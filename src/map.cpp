@@ -1881,8 +1881,71 @@ bool TerrainSet::create_geodata(const std::string &terrain_name, int x_size, int
 	gd.x_size    = x_size;
 	gd.y_size    = y_size;
 	gd.z_size    = 4;
+	
+	std::string mapfile = "$(ufo2000)/init-scripts/maps/" + terrain_name + ".lua";
+	
+	if (exists(F(mapfile.c_str()))) {
+		int stack_top = lua_gettop(L);
+		lua_dofile(L, F(mapfile.c_str()));
+		lua_pushstring(L, "map");
+		lua_gettable(L, LUA_GLOBALSINDEX);
+		ASSERT(lua_isfunction(L, -1));
+		lua_pushnumber(L, x_size);
+		lua_call(L, 1, 1);
 
-	return terrain[terrain_index]->create_geodata(gd);
+    	// we have a table with map data returned at the top of the stack
+		if (!lua_istable(L, -1) || stack_top + 1 != lua_gettop(L)) {
+			lua_settop(L, stack_top);
+			return false;
+		}
+
+		lua_pushstring(L, "Name");
+		lua_gettable(L, -2);
+		if (!lua_isstring(L, -1)) { lua_settop(L, stack_top); return false; }
+		int tid = terrain_set->get_terrain_id(lua_tostring(L, -1));
+		if (tid < 0) { lua_settop(L, stack_top); return false; }
+		gd.terrain = (uint16)tid;
+		lua_pop(L, 1);
+
+		lua_pushstring(L, "Width");
+		lua_gettable(L, -2);
+		if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false;	}
+		gd.x_size = (uint16)lua_tonumber(L, -1);
+		lua_pop(L, 1);
+
+		lua_pushstring(L, "Height");
+		lua_gettable(L, -2);
+		if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false;	}
+		gd.y_size = (uint16)lua_tonumber(L, -1);
+		lua_pop(L, 1);
+	
+		lua_pushstring(L, "Mapdata");
+		lua_gettable(L, -2);
+		if (!lua_istable(L, -1)) { lua_settop(L, stack_top); return false; }
+	
+		int x = 0;
+
+		for (int row = 1; row <= gd.y_size; row++) {
+			lua_pushnumber(L, row);
+			lua_gettable(L, -2);
+			if (!lua_istable(L, -1)) { lua_settop(L, stack_top); return false; }
+
+			for (int col = 1; col <= gd.x_size; col++) {
+				lua_pushnumber(L, col);
+				lua_gettable(L, -2);
+				if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false; }
+
+				gd.mapdata[x++] = lua_tonumber(L, -1) == -1 ? 0xFE : (uint8)lua_tonumber(L, -1);
+				lua_pop(L, 1);
+			}
+
+			lua_pop(L, 1);
+		}
+
+		lua_settop(L, stack_top);
+		return true;
+	} else
+		return terrain[terrain_index]->create_geodata(gd);
 }
 
 int TerrainSet::get_random_terrain_id()
