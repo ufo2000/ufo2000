@@ -50,7 +50,7 @@ void Bullet::punch(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 	fi = _fi; te = _te;
 	type = _type;
 
-	for (i = 7; i < 24; i++) {
+	for (i = 3; i < 24; i++) {
 		z = (int)(z0 + i * cos(fi));
 		x = (int)(x0 + i * cos(te) * sin(fi));
 		y = (int)(y0 + i * sin(te) * sin(fi));
@@ -63,11 +63,11 @@ void Bullet::punch(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 		   )
 			break;
 	}
-
+/*
 	x0 += (int)(8 * cos(te) * sin(fi));
 	y0 += (int)(8 * sin(te) * sin(fi));
 	z0 += (int)(8 * cos(fi));
-
+*/
 	i = 0;
 }
 
@@ -118,7 +118,7 @@ void Bullet::fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 	fi = _fi; te = _te;
 	type = _type;
 
-	i = 7;
+	i = 3;
 	move();
 }
 
@@ -144,7 +144,7 @@ void Bullet::beam(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 	fi = _fi; te = _te;
 	type = _type;
 
-	for (i = 7; i < 100000; i++) {
+	for (i = 3; i < 100000; i++) {
 		z = (int)(z0 + i * cos(fi));
 		x = (int)(x0 + i * cos(te) * sin(fi));
 		y = (int)(y0 + i * sin(te) * sin(fi));
@@ -157,11 +157,11 @@ void Bullet::beam(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 		   )
 			break;
 	}
-
+/*
 	x0 += (int)(8 * cos(te) * sin(fi));
 	y0 += (int)(8 * sin(te) * sin(fi));
 	z0 += (int)(8 * cos(fi));
-
+*/
 	i = 0;
 }
 
@@ -188,7 +188,7 @@ void Bullet::aimedthrow(int _z0, int _x0, int _y0, REAL _fi, REAL _te, Item *_it
 	item = _item;
 	type = item->m_type;
 
-	i = 7;
+	i = 3;
 	move();
 }
 
@@ -542,7 +542,7 @@ void Bullet::showline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 	REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
 
 	int i;
-	for (i = 7; i < 100000; i++) {
+	for (i = 3; i < 100000; i++) {
 		zd = (int)(z0 + i * cos(fi));
 		xd = (int)(x0 + i * cos(te) * sin(fi));
 		yd = (int)(y0 + i * sin(te) * sin(fi));

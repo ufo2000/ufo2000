@@ -2182,9 +2182,11 @@ void Soldier::try_shoot()
 	{
 		precise_aiming();
 	} else {
-		FIRE_z = map->sel_lev * 12 + 8;
+		FIRE_z = map->sel_lev * 12 + 6;
 		FIRE_x = map->sel_col * 16 + 8;
 		FIRE_y = map->sel_row * 16 + 8;
+		Soldier *s = map->man(map->sel_lev, map->sel_col, map->sel_row);
+		if (s) FIRE_z += (s->m_state == SIT) ? 1 : -2;
 	}
 
 	// Perform some checks to determine if we can keep targeting mode after 
@@ -2214,7 +2216,7 @@ void Soldier::try_shoot()
 void Soldier::try_reaction_shot(Soldier *the_target)
 {
 	TARGET = 0;
- 
+
 	// Moving soldier cannot shoot
 	if (ismoving()) return;
 
@@ -2233,7 +2235,7 @@ void Soldier::try_reaction_shot(Soldier *the_target)
 	else
 		FIRE_num = 1;
 
-	FIRE_z = the_target->z * 12 + 8;
+	FIRE_z = the_target->z * 12 + 7 + (the_target->m_state == SIT ? -3 : 0);
 	FIRE_x = the_target->x * 16 + 8;
 	FIRE_y = the_target->y * 16 + 8;
 
@@ -2266,9 +2268,9 @@ void Soldier::shoot(int zd, int xd, int yd, int ISLOCAL)
 	ASSERT(target.action != NONE);
 	ASSERT(target.item != NULL);
 
-	int z0 = z * 12 + 8; if (m_state == SIT) z0 -= 4;
-	int x0 = x * 16 + 8;
-	int y0 = y * 16 + 8;
+	int z0 = z * 12 + 8; if (m_state == SIT) z0 -= 3;
+	int x0 = x * 16 + 8 + DIR_DELTA_X(dir) * 4;
+	int y0 = y * 16 + 8 + DIR_DELTA_Y(dir) * 4;
 
 	m_reaction_chances += (target.time / 4); // How many chances at a reaction shot do we get? TUs / 4.
 
@@ -2563,7 +2565,7 @@ int Soldier::do_reaction_fire(Soldier *the_target, int place, int shot_type)
 	Item *it = item(place);
 	if (it == NULL) return 0; // no item in hand
 	if (!it->data()->isGun && !it->is_laser()) return 0; // item is not a gun or laser
-	if (it->data()->isGun && !it->haveclip()) return 0; // gun with no clip
+	if (!it->is_laser() && !it->haveclip()) return 0; // gun with no clip
 
 	int tus;
 
