@@ -30,6 +30,17 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "editor.h"
 #include "map.h"
 #include "wind.h"
+#include "scenario.h"
+
+#define CAPTION     8
+#define COMMENT    	3
+#define BUTTON      5
+#define SELECTED    48
+#define SWITCH_ON   55
+#define SWITCH_OFF  40
+
+char buf[10000];
+int len = 0;
 
 int points = 0;
 int damage_points = 0;
@@ -48,7 +59,9 @@ void Units::reset()
 	memset(lev, 0, sizeof(lev));
 	memset(col, 0, sizeof(col));
 	memset(row, 0, sizeof(row));
+	memset(buf, 0, sizeof(buf));
 	SEND = 0; START = 0;
+	state = PS_MAIN;
 	selected = -1;
 }
 
@@ -116,8 +129,6 @@ int Units::add(int num, char *nm, int ct)
 
 void Units::print(int gcol)
 {
-	int color4, color5, color6;
-
 	text_mode( -1);
 	int x1, y1, x2, y2, color = xcom1_color(60);
 	int i;
@@ -158,39 +169,16 @@ void Units::print(int gcol)
 
 	}
 	draw_text();
-
-	rect(screen2, gmx, SCREEN2H - 59, gmx + gmw, SCREEN2H - 5, xcom1_color(1));
-	textout_centre(screen2, font, "MAP", gmx + gmw / 2, SCREEN2H - 53, xcom1_color(8));
-	textout_centre(screen2, font, "NEW", gmx + gmw / 2 - gmw / 4, SCREEN2H - 17, xcom1_color(1));
-	textout_centre(screen2, font, "LOAD", gmx + gmw / 2 + gmw / 4, SCREEN2H - 17, xcom1_color(1));
-
-	switch (MAP_WIDTH) {
-
-		case 4:
-		color4 = 55;
-		color5 = color6 = 40;
-		break;
-
-		case 5:
-		color5 = 55;
-		color4 = color6 = 40;
-		break;
-
-		case 6:
-		color6 = 55;
-		color4 = color5 = 40;
-		break;
-
-		default:
-		color4 = color5 = color6 = 40;
-	}
-
-	textout_centre(screen2, font, "4*4", gmx + gmw / 2 - gmw / 4, SCREEN2H - 29, xcom1_color(color4));
-	textout_centre(screen2, font, "5*5", gmx + gmw / 2, SCREEN2H - 29, xcom1_color(color5));
-	textout_centre(screen2, font, "6*6", gmx + gmw / 2 + gmw / 4, SCREEN2H - 29, xcom1_color(color6));
 	
-	textout_centre(screen2, font, terrain_set->get_terrain_name(mapdata.terrain).c_str(), gmx + gmw / 2, SCREEN2H - 41, xcom1_color(40));
-
+	rect(screen2, gmx, SCREEN2H - 71, gmx + gmw, SCREEN2H - 5, xcom1_color(1));
+	textout_centre(screen2, font, "MATCH SETTINGS", gmx + gmw / 2, SCREEN2H - 65, xcom1_color(CAPTION));
+	textout_centre(screen2, font, scenario->name[scenario->type], gmx + gmw / 2, SCREEN2H - 53, xcom1_color(BUTTON));
+	textout_centre(screen2, font, terrain_set->get_terrain_name(mapdata.terrain).c_str(), gmx + gmw / 2, SCREEN2H - 41, xcom1_color(BUTTON));
+	textout_centre(screen2, font, "Game rules:", gmx + gmw / 2, SCREEN2H - 28, xcom1_color(BUTTON));
+	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 16, xcom1_color(BUTTON), "%d; %dk; %d; %d; %d", scenario->rules[0], scenario->rules[1], scenario->rules[2], g_time_limit, scenario->rules[3]);
+	
+	for (int i = 0; i < len; i++) buf[i] = 0;
+	len = 0;
  	points = 0;
  	damage_points = 0;
 
@@ -204,9 +192,6 @@ void Units::print(int gcol)
 	//textout(screen2, small, "INFO", gx, 160, 1);
 	// Moved down...
 	// textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, xcom1_color(50), "total men points=%d", points);
-
-	char buf[10000]; memset(buf, 0, sizeof(buf));
-	int len = 0;
 
 	for (i = 0; i < size; i++) {
 		if (x[i] == 0)
@@ -225,6 +210,142 @@ void Units::print(int gcol)
 	damage_points = draw_items_stats(gx, 160 + 10, buf, len);
 
 	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, xcom1_color(50), "Total points=%d", points + damage_points);
+	
+	switch(state) {
+		case PS_SCEN:
+		draw_scenario_window();
+		break;
+		
+		case PS_MAP:
+		draw_map_window();
+		break;
+		
+		case PS_RULES:
+		draw_rules_window();
+		break;
+		
+		case PS_RULES_0:
+		draw_rules_window();
+		draw_rules_0_window();
+		break;
+		
+		case PS_RULES_1:
+		draw_rules_window();
+		draw_rules_1_window();
+		break;
+		
+		case PS_RULES_2:
+		draw_rules_window();
+		draw_rules_2_window();
+		break;
+		
+		case PS_RULES_3:
+		draw_rules_window();
+		draw_rules_3_window();
+		break;
+		
+		case PS_MAIN:
+		break;
+	}
+}
+
+void Units::draw_scenario_window()
+{
+    rect(screen2, gmx + gmw / 2 - 150, SCREEN2H - 120, gmx + gmw / 2 + 150, SCREEN2H - 37, xcom1_color(1));
+    rectfill(screen2, gmx + gmw / 2 - 150 + 1, SCREEN2H - 120 + 1, gmx + gmw / 2 + 150 - 1, SCREEN2H - 37 - 1, xcom1_color(14));
+    
+    textout_centre(screen2, font, scenario->name[scenario->type], gmx + gmw / 2, SCREEN2H - 110, xcom1_color(SELECTED));
+    textout_centre(screen2, font, "<", gmx + gmw / 2 - 150 + 50, SCREEN2H - 110, xcom1_color(BUTTON));
+    textout_centre(screen2, font, ">", gmx + gmw / 2 + 150 - 50, SCREEN2H - 110, xcom1_color(BUTTON));
+	for (int i = 0; i < 5; i++)
+    	textprintf(screen2, font, gmx + gmw / 2 - 150 + 3, SCREEN2H - 90 + i * 9, xcom1_color(COMMENT), "%s", pos == POS_LEFT ? scenario->briefing_left[scenario->type][i] : scenario->briefing_right[scenario->type][i]);
+}
+
+void Units::draw_map_window()
+{
+	rect(screen2, gmx + gmw / 2 - 80, SCREEN2H - 79, gmx + gmw / 2 + 80, SCREEN2H - 37, xcom1_color(1));
+	rectfill(screen2, gmx + gmw / 2 - 80 + 1, SCREEN2H - 79 + 1, gmx + gmw / 2 + 80 - 1, SCREEN2H - 37 - 1, xcom1_color(14));
+
+	textout_centre(screen2, font, terrain_set->get_terrain_name(mapdata.terrain).c_str(), gmx + gmw / 2, SCREEN2H - 73, xcom1_color(BUTTON));
+
+	textout_centre(screen2, font, "4*4", gmx + gmw / 2 - 40, SCREEN2H - 61, xcom1_color(mapdata.x_size == 4 ? SWITCH_ON : SWITCH_OFF));
+	textout_centre(screen2, font, "5*5", gmx + gmw / 2, SCREEN2H - 61, xcom1_color(mapdata.x_size == 5 ? SWITCH_ON : SWITCH_OFF));
+	textout_centre(screen2, font, "6*6", gmx + gmw / 2 + 40, SCREEN2H - 61, xcom1_color(mapdata.x_size == 6 ? SWITCH_ON : SWITCH_OFF));
+	
+	textout_centre(screen2, font, "NEW", gmx + gmw / 2 - 40, SCREEN2H - 49, xcom1_color(BUTTON));
+	textout_centre(screen2, font, "LOAD", gmx + gmw / 2 + 40, SCREEN2H - 49, xcom1_color(BUTTON));
+}
+
+void Units::draw_rules_window()
+{
+	rect(screen2, gmx + gmw / 2 - 80, SCREEN2H - 103, gmx + gmw / 2 + 80, SCREEN2H - 37, xcom1_color(1));
+	rectfill(screen2, gmx + gmw / 2 - 80 + 1, SCREEN2H - 103 + 1, gmx + gmw / 2 + 80 - 1, SCREEN2H - 37 - 1, xcom1_color(14));
+	
+	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 97, xcom1_color(BUTTON), "Explosives level: %d", scenario->rules[0]);
+	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 85, xcom1_color(BUTTON), "Points limit: %d000", scenario->rules[1]);
+	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 73, xcom1_color(BUTTON), scenario->rules[2] == 0 ? "No turns limit" : "Turns limit: %d", scenario->rules[2]);
+	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 61, xcom1_color(BUTTON), g_time_limit == -1 ? "No time limit" : "Time limit: %d sec", g_time_limit);
+	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 49, xcom1_color(BUTTON), scenario->rules[3] ? "All map is explored" : "Map isn't explored");
+}
+
+void Units::draw_rules_0_window()
+{
+	rect(screen2, gmx + gmw / 2 - 130, SCREEN2H - 139, gmx + gmw / 2 + 130, SCREEN2H - 97, xcom1_color(1));
+	rectfill(screen2, gmx + gmw / 2 - 130 + 1, SCREEN2H - 139 + 1, gmx + gmw / 2 + 130 - 1, SCREEN2H - 97 - 1, xcom1_color(13));
+	
+	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 133, xcom1_color(SELECTED), "%d", scenario->rules[0]);
+	textout_centre(screen2, font, "<", gmx + gmw / 2 - 20, SCREEN2H - 133, xcom1_color(BUTTON));
+	textout_centre(screen2, font, ">", gmx + gmw / 2 + 20, SCREEN2H - 133, xcom1_color(BUTTON));
+	
+	switch(scenario->rules[0]) {
+	    case 0:
+	    textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 121, xcom1_color(COMMENT), "All explosives are prohibited.");
+	    break;
+	    
+     	case 1:
+	    textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 121, xcom1_color(COMMENT), "High explosives, all rockets and");
+	    textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 109, xcom1_color(COMMENT), "alien grenades are prohibited.");
+	    break;
+	    
+	    case 2:
+	    textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 121, xcom1_color(COMMENT), "Large rockets and alien grenades");
+	    textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 109, xcom1_color(COMMENT), "are prohibited.");
+	    break;
+	    
+		case 3:
+	    textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 121, xcom1_color(COMMENT), "All explosives are allowed.");
+	    break;
+	}
+}
+
+void Units::draw_rules_1_window()
+{
+	rect(screen2, gmx + gmw / 2 - 40, SCREEN2H - 99, gmx + gmw / 2 + 40, SCREEN2H - 85, xcom1_color(1));
+	rectfill(screen2, gmx + gmw / 2 - 40 + 1, SCREEN2H - 99 + 1, gmx + gmw / 2 + 40 - 1, SCREEN2H - 85 - 1, xcom1_color(13));
+	
+	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 95, xcom1_color(SELECTED), "%d000", scenario->rules[1]);
+	textout_centre(screen2, font, "<", gmx + gmw / 2 - 30, SCREEN2H - 95, xcom1_color(BUTTON));
+	textout_centre(screen2, font, ">", gmx + gmw / 2 + 30, SCREEN2H - 95, xcom1_color(BUTTON));
+}
+
+void Units::draw_rules_2_window()
+{
+	rect(screen2, gmx + gmw / 2 - 30, SCREEN2H - 87, gmx + gmw / 2 + 30, SCREEN2H - 73, xcom1_color(1));
+	rectfill(screen2, gmx + gmw / 2 - 30 + 1, SCREEN2H - 87 + 1, gmx + gmw / 2 + 30 - 1, SCREEN2H - 73 - 1, xcom1_color(13));
+
+	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 83, xcom1_color(SELECTED), scenario->rules[2] == 0 ? "no" : "%d", scenario->rules[2]);
+	textout_centre(screen2, font, "<", gmx + gmw / 2 - 20, SCREEN2H - 83, xcom1_color(BUTTON));
+	textout_centre(screen2, font, ">", gmx + gmw / 2 + 20, SCREEN2H - 83, xcom1_color(BUTTON));
+}
+
+void Units::draw_rules_3_window()
+{
+	rect(screen2, gmx + gmw / 2 - 30, SCREEN2H - 75, gmx + gmw / 2 + 30, SCREEN2H - 61, xcom1_color(1));
+	rectfill(screen2, gmx + gmw / 2 - 30 + 1, SCREEN2H - 75 + 1, gmx + gmw / 2 + 30 - 1, SCREEN2H - 61 - 1, xcom1_color(13));
+	
+	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 71, xcom1_color(SELECTED), g_time_limit == -1 ? "no" : "%d", g_time_limit);
+	textout_centre(screen2, font, "<", gmx + gmw / 2 - 20, SCREEN2H - 71, xcom1_color(BUTTON));
+	textout_centre(screen2, font, ">", gmx + gmw / 2 + 20, SCREEN2H - 71, xcom1_color(BUTTON));
 }
 
 void Units::build_items_stats(ITEMDATA *id, char *buf, int &len)
@@ -335,27 +456,57 @@ void Units::draw_text()
 
 	if (pos == POS_LEFT) {
 		//textprintf(screen2, font, gx+56, SCREEN2H-29, 8, "%s", "SERVER");
-		textout_centre(screen2, font, "SERVER", gx + 10 * 8, SCREEN2H - 29, xcom1_color(8));
+		textout_centre(screen2, font, "SERVER", gx + 10 * 8, SCREEN2H - 29, xcom1_color(CAPTION));
 	} else {
 		//textprintf(screen2, font, gx+56, SCREEN2H-29, 8, "%s", "CLIENT");
-		textout_centre(screen2, font, "CLIENT", gx + 10 * 8, SCREEN2H - 29, xcom1_color(8));
+		textout_centre(screen2, font, "CLIENT", gx + 10 * 8, SCREEN2H - 29, xcom1_color(CAPTION));
 	}
 
-	int color = 40;      //red
+	int color = SWITCH_OFF;      //red
 	if (SEND)
-		color = 55;      //green
+		color = SWITCH_ON;      //green
 
 	textout_centre(screen2, font, "SEND", gx + 15 * 8, SCREEN2H - 16, xcom1_color(color));
 
 	if (START)
-		color = 55;      //green
+		color = SWITCH_ON;      //green
 	else
-		color = 40;      //red
+		color = SWITCH_OFF;      //red
 
 	textout_centre(screen2, font, "START", gx + 5 * 8, SCREEN2H - 16, xcom1_color(color));
 }
 
 void Units::execute(Map *map, int map_change_allowed)
+{
+	switch (state) {
+		case PS_MAIN:
+		execute_main(map, map_change_allowed);
+		break;
+		case PS_SCEN:
+		execute_scenario(map, map_change_allowed);
+		break;
+		case PS_MAP:
+		execute_map(map, map_change_allowed);
+		break;
+		case PS_RULES:
+		execute_rules(map, map_change_allowed);
+		break;
+		case PS_RULES_0:
+		execute_rules_0(map, map_change_allowed);
+		break;
+		case PS_RULES_1:
+		execute_rules_1(map, map_change_allowed);
+		break;
+		case PS_RULES_2:
+		execute_rules_2(map, map_change_allowed);
+		break;
+		case PS_RULES_3:
+		execute_rules_3(map, map_change_allowed);
+		break;
+	}
+}
+
+void Units::execute_main(Map *map, int map_change_allowed)
 {
 	if (selected != -1) {
 		int mx = mouse_x;
@@ -364,13 +515,15 @@ void Units::execute(Map *map, int map_change_allowed)
 		int r = (my - gmy) / 4;
 
 		if (!(FLAGS & F_PLANNERDBG)) { // allow place at any position
-			if (pos == POS_LEFT) {
+			/*if (pos == POS_LEFT) {
 				if (c > 9)
 					return ;
 			} else {
 				if (c < gmw / 4 - 10)
 					return ;
-			}
+			}*/
+			if (!scenario->is_correct_place(pos, c, r))
+			    return;
 		}
 
 		if (!map->passable(0, c, r)) return;
@@ -443,9 +596,21 @@ void Units::execute(Map *map, int map_change_allowed)
 
 	if (mouse_inside(gx + 15 * 8 - 20, SCREEN2H - 20, gx + 15 * 8 + 20, SCREEN2H - 5)) {
 		//"SEND"
-		if ((points + damage_points) > 10000)
-			g_console->printf("10000 points limit exceeded!\n");
-		else
+		int index_of_first = -1;
+		for (int i = 0; i < 10; i++) {
+			if (x[i] != 0 && y[i] != 0) {
+			    index_of_first = i;
+				break;
+			}
+		}
+		
+		int num_of_men_sel = 0;
+		for (int i = 0; i < 10; i++) {
+			if (x[i] != 0 && y[i] != 0)
+				num_of_men_sel++;
+		}
+		
+		if (scenario->is_correct_platoon(points + damage_points, editor->platoon(), name[index_of_first], pos, buf, len, num_of_men_sel))
 			editor->send_Units(*this);
 		return ;
 	}
@@ -458,24 +623,131 @@ void Units::execute(Map *map, int map_change_allowed)
 		return ;
 	}
 
-	if (!map_change_allowed) return;
+	//if (!map_change_allowed) return;
 
-	if (mouse_inside(gmx + gmw / 2 - gmw / 4 - 20, SCREEN2H - 20, gmx + gmw / 2 - gmw / 4 + 20, SCREEN2H - 5)) {
-		//"NEW"
-		std::string terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
-		Map::new_GEODATA(&mapdata, terrain_name);
-		net->send_map_data(&mapdata);
+	if (mouse_inside(gmx + gmw / 2 - 60, SCREEN2H - 57, gmx + gmw / 2 + 60, SCREEN2H - 44)) {
+		//SCENARIO
+		state = PS_SCEN;
+	}
+
+	if (mouse_inside(gmx + gmw / 2 - 60, SCREEN2H - 43, gmx + gmw / 2 + 60, SCREEN2H - 30)) {
+		//MAP
+		state = PS_MAP;
+	}
+
+	if (mouse_inside(gmx + gmw / 2 - 60, SCREEN2H - 29, gmx + gmw / 2 + 60, SCREEN2H - 3)) {
+	    //RULES
+	    state = PS_RULES;
+	}
+}
+
+void Units::execute_scenario(Map *map, int map_change_allowed)
+{
+    if (!mouse_inside(gmx + gmw / 2 - 150, SCREEN2H - 120, gmx + gmw / 2 + 150, SCREEN2H - 37))
+		state = PS_MAIN;
+
+    if (!map_change_allowed) return;
+
+	if (mouse_inside(gmx + gmw / 2 - 105, SCREEN2H - 114, gmx + gmw / 2 - 95, SCREEN2H - 101)) {
+	    //"<"
+	    scenario->new_scenario(scenario->type - 1);
+
+	    //don't know why this check doesn't work from scenario::new_coords()
+  		if (scenario->type == SC_SABOTAGE) {
+			while (!(map->passable(0, scenario->x1, scenario->y1)) || !(map->passable(0, scenario->x2, scenario->y2)))
+		    	scenario->new_coords();
+		}
+
+		net->send_scenario();
 		mapdata.load_game = 77;
 	}
 
-	if (mouse_inside(gmx + gmw / 2 + gmw / 4 - 20, SCREEN2H - 20, gmx + gmw / 2 + gmw / 4 + 20, SCREEN2H - 5)) {
+	if (mouse_inside(gmx + gmw / 2 + 95, SCREEN2H - 114, gmx + gmw / 2 + 105, SCREEN2H - 101)) {
+	    //">"
+	    scenario->new_scenario(scenario->type + 1);
+
+	    //don't know why this check doesn't work from scenario::new_coords()
+  		if (scenario->type == SC_SABOTAGE) {
+			while (!(map->passable(0, scenario->x1, scenario->y1)) || !(map->passable(0, scenario->x2, scenario->y2)))
+		    	scenario->new_coords();
+		}
+
+		net->send_scenario();
+		mapdata.load_game = 77;
+	}
+}
+
+void Units::execute_map(Map *map, int map_change_allowed)
+{
+        if (!mouse_inside(gmx + gmw / 2 - 80, SCREEN2H - 79, gmx + gmw / 2 + 80, SCREEN2H - 37))
+		state = PS_MAIN;
+
+    if (!map_change_allowed) return;
+
+	if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 77, gmx + gmw / 2 + 75, SCREEN2H - 64)) {
+	    //MAP TYPE
+     	std::string terrain_name = terrain_set->get_random_terrain_name();
+
+		if (net->is_network_game()) {
+	   		ASSERT(g_net_allowed_terrains.size() > 0);
+			while (g_net_allowed_terrains.find(terrain_name) == g_net_allowed_terrains.end()) {
+				terrain_name = terrain_set->get_random_terrain_name();
+			}
+		}
+
+		Map::new_GEODATA(&mapdata, terrain_name);
+		net->send_map_data(&mapdata);
+		mapdata.load_game = 77;
+		scenario->new_coords();
+	}
+
+	if (mouse_inside(gmx + gmw / 2 - 59, SCREEN2H - 63, gmx + gmw / 2 + 20, SCREEN2H - 50)) {
+		//"4*4"
+  		std::string terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
+		MAP_WIDTH = MAP_HEIGHT = 4;
+		Map::new_GEODATA(&mapdata, terrain_name);
+		net->send_map_data(&mapdata);
+		mapdata.load_game = 77;
+		scenario->new_coords();
+	}
+
+	if (mouse_inside(gmx + gmw / 2 - 19, SCREEN2H - 63, gmx + gmw / 2 + 20, SCREEN2H - 50)) {
+		//"5*5"
+  		std::string terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
+		MAP_WIDTH = MAP_HEIGHT = 5;
+		Map::new_GEODATA(&mapdata, terrain_name);
+		net->send_map_data(&mapdata);
+		mapdata.load_game = 77;
+		scenario->new_coords();
+	}
+
+	if (mouse_inside(gmx + gmw / 2 + 21, SCREEN2H - 63, gmx + gmw / 2 + 60, SCREEN2H - 50)) {
+		//"6*6"
+  		std::string terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
+		MAP_WIDTH = MAP_HEIGHT = 6;
+		Map::new_GEODATA(&mapdata, terrain_name);
+		net->send_map_data(&mapdata);
+		mapdata.load_game = 77;
+		scenario->new_coords();
+	}
+
+	if (mouse_inside(gmx + gmw / 2 - 60, SCREEN2H - 49, gmx + gmw / 2 - 20, SCREEN2H - 36)) {
+		//"NEW"
+  		std::string terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
+		Map::new_GEODATA(&mapdata, terrain_name);
+		net->send_map_data(&mapdata);
+		mapdata.load_game = 77;
+		scenario->new_coords();
+	}
+
+	if (mouse_inside(gmx + gmw / 2 + 20, SCREEN2H - 49, gmx + gmw / 2 + 60, SCREEN2H - 36)) {
 		//"LOAD"
 		char path[1000]; *path = 0;
 		if (file_select("GEODATA file", path, "MAP;DAT")) {
 			GEODATA gd;
 			memset(&gd, 0, sizeof(gd));
 
-			int fh = open(path, O_RDONLY | O_BINARY); 
+			int fh = open(path, O_RDONLY | O_BINARY);
 			ASSERT(fh != -1);
 			read(fh, &gd, sizeof(gd));
 			close(fh);
@@ -489,40 +761,166 @@ void Units::execute(Map *map, int map_change_allowed)
 			}
 		}
 	}
+}
 
+void Units::execute_rules(Map *map, int map_change_allowed)
+{
+    if (!mouse_inside(gmx + gmw / 2 - 80, SCREEN2H - 103, gmx + gmw / 2 + 80, SCREEN2H - 37))
+		state = PS_MAIN;
 
+    if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 101, gmx + gmw / 2 + 75, SCREEN2H - 88))
+        state = PS_RULES_0;
 
-	if (mouse_inside(gmx + gmw / 2 - gmw / 4 - 20, SCREEN2H - 32, gmx + gmw / 2 - gmw / 4 + 20, SCREEN2H - 21)) {
-		//"4*4"
-		MAP_WIDTH = MAP_HEIGHT = 4;
+    if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 87, gmx + gmw / 2 + 75, SCREEN2H - 74))
+        state = PS_RULES_1;
+
+    if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 73, gmx + gmw / 2 + 75, SCREEN2H - 60))
+        state = PS_RULES_2;
+        
+    if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 59, gmx + gmw / 2 + 75, SCREEN2H - 48))
+        state = PS_RULES_3;
+        
+	if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 47, gmx + gmw / 2 + 75, SCREEN2H - 32)) {
+	    if (scenario->rules[3] == 0)
+	        scenario->rules[3] = 1;
+		else
+		    scenario->rules[3] = 0;
+		net->send_rules(3, scenario->rules[3]);
 	}
+}
 
-	if (mouse_inside(gmx + gmw / 2 - 20, SCREEN2H - 32, gmx + gmw / 2 + 20, SCREEN2H - 21)) {
-		//"5*5"
-		MAP_WIDTH = MAP_HEIGHT = 5;
-	}
+void Units::execute_rules_0(Map *map, int map_change_allowed)
+{
+	if (!mouse_inside(gmx + gmw / 2 - 110, SCREEN2H - 139, gmx + gmw / 2 + 90, SCREEN2H - 97))
+	    state = PS_RULES;
 
-	if (mouse_inside(gmx + gmw / 2 + gmw / 4 - 20, SCREEN2H - 32, gmx + gmw / 2 + gmw / 4 + 20, SCREEN2H - 21)) {
-		//"6*6"
-		MAP_WIDTH = MAP_HEIGHT = 6;
-	}
-	
-	if (mouse_inside(gmx + gmw / 2 - 60, SCREEN2H - 45, gmx + gmw / 2 + 60, SCREEN2H - 33)) {
-		//MAP TYPE
-  		std::string terrain_name = terrain_set->get_random_terrain_name();
+    if (!map_change_allowed) return;
 
-		if (net->is_network_game()) {
-	   		ASSERT(g_net_allowed_terrains.size() > 0);
-			while (g_net_allowed_terrains.find(terrain_name) == g_net_allowed_terrains.end()) {
-				terrain_name = terrain_set->get_random_terrain_name();
-			}
+	if (mouse_inside(gmx + gmw / 2 - 25, SCREEN2H - 137, gmx + gmw / 2 - 15, SCREEN2H - 124)) {
+	    //"<"
+	    scenario->rules[0]--;
+
+  		if (scenario->rules[0] < 0) {
+   			scenario->rules[0] = 0;
+   			return;
 		}
 
-		Map::new_GEODATA(&mapdata, terrain_name);
-		net->send_map_data(&mapdata);
-		mapdata.load_game = 77;
+		net->send_rules(0, scenario->rules[0]);
 	}
 
+    if (mouse_inside(gmx + gmw / 2 + 15, SCREEN2H - 137, gmx + gmw / 2 + 25, SCREEN2H - 124)) {
+	    //">"
+	    scenario->rules[0]++;
+
+  		if (scenario->rules[0] > 3) {
+   			scenario->rules[0] = 3;
+   			return;
+		}
+
+		net->send_rules(0, scenario->rules[0]);
+	}
+}
+
+void Units::execute_rules_1(Map *map, int map_change_allowed)
+{
+	if (!mouse_inside(gmx + gmw / 2 - 40, SCREEN2H - 99, gmx + gmw / 2 + 40, SCREEN2H - 85))
+	    state = PS_RULES;
+
+	if (!map_change_allowed) return;
+
+	if (mouse_inside(gmx + gmw / 2 - 35, SCREEN2H - 97, gmx + gmw / 2 - 25, SCREEN2H - 84)) {
+	    //"<"
+	    scenario->rules[1]--;
+
+	    if (scenario->rules[1] < 2) {
+			scenario->rules[1] = 2;
+			return;
+		}
+
+		net->send_rules(1, scenario->rules[1]);
+	}
+
+	if (mouse_inside(gmx + gmw / 2 + 25, SCREEN2H - 97, gmx + gmw / 2 + 35, SCREEN2H - 84)) {
+	    //">"
+	    scenario->rules[1]++;
+
+	    if (scenario->rules[1] > 15) {
+			scenario->rules[1] = 15;
+			return;
+		}
+
+		net->send_rules(1, scenario->rules[1]);
+	}
+}
+
+void Units::execute_rules_2(Map *map, int map_change_allowed)
+{
+    if (!mouse_inside(gmx + gmw / 2 - 30, SCREEN2H - 87, gmx + gmw / 2 + 30, SCREEN2H - 73))
+	    state = PS_RULES;
+
+	if (!map_change_allowed) return;
+
+	if (mouse_inside(gmx + gmw / 2 - 25, SCREEN2H - 85, gmx + gmw / 2 - 15, SCREEN2H - 72)) {
+	    //"<"
+	    scenario->rules[2]--;
+
+	    if (scenario->rules[2] < 0) {
+			scenario->rules[2] = 0;
+			return;
+		}
+
+		net->send_rules(2, scenario->rules[2]);
+	}
+
+	if (mouse_inside(gmx + gmw / 2 + 15, SCREEN2H - 85, gmx + gmw / 2 + 25, SCREEN2H - 72)) {
+	    //">"
+	    scenario->rules[2]++;
+
+	    if (scenario->rules[2] > 20) {
+			scenario->rules[2] = 20;
+			return;
+		}
+
+		net->send_rules(2, scenario->rules[2]);
+	}
+}
+
+void Units::execute_rules_3(Map *map, int map_change_allowed)
+{
+    if (!mouse_inside(gmx + gmw / 2 - 30, SCREEN2H - 75, gmx + gmw / 2 + 30, SCREEN2H - 61))
+	    state = PS_RULES;
+
+	if (!map_change_allowed) return;
+
+	if (mouse_inside(gmx + gmw / 2 - 25, SCREEN2H - 73, gmx + gmw / 2 - 15, SCREEN2H - 60)) {
+	    //"<"
+     	g_time_limit -= 15;
+
+	    if (g_time_limit == 0)
+			g_time_limit = -1;
+			
+		if (g_time_limit < -1) {
+		    g_time_limit = -1;
+			return;
+		}
+
+		net->send_time_limit(g_time_limit);
+	}
+
+	if (mouse_inside(gmx + gmw / 2 + 15, SCREEN2H - 73, gmx + gmw / 2 + 25, SCREEN2H - 60)) {
+	    //">"
+	    if (g_time_limit != -1)
+	    	g_time_limit += 15;
+		else
+		    g_time_limit += 16;
+
+	    if (g_time_limit > 600) {
+			g_time_limit = 600;
+			return;
+		}
+
+		net->send_time_limit(g_time_limit);
+	}
 }
 
 void Units::execute_right()

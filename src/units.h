@@ -22,6 +22,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define UNITS_H
 
 enum PanPos {POS_LEFT, POS_RIGHT};
+enum PlanState {PS_MAIN, PS_SCEN, PS_MAP, PS_RULES, PS_RULES_0, PS_RULES_1, PS_RULES_2, PS_RULES_3};
 
 class Units
 {
@@ -36,6 +37,22 @@ private:
 	int mx, my, mx1, my1, mx2, my2;
 	int gx, gy, gmx, gmw, gmy, gmh;
 	PanPos pos;
+	PlanState state;
+	void draw_scenario_window();
+	void draw_map_window();
+	void draw_rules_window();
+	void draw_rules_0_window();
+	void draw_rules_1_window();
+	void draw_rules_2_window();
+	void draw_rules_3_window();
+	void execute_main(Map *map, int map_change_allowed);
+	void execute_scenario(Map *map, int map_change_allowed);
+	void execute_map(Map *map, int map_change_allowed);
+	void execute_rules(Map *map, int map_change_allowed);
+	void execute_rules_0(Map *map, int map_change_allowed);
+	void execute_rules_1(Map *map, int map_change_allowed);
+	void execute_rules_2(Map *map, int map_change_allowed);
+	void execute_rules_3(Map *map, int map_change_allowed);
 public:
 	int SEND;
 	int START;

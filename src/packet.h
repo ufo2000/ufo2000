@@ -24,7 +24,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <list>
 #include <string>
 
-#define COMMAND_NUM 28
+#define COMMAND_NUM 30
 
 enum Command {CMD_MESSAGE = -2, CMD_NONE = -1,
               CMD_NOTICE = 0, CMD_QUITGAME, CMD_ENDTURN,              
@@ -41,7 +41,9 @@ enum Command {CMD_MESSAGE = -2, CMD_NONE = -1,
               CMD_PUNCH, CMD_AIMEDTHROW,                              
               CMD_TIME_LIMIT,                                         
               CMD_TERRAIN_CRC32,                                      
-              CMD_USE_ELEVATOR                                        
+              CMD_USE_ELEVATOR,
+              CMD_SCENARIO,
+              CMD_RULES
              };
 
 

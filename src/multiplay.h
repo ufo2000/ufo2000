@@ -92,6 +92,8 @@ private:
 	int recv_map_data();
 	int recv_time_limit();
 	int recv_terrain_crc32();
+	int recv_scenario();
+	int recv_rules();
 public:
 	ClientServerUfo *m_internet_server;
 	GameType gametype;
@@ -147,6 +149,8 @@ public:
 	void send_map_data(GEODATA *gd);
 	void send_time_limit(int time_limit);
 	void send_terrain_crc32(const std::string &name, uint32 crc32);
+	void send_scenario();
+	void send_rules(int index, int value);
 
 	void send_finish_planner();
 	int recv_finish_planner();

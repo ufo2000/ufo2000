@@ -21,6 +21,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "minimap.h"
 #include "map.h"
+#include "scenario.h"
 
 Minimap::Minimap(Map *map) : m_map(map)
 {
@@ -106,6 +107,10 @@ void Minimap::redraw_minimap(BITMAP *bmp, int x, int y, int full_redraw_mode)
 			MINIMAP_STATE state = MINIMAP_STATE_UNEXPLORED;
 
 			for (int lev = 0; lev < m_map->level; lev++) {
+				if (scenario->is_target_on_minimap(lev, col, row, m_map)) {
+				    state = MINIMAP_STATE_SCTARGET;
+					break;
+				}
 				if (m_map->visible(lev, col, row) && m_map->man(lev, col, row) != NULL) {
 					state = platoon_local->belong(m_map->man(lev, col, row)) ? 
 						MINIMAP_STATE_FRIEND : MINIMAP_STATE_ENEMY;
@@ -137,6 +142,10 @@ void Minimap::redraw_minimap(BITMAP *bmp, int x, int y, int full_redraw_mode)
 						blit(m_minimap_visible[l], bmp, col * 4, row * 4, x + col * 4, y + row * 4, 4, 4);
 						rectfill(bmp, x + col * 4, y + row * 4, x + col * 4 + S, y + row * 4 + S, xcom1_color(32));
 						break;
+                    case MINIMAP_STATE_SCTARGET:
+						rect(bmp, x + col * 4, y + row * 4, x + col * 4 + S + 1, y + row * 4 + S + 1, xcom1_color(1));
+						rectfill(bmp, x + col * 4 + 1, y + row * 4 + 1, x + col * 4 + S, y + row * 4 + S, xcom1_color(32));
+						break;
 				}
 				m_minimap_state[col][row] = state;
 			}
@@ -153,4 +162,35 @@ void Minimap::redraw_full(BITMAP *bmp, int x, int y)
 void Minimap::redraw_fast(BITMAP *bmp, int x, int y)
 {
 	redraw_minimap(bmp, x, y, 0);
+}
+
+
+////////////
+
+
+void MinimapArea::redraw_full(BITMAP *bmp, int x, int y)
+{
+	acquire_bitmap(bmp);
+	BITMAP *temp_bmp = create_bitmap(m_width, m_height);
+	clear_to_color(temp_bmp, xcom1_color(15));
+	
+	if (m_width >= m_minimap->get_width()) {
+		m_minimap->set_full_redraw();
+		m_minimap->redraw(temp_bmp, m_width - m_minimap->get_width(), 0);
+		scenario->draw_minimap_rectangle(temp_bmp, m_width - m_minimap->get_width(), 0);	
+		show_time_left(temp_bmp, 0, 0, 1);
+	}
+
+	blit(temp_bmp, bmp, 0, 0, x, y, m_width, m_height);
+	destroy_bitmap(temp_bmp);
+	release_bitmap(bmp);
+}
+
+void MinimapArea::redraw_fast(BITMAP *bmp, int x, int y)
+{
+	if (m_width >= m_minimap->get_width()) {
+		m_minimap->redraw(bmp, x + m_width - m_minimap->get_width(), y);
+		scenario->draw_minimap_rectangle(bmp, x + m_width - m_minimap->get_width(), y);
+		show_time_left(bmp, x, y, 0);                                                                                                       
+	}
 }

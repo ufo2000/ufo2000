@@ -34,6 +34,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "sound.h"
 #include "packet.h"
 #include "units.h"
+#include "scenario.h"
 
 static std::list<std::string> g_hotseat_cmd_queue;
 
@@ -138,6 +139,7 @@ int Net::init()
 		net->send_debug_message("terrain:%s", 
 			terrain_set->get_terrain_name(mapdata.terrain).c_str());
 	}
+	
 	return 1;
 }
 
@@ -326,6 +328,12 @@ void Net::check()
 		case CMD_TERRAIN_CRC32:
 			recv_terrain_crc32();
 			break;
+		case CMD_SCENARIO:
+		    recv_scenario();
+		    break;
+		case CMD_RULES:
+		    recv_rules();
+		    break;
 		case CMD_FINISH_PLANNER:
 			recv_finish_planner();
 			break;
@@ -1207,6 +1215,7 @@ int Net::recv_map_data()
 	ASSERT(mapdata.terrain >= 0);
 
 	mapdata.load_game = 77;
+	scenario->new_coords();
 	return 1;
 }
 
@@ -1294,6 +1303,71 @@ int Net::recv_terrain_crc32()
 		g_net_allowed_terrains.insert(map_name);
 	else
 		g_net_invalid_terrains.insert(map_name);
+
+	return 1;
+}
+
+void Net::send_scenario()
+{
+	if (!SEND) return ;
+
+	pkt.create(CMD_SCENARIO);
+	pkt << scenario->type;
+	pkt << scenario->x1;
+	pkt << scenario->x2;
+	pkt << scenario->y1;
+	pkt << scenario->y2;
+
+	send(pkt.str(), pkt.str_len());
+	
+	//local.START = 0;
+	//remote.START = 0;
+}
+
+int Net::recv_scenario()
+{
+	int type;
+	
+	pkt >> type;
+	
+	scenario->new_scenario(type);
+	
+	pkt >> scenario->x1;
+	pkt >> scenario->x2;
+	pkt >> scenario->y1;
+ 	pkt >> scenario->y2;
+ 	
+	//local.START = 0;
+	//remote.START = 0;
+	
+	mapdata.load_game = 77;
+
+	return 1;
+}
+
+void Net::send_rules(int index, int value)
+{
+	if (!SEND) return ;
+
+	pkt.create(CMD_RULES);
+	pkt << index;
+	pkt << value;
+	
+	send(pkt.str(), pkt.str_len());
+	
+	local.START = 0;
+	remote.START = 0;
+}
+
+int Net::recv_rules()
+{
+	int index;
+	
+	pkt >> index;
+	pkt >> scenario->rules[index];
+
+	local.START = 0;
+	remote.START = 0;
 
 	return 1;
 }

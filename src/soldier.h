@@ -81,6 +81,7 @@ private:
 public:
 	MANDATA md;
 	ITEMDATA id;
+	int z, x, y;
 private:
 	UNITDATA ud;
 
@@ -100,7 +101,6 @@ private:
 	int NID;
 	int dir, phase;
 	State m_state;
-	int z, x, y;
 
 //!	This flag is set after soldier has moved. Needed for correct work of
 //!	switch to next soldier button

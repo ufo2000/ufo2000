@@ -34,7 +34,8 @@ class Minimap : public VisualObject
 		MINIMAP_STATE_SEEN,
 		MINIMAP_STATE_VISIBLE,
 		MINIMAP_STATE_FRIEND,
-		MINIMAP_STATE_ENEMY
+		MINIMAP_STATE_ENEMY,
+		MINIMAP_STATE_SCTARGET
 	};
 
 	MINIMAP_STATE **m_minimap_state;
@@ -98,30 +99,9 @@ public:
 		delete m_minimap;
 	}
 
-	void redraw_full(BITMAP *bmp, int x, int y)
-	{
-		acquire_bitmap(bmp);
-		BITMAP *temp_bmp = create_bitmap(m_width, m_height);
-		clear_to_color(temp_bmp, xcom1_color(15));
-
-		if (m_width >= m_minimap->get_width()) {
-			m_minimap->set_full_redraw();
-			m_minimap->redraw(temp_bmp, m_width - m_minimap->get_width(), 0);
-			show_time_left(temp_bmp, 0, 0, 1);
-		}
-
-		blit(temp_bmp, bmp, 0, 0, x, y, m_width, m_height);
-		destroy_bitmap(temp_bmp);
-		release_bitmap(bmp);
-	}
-
-	void redraw_fast(BITMAP *bmp, int x, int y)
-	{
-		if (m_width >= m_minimap->get_width()) {
-			m_minimap->redraw(bmp, x + m_width - m_minimap->get_width(), y);
-			show_time_left(bmp, x, y, 0);
-		}
-	}
+	void redraw_full(BITMAP *bmp, int x, int y);
+	
+	void redraw_fast(BITMAP *bmp, int x, int y);
 
 	bool resize(int width, int height)
 	{

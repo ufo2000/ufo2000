@@ -53,6 +53,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "keys.h"
 #include "crc32.h"
 #include "music.h"
+#include "scenario.h"
 
 #include "sysworkarounds.h"
 
@@ -73,6 +74,7 @@ volatile int g_time_left;
 
 Net *net;
 Map *map;
+Scenario *scenario;
 TerrainSet *terrain_set;
 Icon *icon;
 Inventory *inventory;
@@ -227,6 +229,18 @@ int initgame()
 	restartgame();
 	resize_screen2(0, 0);
 	//clear_to_color(screen, 58); //!!!!!
+	
+	//it's not the best place for this code, but i didn't find better
+	if (scenario->rules[3]) {
+	    for (int i = 0; i < 4; i++) {
+	        for (int j = 0; j < 10 * mapdata.x_size; j++) {
+	            for (int k = 0; k < 10 * mapdata.y_size; k++) {
+	                platoon_local->set_seen(i, j, k, 1);
+	                platoon_remote->set_seen(i, j, k, 1);
+				}
+			}
+		}
+	}
 
 	return 1;
 }
@@ -587,6 +601,8 @@ void initmain(int argc, char *argv[])
 
 	if (!Map::load_GEODATA("$(home)/geodata.lua", &mapdata) || !Map::valid_GEODATA(&mapdata))
 		Map::new_GEODATA(&mapdata);
+		
+	scenario = new Scenario(SC_DEATHMATCH);
 
 	delete print_win;
 }
@@ -689,12 +705,19 @@ void switch_turn()
 	map->step();
 
 //	Still did not test where this code would be better to put
-
-	if (platoon_remote->captain() == NULL) // Win?
-		win = 1;
-
-	if (platoon_local->captain() == NULL) // Loss?
-		loss = 1;
+	switch (scenario->check_conditions()) {
+	    case 1:
+	    loss = 1;
+	    break;
+	    
+	    case 2:
+	    win = 1;
+	    break;
+	    
+	    case 3:
+	    win = loss = 1;
+	    break;
+	}
 }
 
 /**

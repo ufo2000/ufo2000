@@ -362,14 +362,16 @@ class Net;
 class Wind;
 class PCK;
 class Soldier;
+class Scenario;
 
 enum Mode { MAP2D, MAP3D, MAN, WATCH, UNIT_INFO, PLANNER };
 
 extern volatile int CHANGE;
 extern Map *map;
+extern Scenario *scenario;
 extern TerrainSet *terrain_set;
 extern std::set<std::string> g_net_allowed_terrains;
-extern Platoon *platoon_local, *platoon_remote;
+extern Platoon *platoon_local, *platoon_remote, *p1, *p2;
 extern Explosive *elist;
 extern Net *net;
 extern int BLOODYMENU;
