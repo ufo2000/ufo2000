@@ -6,7 +6,7 @@
               **                English Manual                **
               **************************************************
 
-                                  $Rev: 646$
+                                  $Rev$
 
              Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
              Copyright (C) 2002-2004  ufo2000 development team
@@ -238,7 +238,14 @@ Left ALT    Shows the trajectory of your shots assuming the accuracy of the
             in digits.
 
 Left SHIFT  Allows precise aiming if held down while ordering a soldier to
-            shoot with the left mouse button.
+            shoot with the left mouse button. It will show a box with squares
+            ordered like this:  3 6 9 12
+                                2 5 8 11
+                                1 4 7 10
+            The order reflects the vertical disposition of the unit/object
+            inside the target box: 1 corresponds to the lowest level of the
+            square you're firing at, usually it is occupied with the floor,
+            going upwards until 12, which is the highest level.
 
 Left SHIFT  Change size of map screen.
  +Arrows
