@@ -260,7 +260,7 @@ void PCK::save_as_bmp(const char *fname)
 #ifdef LINUX
         mkdir(fname, 0755);
 #else
-        mkdir(fname.c_str());
+        mkdir(fname);
 #endif
         char suffix[64];
         sprintf(suffix, "%dx%d-%03d" IMG_FILE_EXT, m_width, m_height, i + 1);
