@@ -2,11 +2,11 @@ CC = g++
 LD = g++
 CFLAGS = -funsigned-char -Wall
 CFLAGS += -pipe -DLINUX
-#CFLAGS += -g -mcpu=i686 -s -fomit-frame-pointer
-CFLAGS += -ggdb
-INCLUDES = ${shell /tmp/alg/bin/allegro-config --cflags}
+CFLAGS += -O -mcpu=i686 -s -fomit-frame-pointer
+#CFLAGS += -ggdb
+INCLUDES = ${shell allegro-config --cflags}
 CFLAGS += $(INCLUDES)
-LIBS = $(addprefix -l,$(LIBRARIES)) ${shell /tmp/alg/bin/allegro-config --libs debug}
+LIBS = $(addprefix -l,$(LIBRARIES)) ${shell allegro-config --libs }
 
 OBJS = about.o bullet.o cell.o config.o connect.o dirty.o editor.o explo.o \
        font.o icon.o inventory.o item.o keys.o main.o mainmenu.o \
@@ -30,6 +30,7 @@ clean:
 	$(RM) *.o
 	$(RM) $(NAME)
 	$(RM) makefile.dep
+
 
 #makefile.dep: $(SRCS_DIR)/*.cpp $(SRCS_DIR)/*.h
 #	$(RM) makefile.dep

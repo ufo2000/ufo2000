@@ -24,6 +24,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <string.h>
 #include "video.h"
 #include "editor.h"
+#include "pfxopen.h"
 
 char last_unit_name[1000];
 char last_map_name[1000];
@@ -84,8 +85,22 @@ Editor::Editor()
 	if (local_platoon_size > 10) local_platoon_size = 10;      //!!!!!!!!!!!
 	assert(local_platoon_size > 0);
 	m_plt = new Platoon(2001, local_platoon_size);
-	m_plt->load_MANDATA("soldier.dat");
-	m_plt->load_ITEMDATA("items.dat");
+	char fnbuf[1000];
+	if (ownfiles_prefix != NULL) {
+		ustrcpy(fnbuf, ownfiles_prefix);
+		ustrcpy(fnbuf + ustrlen(ownfiles_prefix), "soldier.dat" );
+	} else {
+		ustrcpy(fnbuf, "soldier.dat" );
+	}
+	m_plt->load_MANDATA(fnbuf);
+	if (ownfiles_prefix != NULL) {
+		ustrcpy(fnbuf, ownfiles_prefix);
+		ustrcpy(fnbuf + ustrlen(ownfiles_prefix), "items.dat" );
+	} else {
+		ustrcpy(fnbuf, "items.dat" );
+	}
+		
+	m_plt->load_ITEMDATA(fnbuf);
 	man = m_plt->captain();
 
 	sel_item = NULL;
@@ -405,8 +420,23 @@ void Editor::show(int NEXTPREV)
 		}
 	}
 	//save(); //!!!!!!!!!!!!!!!!!!
-	m_plt->save_MANDATA("soldier.dat");
-	m_plt->save_ITEMDATA("items.dat");
+	
+	char fnbuf[1000];
+	if (ownfiles_prefix != NULL) {
+		ustrcpy(fnbuf, ownfiles_prefix);
+		ustrcpy(fnbuf + ustrlen(ownfiles_prefix), "soldier.dat" );
+	} else {
+		ustrcpy(fnbuf, "soldier.dat" );
+	}
+	m_plt->save_MANDATA(fnbuf);
+	if (ownfiles_prefix != NULL) {
+		ustrcpy(fnbuf, ownfiles_prefix);
+		ustrcpy(fnbuf + ustrlen(ownfiles_prefix), "items.dat" );
+	} else {
+		ustrcpy(fnbuf, "items.dat" );
+	}
+		
+	m_plt->save_ITEMDATA(fnbuf);
 
 	destroy_bitmap(screen2);
 	screen2 = create_bitmap(SCREEN2W, SCREEN2H); clear(screen2);
