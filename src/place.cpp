@@ -493,8 +493,7 @@ bool Place::check_mine()
 	Item *it = m_item;
 
 	while (it != NULL) {
-		if ((it->is_grenade()) && (it->m_type == PROXIMITY_GRENADE) && (it->delay_time() <= 0)) {
-//			it->unlink(); // $$$
+		if ((it->is_grenade()) && (it->m_type == PROXIMITY_GRENADE) && (it->delay_time() < 0)) {
 			elist->detonate(it);
 			return true;
 		}

@@ -223,9 +223,14 @@ void Icon::firemenu(int iplace)
 				TARGET = 1;
 			} else {
 				target.time = wtime[sel];
-				int delay_time = doprime(it);
-				if (delay_time > 0)
-					sel_man->prime_grenade(iplace, delay_time, target.time);
+
+				if (it->m_type == PROXIMITY_GRENADE) {
+					sel_man->prime_grenade(iplace, -1, target.time);
+				} else {
+					int delay_time = doprime(it);
+					if (delay_time > 0)
+						sel_man->prime_grenade(iplace, delay_time, target.time);
+				}
 			}
 		}
 	}

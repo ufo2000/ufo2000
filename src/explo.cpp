@@ -49,8 +49,6 @@ void Explosive::reset()
 
 void Explosive::add(Item *it, int delay_time)
 {
-	assert(delay_time > 0);
-
 	int i;
 	for (i = 0; i < EXPLOITEMS; i++)
 		if (item[i] == it) {	  //check for presence
@@ -112,6 +110,8 @@ void Explosive::step(int crc)
 					detonate(item[i]);
 				else
 					item[i] = NULL;
+			} else if ((delaytime[i] <= 0) && (item[i]->m_type == PROXIMITY_GRENADE)) {
+				item[i] = NULL;
 			}
 		}
 }

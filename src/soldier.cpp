@@ -397,7 +397,23 @@ void Soldier::initialize()
 void Soldier::process_MANDATA()
 {
 	memset(&ud, 0, sizeof(ud));
-	//!!!copy data from md to ud
+
+	if (md.TimeUnits < 50) md.TimeUnits = 50;
+	if (md.TimeUnits > 80) md.TimeUnits = 80;
+	if (md.Health < 50) md.Health = 50;
+	if (md.Health > 80) md.Health = 80;
+	if (md.Firing < 50) md.Firing = 50;
+	if (md.Firing > 80) md.Firing = 80;
+	if (md.Throwing < 50) md.Throwing = 50;
+	if (md.Throwing > 80) md.Throwing = 80;
+
+	if (md.TimeUnits + md.Health + md.Firing + md.Throwing > 240) {
+		md.TimeUnits = 50;
+		md.Health    = 50;
+		md.Firing    = 50;
+		md.Throwing  = 50;
+	}
+	
 	strcpy(ud.Name, md.Name);
 	ud.MaxTU = md.TimeUnits;
 	ud.MaxHealth = md.Health;
@@ -409,11 +425,6 @@ void Soldier::process_MANDATA()
 	md.SkinType = g_skins[skin_index].SkinType;
 	md.fFemale  = g_skins[skin_index].fFemale;
 
-	/*ud.MaxFront = md.;
-	ud.MaxLeft = md.;
-	ud.MaxRight = md.;
-	ud.MaxRear = md.;
-	ud.MaxUnder = md.;*/
 	ud.MaxFA = md.Firing;
 	ud.MaxTA = md.Throwing;
 	ud.Morale = 100;
@@ -431,7 +442,6 @@ void Soldier::process_MANDATA()
 	ud.MaxRear = armour[3];
 	ud.MaxUnder = armour[4];
 
-	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	ud.CurTU = ud.MaxTU;
 	ud.CurHealth = ud.MaxHealth;
 	ud.CurEnergy = ud.MaxEnergy;
@@ -1313,7 +1323,6 @@ int Soldier::change_pose()
 int Soldier::prime_grenade(int iplace, int delay_time, int req_time)
 {
 	assert((iplace == P_ARM_RIGHT) || (iplace == P_ARM_LEFT));
-	assert(delay_time > 0);
 
 	if (havetime(req_time)) {
 		Item * it = item(iplace);

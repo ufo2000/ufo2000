@@ -146,9 +146,24 @@ void ConsoleWindow::redraw_fast(BITMAP *bmp, int x, int y)
  */
 void ConsoleWindow::print(const char *text, int color)
 {
-	m_lines_text.push_back(text);
-	m_lines_color.push_back(color);
-	m_need_redraw = true;
+	std::string str = "";
+	while (true) {
+		if (*text == '\n') {
+			m_lines_text.push_back(str);
+			m_lines_color.push_back(color);
+			str = "";
+		} else if (*text == '\0') {
+			if (!str.empty()) {
+				m_lines_text.push_back(str);
+				m_lines_color.push_back(color);
+			}
+			m_need_redraw = true;
+			return;
+		} else {
+			str.append(text, 1);
+		}
+		text++;
+	}
 }
 
 void ConsoleWindow::vprintf(int color, const char *fmt, va_list arglist)
