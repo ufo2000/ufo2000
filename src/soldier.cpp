@@ -1266,7 +1266,7 @@ bool Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
 	Item *it = rhand_item();
 	if(!it) it = lhand_item();	//no item in right hand - use item in left hand
 
-	int time = walk_time;
+	int time = 0;
 	std::string error = "";
 
     if(it) {					//if soldier has got at least one items in hands
@@ -1276,28 +1276,33 @@ bool Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
 		
 			case RESERVE_SNAP:
 			if (it->obdata_accuracy(1)) {
-				time += required(it->obdata_time(1));
+				time = required(it->obdata_time(1));
 				error = "Time units are reserved for snap shot.";
 			}
 			break;
 		
 			case RESERVE_AIM:
 			if (it->obdata_accuracy(2)) {
-				time += required(it->obdata_time(2));
+				time = required(it->obdata_time(2));
 				error = "Time units are reserved for aimed shot.";
 			}
 			break;
 		
 			case RESERVE_AUTO:
 			if (it->obdata_accuracy(0)) {
-				time += (required(it->obdata_time(0)) + 2) / 3 * 3;
+				time = (required(it->obdata_time(0)) + 2) / 3 * 3;
 				error = "Time units are reserved for auto shot.";
 			}
 			break;
 		}
+		
+		if(it->is_grenade() && it->delay_time() > 0 && ReserveTimeMode != RESERVE_FREE) {
+			time = required(25);
+			error = "Time units are reserved for grenade throw.";
+		}
 	}
 	
-	if(!havetime(time, 0)) {
+	if(!havetime(walk_time + time, 0) && havetime(time, 0)) {
 		if(error != "")
 			g_console->printf(xcom1_color(40), error.c_str());
 		return false;
