@@ -149,7 +149,6 @@ void Net::close()
 			closehotseatgame();
 			break;
 		default:
-			assert(false);
 			break;
 	}
 }
@@ -187,6 +186,9 @@ void Net::send(const std::string &pkt)
 			if (MODE != PLANNER)
 				packet_send_hotseat(pkt);
 			break;
+		case GAME_TYPE_INTERNET_SERVER:
+			m_internet_server->send_packet(SRV_GAME_PACKET, pkt);
+			break;
 		default:
 			assert(false);
 	}
@@ -206,6 +208,14 @@ int Net::recv(std::string &pkt)
 			if (MODE != WATCH) return 0;
 			packet_recv_hotseat(pkt);
 			return pkt.size();
+		case GAME_TYPE_INTERNET_SERVER:
+			NLulong id;
+			if (!m_internet_server->recv_packet(id, pkt) || id != SRV_GAME_PACKET) {
+				pkt = "";
+				return 0;
+			} else {
+				return pkt.size();
+			}
 		default:
 			assert(false);
 			break;

@@ -26,8 +26,11 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "map.h"
 #include "connect.h"
 #include "packet.h"
+#undef map
+#include "server_protocol.h"
+#define map ufo2000_map
 
-enum GameType {HOTSEAT, SOCK};
+enum GameType {HOTSEAT, SOCK, GAME_TYPE_INTERNET_SERVER};
 
 void inithotseatgame();
 void closehotseatgame();
@@ -88,6 +91,7 @@ private:
 	int recv_map_data();
 	int recv_time_limit();
 public:
+	ClientServerUfo *m_internet_server;
 	GameType gametype;
 
 	Net();

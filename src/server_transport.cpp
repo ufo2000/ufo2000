@@ -164,9 +164,19 @@ bool ServerClient::send_packet_back(NLulong id, const std::string &packet)
 	return ::send_packet(m_socket, id, packet);
 }
 
+/**
+ * Sent packet to all other successfully logged in players
+ */
 bool ServerClient::send_packet_all(NLulong id, const std::string &packet)
 {
-	return ::send_packet(m_server->m_group, id, packet);
+	std::map<std::string, ServerClient *>::iterator it = m_server->m_clients_by_name.begin();
+	while (it != m_server->m_clients_by_name.end()) {
+		if (it->first != "" && it->first != m_name)
+			if (!it->second->send_packet_back(id, packet)) 
+				return false;
+		it++;
+	}
+	return true;
 }
 
 /****************************************************************************/

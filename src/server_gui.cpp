@@ -27,6 +27,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "wind.h"
 #include "config.h"
 #include "sound.h"
+#include "multiplay.h"
 
 void draw_border(BITMAP *bmp, int x, int y, int w, int h, int color)
 {
@@ -314,12 +315,29 @@ int connect_internet_server()
 				case SRV_USER_OFFLINE: users->update_user_info(packet, USER_STATUS_OFFLINE); break;
 				case SRV_USER_CHALLENGE_IN: users->update_user_info(packet, USER_STATUS_CHALLENGE_IN); break;
 				case SRV_USER_CHALLENGE_OUT: users->update_user_info(packet, USER_STATUS_CHALLENGE_OUT); break;
+				case SRV_USER_BUSY: users->update_user_info(packet, USER_STATUS_BUSY); break;
 				case SRV_MESSAGE: chat->printf(xcom1_color(32), "%s", packet.c_str()); break;
 				case SRV_GAME_START_HOST:
 					alert(" ", "  Game should start as host now ", " ", "    OK    ", NULL, 1, 0);
+		            HOST = 1;
+		            net->gametype = GAME_TYPE_INTERNET_SERVER;
+		            net->m_internet_server = server.get();
+
+		            if (initgame()) {
+		                gameloop();
+		                closegame();
+		            }
 					return -1;
 				case SRV_GAME_START_JOIN:
 					alert(" ", "  Game should start as client now ", " ", "    OK    ", NULL, 1, 0);
+		            HOST = 0;
+		            net->gametype = GAME_TYPE_INTERNET_SERVER;
+		            net->m_internet_server = server.get();
+
+		            if (initgame()) {
+		                gameloop();
+		                closegame();
+		            }
 					return -1;
 			}
 

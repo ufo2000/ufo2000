@@ -32,7 +32,6 @@ protected:
 	NLsocket        m_socket;
 	bool            m_error;
 	ServerDispatch *m_server;
-	NLsocket        m_socket_opponent;
 
 	void Run();
 

@@ -8,7 +8,21 @@ ServerClient *ServerDispatch::CreateServerClient(NLsocket socket)
 ServerClientUfo::~ServerClientUfo()
 {
 	if (m_name != "") {
+	//	send information that the user is offline to al other users
 		send_packet_all(SRV_USER_OFFLINE, m_name);
+
+	//	remove this user from challenge lists of other players
+		std::map<std::string, ServerClient *>::iterator it = m_server->m_clients_by_name.begin();
+		while (it != m_server->m_clients_by_name.end()) {
+			ServerClientUfo *opponent = dynamic_cast<ServerClientUfo *>(it->second);
+			opponent->m_challenged_opponents.erase(m_name);
+			it++;
+		}
+	}
+//	if there is opponent playing with this user, remove pointer to
+//	self from opponent's data
+	if (m_opponent != NULL) {
+		m_opponent->m_opponent = NULL;
 	}
 }
 
@@ -16,6 +30,13 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 {
 	printf("received packet from socket %d {id=%d, data=%s}\n", (int)m_socket, (int)id, packet.c_str());
 
+//	only SRV_LOGIN packet is accepted from not authenticated users
+	if (m_name == "" && id != SRV_LOGIN) {
+		m_error = true;
+		return false;
+	}
+
+//	process incoming packet
 	switch (id) {
 		case SRV_LOGIN: {
 			std::string login, password;
@@ -33,7 +54,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 			printf("user login. login = '%s', password = '%s'\n", login.c_str(), password.c_str());
 
 			if (m_server->m_clients_by_name.find(login) != m_server->m_clients_by_name.end()) {
-				send_packet_back(SRV_FAIL, "login fail (two users with the same login)");
+				send_packet_back(SRV_FAIL, "login failed (two users with the same login)");
 				m_error = true;
 				break;
 			}
@@ -55,6 +76,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
         //	Check that the opponent is currently online
 			std::map<std::string, ServerClient *>::iterator it = m_server->m_clients_by_name.find(packet);
 			if (it == m_server->m_clients_by_name.end()) {
+				printf("Warning: opponent '%s' is offline\n", packet.c_str());
 				send_packet_back(SRV_USER_OFFLINE, packet);
 				break;
 			}
@@ -63,8 +85,12 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 
         //	Try to find self in the opponent's challenge list
         	if (opponent->m_challenged_opponents.find(m_name) != opponent->m_challenged_opponents.end()) {
+        		send_packet_all(SRV_USER_BUSY, m_name);
+				opponent->send_packet_all(SRV_USER_BUSY, packet);
         		send_packet_back(SRV_GAME_START_JOIN, packet);
         		opponent->send_packet_back(SRV_GAME_START_HOST, m_name);
+        		m_opponent = opponent;
+        		opponent->m_opponent = this;
         		break;
         	}
 
@@ -76,14 +102,17 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 		}
 		case SRV_MESSAGE: {
 	    // send message to all other logged in users
-	    	std::map<std::string, ServerClient *>::iterator it = m_server->m_clients_by_name.begin();
-	    	while (it != m_server->m_clients_by_name.end()) {
-				if (it->first != m_name)
-					it->second->send_packet_back(SRV_MESSAGE, m_name + ": " + packet);
-				it++;
-	    	}
+			send_packet_all(SRV_MESSAGE, m_name + ": " + packet);
 			break;
 	    }
+		case SRV_GAME_PACKET: {
+		// send packet to the opponent	
+			if (m_opponent != NULL) {
+				m_opponent->send_packet_back(SRV_GAME_PACKET, packet);
+			} else {
+				printf("Warning: game packet from '%s', no opponent to forward\n", m_name.c_str());
+			}
+		}
 	}
 
 	return true;

@@ -269,6 +269,8 @@ int Connect::do_chat()
 					goto g_return;
 				}
 			break;
+		case GAME_TYPE_INTERNET_SERVER:
+			break;
 		default:
 			assert(false);
 			break;

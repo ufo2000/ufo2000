@@ -391,6 +391,10 @@ void display_error_message(const std::string &error_text);
 extern std::string g_server_login;
 extern std::string g_server_password;
 
+int initgame();
+void gameloop();
+void closegame();
+
 #define CELL_SCR_X 16
 #define CELL_SCR_Y 8
 #define CELL_SCR_Z 24

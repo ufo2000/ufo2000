@@ -22,16 +22,19 @@
 #define SRV_USER_CHALLENGE_OUT 10
 #define SRV_USER_BUSY          11
 
+#define SRV_GAME_PACKET        12
+
 class ServerClientUfo: public ServerClient
 {
-	std::set<std::string> m_challenged_opponents;
+	std::set<std::string>  m_challenged_opponents;
+	ServerClientUfo       *m_opponent;
 public:
-	ServerClientUfo(ServerDispatch *d, NLsocket s) : ServerClient(d, s) { }
+	ServerClientUfo(ServerDispatch *d, NLsocket s): ServerClient(d, s), m_opponent(NULL) { }
 	virtual ~ServerClientUfo();
 	bool recv_packet(NLulong id, const std::string &packet);
 };
 
-class ClientServerUfo : public ClientServer
+class ClientServerUfo: public ClientServer
 {
 public:
 	bool login(const std::string &name, const std::string &pass);
