@@ -1131,7 +1131,7 @@ void Soldier::wayto(int dest_lev, int dest_col, int dest_row)
     //    dest_lev = z;
 
         curway = 1;
-        waylen = map->pathfind(z, x, y, dest_lev, dest_col, dest_row, way);
+        waylen = map->pathfind(z, x, y, dest_lev, dest_col, dest_row, can_fly(), way);
         if (map->man(dest_lev, dest_col, dest_row) != NULL) {
             waylen--;
         }

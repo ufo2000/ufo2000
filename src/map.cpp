@@ -843,9 +843,11 @@ int Map::stopWALK(int oz, int ox, int oy, int part)
                 break;
         }
         if (isStairs(oz, ox, oy) && ((oz + 1 >= level) || !passable(oz + 1, ox, oy))) return 1;
-        for (int z = oz; z > 0 && mcd(z, ox, oy, 0)->No_Floor && !isStairs(z - 1, ox, oy); z--) {
-            if (!passable(z - 1, ox, oy)) return 1;
-        }
+
+        // Pathfindig version 1, this condition is in the method Map::step_dest now
+        /*for (int z = oz; z > 0 && mcd(z, ox, oy, 0)->No_Floor && !isStairs(z - 1, ox, oy); z--) {
+            if (!passable(z - 1, ox, oy)) return 1;*
+        }*/
     }
 
 	return 0;
@@ -874,8 +876,15 @@ int Map::passable(int oz, int ox, int oy, int dir)
 //	Check if the destination point is too high
 	int dx = ox + DIR_DELTA_X(dir);
 	int dy = oy + DIR_DELTA_Y(dir);
+	int dz = oz;
 
-	if (!cell_inside(oz, ox, oy) || !cell_inside(oz, dx, dy)) return 0;
+    if (dir == DIR_UP)
+        dz++;
+
+   if (dir == DIR_DOWN)
+        dz--;
+
+	if (!cell_inside(oz, ox, oy) || !cell_inside(dz, dx, dy)) return 0;
 
 	int height_o = -mcd(oz, ox, oy, 3)->T_Level;
 	int height_d = -mcd(oz, dx, dy, 3)->T_Level;
@@ -883,7 +892,7 @@ int Map::passable(int oz, int ox, int oy, int dir)
 	if (height_d - height_o > 10) return 0;
 
 //	Do the rest of checks
-	if (!passable(oz, dx, dy)) return 0;
+	if (!passable(dz, dx, dy)) return 0;
 
 	switch (dir) {
 		case DIR_EAST:
@@ -931,6 +940,18 @@ int Map::passable(int oz, int ox, int oy, int dir)
 		case DIR_SOUTHEAST:
 			if (stopWALK(oz, ox, oy - 1, 2) || stopWALK(oz, ox + 1, oy, 1) ||
 			        stopWALK(oz, ox, oy, 2) || stopWALK(oz, ox, oy, 1)) {
+				return 0;
+			}
+			break;
+
+		case DIR_UP:
+			if (!mcd(oz + 1, ox, oy, 0)->No_Floor && !mcd(oz + 1, ox, oy, 0) -> Gravlift)  {
+				return 0;
+			}
+			break;
+
+		case DIR_DOWN:
+			if (!mcd(oz, ox, oy, 0)->No_Floor && !mcd(oz, ox, oy, 0) -> Gravlift)  {
 				return 0;
 			}
 			break;

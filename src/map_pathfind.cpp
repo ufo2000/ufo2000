@@ -89,13 +89,13 @@ int Map::findneibo(int & _dz, int & _dx, int & _dy, int value)
 
 #define PATH2DSIZE  2
 
-int Map::pathfind(int sz, int sx, int sy, int dz, int dx, int dy, char *way, PF_MODE pf_mode)
+int Map::pathfind(int sz, int sx, int sy, int dz, int dx, int dy, int can_fly, char *way, PF_MODE pf_mode)
 {
         m_pathfind_mode = pf_mode;
         
 // Pathdinding version 2:
 	static Pathfinding pathfinding;
-	return pathfinding.pathfind(this, sz, sx, sy, dz, dx, dy, 0, way, pf_mode);
+	return pathfinding.pathfind(this, sz, sx, sy, dz, dx, dy, can_fly, way, pf_mode);
 
 	way[0] = 8;
 
@@ -195,7 +195,7 @@ static int TU, TU_max, TU_color;
 void Map::draw_path_from(Soldier * s)
 {
 	char way[100];
-	int waylen = pathfind(s->z, s->x, s->y, sel_lev, sel_col, sel_row, way, PF_DISPLAY);
+	int waylen = pathfind(s->z, s->x, s->y, sel_lev, sel_col, sel_row, s->can_fly(), way, PF_DISPLAY);
 	TU = s->ud.CurTU;
 	if (s->state() == SIT) TU -= 8;		//time to stand up
 	TU_max = s->ud.MaxTU;
