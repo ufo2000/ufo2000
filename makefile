@@ -182,9 +182,23 @@ win32-installer: all server
 	rm $(DISTNAME)/makefile* $(DISTNAME)/Seccast*
 	rm $(DISTNAME)/*.rc $(DISTNAME)/*.h
 	cp ufo2000.exe ufo2000-srv.exe $(DISTNAME)
-	sed 's,%VERSION_ID%,$(UFO_VERSION).$(UFO_SVNVERSION),g' < ufo2000.nsi > $(DISTNAME)/ufo2000.nsi
+	sed 's,GAME_VERSION "installer",GAME_VERSION "$(UFO_VERSION).$(UFO_SVNVERSION)",g' < ufo2000.nsi > $(DISTNAME)/ufo2000.nsi
 	makensis $(DISTNAME)/ufo2000.nsi
 	cp $(DISTNAME)/$(DISTNAME).exe $(DISTNAME).exe
+	svn delete --force $(DISTNAME)
+
+win32-beta-installer: all server
+# create windows beta installer using NSIS
+	svn delete --force $(DISTNAME)
+	svn export . $(DISTNAME)
+	rm $(DISTNAME)/makefile* $(DISTNAME)/Seccast*
+	rm $(DISTNAME)/*.rc $(DISTNAME)/*.h
+	cp ufo2000.exe ufo2000-srv.exe $(DISTNAME)
+	sed 's,host = lxnt.info,host = lxnt.info:2001,g' < ufo2000.default.ini > $(DISTNAME)/ufo2000.default.ini
+	sed 's,GAME_NAME "UFO2000",GAME_NAME "UFO2000 Beta",g' < ufo2000.nsi > $(DISTNAME)/ufo2000.nsi.1
+	sed 's,GAME_VERSION "installer",GAME_VERSION "$(UFO_VERSION).$(UFO_SVNVERSION)-beta",g' < $(DISTNAME)/ufo2000.nsi.1 > $(DISTNAME)/ufo2000.nsi
+	makensis $(DISTNAME)/ufo2000.nsi
+	cp $(DISTNAME)/$(DISTNAME)-beta.exe $(DISTNAME)-beta.exe
 	svn delete --force $(DISTNAME)
 
 source-bz2: 

@@ -6,6 +6,9 @@
 ;--------------------------------
 ;Includes
 
+	!define GAME_NAME "UFO2000"
+	!define GAME_VERSION "installer"
+
 	!addPluginDir  "..\nsis-plugins"
 	!addincludedir "..\nsis-plugins"
 	!include "MUI.nsh"
@@ -16,15 +19,15 @@
 ;--------------------------------
 ;General
 
-	Name "UFO2000"
-	OutFile "ufo2000-%VERSION_ID%.exe"
+	Name "${GAME_NAME}"
+	OutFile "ufo2000-${GAME_VERSION}.exe"
 	SetCompressor lzma
 	SetCompressorDictSize 4
 
 	XPStyle on
 
-	InstallDir $PROGRAMFILES\UFO2000
-	InstallDirRegKey HKLM "Software\UFO2000" "Install_Dir"
+	InstallDir "$PROGRAMFILES\${GAME_NAME}"
+	InstallDirRegKey HKLM "Software\${GAME_NAME}" "Install_Dir"
 	
 	Var STARTMENU_FOLDER
 	Var XCOM_FOLDER
@@ -60,8 +63,8 @@ FunctionEnd
 	!define MUI_WELCOMEFINISHPAGE_BITMAP arts\installer-welcome.bmp
 	!define MUI_UNWELCOMEFINISHPAGE_BITMAP arts\installer-welcome.bmp
 	!define MUI_FINISHPAGE_RUN $INSTDIR\ufo2000.exe
-	!define MUI_UNCONFIRMPAGE_TEXT_TOP "UFO2000 will be uninstalled from the following folder.\
-	Click Uninstall to start the uninstallation.$\r$\nWARNING: All files and folders in the UFO2000\
+	!define MUI_UNCONFIRMPAGE_TEXT_TOP "${GAME_NAME} will be uninstalled from the following folder.\
+	Click Uninstall to start the uninstallation.$\r$\nWARNING: All files and folders in the ${GAME_NAME}\
 	folder will be deleted, including any downloaded X-Com/TFTD demos."
 	!define MUI_ABORTWARNING
 	
@@ -77,7 +80,7 @@ FunctionEnd
 	Page custom XComFolder
 	Page custom DemoSelect
 	!define MUI_STARTMENUPAGE_REGISTRY_ROOT HKLM 
-  !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\UFO2000" 
+  !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${GAME_NAME}" 
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
 	!insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
 	!insertmacro MUI_PAGE_INSTFILES
@@ -265,7 +268,7 @@ FunctionEnd
 ;Custom pages
 
 Function SearchXcom
-	ReadRegStr $0 HKLM "Software\UFO2000" "Install_Dir"
+	ReadRegStr $0 HKLM "Software\${GAME_NAME}" "Install_Dir"
 	StrCmp $0 $INSTDIR sucess fail
 	sucess: Abort
 	fail:
@@ -300,7 +303,7 @@ LangString TEXT_DEMOSEL_TITLE ${LANG_ENGLISH} "Download X-Com Demo"
 LangString TEXT_DEMOSEL_SUBTITLE ${LANG_ENGLISH} "Choose which X-Com demos you want installed."
 
 Function SelectOption
-	ReadRegStr $0 HKLM "Software\UFO2000" "Install_Dir"
+	ReadRegStr $0 HKLM "Software\${GAME_NAME}" "Install_Dir"
 	StrCmp $0 $INSTDIR success failed
 	success: Abort
 	failed:
@@ -324,18 +327,18 @@ FunctionEnd
 ;--------------------------------
 ;Version Information
 
-	VIProductVersion "%VERSION_ID%"
-	VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "UFO2000"
+	VIProductVersion "${GAME_VERSION}"
+	VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "${GAME_NAME}"
 	VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "Massive multiplayer game based on XCOM saga"
 	VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "UFO2000 Development Team"
 	VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "Alexander Ivanov aka Sanami"
-	VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "UFO2000"
-	VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "%VERSION_ID%"
+	VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "${GAME_NAME}"
+	VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "${GAME_VERSION}"
 	
 ;--------------------------------
 ;Installer Sections
 
-Section "UFO2000 (required)" MainSec
+Section "${GAME_NAME} (required)" MainSec
 
 	SectionIn RO
   
@@ -430,12 +433,12 @@ Section "UFO2000 (required)" MainSec
   
 	!insertmacro MUI_STARTMENU_WRITE_END
 	
-	WriteRegStr HKLM SOFTWARE\UFO2000 "Install_Dir" "$INSTDIR"
+	WriteRegStr HKLM "SOFTWARE\${GAME_NAME}" "Install_Dir" "$INSTDIR"
   
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UFO2000" "DisplayName" "UFO2000"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UFO2000" "UninstallString" '"$INSTDIR\uninstall.exe"'
-	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UFO2000" "NoModify" 1
-	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UFO2000" "NoRepair" 1
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${GAME_NAME}" "DisplayName" "${GAME_NAME}"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${GAME_NAME}" "UninstallString" '"$INSTDIR\uninstall.exe"'
+	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${GAME_NAME}" "NoModify" 1
+	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${GAME_NAME}" "NoRepair" 1
 	WriteUninstaller "uninstall.exe"
   
 SectionEnd
@@ -531,8 +534,8 @@ FunctionEnd
 ;Descriptions
 
 	;Language strings
-	LangString DESC_MainSec ${LANG_ENGLISH} "All of UFO2000's required files."
-	LangString DESC_DesktopSec ${LANG_ENGLISH} "Creates a desktop shortcut for UFO2000."
+	LangString DESC_MainSec ${LANG_ENGLISH} "All of ${GAME_NAME}'s required files."
+	LangString DESC_DesktopSec ${LANG_ENGLISH} "Creates a desktop shortcut for ${GAME_NAME}."
 
 	;Assign language strings to sections
 	!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
@@ -545,9 +548,9 @@ FunctionEnd
 
 Section "Uninstall"
   
-	ReadRegStr $STARTMENU_FOLDER HKLM "Software\UFO2000" "Start Menu Folder"
-	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UFO2000"
-	DeleteRegKey HKLM "Software\UFO2000"
+	ReadRegStr $STARTMENU_FOLDER HKLM "Software\${GAME_NAME}" "Start Menu Folder"
+	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${GAME_NAME}"
+	DeleteRegKey HKLM "Software\${GAME_NAME}"
 
 	Delete "$DESKTOP\UFO2000.lnk"
 	RMDir /r "$SMPROGRAMS\$STARTMENU_FOLDER"
