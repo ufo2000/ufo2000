@@ -1127,7 +1127,8 @@ void Soldier::wayto(int dest_lev, int dest_col, int dest_row)
 
     //  !!! Hack to fix synchronization problems with stairs
     //  Should make normal pathfinding code to find paths across stairs
-        dest_lev = z;
+    //  Pathfinding version 1
+    //    dest_lev = z;
 
         curway = 1;
         waylen = map->pathfind(z, x, y, dest_lev, dest_col, dest_row, way);

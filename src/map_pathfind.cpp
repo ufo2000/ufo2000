@@ -92,6 +92,11 @@ int Map::findneibo(int & _dz, int & _dx, int & _dy, int value)
 int Map::pathfind(int sz, int sx, int sy, int dz, int dx, int dy, char *way, PF_MODE pf_mode)
 {
         m_pathfind_mode = pf_mode;
+        
+// Pathdinding version 2:
+	static Pathfinding pathfinding;
+	return pathfinding.pathfind(this, sz, sx, sy, dz, dx, dy, 0, way, pf_mode);
+
 	way[0] = 8;
 
 	int k, i, j;
@@ -206,15 +211,19 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen, Soldier *sld)
 
 	for (int i = 1; i < waylen; i++) {
 		int dir = way[i];
-		if (dir != 8) {
+// Pathdinding version 1:
+/*		if (dir != 8) {
 			_x += DIR_DELTA_X(dir);
 			_y += DIR_DELTA_Y(dir);
 		}
 		if (isStairs(_z, _x, _y))
 			_z++;
-
 		if (mcd(_z, _x, _y, 0)->No_Floor && (_z > 0) && !isStairs(_z - 1, _x, _y))
-			_z--;
+			_z--;*/
+
+// Pathfinding version 2:
+        int time_of_dst;
+        step_dest(_z, _x, _y, dir, 0 /*sld->can_fly()*/, _z, _x, _y, time_of_dst);
 
 		int sx = x + 16 * _x + 16 * _y + 16;
 		int sy = y - (_x + 1) * 8 + 8 * _y - 8 - _z * CELL_SCR_Z;
@@ -222,11 +231,14 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen, Soldier *sld)
 		if ((sx > -32) && (sx < SCREEN2W) && (sy >= -34) && (sy < SCREEN2H)) {
 			//circlefill(screen2, sx, sy, 1, 1);
 			//printsmall(sx, sy, 1, i);
+
+        // Pathfinding version 1:
+        /*
 			int time_of_dst = walk_time(_z, _x, _y);
-			
 			if (DIR_DIAGONAL(dir))
 				time_of_dst = time_of_dst * 3 / 2; // diagonal moves use 1.5 TUs
-			//printsmall(sx, sy, 1, time_of_dst);
+			//printsmall(sx, sy, 1, time_of_dst);*/
+			
 			TU -= time_of_dst;
 
             if (TU < sld->tus_reserved()) {
@@ -282,6 +294,12 @@ int Map::step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2
     if (trying_to_fly && !(flying || map->mcd(z1, x1, y1, 0)->Gravlift && map->mcd(z2, x2, y2, 0)->Gravlift ))
         return 0;
 
+    if(dir<DIR_NULL) {
+        tu_cost = walk_time(z2, x2, y2);
+        if (DIR_DIAGONAL(dir))
+            tu_cost = tu_cost * 3 / 2;
+    }
+
 	if (isStairs(z2, x2, y2))
 		z2++;
 
@@ -291,12 +309,6 @@ int Map::step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2
 	while (mcd(z2, x2, y2, 0)->No_Floor && (z2 > 0) && !isStairs(z2 - 1, x2, y2) && !flying)
 		z2--;
 
-    if(dir<DIR_NULL) {
-        tu_cost = walk_time(z2, x2, y2);
-        if (DIR_DIAGONAL(dir))
-            tu_cost = tu_cost * 3 / 2;
-    }
-    
     if (!passable(z2, x2, y2))
         return 0;
 
