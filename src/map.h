@@ -194,6 +194,9 @@ public:
     //!Is a step in direction "dir" possible, where does it guide to, and what is the TU cost?
     int step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2, int& y2, int& tu_cost);
 
+    //!Can we stand here and not to fall down?
+    int support_for_feet(int z, int x, int y);
+
     int pathfind(int sz, int sx, int sy, int dz, int dx, int dy, int can_fly, char *way, PF_MODE pf_mode = PF_TRUE);
     void path_show(int _z, int _x, int _y, char *way, int waylen, Soldier *sld);
     void draw_path_from(Soldier *s);

@@ -148,13 +148,20 @@ int Map::step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2
         return 0;
 
     //Down if we have no ground under our feet
-	while (mcd(z2, x2, y2, 0)->No_Floor && (z2 > 0) && !isStairs(z2 - 1, x2, y2) && !flying)
+	while ( !support_for_feet(z2, x2, y2) && !flying)
 		z2--;
 
     if (!passable(z2, x2, y2))
         return 0;
 
     return 1;
+}
+
+int Map::support_for_feet(int z, int x, int y)
+{
+    if (z <= 0)
+        return true;
+	return !mcd(z, x, y, 0)->No_Floor || isStairs(z - 1, x, y);
 }
 
 int Pathfinding::pathfind(Map* _map,int sz, int sx, int sy, int dz, int dx, int dy, int can_fly, char *way, PF_MODE pf_mode)

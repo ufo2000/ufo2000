@@ -312,7 +312,7 @@ void Skin::draw_common()
 {
     State state = m_soldier->state();
     int x = m_soldier->x, y = m_soldier->y, z = m_soldier->z;
-    int dir = m_soldier->dir, phase = m_soldier->phase;
+    int dir = m_soldier->dir, phase = m_soldier->phase, is_flying = m_soldier->is_flying();
     Item *lhand_item = m_soldier->lhand_item(), *rhand_item = m_soldier->rhand_item();
     
     int head_frame = 32;
@@ -385,7 +385,10 @@ void Skin::draw_common()
             m_pck[skin_info.SkinType]->drawpck(dir + 8 * arm1, image, 0);
 //          m_pck[md.SkinType]->drawpck(dir + head_frame, image, 0);      //head
             draw_head(m_soldier->md.Appearance, head_frame, dir, image, 0);
-            m_pck[skin_info.SkinType]->drawpck(dir + 8 * 2, image, 0);
+            if (is_flying && m_pck[skin_info.SkinType]->m_imgnum >= 275)
+                m_pck[skin_info.SkinType]->drawpck(275 + dir, image, 0);
+            else
+                m_pck[skin_info.SkinType]->drawpck(dir + 8 * 2, image, 0);
             m_pck[skin_info.SkinType]->drawpck(dir + 8 * arm2, image, 0);
             break;
         case MARCH:
@@ -410,7 +413,10 @@ void Skin::draw_common()
             int yo = 0;
             if (phase % 4 == 0) yo = -1;
 
-            m_pck[skin_info.SkinType]->drawpck(phase + (dir * 3 + 7) * 8, image, yo);     //yofs);
+            if (is_flying && m_pck[skin_info.SkinType]->m_imgnum >= 275)
+                m_pck[skin_info.SkinType]->drawpck(275 + dir, image, 0);
+            else
+                m_pck[skin_info.SkinType]->drawpck(phase + (dir * 3 + 7) * 8, image, yo);     //yofs);
 
             if ((lhand_item != NULL) || (rhand_item != NULL)) {
                 m_pck[skin_info.SkinType]->drawpck(dir + 8 * arm2, image, 0);

@@ -410,6 +410,7 @@ public:
 	virtual bool Read(persist::Engine &archive);
 
 	int can_fly();
+	int is_flying();
 };
 
 #endif

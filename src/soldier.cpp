@@ -2943,3 +2943,8 @@ int Soldier::can_fly()
 {
     return skin()->get_type() == S_XCOM_3;
 }
+
+int Soldier::is_flying()
+{
+    return !map->support_for_feet(z, x, y) && can_fly();
+}
