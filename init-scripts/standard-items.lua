@@ -12,7 +12,7 @@ AddXcomItem {
 	accuracy = {0, 60, 78},
 	time = {0, 18, 30},
 	rounds = 8,
-	weight = 5,
+	weight = 3,
 	isShootable = 1,
 	isWeapon = 1,
 	isGun = 1,
@@ -32,7 +32,7 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 0,
 	rounds = 12,
-	weight = 3,
+	weight = 1,
 	isAmmo = 1,
 	sound = "cv-bullet-hit",
 }
@@ -51,7 +51,7 @@ AddXcomItem {
 	accuracy = {35, 60, 110},
 	time = {35, 25, 80},
 	rounds = 10,
-	weight = 8,
+	weight = 4,
 	isShootable = 1,
 	isWeapon = 1,
 	isGun = 1,
@@ -72,7 +72,7 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 0,
 	rounds = 20,
-	weight = 3,
+	weight = 2,
 	isAmmo = 1,
 	sound = "cv-bullet-hit",
 }
@@ -91,7 +91,7 @@ AddXcomItem {
 	accuracy = {0, 60, 90},
 	time = {0, 33, 80},
 	rounds = 10,
-	weight = 18,
+	weight = 13,
 	isShootable = 1,
 	isWeapon = 1,
 	isGun = 1,
@@ -167,7 +167,7 @@ AddXcomItem {
 	accuracy = {32, 56, 82},
 	time = {40, 33, 80},
 	rounds = 10,
-	weight = 19,
+	weight = 15,
 	isShootable = 1,
 	isWeapon = 1,
 	isGun = 1,
@@ -300,7 +300,7 @@ AddXcomItem {
 	pHeld = 10,
 	damageType = 1,
 	rounds = 1,
-	weight = 8,
+	weight = 7,
 	isAmmo = 1,
 	sound = "IN-rocket-hit",
 }
@@ -320,7 +320,7 @@ AddXcomItem {
 	accuracy = {28, 40, 68},
 	time = {25, 20, 55},
 	rounds = 10,
-	weight = 7,
+	weight = 6,
 	isShootable = 1,
 	isWeapon = 1,
 	isGun = 1,
@@ -352,7 +352,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 18,
-	cost = 200,
+	cost = 360,
 	name = "HEAVY LASER",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 6),
 	pMap = pck_image("$(xcom)/units/floorob.pck", 6),
@@ -362,10 +362,10 @@ AddXcomItem {
 	height = 3,
 	pHeld = 2,
 	damageType = 3,
-	accuracy = {0, 50, 84},
+	accuracy = {0, 75, 120},
 	time = {0, 33, 75},
 	rounds = 10,
-	weight = 18,
+	weight = 15,
 	isShootable = 1,
 	isWeapon = 1,
 	isGun = 1,
@@ -375,7 +375,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 19,
-	cost = 60,
+	cost = 70,
 	name = "GRENADE",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 19),
 	pMap = pck_image("$(xcom)/units/floorob.pck", 19),
@@ -386,7 +386,7 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 2,
 	rounds = 10,
-	weight = 3,
+	weight = 2,
 }
 
 AddXcomItem {
@@ -401,7 +401,7 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 2,
 	rounds = 10,
-	weight = 3,
+	weight = 2,
 }
 
 AddXcomItem {
@@ -491,7 +491,7 @@ AddXcomItem {
 	pHeld = 10,
 	damageType = 5,
 	rounds = 65,
-	weight = 6,
+	weight = 3,
 	isWeapon = 1,
 	twoHanded = 1,
 }
@@ -506,7 +506,7 @@ AddXcomItem {
 	width = 1,
 	height = 1,
 	pHeld = 15,
-	weight = 3,
+	weight = 1,
 }
 
 AddXcomItem {
@@ -632,7 +632,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 38,
-	cost = 200,
+	cost = 170,
 	name = "Plasma Pistol",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 32),
 	pMap = pck_image("$(xcom)/units/floorob.pck", 31),
@@ -654,7 +654,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 39,
-	cost = 50,
+	cost = 40,
 	name = "Plasma Pistol Clip",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 34),
 	pMap = pck_image("$(xcom)/units/floorob.pck", 33),
@@ -665,7 +665,7 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 4,
 	rounds = 26,
-	weight = 3,
+	weight = 2,
 	isAmmo = 1,
 	isAlien = 1,
 }

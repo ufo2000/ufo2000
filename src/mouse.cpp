@@ -63,9 +63,9 @@ MouseRange::MouseRange(int xminn, int yminn, int xmaxn, int ymaxn)
 #endif
     ASSERT(xminn <= xmaxn); ASSERT(yminn <= ymaxn);
     x_min = xminn; y_min = yminn; x_max = xmaxn; y_max = ymaxn;
-    set_mouse_range();
     prev_mouse_range = cur_mouse_range;
     cur_mouse_range = this;
+    set_mouse_range();
 }
 
 /**
@@ -81,6 +81,9 @@ MouseRange::~MouseRange()
     if (cur_mouse_range != NULL) cur_mouse_range->set_mouse_range();
 }
 
+/*
+ * Set the current mouse range again
+ */
 void reset_mouse_range()
 {
 #ifdef MOUSE_DEBUG
@@ -89,6 +92,9 @@ void reset_mouse_range()
     MouseRange::cur_mouse_range->set_mouse_range();
 }
 
+/*
+ * Change the current mouse range
+ */
 void reset_mouse_range(int xminn, int yminn, int xmaxn, int ymaxn)
 {
 #ifdef MOUSE_DEBUG

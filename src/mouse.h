@@ -29,13 +29,11 @@ friend void reset_mouse_range();
 friend void reset_mouse_range(int xminn, int yminn, int xmaxn, int ymaxn);
 private:
     int x_min, y_min, x_max, y_max;
-    MouseRange * prev_mouse_range;
-
-public:
     static MouseRange *cur_mouse_range;
-
+    MouseRange * prev_mouse_range;
     void set_mouse_range();
     void reset_mouse_range(int xminn, int yminn, int xmaxn, int ymaxn);
+public:
     MouseRange(int xminn, int yminn, int xmaxn, int ymaxn);
     ~MouseRange();
 };
