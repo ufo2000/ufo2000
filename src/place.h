@@ -78,6 +78,7 @@ public:
 
 	Item *item(int ix, int iy);
 	Item *item() { return m_item; }
+	Item *top_item();
 	void set_item(Item *it) { m_item = it; }
 
 	void build_ITEMDATA(int ip, ITEMDATA *id);

@@ -100,6 +100,23 @@ Item *Place::item(int ix, int iy)
 	return NULL;
 }
 
+Item *Place::top_item()
+{
+    if (m_item == NULL)
+		return NULL;
+
+	Item *t = m_item, *gt = m_item;
+
+	while (t != NULL) {
+		if (t->obdata_importance() > gt->obdata_importance()) {
+			gt = t;
+		}
+		t = t->m_next;
+	}
+
+    return gt;
+}
+
 int Place::isfree(int xx, int yy)
 {
 	if (!outside_belt(xx, yy))

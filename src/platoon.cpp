@@ -37,14 +37,14 @@ Platoon::Platoon(int PID, int num)
 	ID = PID;
 	size = num;
 	memset(m_seen, 0, sizeof(m_seen));
+	
+	for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 10 * 6; j++)
+            for (int k = 0; k < 10 * 6; k++)
+                m_seen_item_index[i][j][k] = -1;
 
 	m_stats = new Statistics(size);
 	current = m_stats->getfirst();
-
-    for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 10 * 6; j++)
-            for (int k = 0; k < 10 * 6; k++)
-                m_seen_place[i][j][k] = new Place(0, 152, 20 * 10, 3);
 
 	Soldier *s1 = NULL, *s2;
 	for (int i = 0; i < size; i++) {
@@ -70,14 +70,14 @@ Platoon::Platoon(int PID, PLAYERDATA * pd, DeployType dep_type)
 	ID = PID;
 	size = pd->size;
 	memset(m_seen, 0, sizeof(m_seen));
+	
+	for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 10 * 6; j++)
+            for (int k = 0; k < 10 * 6; k++)
+                m_seen_item_index[i][j][k] = -1;
 
 	m_stats = new Statistics(size);
 	current = m_stats->getfirst();
-
-    for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 10 * 6; j++)
-            for (int k = 0; k < 10 * 6; k++)
-                m_seen_place[i][j][k] = new Place(0, 152, 20 * 10, 3);
 
 	Soldier *s1 = NULL, *s2;
 	int i;
@@ -133,8 +133,11 @@ void Platoon::recalc_visibility()
 						m_visible[k][i][j] |= ss->m_visible_cells[n++];
 						m_seen[k][i][j] |= m_visible[k][i][j];
 
-                        if (m_visible[k][i][j])
-                            *m_seen_place[k][i][j] = *map->cell(k, i, j)->get_place();
+                        if (m_visible[k][i][j]) {
+                            if (map->place(k, i, j)->top_item())
+                                m_seen_item_index[k][i][j] = map->place(k, i, j)->top_item()->itemtype();
+                            else
+                                m_seen_item_index[k][i][j] = -1;
 					}
 		}
 		ss = ss->next();
