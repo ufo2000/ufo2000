@@ -1929,4 +1929,33 @@ int TerrainSet::get_random_terrain_id()
 	return -1;
 }
 
-#define map ufo2000_map
+/**
+ * Displays dialog asking the user to select terrain type from the list of 
+ * available terrains, additional requirement for network games is
+ * that remote user should have these maps installed too
+ */
+std::string TerrainSet::select_terrain_gui_dialog(
+	const std::string &default_choice)
+{
+	int default_index = 0, counter = 0;
+	std::vector<std::string> gui_list;
+	std::map<int, Terrain *>::iterator it;
+	for (it = terrain.begin(); it != terrain.end(); ++it) {
+		if (net->is_network_game()) {
+			ASSERT(g_net_allowed_terrains.size() > 0);
+			if (g_net_allowed_terrains.find(it->second->get_name()) == g_net_allowed_terrains.end())
+				continue;
+		}
+		if (it->second->get_name() == default_choice) default_index = counter;
+		gui_list.push_back(it->second->get_name());
+		counter++;
+	}
+	
+	int result = gui_select_from_list(
+		300, 200,
+		"Select terrain type", 
+		gui_list,
+		default_index);
+	
+	return gui_list[result];
+}

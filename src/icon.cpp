@@ -412,6 +412,7 @@ void Icon::firemenu(int iplace)
 		{ firemenu_dialog_proc, 41,  90, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[2], NULL, NULL},
 		{ firemenu_dialog_proc, 41,  60, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[3], NULL, NULL},
 		{ firemenu_dialog_proc, 41,  30, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[4], NULL, NULL},
+		{ d_yield_proc,          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
 		{                 NULL,  0,   0,   0,  0, _FG, _BG,   0,      0,  0,  0,            NULL, NULL, NULL}
 	};
 
@@ -584,6 +585,7 @@ int Icon::doprime(Item *it)
 		{ d_button_proc, DX + (DS + 2) * 2, DY + (DS + 2) * 4, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"22"    , NULL, NULL},
 		{ d_button_proc, DX + (DS + 2) * 3, DY + (DS + 2) * 4, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"23"    , NULL, NULL},
 		{ d_button_proc, DX + (DS + 2) * 4, DY + (DS + 2) * 4, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"24"    , NULL, NULL},
+		{ d_yield_proc,           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
 		{          NULL, 0                , 0                ,  0,  0,   0,   0,   0,      0,  0,  0, NULL            , NULL, NULL}
 	};
 

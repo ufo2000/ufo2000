@@ -453,6 +453,7 @@ static DIALOG config_dlg[] = {
 	{ d_text_proc, 176, 68, 104, 16, FG, BG, 0, 0, 0, 0, (void *)"fire speed", NULL, NULL },
 	{ d_text_proc, 176, 92, 128, 16, FG, BG, 0, 0, 0, 0, (void *)"scroll speed", NULL, NULL },
 	{ d_text_proc, 176, 116, 128, 16, FG, BG, 0, 0, 0, 0, (void *)"mapscroll points", NULL, NULL },
+	{ d_yield_proc,           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
 	{ NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL }
 };
 

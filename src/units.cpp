@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002       ufo2000 development team
+Copyright (C) 2002-2004  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -770,20 +770,17 @@ void Units::execute_map(Map *map, int map_change_allowed)
     if (!map_change_allowed) return;
 
 	if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 77, gmx + gmw / 2 + 75, SCREEN2H - 64)) {
-	    //MAP TYPE
-     	std::string terrain_name = terrain_set->get_random_terrain_name();
+		//MAP TYPE
+		
+		std::string current_terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
+		std::string terrain_name = terrain_set->select_terrain_gui_dialog(current_terrain_name);
 
-		if (net->is_network_game()) {
-	   		ASSERT(g_net_allowed_terrains.size() > 0);
-			while (g_net_allowed_terrains.find(terrain_name) == g_net_allowed_terrains.end()) {
-				terrain_name = terrain_set->get_random_terrain_name();
-			}
+		if (current_terrain_name != terrain_name) {
+			Map::new_GEODATA(&mapdata, terrain_name);
+			net->send_map_data(&mapdata);
+			mapdata.load_game = 77;
+			scenario->new_coords();
 		}
-
-		Map::new_GEODATA(&mapdata, terrain_name);
-		net->send_map_data(&mapdata);
-		mapdata.load_game = 77;
-		scenario->new_coords();
 	}
 
 	if (mouse_inside(gmx + gmw / 2 - 59, SCREEN2H - 63, gmx + gmw / 2 + 20, SCREEN2H - 50)) {

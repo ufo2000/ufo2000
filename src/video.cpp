@@ -407,6 +407,8 @@ int gui_select_from_list(
 		{ NULL,                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL}
 	};
 
+	while (mouse_b & 3) yield_timeslice();
+
 	list_dialog[2].d1 = default_value;
 	set_dialog_color(list_dialog, gui_fg_color, gui_bg_color);
 	centre_dialog(list_dialog);

@@ -572,6 +572,7 @@ static DIALOG sol_dialog[] = {
 	{ d_agup_slider_pro2, DX + SSX, DY + SSY + SH*9,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
 	{ d_agup_rtext_proc,  DX + STX, DY + STY + SH*10, STW, 16, FG, BG, 0, 0, 0, 0, (void *)slider_text[7], NULL, NULL},
 	{ d_agup_slider_pro2, DX + SSX, DY + SSY + SH*10, SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
+	{ d_yield_proc,           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
 	{ NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL}
 };
 
