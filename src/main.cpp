@@ -437,7 +437,7 @@ const char *F(const char *fileid)
 
 void find_lua_files_callback(const char *filename, int attrib, int param)
 {
-    lua_safe_dofile(L, filename);
+    lua_safe_dofile(L, filename, "plugins_sandbox");
     // $$$ Fixme: lua_dofile sets errno variable in some mysterious way,
     // so allegro for_each_file function stops searching files if we do not 
     // reset this back to 0
@@ -465,10 +465,16 @@ int lua_safe_call(lua_State *L, int narg, int nret)
 /**
  * lua_dofile replacement with error message showing on errors
  */
-int lua_safe_dofile(lua_State *L, const char *name)
+int lua_safe_dofile(lua_State *L, const char *name, const char *env_name)
 {
     int status = luaL_loadfile(L, name);
     if (status) display_error_message(lua_tostring(L, -1));
+    if (env_name != NULL) {
+        lua_pushstring(L, env_name);
+        lua_gettable(L, LUA_GLOBALSINDEX);
+        ASSERT(lua_istable(L, -1));
+        lua_setfenv(L, -2);
+    }
     status = lua_safe_call(L, 0, LUA_MULTRET);
     return status;
 }
@@ -571,7 +577,7 @@ void initmain(int argc, char *argv[])
     lua_safe_dofile(L, DATA_DIR "/init-scripts/main.lua");
 
     // Load standard and custom maps
-    lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-maps.lua");
+    lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-maps.lua", "plugins_sandbox");
     for_each_file(DATA_DIR "/newmaps/*.lua", FA_RDONLY | FA_ARCH, find_lua_files_callback, 0);
 
     FLAGS = 0;

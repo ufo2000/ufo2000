@@ -42,36 +42,36 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define d_clear_proc d_agup_clear_proc
 
 #define LUA_REGISTER_CLASS(L, classname) \
-	lua_pushstring(L, #classname); \
-	lua_newtable(L); \
-	lua_pushstring(L, "__index"); \
-	lua_pushvalue(L, -2); \
-	lua_settable(L, -3); \
-	lua_settable(L, LUA_GLOBALSINDEX); \
-	
+    lua_pushstring(L, #classname); \
+    lua_newtable(L); \
+    lua_pushstring(L, "__index"); \
+    lua_pushvalue(L, -2); \
+    lua_settable(L, -3); \
+    lua_settable(L, LUA_GLOBALSINDEX); \
+    
 #define LUA_REGISTER_CLASS_METHOD(L, classname, methodname) \
-	lua_pushstring(L, #classname); \
-	lua_gettable(L, LUA_GLOBALSINDEX); \
-	lua_pushstring(L, #methodname); \
-	lua_pushobjectdirectclosure(L, (classname*)0, &classname::methodname, 0); \
-	lua_settable(L, -3); \
-	lua_pop(L, 1);
+    lua_pushstring(L, #classname); \
+    lua_gettable(L, LUA_GLOBALSINDEX); \
+    lua_pushstring(L, #methodname); \
+    lua_pushobjectdirectclosure(L, (classname*)0, &classname::methodname, 0); \
+    lua_settable(L, -3); \
+    lua_pop(L, 1);
 
 #define LUA_PUSH_OBJECT_POINTER(L, classname, objectptr) \
-	lua_pushstring(L, #classname); \
-	lua_gettable(L, LUA_GLOBALSINDEX); \
-	lua_boxpointer(L, objectptr); \
-	lua_pushvalue(L, -2); \
-	lua_setmetatable(L, -2); \
-	lua_remove(L, -2);
+    lua_pushstring(L, #classname); \
+    lua_gettable(L, LUA_GLOBALSINDEX); \
+    lua_boxpointer(L, objectptr); \
+    lua_pushvalue(L, -2); \
+    lua_setmetatable(L, -2); \
+    lua_remove(L, -2);
 
 #define LUA_REGISTER_FUNCTION(L, functionname) \
-	lua_pushstring(L, #functionname); \
-	lua_pushdirectclosure(L, functionname, 0); \
-	lua_settable(L, LUA_GLOBALSINDEX); \
+    lua_pushstring(L, #functionname); \
+    lua_pushdirectclosure(L, functionname, 0); \
+    lua_settable(L, LUA_GLOBALSINDEX); \
 
 int lua_safe_call(lua_State *L, int narg, int nret);
-int lua_safe_dofile(lua_State *L, const char *name);
+int lua_safe_dofile(lua_State *L, const char *name, const char *env_name = NULL);
 int lua_safe_dobuffer(lua_State *L, const char *buff, size_t size, const char *name);
 int lua_safe_dostring(lua_State *L, const char *str);
 
@@ -86,19 +86,19 @@ typedef NLulong uint32;
 inline uint16 intel_uint16(uint16 x)
 {
 #ifdef ALLEGRO_BIG_ENDIAN
-	return (uint16)(((((uint16)x) & 0x00ff) << 8) | ((((uint16)x) & 0xff00) >> 8));
+    return (uint16)(((((uint16)x) & 0x00ff) << 8) | ((((uint16)x) & 0xff00) >> 8));
 #else
-	return x;
+    return x;
 #endif
 }
 
 inline uint32 intel_uint32(uint32 x)
 {
 #ifdef ALLEGRO_BIG_ENDIAN
-	return (uint32)(((((uint32)x) & 0x000000ff) << 24) | ((((uint32)x) & 0x0000ff00) << 8) | 
-		((((uint32)x) & 0x00ff0000) >> 8) | ((((uint32)x) & 0xff000000) >> 24));
+    return (uint32)(((((uint32)x) & 0x000000ff) << 24) | ((((uint32)x) & 0x0000ff00) << 8) | 
+        ((((uint32)x) & 0x00ff0000) >> 8) | ((((uint32)x) & 0xff000000) >> 24));
 #else
-	return x;
+    return x;
 #endif
 }
 
@@ -112,24 +112,24 @@ inline int32 intel_int32(int32 x) { return (int32)intel_uint32((uint32)x); }
 
 inline void PersistWriteBinary(persist::Engine &archive, const void *data, int size)
 {
-	archive.WriteBinary((const uint8 *)data, size);
+    archive.WriteBinary((const uint8 *)data, size);
 }
 
 inline void PersistReadBinary(persist::Engine &archive, void *data, int size)
 {
-	archive.ReadBinary((uint8 *)data, size);
+    archive.ReadBinary((uint8 *)data, size);
 }
 
 template<class TYPE> void PersistWriteObject(persist::Engine &archive, TYPE &object)
 {
-	archive.Write(static_cast<persist::BaseObject *>(object));
+    archive.Write(static_cast<persist::BaseObject *>(object));
 }
 
 template<class TYPE> void PersistReadObject(persist::Engine &archive, TYPE &object)
 {
-	persist::BaseObject *ptr;
-	archive.Read(ptr);
-	object = static_cast<TYPE>(ptr);
+    persist::BaseObject *ptr;
+    archive.Read(ptr);
+    object = static_cast<TYPE>(ptr);
 }
 
 /**
@@ -143,8 +143,8 @@ template<class TYPE> void PersistReadObject(persist::Engine &archive, TYPE &obje
  */
 template<class TYPE> void PersistWriteBinary(persist::Engine &archive, TYPE &object)
 {
-	ASSERT(static_cast<const persist::BaseObject *>(&object));
-	archive.WriteBinary((const uint8 *)&object + sizeof(void *), sizeof(object) - sizeof(void *));
+    ASSERT(static_cast<const persist::BaseObject *>(&object));
+    archive.WriteBinary((const uint8 *)&object + sizeof(void *), sizeof(object) - sizeof(void *));
 }
 
 /**
@@ -158,8 +158,8 @@ template<class TYPE> void PersistWriteBinary(persist::Engine &archive, TYPE &obj
  */
 template<class TYPE> void PersistReadBinary(persist::Engine &archive, TYPE &object)
 {
-	ASSERT(static_cast<persist::BaseObject *>(&object));
-	archive.ReadBinary((uint8 *)&object + sizeof(void *), sizeof(object) - sizeof(void *));
+    ASSERT(static_cast<persist::BaseObject *>(&object));
+    archive.ReadBinary((uint8 *)&object + sizeof(void *), sizeof(object) - sizeof(void *));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -168,173 +168,173 @@ template<class TYPE> void PersistReadBinary(persist::Engine &archive, TYPE &obje
 
 struct GEODATA
 {
-	int    terrain;      //!< Terrain set index
-	int    x_size;       //!< Distance e/w in tens of tiles
-	int    y_size;       //!< Distance n/s in tens of tiles
-	int    z_size;       //!< Height of map (tiles)
-	int    load_game;    //!< Flag which indicates that the map should be reloaded
-	uint8  mapdata[36];  //!< The actual map data - refers to the number at the end of map name; i.e. urban12 would be number
+    int    terrain;      //!< Terrain set index
+    int    x_size;       //!< Distance e/w in tens of tiles
+    int    y_size;       //!< Distance n/s in tens of tiles
+    int    z_size;       //!< Height of map (tiles)
+    int    load_game;    //!< Flag which indicates that the map should be reloaded
+    uint8  mapdata[36];  //!< The actual map data - refers to the number at the end of map name; i.e. urban12 would be number
 };
 
 struct MANDATA
 {
-	int16         Rank;         //!< Rank  == -1 --> Not used
-	int16         Base;         //!< Base  == -1 --> Transfer in progress
-	int16         Craft;        //!< Craft == -1 --> Not on any craft
-	int16         OldCraft;
-	uint16        Missions;     //!< Number of missions soldier was on
-	uint16        Kills;        //!< Number of kills soldier scored in his life
-	uint16        Recovery;     //!< The number of days before their injuries are gone.
-	uint16        DeathCost;    //!< The number of points you lose when they die.
+    int16         Rank;         //!< Rank  == -1 --> Not used
+    int16         Base;         //!< Base  == -1 --> Transfer in progress
+    int16         Craft;        //!< Craft == -1 --> Not on any craft
+    int16         OldCraft;
+    uint16        Missions;     //!< Number of missions soldier was on
+    uint16        Kills;        //!< Number of kills soldier scored in his life
+    uint16        Recovery;     //!< The number of days before their injuries are gone.
+    uint16        DeathCost;    //!< The number of points you lose when they die.
 #define MAN_NAME_LEN 22
-	char          Name[26];     //!< There are actually 26 bytes allocated for this, but only the first 23 are used.  The names can be up to 22 bytes.
-	unsigned char TimeUnits;    //!< TU each turn for actions
-	unsigned char Health;       //!< Hitpoints: when down to 0, soldier dies
-	unsigned char Stamina;      //!< Actions like walking consume TU as well as energy
-	unsigned char Reactions;    //!< Gives chances for reaction-fire
-	unsigned char Strength;     //!< How much the soldier can carry without strain
-	unsigned char Firing;       //!< Accuracy at firing weapons
-	unsigned char Throwing;     //!< Accuracy at throwing (Grenades etc.)
-	unsigned char Close;        //!< Close-combat accuracy
-	unsigned char PsiStrength;  //!< (Psi-combat not yet implemented)
-	unsigned char PsiSkill;     //!< (Psi-combat not yet implemented)
-	unsigned char Bravery;      //!< Bravery = ( 11 - x ) * 10
-	unsigned char TimeUnitsImp; //!< Improvement in TU after a battle
-	unsigned char HealthImp;    //!< Improvement in Health after a battle
-	unsigned char StaminaImp;   //!< Improvement in Stamina after a battle
-	unsigned char ReactionsImp; //!< Improvement in Reactions after a battle
-	unsigned char StrengthImp;  //!< Improvement in Strength after a battle
-	unsigned char FiringImp;    //!< Improvement in FiringAcc after a battle
-	unsigned char ThrowingImp;  //!< Improvement in ThrowingAcc after a battle
-	unsigned char CloseImp;     //!< Improvement in CloseCombat after a battle
-	unsigned char BraveryImp;   //!< * 10
-	unsigned char SkinType;     //!< 0=none
-	unsigned char PsiImprove;   //!< The psionic improvement over the course of the last month
-	unsigned char fPsiTraining; //!< 0=not in training  1=in psi training
-	unsigned char Promoted;     //!< After a combat, this is set to 1 if they were promoted, 0 if not.
-	unsigned char fFemale;      //
-	unsigned char Appearance;   //
+    char          Name[26];     //!< There are actually 26 bytes allocated for this, but only the first 23 are used.  The names can be up to 22 bytes.
+    unsigned char TimeUnits;    //!< TU each turn for actions
+    unsigned char Health;       //!< Hitpoints: when down to 0, soldier dies
+    unsigned char Stamina;      //!< Actions like walking consume TU as well as energy
+    unsigned char Reactions;    //!< Gives chances for reaction-fire
+    unsigned char Strength;     //!< How much the soldier can carry without strain
+    unsigned char Firing;       //!< Accuracy at firing weapons
+    unsigned char Throwing;     //!< Accuracy at throwing (Grenades etc.)
+    unsigned char Close;        //!< Close-combat accuracy
+    unsigned char PsiStrength;  //!< (Psi-combat not yet implemented)
+    unsigned char PsiSkill;     //!< (Psi-combat not yet implemented)
+    unsigned char Bravery;      //!< Bravery = ( 11 - x ) * 10
+    unsigned char TimeUnitsImp; //!< Improvement in TU after a battle
+    unsigned char HealthImp;    //!< Improvement in Health after a battle
+    unsigned char StaminaImp;   //!< Improvement in Stamina after a battle
+    unsigned char ReactionsImp; //!< Improvement in Reactions after a battle
+    unsigned char StrengthImp;  //!< Improvement in Strength after a battle
+    unsigned char FiringImp;    //!< Improvement in FiringAcc after a battle
+    unsigned char ThrowingImp;  //!< Improvement in ThrowingAcc after a battle
+    unsigned char CloseImp;     //!< Improvement in CloseCombat after a battle
+    unsigned char BraveryImp;   //!< * 10
+    unsigned char SkinType;     //!< 0=none
+    unsigned char PsiImprove;   //!< The psionic improvement over the course of the last month
+    unsigned char fPsiTraining; //!< 0=not in training  1=in psi training
+    unsigned char Promoted;     //!< After a combat, this is set to 1 if they were promoted, 0 if not.
+    unsigned char fFemale;      //
+    unsigned char Appearance;   //
 };
 
 struct UNITDATA
 {
-	unsigned char Picture;      //!< The picture type used on the tactical view
-	unsigned char BigPicture;   //!< The armour type they're wearing on the inventory screen.
-	unsigned char u3;
-	unsigned char u4;
-	unsigned char u5;
-	unsigned char u6;
-	unsigned char u7;
-	unsigned char u8;
-	unsigned char u9;
-	unsigned char u10;
-	unsigned char Facing;       //!< The direction the unit is facing:  00=North, 01=North East, and so on up to 7.
-	unsigned char u12;
-	unsigned char CurTU;        //!< The number of TUs the unit has currently
-	unsigned char CurHealth;    //!< Current Health
-	unsigned char CurStun;      //!< The stun level: if this is higher than CurHealth, they're stunned.
-	unsigned char CurEnergy;    //!< Current Energy
-	unsigned char CurReactions; //!< Current Reaction
-	unsigned char CurStrength;  //!< Current Strength
-	unsigned char CurFront;     //!< Current armor on the front
-	unsigned char CurLeft;      //!< Current armor at the left side
-	unsigned char CurRight;     //!< Current armor at the right side
-	unsigned char CurRear;      //!< Current armor on the rear
-	unsigned char CurUnder;     //!< Current armor at the bottom
-	unsigned char CurFAccuracy; //!< current Firing Accuracy (might go down when wounded)
-	unsigned char CurTAccuracy; //!< current Throwing Accuracy
-	unsigned char MaxTU;        //!< The maximum number of TUs the unit has
-	unsigned char MaxHealth;    //!< Maximum Health
-	unsigned char MaxEnergy;    //!< Maximum Energy
-	unsigned char MaxStrength;  //!< Maximum Strength
-	unsigned char MaxFront;     //!< Maximum armor on the front
-	unsigned char MaxLeft;      //!< Maximum armor at the left side
-	unsigned char MaxRight;     //!< Maximum armor at the right side
-	unsigned char MaxRear;      //!< Maximum armor on the rear
-	unsigned char MaxUnder;     //!< Maximum armor at the bottom
-	unsigned char MaxFA;        // ?
-	unsigned char MaxTA;        // ?
-	unsigned char u37;
-	unsigned char PsiSkill;     //!< 
-	unsigned char ItemDie;      //!< The item type which is created when the unit dies
-	unsigned char u40;
-	unsigned char SoldierNo;    //!< The entry # in soldier.dat which this unit equals.  FF means they were created for this fight (they're alien, tank, or civilian).
-	unsigned char u41;
-	unsigned char Rank;         //!< The soldier rank for humans/aliens or, on tanks, the body type (0=tank 1=hovertank)
-	unsigned char ARank;        //!< The alien rank, for research purposes (if you stun them)
-	unsigned char u45;
-	unsigned char EnergyUse;    //!< If it's set to 255 no energy is used, if it's 1 then half as much energy as TUs is used, and if it's anything else then as much energy as TUs is used.
-	unsigned char Backpack;     //!< In humans: 0=normal backpack 1=large backpack  In tanks: 'head' type--0=cannon, 1=rocket, 2=laser, and so on.
-	unsigned char MIAScore;     //!< The number of points lost if they're Missing in Action
-	unsigned char u49;
-	unsigned char UnitBottom;   //!< The bottom (in pixels above ground, I think) of the unit.  Used for collisions with bullets AND in drawing the picture (they are shifted up this much).
-	unsigned char u51;
-	unsigned char UnitHeight;   //!< The number of pixels tall (I think) the unit is, for same purpose as UnitBottom
-	unsigned char u53;
-	unsigned char ItemLeft;     //!< The item type in the left hand--used only on the tactical screen (not used in the inventory screen)
-	unsigned char ItemRight;    //!< The item type in the right hand
-	unsigned char u56;
-	unsigned char u57;
-	unsigned char PsiStrength;
-	unsigned char Morale;
-	unsigned char u60;
-	unsigned char u61;
-	unsigned char u62;
-	unsigned char u63;
-	unsigned char HeadWound;    //!< Number of fatal wounds in the head.
-	unsigned char TorsoWound;
-	unsigned char RArmWound;    //!< Right arm wounds
-	unsigned char LArmWound;
-	unsigned char RLegWound;
-	unsigned char LLegWound;
-	unsigned char u70;
-	unsigned char u71;
-	unsigned char u72;
-	unsigned char u73;
-	unsigned char u74;
-	unsigned char u75;
-	unsigned char u76;
-	unsigned char u77;
-	unsigned char Missions;     //!< Number of missions so far this mission ... !!?
-	unsigned char Kills;        //!< Number of kills so far this mission
-	unsigned char u80;
-	unsigned char u81;
-	unsigned char u82;
-	unsigned char u83;
-	unsigned char u84;
-	unsigned char u85;
-	unsigned char u86;
-	char          Name[25];     //!< The unit name!!
-	unsigned char u112;
-	unsigned char u113;
-	unsigned char u114;
-	unsigned char u115;
-	unsigned char Gender;       //!< used in the inventory picture
-	unsigned char SkinColor;    //!< the 'Appearance' stat from SOLDIER.DAT
-	unsigned char AttachedWep;
-	unsigned char AttachedAmmo; //!< The number of rounds left in the AttachedWep
-	unsigned char Flags;        //!< if (Flags&&2) the unit can fly, otherwise it can't.
-	unsigned char u118;
-	unsigned char u119;         //!< skin_type;  armour_type
-	unsigned char u120;         //!< MOVED; // already moved this turn
+    unsigned char Picture;      //!< The picture type used on the tactical view
+    unsigned char BigPicture;   //!< The armour type they're wearing on the inventory screen.
+    unsigned char u3;
+    unsigned char u4;
+    unsigned char u5;
+    unsigned char u6;
+    unsigned char u7;
+    unsigned char u8;
+    unsigned char u9;
+    unsigned char u10;
+    unsigned char Facing;       //!< The direction the unit is facing:  00=North, 01=North East, and so on up to 7.
+    unsigned char u12;
+    unsigned char CurTU;        //!< The number of TUs the unit has currently
+    unsigned char CurHealth;    //!< Current Health
+    unsigned char CurStun;      //!< The stun level: if this is higher than CurHealth, they're stunned.
+    unsigned char CurEnergy;    //!< Current Energy
+    unsigned char CurReactions; //!< Current Reaction
+    unsigned char CurStrength;  //!< Current Strength
+    unsigned char CurFront;     //!< Current armor on the front
+    unsigned char CurLeft;      //!< Current armor at the left side
+    unsigned char CurRight;     //!< Current armor at the right side
+    unsigned char CurRear;      //!< Current armor on the rear
+    unsigned char CurUnder;     //!< Current armor at the bottom
+    unsigned char CurFAccuracy; //!< current Firing Accuracy (might go down when wounded)
+    unsigned char CurTAccuracy; //!< current Throwing Accuracy
+    unsigned char MaxTU;        //!< The maximum number of TUs the unit has
+    unsigned char MaxHealth;    //!< Maximum Health
+    unsigned char MaxEnergy;    //!< Maximum Energy
+    unsigned char MaxStrength;  //!< Maximum Strength
+    unsigned char MaxFront;     //!< Maximum armor on the front
+    unsigned char MaxLeft;      //!< Maximum armor at the left side
+    unsigned char MaxRight;     //!< Maximum armor at the right side
+    unsigned char MaxRear;      //!< Maximum armor on the rear
+    unsigned char MaxUnder;     //!< Maximum armor at the bottom
+    unsigned char MaxFA;        // ?
+    unsigned char MaxTA;        // ?
+    unsigned char u37;
+    unsigned char PsiSkill;     //!< 
+    unsigned char ItemDie;      //!< The item type which is created when the unit dies
+    unsigned char u40;
+    unsigned char SoldierNo;    //!< The entry # in soldier.dat which this unit equals.  FF means they were created for this fight (they're alien, tank, or civilian).
+    unsigned char u41;
+    unsigned char Rank;         //!< The soldier rank for humans/aliens or, on tanks, the body type (0=tank 1=hovertank)
+    unsigned char ARank;        //!< The alien rank, for research purposes (if you stun them)
+    unsigned char u45;
+    unsigned char EnergyUse;    //!< If it's set to 255 no energy is used, if it's 1 then half as much energy as TUs is used, and if it's anything else then as much energy as TUs is used.
+    unsigned char Backpack;     //!< In humans: 0=normal backpack 1=large backpack  In tanks: 'head' type--0=cannon, 1=rocket, 2=laser, and so on.
+    unsigned char MIAScore;     //!< The number of points lost if they're Missing in Action
+    unsigned char u49;
+    unsigned char UnitBottom;   //!< The bottom (in pixels above ground, I think) of the unit.  Used for collisions with bullets AND in drawing the picture (they are shifted up this much).
+    unsigned char u51;
+    unsigned char UnitHeight;   //!< The number of pixels tall (I think) the unit is, for same purpose as UnitBottom
+    unsigned char u53;
+    unsigned char ItemLeft;     //!< The item type in the left hand--used only on the tactical screen (not used in the inventory screen)
+    unsigned char ItemRight;    //!< The item type in the right hand
+    unsigned char u56;
+    unsigned char u57;
+    unsigned char PsiStrength;
+    unsigned char Morale;
+    unsigned char u60;
+    unsigned char u61;
+    unsigned char u62;
+    unsigned char u63;
+    unsigned char HeadWound;    //!< Number of fatal wounds in the head.
+    unsigned char TorsoWound;
+    unsigned char RArmWound;    //!< Right arm wounds
+    unsigned char LArmWound;
+    unsigned char RLegWound;
+    unsigned char LLegWound;
+    unsigned char u70;
+    unsigned char u71;
+    unsigned char u72;
+    unsigned char u73;
+    unsigned char u74;
+    unsigned char u75;
+    unsigned char u76;
+    unsigned char u77;
+    unsigned char Missions;     //!< Number of missions so far this mission ... !!?
+    unsigned char Kills;        //!< Number of kills so far this mission
+    unsigned char u80;
+    unsigned char u81;
+    unsigned char u82;
+    unsigned char u83;
+    unsigned char u84;
+    unsigned char u85;
+    unsigned char u86;
+    char          Name[25];     //!< The unit name!!
+    unsigned char u112;
+    unsigned char u113;
+    unsigned char u114;
+    unsigned char u115;
+    unsigned char Gender;       //!< used in the inventory picture
+    unsigned char SkinColor;    //!< the 'Appearance' stat from SOLDIER.DAT
+    unsigned char AttachedWep;
+    unsigned char AttachedAmmo; //!< The number of rounds left in the AttachedWep
+    unsigned char Flags;        //!< if (Flags&&2) the unit can fly, otherwise it can't.
+    unsigned char u118;
+    unsigned char u119;         //!< skin_type;  armour_type
+    unsigned char u120;         //!< MOVED; // already moved this turn
 };
 
 struct ITEMDATA
 {
-	char  name[26];
-	int32 num;
-	char  type[100];
-	unsigned char  place[100]; //if (id.place[i] == 0xFF)  - must be unsigned check!
-	char  x[100];
-	char  y[100];
+    char  name[26];
+    int32 num;
+    char  type[100];
+    unsigned char  place[100]; //if (id.place[i] == 0xFF)  - must be unsigned check!
+    char  x[100];
+    char  y[100];
 };
 
 struct PLAYERDATA
 {
-	int32    size;
-	MANDATA  md[20];
-	ITEMDATA id[20];
-	int32    lev[20], col[20], row[20];
+    int32    size;
+    MANDATA  md[20];
+    ITEMDATA id[20];
+    int32    lev[20], col[20], row[20];
 };
 
 //////////////////////////////////////////////////////////////////////////////
