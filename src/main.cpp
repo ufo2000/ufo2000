@@ -176,8 +176,8 @@ void restartgame()
 	//map->load("floor0.map", Map::cultivat);
 	//map = new Map("GEODATA.DAT");
 	map = new Map(mapdata);
-	p1 = new Platoon(1111, &pd1);
-	p2 = new Platoon(2222, &pd2);
+	p1 = new Platoon(1000, &pd1);
+	p2 = new Platoon(2000, &pd2);
 
 	int fh = OPEN_GTEMP("cur_map.dat", O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
 	assert(fh != -1);
@@ -384,6 +384,7 @@ void initmain(int argc, char *argv[])
     if (get_config_int("Flags", "F_SMALLFONT", 0)) FLAGS |= F_SMALLFONT;      // no, use small font instead.
     if (get_config_int("Flags", "F_SOUNDCHECK", 0)) FLAGS |= F_SOUNDCHECK;    // perform soundtest.
     if (get_config_int("Flags", "F_LOGTOSTDOUT", 0)) FLAGS |= F_LOGTOSTDOUT;  // Copy all init console output to stdout.
+    if (get_config_int("Flags", "F_DEBUGDUMPS", 0)) FLAGS |= F_DEBUGDUMPS;    // Produce a lot of files with the information which can help in debugging
 	origfiles_prefix = get_config_string("Paths",  "origfiles", NULL); // original ufo files here
 	ownfiles_prefix  = get_config_string("Paths",  "ownfiles",  NULL); // own data files here (ufo2000.dat & bitmaps)
 	gametemp_prefix  = get_config_string("Paths",  "gametemp",  NULL); // game temporary files here (may span launches)
@@ -597,102 +598,56 @@ int build_crc()
 	p2->eot_save(buf, buf_size);
 	map->eot_save(buf, buf_size);
 
-	int fh = OPEN_GTEMP("eot_save.txt", O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
-	assert(fh != -1);
-	buf_size = write(fh, buf, buf_size);
-	close(fh);
+	int crc = crc16(buf);
 
-	return crc16(buf);
-	//return 2000;
+	if (FLAGS & F_DEBUGDUMPS) {
+		char filename[128];
+		sprintf(filename, "eot_save_%d.txt", crc);
+		int fh = OPEN_GTEMP(filename, O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
+		assert(fh != -1);
+		buf_size = write(fh, buf, buf_size);
+		close(fh);
+	}
+
+	return crc;
 }
-
 
 extern int RECALC_VISIBILITY;
 
-void next_turn(int crc)
+/**
+ * Check that no moves are performed on the map, so that it is save to end turn or
+ * do something similar
+ */
+bool nomoves()
 {
-	CONFIRM_REQUESTED = 0;
-	int bcrc;
-	if (crc != -1) {
-		//!!!compare for remote crc
-		bcrc = build_crc();
-		if (crc != bcrc) {
-			g_console->print("wrong wholeCRC");
-			g_console->printf("crc=%d, bcrc=%d", crc, bcrc);
-		}
+	return platoon_local->nomoves() && platoon_remote->nomoves();
+}
+
+/**
+ * Function that calculates current gamestate crc and compares it with the 
+ * passed in argument value
+ */
+void check_crc(int crc)
+{
+	int bcrc = build_crc();
+	if (crc != bcrc) {
+		g_console->print("wrong wholeCRC");
+		g_console->printf("crc=%d, bcrc=%d", crc, bcrc);
 	}
+}
+
+/**
+ * Function that is called to make all the necessery changes to the gamestate
+ * when changing active player (passing turn)
+ */
+void switch_turn()
+{
+	CONFIRM_REQUESTED = 0; // ???
 
 	turn++;
+	map->step();
 
-	if (MODE == WATCH) {
-		g_time_left = g_time_limit;
-		MODE = MAP3D;
-	} else {
-		g_time_left = 0;
-		MODE = WATCH;
-	}
-
-	if (net->gametype == HOTSEAT) {
-    //	Load the game state for the start of enemy turn and switch to WATCH mode
-		icon->show_eot();
-		loadgame("ufo2000.tmp");
-		MODE = WATCH;
-
-		map->m_minimap_area->set_full_redraw();
-		g_console->set_full_redraw();
-
-		Platoon *pt = platoon_local;
-		platoon_local = platoon_remote;
-		platoon_remote = pt;
-
-		sel_man = platoon_local->captain();
-		while (sel_man && (sel_man->state() == STUN))
-		{
-			sel_man = sel_man->next();
-			if (sel_man == platoon_local->captain())
-			{
-				sel_man = NULL;
-				break;
-			}
-		}
-		if (sel_man != NULL)
-			map->center(sel_man);
-
-		RECALC_VISIBILITY = 1;
-
-		alert(" ", "  NEXT TURN  ", " ", "    OK    ", NULL, 1, 0);
-	}
-
-	if (crc == -1) {
-		//!!!build map&man crc
-		bcrc = build_crc();
-		net->send_endturn(bcrc);
-	}
-
-	// Instead of resetting both platoons every second turn, we reset them at the start of their turn.
-	// Therefore, a team keeps their leftover TUs through the duration of the enemy turn - vital for reaction fire.
-	if (turn % 2 == 0) {
-		map->step();      //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		if (HOST || (net->gametype == HOTSEAT))
-			platoon_local->restore();
-		else
-			platoon_remote->restore();
-	}
-	else
-	{
-		if (HOST && (net->gametype != HOTSEAT))
-			platoon_remote->restore();
-		else
-			platoon_local->restore();
-	}
-
-	elist->step(crc);
-	g_console->printf(
-		xcom1_color(192),
-		"Next turn. local = %d, remote = %d soldiers",
-		platoon_local->num_of_men(),
-		platoon_remote->num_of_men());
-
+//	Still did not test where this code would be better to put
 	Soldier *check;
 
 	if (platoon_remote->captain() != NULL) // Win?
@@ -724,6 +679,80 @@ void next_turn(int crc)
 	}
 	else
 		loss = 1;
+}
+
+/**
+ * This function is called when player wants to pass turn to the other player
+ */
+void send_turn()
+{
+	assert(MODE == MAP3D);
+	switch_turn();
+	elist->step(-1);
+	int crc = build_crc();
+	net->send_endturn(crc);
+
+	platoon_remote->restore();
+
+	if (net->gametype == HOTSEAT) {
+    //	Load the game state for the start of enemy turn and switch to WATCH mode
+		icon->show_eot();
+		loadgame("ufo2000.tmp");
+
+		map->m_minimap_area->set_full_redraw();
+		g_console->set_full_redraw();
+
+		Platoon *pt = platoon_local;
+		platoon_local = platoon_remote;
+		platoon_remote = pt;
+
+		sel_man = platoon_local->captain();
+		while (sel_man && (sel_man->state() == STUN))
+		{
+			sel_man = sel_man->next();
+			if (sel_man == platoon_local->captain())
+			{
+				sel_man = NULL;
+				break;
+			}
+		}
+		if (sel_man != NULL)
+			map->center(sel_man);
+
+		RECALC_VISIBILITY = 1;
+
+		alert(" ", "  NEXT TURN  ", " ", "    OK    ", NULL, 1, 0);
+	}
+
+	g_time_left = 0;
+	MODE = WATCH;
+}
+
+/**
+ * This function is called when we receive turn from the other player
+ */
+void recv_turn(int crc)
+{
+	assert(MODE == WATCH);
+	switch_turn();
+	elist->step(0);
+	check_crc(crc);
+
+	platoon_local->restore();
+
+	if (net->gametype == HOTSEAT) {
+		savegame("ufo2000.tmp");
+		map->m_minimap_area->set_full_redraw();
+	}
+
+	g_time_left = g_time_limit;
+	MODE = MAP3D;
+
+	g_console->printf(
+		xcom1_color(192),
+		"Next turn. local = %d, remote = %d soldiers",
+		platoon_local->num_of_men(),
+		platoon_remote->num_of_men());
 }
 
 int GAMELOOP = 0;
@@ -895,8 +924,8 @@ void gameloop()
 
 		if (MODE != WATCH && g_time_left == 0) {
 			TARGET = 0;
-			if (platoon_local->nomoves()) {
-				next_turn(-1);
+			if (nomoves()) {
+				send_turn();
 			}
 		}
 

@@ -117,4 +117,5 @@ extern unsigned long FLAGS;
 #define F_SMALLFONT		    0x00008000
 #define F_SOUNDCHECK    	0x00010000
 #define F_LOGTOSTDOUT       0x00020000
+#define F_DEBUGDUMPS        0x00040000
 #endif

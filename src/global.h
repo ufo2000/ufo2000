@@ -380,6 +380,12 @@ bool loadgame(std::iostream &stream);
 void savegame(const char *filename);
 void savegame(std::iostream &stream);
 
+void check_crc(int crc);
+void recv_turn(int crc);
+void send_turn();
+
+bool nomoves();
+
 #define CELL_SCR_X 16
 #define CELL_SCR_Y 8
 #define CELL_SCR_Z 24

@@ -31,8 +31,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "wind.h"
 #include "config.h"
 
-extern void next_turn(int crc);
-
 void cprintf(char *str)
 {
 	text_mode(0); textprintf(screen, font, 1, 1, xcom1_color(1), "%s", str);
@@ -336,8 +334,8 @@ void Icon::execute(int mx, int my)
 					break;
 				case 6:      //cprintf("6"); //eot
 					TARGET = 0;
-					if (platoon_local->nomoves()) {
-						next_turn( -1);
+					if (nomoves()) {
+						send_turn();
 					}
 					break;
 			}

@@ -65,8 +65,6 @@ void closehotseatgame()
 {
 }
 
-void next_turn(int crc);
-
 void Net::error(char *str)
 {
 	g_console->printf("___error in %s___", str);
@@ -78,7 +76,7 @@ Net::Net()
 	SEND = 1;
 	queue = new BQ(1000);
 	connect = new Connect();
-	flog = FOPEN_RTEMP("ufo2000.log", "at");
+	flog = FOPEN_RTEMP("ufo2000.log", "wt");
 	log("%s\n", "_____________Net()");
 }
 
@@ -229,7 +227,7 @@ void Net::check()
 		}
 	}
 
-	if (GAMELOOP && (!platoon_remote->nomoves()))
+	if (GAMELOOP && (!nomoves()))
 		return ;
 
 	if (!queue->get(packet)) return;
@@ -251,14 +249,7 @@ void Net::check()
 			recv_restart();
 			break;
 		case CMD_ENDTURN:
-			if (gametype == HOTSEAT && MODE == WATCH) {
-				MODE = MAP3D;
-				savegame("ufo2000.tmp");
-				g_time_left = g_time_limit;
-				map->m_minimap_area->set_full_redraw();
-			} else {
-				recv_endturn();
-			}
+			recv_endturn();
 			break;
 		case CMD_OPENDOOR:
 			recv_open_door();
@@ -415,13 +406,8 @@ void Net::send_endturn(int crc)
 
 int Net::recv_endturn()
 { // "TURN"
-	int crc;
-
-	pkt >> crc;
-
-	SEND = 0;
-	next_turn(crc);
-	SEND = 1;
+	int crc; pkt >> crc;
+	recv_turn(crc);
 	return 1;
 }
 
