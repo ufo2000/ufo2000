@@ -1306,7 +1306,7 @@ void endgame_stats()
 	stretch_blit(back, newscr, 0, 0, back->w, back->h, 0, 0, SCREEN_W, SCREEN_H);
 
 	// avoid open/closing logfile with many battle_report() - statements:
-    FILE *f_br = fopen( "battlereport.txt", "at");
+    FILE *f_br = fopen( F("$(home)/battlereport.txt"), "at");
     fprintf(f_br, "\n# %s:\n\n", _("Summary") );
     fprintf(f_br, "%s \n\n", winner);
 

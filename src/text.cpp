@@ -81,7 +81,7 @@ void battle_report( const char *format, ... )
     va_list arglist;
 
     FILE *logFile;
-    logFile = fopen( "battlereport.txt", "a" );
+    logFile = fopen( F("$(home)/battlereport.txt"), "a" );
 
     va_start( arglist, format );
   //vfprintf( stderr, format, arglist );
