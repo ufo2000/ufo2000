@@ -23,6 +23,15 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "spk.h"
 #include "item.h"
 
+/**
+ * Inventory management in the battlecape. 
+ 
+ * @ingroup battlescape
+ * @ingroup gui
+ * @relates Editor
+ * @todo Try to simplify Inventory and Editor classes and make them 
+ *       share common code -serge-
+ */
 class Inventory
 {
 private:

@@ -543,6 +543,10 @@ void initmain(int argc, char *argv[])
     luaopen_math(L);
     luaopen_table(L);
     luaopen_debug(L);
+	
+	// Lua API for accessing C++ objects
+	LUA_REGISTER_CLASS(L, Platoon);
+	
     LUA_REGISTER_CLASS(L, Place);
     LUA_REGISTER_CLASS_METHOD(L, Place, add_item);
     LUA_REGISTER_CLASS_METHOD(L, Place, destroy_all_items);

@@ -199,7 +199,13 @@ public:
 	}
 };
 
-//icon itself
+/**
+ * Control panel with buttons used by player to manage his squad in battlescape. 
+ * Contains 'quit', 'next soldier', 'inventory', 'sit/stand' and other controls.
+ *
+ * @ingroup gui
+ * @ingroup battlescape
+ */
 class Icon
 {
 private:
@@ -250,4 +256,3 @@ public:
 };                      
 
 #endif
-

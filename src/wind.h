@@ -28,6 +28,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 /**
  * Base class for objects that are displayed on screen
  * with dirty rectangles support
+ *
+ * @ingroup gui
  */
 class VisualObject
 {
@@ -66,6 +68,8 @@ public:
 /**
  * Visual object for console status line - bottom line in which the new
  * text is entered. Contains code for keyboard input and displaying.
+ *
+ * @ingroup gui
  */
 class ConsoleStatusLine : public VisualObject
 {
@@ -92,6 +96,8 @@ public:
  * Visual object for rectangular area with chat console. 
  * It provides log window for previous text messages and 
  * also incorporates status line for editing new text.
+ *
+ * @ingroup gui
  */
 class ConsoleWindow : public VisualObject
 {
@@ -136,6 +142,14 @@ __attribute__ __format__ for non-static member functions.
 
 class DirtyList;
 
+/**
+ * Old class responsible for chat console. Has many problems without
+ * restoring its content after switching fullscreen/windowed mode and
+ * also is not performance efficient. Will be eventually removed.
+ *
+ * @ingroup gui
+ * @deprecated
+ */
 class Wind
 {
 	int m_x, m_y, m_w, m_h;

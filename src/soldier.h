@@ -66,7 +66,9 @@ enum State { SIT = 0, STAND, MARCH, FALL, LIE };
 
 /**
  * A class which describes unit with all his equipment, health status and
- * position on map
+ * position on map 
+ *
+ * @ingroup battlescape
  */
 class Soldier: public persist::BaseObject
 {
@@ -121,14 +123,14 @@ private:
 	char way[100];
 	int curway, waylen;
 
-//!	Information about seen enemies. It does not need to be saved and can be
-//!	restored by calling calc_visible_cells? function
 	char m_visible_cells[4 * 6 * 10 * 6 * 10];      // do sizeof
+//@{
+    //!	Information about seen enemies. 
 	int enemy_num;
 	int enemy_z[100], enemy_x[100], enemy_y[100];
 	int seen_enemy_num;
 	int seen_enemy_z[100], seen_enemy_x[100], seen_enemy_y[100];
-	
+//@}    
 	int time_reserve(int walk_time, int ISLOCAL, int use_energy = 1);
 	void berserk_fire();
     int calc_z();

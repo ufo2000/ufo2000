@@ -33,6 +33,15 @@ enum GameType {GAME_TYPE_HOTSEAT, GAME_TYPE_INTERNET_SERVER};
 void inithotseatgame();
 void closehotseatgame();
 
+/**
+ * High level object providing network support. Uses some kind of RPC 
+ * for sending local changes to the remote player. Network packets are received,
+ * arguments unpacked and proper functions called to keep game state in sync.
+ * 
+ * @ingroup planner
+ * @ingroup battlescape
+ * @ingroup network
+ */
 class Net
 {
 public:

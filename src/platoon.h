@@ -27,7 +27,10 @@ class Units;
 class Statistics;
 
 /**
- * Class for handling the squad controlled by one of the opposing sides
+ * Class for handling the squad controlled by one of the opposing sides.
+ *
+ * @ingroup battlescape
+ * @ingroup planner
  */
 class Platoon: public persist::BaseObject
 {

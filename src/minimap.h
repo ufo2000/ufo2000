@@ -24,6 +24,11 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "wind.h"
 
+/**
+ * Minimap rendering object.
+ *
+ * @ingroup gui
+ */
 class Minimap : public VisualObject
 {
 	int m_height_10, m_width_10;

@@ -23,6 +23,14 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "global.h"
 #include "item.h"
 
+/**
+ * Items container. Simulates items stacked on the ground and also 
+ * unit equipment held in different places and body parts (hands, belt, 
+ * backpack, etc.) 
+ *
+ * @ingroup planner
+ * @ingroup battlescape
+ */
 class Place: public persist::BaseObject
 {
 	DECLARE_PERSISTENCE(Place);
@@ -57,9 +65,7 @@ public:
 	int ishand();
 	int isfit(Item *it, int xx, int yy);
 	void dropall(int lev, int col, int row);
-	//int isbelt();
 	int outside_belt(int x, int y);
-	//Item *itemat(int xx, int yy); /// screen coords
 	Item *item_under_mouse();
 	int isthere(Item *it);
 

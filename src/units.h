@@ -25,6 +25,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 enum PanPos {POS_LEFT, POS_RIGHT};
 enum PlanState {PS_MAIN, PS_SCEN, PS_MAP, PS_RULES, PS_RULES_0, PS_RULES_1, PS_RULES_2, PS_RULES_3, PS_RULES_4};
 
+/**
+ * Object responsible for units selection buttons in the planner screen.  
+ * 
+ * @ingroup planner
+ * @ingroup gui
+ */
 class Units
 {
 	friend class Connect;

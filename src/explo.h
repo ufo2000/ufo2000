@@ -27,6 +27,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 class Soldier;
 
 #define EXPLOITEMS 100
+
+/**
+ * Explosives management 
+ *
+ * @ingroup battlescape
+ */
 class Explosive: public persist::BaseObject
 {
 	DECLARE_PERSISTENCE(Explosive);

@@ -26,6 +26,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 /**
  * A class that holds all of the statistics for a single soldier
+ *
+ * @ingroup battlescape
  */
 class StatEntry: public persist::BaseObject
 { 

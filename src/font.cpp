@@ -420,8 +420,8 @@ static int uaf_text_length(AL_CONST FONT *f, AL_CONST char *text) {
  *
  * @param f The 'this' pointer.
  * @param ch The character.
- * @param fg. Foreground color. Currently five color indexes starting with this one are used to draw the glyph.
- * @param bg. Background color, AKA textmode.
+ * @param fg Foreground color. Currently five color indexes starting with this one are used to draw the glyph.
+ * @param bg Background color, AKA textmode.
  * @param bmp Destination bitmap.
  * @param  x  X coordinate of top left corner of glyph bounding box.
  * @param  y  Y coordinate of top left corner of glyph bounding box.

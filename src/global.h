@@ -470,4 +470,21 @@ std::string indent(const std::string &);
 
 #include "../ufo2000.h"
 
+/**
+ * @defgroup planner Mission planner
+ * Soldiers management, map and game rules selection, many other
+ * battle preparation things
+ */
+
+/**
+ * @defgroup network Network support
+ */
+
+/**
+ * @defgroup gui User interface
+ */
+
+/**
+ * @defgroup battlescape Battlescape 
+ */
 #endif

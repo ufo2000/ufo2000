@@ -76,6 +76,7 @@ PCK::~PCK()
  *
  * @param data pointer to data buffer for a frame from PCK file
  * @param size size of frame data
+ * @param tftd_flag flag specifying whether we need to use tftd palette
  * @return     bitmap with a frame image
  */
 BITMAP *PCK::pckdat2bmp(const unsigned char *data, int size, int tftd_flag)

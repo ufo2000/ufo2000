@@ -6,6 +6,7 @@ SetOption('max_drift', 1)
 env = Environment()
 
 HAVE_DUMBOGG=False
+HAVE_TTF=False
 
 def getsources():
     import os
@@ -20,10 +21,16 @@ def getsources():
                     allsource.append(os.path.join('obj', root, name))
         if 'dumbogg' in dirs and not HAVE_DUMBOGG:
             dirs.remove('dumbogg')
+        if 'jinete' in dirs and not HAVE_TTF:
+            dirs.remove('jinete')
         if 'exchndl' in dirs:
             dirs.remove('exchndl')
         if '.svn' in dirs:
             dirs.remove('.svn')
+        if 'luac' in dirs:
+            dirs.remove('luac')
+        if 'lua' in dirs:
+            dirs.remove('lua')
 
     return allsource
 

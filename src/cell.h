@@ -25,10 +25,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "place.h"
 #include "soldier.h"
 
-//////////////////////////////////////////////////////////////////////////////
-/// Cell of map                                                            ///
-//////////////////////////////////////////////////////////////////////////////
-
+/**
+ * Minimal part of map. It can contain a soldier, stack of items, 
+ * and also describes terrain objects (floor, object, two walls)
+ * 
+ * @ingroup battlescape
+ */
 class Cell: public persist::BaseObject
 {
 	DECLARE_PERSISTENCE(Cell);
@@ -38,13 +40,14 @@ private:
  	int m_fire_state;
  	int m_fire_time;
 
-	int m_pfval;      //path finder internal
+	int m_pfval;        //!< path finder internal
 	int MOUSE;
 	char visi[3][3][3];
-	Soldier *m_soldier;
-	Place *m_place;
+    Soldier *m_soldier; //!< Soldier standing here
+	Place *m_place;     //!< Stack of items here
 public:
-	unsigned char type[4];
+    //! Indexes of MCD records for floor, walls and object
+	unsigned char type[4]; 
 
 	Soldier *get_soldier() { return m_soldier; }
 	Place *get_place() { return m_place; }

@@ -44,7 +44,11 @@ enum Command {CMD_MESSAGE = -2, CMD_NONE = -1,
               COMMAND_NUM // COMMAND_NUM - Should be the last command!
              };
 
-
+/**
+ * Object for packing/unpacking data to network packets
+ *
+ * @ingroup network
+ */             
 class Packet
 {
 private:

@@ -61,6 +61,14 @@ inline int DIR_DIAGONAL(int dir)
     return dir % 2;
 }
 
+/**
+ * Battlescape map. It contains most of the information about the 
+ * battlefield.
+ *
+ * @ingroup battlescape
+ * @todo Move all the remaining global variables with information about the
+ *      battlefield to this class -serge-
+ */
 class Map: public persist::BaseObject
 {
     DECLARE_PERSISTENCE(Map)
@@ -380,6 +388,11 @@ public:
 /**
  * Information container and map generator for all the terrains used in
  * the game
+ *
+ * @ingroup planner
+ * @todo Finally get rid of terrain indexes and simplify code (these indexes
+ *        are only used internally and are never stored to disk or sent over
+ *        network) -serge-
  */
 class TerrainSet
 {

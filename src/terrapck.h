@@ -23,15 +23,22 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "pck.h"
 
+/**
+ * Map cell description data. Provides information about cell object
+ * shape, ability to walk/see through it, reference to pictures for
+ * rendering cell. Map cell is described by 4 MCD records: two walls,
+ * floor and object
+ *
+ * @ingroup battlescape
+ */
 #pragma pack(1)
-
 struct MCD
 {
 //!	Each frame is an index into the ____.TAB file; it rotates between the frames constantly.
 	unsigned char Frame[8];
-//!	The 12 levels of references into GEODATA\LOFTEMPS.DAT
+//!	The 12 levels of references into GEODATA/LOFTEMPS.DAT
 	unsigned char LOFT[12];      
-//!	A reference into the GEODATA\SCANG.DAT
+//!	A reference into the GEODATA/SCANG.DAT
 	int16         ScanG;
 	unsigned char u23;
 	unsigned char u24;
@@ -112,7 +119,6 @@ struct MCD
 	int pck_base;
 	int tftd_flag;
 };
-
 #pragma pack()
 
 class TerraPCK : public PCK

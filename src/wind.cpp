@@ -79,6 +79,7 @@ bool ConsoleStatusLine::resize(int width, int height)
  * Function that processes keyboard input for the status line
  *
  * @param keycode allegro key code obtained by readkey() function
+ * @param scancode allegro key scancode obtained by readkey() function
  * @return true if there is ready line inside of internal buffer (ENTER pressed)
  */
 bool ConsoleStatusLine::process_keyboard_input(int keycode, int scancode)
@@ -149,6 +150,7 @@ void ConsoleWindow::redraw_fast(BITMAP *bmp, int x, int y)
  * Function that inserts a new text line into console buffer
  *
  * @param text message to be printed
+ * @param color text message color
  */
 void ConsoleWindow::print(const char *text, int color)
 {
@@ -217,6 +219,7 @@ void ConsoleWindow::printf(const char *fmt, ...)
  * Function that processes all keyboard input of console
  *
  * @param keycode code from allegro readkey() function
+ * @param scancode scancode from allegro readkey() function
  * @return        true if a new line has been just inserted into a buffer
  *                this line can be read by get_text() function
  */
@@ -485,4 +488,3 @@ void Wind::info(int _x, int _y)
 	           "m_txtbeg=%d, m_txtend=%d, m_txtvis=%d, m_curx=%d, m_cury=%d, m_w=%d, m_h=%d ",
 	           m_txtbeg, m_txtend, m_txtvis, m_curx, m_cury, m_w, m_h);
 }
-

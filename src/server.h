@@ -32,6 +32,8 @@ inline long get_time_diff(const NLtime &x, const NLtime &y)
 
 /**
  * Client side client-server connection
+ *
+ * @ingroup network
  */
 class ClientServer
 {
@@ -53,6 +55,8 @@ public:
 
 /**
  * Server side client-server connection
+ *
+ * @ingroup network
  */
 class ServerClient
 {
@@ -89,6 +93,8 @@ public:
 
 /**
  * Dispatcher of the packets
+ *
+ * @ingroup network
  */
 class ServerDispatch
 {

@@ -38,8 +38,11 @@ struct Buffer
 	ITEMDATA id;
 }; 
 
-/**
- * Unit editor.
+/** 
+ * Squad editor class. It is used from the planner screen to load,
+ * save or edit soldiers in a current squad.
+ *
+ * @ingroup planner
  */
 class Editor
 { 

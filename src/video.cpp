@@ -365,7 +365,7 @@ void resize_screen2(int vw, int vh)
 
 /**
  * Yes/No style messagebox
- * @param message  question that is asked
+ * @param mess  question that is asked
  */
 int askmenu(const char *mess)
 {
@@ -442,4 +442,3 @@ int gui_select_from_list(
     current_list = NULL;
     return list_dialog[2].d1;
 }
-

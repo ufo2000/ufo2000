@@ -135,6 +135,11 @@ struct UserInfo
 // #define COLOR_RED00     xcom_color(32)
 #define COLOR_DARKGRAY COLOR_GRAY06
 
+/**
+ * Object for displaying list of users in the server chat
+ * 
+ * @ingroup gui
+ */
 class UsersList: public VisualObject
 {
 	std::vector<UserInfo> m_users;
@@ -644,4 +649,3 @@ int connect_internet_server()
 
 	return -1;
 }
-

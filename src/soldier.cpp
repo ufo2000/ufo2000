@@ -649,7 +649,7 @@ void Soldier::draw_unibord(int gx, int gy)
 /**
  * Draw yellow arrow above selected friendly soldier
  *
- * @select_y : vertical offset, to make the arrow move up & down
+ * @param select_y vertical offset, to make the arrow move up & down
  */
 void Soldier::draw_selector(int select_y)
 {

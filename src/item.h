@@ -41,6 +41,13 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 class Place;
 class Editor;
 
+/**
+ * Item object. Stores all the needed information about item including
+ * properties, sound effects and item image.
+ *
+ * @ingroup planner
+ * @ingroup battlescape
+ */
 class Item: public persist::BaseObject
 {
 	DECLARE_PERSISTENCE(Item);

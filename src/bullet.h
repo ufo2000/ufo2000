@@ -25,6 +25,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 class Item;
 
+/**
+ * Fired bullets, thrown grenades, rockets and other projectiles 
+ * simulation. 
+ *
+ * @ingroup battlescape
+ */
 class Bullet: public persist::BaseObject
 {
 	DECLARE_PERSISTENCE(Bullet);
