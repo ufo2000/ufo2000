@@ -66,7 +66,7 @@ Soldier::Soldier(Platoon *platoon, int _NID)
 {
     NID = _NID;
     z = -1; x = -1; y = -1;
-    dir = 0; phase = 0; m_state = STAND;
+    dir = 0; move_dir = 0; phase = 0; m_state = STAND;
     m_next = NULL; m_prev = NULL;
     m_body = NULL;
     m_platoon = platoon;
@@ -101,7 +101,7 @@ Soldier::Soldier(Platoon *platoon, int _NID)
 Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *mdat, ITEMDATA *idat, DeployType dep_type)
 {
     NID = _NID; z = _z; x = _x; y = _y;
-    dir = 0;
+    dir = 0; move_dir = 0;
 
     //  Face the enemy depending on what the deployment is
     int ang, dest_col, dest_row;
@@ -908,7 +908,7 @@ int Soldier::move(int ISLOCAL)
 {
     if (z == -1) return 0; // auto-return 0 if stunned
 
-    if ((z > 0) && map->mcd(z, x, y, 0)->No_Floor) {
+    if ((z > 0) && map->mcd(z, x, y, 0)->No_Floor && !can_fly()) {
         if (!map->isStairs(z - 1, x, y)) {
             map->set_man(z, x, y, NULL);
             z--;
@@ -945,7 +945,38 @@ int Soldier::move(int ISLOCAL)
     }
 
     if (m_state == MARCH) {
-        
+
+        if(move_dir > DIR_NULL) {
+            map->set_man(z, x, y, NULL);
+            int tu_cost;
+            map->step_dest(z, x, y, move_dir, can_fly(), z, x, y, tu_cost);
+            map->set_man(z, x, y, this);
+            spend_time(tu_cost, 1);
+            m_place[P_MAP] = map->place(z, x, y);
+
+            if (this == sel_man) {
+                //map->center(this);
+                map->sel_lev = z;
+            }
+
+            calc_visible_cells();
+
+            curway++;
+            if (curway >= waylen) {
+                move_dir = dir;
+                finish_march(ISLOCAL);
+            } else {
+                if (time_reserve(walktime(way[curway]), ISLOCAL) != OK)
+                    finish_march(ISLOCAL);
+                else
+                    move_dir = way[curway];
+                    if( way[curway] < 8)
+                        dir = way[curway];
+            }
+            return 1;
+        }
+
+
         if ((phase == 3 || phase == 7) && map->visible(z, x, y)) {
             // Make some step sounds (twice per movement from one cell to another)
             switch (md.SkinType) {
@@ -1011,8 +1042,11 @@ int Soldier::move(int ISLOCAL)
                 } else {
                     if (time_reserve(walktime(way[curway]), ISLOCAL) != OK)
                         finish_march(ISLOCAL);
-                    else
-                        dir = way[curway];
+                    else {
+                        move_dir = way[curway];
+                        if( way[curway] < 8)
+                            dir = way[curway];
+                    }
                 }
             }
         }
@@ -1033,7 +1067,8 @@ int Soldier::move(int ISLOCAL)
         m_reaction_chances = reaction_chances;
 
         if (curway != -1) {
-            if (dir == way[curway]) {
+            move_dir = way[curway];
+            if (dir == way[curway] || way[curway] >= DIR_NULL) {
                 if (waylen == 0) {
                     curway = -1;
                 } else {
