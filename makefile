@@ -1,12 +1,36 @@
+#
+# HAVE_ defines.
+#
+# unix-like systems (tested on: RedHat 8, FreeBSD 4.6RC).
+
+CONFIG= -DLINUX -DHAVE_VSNPRINTF -DHAVE_ARPA_INET_H 
+
+# windoze (tested on: MinGW 2.0)
+
+# CONFIG= -DWIN32 
+
+# optimization (uncomment only one)
+# release options:
+#OPTCFLAGS=-O -mcpu=i686 -fomit-frame-pointer
+#OPTLDFLAGS=-s
+#ALLEGINC=${shell allegro-config --cflags}
+#ALLEGLIB=${shell allegro-config --libs}
+
+#debug options:
+OPTCFLAGS=-ggdb -Wall -Werror
+OPTLDFLAGS=-ggdb
+ALLEGINC=${shell allegro-config --cflags debug}
+ALLEGLIB=${shell allegro-config --libs --static debug}
+
+# Any non-standard locations of libraries get here. (i.e. expat)
+#EXTRAINC=-I/usr/local/include
+#EXTRALIB=-L/usr/local/lib
+
 CC = g++
 LD = g++
-CFLAGS = -funsigned-char -Wall
-CFLAGS += -pipe -DLINUX
-CFLAGS += -O -mcpu=i686 -s -fomit-frame-pointer
-#CFLAGS += -ggdb
-INCLUDES = ${shell allegro-config --cflags}
-CFLAGS += $(INCLUDES)
-LIBS = -lexpat $(addprefix -l,$(LIBRARIES)) ${shell allegro-config --libs }
+CFLAGS = -funsigned-char -pipe $(CONFIG)
+CFLAGS += $(OPTCFLAGS) $(ALLEGINC) $(EXTRAINC)
+LIBS = $(OPTLDFLAGS) $(ALLEGLIB) $(EXTRALIB) -lexpat -ljpgal
 
 SRCS = about.cpp bullet.cpp cell.cpp config.cpp connect.cpp dirty.cpp \
        editor.cpp explo.cpp font.cpp icon.cpp inventory.cpp item.cpp  \
@@ -14,10 +38,10 @@ SRCS = about.cpp bullet.cpp cell.cpp config.cpp connect.cpp dirty.cpp \
        multiplay.cpp netsock.cpp packet.cpp pck.cpp place.cpp         \
        platoon.cpp soldier.cpp sound.cpp spk.cpp terrapck.cpp         \
        units.cpp video.cpp wind.cpp word.cpp crc32.cpp persist.cpp    \
-       jpeg.cpp pfxopen.cpp minimap.cpp
+       pfxopen.cpp minimap.cpp
 
-OBJS = $(addprefix obj/,$(SRCS:.cpp=.o))
-DEPS = $(addprefix obj/,$(SRCS:.cpp=.d))
+OBJS = ${addprefix obj/,$(SRCS:.cpp=.o)}
+DEPS = ${addprefix obj/,$(SRCS:.cpp=.d)}
 
 NAME = ufo2000
 

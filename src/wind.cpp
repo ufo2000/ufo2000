@@ -27,7 +27,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 ConsoleStatusLine::ConsoleStatusLine(int width, FONT *font, int color)
 {
-	m_width = width; 
+	m_width = width;
 	m_height = text_height(font);
 	m_font = font;
 	m_need_redraw = true;
@@ -41,7 +41,7 @@ ConsoleStatusLine::~ConsoleStatusLine()
 /**
  * Function that erases last entered character from internal buffer
  *
- * @return true if character was really removed, 
+ * @return true if character was really removed,
  *         false if there was no text in the internal buffer
  */
 bool ConsoleStatusLine::backspace()
@@ -73,7 +73,7 @@ void ConsoleStatusLine::redraw_fast(BITMAP *bmp, int x, int y)
 	if (m_need_redraw) redraw_full(bmp, x, y);
 }
 
-/** 
+/**
  * Function that processes keyboard input for the status line
  *
  * @param keycode allegro key code obtained by readkey() function
@@ -120,8 +120,8 @@ void ConsoleWindow::redraw_full(BITMAP *bmp, int x, int y)
 	int lines_to_show = (m_height - m_status_line->get_height()) / text_height(m_font);
 	for (int i = m_lines_text.size() - 1, j = 1; i >= 0 && j <= lines_to_show; i--, j++) {
 		text_mode(-1);
-		textout(temp_bmp, m_font, m_lines_text[i].c_str(), 0, 
-			m_height - m_status_line->get_height() - j * text_height(m_font), 
+		textout(temp_bmp, m_font, m_lines_text[i].c_str(), 0,
+			m_height - m_status_line->get_height() - j * text_height(m_font),
 			m_lines_color[i]);
 	}
 	m_status_line->redraw_full(temp_bmp, 0, m_height - m_status_line->get_height());
@@ -166,17 +166,25 @@ void ConsoleWindow::print(const char *text, int color)
 	}
 }
 
-void ConsoleWindow::vprintf(int color, const char *fmt, va_list arglist)
+void ConsoleWindow::vprintf(int color, const char *format, va_list arglist)
 {
+    int stringsize = 4096;
+    char *bigbuf;
+
 #ifdef HAVE_VSNPRINTF
-	std::vector<char> buffer(1024);
-	while (vsnprintf(&buffer[0], buffer.size(), fmt, arglist) < 0)
-		buffer.resize(buffer.size() * 2);
+    static char smallbuf[4];
+	stringsize = vsnprintf(smallbuf, sizeof(smallbuf), format, arglist);
+    if (stringsize < 0)  /* Pre-glibc 2.1 behaviour */
+        stringsize = 4096;
+    bigbuf = new char[stringsize];
+    vsnprintf(bigbuf, stringsize, format, arglist);
 #else
-	std::vector<char> buffer(1024); // Hope, this will be enough
-	vsprintf(&buffer[0], fmt, arglist);
+	bigbuf = new char[stringsize];
+	vsprintf(bigbuf, format, arglist); //WILL break if exceeds 4K.
 #endif
-	print(&buffer[0], color);
+	print(bigbuf, color);
+
+    delete[] bigbuf;
 }
 
 void ConsoleWindow::printf(int color, const char *fmt, ...)
@@ -244,12 +252,12 @@ Wind::Wind(BITMAP *_backscr, int x1, int y1, int x2, int y2, int col, FONT *f)
 	} else {
 		m_font = font;
 	}
-	
+
 	m_backscr = _backscr;
 	m_x = x1; m_y = y1;
 	m_w = x2 - x1; m_h = y2 - y1;
 	m_screen = create_bitmap(m_w, m_h); clear(m_screen);
-	m_charh = text_height(m_font); 
+	m_charh = text_height(m_font);
 	m_charw = text_length(m_font, "m"); //FIXME: we don't actually need to know this, do we?
 
 	m_scrw = m_w / m_charw; m_scrh = m_h / m_charh;
@@ -281,10 +289,10 @@ Wind::~Wind()
 	destroy_bitmap(m_screen);
 }
 
-void Wind::setfont(FONT *f) 
+void Wind::setfont(FONT *f)
 {
 	m_font = (f == NULL) ? font : f;
-}	
+}
 
 void Wind::redraw()
 {

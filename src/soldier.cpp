@@ -33,7 +33,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "explo.h"
 #include "config.h"
 
-SKIN_INFO g_skins[] = 
+SKIN_INFO g_skins[] =
 {
 	{ "male",    S_XCOM_0,  0 },
 	{ "female",  S_XCOM_0,  1 },
@@ -413,7 +413,7 @@ void Soldier::process_MANDATA()
 		md.Firing    = 50;
 		md.Throwing  = 50;
 	}
-	
+
 	strcpy(ud.Name, md.Name);
 	ud.MaxTU = md.TimeUnits;
 	ud.MaxHealth = md.Health;
@@ -895,7 +895,7 @@ void Soldier::calc_visible_cells()
 	}
 }
 
-int Soldier::move(int ISLOCAL) 
+int Soldier::move(int ISLOCAL)
 {
 	if ((z > 0) && map->mcd(z, x, y, 0)->No_Floor) {
 		if (!map->isStairs(z - 1, x, y)) {
@@ -937,7 +937,7 @@ int Soldier::move(int ISLOCAL)
 	}
 
 	if (m_state == MARCH) {
-		if ((phase == 3 || phase == 7) && map->visible(z, x, y)) 
+		if ((phase == 3 || phase == 7) && map->visible(z, x, y))
             soundSystem::getInstance()->play(SS_STEP_HUMAN, 128);
 		phase++;
 
@@ -1035,7 +1035,7 @@ void Soldier::wayto(int dest_lev, int dest_col, int dest_row)
 
 void Soldier::finish_march(int ISLOCAL)
 {
-	if (m_state != DIE)	
+	if (m_state != DIE)
 		m_state = STAND;
 	curway = -1;
 	waylen = 0;
@@ -1426,7 +1426,7 @@ int Soldier::FAccuracy(int peraccur, int TWOHAND)
 	double weapon_delta = 1. / (double)(peraccur * peraccur);
 	double soldier_delta = 1. / (double)(ac * ac);
 
-	return sqrt(2. / (weapon_delta + soldier_delta));
+	return static_cast<int>(sqrt(2. / (weapon_delta + soldier_delta)));
 }
 
 int Soldier::TAccuracy(int peraccur)

@@ -29,13 +29,15 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <winalleg.h>
 #endif
 
+#include <stdarg.h>
+
 #include "global.h"
 #include "dirty.h"
 #include "keys.h"
 #include "font.h"
 
 /**
- * Base class for objects that are displayed on screen with dirty rectangles 
+ * Base class for objects that are displayed on screen with dirty rectangles
  * support
  */
 class VisualObject
@@ -99,7 +101,7 @@ public:
 };
 
 /**
- * Visual object for rectangular area with chat console. It provides 
+ * Visual object for rectangular area with chat console. It provides
  * log window for previous text messages and also incorporates status
  * line for editing new text.
  */
@@ -118,10 +120,25 @@ public:
 	void redraw_fast(BITMAP *bmp, int x, int y);
 
 	void print(const char *text, int color = xcom1_color(48));
-
-	void vprintf(int color, const char *fmt, va_list arglist);
-	void printf(int color, const char *fmt, ...);
-	void printf(const char *fmt, ...);
+/*
+gcc undocumented feature: 'this' pointer is counted in the
+__attribute__ __format__ for non-static member functions.
+*/
+	void vprintf(int color, const char *fmt, va_list arglist)
+#if defined(__GNUC__)
+        __attribute__((__format__(__printf__,3,0)))
+#endif
+    ;
+	void printf(int color, const char *fmt, ...)
+#if defined(__GNUC__)
+        __attribute__((__format__(__printf__,3,4)))
+#endif
+    ;
+	void printf(const char *fmt, ...)
+#if defined(__GNUC__)
+        __attribute__((__format__(__printf__,2,3)))
+#endif
+    ;
 
 	bool process_keyboard_input(int keycode, int scancode);
 
@@ -159,7 +176,7 @@ class Wind
 	void scroll();
 
 	void info(int _x, int _y);
-	
+
 	void setfont(FONT *f);
 
 public:

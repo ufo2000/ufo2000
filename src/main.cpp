@@ -271,7 +271,7 @@ void print(const char *str)
 class consoleBuf : public std::streambuf {
     std::string curline;
     bool doCout;
-  
+
 protected:
     virtual int overflow(int c) {
         if (doCout)
@@ -293,7 +293,7 @@ protected:
         } else {
             curline += static_cast<char>(c);
         }
-        
+
         return c;
     }
 public:
@@ -338,7 +338,7 @@ void check_data_files()
 
 void initmain(int argc, char *argv[])
 {
-    
+
 	srand(time(NULL));
 	set_uformat(U_UTF8);
 	allegro_init();
@@ -422,17 +422,17 @@ void initmain(int argc, char *argv[])
 	set_palette(black_palette);
 
 	PALETTE pal;
-	BITMAP *text_back = load_memory_jpg(datafile[DAT_TEXT_BACK_JPG].dat, pal);
+	BITMAP *text_back = load_memory_jpg(datafile[DAT_TEXT_BACK_JPG].dat, datafile[DAT_TEXT_BACK_JPG].size, pal);
 
 	stretch_blit(text_back, screen, 0, 0, text_back->w, text_back->h, 0, 0, screen->w, screen->h);
     fade_from(black_palette, pal, (64 - FADE_SPEED)/3 + FADE_SPEED);
 
 	print_win = new Wind(text_back, 15, 300, 625, 390, 255);
-    
+
     /* to use the init console as an ostream -very handy. */
     consoleBuf consbuf(FLAGS & F_LOGTOSTDOUT);
     std::ostream console(&consbuf);
-    
+
 	console<<"allegro_init"<<std::endl;
 
 	console<<"loadini"<<std::endl;
@@ -451,7 +451,7 @@ void initmain(int argc, char *argv[])
         std::ifstream smap("soundmap.xml");
         if (smap) {
             xml<<smap.rdbuf();
-            
+
             if (FLAGS & F_SOUNDCHECK) {
                 if (0 == ss->initialize(xml.str(), &console, true)) {
                     console<<"  Soundcheck in progress..."<<std::endl;
@@ -469,7 +469,7 @@ void initmain(int argc, char *argv[])
     }
 	console<<"initvideo"<<std::endl;
 	initvideo();
-    
+
 	console<<"initmainmenu"<<std::endl;
 	initmainmenu();
 
@@ -483,13 +483,13 @@ void initmain(int argc, char *argv[])
 
 	console<<"initpck units"<<std::endl;
 	Soldier::initpck();
-    
+
 	console<<"initpck terrain"<<std::endl;
 	Map::initpck();
-    
+
 	console<<"init obdata"<<std::endl;
 	Item::initobdata();
-    
+
 	console<<"init bigobs"<<std::endl;
 	Item::initbigobs();
 
@@ -505,22 +505,22 @@ void initmain(int argc, char *argv[])
 
 	console<<"new icon"<<std::endl;
 	icon = new Icon((SCREEN2W - 320) / 2, SCREEN2H - 56);
-    
+
 	console<<"new inventory"<<std::endl;
 	inventory = new Inventory();
-    
+
 	console<<"new about"<<std::endl;
 	about = new About();
-    
+
 	console<<"new editor"<<std::endl;
 	editor = new Editor();
-    
+
 	console<<"new net"<<std::endl;
 	net = new Net();
-    
+
 	console<<"new terrain_set"<<std::endl;
 	terrain_set = new TerrainSet();
-    
+
 	mouse_callback = mouser_proc;
 	//keyboard_callback = keyboard_proc;
 
@@ -663,9 +663,9 @@ void next_turn(int crc)
 
 	elist->step(crc);
 	g_console->printf(
-		xcom1_color(192), 
+		xcom1_color(192),
 		"Next turn. local = %d, remote = %d soldiers",
-		platoon_local->num_of_men(), 
+		platoon_local->num_of_men(),
 		platoon_remote->num_of_men());
 }
 
@@ -803,7 +803,7 @@ bool loadgame(const char *filename)
 	return true;
 }
 
-/** 
+/**
  * Main loop of the tactical part of the game
  */
 void gameloop()
@@ -823,7 +823,7 @@ void gameloop()
 	}
 
 	while (!DONE) {
-	
+
 		if (MODE != WATCH && g_time_left == 0) {
 			TARGET = 0;
 			if (platoon_local->nomoves()) {

@@ -345,7 +345,7 @@ int Connect::do_chat()
 
 		if (keypressed()) {
 			int scancode;
-			int keycode = ureadkey(&scancode);
+			ureadkey(&scancode);
 
 			switch (scancode) {
 				case KEY_F4:
