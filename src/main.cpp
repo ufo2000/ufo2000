@@ -1573,7 +1573,21 @@ int main(int argc, char *argv[])
 
 	if (FLAGS & F_FASTSTART) {
 		faststart();
+	} else if (argc >= 3) {
+		// skybuck: connect directly to game server if 4 command line arguments
+		// actually just 3. (the 4th is the executable file path+name in argv[0]
+
+		// try to auto login ;)
+		g_server_autologin = 1;
+
+		// skybuck: ufo2000 will automatically use argv[1] and argv[2] as
+		// login name and password
+		// only thing remaining to be done is send a auto challenge etc...
+		// or simple start the game with the player...
+		// but just logging in and skipping everything would be already good enough :D
+		connect_internet_server();
 	} else {
+		// skybuck: otherwise just start/show main menu
         int mm = 2, h = -1;
         while ((mm = do_mainmenu()) != MAINMENU_QUIT) {
             h = -1;
