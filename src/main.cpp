@@ -1194,7 +1194,7 @@ int main(int argc, char *argv[])
 			case MAINMENU_TCPIP:
 				h = setsocketplay();
 				break;
-#ifdef WIN32
+#ifdef HAVE_DPLAY
 			case MAINMENU_DPLAY:
 				h = setdplayplay();
 				break;
