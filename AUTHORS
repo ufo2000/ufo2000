@@ -14,7 +14,7 @@ Programming:
       * Reaction fire
       * Strength and energy statistics
       * Different armor types support
-      * Support for many new weapons including small launcer (stunning)
+      * Support for many new weapons including small launcher (stunning)
       * End of game screen and statistics
 
    Alexander Sabourenkov aka lxnt
@@ -136,18 +136,20 @@ Other:
       * UFO2000 Pager (win32-program that notifies when other players
         log on to ufo2000 game server)
 		
-===============================================================================		
-== Many thanks to the authors of the following libraries used in UFO2000
+===============================================================================
+== Many thanks to the authors of the following libraries that are used in
+== UFO2000 now or have been used in the past
 ===============================================================================
 
-   Allegro
-   Lua
-   HawkNL
-   DUMB
-   Ogg Vorbis
-   AGUP
-   JPGAlleg
-   LuaPlus
-   CommonC++
+   Allegro    (http://www.talula.demon.co.uk/allegro/)
+   AGUP       (http://agup.sf.net)
+   CommonC++  (http://cplusplus.sourceforge.net/)
+   DUMB       (http://dumb.sf.net)
+   Expat      (http://expat.sourceforge.net/)
+   HawkNL     (http://www.hawksoft.com/hawknl/)
+   JPGAlleg   (http://www.ecplusplus.com/index.php?page=projects&pid=1)
+   Lua        (http://www.lua.org/)
+   LuaPlus    (http://wwhiz.com/LuaPlus/)
+   Ogg Vorbis (http://www.vorbis.org/)
 
 ==============================================================================

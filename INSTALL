@@ -81,6 +81,10 @@ available in this case.
 
      ftp://ftp.microprose.com/pub/mps-online/demos/terror.zip
 
+   Please note that data files from TFTD are optional and only add support 
+   for some extra maps to the game. Data files from X-COM are required and
+   you can't start the game without them.
+
 --- Linux/Unix ---
 
 1) Check if you have all the needed libraries installed and install them
@@ -129,6 +133,10 @@ available in this case.
 
      ftp://ftp.microprose.com/pub/mps-online/demos/terror.zip
 
+   Please note that data files from TFTD are optional and only add support 
+   for some extra maps to the game. Data files from X-COM are required and
+   you can't start the game without them.
+
 --- Gentoo Linux ---
 
 There is ufo2000 ebuild available which makes installation of the game 
@@ -147,8 +155,12 @@ types and use more different units.
 You can get the latest source snapshot from the source repository 
   http://lxnt.info:8888/repos/ufo2k/trunk/
 
-You will need Subversion 0.31.0+ client. Look at
+You will need Subversion 1.0+ client. Look at
   http://subversion.tigris.org/
 
 You can also check out any release from the tags directory at
   http://lxnt.info:8888/repos/ufo2k/tags/
+
+Also if you would like to know more about taking part in the development
+of the game, you are suggested to read HACKING file which is located in the
+UFO2000 directory (or here: http://lxnt.info:8888/repos/ufo2k/trunk/HACKING).

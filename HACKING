@@ -1,0 +1,118 @@
+==============================================================================
+== This file is a guide for new UFO2000 developers.
+==============================================================================
+
+Note: This file is still not complete and some things still can be changed
+in the future. You can ask questions and discuss it in ufo2000 mailing list
+(http://lxnt.info/mailman/listinfo/ufo2000) and also suggest what you would 
+like to see changed or updated here.
+
+==============================================================================
+== Sources formatting style
+==============================================================================
+
+Most important rules:
+* Indentation is 4 spaces
+* K&R braces style (see http://en.wikipedia.org/wiki/Indent_style)
+
+The other issue that always comes up in C styling is the placement of braces. 
+Unlike the indent size, there are few technical reasons to choose one placement 
+strategy over the other, but the preferred way, as shown to us by the prophets 
+Kernighan and Ritchie, is to put the opening brace last on the line, and put 
+the closing brace first, thusly:
+
+    if (x is true) {
+        we do y
+    }
+
+However, there is one special case, namely functions: they have the opening 
+brace at the beginning of the next line, thus:
+
+    int function(int x)
+    {
+        body of function
+    }
+
+Heretic people all over the world have claimed that this inconsistency is ... 
+well ... inconsistent, but all right-thinking people know that (a) K&R are 
+right and (b) K&R are right. Besides, functions are special anyway (you can't 
+nest them in C).
+
+Note that the closing brace is empty on a line of its own, except in the cases 
+where it is followed by a continuation of the same statement, ie a "while" in 
+a do-statement or an "else" in an if-statement, like this:
+
+    do {
+        body of do-loop
+    } while (condition);
+
+and
+
+    if (x == y) {
+        ..
+    } else if (x > y) {
+        ...
+    } else {
+        ....
+    }
+
+Switch statement example:
+
+    switch (x) {
+        case 1:
+            ..
+            break;
+        case 2:
+            ...
+            break;
+        default:
+            ....
+            break;
+    }
+
+It is also currently recommended to add 'g_' prefix to global variables 
+and 'm_' to class member fields. Class names should have first uppercase
+letter, function and variable names should begin with a lowercase letter. 
+Constants should be all uppercase. The use of #ifdef's should be avoided
+if possible.
+
+The sources should have doxygen style comments describing arguments
+and return values for different functions (doxygen home page is 
+here: http://www.doxygen.org).
+
+Note: not all the UFO2000 sources are formatted as described here, this
+is a guide for writing new code and fixing old code when refactoring.
+
+==============================================================================
+== Commit access
+==============================================================================
+
+How commit access is granted:
+
+After someone has successfully contributed a few non-trivial patches,
+some full committer, usually whoever has reviewed and applied the most
+patches from that contributor, proposes them for commit access.  This
+proposal is sent only to the other full committers -- the ensuing
+discussion is private, so that everyone can feel comfortable speaking
+their minds.  Assuming there are no objections, the contributor is
+granted commit access.  The decision is made by consensus; there are
+no formal rules governing the procedure, though generally if someone
+strongly objects the access is not offered, or is offered on a
+provisional basis.
+
+The criteria for commit access are that the person's patches adhere to
+the guidelines in this file, adhere to all the usual unquantifiable
+rules of coding (code should be readable, robust, maintainable, etc),
+and that the person respects the "Hippocratic Principle": first, do no
+harm.  In other words, what is significant is not the size or quantity
+of patches submitted, but the degree of care shown in avoiding bugs
+and minimizing unnecessary impact on the rest of the code.  Many full
+committers are people who have not made major code contributions, but
+rather lots of small, clean fixes, each of which was an unambiguous
+improvement to the code.
+
+==============================================================================
+
+This document "borrows" a lot of text from:
+* http://pantransit.reptiles.org/prog/CodingStyle.html
+* http://svn.collab.net/repos/svn/trunk/HACKING
