@@ -72,6 +72,8 @@ struct OBDATA
 
 enum Action { NONE, THROW, PRIME, SNAPSHOT, AIMEDSHOT, AUTOSHOT, PUNCH, AIMEDTHROW };
 
+class Place;
+
 class Item: public persist::BaseObject
 {
 	DECLARE_PERSISTENCE(Item);
@@ -80,13 +82,14 @@ public:
 	static OBDATA *obdata;
 
 private:
-	int  type;
-	int  x, y;
-	Item *next, *prev;
+	int  m_type;
+	int  m_x, m_y;
+	Item *m_next, *m_prev;
+	Place *m_place;
 
-	int  rounds;
+	int  m_rounds;
 	int  m_delay_time;
-	Item *ammo;
+	Item *m_ammo;
 
 public:
 	static void initobdata();
@@ -100,9 +103,9 @@ public:
 	virtual ~Item();
 
 	static int health_max(int _type);
-	int health_max() { return health_max(type); }
+	int health_max() { return health_max(m_type); }
 	static int is_laser(int _type);
-	int is_laser() { return is_laser(type); };
+	int is_laser() { return is_laser(m_type); };
 	int is_grenade();
 	int is_cold_weapon();
 	int is_knife();
@@ -117,20 +120,20 @@ public:
 
 	int inside(int _x, int _y);
 
-	OBDATA *data() { return &obdata[type]; }
-	Item *clip() { return ammo; }
-	int cliptype() { return ammo->type; }
-	int roundsremain() { return ammo->rounds; }
-	void setpos(int _x, int _y) { x = _x; y = _y; }
-	int explo_range() { return explo_range(type); }
+	OBDATA *data() { return &obdata[m_type]; }
+	Item *clip() { return m_ammo; }
+	int cliptype() { return m_ammo->m_type; }
+	int roundsremain() { return m_ammo->m_rounds; }
+	void setpos(int _x, int _y) { m_x = _x; m_y = _y; }
+	int explo_range() { return explo_range(m_type); }
 	void set_delay_time(int dt) { m_delay_time = dt; }
 	int delay_time() { return m_delay_time; }
 	int is_explo();
 
 	void od_info(int gx, int gy, int gcol)
 	{
-		assert((type >= 0) && (type < obdata_num));
-		od_info(type, gx, gy, gcol);
+		assert((m_type >= 0) && (m_type < obdata_num));
+		od_info(m_type, gx, gy, gcol);
 	}
 
 	friend class Place;
@@ -246,7 +249,7 @@ struct Target
 
 inline int Item::is_explo() 
 {
-	return (type == HIGH_EXPLOSIVE);
+	return (m_type == HIGH_EXPLOSIVE);
 }
 
 #endif

@@ -133,7 +133,7 @@ void Bullet::aimedthrow(int _z0, int _x0, int _y0, REAL _fi, REAL _te, Item *_it
 	z0 = _z0; x0 = _x0; y0 = _y0;
 	/*ro = _ro;*/ fi =      _fi;      te =      _te;
 	item = _item;
-	type = item->type;
+	type = item->m_type;
 
 	i = 7;
 	move();

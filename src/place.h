@@ -28,6 +28,8 @@ class Place: public persist::BaseObject
 {
 	DECLARE_PERSISTENCE(Place);
 private:
+	friend class Item;
+
 	int gx, gy;
 
 	int width, height;

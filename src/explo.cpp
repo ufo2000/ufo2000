@@ -95,7 +95,8 @@ int Explosive::on_hand(Item *it)
 	return ((iplace == P_ARM_RIGHT) || (iplace == P_ARM_LEFT));
 }
 
-void Explosive::step(int crc) { // -1 if local
+void Explosive::step(int crc)
+{ // -1 if local
 	for(int i=0;i<EXPLOITEMS;i++)
 		if (item[i] != NULL) {
 			if (!item[i]->is_explo()) {// small grenade
@@ -106,7 +107,7 @@ void Explosive::step(int crc) { // -1 if local
 			delaytime[i]--;
 			item[i]->set_delay_time(delaytime[i]);
 
-			if ((delaytime[i] <= 0)&&(item[i]->type!=PROXIMITY_GRENADE)) {
+			if ((delaytime[i] <= 0) && (item[i]->m_type != PROXIMITY_GRENADE)) {
 				if (crc == -1)
 					detonate(item[i]);
 				else
@@ -116,10 +117,11 @@ void Explosive::step(int crc) { // -1 if local
 }
 
 
-void Explosive::check_for_detonation(Item *it) {
+void Explosive::check_for_detonation(Item *it)
+{
 	for(int i=0;i<EXPLOITEMS;i++)
 		if (item[i] == it) {
-			if ((delaytime[i] == 1)&&(item[i]->type!=PROXIMITY_GRENADE))
+			if ((delaytime[i] == 1) && (item[i]->m_type != PROXIMITY_GRENADE))
 				detonate(it);
 			return;
 		}
@@ -141,7 +143,7 @@ int Explosive::detonate(Item *it)
 	iplace = map->find_place_num(ip, lev, col, row);
 	assert(iplace != -1);
 
-	type = it->type;
+	type = it->m_type;
 	damage = it->data()->damage;
 	range = it->explo_range();
 
@@ -149,7 +151,7 @@ int Explosive::detonate(Item *it)
 //	remote player, but remote player's soldier steps on proximity mine during
 //	his movement)
 	if (type != PROXIMITY_GRENADE)
-		net->send_detonate_item(lev, col, row, iplace, it->x, it->y);
+		net->send_detonate_item(lev, col, row, iplace, it->m_x, it->m_y);
 
 	remove(it);
 	int v = ip->destroy(it);

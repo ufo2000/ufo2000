@@ -1593,7 +1593,7 @@ void Soldier::try_shoot()
 	}
 
 	if (!target.item->is_laser() && !target.item->is_cold_weapon() &&
-	        ((target.item->ammo == NULL) || (target.item->ammo->rounds < FIRE_num + 1))) {
+	        ((target.item->m_ammo == NULL) || (target.item->m_ammo->m_rounds < FIRE_num + 1))) {
 		TARGET = 0;
 	}
 
@@ -1677,7 +1677,7 @@ int Soldier::punch(int z0, int x0, int y0, REAL fi, REAL te, int iplace, int req
 	if (it == NULL)
 		return 0;
 
-	m_bullet->punch(z0, x0, y0, fi, te, it->type);
+	m_bullet->punch(z0, x0, y0, fi, te, it->m_type);
 	net->send_punch(NID, z0, x0, y0, fi, te, iplace, req_time);
 	return 1;
 }
@@ -1727,7 +1727,7 @@ int Soldier::beam(int z0, int x0, int y0, REAL fi, REAL te, int iplace, int req_
 	if (it == NULL)
 		return 0;
 
-	m_bullet->beam(z0, x0, y0, fi, te, it->type);
+	m_bullet->beam(z0, x0, y0, fi, te, it->m_type);
 	net->send_beam(NID, z0, x0, y0, fi, te, iplace, req_time);
 	return 1;
 }

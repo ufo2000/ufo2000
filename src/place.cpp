@@ -50,7 +50,7 @@ Place::~Place()
 {
 	Item *t1 = m_item, *t2 = NULL;
 	while (t1 != NULL) {
-		t2 = t1->next;
+		t2 = t1->m_next;
 		delete t1;
 		t1 = t2;
 	}
@@ -83,7 +83,7 @@ Item *Place::item_under_mouse()
 		while (t != NULL) {
 			if (t->inside(xx, yy))
 				return t;
-			t = t->next;
+			t = t->m_next;
 		}
 	}
 	return NULL;
@@ -91,12 +91,12 @@ Item *Place::item_under_mouse()
 
 Item *Place::item(int ix, int iy)
 {
-	Item * t = m_item;
+	Item *t = m_item;
 	while (t != NULL) {
-		if ((ix == t->x) && (iy == t->y)) {
+		if ((ix == t->m_x) && (iy == t->m_y)) {
 			return t;
 		}
-		t = t->next;
+		t = t->m_next;
 	}
 	return NULL;
 }
@@ -109,7 +109,7 @@ int Place::isfree(int xx, int yy)
 			while (t != NULL) {
 				if (t->inside(xx, yy))
 					return 0;
-				t = t->next;
+				t = t->m_next;
 				//if (t==m_item) return 0;
 			}
 			return 1;
@@ -137,19 +137,14 @@ int Place::isfit(Item * it, int xx, int yy)
 
 int Place::put(Item * it, int xx, int yy)
 {
-	if (m_item == NULL) {
-		m_item = it;
-		it->setpos(xx, yy);
-	} else if (isfree(xx, yy) && isfit(it, xx, yy)) {
-		m_item->prev = it;
-		it->next = m_item; it->prev = NULL;
+	if (isfree(xx, yy) && isfit(it, xx, yy)) {
+		if (m_item != NULL) m_item->m_prev = it;
+		it->m_next = m_item; it->m_prev = NULL; it->m_place = this;
 		it->setpos(xx, yy);
 		m_item = it;
-	} else {
-		return 0;
+		return 1;
 	}
-
-	return 1;
+	return 0;
 }
 
 int Place::put(Item * it)
@@ -171,29 +166,25 @@ Item * Place::get(int xx, int yy)
 	t = m_item;
 	while (t != NULL) {
 		if (ishand() || t->inside(xx, yy)) {
-			if (t == m_item)
-				m_item = t->next;
 			t->unlink();
 			return t;
 		}
-		t = t->next;
+		t = t->m_next;
 	}
 	return NULL;
 }
 
-int Place::destroy(Item * it)
+int Place::destroy(Item *it)
 {
 	Item * t;
 	t = m_item;
 	while (t != NULL) {
 		if (t == it) {
-			if (t == m_item)
-				m_item = t->next;
 			t->unlink();
 			delete it;
 			return 1;
 		}
-		t = t->next;
+		t = t->m_next;
 	}
 	return 0;
 }
@@ -243,7 +234,7 @@ void Place::draw(int gx, int gy)
 		if (t->data()->importance > gt->data()->importance) {
 			gt = t;
 		}
-		t = t->next;
+		t = t->m_next;
 	}
 
 	map->drawitem(gt->data()->pMap, gx, gy);
@@ -294,11 +285,11 @@ void Place::drawgrid(int PLACE_NUM)
 		rect(screen2, gx, gy, gx + width * 16, gy + height * 15, xcom1_color(8));
 	}
 
-	Item * t = m_item;
+	Item *t = m_item;
 	while (t != NULL) {
-		if ((t->x >= viscol - 1) && (t->x < viscol + 20)) {
-			int x = gx + (t->x - viscol) * 16;
-			int y = gy + t->y * 15 + 5;
+		if ((t->m_x >= viscol - 1) && (t->m_x < viscol + 20)) {
+			int x = gx + (t->m_x - viscol) * 16;
+			int y = gy + t->m_y * 15 + 5;
 
 			if (ishand()) {
 				int it_width = t->data()->width;
@@ -315,17 +306,17 @@ void Place::drawgrid(int PLACE_NUM)
 				t->draw_health(0, x + 1, y - 4);
 			}
 		}
-		t = t->next;
+		t = t->m_next;
 	}
 }
 
 void Place::dropall(int lev, int col, int row)
 {
-	Item * t = m_item;
+	Item *t = m_item;
 	while (t != NULL) {
 		//text_mode(0);
 		//textprintf(screen, font, 1, 150, 1, "x=%d y=%d t=%2x p=%4s n=%1s   ", t->x, t->y, t->type, t->prev, t->next);
-		Item * tn = t->next;
+		Item *tn = t->m_next;
 		map->place(lev, col, row)->put(t);
 		//textprintf(screen, font, 1, 160, 1, "put t=%2x", t->type);
 		//textprintf(screen, font, 1, 170, 1, "x=%d y=%d t=%2x p=%4s n=%1s   ", t->x, t->y, t->type, t->prev, t->next);
@@ -334,15 +325,18 @@ void Place::dropall(int lev, int col, int row)
 	m_item = NULL;
 }
 
-int Place::isthere(Item * it)
+int Place::isthere(Item *it)
 {
-	Item * t;
+	Item *t;
 	t = m_item;
 	while (t != NULL) {
-		if (t == it)
+		if (t == it) {
+			assert(it->m_place == this);
 			return 1;
-		t = t->next;
+		}
+		t = t->m_next;
 	}
+	assert(it->m_place != this);
 	return 0;
 }
 
@@ -351,12 +345,12 @@ void Place::save_bin(char *fn)
 	char buf[3 * 1000];
 	int buf_size = 0;
 
-	Item * it = m_item;
+	Item *it = m_item;
 	while (it != NULL) {
-		buf[buf_size++] = it->type;
-		buf[buf_size++] = it->x;
-		buf[buf_size++] = it->y;
-		it = it->next;
+		buf[buf_size++] = it->m_type;
+		buf[buf_size++] = it->m_x;
+		buf[buf_size++] = it->m_y;
+		it = it->m_next;
 	}
 
 	int fh = OPEN_OWN(fn, O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
@@ -390,28 +384,28 @@ void Place::build_ITEMDATA(int ip, ITEMDATA * id) //don't save clip rounds
 	{
 		assert(id->num < 100);
 		id->place[id->num] = ip;
-		id->type[id->num] = it->type;
-		id->x[id->num] = it->x;
-		id->y[id->num] = it->y;
+		id->type[id->num] = it->m_type;
+		id->x[id->num] = it->m_x;
+		id->y[id->num] = it->m_y;
 		id->num++;
 		if (it->haveclip()) {
 			id->place[id->num] = 0xFF;
 			id->type[id->num] = it->cliptype();
 			id->num++;
 		}
-		it = it->next;
+		it = it->m_next;
 	}
 }
 
 void Place::build_items_stats(char *buf, int &len)
 {
-	Item * it = m_item;
+	Item *it = m_item;
 	while (it != NULL) {
-		buf[len++] = it->type;
+		buf[len++] = it->m_type;
 		if (it->haveclip()) {
 			buf[len++] = it->cliptype();
 		}
-		it = it->next;
+		it = it->m_next;
 	}
 }
 
@@ -426,13 +420,13 @@ int Place::save_items(char *fs, int _z, int _x, int _y, char *txt)
 
 	while (t != NULL) {
 		len += sprintf(txt + len, format, _z, _x, _y,
-		               t->type, t->x, t->y, t->rounds);
+		               t->m_type, t->m_x, t->m_y, t->m_rounds);
 
 		if (t->haveclip()) {
 			len += sprintf(txt + len, format, _z, _x, _y,
 			               t->cliptype(), -1, -1, t->roundsremain());
 		}
-		t = t->next;
+		t = t->m_next;
 	}
 	return len;
 }
@@ -444,13 +438,13 @@ int Place::eot_save(int ip, char *txt)
 
 	while (t != NULL) {
 		len += sprintf(txt + len, "ip=%d type=%d x=%d y=%d rounds=%d\r\n",
-		               ip, t->type, t->x, t->y, t->rounds);
+		               ip, t->m_type, t->m_x, t->m_y, t->m_rounds);
 		if (t->haveclip()) //////////////////////
 		{
 			len += sprintf(txt + len, "ip=%d type=%d x=%d y=%d rounds=%d\r\n",
 			               -1, t->cliptype(), -1, -1, t->roundsremain());
 		}
-		t = t->next;
+		t = t->m_next;
 	}
 	return len;
 }
@@ -460,7 +454,7 @@ void Place::destroy_all_items()
 	Item *t, *t2;
 	t = m_item;
 	while (t != NULL) {
-		t2 = t->next;
+		t2 = t->m_next;
 		delete t;
 		t = t2;
 	}
@@ -499,12 +493,12 @@ bool Place::check_mine()
 	Item *it = m_item;
 
 	while (it != NULL) {
-		if ((it->is_grenade()) && (it->type == PROXIMITY_GRENADE) && (it->delay_time() <= 0)) {
-			it->unlink();
+		if ((it->is_grenade()) && (it->m_type == PROXIMITY_GRENADE) && (it->delay_time() <= 0)) {
+//			it->unlink(); // $$$
 			elist->detonate(it);
 			return true;
 		}
-		it = it->next;
+		it = it->m_next;
 	}
 	return false;
 }

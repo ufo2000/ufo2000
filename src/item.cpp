@@ -198,52 +198,53 @@ void Item::od_info(int type, int gx, int gy, int gcol)
 
 Item::Item()
 {
-	type = 0;
-	x = 0; y = 0;
-	next = NULL; prev = NULL;
-	rounds = 0;
+	m_type = 0;
+	m_x = 0; m_y = 0;
+	m_next = NULL; m_prev = NULL; m_place = NULL;
+	m_rounds = 0;
 	m_delay_time = 0;
-	ammo = NULL;
+	m_ammo = NULL;
 
 	m_health = 100;
 }
 
 Item::Item(int _type)
 {
-	type = _type;
-	x = 0; y = 0;
-	next = NULL; prev = NULL;
-	rounds = data()->rounds;
+	m_type = _type;
+	m_x = 0; m_y = 0;
+	m_next = NULL; m_prev = NULL; m_place = NULL;
+	m_rounds = data()->rounds;
 	m_delay_time = 0;
-	ammo = NULL;
+	m_ammo = NULL;
 
 	m_health = health_max();
 }
 
 Item::~Item()
 {
-	if (ammo != NULL) {
-		assert(ammo->next == NULL);
-		assert(ammo->prev == NULL);
-		delete ammo;
+	if (m_ammo != NULL) {
+		assert(m_ammo->m_next == NULL);
+		assert(m_ammo->m_prev == NULL);
+		delete m_ammo;
 	}
 }
 
 void Item::unlink()
 {
-	if (prev != NULL) prev->next = next;
-	if (next != NULL) next->prev = prev;
-	prev = NULL; next = NULL;
+	if (m_prev != NULL) m_prev->m_next = m_next;
+	if (m_next != NULL) m_next->m_prev = m_prev;
+	if (m_place != NULL && m_place->m_item == this) m_place->m_item = m_next;
+	m_prev = NULL; m_next = NULL; m_place = NULL;
 }
 
 int Item::loadclip(Item *clip)
 {
 	assert(clip != NULL);
 	//if (data()->isGun && clip->data()->isAmmo) {
-	if ((ammo == NULL) &&
-	        (memchr(data()->ammo, clip->type, 3) != NULL)) {
+	if ((m_ammo == NULL) &&
+	        (memchr(data()->ammo, clip->m_type, 3) != NULL)) {
 		clip->unlink();
-		ammo = clip;
+		m_ammo = clip;
 		//textprintf(screen, font, 1, 150, 1, "ammo=%s", ammo); readkey();
 		return 1;
 	}
@@ -253,27 +254,27 @@ int Item::loadclip(Item *clip)
 
 Item *Item::unload()
 {
-	Item * t;
-	t = ammo;
-	ammo = NULL;
+	Item *t;
+	t = m_ammo;
+	m_ammo = NULL;
 	return t;
 }
 
 int Item::haveclip()
 {
-	if (ammo != NULL)
+	if (m_ammo != NULL)
 		return 1;
 	return 0;
 }
 
 void Item::shot()
 {
-	if (ammo->rounds > 0)
-		ammo->rounds--;
-	if (ammo->rounds == 0) {
-		if (ammo != NULL) {
-			delete ammo;
-			ammo = NULL;
+	if (m_ammo->m_rounds > 0)
+		m_ammo->m_rounds--;
+	if (m_ammo->m_rounds == 0) {
+		if (m_ammo != NULL) {
+			delete m_ammo;
+			m_ammo = NULL;
 		}
 	}
 }
@@ -283,7 +284,7 @@ int Item::is_grenade()
 	char grenades[6] = {GRENADE, SMOKE_GRENADE, PROXIMITY_GRENADE,
 	                    HIGH_EXPLOSIVE, ALIEN_GRENADE};
 
-	if (memchr(grenades, type, 5) != NULL)
+	if (memchr(grenades, m_type, 5) != NULL)
 		return 1;
 	return 0;
 }
@@ -297,14 +298,14 @@ int Item::is_laser(int type)
 
 int Item::is_cold_weapon()
 {
-	if ((type == KASTET) || (type == KNIFE))
+	if ((m_type == KASTET) || (m_type == KNIFE))
 		return 1;
 	return 0;
 }
 
 int Item::is_knife()
 {
-	if ((type == KNIFE))
+	if ((m_type == KNIFE))
 		return 1;
 	return 0;
 }
@@ -313,14 +314,14 @@ int Item::armourpierce()
 {
 	if (!data()->isGun)
 		return data()->damage;
-	if (ammo != NULL)
-		return ammo->data()->damage;
+	if (m_ammo != NULL)
+		return m_ammo->data()->damage;
 	return 0;
 }
 
 int Item::inside(int _x, int _y)
 {
-	if ((x <= _x) && (_x < x + data()->width) && (y <= _y) && (_y < y + data()->height))
+	if ((m_x <= _x) && (_x < m_x + data()->width) && (m_y <= _y) && (_y < m_y + data()->height))
 		return 1;
 	return 0;
 }
@@ -397,9 +398,10 @@ bool Item::Write(persist::Engine &archive) const
 {
 	PersistWriteBinary(archive, *this);
 
-	PersistWriteObject(archive, next);
-	PersistWriteObject(archive, prev);
-	PersistWriteObject(archive, ammo);
+	PersistWriteObject(archive, m_next);
+	PersistWriteObject(archive, m_prev);
+	PersistWriteObject(archive, m_place);
+	PersistWriteObject(archive, m_ammo);
 
 	return true;
 }
@@ -408,9 +410,10 @@ bool Item::Read(persist::Engine &archive)
 {
 	PersistReadBinary(archive, *this);
 
-	PersistReadObject(archive, next);
-	PersistReadObject(archive, prev);
-	PersistReadObject(archive, ammo);
+	PersistReadObject(archive, m_next);
+	PersistReadObject(archive, m_prev);
+	PersistReadObject(archive, m_place);
+	PersistReadObject(archive, m_ammo);
 
 	return true;
 }

@@ -238,7 +238,7 @@ void Editor::show(int NEXTPREV)
 					textout(screen2, g_small_font, "AMMO:", 272, 64, xcom1_color(66));
 					textout(screen2, g_small_font, "ROUNDS", 272, 72, xcom1_color(66));
 					textout(screen2, g_small_font, "LEFT=", 272, 80, xcom1_color(66));
-					textprintf(screen2, g_small_font, 299, 80, xcom1_color(18), "%d", sel_item->rounds);
+					textprintf(screen2, g_small_font, 299, 80, xcom1_color(18), "%d", sel_item->m_rounds);
 					rect(screen2, 272, 88, 303, 135, xcom1_color(8));      //clip
 					bigobs->showpck(sel_item->data()->pInv, 272, 88 + 8);
 				}
@@ -248,7 +248,7 @@ void Editor::show(int NEXTPREV)
 			} else {
 				Item *it = m_armoury->item_under_mouse();
 				if (it != NULL) {
-					if (memchr(weapon_in_use, it->type, sizeof(weapon_in_use)) != NULL)
+					if (memchr(weapon_in_use, it->m_type, sizeof(weapon_in_use)) != NULL)
 						it->od_info(330, 220, xcom1_color(5));
 					else
 						it->od_info(330, 220, xcom1_color(10));
@@ -309,11 +309,11 @@ void Editor::show(int NEXTPREV)
 				if (sel_item == NULL) {
 					sel_item = m_armoury->mselect();
 					if (sel_item != NULL) {
-						if (memchr(weapon_in_use, sel_item->type, sizeof(weapon_in_use)) != NULL) {
+						if (memchr(weapon_in_use, sel_item->m_type, sizeof(weapon_in_use)) != NULL) {
 							sel_item_place = 9;
-							dup_item = new Item(sel_item->type);      //!!!!!!!!!!!!
+							dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
 						} else {
-							m_armoury->put(sel_item, sel_item->x, sel_item->y);
+							m_armoury->put(sel_item, sel_item->m_x, sel_item->m_y);
 							sel_item = NULL;
 						}
 					}
@@ -322,7 +322,7 @@ void Editor::show(int NEXTPREV)
 				if (dup_item != NULL) {
 					for (i = 0; i < NUMBER_OF_PLACES; i++) {
 						if (man->place(i)->mdeselect(dup_item)) {
-							dup_item = new Item(sel_item->type);      //!!!!!!!!!!!!
+							dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
 							break;
 						}
 					}
@@ -344,7 +344,7 @@ void Editor::show(int NEXTPREV)
 						}
 					} else {
 						if (m_armoury->mdeselect(sel_item)) {
-							Item *del = m_armoury->get(sel_item->x, sel_item->y);
+							Item *del = m_armoury->get(sel_item->m_x, sel_item->m_y);
 							assert(del != NULL);
 							delete del;
 							sel_item = NULL;
@@ -361,11 +361,11 @@ void Editor::show(int NEXTPREV)
 			CHANGE = 1;
 			if (sel_item != NULL) {
 				if (sel_item_place == 9) {
-					m_armoury->put(sel_item, sel_item->x, sel_item->y);
+					m_armoury->put(sel_item, sel_item->m_x, sel_item->m_y);
 					delete dup_item;
 					dup_item = NULL;
 				} else
-					man->putitem(sel_item, sel_item_place, sel_item->x, sel_item->y);
+					man->putitem(sel_item, sel_item_place, sel_item->m_x, sel_item->m_y);
 
 				sel_item = NULL;
 			} else {
@@ -454,7 +454,7 @@ int Editor::load_clip()
 		for (i = 0; i < NUMBER_OF_PLACES; i++) {
 			it = man->place(i)->item_under_mouse();
 			if ((it != NULL) && it->loadclip(dup_item)) {
-				dup_item = new Item(sel_item->type);      //!!!!!!!!!!!!
+				dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
 				return 1;
 			}
 		}

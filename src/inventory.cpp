@@ -90,8 +90,7 @@ void Inventory::draw()
 			textout(screen2, g_small_font, "AMMO:", 272, 64, xcom1_color(66));
 			textout(screen2, g_small_font, "ROUNDS", 272, 72, xcom1_color(66));
 			textout(screen2, g_small_font, "LEFT=", 272, 80, xcom1_color(66));
-			textprintf(screen2, g_small_font, 299, 80, xcom1_color(18), "%d", sel_item->rounds);
-			//textprintf(screen2, font, 272, 80, color, "%d", sel_item->rounds);
+			textprintf(screen2, g_small_font, 299, 80, xcom1_color(18), "%d", sel_item->m_rounds);
 			rect(screen2, 272, 88, 303, 135, xcom1_color(8));      //clip
 			bigobs->showpck(sel_item->data()->pInv, 272, 88 + 8);
 		}
@@ -102,7 +101,6 @@ void Inventory::draw()
 			bigobs->showpck(sel_item->data()->pInv,
 			                mouse_x - sel_item->data()->width * 16 / 2,
 			                mouse_y - sel_item->data()->height * 16 / 2 + 8);
-			//textprintf(screen, font, 1, 150, 1, "w=%d h=%d x=%d y=%d ", obdata[sel_item->type]->width, obdata[sel_item->type]->height, sel_item->x, sel_item->y);
 		}
 
 	}
@@ -137,7 +135,7 @@ void Inventory::execute()
 					sel_item = sel_man->select_item(sel_item_place);
 					//net_send("_select_item");
 					if (sel_item != NULL)
-						net->send_select_item(sel_man->NID, sel_item_place, sel_item->x, sel_item->y);
+						net->send_select_item(sel_man->NID, sel_item_place, sel_item->m_x, sel_item->m_y);
 				} else {
 					Item *it = sel_man->item_under_mouse(P_ARM_LEFT);
 					if ((it != NULL) && sel_man->load_ammo(P_ARM_LEFT, sel_item)) {
@@ -154,7 +152,7 @@ void Inventory::execute()
 					int req_time;
 					int pn = sel_man->deselect_item(sel_item, sel_item_place, req_time);
 					if (pn != -1) {
-						net->send_deselect_item(sel_man->NID, pn, sel_item->x, sel_item->y, req_time);
+						net->send_deselect_item(sel_man->NID, pn, sel_item->m_x, sel_item->m_y, req_time);
 						sel_item = NULL;
 					}
 				}
@@ -166,8 +164,8 @@ void Inventory::execute()
 void Inventory::backput()
 {
 	if (sel_item != NULL) {
-		sel_man->putitem(sel_item, sel_item_place, sel_item->x, sel_item->y);
-		net->send_deselect_item(sel_man->NID, sel_item_place, sel_item->x, sel_item->y, 0);
+		sel_man->putitem(sel_item, sel_item_place, sel_item->m_x, sel_item->m_y);
+		net->send_deselect_item(sel_man->NID, sel_item_place, sel_item->m_x, sel_item->m_y, 0);
 		sel_item = NULL;
 	}
 }
