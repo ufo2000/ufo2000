@@ -1007,14 +1007,7 @@ int Map::open_door(int z, int x, int y, int dir)
 		ASSERT(mcd < (int)m_terrain->m_mcd.size());
 
 		m_cell[doorz][doorx][doory]->type[door] = 0;
-		if (door == 2) {
-			m_cell[doorz][doorx][doory + 1]->type[1] = mcd;
-			rebuild_visi(doorz, doorx, doory + 1);
-		} else {
-			m_cell[doorz][doorx][doory - 1]->type[2] = mcd;
-			rebuild_visi(doorz, doorx, doory - 1);
-		}
-
+		m_cell[doorz][doorx][doory]->type[3 - door] = mcd;
 		rebuild_visi(doorz, doorx, doory);
 
 		return 1;
