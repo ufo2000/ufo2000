@@ -1,14 +1,21 @@
-Changes in version 0.4.0      ??? ?? ??? 2003
+Changes in version 0.4.0      ??? ?? ??? 2004
+   - internet game server is now used to find opponents and hold tournaments
+   - reaction (opportunity) fire
+   - support for data files from X-COM demo added
+   - many new terrain types support from both X-COM and TFTD added
    - new sound system allowing use of both original and collector's edition files
      and simple reassignment of sounds
-   - reaction (opportunity) fire
    - enemy turn replay for hotseat game
    - strength and energy statistics
    - different armor types support
-   - 3 additional terrain types (desert, forest, mountain)
-   - end of game screen
-   - use of internet server to find opponents
-   - other minor improvements
+   - several user made terrain types added
+   - end of game statistics screen
+   - the game now can be compiled with proper Linux/Unix directory hierarchy 
+     support, which allowed to create Gentoo Linux ebuild
+   - support for different screen resolutions and color depth added
+   - the game now should run fine in linux console (with fbcon driver)
+   - better looking bullets
+   - other minor improvements and bugfixes
 
 Changes in version 0.3.60     Sat 21 Jun 2003
    - improved chat console: added support for unicode, xcom fonts and multiple languages
@@ -17,7 +24,7 @@ Changes in version 0.3.60     Sat 21 Jun 2003
    - some new sounds and also background music added
    - added mutons and sectoids (only their skins)
    - accuracy calculation algorithm changed
-   - fixed fullscreen related problems in linix version
+   - fixed fullscreen related problems in linux version
    - better looking main menu
    - fixed bug with proximity grenades
    - many other bugfixes

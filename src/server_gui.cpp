@@ -30,6 +30,13 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "sound.h"
 #include "multiplay.h"
 
+#ifdef WIN32
+#include <windows.h>
+#define usleep(t) Sleep((t + 999) / 1000)
+#else
+#include <unistd.h>
+#endif
+
 #define BORDER_COLOR xcom1_color(4)
 #define TITLE_COLOR  xcom1_color(2)
 
@@ -522,18 +529,6 @@ int connect_internet_server()
 
 			if (chat->process_keyboard_input(keycode, scancode)) {
 				server->send_packet(SRV_MESSAGE, chat->get_text());
-#if 0 // we do not need this code anymore
-				if (strncmp(chat->get_text(), "add ", 4) == 0)
-					users->update_user_info(chat->get_text() + 4, USER_STATUS_READY);
-				if (strncmp(chat->get_text(), "del ", 4) == 0)
-					users->update_user_info(chat->get_text() + 4, USER_STATUS_OFFLINE);
-				if (strncmp(chat->get_text(), "host ", 5) == 0)
-					users->update_user_info(chat->get_text() + 5, USER_STATUS_CHALLENGE_OUT);
-				if (strncmp(chat->get_text(), "join ", 5) == 0)
-					users->update_user_info(chat->get_text() + 5, USER_STATUS_CHALLENGE_IN);
-				if (strncmp(chat->get_text(), "busy ", 5) == 0)
-					users->update_user_info(chat->get_text() + 5, USER_STATUS_BUSY);
-#endif
 				users_border->resize(-1, -1);
 				users_border->resize(users_border->get_width(), SCREEN_H);
 				chat_border->resize(SCREEN_W - users_border->get_width(), SCREEN_H);
@@ -541,10 +536,8 @@ int connect_internet_server()
 				users_border->set_full_redraw();
 			}
 		}
-#ifdef WIN32
 		// Do not load cpu so heavy
-		Sleep(1);
-#endif		
+		usleep(10000);
 	}
 
 	show_mouse(NULL);

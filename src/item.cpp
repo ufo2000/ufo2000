@@ -116,6 +116,8 @@ void Item::initobdata()
 	obdata[STUN_ROD].accuracy[0] = 100;     	//apunch
 	obdata[STUN_ROD].damage = 100;
 
+	obdata[Heavy_Plasma].accuracy[0] = 0; // Disable auto fire for heavy plasma
+
 	delete []buf;
 }
 

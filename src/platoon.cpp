@@ -421,7 +421,11 @@ void Platoon::load_FULLDATA(char *fn)
 	unsigned int buf_size;
 
 	int fh = open(F(fn), O_RDONLY | O_BINARY);
-	ASSERT(fh != -1);
+	if (fh == -1) {
+		alert(" ", "Can't open specified file", " ", "    OK    ", NULL, 1, 0);
+		return;		
+	}
+
 	buf_size = filelength(fh);
 	buf = new char[buf_size];
 	buf_size = read(fh, buf, buf_size);
