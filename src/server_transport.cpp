@@ -111,6 +111,21 @@ void ServerDispatch::HandleSocket(NLsocket socket)
     std::string packet;
     int err;
 
+    if (client->m_name.empty() && stream.size() >= 3 && stream[0] == 'G' && 
+    	stream[1] == 'E' && stream[2] == 'T') {
+	//	HTTP request    	
+		std::string http_reply;
+		http_reply += "HTTP/1.0 200 OK\n";
+		http_reply += "Content-Type: text/html;charset=utf-8\n\n";
+		std::string html_body;
+		MakeHtmlReport(html_body);
+		http_reply += html_body;
+		send_to_socket(socket, http_reply.data(), http_reply.size());
+	    printf("SERVER: HTTP reply sent, socket %d closed\n", (int)socket);
+        delete client;
+        return;
+    }
+
 	while ((err = decode_packet(stream, id, packet)) == 1)
 		client->recv_packet(id, packet);
 
@@ -150,8 +165,7 @@ void ServerDispatch::Run(NLsocket sock)
 
     m_group = nlGroupCreate();
 
-    while (1)
-    {
+    while (1) {
     	HandleNewConnections();
         
     /* check for incoming messages */
@@ -160,16 +174,16 @@ void ServerDispatch::Run(NLsocket sock)
         assert(count != NL_INVALID);
 
     /* loop through the clients and read the packets */
-        for (NLint i = 0; i < count; i++)
-        {
+        for (NLint i = 0; i < count; i++) {
             int readlen;
 	        NLbyte buffer[128];
 
-            while ((readlen = nlRead(s[i], buffer, sizeof(buffer))) > 0)
+            while ((readlen = nlRead(s[i], buffer, sizeof(buffer))) > 0) {
+				m_clients_by_socket[s[i]]->m_traffic_in += readlen;
             	m_clients_by_socket[s[i]]->m_stream.append(buffer, readlen);
+            }
 
-            if (readlen == NL_INVALID)
-            {
+            if (readlen == NL_INVALID) {
                 NLenum err = nlGetError();
                 if (err == NL_MESSAGE_END || err == NL_SOCK_DISCONNECT)
                 	m_clients_by_socket[s[i]]->m_error = true;
@@ -184,6 +198,7 @@ void ServerDispatch::Run(NLsocket sock)
 
 bool ServerClient::send_packet_back(NLulong id, const std::string &packet)
 {
+	m_traffic_out += packet.size();
 	return ::send_packet(m_socket, id, packet);
 }
 

@@ -66,7 +66,9 @@ DEPS_SERVER = $(addprefix $(OBJDIR)/,$(SRCS_SERVER:.cpp=.d))
 
 ##############################################################################
 
-all: $(OBJDIR) $(NAME) $(SERVER_NAME)
+all: $(OBJDIR) $(NAME)
+
+server: $(OBJDIR) $(SERVER_NAME)
 
 $(OBJDIR):
 	mkdir $(OBJDIR)
@@ -90,6 +92,13 @@ source-zip:
 	-$(RM) ufo2000-r$(UFO_SVNVERSION)-src.zip
 	svn export . ufo2000-r$(UFO_SVNVERSION)-src
 	7z a -tzip -r -mx ufo2000-r$(UFO_SVNVERSION)-src.zip "ufo2000-r$(UFO_SVNVERSION)-src/*"
+	svn delete --force ufo2000-r$(UFO_SVNVERSION)-src
+
+source-bz2:
+# create tar.bz2 archive with ufo2000 sources (on *nix systems)
+	-$(RM) ufo2000-r$(UFO_SVNVERSION)-src.tar.bz2
+	svn export . ufo2000-r$(UFO_SVNVERSION)-src
+	tar -cjf ufo2000-r$(UFO_SVNVERSION)-src.tar.bz2 ufo2000-r$(UFO_SVNVERSION)-src
 	svn delete --force ufo2000-r$(UFO_SVNVERSION)-src
 
 -include $(DEPS)

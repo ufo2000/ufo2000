@@ -33,10 +33,13 @@ protected:
 	bool            m_error;
 	ServerDispatch *m_server;
 
+    long        m_traffic_in;
+    long        m_traffic_out;
+
 	void Run();
 
 public:
-	ServerClient() { m_error = true; }
+	ServerClient() { m_error = true; m_traffic_in = m_traffic_out = 0; }
 	ServerClient(ServerDispatch *server, NLsocket socket);
 	virtual ~ServerClient();
 //	This function sends a data packet to the specified recipient
@@ -69,6 +72,7 @@ public:
 	virtual ~ServerDispatch() {}
 //	A function that is called when a new client wants to connect
 	virtual ServerClient *CreateServerClient(NLsocket socket);
+	virtual void MakeHtmlReport(std::string &html_body);
 };
 
 #endif

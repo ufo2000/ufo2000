@@ -19,9 +19,45 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <stdio.h>
 #include "server_protocol.h"
 
 #define MAX_USERNAME_SIZE 16
+
+static std::string tostring(int x)
+{
+	char buffer[32];
+	sprintf(buffer, "%d", x);
+	return buffer;
+}
+
+void ServerDispatch::MakeHtmlReport(std::string &html_body)
+{
+	html_body = "<html><head></head><body>";
+	html_body += "<table border=1>";
+	html_body += "<tr><td>user name<td>bytes received<td>bytes sent";
+
+//	Report other players status
+	std::map<std::string, ServerClient *>::iterator it = m_clients_by_name.begin();
+	while (it != m_clients_by_name.end()) {
+		ServerClientUfo *client = dynamic_cast<ServerClientUfo *>(it->second);
+
+		html_body += "<tr><td>";
+		html_body += client->m_name;
+		html_body += "<td>";
+		html_body += tostring(client->m_traffic_out);
+		html_body += "<td>";
+		html_body += tostring(client->m_traffic_in);
+
+		it++;
+	}
+
+	html_body += "</table>";
+	html_body += "<br>";
+	html_body += "bytes received = number of bytes received by user from server<br>";
+	html_body += "bytes received = number of bytes sent by user to server<br>";
+	html_body += "</body><html>";
+}
 
 ServerClient *ServerDispatch::CreateServerClient(NLsocket socket)
 {
