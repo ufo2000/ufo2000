@@ -51,7 +51,7 @@ char Map::ofs2dir[3][3] = {{5, 6, 7},
 
 IMPLEMENT_PERSISTENCE(Map, "Map");
 
-void load_terrain_pck(int tid, TerraPCK *&terrain_pck)
+void load_terrain_pck(const std::string &tid, TerraPCK *&terrain_pck)
 {
 	terrain_pck = NULL;
 
@@ -61,7 +61,7 @@ void load_terrain_pck(int tid, TerraPCK *&terrain_pck)
 	lua_gettable(L, LUA_GLOBALSINDEX);
 	ASSERT(lua_istable(L, -1)); 
     // Enter [tid] table
-	lua_pushnumber(L, tid);
+	lua_pushstring(L, tid.c_str());
 	lua_gettable(L, -2);
 	ASSERT(lua_istable(L, -1));
     // Enter 'Tiles' table
@@ -167,8 +167,10 @@ Map::Map(GEODATA &mapdata)
 
 	create(mapdata.z_size, mapdata.x_size, mapdata.y_size);
 
-	m_terrain_set = mapdata.terrain;
-	load_terrain_pck(m_terrain_set, m_terrain);
+	std::string terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
+	ASSERT(terrain_name.size() < sizeof(m_terrain_name));
+	strcpy(m_terrain_name, terrain_name.c_str());
+	load_terrain_pck(m_terrain_name, m_terrain);
 	loadmaps(mapdata.mapdata);
 
 	build_visi();
@@ -201,7 +203,7 @@ void Map::loadmaps(unsigned char *_map)
 	lua_pushstring(L, "TerrainTable");
 	lua_gettable(L, LUA_GLOBALSINDEX);
 	ASSERT(lua_istable(L, -1));
-	lua_pushnumber(L, m_terrain_set);
+	lua_pushstring(L, m_terrain_name);
 	lua_gettable(L, -2);
 	ASSERT(lua_istable(L, -1));
 	lua_pushstring(L, "Maps");
@@ -1481,19 +1483,19 @@ void Map::new_GEODATA(GEODATA *md)
     // $$$ Hack - the game currently crashes when using nonsquare map
 	if (MAP_WIDTH != MAP_HEIGHT) MAP_HEIGHT = MAP_WIDTH;
 
-	int terrain_id = terrain_set->get_random_terrain_id();
+	std::string terrain_name = terrain_set->get_random_terrain_name();
 
 	if (net->is_network_game()) {
-	    ASSERT(g_net_allowed_terrains.size() > 1);
-		while (g_net_allowed_terrains.find(terrain_id) == g_net_allowed_terrains.end()) {
-			terrain_id = terrain_set->get_random_terrain_id();
+	    ASSERT(g_net_allowed_terrains.size() > 0);
+		while (g_net_allowed_terrains.find(terrain_name) == g_net_allowed_terrains.end()) {
+			terrain_name = terrain_set->get_random_terrain_name();
 		}
 	}
 
-	terrain_set->create_geodata(terrain_id, MAP_WIDTH, MAP_HEIGHT, *md);
+	terrain_set->create_geodata(terrain_name, MAP_WIDTH, MAP_HEIGHT, *md);
 }
 
-void Map::new_GEODATA(GEODATA *md, int terrain_id)
+void Map::new_GEODATA(GEODATA *md, const std::string &terrain_name)
 {
 	// Check map size settings
 	if (MAP_WIDTH < 2) MAP_WIDTH = 2;
@@ -1505,17 +1507,21 @@ void Map::new_GEODATA(GEODATA *md, int terrain_id)
     // $$$ Hack - the game currently crashes when using nonsquare map
 	if (MAP_WIDTH != MAP_HEIGHT) MAP_HEIGHT = MAP_WIDTH;
 
-	terrain_set->create_geodata(terrain_id, MAP_WIDTH, MAP_HEIGHT, *md);
+	terrain_set->create_geodata(terrain_name, MAP_WIDTH, MAP_HEIGHT, *md);
 }
 
 int Map::valid_GEODATA(GEODATA *md)
 {
+	std::string terrain_name = terrain_set->get_terrain_name(md->terrain);
+
 	if ((md->x_size > 6) || (md->y_size > 6) ||
 		(md->x_size < 2) || (md->y_size < 2) ||
         (md->x_size != md->y_size) || (md->z_size != 4) ||
-        terrain_set->get_terrain_name(md->terrain) == "" ||
-        (net->is_network_game() && 
-        g_net_allowed_terrains.find(md->terrain) == g_net_allowed_terrains.end())) return 0;
+        terrain_name == "") return 0;
+        
+	if (net->is_network_game() && 
+        g_net_allowed_terrains.find(terrain_name) == g_net_allowed_terrains.end()) return 0;
+
 	return 1;
 }
 
@@ -1647,7 +1653,7 @@ bool Map::Read(persist::Engine &archive)
 			for (int row = 0; row < 10 * height; row++)
 				PersistReadObject(archive, m_cell[lev][col][row]);
 
-    load_terrain_pck(m_terrain_set, m_terrain);
+    load_terrain_pck(m_terrain_name, m_terrain);
 
 	m_minimap_area = new MinimapArea(this, SCREEN_W - SCREEN2W, SCREEN2H);
 
@@ -1660,15 +1666,15 @@ bool Map::Read(persist::Engine &archive)
 
 #define MAP_BLOCKS_LIMIT 100
 
-Terrain::Terrain(int terrain_id)
+Terrain::Terrain(const std::string &terrain_name)
 {
 	int stack_top = lua_gettop(L);
     // Enter 'TerrainTable' table
 	lua_pushstring(L, "TerrainTable");
 	lua_gettable(L, LUA_GLOBALSINDEX);
 	ASSERT(lua_istable(L, -1)); 
-	// Enter [terrain_id] table
-	lua_pushnumber(L, terrain_id);
+	// Enter [terrain_name] table
+	lua_pushstring(L, terrain_name.c_str());
 	lua_gettable(L, -2);
 	ASSERT(lua_istable(L, -1)); 
     // Extract terrain crc32
@@ -1677,12 +1683,15 @@ Terrain::Terrain(int terrain_id)
 	ASSERT(lua_isnumber(L, -1)); 
 	m_crc32 = (unsigned long)lua_tonumber(L, -1);
 	lua_pop(L, 1);
+/*
     // Extract terrain name
 	lua_pushstring(L, "Name");
 	lua_gettable(L, -2);
 	ASSERT(lua_isstring(L, -1)); 
 	m_name = lua_tostring(L, -1);
 	lua_pop(L, 1);
+*/
+	m_name = terrain_name;
 	// Enter 'Maps' table
 	lua_pushstring(L, "Maps");
 	lua_gettable(L, -2);
@@ -1787,6 +1796,7 @@ bool Terrain::create_geodata(GEODATA &gd)
 
 TerrainSet::TerrainSet()
 {
+	int terrain_id = 0;
 	int stack_top = lua_gettop(L);
 	lua_pushstring(L, "TerrainTable");
 	lua_gettable(L, LUA_GLOBALSINDEX);
@@ -1794,10 +1804,10 @@ TerrainSet::TerrainSet()
 
 	lua_pushnil(L);
 	while (lua_next(L, -2) != 0) {
-		ASSERT(lua_isnumber(L, -2));
-		int terrain_id = (int)lua_tonumber(L, -2);
+		ASSERT(lua_isstring(L, -2));
+		std::string terrain_name = lua_tostring(L, -2);
 
-		terrain[terrain_id] = new Terrain(terrain_id);
+		terrain[terrain_id++] = new Terrain(terrain_name);
 
 		lua_pop(L, 1);
 	}
@@ -1819,15 +1829,16 @@ TerrainSet::~TerrainSet()
 		delete it->second;
 }
 
-bool TerrainSet::create_geodata(int terrain_index, int x_size, int y_size, GEODATA &gd)
+bool TerrainSet::create_geodata(const std::string &terrain_name, int x_size, int y_size, GEODATA &gd)
 {
-	if (terrain.find(terrain_index) == terrain.end()) return false;
+	int terrain_index = get_terrain_id(terrain_name);
+	if (terrain_index < 0) return false;
 
 	memset(&gd, 0, sizeof(gd));
-	gd.terrain = terrain_index;
-	gd.x_size  = x_size;
-	gd.y_size  = y_size;
-	gd.z_size  = 4;
+	gd.terrain   = terrain_index;
+	gd.x_size    = x_size;
+	gd.y_size    = y_size;
+	gd.z_size    = 4;
 
 	return terrain[terrain_index]->create_geodata(gd);
 }

@@ -40,14 +40,14 @@ void Packet::reset()
 	cur = 0; size = 0;
 	memset(data, 0, sizeof(data));
 }
-
+/*
 void Packet::str2pkt(char *str)
 {
 	reset();
 	strcpy(data, str);
 	size = strlen(data);
 }
-
+*/
 void Packet::create(char *header)
 {
 	reset();
@@ -146,6 +146,56 @@ Packet &Packet::operator>>(char *i)
 	return *this;
 }
 
+Packet &Packet::operator<<(const std::string &x)
+{
+	for (int i = 0; i < (int)x.size(); i++) {
+		if (x[i] == '_' || x[i] == '\\') {
+			data[size++] = '\\';
+			data[size++] = x[i];
+		} else if (x[i] == '\n') {
+			data[size++] = '\\';
+			data[size++] = 'n';
+		} else if (x[i] < 0x20) {
+			sprintf(&data[size], "\\%02X", (uint8)x[i]);
+			size += 3;
+		} else {
+			data[size++] = x[i];
+		}
+	}
+	data[size++] = '_';
+	return *this;
+}
+
+Packet &Packet::operator>>(std::string &x)
+{
+	x = "";
+
+	while (data[cur] != '_') {
+		if (data[cur] == '\\') {
+			cur++;
+			if (data[cur] == '\\') {
+				x.append("\\");
+				cur++;
+			} else if (data[cur] == '_') {
+				x.append("_");
+				cur++;
+			} else if (data[cur] == 'n') {
+				x.append("\n");
+				cur++;
+			} else {
+				int c;
+				sscanf(&data[cur], "%2X", &c);
+				x += (char)c;
+				cur += 2;
+			}
+		} else {
+			x += data[cur++];
+		}
+	}
+	cur++;
+	return *this;
+}
+
 Packet &Packet::operator<<(int i)
 {
 	int len = sprintf(data + size, "%d_", i);
@@ -156,6 +206,25 @@ Packet &Packet::operator<<(int i)
 Packet &Packet::operator>>(int &i)
 {
 	sscanf(data + cur, "%d_", &i);
+
+	int len = 0;
+	while (data[cur + len] != '_')
+		len++;
+
+	cur += len + 1;
+	return *this;
+}
+
+Packet &Packet::operator<<(uint32 i)
+{
+	int len = sprintf(data + size, "%08X_", i);
+	size += len;
+	return *this;
+}
+
+Packet &Packet::operator>>(uint32 &i)
+{
+	sscanf(data + cur, "%X_", &i);
 
 	int len = 0;
 	while (data[cur + len] != '_')

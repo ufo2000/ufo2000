@@ -124,14 +124,16 @@ xcom_palette = 0
 
 -- adds new terrain
 function AddXcomTerrain(terrain)
-	if TerrainTable[terrain.Index] then
-		Warning("AddXcomTerrain: terrains '%s' and '%s' share the same index %d - '%s' will not be used", 
-			TerrainTable[terrain.Index].Name, terrain.Name, terrain.Index, terrain.Name) 
+	if TerrainTable[terrain.Name] then
+		Warning("AddXcomTerrain: duplicate terrain name detected '%s'", terrain.Name)
 		return nil
 	end
 
+	if terrain.Index then
+		Warning("AddXcomTerrain: deprecated 'Index' field detected in terrain '%s'", terrain.Name)
+	end
+
 	local tmp    = {}
-	tmp.Index    = terrain.Index
 	tmp.Name     = terrain.Name
 	tmp.Tiles    = {}
 	tmp.Palettes = {}
@@ -176,7 +178,7 @@ function AddXcomTerrain(terrain)
 	end
 
 	if number_of_maps > 0 then
-		TerrainTable[tmp.Index] = tmp
+		TerrainTable[tmp.Name] = tmp
 		Message("AddXcomTerrain: '%s' terrain - OK, %d maps, crc32 = %08X",
 			tmp.Name, number_of_maps, tmp.Crc32) 
 	else

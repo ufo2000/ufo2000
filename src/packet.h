@@ -54,13 +54,12 @@ private:
 public:
 	Packet();
 	void reset();
-	void str2pkt(char *str);
+//	void str2pkt(char *str);
 	void create(char *header);
 	void create(Command cmd);
 	Command command(char *str);
 	Command command(char *buf, int buf_size);
 
-	inline void set_cur(int ofs) { cur = ofs; }
 	inline char *str() { return data; }
 	inline int str_len() { return size; }
 	void push(char *buf, int buf_size);
@@ -69,11 +68,17 @@ public:
 	Packet &operator<<(int i);
 	Packet &operator>>(int &i);
 
+	Packet &operator<<(uint32 i);
+	Packet &operator>>(uint32 &i);
+
 	Packet &operator<<(REAL i);
 	Packet &operator>>(REAL &i);
 
 	Packet &operator<<(char *i);
 	Packet &operator>>(char *i);
+
+	Packet &operator<<(const std::string &i);
+	Packet &operator>>(std::string &i);
 };
 
 class BQ

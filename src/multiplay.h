@@ -146,7 +146,7 @@ public:
 	void send_unit_data(int num, int lev, int col, int row, MANDATA *md, ITEMDATA *id);
 	void send_map_data(GEODATA *gd);
 	void send_time_limit(int time_limit);
-	void send_terrain_crc32(int index, unsigned long crc32);
+	void send_terrain_crc32(const std::string &name, uint32 crc32);
 
 	void send_finish_planner();
 	int recv_finish_planner();

@@ -226,20 +226,22 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 #undef map
 		std::map<int, Terrain *>::iterator it = terrain_set->terrain.begin();
 		while (it != terrain_set->terrain.end()) {
-			net->send_terrain_crc32(it->first, it->second->get_crc32());
+			net->send_terrain_crc32(it->second->get_name(), it->second->get_crc32());
 			it++;
 		}
-		net->send_terrain_crc32(-1, 0);
+		net->send_terrain_crc32("", 0);
 #define map ufo2000_map
 
 		// Wait until a complete list of remote terrains is received
-		while (g_net_allowed_terrains.find(-1) == g_net_allowed_terrains.end()) {
+		while (g_net_allowed_terrains.find("") == g_net_allowed_terrains.end()) {
 			net->check();
 			yield_timeslice();
 		}
 
-		if (g_net_allowed_terrains.size() == 1) {
-			// No allowed terrains received, only end marker
+        // Remove end marker
+		g_net_allowed_terrains.erase("");
+
+		if (g_net_allowed_terrains.size() == 0) {
 
 			alert("remote player does not have any of your maps", "", "", "OK", NULL, 0, 0);
 

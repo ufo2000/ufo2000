@@ -75,7 +75,7 @@ private:
 	static uint16 *m_loftemp;
 	static int m_loftemp_num;
 
-	int m_terrain_set; //!< Terrain type index
+	char m_terrain_name[128]; //!< Terrain name
 
 	static int dir2ofs[8];
 	static char ofs2dir[3][3];
@@ -100,7 +100,7 @@ public:
 	static int valid_GEODATA(GEODATA *gd);
     //! creates new random GEODATA structure
 	static void new_GEODATA(GEODATA *mapdata);
-	static void new_GEODATA(GEODATA *mapdata, int terrain_id);
+	static void new_GEODATA(GEODATA *mapdata, const std::string &terrain_name);
     //! loads GEODATA structure from lua-file
 	static bool load_GEODATA(const char *filename, GEODATA *mapdata);
     //! saves GEODATA structure to lua-file
@@ -355,16 +355,16 @@ class Terrain
 	std::vector<block_info> m_blocks;
 	int                     m_rand_weight;
 
-	unsigned long           m_crc32;
+	uint32                  m_crc32;
 
 	int get_random_block();
 
 public:
-	Terrain(int terrain_id);
+	Terrain(const std::string &terrain_name);
 	virtual ~Terrain();
 
 	int get_rand_weight() { return m_rand_weight; }
-	unsigned long get_crc32() { return m_crc32; }
+	uint32 get_crc32() { return m_crc32; }
 	const std::string &get_name() { return m_name; }
 
 	bool create_geodata(GEODATA &gd);
@@ -378,17 +378,18 @@ public:
  */
 class TerrainSet
 {
+	int get_random_terrain_id();
 public:
 	std::map<int, Terrain *> terrain;
 
 	TerrainSet();
 	virtual ~TerrainSet();
 
-	int get_random_terrain_id();
-	int get_random_terrain_size_x();
-	int get_random_terrain_size_y();
-
-	unsigned long get_terrain_crc32(int index)
+	const std::string &get_random_terrain_name()
+	{
+		return terrain[get_random_terrain_id()]->get_name();
+	}
+	uint32 get_terrain_crc32(int index)
 	{
 		if (terrain.find(index) == terrain.end()) return 0;
 		return terrain[index]->get_crc32();
@@ -407,7 +408,7 @@ public:
 		}
 		return -1;
 	}
-	bool create_geodata(int terrain_index, int size_x, int size_y, GEODATA &gd);
+	bool create_geodata(const std::string &terrain_name, int size_x, int size_y, GEODATA &gd);
 };
 
 #define map ufo2000_map

@@ -182,18 +182,12 @@ template<class TYPE> void PersistReadBinary(persist::Engine &archive, TYPE &obje
 
 struct GEODATA
 {
-	uint16        x_size;       //!< Distance e/w in tens of tiles
-	uint16        y_size;       //!< Distance n/s in tens of tiles
-	uint16        z_size;       //!< Height of map (tiles)
-	uint16        ship[2];      //!< The types of each of the two ships
-	uint16        terrain;      //!< Terrain set; refers to the MCD combo sets ---  A JUNGLE, FOREST, etc...
-	unsigned char mapdata[36];  //!< The actual map data - refers to the number at the end of map name; i.e. urban12 would be number
-	unsigned char use_rmp[36];  //!< Tells it if it should use the RMPs of each square(if no, there will be no units in that square)
-	unsigned char ship1_y;      //!< These coords are given in tiles
-	unsigned char ship1_x;
-	unsigned char ship2_y;
-	unsigned char ship2_x;
-	unsigned char load_game;    //!< If this is on, then the game is supposed to use the data from the GAME_xx directory
+	int    terrain;      //!< Terrain set index
+	int    x_size;       //!< Distance e/w in tens of tiles
+	int    y_size;       //!< Distance n/s in tens of tiles
+	int    z_size;       //!< Height of map (tiles)
+	int    load_game;    //!< Flag which indicates that the map should be reloaded
+	uint8  mapdata[36];  //!< The actual map data - refers to the number at the end of map name; i.e. urban12 would be number
 };
 
 struct MANDATA
@@ -374,7 +368,7 @@ enum Mode { MAP2D, MAP3D, MAN, WATCH, UNIT_INFO, PLANNER };
 extern volatile int CHANGE;
 extern Map *map;
 extern TerrainSet *terrain_set;
-extern std::set<int> g_net_allowed_terrains;
+extern std::set<std::string> g_net_allowed_terrains;
 extern Platoon *platoon_local, *platoon_remote;
 extern Explosive *elist;
 extern Net *net;

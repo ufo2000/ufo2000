@@ -31,8 +31,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "map.h"
 #include "wind.h"
 
-int terrain_id;
-
 int points = 0;
 int damage_points = 0;
 
@@ -464,8 +462,8 @@ void Units::execute(Map *map, int map_change_allowed)
 
 	if (mouse_inside(gmx + gmw / 2 - gmw / 4 - 20, SCREEN2H - 20, gmx + gmw / 2 - gmw / 4 + 20, SCREEN2H - 5)) {
 		//"NEW"
-		terrain_id = mapdata.terrain;
-		Map::new_GEODATA(&mapdata, terrain_id);
+		std::string terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
+		Map::new_GEODATA(&mapdata, terrain_name);
 		net->send_map_data(&mapdata);
 		mapdata.load_game = 77;
 	}
@@ -511,16 +509,16 @@ void Units::execute(Map *map, int map_change_allowed)
 	
 	if (mouse_inside(gmx + gmw / 2 - 60, SCREEN2H - 45, gmx + gmw / 2 + 60, SCREEN2H - 33)) {
 		//MAP TYPE
-  		terrain_id = terrain_set->get_random_terrain_id();
+  		std::string terrain_name = terrain_set->get_random_terrain_name();
 
 		if (net->is_network_game()) {
-	   		ASSERT(g_net_allowed_terrains.size() > 1);
-			while (g_net_allowed_terrains.find(terrain_id) == g_net_allowed_terrains.end()) {
-				terrain_id = terrain_set->get_random_terrain_id();
+	   		ASSERT(g_net_allowed_terrains.size() > 0);
+			while (g_net_allowed_terrains.find(terrain_name) == g_net_allowed_terrains.end()) {
+				terrain_name = terrain_set->get_random_terrain_name();
 			}
 		}
 
-		Map::new_GEODATA(&mapdata, terrain_id);
+		Map::new_GEODATA(&mapdata, terrain_name);
 		net->send_map_data(&mapdata);
 		mapdata.load_game = 77;
 	}
