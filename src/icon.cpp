@@ -807,7 +807,7 @@ void Icon::execute(int mx, int my)
 	} else
 	if (button[B_CROUCH].is_inside(mx, my)) {
 		if (MODE != WATCH) {
-			if ((sel_man != NULL) && (!sel_man->ismoving())) {
+			if ((sel_man != NULL) && (!sel_man->ismoving()) && (!sel_man->is_flying())) {
 				sel_man->change_pose();
 			}
 		}

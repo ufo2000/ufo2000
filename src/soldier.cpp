@@ -986,7 +986,7 @@ int Soldier::move(int ISLOCAL)
         }
 
 
-        if ((phase == 3 || phase == 7) && map->visible(z, x, y)) {
+        if ((phase == 3 || phase == 7) && map->visible(z, x, y) && !is_flying()) {
             // Make some step sounds (twice per movement from one cell to another)
             switch (md.SkinType) {
                 case S_SECTOID:
