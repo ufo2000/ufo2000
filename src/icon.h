@@ -40,13 +40,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define B_DONE			12
 #define B_EXIT			13
 #define B_MAN_STATS		14
-// Icons for reserving time:
-#define B_TIME_FREE		15
-#define B_TIME_AIM 		16
-#define B_TIME_SNAP		17
-#define B_TIME_AUTO		18
-#define B_BARCHART 		19
-#define BUTTON_NUMBER		20
+#define B_BARCHART 		15
+#define BUTTON_NUMBER	16
 
 #define A_TIME_UNITS	0
 #define A_ENERGY		1
@@ -61,6 +56,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define T_TURN_NUMBER	0
 #define T_MAN_NAME		1
 #define TEXT_NUMBER		2
+
+#define R_TIME_FREE		0
+#define R_TIME_AIM 		1
+#define R_TIME_SNAP		2
+#define R_TIME_AUTO		3
+#define RESERVE_NUMBER	4
 
 enum BarDir {dir_hor, dir_vert};
 enum ItemDigs {dig_round, dig_count};
@@ -170,6 +171,21 @@ public:
 	};
 };
 
+class IconReserve
+{
+public:
+	IconButton button;
+	int BorderX1, BorderY1, BorderX2, BorderY2;
+	int BorderColor;
+	
+	const char *name;
+	
+	void Draw(int x, int y)
+	{
+		rect(screen2, x + BorderX1, y + BorderY1, x + BorderX2, y + BorderY2, xcom1_color(BorderColor));
+	}
+};
+
 //icon itself
 class Icon
 {
@@ -186,6 +202,7 @@ private:
 	IconButton button[BUTTON_NUMBER];
 	IconText text[TEXT_NUMBER];
 	IconAttribute attribute[ATTRIBUTE_NUMBER];
+	IconReserve reserve[RESERVE_NUMBER];
 	
 	int stun_color; 
 public:

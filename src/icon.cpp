@@ -73,13 +73,7 @@ Icon::Icon()
 	button[B_EXIT].name = "Exit";
 
 	button[B_MAN_STATS].name = "ManStats";
-	button[B_BARCHART].name      = "BarChart";
-	// Todo: read definitions for alternate barchart-layout
-
-	button[B_TIME_FREE].name     = "ResTimeFree";
-	button[B_TIME_AIM].name      = "ResTimeAim";
-	button[B_TIME_SNAP].name     = "ResTimeSnap";
-	button[B_TIME_AUTO].name     = "ResTimeAuto";
+	button[B_BARCHART].name = "BarChart";
 	
 	text[T_TURN_NUMBER].name = "TurnNumber";
 	text[T_MAN_NAME].name = "ManName";
@@ -88,6 +82,11 @@ Icon::Icon()
 	attribute[A_ENERGY].name = "Energy";
 	attribute[A_HEALTH].name = "Health";
 	attribute[A_MORALE].name = "Morale";
+		
+	reserve[R_TIME_FREE].name = "ResTimeFree";
+	reserve[R_TIME_AIM].name = "ResTimeAim";
+	reserve[R_TIME_SNAP].name = "ResTimeSnap";
+	reserve[R_TIME_AUTO].name = "ResTimeAuto";
 
 	int nc[4];
 	const char *nd;
@@ -340,6 +339,58 @@ Icon::Icon()
 	nc[0] = (int)lua_tonumber(L, -1);
 	lua_pop(L, 1);
 	
+	//reserve time buttons
+		for (int i = 0; i < RESERVE_NUMBER; i++) {
+		lua_pushstring(L, reserve[i].name);
+		lua_gettable(L, -2);
+		ASSERT(lua_istable(L, -1));
+	
+		lua_pushstring(L, "Button");
+		lua_gettable(L, -2);
+		ASSERT(lua_istable(L, -1));
+	
+		for (int j = 1; j <= 4; j++) {
+			lua_pushnumber(L, j);
+			lua_gettable(L, -2);
+			ASSERT(lua_isnumber(L, -1));
+			nc[j - 1] = (int)lua_tonumber(L, -1);
+			lua_pop(L, 1);
+		}
+	
+		reserve[i].button.set_coords(nc[0], nc[1], nc[2], nc[3]);
+		
+		lua_pop(L, 1);
+		
+		lua_pushstring(L, "BorderCoords");
+		lua_gettable(L, -2);
+		ASSERT(lua_istable(L, -1));
+	
+		for (int j = 1; j <= 4; j++) {
+			lua_pushnumber(L, j);
+			lua_gettable(L, -2);
+			ASSERT(lua_isnumber(L, -1));
+			nc[j - 1] = (int)lua_tonumber(L, -1);
+			lua_pop(L, 1);
+		}
+	
+		reserve[i].BorderX1 = nc[0];
+		reserve[i].BorderY1 = nc[1];
+		reserve[i].BorderX2 = nc[2];
+		reserve[i].BorderY2 = nc[3];
+		
+		lua_pop(L, 1);
+	
+		lua_pushstring(L, "BorderColor");
+		lua_gettable(L, -2);
+		ASSERT(lua_isnumber(L, -1));
+		nc[0] = (int)lua_tonumber(L, -1);
+		lua_pop(L, 1);
+	
+		reserve[i].BorderColor = nc[0];
+		
+		lua_pop(L, 1);
+	}
+	
 	stun_color = nc[0];
 			
 	lua_settop(L, stack_top);
@@ -435,7 +486,7 @@ void Icon::firemenu(int iplace)
 	static char dstr[5][100];
 
 	static DIALOG the_dialog[] = {
-		//         dialog proc,  x,   y,   w,  h,  fg,  bg, key,  flags, d1, d2,              dp,  dp2,  dp3
+		//         dialog proc,  x,   y,   w,  h,  fg,  bg, key,  flags, d1, d2,              dp,  dp2,  dp3  
 		{ firemenu_dialog_proc, 41, 150, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[0], NULL, NULL},
 		{ firemenu_dialog_proc, 41, 120, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[1], NULL, NULL},
 		{ firemenu_dialog_proc, 41,  90, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[2], NULL, NULL},
@@ -663,26 +714,21 @@ void Icon::execute(int mx, int my)
 // Test: Buttons for reserving time (Todo: further processing)
 //
 	} else
-	if (button[B_TIME_FREE].is_inside(mx, my)) {
-		ReserveTimeMode = RESERVE_FREE;
+	if (reserve[R_TIME_FREE].button.is_inside(mx, my)) {
+		ReserveTimeMode = RESERVE_FREE;       
 		soundSystem::getInstance()->play(SS_BUTTON_PUSH_1); 
-		g_console->printf(COLOR_SYS_OK, "%s %d", "Reserve time: Free", ReserveTimeMode); 
 	} else
-	if (button[B_TIME_AIM].is_inside(mx, my)) {
+	if (reserve[R_TIME_AIM].button.is_inside(mx, my)) {
 		ReserveTimeMode = RESERVE_AIM;
-		g_console->printf(COLOR_SYS_OK, "%s %d", "Reserve time: Aim", ReserveTimeMode); 
 		soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
 	} else
-	if (button[B_TIME_SNAP].is_inside(mx, my)) {
+	if (reserve[R_TIME_SNAP].button.is_inside(mx, my)) {
 		ReserveTimeMode = RESERVE_SNAP;
-		g_console->printf(COLOR_SYS_OK, "%s %d", "Reserve time: Snap", ReserveTimeMode); 
 		soundSystem::getInstance()->play(SS_BUTTON_PUSH_1); 
 	} else
-	if (button[B_TIME_AUTO].is_inside(mx, my)) {
+	if (reserve[R_TIME_AUTO].button.is_inside(mx, my)) {
 		ReserveTimeMode = RESERVE_AUTO;
-		g_console->printf(COLOR_SYS_OK, "%s %d", "Reserve time: Auto", ReserveTimeMode); 
-		soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
-// 
+		soundSystem::getInstance()->play(SS_BUTTON_PUSH_2);  
 	} else
 	if (button[B_MAP].is_inside(mx, my)) {
 		if (MODE != WATCH)
@@ -782,6 +828,24 @@ void Icon::info()
 	}      
 	
 	draw_text(T_TURN_NUMBER, (turn / 2) + 1, "%02d");
+		
+	switch(ReserveTimeMode) {
+		case RESERVE_FREE:
+		reserve[R_TIME_FREE].Draw(x, y);  
+		break;
+		
+		case RESERVE_AIM:
+		reserve[R_TIME_AIM].Draw(x, y);
+		break;
+		
+		case RESERVE_SNAP:
+		reserve[R_TIME_SNAP].Draw(x, y);
+		break;
+		
+		case RESERVE_AUTO:
+		reserve[R_TIME_AUTO].Draw(x, y);
+		break;
+	}
 }
 
 /**

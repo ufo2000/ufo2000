@@ -45,7 +45,7 @@ char *icontext( const int icon_nr )
 
     switch (icon_nr) {
         //                           ....+....1....+....2....+....3....+....4
-        	case B_MAN_UP      : return "Move up one level";
+        case B_MAN_UP      : return "Move up one level";
 		case B_MAN_DOWN    : return "Move down one level";
 
 		case B_VIEW_UP     : return "View Up";
@@ -69,10 +69,10 @@ char *icontext( const int icon_nr )
 		case B_MAN_STATS   : return "Show Stats";
 		case B_BARCHART    : return "Switch Barchart";
 
-		case B_TIME_FREE   : return "Reserve Time: None";
+		/*case B_TIME_FREE   : return "Reserve Time: None";
 		case B_TIME_AIM    : return "Reserve Time: Aimed shot";
 		case B_TIME_SNAP   : return "Reserve Time: Snapshot";
-		case B_TIME_AUTO   : return "Reserve Time: Autoshot";
+		case B_TIME_AUTO   : return "Reserve Time: Autoshot";*/
 
         default            : return "icon ??";
     }
