@@ -18,8 +18,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 #ifndef EDITOR_H
 #define EDITOR_H
+
 #include "pck.h"
 #include "spk.h"
 #include "item.h"
@@ -64,6 +66,7 @@ public:
 	Platoon *platoon() { return m_plt; };
 
 	void edit_soldier();
+  //void make_soldier( int NID, int s_type );
 	void change_equipment();
 
 	void do_mapedit();

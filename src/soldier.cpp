@@ -2213,7 +2213,7 @@ int Soldier::open_door()
 }
 
 /**
- * Change between standing and sittung/kneeling.
+ * Change between standing and sitting/kneeling.
  * Return 1 on success, 0 on failure.
  */
 int Soldier::change_pose()
@@ -2268,6 +2268,11 @@ int Soldier::prime_grenade(int iplace, int delay_time, int req_time)
 }
 
 
+/**
+ * Try to unload clip from item.  
+ * Check if it is a weapon, hands are free, soldier has enough time, etc.
+ * Return 1 on success, 0 on failure.
+ */
 int Soldier::unload_ammo(Item * it)
 {
 	if ((it == NULL) || (!it->haveclip()))
@@ -2429,6 +2434,10 @@ int Soldier::TAccuracy(int peraccur)
 	return ac;
 }
 
+/**
+ * Calculate random deviation for a shot
+ * based on firing accuracy of soldier.
+ */
 void Soldier::apply_accuracy(REAL & fi, REAL & te)
 {
 	REAL TE_STEP = (PI /  8. / (double)(cfg_get_base_accuracy()));
@@ -2449,7 +2458,10 @@ void Soldier::apply_accuracy(REAL & fi, REAL & te)
 	}
 }
 
-
+/**
+ * Calculate random deviation for a grenade-throw 
+ * based on throwing accuracy of soldier.
+ */
 void Soldier::apply_throwing_accuracy(REAL &fi, REAL &te, int weight)
 {
 	REAL TE_STEP = (PI /  8 / 30.0);

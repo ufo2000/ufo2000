@@ -279,7 +279,172 @@ bool Editor::handle_mouse_leftclick()
 	if (sel_item != NULL)
 		load_clip();
 	return false;
-}
+};
+
+/**
+ * Change attributes of current soldier to a set of predefined values
+ */ 
+// Todo: read values from config-file or lua-script
+void prep_soldier( int NID, int s_type )
+{
+    int nr = 0;
+  //int s_type = 1;
+    char name[26];  // MAN_NAME_LEN: 22
+    int itemtype = LASER_PISTOL;   // see also: constants in item.h
+    Item * it;
+
+    Soldier *ss = editor->platoon()->findman(NID);
+    ASSERT(ss != NULL);
+
+    nr = NID % 100;  
+//
+//  int b1 = 0;
+//  char test1[128];
+//  char test2[128];
+//  sprintf( test1,  "Test: Make_Soldier #%d", NID );
+//  sprintf( test2,  "Name:%s TU: %d", ss->md.Name, ss->md.TimeUnits );
+//  b1 = alert3( test1, test2, "Select Type:", 
+//               "Rifleman", "Scout",  "cancel",  0, 0, 0 );
+//
+    if (s_type == 1) {
+      //sprintf( name, "%-18s #%02d", "Test-Rifleman", nr ); // MAN_NAME_LEN: 22
+      //sprintf( name, "%-18s #%02d", "Test-Sharpshooter", nr );
+        sprintf( name, "%-18s #%02d", "Rifleman", nr );
+        strcpy(ss->md.Name, name);
+        ss->md.TimeUnits  = 80;
+        ss->md.Stamina    = 57;
+        ss->md.Health     = 52;
+        ss->md.Bravery    =  0;
+        ss->md.Reactions  = 50;
+        ss->md.Firing     = 80;
+        ss->md.Throwing   = 51;
+        ss->md.Strength   = 25;
+        ss->md.SkinType   = S_XCOM_1;
+        ss->md.fFemale    = 1;
+        ss->md.Appearance = 1;
+        ss->process_MANDATA();
+
+      //it = makeitem("LASER RIFLE");
+// see: Place::add_item(), put()
+/*
+        itemtype = LASER_GUN;
+        it = new Item( itemtype );
+        ss->putitem(it, P_ARM_RIGHT);
+
+        itemtype = ALIEN_GRENADE;
+      //it = new Item( itemtype );
+      //ss->putitem(it, P_ARM_LEFT);
+        ss->putitem(new Item( itemtype ), P_SHL_LEFT  );
+        ss->putitem(new Item( itemtype ), P_SHL_RIGHT );
+*/
+        itemtype = Heavy_Plasma;
+        ss->putitem(new Item( itemtype ), P_ARM_RIGHT );
+        itemtype = Heavy_Plasma_Clip;
+        it = new Item( itemtype );
+        ss->load_ammo(P_ARM_RIGHT, it);  // load clip
+        ss->putitem(new Item( itemtype ), P_LEG_RIGHT );
+
+        itemtype = ALIEN_GRENADE;
+        ss->putitem(new Item(itemtype), P_SHL_LEFT);
+
+        itemtype = SMOKE_GRENADE;
+        ss->putitem(new Item(itemtype), P_SHL_RIGHT);
+    }
+
+    if (s_type == 2) {
+        sprintf( name, "%-18s #%02d", "Scout", nr );
+        strcpy(ss->md.Name, name);
+        ss->md.TimeUnits  = 80;
+        ss->md.Stamina    = 75;
+        ss->md.Health     = 51;
+        ss->md.Bravery    =  0;
+        ss->md.Reactions  = 50;
+        ss->md.Firing     = 62;
+        ss->md.Throwing   = 52;
+        ss->md.Strength   = 25;
+        ss->md.SkinType   = S_XCOM_0;
+        ss->md.fFemale    = 0;
+        ss->md.Appearance = 0;
+        ss->process_MANDATA();
+
+        itemtype = LASER_PISTOL;
+        it = new Item( itemtype );
+        ss->putitem(it, P_ARM_RIGHT);
+
+        itemtype = ALIEN_GRENADE;
+        ss->putitem(new Item(itemtype), P_SHL_LEFT);
+        itemtype = PROXIMITY_GRENADE;
+        ss->putitem(new Item(itemtype), P_SHL_LEFT);
+
+        itemtype = GRENADE;
+        ss->putitem(new Item(itemtype), P_ARM_LEFT);
+        ss->putitem(new Item(itemtype), P_SHL_RIGHT);
+        ss->putitem(new Item(itemtype), P_SHL_RIGHT);
+        ss->putitem(new Item(itemtype), P_SHL_LEFT);
+        ss->putitem(new Item(itemtype), P_SHL_LEFT);
+
+        itemtype = SMOKE_GRENADE;
+        ss->putitem(new Item(itemtype), P_LEG_LEFT);
+    }
+
+    if (s_type == 3) {
+        sprintf( name, "%-18s #%02d", "HeavyWeapons", nr );
+        strcpy(ss->md.Name, name);
+        ss->md.TimeUnits  = 59;
+        ss->md.Stamina    = 51;
+        ss->md.Health     = 51;
+        ss->md.Bravery    =  0;
+        ss->md.Reactions  = 51;
+        ss->md.Firing     = 80;
+        ss->md.Throwing   = 50;
+        ss->md.Strength   = 39;
+        ss->md.SkinType   = S_XCOM_2;
+        ss->md.fFemale    = 0;
+        ss->md.Appearance = 2;
+        ss->process_MANDATA();
+
+        itemtype = AUTO_CANNON;
+        ss->putitem(new Item(itemtype), P_ARM_RIGHT);
+        itemtype = AUTO_CANNON_HE_AMMO;
+      //it = new Item( itemtype );
+      //ss->putitem(it, P_ARM_LEFT);
+      //it = new Item( itemtype );
+        ss->load_ammo(P_ARM_RIGHT, new Item(itemtype) );  // load clip
+
+        ss->putitem(new Item(itemtype), P_SHL_RIGHT);
+        itemtype = AUTO_CANNON_I_AMMO;
+        ss->putitem(new Item(itemtype), P_SHL_LEFT);
+        itemtype = AUTO_CANNON_AP_AMMO;
+        ss->putitem(new Item(itemtype), P_BELT);
+    }
+
+    if (s_type == 4) {
+        sprintf( name, "%-18s #%02d", "Special", nr );
+        strcpy(ss->md.Name, name);
+        ss->md.TimeUnits  = 80;
+        ss->md.Stamina    = 78;
+        ss->md.Health     = 50;
+        ss->md.Bravery    =  0;
+        ss->md.Reactions  = 50;
+        ss->md.Firing     = 52;
+        ss->md.Throwing   = 60;
+        ss->md.Strength   = 25;
+        ss->md.SkinType   = S_XCOM_0;
+        ss->md.fFemale    = 0;
+        ss->md.Appearance = 2;
+        ss->process_MANDATA();
+
+        itemtype = LASER_PISTOL;
+        it = new Item( itemtype );
+        ss->putitem(it, P_BELT);
+
+        itemtype = HIGH_EXPLOSIVE;
+        ss->putitem(new Item(itemtype), P_ARM_RIGHT);
+        ss->putitem(new Item(itemtype), P_ARM_LEFT);
+        ss->putitem(new Item(itemtype), P_SHL_RIGHT);
+    }
+
+};
 
 /**
  * Activate unit stats and inventory edit screen
@@ -293,7 +458,7 @@ void Editor::show()
 	destroy_bitmap(screen2);
     screen2 = create_bitmap(640, 400); 
     clear(screen2);
-	
+
     // Prepare background picture for editor screen to improve 
     // performance a bit (static image that is never changed)
     BITMAP *editor_bg = create_bitmap(640, 400);
@@ -303,6 +468,7 @@ void Editor::show()
     text_mode(-1);
     textout(editor_bg, g_small_font, _("Click-and-drop weapons from the armory to the soldier, right-click to remove"), 8, 364, COLOR_WHITE); 
     textout(editor_bg, large, _("F1 Help   F2 Save Team   F3 Load Team   F4 Edit Attributes"), 8, 380, COLOR_LT_BLUE);
+    textout(editor_bg, large, _("F5-F12 Quick-Setup"), 485, 380, COLOR_BLUE);
 
 	position_mouse(320, 200);
 	set_mouse_range(0, 0, 639, 399);
@@ -311,7 +477,50 @@ void Editor::show()
 	int mouse_leftr = 1, mouse_rightr = 1;
 	int i;
     int color = COLOR_LT_OLIVE;
+    int b1 = 0;
     int nr = 0;
+    int A1 = 0, A2 = 0;
+    int NID = 0;
+ // char test[128];
+    char name[26];
+    int NameScheme = 0;
+    static char *names_A[16] = {
+        ("Aaron"),
+        ("Abe"),
+        ("Achim"),
+        ("Adam"),
+        ("Ajo"),
+        ("Akim"),
+        ("Alexandra"),
+        ("Ali"),
+        ("Alfonso"),
+        ("Andrea"),
+        ("Anne"),
+        ("Antonio"),
+        ("Apollo"),
+        ("Arnold"),
+        ("Attila"),
+        ("Axel")
+    };
+    static char *names_B[16] = {
+        ("Barbara"),
+        ("Bastian"),
+        ("Beatrix"),
+        ("Ben"),
+        ("Beren"),
+        ("Bernd"),
+        ("Bill"),
+      //("Björn"),
+        ("Bo"),
+        ("Boris"),
+        ("Brad"),
+        ("Brian"),
+        ("Brigit"),
+        ("Britta"),
+        ("Bruce"),
+        ("Brunhilde"),
+        ("Bruno")
+    };
 
 	while (!DONE) {
 
@@ -340,9 +549,9 @@ void Editor::show()
 
 				//textprintf(screen2, font, 129, 141, color, "%s", sel_item->data()->name);
 				if (dup_item == NULL)
-					textprintf(screen2, g_small_font, 128, 140, COLOR_GREEN,     "%s", sel_item->name().c_str());
+                    textprintf(screen2, g_small_font, 128, 140, COLOR_GREEN,  "%s", sel_item->name().c_str());
 				else
-					textprintf(screen2, g_small_font, 128, 208, COLOR_GRAY03, "%s", sel_item->name().c_str());
+                    textprintf(screen2, g_small_font, 128, 208, COLOR_GRAY03, "%s", sel_item->name().c_str());
 
 				if (sel_item->haveclip()) {
 					//textprintf(screen2, font, 272, 80, color, "%d", sel_item->roundsremain());
@@ -434,10 +643,12 @@ void Editor::show()
 
 		if (keypressed()) {
             CHANGE = 1;
-			int c = readkey();
-			switch (c >> 8) {
+          //int c = readkey();
+          //switch (c >> 8) {
+            int scancode; int keycode = ureadkey(&scancode); 
+            switch (scancode) { 
 				case KEY_F1:
-					help( HELP_INVENTORY );
+                    help( HELP_INVENTORY );
 					break;
 				case KEY_F2:
 					//if (askmenu("SAVE DATA")) {
@@ -452,39 +663,132 @@ void Editor::show()
 				case KEY_F4:
 					edit_soldier();   // Edit Attributes+Armor
 					break;
-
-                case KEY_F5:  // Avg. Rifleman
+//
+                case KEY_F5:  // Rifleman / Sharpshooter
+                    if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) { // Shift-F5:
+                      //soundSystem::getInstance()->play( SS_CLIP_LOAD );
+                        b1 = alert3( "Select Setup for F5:", "", "",
+                                     "Rifleman", "Scout",  "HeavyWeapons",  0, 0, 0 );
+                      // Todo: further processing
+                    } else { // F5:
+                        NID = man->get_NID();  // index of current man: 1001..1015, 2001..2015
+                        prep_soldier( NID, 1 );
+                      //make_soldier( man->get_NID(), 1 );
+                    }
                     break;
                 case KEY_F6:  // Scout
+                    if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) { // Shift-F6:
+                        b1 = alert3( "Select Setup for F6:", "", "",
+                                     "Rifleman", "Scout",  "HeavyWeapons",  0, 0, 0 );
+                    } else { // F6:
+                        prep_soldier( man->get_NID(), 2 );
+                    }
                     break;
-                case KEY_F7:  // Sharpshooter
+                case KEY_F7:  // HeavyWeapons
+                    if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) { // Shift-F7:
+                        b1 = alert3( "Select Setup for F7:", "", "",
+                                     "Rifleman", "Scout",  "HeavyWeapons",  0, 0, 0 );
+                    } else { // F7:
+                        prep_soldier( man->get_NID(), 3 );
+                    }
                     break;
-                case KEY_F8:  // HeavyWeapons
+                case KEY_F8:  // Special
+                    if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) { // Shift-F8:
+                        b1 = alert3( "Select Setup for F8:", "", "",
+                                     "Special-1", "Special-2",  "Special-3",  0, 0, 0 );
+                    } else { // F8:
+                        prep_soldier( man->get_NID(), 4 );
+                    }
                     break;
-                case KEY_F9:  // Test: config: load/save/generate single soldier
-                    nr = man->get_NID();  // index of current man: 1001..1015, 2001..2015
-                    nr = nr % 100;  
+
+                 case KEY_F9:  // Name-Generator
+                    if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) { // Shift-F9:
+                        b1 = alert3( "Select naming scheme for namegenerator:", "", "",
+                                     "A", "B", "Trooper",  0, 0, 0 );
+                        NameScheme = b1;
+                    } else { // F9:
+                        NID = man->get_NID();
+                        nr  = NID % 100;  
+                        switch (NameScheme) {  // Todo: generate different names
+                            case 1:
+                                sprintf( name, "%s", names_A[nr] );
+                                break;
+                            case 2:
+                                sprintf( name, "%s", names_B[nr] );
+                                break;
+                            case 3:
+                                sprintf( name, "%s #%02d", "Trooper", nr );
+                                break;
+                            default:
+                                sprintf( name, "%s #%02d", "Soldier", nr );
+                                break;
+                        }
+                        strcpy(man->md.Name, name);
+                    }
                     break;
 
                 case KEY_F10:
                     change_screen_mode();
                     break;
-                case KEY_F12:
-					if (askmenu("SAVE ARMOURY")) {
-						m_armoury->save_to_file("$(home)/armoury.lua", "Armoury");
-					}
-					break;
+              //case KEY_F11:
+              //    if (askmenu("SAVE ARMOURY")) {
+              //        m_armoury->save_to_file("$(home)/armoury.lua", "Armoury");
+              //    }
+              //    break;
+
+				case KEY_F11:  // cycle thru apperances:
+                    A1 = man->md.Appearance;
+                    A2 = man->md.fFemale;
+                    A1 = A1 + (A2 ? 4 : 0);
+                    A1++;
+                    if (A1 >= 8) A1 = 0;
+                    man->md.fFemale    = A1 >= 4;
+                    man->md.Appearance = A1 % 4;
+                    man->process_MANDATA();
+                    break;
+				case KEY_F12:  // cycle thru armor-types:
+                    A1 = man->md.SkinType;
+                    switch (man->md.SkinType) {
+                        case S_XCOM_0 : man->md.SkinType = S_XCOM_1;  break;
+                        case S_XCOM_1 : man->md.SkinType = S_XCOM_2;  break;
+                        case S_XCOM_2 : man->md.SkinType = S_XCOM_3;  break;
+                        case S_XCOM_3 : man->md.SkinType = S_XCOM_0;  break;
+
+                      // Todo: handle appearance when switching races
+                      //case S_XCOM_3 : man->md.SkinType = S_SECTOID; break;
+                      //case S_SECTOID: man->md.SkinType = S_MUTON;   break;
+                      //case S_MUTON  : man->md.SkinType = S_XCOM_0;  break;
+                        default: 
+                                        man->md.SkinType = S_XCOM_0;  break;
+                    }
+                    man->process_MANDATA();
+                    break;
+//
+
+                case KEY_DEL:  // Todo: Undo
+                    man->destroy_all_items();   // items of current man, including ground
+                    break;
+
+                case KEY_TAB:   // jump to next/prev. soldier
+                    if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) { // Shift-TAB:
+                        man = man->prevman();
+                    } else { // TAB:
+                        man = man->nextman();
+                    }
+                    break;
                 case KEY_LEFT:
                     man = man->prevman();
                     break;
                 case KEY_RIGHT:
-                    // fallthru
-                case KEY_TAB:   // jump to next soldier
                     man = man->nextman();
                     break;
+
 				case KEY_ESC:
 					DONE = 1;
 					break;
+                default: 
+                  g_console->process_keyboard_input(keycode, scancode);
+                  // Todo: show chat-window
 			}
 		}
 	}

@@ -1236,34 +1236,26 @@ void endgame_stats()
 			FS_MusicPlay(F(cfg_get_lose_music_file_name()));
 			back = back_lose;
             strcpy(winner, _("DRAW!"));
- 		}
- 		else
- 		{
+        } else {
 			FS_MusicPlay(F(cfg_get_win_music_file_name()));
 			back = back_win;
  			if (win)
  			{
                 if (turn % 2 == 0) strcpy(winner, _("PLAYER 2 WINS!") );
 				else               strcpy(winner, _("PLAYER 1 WINS!") );
- 			}
- 			else
- 			{
+            } else {
                 if (turn % 2 == 0) strcpy(winner, _("PLAYER 1 WINS!") );
                 else               strcpy(winner, _("PLAYER 2 WINS!") );
  			}
  		}
- 	}
- 	else
- 	{
+    } else {
 		// Only go to the top case if it's an exclusive win.
 		if ((win && (!loss)))
 		{
 			FS_MusicPlay(F(cfg_get_win_music_file_name()));
 			back = back_win;
             strcpy(winner, _("YOU WIN!") );
-		}
-		else
-		{
+        } else {
 			FS_MusicPlay(F(cfg_get_lose_music_file_name()));
 			back = back_lose;
             if (!win) strcpy(winner, _("YOU LOSE!") );
@@ -1273,41 +1265,43 @@ void endgame_stats()
 
 	stretch_blit(back, newscr, 0, 0, back->w, back->h, 0, 0, SCREEN_W, SCREEN_H);
 
-    textprintf_centre(newscr, large, 320, 12, COLOR_RED00, "%s", winner);
+    textprintf_centre(newscr, large, 320, 12-4, COLOR_RED00, "%s", winner);
 
-	if (net->gametype == GAME_TYPE_HOTSEAT)
+    int x1 =  16, x2 = 336;
+    int y1 =  38-8, y2 =  56-8, h = 8, w = 8;
+    if (net->gametype == GAME_TYPE_HOTSEAT)
 	{
 		//textprintf(newscr, g_small_font,   8, 60, COLOR_WHITE, "Player 1");
 		//textprintf(newscr, g_small_font, 328, 60, COLOR_WHITE, "Player 2");
-        textprintf(newscr, large,  16, 38, COLOR_GREEN, _("Player 1") );
-        textprintf(newscr, large, 336, 38, COLOR_GREEN, _("Player 2") );
+        textprintf(newscr, large,  x1, y1, COLOR_GREEN, _("Player 1") );
+        textprintf(newscr, large,  x2, y1, COLOR_GREEN, _("Player 2") );
     } else {
-        textprintf(newscr, large,  16, 38, COLOR_GREEN, _("Your Platoon") );
-        textprintf(newscr, large, 336, 38, COLOR_GREEN, _("Remote Platoon") );
+        textprintf(newscr, large,  x1, y1, COLOR_GREEN, _("Your Platoon") );
+        textprintf(newscr, large,  x2, y1, COLOR_GREEN, _("Remote Platoon") );
     }
     strcpy(txt, _("Total Kills:") );
-    textprintf(newscr, g_small_font,  16+ 0, 56, COLOR_RED03,  "%s",  txt );
-    textprintf(newscr, g_small_font, 336+ 0, 56, COLOR_YELLOW, "%s",  txt);
-    textprintf(newscr, g_small_font,  16+54, 56, COLOR_RED03,  "%2d", local_kills);
-    textprintf(newscr, g_small_font, 336+54, 56, COLOR_YELLOW, "%2d", remote_kills);
+    textprintf(newscr, g_small_font,  x1+ 0, y2+0*h, COLOR_RED03,  "%s",  txt );
+    textprintf(newscr, g_small_font,  x2+ 0, y2+0*h, COLOR_YELLOW, "%s",  txt);
+    textprintf(newscr, g_small_font,  x1+54, y2+0*h, COLOR_RED03,  "%2d", local_kills);
+    textprintf(newscr, g_small_font,  x2+54, y2+0*h, COLOR_YELLOW, "%2d", remote_kills);
 
     strcpy(txt, _("Death:") );
-    textprintf(newscr, g_small_font,  16+ 0, 64, COLOR_YELLOW, "%s",  txt);
-    textprintf(newscr, g_small_font, 336+ 0, 64, COLOR_RED03,  "%s",  txt);
-    textprintf(newscr, g_small_font,  16+54, 64, COLOR_YELLOW, "%2d", local_dead);
-    textprintf(newscr, g_small_font, 336+54, 64, COLOR_RED03,  "%2d", remote_dead);
+    textprintf(newscr, g_small_font,  x1+ 0, y2+1*h, COLOR_YELLOW, "%s",  txt);
+    textprintf(newscr, g_small_font,  x2+ 0, y2+1*h, COLOR_RED03,  "%s",  txt);
+    textprintf(newscr, g_small_font,  x1+54, y2+1*h, COLOR_YELLOW, "%2d", local_dead);
+    textprintf(newscr, g_small_font,  x2+54, y2+1*h, COLOR_RED03,  "%2d", remote_dead);
 
     strcpy(txt, _("Total Damage Inflicted:") );
-    textprintf(newscr, g_small_font,  16+ 0, 72, COLOR_BLUE,   "%s",  txt);
-    textprintf(newscr, g_small_font, 336+ 0, 72, COLOR_GRAY,   "%s",  txt);
-    textprintf(newscr, g_small_font,  16+99, 72, COLOR_BLUE,   "%6d", local_inflicted);
-    textprintf(newscr, g_small_font, 336+99, 72, COLOR_GRAY,   "%6d", remote_inflicted);
+    textprintf(newscr, g_small_font,  x1+ 0, y2+2*h, COLOR_BLUE,   "%s",  txt);
+    textprintf(newscr, g_small_font,  x2+ 0, y2+2*h, COLOR_GRAY,   "%s",  txt);
+    textprintf(newscr, g_small_font,  x1+99, y2+2*h, COLOR_BLUE,   "%6d", local_inflicted);
+    textprintf(newscr, g_small_font,  x2+99, y2+2*h, COLOR_GRAY,   "%6d", remote_inflicted);
 
     strcpy(txt, _("Total Damage Taken:") );
-    textprintf(newscr, g_small_font,  16+ 0, 80, COLOR_GRAY,   "%s",  txt);
-    textprintf(newscr, g_small_font, 336+ 0, 80, COLOR_BLUE,   "%s",  txt);
-    textprintf(newscr, g_small_font,  16+99, 80, COLOR_GRAY,   "%6d", local_taken);
-    textprintf(newscr, g_small_font, 336+99, 80, COLOR_BLUE,   "%6d", remote_taken);
+    textprintf(newscr, g_small_font,  x1+ 0, y2+3*h, COLOR_GRAY,   "%s",  txt);
+    textprintf(newscr, g_small_font,  x2+ 0, y2+3*h, COLOR_BLUE,   "%s",  txt);
+    textprintf(newscr, g_small_font,  x1+99, y2+3*h, COLOR_GRAY,   "%6d", local_taken);
+    textprintf(newscr, g_small_font,  x2+99, y2+3*h, COLOR_BLUE,   "%6d", remote_taken);
 
 	//textprintf_centre(newscr, large,        320, 108, COLOR_GOLD, "Most Valuable Soldier:");
 	//textprintf_centre(newscr, g_small_font, 320, 124, COLOR_GOLD, "%s (%s, %d kills)",
@@ -1319,23 +1313,24 @@ void endgame_stats()
 
 	//textprintf_centre(newscr, large,        320, 140, COLOR_MAGENTA, "Most Devastating Soldier:");
 	//textprintf_centre(newscr, g_small_font, 320, 156, COLOR_MAGENTA, "%s (%s, %d damage inflicted)",
-    textprintf_centre(newscr, large,        300, 100, COLOR_MAGENTA, _("Most Devastating Soldier:") );
-    textprintf_centre(newscr, g_small_font, 300, 116, COLOR_MAGENTA, _("%s (%s, %d damage inflicted)"),
+    textprintf_centre(newscr, large,        308, 100-12, COLOR_MAGENTA, _("Most Devastating Soldier:") );
+    textprintf_centre(newscr, g_small_font, 308, 116-12, COLOR_MAGENTA, _("%s (%s, %d damage inflicted)"),
 		devastating->get_name(),
         (devastating_remote) ? ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 2") : _("Remote")) : ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 1") : _("Local") ),
 		devastating->get_inflicted());
 
 	//textprintf_centre(newscr, large,        320, 172, COLOR_ROSE, "Most Cowardly Soldier:");
 	//textprintf_centre(newscr, g_small_font, 320, 188, COLOR_ROSE, "%s (%s, %d damage inflicted)",
-    textprintf_centre(newscr, large,        500, 100, COLOR_ROSE, _("Most Cowardly Soldier:") );
-    textprintf_centre(newscr, g_small_font, 500, 116, COLOR_ROSE, _("%s (%s, %d damage inflicted)"),
+    textprintf_centre(newscr, large,        524, 100, COLOR_ROSE, _("Most Cowardly Soldier:") );
+    textprintf_centre(newscr, g_small_font, 524, 116, COLOR_ROSE, _("%s (%s, %d damage inflicted)"),
 		coward->get_name(),
         (coward_remote) ? ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 2") : _("Remote") ) : ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 1") : _("Local") ),
 		coward->get_inflicted());
 
     // Table of soldier-names for both players, with kills and damage:
-    int x1 =  20, x2 = 320, y1 = 138;
-    int h  =  12, w  =   8;
+  //int x1 =  20, x2 = 320, y1 = 138;
+        x1 =  20; x2 = 320; y1 = 134;
+        h  =  12, w  =   8;
     int x  =   0, y  =   0;
     int dead = 0, kills = 0, damage = 0;
 
