@@ -31,6 +31,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <vector>
 #include <map>
 
+#ifndef WIN32
+#include <unistd.h>
+#endif
+
 #include "server_config.h"
 
 #ifndef SERVER_LOG_FILENAME

@@ -23,10 +23,14 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
 #include <vector>
+#include <stdio.h>
+#include <time.h>
 
 #ifdef WIN32
 #include <windows.h>
 #define usleep(t) Sleep((t + 999) / 1000)
+#else
+#include <unistd.h>
 #endif
 
 #include "server.h"
