@@ -18,10 +18,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+#include "stdafx.h"
+
 #include "global.h"
-#include <time.h>
-#include <stdio.h>
-#include <string.h>
 #include "video.h"
 #include "keys.h"
 #include "spk.h"
@@ -276,14 +275,19 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 	mapdata.load_game = 77;
 
 	if (HOST) {
+		int i;
 		net->send_map_data(&mapdata);
 		net->send_time_limit(g_time_limit);
 		net->send_scenario();
-		for (int i = 0; i < 5; i++)
+		for (i = 0; i < 5; i++)
 			net->send_rules(i, scenario->rules[i]);
-		for (int i = 0; i < SCENARIO_NUMBER; i++)
+		for (i = 0; i < SCENARIO_NUMBER; i++)
 			for (int j = 0; j < 3; j++)
 				net->send_options(i, j, scenario->options[i][j]->value);
+	}
+	else //send start_sit info now
+	{
+		net->send_p2_start_sit((FLAGS & F_SECONDSIT)?1:0);
 	}
 
 	if (map_change_allowed)

@@ -18,11 +18,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
+#include "stdafx.h"
+
 #include "global.h"
-#include <stdio.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <string.h>
 #include "platoon.h"
 #include "video.h"
 #include "multiplay.h"
@@ -623,4 +622,14 @@ bool Platoon::Read(persist::Engine &archive)
 	PersistReadObject(archive, m_stats);
 
 	return true;
+}
+
+void Platoon::sit_on_start()
+{
+	Soldier *ss = man;
+	while (ss != NULL) {
+			ss->set_start_sit();
+		ss = ss->next();
+	}
+
 }

@@ -1,20 +1,8 @@
+
+#include "stdafx.h"
+
 #include "global.h"
 
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <vector>
-
-#include <cstring>
-#include <assert.h>
-
-
-#include <expat.h>
-#include "allegro.h"
-
-#include "sysworkarounds.h"
 #include "sound.h"
 
 struct sound_sym_maptable_t {

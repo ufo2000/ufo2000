@@ -1,10 +1,6 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-#include <vector>
-#include <string>
-#include <iostream>
-
 /* MUST be in sync with KNOWN_SYMS in sound.cpp*/
 enum SoundSym_e_t {
     SS_UNKNOWN,

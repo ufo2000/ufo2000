@@ -19,6 +19,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include "stdafx.h"
+
 #include "global.h"
 #include "scenario.h"
 #include "multiplay.h"
@@ -241,13 +243,14 @@ bool Scenario::new_scenario (std::string sc_name)
 
 void Scenario::start ()
 {
+	int i;
 	// Set initial visibility level
 	switch (rules[3]) {
 		case 0: // No initially visible cells
 		break;
 
 		case 1: // Deployment areas visible
-		for (int i = 0; i < 4; i++) {
+		for (i = 0; i < 4; i++) {
 			for (int j = 0; j < 10 * mapdata.x_size; j++) {
 				for (int k = 0; k < 10 * mapdata.y_size; k++) {
 					if (p1 == platoon_local) {
@@ -267,7 +270,7 @@ void Scenario::start ()
 		break;
 
 		case 2: // Entire map visible
-		for (int i = 0; i < 4; i++) {
+		for (i = 0; i < 4; i++) {
 			for (int j = 0; j < 10 * mapdata.x_size; j++) {
 				for (int k = 0; k < 10 * mapdata.y_size; k++) {
 					platoon_local->set_seen(i, j, k, 1);
@@ -427,20 +430,22 @@ int Scenario::conditions_sabotage ()
     bool target1 = false, target2 = false;
 	char buf[10000]; memset(buf, 0, sizeof(buf));
 	int len = 0;
+
+	int i;
 	
 	map->cell(0, x1, y1)->get_place()->build_items_stats(buf, len);
-	for (int i = 0; i < len; i++) {
+	for (i = 0; i < len; i++) {
 	    if (buf[i] == HIGH_EXPLOSIVE) {
 	    	target1 = true;
 	    	break;
 		}
 	}
 	
-	for (int i = 0; i < len; i++) buf[i] = 0;
+	for (i = 0; i < len; i++) buf[i] = 0;
 	len = 0; 
 	
 	map->cell(0, x2, y2)->get_place()->build_items_stats(buf, len);
-	for (int i = 0; i < len; i++) {
+	for (i = 0; i < len; i++) {
 	    if (buf[i] == HIGH_EXPLOSIVE) {
 	    	target2 = true;
 	    	break;
@@ -462,12 +467,13 @@ int Scenario::conditions_control ()
 	int win = 0, loss = 0;
 	
     int temp1 = 0, temp2 = 0;
+	int i;
 
-    for (int i = 0; i < p1->num_of_men(); i++) {
+    for (i = 0; i < p1->num_of_men(); i++) {
   	    if (p1->findnum(i)->x >= x1 && p1->findnum(i)->x < x2 && p1->findnum(i)->y >= y1 && p1->findnum(i)->y < y2)
   	        temp1++;
 	}
-	for (int i = 0; i < p2->num_of_men(); i++) {
+	for (i = 0; i < p2->num_of_men(); i++) {
        	if (p2->findnum(i)->x >= x1 && p2->findnum(i)->x < x2 && p2->findnum(i)->y >= y1 && p2->findnum(i)->y < y2)
   	        temp2++;
 	}

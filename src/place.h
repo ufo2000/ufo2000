@@ -20,7 +20,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #ifndef PLACE_H
 #define PLACE_H
-#include <assert.h>
 #include "global.h"
 #include "item.h"
 

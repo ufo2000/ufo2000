@@ -21,7 +21,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef CELL_H
 #define CELL_H
 
-#include <stdio.h>
 #include "global.h"
 #include "place.h"
 #include "soldier.h"

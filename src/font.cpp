@@ -19,18 +19,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#include <assert.h>
-#include <string.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <sys/stat.h>
+#include "stdafx.h"
 
-#include <allegro.h>
-#include <allegro/internal/aintern.h>
-#ifdef WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <winalleg.h>
-#endif
 
 #include "global.h"
 #include "font.h"

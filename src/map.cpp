@@ -18,12 +18,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
+#include "stdafx.h"
+
 #include "global.h"
-#include <string.h>
-#include <stdio.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <allegro.h>
 
 #include "video.h"
 #include "colors.h"
@@ -701,6 +699,7 @@ void Map::build_visi_cell(int lev, int col, int row)
 				int dx = i - 1;
 				int dy = j - 1;
 
+				m_cell[lev][col][row]->visi[k][i][j] = 0; //so below we found if cell is(become) visible, but if it become INvisible?
 				switch (dz) {
 					case 0:
 						if (stopLOS_level(dx, dy, lev, col, row))
@@ -1866,7 +1865,7 @@ int Terrain::get_random_block()
 
 bool Terrain::create_geodata(GEODATA &gd)
 {
-	char map[6][6];
+	unsigned char map[6][6];
 	memset(map, 0xFF, 36);
 	for (int y = 0; y < gd.y_size; y++)
 		for (int x = 0; x < gd.x_size; x++) {

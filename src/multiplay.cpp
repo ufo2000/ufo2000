@@ -18,12 +18,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
+#include "stdafx.h"
+
 #include "global.h"
-#include <assert.h>
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include <list>
 
 #include "video.h"
 #include "wind.h"
@@ -279,6 +277,9 @@ void Net::check()
 		case CMD_CHANGEPOSE:
 			recv_change_pose();
 			break;
+		case CMD_RESTIME:
+			recv_reserve_time();
+			break;
 		case CMD_PRIMEGRENADE:
 			recv_prime_grenade();
 			break;
@@ -338,6 +339,9 @@ void Net::check()
 			break;
 		case CMD_TIME_LIMIT:
 			recv_time_limit();
+			break;
+		case CMD_P2_ISSIT:
+			recv_p2_start_sit();
 			break;
 		case CMD_TERRAIN_CRC32:
 			recv_terrain_crc32();
@@ -486,6 +490,17 @@ void Net::send_change_pose(int NID)
 	send();
 }
 
+void Net::send_reserve_time(int NID,int res)
+{
+	if (!SEND) return ;
+
+	pkt.create(CMD_RESTIME);
+	pkt << NID;
+	pkt << res;
+	send();
+}
+
+
 int Net::recv_change_pose()
 { // "POSE"
 	int NID;
@@ -506,6 +521,25 @@ int Net::recv_change_pose()
 	return 0;
 }
 
+int Net::recv_reserve_time()
+{ // "RESTIME"
+	int NID;
+	int res;
+
+	pkt >> NID;
+	pkt >> res;
+
+	Soldier *ss = findman(NID);
+	if (ss != NULL) {
+		SEND = 0;
+		ss->set_reserve_type(res);
+		SEND = 1;
+		return 1;
+	} else {
+		error("NID reserve type");
+	}
+	return 0;
+}
 
 
 void Net::send_prime_grenade(int NID, int iplace, int delay_time, int req_time)
@@ -1259,6 +1293,25 @@ int Net::recv_time_limit()
 	g_time_limit = time_limit;
 	return 1;
 }
+
+void Net::send_p2_start_sit(int is_sit)
+{
+	if (!SEND) return ;
+
+	pkt.create(CMD_P2_ISSIT);
+	pkt << is_sit;
+
+	send(pkt.str(), pkt.str_len());
+}
+
+int Net::recv_p2_start_sit()
+{
+	int is_sit;
+	pkt >> is_sit;
+	g_p2_start_sit = is_sit;
+	return 1;
+}
+
 
 void Net::send_terrain_crc32(const std::string &name, uint32 crc32)
 {

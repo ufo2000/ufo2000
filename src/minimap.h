@@ -22,7 +22,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef MINIMAP_H
 #define MINIMAP_H
 
-#include <allegro.h>
 #include "wind.h"
 #include "colors.h"
 

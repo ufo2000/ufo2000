@@ -99,6 +99,7 @@ private:
 	Place  *m_place[NUMBER_OF_PLACES]; //8 - for internal editor use
 	Platoon *m_platoon;
 	bool m_p_map_allocated;
+	unsigned char m_ReserveTimeMode;
 
 	int NID;
 	int dir, phase;
@@ -146,6 +147,9 @@ public:
 	virtual ~Soldier();
 
 	void initialize();
+
+	void set_reserve_type(int type); //used to set restime from icon
+	int get_reserve_type() {return m_ReserveTimeMode;};
 
 	void process_MANDATA();
 	void show_MANDATA(int gx, int gy, int gcol);
@@ -331,6 +335,8 @@ public:
 	
 	void panic();
 	void change_morale(int delta);
+
+	void set_start_sit() {m_state=SIT;};
 
 	virtual bool Write(persist::Engine &archive) const;
 	virtual bool Read(persist::Engine &archive);

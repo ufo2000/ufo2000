@@ -20,7 +20,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #ifndef MULTIPLAY_H
 #define MULTIPLAY_H
-#include <stdio.h>
 #include "item.h"
 #include "soldier.h"
 #include "map.h"
@@ -62,6 +61,7 @@ private:
 	int recv_endturn();
 	int recv_open_door();
 	int recv_change_pose();
+	int recv_reserve_time(); //recv time reserving change
 	int recv_prime_grenade();
 	int recv_unload_ammo();
 	int recv_load_ammo();
@@ -91,6 +91,7 @@ private:
 	int recv_unit_data();
 	int recv_map_data();
 	int recv_time_limit();
+	int recv_p2_start_sit(); //player 2 starts sitting
 	int recv_terrain_crc32();
 	int recv_scenario();
 	int recv_rules();
@@ -124,6 +125,7 @@ public:
 
 	void send_open_door(int NID);
 	void send_change_pose(int NID);
+	void send_reserve_time(int NID, int res); //change soldiers time reserving
 	void send_prime_grenade(int NID, int iplace, int delay_time, int req_time);
 	void send_unload_ammo(int NID);
 	void send_load_ammo(int NID, int iplace);
@@ -152,6 +154,7 @@ public:
 	void send_unit_data(int num, int lev, int col, int row, MANDATA *md, ITEMDATA *id);
 	void send_map_data(GEODATA *gd);
 	void send_time_limit(int time_limit);
+	void send_p2_start_sit(int is_sit);
 	void send_terrain_crc32(const std::string &name, uint32 crc32);
 	void send_scenario();
 	void send_rules(int index, int value);

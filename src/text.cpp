@@ -25,6 +25,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 // Todo: collect all text used in Ufo2000
 
+#include "stdafx.h"
+
 #include "global.h"
 #include "text.h"
 

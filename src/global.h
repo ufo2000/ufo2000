@@ -21,35 +21,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-#ifdef _MSC_VER
-#pragma warning(disable:4786)
-#endif
-
-#ifndef WIN32
-#include <unistd.h>
-#endif
-
-#ifndef LINUX
-#include <io.h>
-#include <conio.h>
-#endif
-
-#ifdef LINUX
-#include <sys/stat.h>
-inline long filelength(int handle) { struct stat s; fstat(handle, &s); return s.st_size; }
-#endif
-
-#include <assert.h>
-#include <allegro.h>
-#ifdef __MINGW32__
-#include <winalleg.h>
-#endif
-
-#include "jpgalleg/jpgalleg.h"
-
-extern "C" {
-#include "agup/agup.h"
-}
 
 #define d_box_proc d_agup_box_proc
 #define d_shadow_box_proc d_agup_shadow_box_proc
@@ -69,14 +40,6 @@ extern "C" {
 #define d_ctext_proc d_agup_ctext_proc
 #define d_rtext_proc d_agup_rtext_proc
 #define d_clear_proc d_agup_clear_proc
-
-extern "C" {
-#include "lua.h"
-#include "lualib.h"
-#include "lauxlib.h"
-}
-
-#include "LuaPlus/LuaPlusCD.h"
 
 #define LUA_REGISTER_CLASS(L, classname) \
 	lua_pushstring(L, #classname); \
@@ -111,8 +74,6 @@ int lua_safe_call(lua_State *L, int narg, int nret);
 int lua_safe_dofile(lua_State *L, const char *name);
 int lua_safe_dobuffer(lua_State *L, const char *buff, size_t size, const char *name);
 int lua_safe_dostring(lua_State *L, const char *str);
-
-#include <nl.h>
 
 // We rely on HawkNL in defining data types of proper system independent size
 typedef NLbyte int8;
@@ -201,11 +162,6 @@ template<class TYPE> void PersistReadBinary(persist::Engine &archive, TYPE &obje
 	archive.ReadBinary((uint8 *)&object + sizeof(void *), sizeof(object) - sizeof(void *));
 }
 
-#include <math.h>
-#define REAL  float
-#ifndef PI
-#define PI    3.141592654
-#endif
 
 #include "explo.h"
 
@@ -371,7 +327,7 @@ struct ITEMDATA
 	char  name[26];
 	int32 num;
 	char  type[100];
-	char  place[100];
+	unsigned char  place[100]; //if (id.place[i] == 0xFF)  - must be unsigned check!
 	char  x[100];
 	char  y[100];
 };
@@ -403,11 +359,10 @@ enum Mode { MAP2D, MAP3D, MAN, WATCH, UNIT_INFO, PLANNER };
 
 //! possible Stati for reserve-time - buttons
 // extern int ReserveTimeMode;
-// #define RESERVE_FREE 0
-// #define RESERVE_AIM  1
-// #define RESERVE_SNAP 2
-// #define RESERVE_AUTO 3
-extern enum ReserveTime_Mode { RESERVE_FREE, RESERVE_AIM, RESERVE_SNAP, RESERVE_AUTO } ReserveTimeMode;
+ #define RESERVE_FREE 0
+ #define RESERVE_AIM  1
+ #define RESERVE_SNAP 2
+ #define RESERVE_AUTO 3
 // TODO: ReserveTime should be platoon- or soldier-specific
 
 extern volatile int CHANGE;
@@ -451,6 +406,7 @@ extern int NOTICEremote;
 extern Wind *info_win;
 extern Icon *icon;
 extern int g_time_limit;
+extern int g_p2_start_sit;
 
 extern volatile int g_time_left;
 

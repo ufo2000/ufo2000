@@ -20,11 +20,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #ifndef VIDEO_H
 #define VIDEO_H
-#include <allegro.h>
-#ifdef WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <winalleg.h>
-#endif
 #include "font.h"
 
 extern BITMAP *screen2;
@@ -92,4 +87,6 @@ extern unsigned long FLAGS;
 #define F_DEBUGDUMPS        0x00040000
 #define F_ENDTURNSND		0x00080000
 #define F_TOOLTIPS          0x00100000
+#define F_SECONDSIT	    0x00200000
+#define F_REACTINFO	    0x00400000
 #endif

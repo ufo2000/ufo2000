@@ -22,26 +22,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include "stdafx.h"
+
 #include "server.h"
 #include "server_protocol.h"
 #include "server_config.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <nl.h>
-
-#include <string>
-#include <vector>
-#include <map>
-
-#ifdef WIN32
-#include <windows.h>
-#define usleep(t) Sleep((t + 999) / 1000)
-#else
-#include <unistd.h>
-#endif
 
 ServerClient::ServerClient(ServerDispatch *server, NLsocket socket)
 	:m_socket(socket), m_server(server)

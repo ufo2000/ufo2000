@@ -46,11 +46,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #endif
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <map>
-
 namespace persist {
 
 class PersistException

@@ -20,7 +20,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #ifndef SPK_H
 #define SPK_H
-#include <allegro.h>
 
 class SPK
 {

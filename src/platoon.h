@@ -23,7 +23,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "soldier.h"
 #include "units.h"
 #include "stats.h"
-#include <vector>
 
 /**
  * Class for handling the squad controlled by one of the opposing sides
@@ -105,6 +104,8 @@ public:
 	void set_seen(int lev, int col, int row, int value) { m_seen[lev][col][row] = value; }
 	int is_visible(int lev, int col, int row) { return m_visible[lev][col][row]; }
 	void set_visible(int lev, int col, int row, int value) { m_visible[lev][col][row] = value; }
+
+	void sit_on_start();
 
 	virtual bool Write(persist::Engine &archive) const;
 	virtual bool Read(persist::Engine &archive);

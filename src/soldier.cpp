@@ -18,12 +18,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
+#include "stdafx.h"
+
 #include "global.h"
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
 
 #include "video.h"
 #include "soldier.h"
@@ -35,6 +33,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "config.h"
 #include "icon.h"
 #include "colors.h"
+
+//uncomment to view some formulas results (reaction fire)
+#define SHOW_DEBUG_INFO
 
 SKIN_INFO g_skins[] =
 {
@@ -307,6 +308,8 @@ Soldier::Soldier(Platoon *platoon, int _NID)
 	MOVED = 0;
 	m_reaction_chances = 0;
 
+	m_ReserveTimeMode=RESERVE_FREE;
+
 	memset(&md, 0, sizeof(md));
 	memset(&id, 0, sizeof(id));
 	memset(&ud, 0, sizeof(ud));
@@ -357,6 +360,7 @@ Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *md
 	MOVED = 0;
 	m_reaction_chances = 0;
 
+	m_ReserveTimeMode=RESERVE_FREE;
 	memcpy(&md, mdat, sizeof(md));
 	memcpy(&id, idat, sizeof(id));
 
@@ -1271,7 +1275,7 @@ bool Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
 	std::string error = "";
 
     if(it) {					//if soldier has got at least one items in hands
-		switch(ReserveTimeMode) {
+		switch(m_ReserveTimeMode) {
 			case RESERVE_FREE:
 			break;
 		
@@ -1297,7 +1301,7 @@ bool Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
 			break;
 		}
 		
-		if(it->is_grenade() && it->delay_time() > 0 && ReserveTimeMode != RESERVE_FREE) {
+		if(it->is_grenade() && it->delay_time() > 0 && m_ReserveTimeMode != RESERVE_FREE) {
 			time = required(25);
 			error = "Time units are reserved for grenade throw.";
 		}
@@ -1305,7 +1309,7 @@ bool Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
 	
 	if(!havetime(walk_time + time, 0) && havetime(time, 0)) {
 		if(error != "")
-			g_console->printf(xcom1_color(40), error.c_str());
+			g_console->printf(COLOR_SYS_INFO1, error.c_str());
 		return false;
 	} else {
 		return havetime(walk_time, use_energy);
@@ -2125,6 +2129,7 @@ int Soldier::open_door()
 		if (map->open_door(z, x, y, dir)) {
 			soundSystem::getInstance()->play(SS_DOOR_CLICK);
 			spend_time(6);
+			if (platoon_local->belong(this)) platoon_remote->check_reaction_fire(this); //local soldier opens door - so let's check reaction fire
 			net->send_open_door(NID);
 			return 1;
 		}
@@ -2797,7 +2802,7 @@ int Soldier::check_reaction_fire(Soldier *the_target)
 		// Compare the reaction figures.
 		float total_reactions = ud.CurReactions;
 		float tu_ratio; 
-		if (the_target->ud.CurTU > 0) tu_ratio = ud.CurTU / the_target->ud.CurTU;
+		if (the_target->ud.CurTU > 0) tu_ratio = (float)ud.CurTU / the_target->ud.CurTU; //needs for smooth interpolating
 		else tu_ratio = 999;
 
 		ASSERT(the_target->ud.CurReactions > 0); // Shouldn't happen, but...
@@ -2805,16 +2810,38 @@ int Soldier::check_reaction_fire(Soldier *the_target)
 		if (((float)ud.CurReactions / (float)the_target->ud.CurReactions) < total_reactions)
 			total_reactions = ((float)ud.CurReactions / (float)the_target->ud.CurReactions);
 
+		float r1 = total_reactions;
 		total_reactions /= 2;
+		float r2 = total_reactions;
 
 		if (tu_ratio < 1) total_reactions *= tu_ratio;
+
+		if(FLAGS & F_REACTINFO)
+			g_console->printf(COLOR_SYS_INFO1,"ToReact=%5.4f (%5.4f, %5.4f) TU: %5.4f", total_reactions, r1, r2, tu_ratio);
 		
 		if (randval(0, 1) < total_reactions)
 		{
 			// We can make a reaction shot.
 			// Try the weapon in right hand first
-			if (do_reaction_fire(the_target, P_ARM_RIGHT, AIMED)) return 1;
-			if (do_reaction_fire(the_target, P_ARM_RIGHT, SNAP)) return 1;
+
+			switch (m_ReserveTimeMode) {
+			case RESERVE_FREE:
+				if (do_reaction_fire(the_target, P_ARM_RIGHT, AUTO)) return 1;
+				if (do_reaction_fire(the_target, P_ARM_RIGHT, AIMED)) return 1;
+				if (do_reaction_fire(the_target, P_ARM_RIGHT, SNAP)) return 1;
+				break;
+			case RESERVE_SNAP:
+				if (do_reaction_fire(the_target, P_ARM_RIGHT, SNAP)) return 1;
+				break;
+			case RESERVE_AIM:
+				if (do_reaction_fire(the_target, P_ARM_RIGHT, AIMED)) return 1;
+				if (do_reaction_fire(the_target, P_ARM_RIGHT, SNAP)) return 1;
+				break;
+			case RESERVE_AUTO:
+				if (do_reaction_fire(the_target, P_ARM_RIGHT, AUTO)) return 1;
+				if (do_reaction_fire(the_target, P_ARM_RIGHT, SNAP)) return 1;
+				break;
+			}
 
 			// No luck with right arm, go to left arm.
 			if (do_reaction_fire(the_target, P_ARM_LEFT, AIMED)) return 1;
@@ -2831,6 +2858,7 @@ int Soldier::check_reaction_fire(Soldier *the_target)
 int Soldier::do_reaction_fire(Soldier *the_target, int place, int shot_type)
 {
 	Item *it = item(place);
+	char *type_str=NULL;
 	if (it == NULL) return 0; // no item in hand
 	if (!it->obdata_isGun() && !it->is_laser()) return 0; // item is not a gun or laser
 	if (!it->is_laser()     && !it->haveclip()) return 0; // gun with no clip
@@ -2842,7 +2870,7 @@ int Soldier::do_reaction_fire(Soldier *the_target, int place, int shot_type)
 
 	// How many TUs do we use?
 	tus = required(it->obdata_time(shot_type));
-	if (shot_type == AUTO) tus = (tus + 2) / 3 * 3; // this was taken from firemenu
+	if (shot_type == AUTO) tus = (tus + 2) / 3;//NOT!!!  * 3;
 
 	if (tus <= ud.CurTU) {
 		// We have enough time to make the shot. Set up target.
@@ -2851,19 +2879,25 @@ int Soldier::do_reaction_fire(Soldier *the_target, int place, int shot_type)
 		switch (shot_type) {
 			case AIMED:
 				target.action = AIMEDSHOT;
+				type_str="AIMED shot";
 				break;
 			case AUTO:
 				target.action = AUTOSHOT;
+				type_str="AUTO shot";
 				break;
 			case SNAP:
 				target.action = SNAPSHOT;
+				type_str="SNAP shot";
 				break;
 		}
 		target.item = it;
 		target.place = place;
 		try_reaction_shot(the_target);
 		if (FIRE_num > 0) // If FIRE_num is set, we're firing shots, so...
+		{
+			g_console->printf(COLOR_SYS_INFO1,"Reaction fire with %s!",type_str);
 			return 1;
+		}
 	}
 
 	// Nope.
@@ -2925,3 +2959,20 @@ bool Soldier::Read(persist::Engine &archive)
 
 	return true;
 }
+
+void Soldier::set_reserve_type(int type)
+{
+	if(type == RESERVE_AUTO)
+		if((rhand_item() && rhand_item()->obdata_accuracy(AUTO)) || (lhand_item() && lhand_item()->obdata_accuracy(AUTO)))
+		{
+			m_ReserveTimeMode = type;
+			net->send_reserve_time(NID, type);
+			return;
+		}
+		else return;
+	if(type == RESERVE_FREE || rhand_item() || lhand_item())
+	{
+		m_ReserveTimeMode = type;
+		net->send_reserve_time(NID, type);
+	}
+};

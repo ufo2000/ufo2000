@@ -22,8 +22,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef SERVER_CONFIG_H
 #define SERVER_CONFIG_H
 
-#include <string>
-#include <nl.h>
 
 extern int g_server_reload_config_flag;
 

@@ -18,8 +18,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
+#include "stdafx.h"
+
 #include "global.h"
-#include <stdio.h>
 #include "video.h"
 #include "icon.h"
 #include "sound.h"
@@ -38,8 +40,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //! firemenu background color
 #define _BG COLOR_BLACK1
 
-ReserveTime_Mode ReserveTimeMode; 	// TODO: should be platoon- or soldier-specific
-
 // not used ??
 void cprintf(char *str)
 {
@@ -53,6 +53,9 @@ void cprintf(char *str)
  */
 Icon::Icon()
 {
+	int i;
+	int j;
+
 	//names in .lua file
 	item[I_LEFT].name = "LeftItem";
 	item[I_RIGHT].name = "RightItem";
@@ -110,7 +113,7 @@ Icon::Icon()
     }
 
 	//items
-	for (int i = 0; i < ITEM_NUMBER; i++) {
+	for (i = 0; i < ITEM_NUMBER; i++) {
    		lua_pushstring(L, item[i].name);
 		lua_gettable(L, -2);
 		ASSERT(lua_istable(L, -1));
@@ -119,7 +122,7 @@ Icon::Icon()
 		lua_gettable(L, -2);
 		ASSERT(lua_istable(L, -1));
 	
-		for (int j = 1; j <= 4; j++) {
+		for (j = 1; j <= 4; j++) {
 			lua_pushnumber(L, j);
 			lua_gettable(L, -2);
 			ASSERT(lua_isnumber(L, -1));
@@ -135,7 +138,7 @@ Icon::Icon()
 		lua_gettable(L, -2);
 		ASSERT(lua_istable(L, -1));
 	
-		for (int j = 1; j <= 2; j++) {
+		for (j = 1; j <= 2; j++) {
 			lua_pushnumber(L, j);
 			lua_gettable(L, -2);
 			ASSERT(lua_isnumber(L, -1));
@@ -152,7 +155,7 @@ Icon::Icon()
 		lua_gettable(L, -2);
 		ASSERT(lua_istable(L, -1));
 	
-		for (int j = 1; j <= 2; j++) {
+		for (j = 1; j <= 2; j++) {
 			lua_pushnumber(L, j);
 			lua_gettable(L, -2);
 			ASSERT(lua_isnumber(L, -1));
@@ -185,7 +188,7 @@ Icon::Icon()
 	}
 	
 	//buttons
-	for (int i = 0; i < BUTTON_NUMBER; i++) {
+	for (i = 0; i < BUTTON_NUMBER; i++) {
 		lua_pushstring(L, button[i].name);
 		lua_gettable(L, -2);
 		ASSERT(lua_istable(L, -1));
@@ -204,7 +207,7 @@ Icon::Icon()
 	}
 	
 	//texts
-	for (int i = 0; i < TEXT_NUMBER; i++) {
+	for (i = 0; i < TEXT_NUMBER; i++) {
 		lua_pushstring(L, text[i].name);
 		lua_gettable(L, -2);
 		ASSERT(lua_istable(L, -1));
@@ -213,7 +216,7 @@ Icon::Icon()
 		lua_gettable(L, -2);
 		ASSERT(lua_istable(L, -1));
 	
-		for (int j = 1; j <= 2; j++) {
+		for (j = 1; j <= 2; j++) {
 			lua_pushnumber(L, j);
 			lua_gettable(L, -2);
 			ASSERT(lua_isnumber(L, -1));
@@ -253,7 +256,7 @@ Icon::Icon()
 	}
 	
 	//attributes	
-	for (int i = 0; i < ATTRIBUTE_NUMBER; i++) {
+	for (i = 0; i < ATTRIBUTE_NUMBER; i++) {
 		lua_pushstring(L, attribute[i].name);
 		lua_gettable(L, -2);
 		ASSERT(lua_istable(L, -1));
@@ -262,7 +265,7 @@ Icon::Icon()
 		lua_gettable(L, -2);
 		ASSERT(lua_istable(L, -1));
 	
-		for (int j = 1; j <= 2; j++) {
+		for (j = 1; j <= 2; j++) {
 			lua_pushnumber(L, j);
 			lua_gettable(L, -2);
 			ASSERT(lua_isnumber(L, -1));
@@ -308,7 +311,7 @@ Icon::Icon()
 		lua_gettable(L, -2);
 		ASSERT(lua_istable(L, -1));
 	
-		for (int j = 1; j <= 2; j++) {
+		for (j = 1; j <= 2; j++) {
 			lua_pushnumber(L, j);
 			lua_gettable(L, -2);
 			ASSERT(lua_isnumber(L, -1));
@@ -340,7 +343,7 @@ Icon::Icon()
 	lua_pop(L, 1);
 	
 	//reserve time buttons
-		for (int i = 0; i < RESERVE_NUMBER; i++) {
+		for (i = 0; i < RESERVE_NUMBER; i++) {
 		lua_pushstring(L, reserve[i].name);
 		lua_gettable(L, -2);
 		ASSERT(lua_istable(L, -1));
@@ -349,7 +352,7 @@ Icon::Icon()
 		lua_gettable(L, -2);
 		ASSERT(lua_istable(L, -1));
 	
-		for (int j = 1; j <= 4; j++) {
+		for (j = 1; j <= 4; j++) {
 			lua_pushnumber(L, j);
 			lua_gettable(L, -2);
 			ASSERT(lua_isnumber(L, -1));
@@ -365,7 +368,7 @@ Icon::Icon()
 		lua_gettable(L, -2);
 		ASSERT(lua_istable(L, -1));
 	
-		for (int j = 1; j <= 4; j++) {
+		for (j = 1; j <= 4; j++) {
 			lua_pushnumber(L, j);
 			lua_gettable(L, -2);
 			ASSERT(lua_isnumber(L, -1));
@@ -678,15 +681,16 @@ int Icon::identify(int mx, int my)
 {
     int icon_nr = -1;
     mx -= x; my -= y;
+	int i;
 
-    for (int i = B_MAN_UP; i <= BUTTON_NUMBER; i++) { 
+    for (i = B_MAN_UP; i <= BUTTON_NUMBER; i++) { 
         if (button[ i ].is_inside(mx, my)) { 
             icon_nr = i; 
             return icon_nr;
         } 
     } 
     // Reserve-time-buttons are a separate class:
-    for (int i = R_TIME_FREE; i <= RESERVE_NUMBER; i++) { 
+    for (i = R_TIME_FREE; i <= RESERVE_NUMBER; i++) { 
         if (reserve[ i ].button.is_inside(mx, my)) {
             icon_nr = i + BUTTON_NUMBER; 
             return icon_nr;
@@ -736,19 +740,23 @@ void Icon::execute(int mx, int my)
 //
 	} else
 	if (reserve[R_TIME_FREE].button.is_inside(mx, my)) {
-		ReserveTimeMode = RESERVE_FREE;       
+		if(sel_man)
+			sel_man->set_reserve_type(RESERVE_FREE); 
 		soundSystem::getInstance()->play(SS_BUTTON_PUSH_1); 
 	} else
 	if (reserve[R_TIME_AIM].button.is_inside(mx, my)) {
-		ReserveTimeMode = RESERVE_AIM;
+		if(sel_man)		
+			sel_man->set_reserve_type(RESERVE_AIM);
 		soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
 	} else
 	if (reserve[R_TIME_SNAP].button.is_inside(mx, my)) {
-		ReserveTimeMode = RESERVE_SNAP;
+		if(sel_man)
+			sel_man->set_reserve_type(RESERVE_SNAP);
 		soundSystem::getInstance()->play(SS_BUTTON_PUSH_1); 
 	} else
 	if (reserve[R_TIME_AUTO].button.is_inside(mx, my)) {
-		ReserveTimeMode = RESERVE_AUTO;
+		if(sel_man)
+			sel_man->set_reserve_type(RESERVE_AUTO);
 		soundSystem::getInstance()->play(SS_BUTTON_PUSH_2);  
 	} else
 	if (button[B_MAP].is_inside(mx, my)) {
@@ -850,23 +858,25 @@ void Icon::info()
 	
 	draw_text(T_TURN_NUMBER, (turn / 2) + 1, "%02d");
 		
-	switch(ReserveTimeMode) {
+	if(sel_man)
+		switch(sel_man->m_ReserveTimeMode) {
 		case RESERVE_FREE:
-		reserve[R_TIME_FREE].Draw(x, y);  
-		break;
+			reserve[R_TIME_FREE].Draw(x, y);  
+			break;
 		
 		case RESERVE_AIM:
-		reserve[R_TIME_AIM].Draw(x, y);
-		break;
+			reserve[R_TIME_AIM].Draw(x, y);
+			break;
 		
 		case RESERVE_SNAP:
-		reserve[R_TIME_SNAP].Draw(x, y);
-		break;
+			reserve[R_TIME_SNAP].Draw(x, y);
+			break;
 		
 		case RESERVE_AUTO:
-		reserve[R_TIME_AUTO].Draw(x, y);
-		break;
-	}
+			reserve[R_TIME_AUTO].Draw(x, y);
+			break;
+		}
+	else reserve[R_TIME_FREE].Draw(x, y);
 }
 
 /**

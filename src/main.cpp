@@ -23,21 +23,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * Main program:  Ufo2000-client
  */
 
+
+#include "stdafx.h"
+
 #include "global.h"
-
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <signal.h>
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <time.h>
-#include <fstream>
 
 #include "version.h"
 #include "pck.h"
@@ -75,6 +64,8 @@ ConsoleWindow *g_console;
 int g_time_limit;               //!< Limit of time for a single turn in seconds
 volatile int g_time_left;       //!< Current counter for time left for this turn
 int last_time_left;             //!< Time of last screen-update for g_time_left
+int g_p2_start_sit=0;               //!< If player 2 starts sitting - 0 by default
+
 
 //ReserveTime_Mode ReserveTimeMode; 	// TODO: should be platoon- or soldier-specific
 
@@ -237,6 +228,15 @@ void restartgame()
 	// Initial statistics get set properly here (strength effect on TU, mostly).
 	platoon_local->restore();
 	platoon_remote->restore();
+
+	//deal with initial sit for p2
+	if(!HOST || (net->gametype == GAME_TYPE_HOTSEAT))
+	{
+		if (FLAGS & F_SECONDSIT) p2->sit_on_start();
+	}
+	else {  
+		if(g_p2_start_sit) p2->sit_on_start(); //!HOTSEAT HOST - recieves g_p2_start_sit in planner (connect.cpp)
+	}
 
 	//sel_man = NULL;
 	sel_man = platoon_local->captain();
@@ -555,6 +555,8 @@ void initmain(int argc, char *argv[])
     if (get_config_int("Flags", "F_DEBUGDUMPS", 0)) FLAGS |= F_DEBUGDUMPS;    // Produce a lot of files with the information which can help in debugging
     if (get_config_int("Flags", "F_TOOLTIPS",    0)) FLAGS |= F_TOOLTIPS;     // Enable display of tooltips for the control-panel
     if (get_config_int("Flags", "F_ENDTURNSND", 1)) FLAGS |= F_ENDTURNSND;	  // sound signal at the end of turn
+    if (get_config_int("Flags", "F_SECONDSIT", 1)) FLAGS |= F_SECONDSIT;	  // second player starts in SIT position
+    if (get_config_int("Flags", "F_REACTINFO", 0)) FLAGS |= F_REACTINFO;	  // show debug info on reaction fire
 	const AGUP_THEME *gui_theme = agup_theme_by_name(get_config_string("General", "gui_theme", "BeOS"));
 
 	if (argc > 1) {
@@ -1452,7 +1454,7 @@ void gameloop()
 	
 	clear_keybuf();
 	GAMELOOP = 1;
-	ReserveTimeMode = RESERVE_FREE;
+
 	g_console->printf( COLOR_SYS_HEADER, "%s", "Welcome to the battlescape of UFO2000 !");
 	g_console->printf( COLOR_SYS_INFO1,  "Press F1 for help.");  // see KEY_F1
 	color1 = 0;
@@ -1669,7 +1671,6 @@ void gameloop()
 			int scancode;
 			int keycode = ureadkey(&scancode);
 			int vol;
-			char test[128];
 
 			switch (scancode) {
 				case KEY_PGUP:

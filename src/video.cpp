@@ -18,18 +18,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
+#include "stdafx.h"
+
 #include "global.h"
-#include <assert.h>
-#include <stdio.h>
-
-#ifdef LINUX
-#include <stdlib.h>
-#include <unistd.h>
-#endif
-
-#include <string.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 #include "video.h"
 #include "wind.h"
 #include "../ufo2000.h"

@@ -20,7 +20,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #ifndef DIRTY_H
 #define DIRTY_H
-#include <allegro.h>
 
 struct Rect
 {

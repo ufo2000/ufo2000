@@ -21,11 +21,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef WIND_H
 #define WIND_H
 
-#include <allegro.h>
-#include <stdio.h>
-
-#include <stdarg.h>
-
 #include "global.h"
 #include "dirty.h"
 #include "keys.h"

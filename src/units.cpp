@@ -18,12 +18,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
+#include "stdafx.h"
+
 #include "global.h"
-#include <assert.h>
-#include <stdio.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <string.h>
 
 #include "video.h"
 #include "multiplay.h"
@@ -207,7 +205,7 @@ void Units::print(int gcol)
 	textout_centre(screen2, font, "Game rules:", gmx + gmw / 2, SCREEN2H - 28, xcom1_color(BUTTON));
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 16, xcom1_color(BUTTON), "%d; %dk; %d; %d; %d; %d", scenario->rules[0], scenario->rules[1], scenario->rules[2], tmp, scenario->rules[3], scenario->rules[4]);
 	
-	for (int i = 0; i < len; i++) buf[i] = 0;
+	for (i = 0; i < len; i++) buf[i] = 0;
 	len = 0;
  	points = 0;
  	damage_points = 0;
@@ -289,7 +287,9 @@ void Units::print(int gcol)
 
 void Units::draw_scenario_window()
 {
-    rect(    screen2, gmx + gmw / 2 - 200,     SCREEN2H - 320,     gmx + gmw / 2 + 200,     SCREEN2H - 37,     COLOR_WHITE);
+    int i;
+
+	rect(    screen2, gmx + gmw / 2 - 200,     SCREEN2H - 320,     gmx + gmw / 2 + 200,     SCREEN2H - 37,     COLOR_WHITE);
     rectfill(screen2, gmx + gmw / 2 - 200 + 1, SCREEN2H - 320 + 1, gmx + gmw / 2 + 200 - 1, SCREEN2H - 37 - 1, COLOR_GRAY14);
 
     textout_centre(screen2, font, scenario->name[scenario->type], gmx + gmw / 2, SCREEN2H - 310, xcom1_color(SELECTED));
@@ -297,20 +297,20 @@ void Units::draw_scenario_window()
     textout_centre(screen2, font, ">", gmx + gmw / 2 + 150 - 50, SCREEN2H - 310, xcom1_color(BUTTON));
 
     textout_centre(screen2, font, "Player 1", gmx + gmw / 2, SCREEN2H - 285, xcom1_color(CAPTION));
-	for (int i = 0; i < 8; i++)
+	for (i = 0; i < 8; i++)
     	textprintf(screen2, font, gmx + gmw / 2 - 200 + 5, SCREEN2H - 270 + i * 9, xcom1_color(COMMENT), scenario->briefing_left[scenario->type][i]);
 	if (pos == POS_LEFT)
 		rect(screen2, gmx + gmw / 2 - 200 + 3, SCREEN2H - 272, gmx + gmw / 2 + 200 - 3, SCREEN2H - 198, xcom1_color(LOCAL_COLOR));    	
     	
     textout_centre(screen2, font, "Player 2", gmx + gmw / 2, SCREEN2H - 185, xcom1_color(CAPTION));
-	for (int i = 0; i < 8; i++)
+	for (i = 0; i < 8; i++)
     	textprintf(screen2, font, gmx + gmw / 2 - 200 + 5, SCREEN2H - 170 + i * 9, xcom1_color(COMMENT), scenario->briefing_right[scenario->type][i]);
    	if (pos == POS_RIGHT)
 		rect(screen2, gmx + gmw / 2 - 200 + 3, SCREEN2H - 172, gmx + gmw / 2 + 200 - 3, SCREEN2H - 98, xcom1_color(LOCAL_COLOR));    	
 
     	
 	textout_centre(screen2, font, "Options", gmx + gmw / 2, SCREEN2H - 85, xcom1_color(CAPTION));
-	for (int i = 0; i < 3; i++) {
+	for (i = 0; i < 3; i++) {
 		switch(scenario->options[scenario->type][i]->type) {
 			case OPT_NONE:
 			case OPT_HIDDEN:
@@ -647,6 +647,7 @@ void Units::execute(Map *map, int map_change_allowed)
  */
 void Units::execute_main(Map *map, int map_change_allowed)
 {
+	int i;
 	if (selected != -1) {
 		int mx = mouse_x;
 		int my = mouse_y;
@@ -687,7 +688,7 @@ void Units::execute_main(Map *map, int map_change_allowed)
 	int x1, y1, x2, y2;
 	x1 = gx - 2; x2 = gx + MAN_NAME_LEN * 8 + 2;	
 
-	for (int i = 0; i < size; i++) {
+	for (i = 0; i < size; i++) {
 		y1 = gy + i * 15 - 2; y2 = y1 + 8 + 3;
 
 		if (mouse_inside(x1, y1, x2, y2)) {
@@ -736,7 +737,7 @@ void Units::execute_main(Map *map, int map_change_allowed)
 	if (mouse_inside(gx + 15 * 8 - 20, SCREEN2H - 20, gx + 15 * 8 + 20, SCREEN2H - 5)) {
 		//"SEND"
 		int index_of_first = -1;
-		for (int i = 0; i < 10; i++) {
+		for (i = 0; i < 10; i++) {
 			if (x[i] != 0 && y[i] != 0) {
 			    index_of_first = i;
 				break;
@@ -744,7 +745,7 @@ void Units::execute_main(Map *map, int map_change_allowed)
 		}
 		
 		int num_of_men_sel = 0;
-		for (int i = 0; i < 10; i++) {
+		for (i = 0; i < 10; i++) {
 			if (x[i] != 0 && y[i] != 0)
 				num_of_men_sel++;
 		}

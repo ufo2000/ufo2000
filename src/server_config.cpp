@@ -23,20 +23,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #pragma warning(disable:4786)
 #endif
 
-#include <nl.h>
-#include <stdio.h>
-#include <string>
-#include <vector>
-#include <map>
-#include <time.h>
-#include <stdarg.h>
-#include <assert.h>
-#include "server_config.h"
+#include "stdafx.h"
 
-#ifndef WIN32
-#include <sys/types.h>
-#include <unistd.h>
-#endif
+#include "server_config.h"
 
 #ifndef SERVER_LOG_FILENAME
 #define SERVER_LOG_FILENAME "ufo2000-srv.log"

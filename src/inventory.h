@@ -20,7 +20,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #ifndef INVENTORY_H
 #define INVENTORY_H
-#include <allegro.h>
 #include "spk.h"
 #include "item.h"
 

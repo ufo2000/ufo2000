@@ -19,7 +19,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#include <stdio.h>
+#include "stdafx.h"
+
 #include "server_protocol.h"
 #include "server_config.h"
 

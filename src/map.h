@@ -20,9 +20,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #ifndef MAP_H
 #define MAP_H
-#include <assert.h>
-#include <vector>
-#include <map>
 #include "cell.h"
 #include "pck.h"
 #include "spk.h"

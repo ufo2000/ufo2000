@@ -19,8 +19,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#include <stdio.h>
-#include <nl.h>
+#include "stdafx.h"
+
 #ifdef HAVE_DUMBOGG
 #include <aldumb.h>
 extern "C" {
@@ -29,11 +29,6 @@ extern "C" {
 #endif
 #include "global.h"
 #include "music.h"
-#ifdef WIN32
-#define usleep(t) Sleep((t + 999) / 1000)
-#else
-#include <unistd.h>
-#endif
 
 static MIDI *allegro_midi = NULL;
 static int music_volume = 255;
