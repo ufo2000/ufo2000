@@ -1407,16 +1407,28 @@ void gameloop()
 					FS_DecMusicVolume();
 					break;
 				case KEY_LEFT:
-					resize_screen2(-10, 0);
+					if (key[KEY_LSHIFT])
+						map->move(10, 0);
+					else
+						resize_screen2(-10, 0);
 					break;
 				case KEY_UP:
-					resize_screen2(0, -10);
+					if (key[KEY_LSHIFT])
+						map->move(0, 10);
+					else
+						resize_screen2(0, -10);
 					break;
 				case KEY_RIGHT:
-					resize_screen2(10, 0);
+					if (key[KEY_LSHIFT])
+						map->move(-10, 0);
+					else
+						resize_screen2(10, 0);
 					break;
 				case KEY_DOWN:
-					resize_screen2(0, 10);
+					if (key[KEY_LSHIFT])
+						map->move(0, -10);
+					else
+						resize_screen2(0, 10);
 					break;
 				case KEY_F2:
 					if (askmenu("SAVE GAME"))
