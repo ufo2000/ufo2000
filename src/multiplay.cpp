@@ -51,9 +51,7 @@ void next_turn(int crc);
 
 void Net::error(char *str)
 {
-	info->printstr("___error in ");
-	info->printstr(str);
-	info->printstr("___\n");
+	g_console->printf("___error in %s___", str);
 	log(str);
 }
 
@@ -165,11 +163,7 @@ void Net::send()
 void Net::send(char *dat, int size)
 {
 	if (FLAGS & F_RAWMESSAGES) {
-		char frm[100];
-		sprintf(frm, "send:[PLAYERDATA size %d byte\n", size);
-		info->printstr(frm);
-		//info->printstr("send:[");
-		//info->printstr(dat); //info->printstr(", ");
+		g_console->printf("send:[PLAYERDATA size %d byte", size);
 	}
 
 	switch (gametype) {
@@ -197,8 +191,7 @@ void Net::send(char *_str)
 	str[l + 1] = 0;
 
 	if (FLAGS & F_RAWMESSAGES) {
-		info->printstr("send:[");
-		info->printstr(str);      //info->printstr(", ");
+		g_console->printf("send:[%s", str);
 	}
 
 	log("send:[", str);
@@ -305,11 +298,8 @@ void Net::check()
 		//queue->put(recv_str);
 		queue->put(recv_str, recv_str_len);
 		if (FLAGS & F_RAWMESSAGES) {
-			char s[100];
-			sprintf(s, "put:[%d]", recv_str_len);
-			info->printstr(s);
-			//info->printstr("put:[");
-			info->printstr(recv_str);
+			g_console->printf("put:[%d]", recv_str_len);
+			g_console->print(recv_str);
 		}
 	}
 	if (GAMELOOP && (!platoon_remote->nomoves()))
@@ -324,11 +314,8 @@ void Net::check()
 		return ;
 
 	if (FLAGS & F_RAWMESSAGES) {
-		char s[100];
-		sprintf(s, "get:[%d]", recv_str_len);
-		info->printstr(s);
-		//info->printstr("get:[");
-		info->printstr(recv_str);      //info->printstr("], ");
+		g_console->printf("get:[%d]", recv_str_len);
+		g_console->print(recv_str);      //info->printstr("], ");
 	}
 
 	log("recv:[", recv_str);
@@ -417,12 +404,12 @@ void Net::check()
 			break;
 		case CMD_MESSAGE:
 			play(S_MESSAGE);
-			info->printstr(pkt.str(), 32);
+			g_console->print(pkt.str(), xcom1_color(32));
 			break;
 		case CMD_NONE:
 			//play(S_MESSAGE);
 			//if (FLAGS & F_RAWMESSAGES == 0) {
-			info->printstr(recv_str, 144);      //info->printstr("], ");
+			g_console->print(recv_str, xcom1_color(144));      //info->printstr("], ");
 			//}
 			break;
 	};
@@ -1271,14 +1258,12 @@ int Net::recv_unit_data_size()
 
 	if (size == 0) { //begin send
 		memset(pd_remote, 0, sizeof(PLAYERDATA));
-		info->printstr("pd recv begin\n");
+		g_console->print("pd recv begin");
 	} else { //end send
 		//info->printstr("pd recv end\n");
 		pd_remote->size = size;
-		char s[100];
-		sprintf(s, "pd recv end. size %d\n", pd_remote->size);
+		g_console->printf("pd recv end. size %d", pd_remote->size);
 		remote.SEND = 1;
-		info->printstr(s);
 	}
 	return 1;
 }
@@ -1393,8 +1378,7 @@ void Net::replay()
 	}
 	replay_cur++;
 
-	info->printstr(str);
-	info->printstr("\n");
+	g_console->print(str);
 
 	char *xcom = strstr(str, "send:[ ");
 	if (xcom != NULL) {
@@ -1494,7 +1478,7 @@ void Net::replay()
 			break;
 		case CMD_MESSAGE:
 			play(S_MESSAGE);
-			info->printstr(pkt.str(), 32);
+			g_console->print(pkt.str(), xcom1_color(32));
 			break;
 		case CMD_NONE:
 			break;

@@ -276,7 +276,7 @@ void Place::drawgrid(int PLACE_NUM)
 {
 	assert((PLACE_NUM >= 0) && (PLACE_NUM < 10));
 
-	textout(screen2, small, place_name[PLACE_NUM], gx, gy - 8, 66);
+	textout(screen2, g_small_font, place_name[PLACE_NUM], gx, gy - 8, 66);
 
 	if (!ishand()) {
 		int dx = 0, dy = 0;
@@ -505,7 +505,7 @@ void Place::draw_deselect_time(int PLACE_NUM, int time)
 	if (time) {
 		//place_name[PLACE_NUM]
 		//textout(screen2, small, time, gx, gy-8, 66);
-		printsmall(gx + 1 + text_length(small, place_name[PLACE_NUM]), gy - 6, 1, time);
+		printsmall(gx + 1 + text_length(g_small_font, place_name[PLACE_NUM]), gy - 6, 1, time);
 	}
 }
 

@@ -63,11 +63,6 @@ void Explosive::add(Item *it, int delay_time)
 			item[i] = it;
 			delaytime[i] = delay_time;
 			item[i]->set_delay_time(delay_time);
-
-			//char str[100];
-			//sprintf(str, "explo add %d, delay_time=%d\n", i, delay_time);
-			//info->printstr(str);
-
 			return ;
 		}
 }

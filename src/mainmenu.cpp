@@ -99,7 +99,7 @@ static int d_mainmenu_background_proc(int msg, DIALOG *d, int c)
 	if (msg == MSG_DRAW) {
 		stretch_blit(menuback, screen, 0, 0, menuback->w, menuback->h, 0, 0, screen->w, screen->h);
 		text_mode(-1);
-		textprintf(screen, small, 0, 0, 220, "UFO2000 %s", UFO_VERSION_STRING);
+		textprintf(screen, g_small_font, 0, 0, 220, "UFO2000 %s", UFO_VERSION_STRING);
 	}
 	return D_O_K;
 }

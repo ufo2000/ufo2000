@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002       ufo2000 development team
+Copyright (C) 2002-2003  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,6 +25,198 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "wind.h"
 #include "pfxopen.h"
 
+ConsoleStatusLine::ConsoleStatusLine(int width, FONT *font, int color)
+{
+	m_width = width; 
+	m_height = text_height(font);
+	m_font = font;
+	m_need_redraw = true;
+	m_color = color;
+}
+
+ConsoleStatusLine::~ConsoleStatusLine()
+{
+}
+
+/**
+ * Function that erases last entered character from internal buffer
+ *
+ * @return true if character was really removed, 
+ *         false if there was no text in the internal buffer
+ */
+bool ConsoleStatusLine::backspace()
+{
+	int len = ustrlen(m_text.c_str());
+	if (len == 0) return false;
+	int offs = uoffset(m_text.c_str(), len - 1);
+	m_text.erase(offs);
+	return true;
+}
+
+void ConsoleStatusLine::redraw_full(BITMAP *bmp, int x, int y)
+{
+	BITMAP * temp_bmp = create_bitmap(m_width, m_height);
+	clear_to_color(temp_bmp, 11);
+	text_mode(-1); textout(temp_bmp, m_font, m_text.c_str(), 0, 0, m_color);
+	int len = text_length(m_font, m_text.c_str());
+	if (len > 0)
+		line(temp_bmp, len, 0, len, m_height - 1, xcom1_color(1));
+	blit(temp_bmp, bmp, 0, 0, x, y, m_width, m_height);
+	destroy_bitmap(temp_bmp);
+	m_need_redraw = false;
+}
+
+void ConsoleStatusLine::redraw_fast(BITMAP *bmp, int x, int y)
+{
+	if (m_need_redraw) redraw_full(bmp, x, y);
+}
+
+/** 
+ * Function that processes keyboard input for the status line
+ *
+ * @param keycode allegro key code obtained by readkey() function
+ * @return true if there is ready line inside of internal buffer (ENTER pressed)
+ */
+bool ConsoleStatusLine::process_keyboard_input(int keycode)
+{
+	if (keycode >> 8 == KEY_ENTER)
+		return true;
+
+	if (keycode >> 8 == KEY_BACKSPACE) {
+		if (backspace()) m_need_redraw = true;
+		return false;
+	}
+
+	int c = keymaper(keycode & 0xFF);
+	char tmp[6];
+	int size = usetc(tmp, c);
+	m_text.append(tmp, tmp + size);
+	if (text_length(m_font, m_text.c_str()) > m_width) backspace();
+	m_need_redraw = true;
+	return false;
+}
+
+ConsoleWindow::ConsoleWindow(int width, int height, FONT *font)
+{
+	m_width = width;
+	m_height = height;
+	m_font = font;
+	m_status_line = new ConsoleStatusLine(width, font);
+	m_need_redraw = true;
+}
+
+ConsoleWindow::~ConsoleWindow()
+{
+	delete m_status_line;
+}
+
+void ConsoleWindow::redraw_full(BITMAP *bmp, int x, int y)
+{
+	BITMAP * temp_bmp = create_bitmap(m_width, m_height);
+	clear_to_color(temp_bmp, xcom1_color(15));
+	int lines_to_show = (m_height - m_status_line->get_height()) / text_height(m_font);
+	for (int i = m_lines_text.size() - 1, j = 1; i >= 0 && j <= lines_to_show; i--, j++) {
+		text_mode(-1);
+		textout(temp_bmp, m_font, m_lines_text[i].c_str(), 0, 
+			m_height - m_status_line->get_height() - j * text_height(m_font), 
+			m_lines_color[i]);
+	}
+	m_status_line->redraw_full(temp_bmp, 0, m_height - m_status_line->get_height());
+	blit(temp_bmp, bmp, 0, 0, x, y, m_width, m_height);
+	destroy_bitmap(temp_bmp);
+	m_need_redraw = false;
+}
+
+void ConsoleWindow::redraw_fast(BITMAP *bmp, int x, int y)
+{
+	if (m_need_redraw)
+		redraw_full(bmp, x, y);
+	else
+		m_status_line->redraw_fast(bmp, x, y + m_height - m_status_line->get_height());
+}
+
+/**
+ * Function that inserts a new text line into console buffer
+ *
+ * @param text message to be printed
+ */
+void ConsoleWindow::print(const char *text, int color)
+{
+	m_lines_text.push_back(text);
+	m_lines_color.push_back(color);
+	m_need_redraw = true;
+}
+
+void ConsoleWindow::vprintf(int color, const char *fmt, va_list arglist)
+{
+#ifdef HAVE_VSNPRINTF
+	std::vector<char> buffer(1024);
+	while (vsnprintf(&buffer[0], buffer.size(), fmt, arglist) < 0)
+		buffer.resize(buffer.size() * 2);
+#else
+	std::vector<char> buffer(1024); // Hope, this will be enough
+	vsprintf(&buffer[0], fmt, arglist);
+#endif
+	print(&buffer[0], color);
+}
+
+void ConsoleWindow::printf(int color, const char *fmt, ...)
+{
+	va_list arglist;
+	va_start(arglist, fmt);
+	vprintf(color, fmt, arglist);
+	va_end(arglist);
+}
+
+void ConsoleWindow::printf(const char *fmt, ...)
+{
+	va_list arglist;
+	va_start(arglist, fmt);
+	vprintf(xcom1_color(1), fmt, arglist);
+	va_end(arglist);
+}
+
+/**
+ * Function that processes all keyboard input of console
+ *
+ * @param keycode code from allegro readkey() function
+ * @return        true if a new line has been just inserted into a buffer
+ *                this line can be read by get_text() function
+ */
+bool ConsoleWindow::process_keyboard_input(int keycode)
+{
+	if (keycode >> 8 == KEY_ENTER) {
+		print(m_status_line->get_text().c_str());
+		m_status_line->set_text("");
+		return true;
+	}
+	m_status_line->process_keyboard_input(keycode);
+	return false;
+}
+
+/**
+ * Function that returns last entered text string
+ *
+ * @return last entered text string
+ */
+const char *ConsoleWindow::get_text()
+{
+	assert(!m_lines_text.empty());
+	return m_lines_text.back().c_str();
+}
+
+/**
+ * Function that resizes console window
+ *
+ * @param width  new width of console window
+ * @param height new height of console window
+ */
+bool ConsoleWindow::resize(int width, int height)
+{
+	m_height = height;
+	m_need_redraw = true;
+	return true;
+}
 
 Wind::Wind(BITMAP *_backscr, int x1, int y1, int x2, int y2, int col, FONT *f)
 {

@@ -627,11 +627,10 @@ void Soldier::draw_inventory()
 {
 	showspk();
 
-	text_mode( -1);
+	text_mode(-1);
 	textout(screen2, large, md.Name, 0, 0, 66);
-	textout(screen2, small, "TUS>", 250, 24, 66);
-	textprintf(screen2, small, 271, 24, 18, "%d", ud.CurTU);
-	//textprintf(screen2, small, gx+151, gy+31+i*10, 146, "%d", param[i].cur);
+	textout(screen2, g_small_font, "TUS>", 250, 24, 66);
+	textprintf(screen2, g_small_font, 271, 24, 18, "%d", ud.CurTU);
 
 	for (int i = 0; i < 8; i++)
 		m_place[i]->drawgrid(i);
@@ -685,10 +684,10 @@ void Soldier::draw_unibord(int gx, int gy)
 	for (int i = 0; i < 17; i++) {
 		if (param[i].str != NULL) {
 			//textout(screen2, font, param[i].str, gx+8, gy+31+i*10, 50);
-			textout(screen2, small, param[i].str, gx + 8, gy + 31 + i * 10, 50);
+			textout(screen2, g_small_font, param[i].str, gx + 8, gy + 31 + i * 10, 50);
 			//textprintf(ui, font, 150, 31+i*10, 146, "%d", param[i].val);
 			//printsmall(gx+154, gy+32+i*10, 146, param[i].cur);
-			textprintf(screen2, small, gx + 151, gy + 31 + i * 10, 146, "%d", param[i].cur);
+			textprintf(screen2, g_small_font, gx + 151, gy + 31 + i * 10, 146, "%d", param[i].cur);
 
 			rect(screen2, gx + 170, gy + 32 + i * 10, gx + 170 + param[i].max, gy + 36 + i * 10, param[i].col);
 			if (param[i].cur)
@@ -1119,10 +1118,8 @@ void Soldier::die()
 	map->place(z, x, y)->put(new Item(ctype));
 
 	char s[100];
-	sprintf(s, "%s killed.\n", md.Name);
-	info->printstr(s, 132);
-
-	//delete(this);
+	sprintf(s, "%s killed.", md.Name);
+	g_console->print(s, xcom1_color(132));
 }
 
 
@@ -1781,7 +1778,7 @@ void Soldier::drawinfo(int x, int y)
 				printsmall(x + 33, y + 47, 36, lhand_item()->delay_time() - 1);
 		}
 	}
-	textout(screen2, small, md.Name, x + 134, y + 32, 130);
+	textout(screen2, g_small_font, md.Name, x + 134, y + 32, 130);
 
 
 	drawbar(71, 64, 170 + x, 41 + y, ud.CurTU, ud.MaxTU);

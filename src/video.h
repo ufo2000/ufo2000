@@ -29,10 +29,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 extern BITMAP *screen2;
 extern int SCREEN2W, SCREEN2H;
-extern BITMAP *screen_text;
 extern BITMAP *mouser, *selector;
 
-extern int REDRAW;
 extern volatile int DRAWIT;
 
 extern void drawit_timer();

@@ -733,7 +733,7 @@ static FONT *create_font(unsigned char *data00, unsigned char *data04, int w, in
 FONT *large;
 
 /** 'Small' UFO font. */
-FONT *small;
+FONT *g_small_font;
 
 /** constructs a 'small' font */
 void create_small_font() {
@@ -756,7 +756,7 @@ void create_small_font() {
                 dat_cyr = NULL;
         }
 	
-	small = create_font(dat_lat, dat_cyr, 8, 9, 1);
+	g_small_font = create_font(dat_lat, dat_cyr, 8, 9, 1);
 	
 	if (dat_cyr != NULL) {
                 delete []dat_cyr;
@@ -794,7 +794,7 @@ void create_large_font() {
 
 /** Destroys a 'small' font. Uses allegro function to reach destructor in the vtable. */
 void free_small_font() {
-	destroy_font(small);
+	destroy_font(g_small_font);
 }
 
 /** Destroys a 'large' font. Uses allegro function to reach destructor in the vtable. */

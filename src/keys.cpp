@@ -92,7 +92,7 @@ void keyswitch(int keyswitch_lang)
 
 int keymaper(int c)
 {
-	if (c < 32 || c > 127) return '?';
+	if (c < 32 || c > 127) return c;
 	return keymap[c];
 }
 

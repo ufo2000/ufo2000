@@ -62,7 +62,6 @@ DATAFILE *datafile;
 
 BITMAP *mouser, *selector;
 BITMAP *screen2;
-BITMAP *screen_text;
 
 char *palettes;
 int palettes_size;
@@ -75,8 +74,6 @@ void drawit_timer()
 	DRAWIT++;
 }
 END_OF_FUNCTION(drawit_timer);
-
-int REDRAW = 0;
 
 //! Counter for number of switches to ufo2000 from other programs
 volatile int g_switch_in_counter;
@@ -104,8 +101,6 @@ void initvideo()
 
 	screen2 = create_bitmap(SCREEN2W, SCREEN2H);
 	clear(screen2);
-	screen_text = create_bitmap(640, 400 - 10 - SCREEN2H);
-	clear(screen_text);
 
 	initpal("geodata/palettes.dat");
 
@@ -118,11 +113,7 @@ void initvideo()
 	}
 	
 	if (FLAGS & F_SMALLFONT) {
-		
-// crude hack around a some idiot's #define in rpcndr.h file, apparently from WIN32 SDK.
-// instead of using typedef these bozos put a '#define small char'  there. 
-#undef small		
-		font = small;
+		font = g_small_font;
 	}
 	
 }
@@ -134,7 +125,6 @@ void closevideo()
 
 	delete [] palettes;
 
-	destroy_bitmap(screen_text);
 	destroy_bitmap(screen2);
 }
 
@@ -148,7 +138,7 @@ void change_screen_mode()
 		}
 		set_video_mode();
 		reset_video();
-		REDRAW = 1;
+		g_switch_in_counter++;
 	}
 }
 
@@ -259,7 +249,7 @@ void reset_video()
 	set_mouse_speed(1, 1);
 	gui_fg_color = xcom1_color(15);
 	gui_bg_color = xcom1_color(1);
-	REDRAW = 1;
+	g_switch_in_counter++;
 }
 
 void initpal(char *fname)
@@ -333,43 +323,26 @@ unsigned short crc16(char *data_p)
 
 #include "icon.h"
 
-/*
-extern Icon *icon;
-extern Wind *info;
-extern BITMAP *info_background;
-extern BITMAP *logo;
-*/
-
 void resize_screen2(int vw, int vh)
 {
 	// shortcut to avoid screen flicker when at maximum/minimum size.
 	if (((SCREEN2W <= 320) && (vw < 0)) || ((SCREEN2H <= 200) && (vh < 0)))
 		return ;
 
-	if (((SCREEN2W >= 640) && (vw > 0)) || ((SCREEN2H >= 400) && (vh > 0)))
+	if (((SCREEN2W >= 640) && (vw > 0)) || ((SCREEN2H >= 360) && (vh > 0)))
 		return ;
 
 	SCREEN2W += vw; SCREEN2H += vh;
 	if (SCREEN2W > 640) SCREEN2W = 640;
 	if (SCREEN2W < 320) SCREEN2W = 320;
-	if (SCREEN2H > 400) SCREEN2H = 400;
+	if (SCREEN2H > 360) SCREEN2H = 360;
 	if (SCREEN2H < 200) SCREEN2H = 200;
 
 	destroy_bitmap(screen2);
 	screen2 = create_bitmap(SCREEN2W, SCREEN2H);
 
-	if (SCREEN2H < 390) {
-		destroy_bitmap(screen_text);
-		screen_text = create_bitmap(640, 400 - 10 - SCREEN2H);
-		clear(screen_text);
-	}
-	/*	What are those three lines for?  It crashes if SCREEN2H > 390 without them. */
-
-	clear(info_background);
-	draw_sprite(info_background, logo, 640 - logo->w, SCREEN2H);
-	blit(info_background, screen, 0, 0, 0, 0, 640, 400);
-	delete(info);
-	info = new Wind(info_background, 0, SCREEN2H, 640, 400, 1);
+	clear_to_color(screen, xcom1_color(15));
+	g_console->resize(640, screen->h - SCREEN2H);
 	icon->setxy((SCREEN2W - 320) / 2, SCREEN2H - 56);
 	set_mouse_range(0, 0, SCREEN2W - 1, SCREEN2H - 1);
 	position_mouse(SCREEN2W / 2, SCREEN2H / 2);

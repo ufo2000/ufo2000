@@ -66,14 +66,14 @@ void Inventory::draw()
 		sel_man->draw_deselect_times(sel_item_place);
 
 		//textprintf(screen2, font, 129, 141, color, "%s", sel_item->data()->name);
-		textprintf(screen2, small, 128, 140, 50, "%s", sel_item->data()->name);
+		textprintf(screen2, g_small_font, 128, 140, 50, "%s", sel_item->data()->name);
 		if (sel_item->is_grenade()) {
 			if (sel_item->delay_time()) {
 				//printsmall(118, 142, 40, sel_item->delay_time()-1);
-				textout(screen2, small, "DELAY", 272, 64, 66);
-				textout(screen2, small, "TIME:", 272, 72, 66);
-				textout(screen2, small, "LEFT=", 272, 80, 66);
-				textprintf(screen2, small, 299, 80, 18, "%d", sel_item->delay_time() - 1);
+				textout(screen2, g_small_font, "DELAY", 272, 64, 66);
+				textout(screen2, g_small_font, "TIME:", 272, 72, 66);
+				textout(screen2, g_small_font, "LEFT=", 272, 80, 66);
+				textprintf(screen2, g_small_font, 299, 80, 18, "%d", sel_item->delay_time() - 1);
 				//textprintf(screen2, font, 272, 80, color, "%d", sel_item->rounds);
 				rect(screen2, 272, 88, 303, 135, 8);      //clip
 				bigobs->showpck(sel_item->data()->pInv, 272, 88 + 8);
@@ -81,18 +81,17 @@ void Inventory::draw()
 		}
 
 		if (sel_item->haveclip()) {
-			textout(screen2, small, "AMMO:", 272, 64, 66);
-			textout(screen2, small, "ROUNDS", 272, 72, 66);
-			textout(screen2, small, "LEFT=", 272, 80, 66);
-			textprintf(screen2, small, 299, 80, 18, "%d", sel_item->roundsremain());
-			//textprintf(screen2, font, 272, 80, color, "%d", sel_item->roundsremain());
+			textout(screen2, g_small_font, "AMMO:", 272, 64, 66);
+			textout(screen2, g_small_font, "ROUNDS", 272, 72, 66);
+			textout(screen2, g_small_font, "LEFT=", 272, 80, 66);
+			textprintf(screen2, g_small_font, 299, 80, 18, "%d", sel_item->roundsremain());
 			rect(screen2, 272, 88, 303, 135, 8);      //clip
 			bigobs->showpck(sel_item->clip()->data()->pInv, 272, 88 + 8);
 		} else if (sel_item->data()->isAmmo) {
-			textout(screen2, small, "AMMO:", 272, 64, 66);
-			textout(screen2, small, "ROUNDS", 272, 72, 66);
-			textout(screen2, small, "LEFT=", 272, 80, 66);
-			textprintf(screen2, small, 299, 80, 18, "%d", sel_item->rounds);
+			textout(screen2, g_small_font, "AMMO:", 272, 64, 66);
+			textout(screen2, g_small_font, "ROUNDS", 272, 72, 66);
+			textout(screen2, g_small_font, "LEFT=", 272, 80, 66);
+			textprintf(screen2, g_small_font, 299, 80, 18, "%d", sel_item->rounds);
 			//textprintf(screen2, font, 272, 80, color, "%d", sel_item->rounds);
 			rect(screen2, 272, 88, 303, 135, 8);      //clip
 			bigobs->showpck(sel_item->data()->pInv, 272, 88 + 8);

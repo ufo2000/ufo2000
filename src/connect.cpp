@@ -301,22 +301,12 @@ int Connect::do_chat()
 			break;
 	}
 
-	//info_win->printstr("\nF10 - start game\nESC - cancel\nF1 - send mapdata\nF2 - rand new map\nF3 - rand men data\n");
 	info_win->printstr("\nF10 - start game\nESC - cancel\n");
 
-	char str[2];
 	while (!DONE) {
 		if (net->recv_raw(buf)) {
 			remote_win->printstr(buf);
 
-			/*char *str = strstr(buf, "GEODATA");
-			if (str != NULL) {
-				recv_mapdata(str);
-			}
-			str = strstr(buf, "MENDATA");
-			if (str != NULL) {
-				recv_mendata(str);
-			}*/
 			if (strstr(buf, "QUIT") != NULL) {
 				net->SEND = 0;
 				DONE = 1;
@@ -342,17 +332,6 @@ int Connect::do_chat()
 			int c = readkey();
 
 			switch (c >> 8) {
-					/*case KEY_F1:
-						  send_mapdata();
-						  break;
-					case KEY_F2:
-						  new_mapdata();
-						  send_mapdata();
-						  break;
-					case KEY_F3:
-						  new_mendata();
-						  send_mendata();
-						  break;*/
 				case KEY_F4:
 				case KEY_F5:
 					info_win->redraw_full();
@@ -368,28 +347,9 @@ int Connect::do_chat()
 					net->send_raw("START\r\n");
 					//DONE = 1;
 					break;
-					/*case KEY_ENTER:
-						  y += 8;
-						  x = 15;
-						  break;*/
 				default:
-					c &= 0xff;
-					c = keymaper(c);
-
-					local_win->printchr(c);
-					str[0] = c;
-					if (c == '\r') {
-						str[1] = '\n';
-						local_win->printchr('\n');
-						str[2] = 0;
-					} else {
-						str[1] = 0;
-					}
-
-					net->send_raw(str);
-					/*text_mode(-1);
-					textprintf(screen, font, x, y, TEXTCOLOR, "%c", c);
-					x += 8;*/
+					if (g_console->process_keyboard_input(c))
+						net->send_raw((char *)g_console->get_text());
 			}
 		}
 	}
@@ -398,7 +358,7 @@ g_return:
 	        //closenet();
 	        //g_skipclose:
 	        //readkey(); savescreen();
-	        remove_int(drawit_timer);
+	remove_int(drawit_timer);
 	delete back09;
 	delete local_win; local_win = NULL;
 	delete remote_win; remote_win = NULL;
@@ -426,10 +386,6 @@ void Connect::reset_uds()
 
 void Connect::swap_uds()
 {
-	/*int size;
-	char name[20][26];
-	int cost[20];
-	int x[20], y[20];*/
 	Units u;
 	memcpy(&u, &local, sizeof(Units));
 	memcpy(&local, &remote, sizeof(Units));
@@ -440,7 +396,6 @@ int FINISH_PLANNER = 0;
 
 int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 {
-	char sendbuf[1000];
 	int sendbuf_len = 0;
 	int mouse_leftr = 1, mouse_rightr = 1;
 	int DONE = 0;
@@ -452,7 +407,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 	screen2 = create_bitmap(640, SCREEN2H - 1); clear(screen2);
 	set_mouse_range(0, 0, 639, SCREEN2H - 1);
 
-	info->redraw_full();
+	g_console->redraw_full(screen, 0, SCREEN2H);
 
 	Map *map = new Map(mapdata);
 	BITMAP *map2d = map->create_bitmap_of_map();
@@ -475,9 +430,12 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 		net->send_map_data(&mapdata);
 
 	while (!DONE) {
+
+		g_console->redraw(screen, 0, SCREEN2H);
+
 		net->check();
 		if (mapdata.load_game == 77) { //new	mapdata
-			info->printstr("mapdata generated\n");
+			g_console->print("mapdata generated");
 			mapdata.load_game = 0;
 			delete map;
 			destroy_bitmap(map2d);
@@ -498,11 +456,6 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 			local.set_mouse_range(639, SCREEN2H - 1, map2d_x, 0, map2d_x + map2d->w - 1, map2d->h - 1);
 
 			CHANGE = 1;
-		}
-
-		if (REDRAW) {
-			info->redraw_full();
-			REDRAW = 0;
 		}
 
 		if (CHANGE) { //!!build screen
@@ -601,37 +554,9 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 						DONE = 1;
 					}
 					break;
-				case KEY_BACKSPACE:
-					if (sendbuf_len > 0) {
-						sendbuf[--sendbuf_len] = 0;
-						if (sendbuf_len < 0) {
-							sendbuf_len = 0;
-							sendbuf[0] = 0;
-						}
-						rectfill(screen, 0, 392, 640, 400, 0);
-						textprintf(screen, font, 0, 392, 1, "%s", sendbuf);
-					}
-					break;
-				case KEY_ENTER:
-					if (sendbuf_len > 0) {
-						//if (FLAGS & F_RAWMESSAGES == 0) {
-						info->printstr(sendbuf, 48);
-						info->printchr('\n');
-						//}
-						net->send_message(sendbuf);
-						sendbuf_len = 0;
-						rectfill(screen, 0, 392, 640, 400, 0);
-					}
-					break;
 				default:
-					c &= 0xff;
-					c = keymaper(c);
-
-					if ((c >= ' ') && (sendbuf_len < 78)) {
-						sendbuf[sendbuf_len++] = c;
-						sendbuf[sendbuf_len] = 0;
-						textprintf(screen, font, 0, 392, 1, "%s", sendbuf);      //unishit
-					}
+					if (g_console->process_keyboard_input(c))
+						net->send_message((char *)g_console->get_text());
 			}
 		}
 		if (FINISH_PLANNER)
@@ -662,7 +587,7 @@ void Connect::draw_pd_info(void *_pd, int gx, int gy)
 {
 	PLAYERDATA *pd = (PLAYERDATA *)_pd;
 
-	textout(screen2, small, "INFO", gx, gy, 1);
+	textout(screen2, g_small_font, "INFO", gx, gy, 1);
 	int i;
 	int points = 0;
 	for (i = 0; i < pd->size; i++) {
@@ -671,5 +596,5 @@ void Connect::draw_pd_info(void *_pd, int gx, int gy)
 		          pd->md[i].Firing +
 		          pd->md[i].Throwing;
 	}
-	textprintf(screen2, small, gx, gy + 10, 1, "total men points=%d", points);
+	textprintf(screen2, g_small_font, gx, gy + 10, 1, "total men points=%d", points);
 }

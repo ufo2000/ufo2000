@@ -57,8 +57,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 Target target;
 int HOST, DONE, TARGET, turn;
 Mode MODE;
-Wind *info;
-BITMAP *info_background, *logo;
+ConsoleWindow *g_console;
 
 Net *net;
 Map *map;
@@ -412,15 +411,8 @@ void initmain(int argc, char *argv[])
 	print("init bigobs");
 	Item::initbigobs();
 
-	print("init logo");
-
-	logo = (BITMAP *)datafile[DAT_LOGO].dat;
-	info_background = create_bitmap(640, 400); clear(info_background);
-
-	draw_sprite(info_background, logo, 640 - logo->w, SCREEN2H);
-
-	print("new info");
-	info = new Wind(info_background, 5, SCREEN2H + 5, 630, 390 - 5, 1);
+	print("new console window");
+	g_console = new ConsoleWindow(screen->w, screen->h - SCREEN2H, font);
 	print("new icon");
 	icon = new Icon((SCREEN2W - 320) / 2, SCREEN2H - 56);
 	print("new inventory");
@@ -466,10 +458,7 @@ void closemain()
 	delete about;
 	delete inventory;
 	delete icon;
-	delete info;
-
-	destroy_bitmap(info_background);
-	destroy_bitmap(logo);
+	delete g_console;
 
 	Item::freebigobs();
 	Map::freepck();
@@ -532,10 +521,8 @@ void next_turn(int crc)
 		//!!!compare for remote crc
 		bcrc = build_crc();
 		if (crc != bcrc) {
-			info->printstr("wrong wholeCRC\n");
-			char str[100];
-			sprintf(str, "crc=%d, bcrc=%d\n", crc, bcrc);
-			info->printstr(str);
+			g_console->print("wrong wholeCRC");
+			g_console->printf("crc=%d, bcrc=%d", crc, bcrc);
 		}
 	}
 
@@ -548,7 +535,7 @@ void next_turn(int crc)
 
 	if (net->gametype == HOTSEAT) {
 		icon->show_eot();
-		info->redraw_full();
+		g_console->redraw_full(screen, 0, SCREEN2H);
 
 		Platoon *pt = platoon_local;
 		platoon_local = platoon_remote;
@@ -575,10 +562,11 @@ void next_turn(int crc)
 	}
 
 	elist->step(crc);
-	char str[100];
-	sprintf(str, "Next turn. local = %d, remote = %d soldiers\n",
-	        platoon_local->num_of_men(), platoon_remote->num_of_men());
-	info->printstr(str, 192);
+	g_console->printf(
+		xcom1_color(192), 
+		"Next turn. local = %d, remote = %d soldiers",
+		platoon_local->num_of_men(), 
+		platoon_remote->num_of_men());
 }
 
 int GAMELOOP = 0;
@@ -720,9 +708,6 @@ bool loadgame(const char *filename)
  */
 void gameloop()
 {
-	char sendbuf[1000];
-	int sendbuf_len = 0;
-	int sendbuf_count = 0;
 	int mouse_leftr = 1, mouse_rightr = 1, select_y = 0;
 
 	clear_keybuf();
@@ -730,18 +715,15 @@ void gameloop()
 	RECALC_VISIBILITY = 1;
 
 	while (!DONE) {
+	
+		g_console->redraw(screen, 0, SCREEN2H);
+
 		net->check();
-		if (REDRAW) {
-			info->redraw_full();
-			REDRAW = 0;
-		}
 
 		if (NOTICE) {
 			if (NOTICEdemon) {
 				net->send_notice();
-				char str[10];
-				sprintf(str, "%d", NOTICEremote);
-				info->writestr(0, 10, str);
+//				g_console->printf("%d", NOTICEremote);
 			}
 			NOTICEremote++;
 			NOTICE = 0;
@@ -958,25 +940,11 @@ void gameloop()
 						savegame();
 					break;
 				case KEY_F3:
-					if (askmenu("LOAD GAME"))
-					{
-						if (!loadgame("ufo2000.sav"))
-						{
+					if (askmenu("LOAD GAME")) {
+						if (!loadgame("ufo2000.sav")) {
 							alert("saved game not found", "", "", "OK", NULL, 0, 0);
 						}
-
-						/*
-						  if ((HOST) && (turn % 2 == 0))
-							  MODE = MAP3D;
-						  else
-							  MODE = WATCH;
-						  position_mouse(160, 100);
-						  sel_man = platoon_local->captain();
-						*/
 					}
-					break;
-				case KEY_F4:
-					info->redraw_full();
 					break;
 				case KEY_F5:
 					if (askmenu("RESTART GAME")) {
@@ -985,12 +953,6 @@ void gameloop()
 						//position_mouse(160, 100);
 					}
 					break;
-					/*case KEY_F6:
-						  //if (askmenu("CONFIRM RESTART GAME")) {
-							  net->send_restart(1);
-							  //position_mouse(160, 100);
-						  //}
-						  break;*/
 				case KEY_F9:
 					if (FLAGS & F_SEL_ANY_MAN) {
 						if (MODE == WATCH)
@@ -1022,49 +984,9 @@ void gameloop()
 					if (askmenu("EXIT GAME"))
 						DONE = 1;
 					break;
-					/*case KEY_TAB:
-						  blit(screen_text, screen, 0,0, 0,0, screen_text->w, screen_text->h);
-						  break;*/
-					/*case KEY_F6:
-						  if (askmenu("LOAD LOG FOR REPLAY"))
-							  net->replay_load("ufo2000replay.log");
-						  break;*/
-					/*case KEY_SPACE:
-						  net->replay();
-						  break;*/
-				case KEY_BACKSPACE:
-					if (sendbuf_count > 0) {
-						usetat(sendbuf, --sendbuf_count, 0);
-						sendbuf_len = ustrsize(sendbuf);
-						rectfill(screen, 0, 392, 640, 400, 0);
-						textprintf(screen, font, 0, 392, 1, "%s", sendbuf);
-					}
-					break;
-				case KEY_ENTER:
-					if (sendbuf_count > 0) {
-
-						info->printstr(sendbuf, xcom1_color(48));
-						info->printchr('\n');
-
-						net->send_message(sendbuf);
-						sendbuf_len = 0;
-						sendbuf_count = 0;
-						usetc(sendbuf, 0);
-						rectfill(screen, 0, 392, 640, 400, 0);
-					}
-					break;
 				default:
-					c &= 0xff;
-					c = keymaper(c);
-
-					if ((c >= ' ') && (sendbuf_count < 78)) {
-
-						sendbuf_len += usetc(sendbuf + sendbuf_len, c);
-						usetc(sendbuf + sendbuf_len, 0);
-						sendbuf_count++;
-
-						textprintf(screen, font, 0, 392, 1, "%s", sendbuf);
-					}
+					if (g_console->process_keyboard_input(c))
+						net->send_message((char *)g_console->get_text());
 			}
 			CHANGE = 1;
 		}

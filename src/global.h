@@ -344,7 +344,7 @@ extern int local_platoon_size;
 extern char last_map_name[1000];
 extern char last_unit_name[1000];
 
-extern Wind *info;
+//extern Wind *info;
 extern Editor *editor;
 
 extern int HOST;
@@ -361,12 +361,14 @@ extern int CONFIRM_REQUESTED;
 extern DATAFILE *datafile;
 extern int NOTICEremote;
 extern Wind *info_win;
-extern BITMAP *info_background;
-extern BITMAP *logo;
 extern Icon *icon;
 extern int VISIBILITY_CHANGED;
 
 extern volatile int g_switch_in_counter;
+class ConsoleStatusLine;
+extern ConsoleStatusLine *g_status;
+class ConsoleWindow;
+extern ConsoleWindow *g_console;
 
 #include "../ufo2000.h"
 

@@ -173,7 +173,7 @@ void Units::print(int gcol)
 		}
 	}
 	//textout(screen2, small, "INFO", gx, 160, 1);
-	textprintf_centre(screen2, small, gx + 10 * 8, 160, 50, "total men points=%d", points);
+	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, 50, "total men points=%d", points);
 
 
 	char buf[10000]; memset(buf, 0, sizeof(buf));
@@ -218,7 +218,7 @@ void Units::draw_items_stats(int gx, int gy, char *buf, int len)
 				num++;
 		}
 		if (num != 0) {
-			textprintf(screen2, small, gx + (aa / 72) * 90, gy + (aa % 72),
+			textprintf(screen2, g_small_font, gx + (aa / 72) * 90, gy + (aa % 72),
 			           1, "%s=%d", Item::obdata[weapon[w]].name, num);
 			aa += 9;
 		}
@@ -267,7 +267,7 @@ void Units::print_simple(int gcol)
 		          pd_remote->md[i].Firing +
 		          pd_remote->md[i].Throwing;
 	}
-	textprintf_centre(screen2, small, gx + 10 * 8, 160, 50, "total men points=%d", points);
+	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, 50, "total men points=%d", points);
 
 	char buf[10000]; memset(buf, 0, sizeof(buf));
 	int len = 0;
@@ -438,7 +438,7 @@ void Units::execute(Map *map, int map_change_allowed)
 				net->send_map_data(&mapdata);
 				mapdata.load_game = 77;
 			} else {
-				info->printstr("invalid GEODATA file.\n");
+				g_console->print("invalid GEODATA file.");
 			}
 		}
 	}
