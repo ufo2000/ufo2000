@@ -870,11 +870,6 @@ int build_crc()
     char buf[200000]; memset(buf, 0, sizeof(buf));
     int buf_size = 0;
 	
-    // Commented out, it causes false crc error alarms when games are
-    // in fact compatible, but version_id is different
-	
-    // buf_size += sprintf(buf + buf_size, "%s\n", g_version_id.c_str());
-
     p1->eot_save(buf, buf_size);
     p2->eot_save(buf, buf_size);
     map->eot_save(buf, buf_size);
@@ -904,6 +899,7 @@ static void dump_gamestate_on_crc_error(int crc)
     sprintf(filename, "$(home)/eot_save_%d.txt", crc);
     int fh = open(F(filename), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, 0644);
     if (fh != -1) {
+        write(fh, g_version_id.data(), g_version_id.size());
         write(fh, g_eot_save[crc].data(), g_eot_save[crc].size());
         close(fh);
     }
