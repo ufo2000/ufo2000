@@ -184,6 +184,7 @@ void Bullet::move()
 				        platoon_remote->check_for_hit(z, x, y) ||
 				        platoon_local->check_for_hit(z, x, y)
 				   ) {
+                    explodes = map->inside(z, x, y);
 					hitcell();
 					state = HIT;
 					switch(type)
@@ -300,14 +301,14 @@ void Bullet::move()
 			break;
 		case HIT:
 			if (phase == 0) {
-				if (explodable()) {
+				if (explodable() && explodes) {
 					detonate();
 					item  = NULL;
 					state = READY;
 					break;
 				}
 			}
-			if (incendiary()) {
+			if (incendiary() && explodes) {
 				detonate();
 				item  = NULL;
 				state = READY;

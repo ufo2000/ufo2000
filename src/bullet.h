@@ -43,6 +43,7 @@ private:
 	int phase;
 
 	int owner;
+	bool explodes;
 public:
 
 	Bullet(Soldier *man);
