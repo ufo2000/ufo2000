@@ -250,34 +250,43 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen, Soldier *sld)
 
 int Map::step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2, int& y2, int& tu_cost)
 {
-    if (!passable(z1, x1, y1, dir)) return 0;
+    if (!passable(z1, x1, y1, dir))
+        return 0;
+
     z2=z1;
     x2=x1;
     y2=y1;
-
-    if(map->mcd(z1, x1, y1, 0)->Gravlift && map->mcd(z2, x2, y2, 0)->Gravlift)
-        flying = 1;
 
     if (dir < DIR_NULL) {
 		x2 += DIR_DELTA_X(dir);
 		y2 += DIR_DELTA_Y(dir);
 	}
 
-    if (dir == DIR_UP && flying) {
+    int trying_to_fly = 0;
+
+    if (dir == DIR_UP) {
         z2++;
-        tu_cost=10;
+        tu_cost = 10;
+        trying_to_fly = 1;
     }
 
-    if (dir == DIR_DOWN && flying) {
+    if (dir == DIR_DOWN) {
         z2--;
-        tu_cost=10;
+        tu_cost = 10;
+        trying_to_fly = 1;
     }
 
-    if ((x2 < 0) || (y2 < 0) || (z2 < 0) || (x2 >= width * 10) || (y2 >= height * 10) || (z2 >= level * 10))
+    if (!cell_inside(z2, x2, y2))
+        return 0;
+
+    if (trying_to_fly && !(flying || map->mcd(z1, x1, y1, 0)->Gravlift && map->mcd(z2, x2, y2, 0)->Gravlift ))
         return 0;
 
 	if (isStairs(z2, x2, y2))
 		z2++;
+
+    if (!cell_inside(z2, x2, y2))
+        return 0;
 
 	while (mcd(z2, x2, y2, 0)->No_Floor && (z2 > 0) && !isStairs(z2 - 1, x2, y2) && !flying)
 		z2--;
