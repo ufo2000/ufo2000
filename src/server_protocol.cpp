@@ -25,11 +25,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 std::string ServerClientUfo::m_last_user_name = "";
 NLtime      ServerClientUfo::m_last_user_disconnect_time;
+int         ServerClientUfo::m_games_started = 0;
 
 static std::string time_to_string(long t)
 {
 	char buffer[64];
-	long days    = t / (24 * 3600 * 1000); t -= days * (3600 * 1000);
+	long days    = t / (24 * 3600 * 1000); t -= days * (24 * 3600 * 1000);
 	long hours   = t / (3600 * 1000); t -= hours * (3600 * 1000);
 	long minutes = t / (60 * 1000); t -= minutes * (60 * 1000);
 	long seconds = t / 1000;
@@ -95,8 +96,19 @@ void ServerDispatch::MakeHtmlReport(std::string &html_body)
 
 	html_body += "</table>";
 	html_body += "<br>";
+
+	if (m_clients_by_name.size() == 0 && !ServerClientUfo::m_last_user_name.empty()) {
+		html_body += "the last user ";
+		html_body += ServerClientUfo::m_last_user_name;
+		html_body += " was here ";
+		html_body += time_to_string(get_time_diff(ServerClientUfo::m_last_user_disconnect_time, now));
+		html_body += " ago<br><br>";
+	}
+
 	html_body += "game server uptime = ";
 	html_body += time_to_string(get_time_diff(m_connection_time, now)) + "<br>";
+	html_body += "number of games started up to this moment = ";
+	html_body += num_to_string(ServerClientUfo::m_games_started) + "<br>";
 	html_body += "total incoming game traffic = ";
 	html_body += num_to_string(m_traffic_in + traffic_in_cur) + "<br>";
 	html_body += "total outcoming game traffic = ";
@@ -259,6 +271,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
             //	opponent found in the challenge list
 
             	server_log("game start: '%s' vs '%s'\n", m_name.c_str(), packet.c_str());
+            	m_games_started++;
 
         		send_packet_all(SRV_USER_BUSY, m_name);
 				opponent->send_packet_all(SRV_USER_BUSY, packet);
