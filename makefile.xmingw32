@@ -1,12 +1,12 @@
 CC = g++
 LD = g++
 CFLAGS = -funsigned-char -Wall
-CFLAGS += -pipe -DWIN32
+CFLAGS += -pipe -DWIN32 -DHAVE_DPLAY
 CFLAGS += -O -mcpu=i686 -s -fomit-frame-pointer
 #CFLAGS += -ggdb
 INCLUDES = -I/usr/local/cross-tools/include
 CFLAGS += $(INCLUDES) -fvtable-thunks
-LIBS = $(addprefix -l,$(LIBRARIES))  -L/usr/local/cross-tools/lib -lalleg -lws2_32
+LIBS = $(addprefix -l,$(LIBRARIES))  -L/usr/local/cross-tools/lib -lalleg -lws2_32 -ldplayx -ldxguid -lole32
 
 OBJS = about.o bullet.o cell.o config.o connect.o dirty.o editor.o explo.o \
        font.o icon.o inventory.o item.o keys.o main.o mainmenu.o \
@@ -16,7 +16,7 @@ OBJS = about.o bullet.o cell.o config.o connect.o dirty.o editor.o explo.o \
 
 SRCS_DIR = ./src
 
-NAME = ufo2000.exe
+NAME = ufo2000-0.3.51.exe
 
 all:  makefile.dep $(NAME)
 

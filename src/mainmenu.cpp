@@ -230,14 +230,18 @@ int do_mainmenu2()
 	sprintf(dstr[0], "quit to os");
 #elif WIN32
 	sprintf(dstr[MAINMENU_LOADGAME], "load saved game");
+#    if defined(HAVE_DPLAY)
 	sprintf(dstr[MAINMENU_DPLAY],    "DirectPlay");
+#    else
+	the_dialog[MAINMENU_DPLAY].proc = NULL;
+#    endif
 	sprintf(dstr[MAINMENU_TCPIP],    "tcp/ip");
 	sprintf(dstr[MAINMENU_HOTSEAT],  "hotseat");
 	sprintf(dstr[MAINMENU_EDITOR],   "editor");
 	sprintf(dstr[MAINMENU_ABOUT],    "about");
 	sprintf(dstr[MAINMENU_QUIT],     "quit");
 #else
-	the_dialog[6].proc = NULL;
+	the_dialog[MAINMENU_LOADGAME].proc = NULL;
 	sprintf(dstr[MAINMENU_LOADGAME], "load saved game");
 	sprintf(dstr[MAINMENU_TCPIP],    "tcp/ip"); 
 	sprintf(dstr[MAINMENU_HOTSEAT],  "hotseat"); 

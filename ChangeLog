@@ -1,4 +1,4 @@
-Changes in version 0.3.51     tbd, now Thu 24 Oct 2002
+Changes in version 0.3.51     Sat 2 Nov 2002
    - merged incendiary ammunition patch
    - fixed bug with firing accuracy decrease for two-handed weapons
    - now game can use original ufo fonts instead of allegro's default 8x8 (but colors are broken yet)

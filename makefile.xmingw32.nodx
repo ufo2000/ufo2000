@@ -1,12 +1,12 @@
 CC = g++
 LD = g++
 CFLAGS = -funsigned-char -Wall
-CFLAGS += -pipe -DLINUX
+CFLAGS += -pipe -DWIN32
 CFLAGS += -O -mcpu=i686 -s -fomit-frame-pointer
 #CFLAGS += -ggdb
-INCLUDES = ${shell /tmp/al402/bin/allegro-config --cflags}
-CFLAGS += $(INCLUDES)
-LIBS = $(addprefix -l,$(LIBRARIES)) ${shell /tmp/al402/bin/allegro-config --libs }
+INCLUDES = -I/usr/local/cross-tools/include
+CFLAGS += $(INCLUDES) -fvtable-thunks
+LIBS = $(addprefix -l,$(LIBRARIES))  -L/usr/local/cross-tools/lib -lalleg -lws2_32
 
 OBJS = about.o bullet.o cell.o config.o connect.o dirty.o editor.o explo.o \
        font.o icon.o inventory.o item.o keys.o main.o mainmenu.o \
@@ -16,7 +16,7 @@ OBJS = about.o bullet.o cell.o config.o connect.o dirty.o editor.o explo.o \
 
 SRCS_DIR = ./src
 
-NAME = ufo2000
+NAME = ufo2000-0.3.51-nodx.exe
 
 all:  makefile.dep $(NAME)
 
@@ -32,8 +32,8 @@ clean:
 	$(RM) makefile.dep
 
 
-makefile.dep: $(SRCS_DIR)/*.cpp $(SRCS_DIR)/*.h
-	$(RM) makefile.dep
-	g++ -MM -DLINUX $(INCLUDES) $(SRCS_DIR)/*.cpp >> makefile.dep
+#makefile.dep: $(SRCS_DIR)/*.cpp $(SRCS_DIR)/*.h
+#	$(RM) makefile.dep
+#	g++ -MM -DLINUX $(INCLUDES) $(SRCS_DIR)/*.cpp >> makefile.dep
 
 -include makefile.dep
