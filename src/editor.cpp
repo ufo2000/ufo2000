@@ -33,35 +33,35 @@ char last_unit_name[1000];
 char last_map_name[1000];
 
 int weapon[] = {
-	PISTOL , PISTOL_CLIP ,
-	RIFLE , RIFLE_CLIP ,
-	LASER_PISTOL , LASER_GUN , HEAVY_LASER ,
-	Plasma_Pistol , Plasma_Pistol_Clip ,
-	Plasma_Rifle , Plasma_Rifle_Clip ,
-	Heavy_Plasma , Heavy_Plasma_Clip ,
-	HEAVY_CANNON , CANNON_AP_AMMO , CANNON_HE_AMMO , CANNON_I_AMMO ,
-	AUTO_CANNON , AUTO_CANNON_AP_AMMO, AUTO_CANNON_HE_AMMO, AUTO_CANNON_I_AMMO ,
-	ROCKET_LAUNCHER , SMALL_ROCKET , LARGE_ROCKET , INCENDIARY_ROCKET ,
-	GRENADE , ALIEN_GRENADE , PROXIMITY_GRENADE , SMOKE_GRENADE ,
-	HIGH_EXPLOSIVE ,
-	Flare , MOTION_SCANNER , MEDI_KIT ,
-	BLASTER_LAUNCHER , BLASTER_BOMB ,
-	STUN_ROD , SMALL_LAUNCHER , STUN_MISSILE ,
-	MIND_PROBE , PSI_AMP
+    PISTOL , PISTOL_CLIP ,
+    RIFLE , RIFLE_CLIP ,
+    LASER_PISTOL , LASER_GUN , HEAVY_LASER ,
+    Plasma_Pistol , Plasma_Pistol_Clip ,
+    Plasma_Rifle , Plasma_Rifle_Clip ,
+    Heavy_Plasma , Heavy_Plasma_Clip ,
+    HEAVY_CANNON , CANNON_AP_AMMO , CANNON_HE_AMMO , CANNON_I_AMMO ,
+    AUTO_CANNON , AUTO_CANNON_AP_AMMO, AUTO_CANNON_HE_AMMO, AUTO_CANNON_I_AMMO ,
+    ROCKET_LAUNCHER , SMALL_ROCKET , LARGE_ROCKET , INCENDIARY_ROCKET ,
+    GRENADE , ALIEN_GRENADE , PROXIMITY_GRENADE , SMOKE_GRENADE ,
+    HIGH_EXPLOSIVE ,
+    Flare , MOTION_SCANNER , MEDI_KIT ,
+    BLASTER_LAUNCHER , BLASTER_BOMB ,
+    STUN_ROD , SMALL_LAUNCHER , STUN_MISSILE ,
+    MIND_PROBE , PSI_AMP
 };
 
 static char weapon_in_use[] = {
-	PISTOL , PISTOL_CLIP ,
-	RIFLE , RIFLE_CLIP ,
-	Plasma_Pistol , Plasma_Pistol_Clip ,
-	Plasma_Rifle , Plasma_Rifle_Clip ,
-	Heavy_Plasma , Heavy_Plasma_Clip ,
-	LASER_PISTOL , LASER_GUN , HEAVY_LASER ,
-	HEAVY_CANNON , CANNON_AP_AMMO , CANNON_HE_AMMO, CANNON_I_AMMO ,
-	AUTO_CANNON , AUTO_CANNON_AP_AMMO , AUTO_CANNON_HE_AMMO, AUTO_CANNON_I_AMMO ,
-	ROCKET_LAUNCHER , SMALL_ROCKET , LARGE_ROCKET , INCENDIARY_ROCKET ,
-	GRENADE , ALIEN_GRENADE , HIGH_EXPLOSIVE , PROXIMITY_GRENADE , SMOKE_GRENADE ,
-	STUN_ROD , SMALL_LAUNCHER , STUN_MISSILE
+    PISTOL , PISTOL_CLIP ,
+    RIFLE , RIFLE_CLIP ,
+    Plasma_Pistol , Plasma_Pistol_Clip ,
+    Plasma_Rifle , Plasma_Rifle_Clip ,
+    Heavy_Plasma , Heavy_Plasma_Clip ,
+    LASER_PISTOL , LASER_GUN , HEAVY_LASER ,
+    HEAVY_CANNON , CANNON_AP_AMMO , CANNON_HE_AMMO, CANNON_I_AMMO ,
+    AUTO_CANNON , AUTO_CANNON_AP_AMMO , AUTO_CANNON_HE_AMMO, AUTO_CANNON_I_AMMO ,
+    ROCKET_LAUNCHER , SMALL_ROCKET , LARGE_ROCKET , INCENDIARY_ROCKET ,
+    GRENADE , ALIEN_GRENADE , HIGH_EXPLOSIVE , PROXIMITY_GRENADE , SMOKE_GRENADE ,
+    STUN_ROD , SMALL_LAUNCHER , STUN_MISSILE
 };
 
 /**
@@ -71,57 +71,57 @@ static char weapon_in_use[] = {
  */
 bool is_item_allowed(int type)
 {
-	int stack_top = lua_gettop(L);
-	lua_pushstring(L, "IsItemAllowed");
-	lua_gettable(L, LUA_GLOBALSINDEX);
-	lua_pushstring(L, Item::obdata_name(type).c_str());
-	lua_safe_call(L, 1, 1);
-	bool result = lua_toboolean(L, -1) != 0;
-	lua_settop(L, stack_top);
-	return result && memchr(weapon_in_use, type, sizeof(weapon_in_use)) != NULL;
+    int stack_top = lua_gettop(L);
+    lua_pushstring(L, "IsItemAllowed");
+    lua_gettable(L, LUA_GLOBALSINDEX);
+    lua_pushstring(L, Item::obdata_name(type).c_str());
+    lua_safe_call(L, 1, 1);
+    bool result = lua_toboolean(L, -1) != 0;
+    lua_settop(L, stack_top);
+    return result && memchr(weapon_in_use, type, sizeof(weapon_in_use)) != NULL;
 }
 
 Editor::Editor()
 {
-	BITMAP *image = create_bitmap(320, 200); clear(image);
+    BITMAP *image = create_bitmap(320, 200); clear(image);
     tac01 = new SPK("$(xcom)/ufograph/tac01.scr");  // Picture with buttons
-	tac01->show(image, 0, 0);
+    tac01->show(image, 0, 0);
   //b123 = create_bitmap(83, 22); clear(b123);  // not used ?
   //blit(image, b123, 45, 0, 0, 0, 83, 22);
   //b4 = create_bitmap(32, 25); clear(b4);
   //blit(image, b4, 224, 21, 0, 0, 32, 25);
     b5 = create_bitmap(32, 15); clear(b5);  // Button for Scroll-left
-	blit(image, b5, 288, 137, 0, 0, 32, 15);
-	destroy_bitmap(image);
+    blit(image, b5, 288, 137, 0, 0, 32, 15);
+    destroy_bitmap(image);
 
-	m_armoury = new Place(0, 220, 20, 9);
+    m_armoury = new Place(0, 220, 20, 9);
 
-	// make armoury object available to lua code
-	lua_pushstring(L, "Armoury");
-	LUA_PUSH_OBJECT_POINTER(L, Place, m_armoury);
-	lua_settable(L, LUA_GLOBALSINDEX);
+    // make armoury object available to lua code
+    lua_pushstring(L, "Armoury");
+    LUA_PUSH_OBJECT_POINTER(L, Place, m_armoury);
+    lua_settable(L, LUA_GLOBALSINDEX);
 
-	if (local_platoon_size > 15) local_platoon_size = 15;      //Maybe we should allow more
-	ASSERT(local_platoon_size > 0);
-	m_plt = new Platoon(2001, local_platoon_size);
-	m_plt->load_MANDATA("$(home)/soldier.dat");
-	m_plt->load_ITEMDATA("$(home)/items.dat");
-	man = m_plt->captain();
+    if (local_platoon_size > 15) local_platoon_size = 15;      //Maybe we should allow more
+    ASSERT(local_platoon_size > 0);
+    m_plt = new Platoon(2001, local_platoon_size);
+    m_plt->load_MANDATA("$(home)/soldier.dat");
+    m_plt->load_ITEMDATA("$(home)/items.dat");
+    man = m_plt->captain();
 
-	sel_item = NULL;
-	dup_item = NULL;    
-	buffer.empty = true;                                   
+    sel_item = NULL;
+    dup_item = NULL;    
+    buffer.empty = true;                                   
 }
 
 Editor::~Editor()
 {
-	delete m_plt;
-	delete tac01;
-	delete m_armoury;
-	// unregister armoury object from lua
-	lua_pushstring(L, "Armoury");
-	lua_pushnil(L);
-	lua_settable(L, LUA_GLOBALSINDEX);
+    delete m_plt;
+    delete tac01;
+    delete m_armoury;
+    // unregister armoury object from lua
+    lua_pushstring(L, "Armoury");
+    lua_pushnil(L);
+    lua_settable(L, LUA_GLOBALSINDEX);
 }
 
 /**
@@ -129,13 +129,13 @@ Editor::~Editor()
  */
 void Editor::load()
 {
-	char path[1000];
-	strcpy(path, last_unit_name);
+    char path[1000];
+    strcpy(path, last_unit_name);
     if (file_select_mr( _("LOAD UNITS DATA"), path, "UNITS")) {
-		m_plt->load_FULLDATA(path);
-		strcpy(last_unit_name, path);
+        m_plt->load_FULLDATA(path);
+        strcpy(last_unit_name, path);
         lua_message( std::string("Team loaded: ") + path );
-	}
+    }
 }
 
 
@@ -144,22 +144,22 @@ void Editor::load()
  */
 void Editor::save()
 {
-	char path[1000];
-	strcpy(path, last_unit_name);
+    char path[1000];
+    strcpy(path, last_unit_name);
     if (file_select_mr( _("SAVE UNITS DATA"), path, "UNITS")) {
-		m_plt->save_FULLDATA(path);
-		strcpy(last_unit_name, path);
+        m_plt->save_FULLDATA(path);
+        strcpy(last_unit_name, path);
         lua_message( std::string("Team saved: ") + path );
-	}
+    }
 }
 
 int Editor::set_man(char *name)
 {
-	Soldier * ss = m_plt->findman(name);
-	if (ss == NULL)
-		return 0;
-	man = ss;
-	return 1;
+    Soldier * ss = m_plt->findman(name);
+    if (ss == NULL)
+        return 0;
+    man = ss;
+    return 1;
 }
 
 /**
@@ -169,118 +169,118 @@ int Editor::set_man(char *name)
  */
 bool Editor::handle_mouse_leftclick()
 {
-	int i;
+    int i;
 
-	// Mouse click in unit stats area - edit unit stats.
-	if (mouse_inside(320, 0, 639, 200)) {
-		// unibord
-		edit_soldier();
-		return false;
-	}
-	if (mouse_inside( 50, 50, 110, 142)) {  // Picture of soldier (Powerarmor)
-		edit_soldier();
-		return false;
-	} 
+    // Mouse click in unit stats area - edit unit stats.
+    if (mouse_inside(320, 0, 639, 200)) {
+        // unibord
+        edit_soldier();
+        return false;
+    }
+    if (mouse_inside( 50, 50, 110, 142)) {  // Picture of soldier (Powerarmor)
+        edit_soldier();
+        return false;
+    } 
 
-	// Mouse click in item info panel (right bottom part of the screen) - 
-	// change equipment dialog (Standard=all weapons/No explosives/No alien weapons/...)
+    // Mouse click in item info panel (right bottom part of the screen) - 
+    // change equipment dialog (Standard=all weapons/No explosives/No alien weapons/...)
     if (mouse_inside(320, 200, 639, 400)) {  // ?? disable this
-		change_equipment();
-		return false;
-	}
+        change_equipment();
+        return false;
+    }
     // Mouse click on text "ARMORY": change equipment dialog 
     if (mouse_inside(0, 200, 105, 220)) {
         change_equipment();
         return false;
     }
 
-	if ((sel_item == NULL) || (dup_item != NULL)) {
-		if (mouse_inside(237, 1, 271, 22)) {  // ok-button
-			return true;
-		} else
-			if (mouse_inside(273, 1, 295, 22)) {  // <
-				man = man->prevman();
-			} else
-				if (mouse_inside(297, 1, 319, 22)) {  // >
-					man = man->nextman();
-				}
-	}
+    if ((sel_item == NULL) || (dup_item != NULL)) {
+        if (mouse_inside(237, 1, 271, 22)) {  // ok-button
+            return true;
+        } else
+            if (mouse_inside(273, 1, 295, 22)) {  // <
+                man = man->prevman();
+            } else
+                if (mouse_inside(297, 1, 319, 22)) {  // >
+                    man = man->nextman();
+                }
+    }
 
-	if (mouse_inside(288, 32, 319, 57)) {  // clip
-		//if ((dup_item == NULL) && (man->unload_ammo(sel_item)))
-		//	sel_item = NULL;
-		if ((dup_item == NULL) && (sel_item != NULL) && (sel_item->haveclip()) &&
-				(man->rhand_item() == NULL) && (man->lhand_item() == NULL)) {
-			man->putitem(sel_item, P_ARM_RIGHT);
-			man->putitem(sel_item->unload(), P_ARM_LEFT);
-			sel_item = NULL;
-		}
-	} else
-		if (mouse_inside(288, 137, 319, 151)) {  // -->
-							// Todo: repack items on ground
-			man->place(P_MAP)->scroll_right();
-		} else
-			if (mouse_inside(255, 137, 286, 151)) {  // <--
-				man->place(P_MAP)->scroll_left();
-			}
+    if (mouse_inside(288, 32, 319, 57)) {  // clip
+        //if ((dup_item == NULL) && (man->unload_ammo(sel_item)))
+        //  sel_item = NULL;
+        if ((dup_item == NULL) && (sel_item != NULL) && (sel_item->haveclip()) &&
+                (man->rhand_item() == NULL) && (man->lhand_item() == NULL)) {
+            man->putitem(sel_item, P_ARM_RIGHT);
+            man->putitem(sel_item->unload(), P_ARM_LEFT);
+            sel_item = NULL;
+        }
+    } else
+        if (mouse_inside(288, 137, 319, 151)) {  // -->
+                            // Todo: repack items on ground
+            man->place(P_MAP)->scroll_right();
+        } else
+            if (mouse_inside(255, 137, 286, 151)) {  // <--
+                man->place(P_MAP)->scroll_left();
+            }
 
-	if (sel_item == NULL) {  // Pick up item from soldier
-		for (i = 0; i < NUMBER_OF_PLACES; i++) {
-			sel_item = man->place(i)->mselect();
-			if (sel_item != NULL) {
-				sel_item_place = i;
-				break;
-			}
-		}
-		if (sel_item == NULL) {  // Pick up item from armory
-			sel_item = m_armoury->mselect();
-			if (sel_item != NULL) {
-				if (is_item_allowed(sel_item->m_type)) {
-					sel_item_place = P_ARMOURY;
-					dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
-				} else {
-					m_armoury->put(sel_item, sel_item->m_x, sel_item->m_y);
-					sel_item = NULL;
-				}
-			}
-		}
-	} else {
-		if (dup_item != NULL) {
-			for (i = 0; i < NUMBER_OF_PLACES; i++) {
-				if (man->place(i)->mdeselect(dup_item)) {
-					dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
-					break;
-				}
-			}
-		} else {
-			for (i = 0; i < NUMBER_OF_PLACES; i++) {
-				if (man->place(i)->mdeselect(sel_item)) {
-					sel_item = NULL;
-					break;
-				}
-			}
-		}
+    if (sel_item == NULL) {  // Pick up item from soldier
+        for (i = 0; i < NUMBER_OF_PLACES; i++) {
+            sel_item = man->place(i)->mselect();
+            if (sel_item != NULL) {
+                sel_item_place = i;
+                break;
+            }
+        }
+        if (sel_item == NULL) {  // Pick up item from armory
+            sel_item = m_armoury->mselect();
+            if (sel_item != NULL) {
+                if (is_item_allowed(sel_item->m_type)) {
+                    sel_item_place = P_ARMOURY;
+                    dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
+                } else {
+                    m_armoury->put(sel_item, sel_item->m_x, sel_item->m_y);
+                    sel_item = NULL;
+                }
+            }
+        }
+    } else {
+        if (dup_item != NULL) {
+            for (i = 0; i < NUMBER_OF_PLACES; i++) {
+                if (man->place(i)->mdeselect(dup_item)) {
+                    dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
+                    break;
+                }
+            }
+        } else {
+            for (i = 0; i < NUMBER_OF_PLACES; i++) {
+                if (man->place(i)->mdeselect(sel_item)) {
+                    sel_item = NULL;
+                    break;
+                }
+            }
+        }
 
-		if (sel_item != NULL) {
-			if (dup_item != NULL) {
-				if (m_armoury->mdeselect(sel_item)) {
-					sel_item = NULL;
-					delete dup_item;
-					dup_item = NULL;
-				}
-			} else {
-				if (m_armoury->mdeselect(sel_item)) {
-					Item *del = m_armoury->get(sel_item->m_x, sel_item->m_y);
-					ASSERT(del != NULL);
-					delete del;
-					sel_item = NULL;
-				}
-			}
-		}
-	}
-	if (sel_item != NULL)
-		load_clip();
-	return false;
+        if (sel_item != NULL) {
+            if (dup_item != NULL) {
+                if (m_armoury->mdeselect(sel_item)) {
+                    sel_item = NULL;
+                    delete dup_item;
+                    dup_item = NULL;
+                }
+            } else {
+                if (m_armoury->mdeselect(sel_item)) {
+                    Item *del = m_armoury->get(sel_item->m_x, sel_item->m_y);
+                    ASSERT(del != NULL);
+                    delete del;
+                    sel_item = NULL;
+                }
+            }
+        }
+    }
+    if (sel_item != NULL)
+        load_clip();
+    return false;
 };
 
 /**
@@ -585,8 +585,8 @@ const char *select_setup(const char *prompt)
 // Called by: Connect::do_planner() via Units::execute and execute_main()
 void Editor::show()
 {
-	reset_video();
-	destroy_bitmap(screen2);
+    reset_video();
+    destroy_bitmap(screen2);
     screen2 = create_bitmap(640, 400); 
     clear(screen2);
 
@@ -600,12 +600,12 @@ void Editor::show()
     textout(editor_bg, g_small_font, _("Click-and-drop weapons from the armory to the soldier, right-click to remove"), 8, 364, COLOR_WHITE); 
     textout(editor_bg, large, _("F1 Help   F2 Save Team   F3 Load Team   F4 Edit Attributes"), 8, 380, COLOR_LT_BLUE);
 
-	position_mouse(320, 200);
+    position_mouse(320, 200);
     MouseRange temp_mouse_range(0, 0, 639, 399);
 
-	int DONE = 0;
-	int mouse_leftr = 1, mouse_rightr = 1;
-	int i;
+    int DONE = 0;
+    int mouse_leftr = 1, mouse_rightr = 1;
+    int i;
     int color = COLOR_LT_OLIVE;
     int b1 = 0;
     int nr = 0;
@@ -617,64 +617,64 @@ void Editor::show()
     char name[26];
     int NameScheme = 0;
 
-	while (!DONE) {
+    while (!DONE) {
 
         rest(1); // Don't eat all CPU resources
 
-		if (CHANGE) {
+        if (CHANGE) {
             blit(editor_bg, screen2, 0, 0, 0, 0, editor_bg->w, editor_bg->h);
             man->showspk(); // Show "bigpicture" of soldier in choosen armor
 
-			color = COLOR_DK_GRAY;
-			if (man->x != 0)   // ??? This soldier already selected for the mission ?
-			    color = COLOR_LT_OLIVE;
+            color = COLOR_DK_GRAY;
+            if (man->x != 0)   // ??? This soldier already selected for the mission ?
+                color = COLOR_LT_OLIVE;
             text_mode(-1);
-			textout(screen2, large, man->md.Name, 0, 0, color);
+            textout(screen2, large, man->md.Name, 0, 0, color);
 
-			for (i = 0; i < NUMBER_OF_PLACES; i++) //man->drawgrid();
-				man->place(i)->drawgrid(i);
-			m_armoury->drawgrid(P_ARMOURY);
+            for (i = 0; i < NUMBER_OF_PLACES; i++) //man->drawgrid();
+                man->place(i)->drawgrid(i);
+            m_armoury->drawgrid(P_ARMOURY);
 
-			man->draw_unibord(320, 0);	// Attribute-Barchart
-			if (sel_item != NULL) {
-				if (dup_item != NULL)
-					sel_item->od_info(330, 220, COLOR_WHITE);
-				else
-					sel_item->od_info(330, 220, COLOR_OLIVE);
+            man->draw_unibord(320, 0);  // Attribute-Barchart
+            if (sel_item != NULL) {
+                if (dup_item != NULL)
+                    sel_item->od_info(330, 220, COLOR_WHITE);
+                else
+                    sel_item->od_info(330, 220, COLOR_OLIVE);
 
-				//textprintf(screen2, font, 129, 141, color, "%s", sel_item->data()->name);
-				if (dup_item == NULL)
+                //textprintf(screen2, font, 129, 141, color, "%s", sel_item->data()->name);
+                if (dup_item == NULL)
                     textprintf(screen2, g_small_font, 128, 140, COLOR_GREEN,  "%s", sel_item->name().c_str());
-				else
+                else
                     textprintf(screen2, g_small_font, 128, 208, COLOR_GRAY03, "%s", sel_item->name().c_str());
 
-				if (sel_item->haveclip()) {
-					//textprintf(screen2, font, 272, 80, color, "%d", sel_item->roundsremain());
+                if (sel_item->haveclip()) {
+                    //textprintf(screen2, font, 272, 80, color, "%d", sel_item->roundsremain());
                     textout(screen2, g_small_font, _("AMMO:"),  272, 64, COLOR_LT_OLIVE);
                     textout(screen2, g_small_font, _("ROUNDS"), 272, 72, COLOR_LT_OLIVE);
                     textout(screen2, g_small_font, _("LEFT="),  272, 80, COLOR_LT_OLIVE);
                     textprintf(screen2, g_small_font,           299, 80, COLOR_ORANGE, "%d", sel_item->roundsremain());
-					rect(screen2, 272, 88, 303, 135, COLOR_DK_GRAY);      //clip
-					PCK::showpck(sel_item->clip()->obdata_pInv(), 272, 88 + 8);
-				} else if (sel_item->obdata_isAmmo()) {
-					//textprintf(screen2, font, 272, 80, color, "%d", sel_item->rounds);
+                    rect(screen2, 272, 88, 303, 135, COLOR_DK_GRAY);      //clip
+                    PCK::showpck(sel_item->clip()->obdata_pInv(), 272, 88 + 8);
+                } else if (sel_item->obdata_isAmmo()) {
+                    //textprintf(screen2, font, 272, 80, color, "%d", sel_item->rounds);
                     textout(screen2, g_small_font, _("AMMO:"),  272, 64, COLOR_LT_OLIVE);
                     textout(screen2, g_small_font, _("ROUNDS"), 272, 72, COLOR_LT_OLIVE);
                     textout(screen2, g_small_font, _("LEFT="),  272, 80, COLOR_LT_OLIVE);
                     textprintf(screen2, g_small_font,           299, 80, COLOR_ORANGE, "%d", sel_item->m_rounds);
-					rect(screen2, 272, 88, 303, 135, COLOR_DK_GRAY);      //clip
-					PCK::showpck(sel_item->obdata_pInv(), 272, 88 + 8);
-				}
-				PCK::showpck(sel_item->obdata_pInv(),
-				                mouse_x - sel_item->obdata_width()  * 16 / 2,
-				                mouse_y - sel_item->obdata_height() * 16 / 2 + 8);
+                    rect(screen2, 272, 88, 303, 135, COLOR_DK_GRAY);      //clip
+                    PCK::showpck(sel_item->obdata_pInv(), 272, 88 + 8);
+                }
+                PCK::showpck(sel_item->obdata_pInv(),
+                                mouse_x - sel_item->obdata_width()  * 16 / 2,
+                                mouse_y - sel_item->obdata_height() * 16 / 2 + 8);
             } else {
-				Item *it = m_armoury->item_under_mouse();
-				if (it != NULL) {
-					if (is_item_allowed(it->m_type))
-						it->od_info(330, 220, COLOR_GRAY05);
-					else
-						it->od_info(330, 220, COLOR_GRAY10);
+                Item *it = m_armoury->item_under_mouse();
+                if (it != NULL) {
+                    if (is_item_allowed(it->m_type))
+                        it->od_info(330, 220, COLOR_GRAY05);
+                    else
+                        it->od_info(330, 220, COLOR_GRAY10);
                 } else {
                     textprintf(screen2, large, 330, 220, COLOR_LT_BLUE, "%s:", "Quick-Setup");
                     textprintf(screen2, font,  330, 240, COLOR_BLUE, "%s", _("Use keys with shift to configure them:") );
@@ -691,92 +691,93 @@ void Editor::show()
 
                     textprintf(screen2, font,  330, 335, COLOR_LT_BLUE, "%-3s: %s", "DEL", _("Delete Equipment of current man") );
                     textprintf(screen2, font,  330, 345, COLOR_LT_BLUE, "%-3s: %s", "TAB", _("Next soldier") );
-				}
-			}
+                }
+            }
 
             int wht = man->count_weight();
-			int max_wht = man->md.Strength;
-			color       = max_wht < wht ? COLOR_RED03 : COLOR_GRAY02;
+            int max_wht = man->md.Strength;
+            color       = max_wht < wht ? COLOR_RED03 : COLOR_GRAY02;
             textprintf(screen2, g_small_font, 0, 20, color, _("Equipment weight: %d/%2d"), wht, max_wht);
             char str1[64]; // to adjust position of translated string
           //int x1 = 120;
             int x2 = 236;
-			sprintf(str1, "%s: %4d", _("Equipment cost"), man->calc_full_ammunition_cost() );
+            sprintf(str1, "%s: %4d", _("Equipment cost"), man->calc_full_ammunition_cost() );
             int w1 = text_length(g_small_font, str1);  // right-justify string
             textprintf(screen2, g_small_font, x2-w1, 20, COLOR_GRAY02, str1);
 
-			draw_sprite(screen2, mouser, mouse_x, mouse_y);
-			blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
-			CHANGE = 0;
-		}
+            draw_sprite(screen2, mouser, mouse_x, mouse_y);
+            blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
+            CHANGE = 0;
+        }
 
-		if ((mouse_b & 1) && (mouse_leftr)) { //left mouseclick
-			mouse_leftr = 0;
-			CHANGE = 1;
+        if ((mouse_b & 1) && (mouse_leftr)) { //left mouseclick
+            mouse_leftr = 0;
+            CHANGE = 1;
 
-			if (handle_mouse_leftclick())
-				DONE = 1;
-		}
+            if (handle_mouse_leftclick())
+                DONE = 1;
+        }
 
-		if ((mouse_b & 2) && (mouse_rightr)) { //right mouseclick: get & put items
-			mouse_rightr = 0;
-			CHANGE = 1;
-			if (sel_item != NULL) {
-				if (sel_item_place == 9) {
-					m_armoury->put(sel_item, sel_item->m_x, sel_item->m_y);
-					delete dup_item;
-					dup_item = NULL;
-				} else
-					man->putitem(sel_item, sel_item_place, sel_item->m_x, sel_item->m_y);
+        if ((mouse_b & 2) && (mouse_rightr)) { //right mouseclick: get & put items
+            mouse_rightr = 0;
+            CHANGE = 1;
+            if (sel_item != NULL) {
+                if (sel_item_place == 9) {
+                    m_armoury->put(sel_item, sel_item->m_x, sel_item->m_y);
+                    delete dup_item;
+                    dup_item = NULL;
+                } else
+                    man->putitem(sel_item, sel_item_place, sel_item->m_x, sel_item->m_y);
 
-				sel_item = NULL;
-			} else {
-				for (i = 0; i < NUMBER_OF_PLACES; i++) {
-					sel_item = man->place(i)->mselect();
-					if (sel_item != NULL) {
-						break;
-					}
-				}
-				if (sel_item != NULL) {
-					delete(sel_item);
-					sel_item = NULL;
-				}
-			}
-		}
+                sel_item = NULL;
+            } else {
+                for (i = 0; i < NUMBER_OF_PLACES; i++) {
+                    sel_item = man->place(i)->mselect();
+                    if (sel_item != NULL) {
+                        break;
+                    }
+                }
+                if (sel_item != NULL) {
+                    delete(sel_item);
+                    sel_item = NULL;
+                }
+            }
+        }
 
-		if (!(mouse_b & 1)) {
-			mouse_leftr = 1;
-		}
+        if (!(mouse_b & 1)) {
+            mouse_leftr = 1;
+        }
 
-		if (!(mouse_b & 2)) {
-			mouse_rightr = 1;
-		}
+        if (!(mouse_b & 2)) {
+            mouse_rightr = 1;
+        }
 
-		if (keypressed()) {
+        if (keypressed()) {
             CHANGE = 1;
           //int c = readkey();
           //switch (c >> 8) {
             int scancode; int keycode = ureadkey(&scancode); 
             switch (scancode) { 
-				case KEY_F1:
+                case KEY_F1:
                     help( HELP_INVENTORY );
-					break;
+                    break;
                 // Todo: Change from "Save&Load Team" to "Save&Load Soldier" 
                 // Todo: move "Save&Load Team" to Mission-planner (connect.cpp)
-				case KEY_F2:
-					//if (askmenu("SAVE DATA")) {
-					save();
-					//}
-					break;
-				case KEY_F3:
-					//if (askmenu("LOAD DATA")) {
-					load();
-					//}
-					break;
-				case KEY_F4:
-					edit_soldier();   // Edit Attributes+Armor
-					break;
+                case KEY_F2:
+                    //if (askmenu("SAVE DATA")) {
+                    save();
+                    //}
+                    break;
+                case KEY_F3:
+                    //if (askmenu("LOAD DATA")) {
+                    load();
+                    //}
+                    break;
+                case KEY_F4:
+                    edit_soldier();   // Edit Attributes+Armor
+                    break;
 //
+/*
                 case KEY_F5:  // Soldier-Type #1: Rifleman / Sharpshooter
                     if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) { // Shift-F5:
                       //soundSystem::getInstance()->play( SS_CLIP_LOAD );
@@ -844,7 +845,7 @@ void Editor::show()
                         strcpy(man->md.Name, name);
                     }
                     break;
-
+*/
                 case KEY_F10:
                     change_screen_mode();
                     break;
@@ -894,13 +895,13 @@ void Editor::show()
                     break;
 //
                 case KEY_INSERT:  // Todo: Copy items from last DEL to current man
-                	if ((key[KEY_LCONTROL]) || (key[KEY_RCONTROL])) {
-                		copy_soldier(man);
-                		break;
-                	}
+                    if ((key[KEY_LCONTROL]) || (key[KEY_RCONTROL])) {
+                        copy_soldier(man);
+                        break;
+                    }
                     if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT])) {
-                    	paste_soldier(man);
-                    	break;
+                        paste_soldier(man);
+                        break;
                     }
                     
                       // Test:
@@ -948,25 +949,25 @@ void Editor::show()
               //case KEY_ASTERISK:   // Test
               //    Editor::do_mapedit();
               //    break;
-				case KEY_ESC:
-					DONE = 1;
-					break;
+                case KEY_ESC:
+                    DONE = 1;
+                    break;
                 default: 
                   g_console->process_keyboard_input(keycode, scancode);
                   // Todo: show chat-window
-			}
-		}
-	}
+            }
+        }
+    }
 
-	m_plt->save_MANDATA(F("$(home)/soldier.dat"));
-	m_plt->save_ITEMDATA(F("$(home)/items.dat"));
+    m_plt->save_MANDATA(F("$(home)/soldier.dat"));
+    m_plt->save_ITEMDATA(F("$(home)/items.dat"));
 
     destroy_bitmap(editor_bg);
-	destroy_bitmap(screen2);
-	screen2 = create_bitmap(SCREEN2W, SCREEN2H); clear(screen2);
+    destroy_bitmap(screen2);
+    screen2 = create_bitmap(SCREEN2W, SCREEN2H); clear(screen2);
 
-	fade_out(10);
-	clear(screen);
+    fade_out(10);
+    clear(screen);
 }
 
 /**
@@ -974,27 +975,27 @@ void Editor::show()
  */
 int Editor::load_clip()
 {
-	Item * it;
-	int i;
+    Item * it;
+    int i;
 
-	if (dup_item != NULL) {		// items from armory are duplicated
-		for (i = 0; i < NUMBER_OF_PLACES; i++) {
-			it = man->place(i)->item_under_mouse();
-			if ((it != NULL) && it->loadclip(dup_item)) {
-				dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
-				return 1;
-			}
-		}
-	} else {			// other items are moved
-		for (i = 0; i < NUMBER_OF_PLACES; i++) {
-			it = man->place(i)->item_under_mouse();
-			if ((it != NULL) && it->loadclip(sel_item)) {
-				sel_item = NULL;
-				return 1;
-			}
-		}
-	}
-	return 0;
+    if (dup_item != NULL) {     // items from armory are duplicated
+        for (i = 0; i < NUMBER_OF_PLACES; i++) {
+            it = man->place(i)->item_under_mouse();
+            if ((it != NULL) && it->loadclip(dup_item)) {
+                dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
+                return 1;
+            }
+        }
+    } else {            // other items are moved
+        for (i = 0; i < NUMBER_OF_PLACES; i++) {
+            it = man->place(i)->item_under_mouse();
+            if ((it != NULL) && it->loadclip(sel_item)) {
+                sel_item = NULL;
+                return 1;
+            }
+        }
+    }
+    return 0;
 }
 
 //#define D_WIDTH 320
@@ -1043,73 +1044,73 @@ static char points_str[100];
  */
 static int get_list_size(const char **list)
 {
-	int i = 0;
-	while (list[i] != NULL) i++;
-	return i;
+    int i = 0;
+    while (list[i] != NULL) i++;
+    return i;
 }
 
 static void fixup_unit_info();
 
 // Todo: gettext ??
 static const char *race_names[] = { 
-	"human",
-	"sectoid",
-	"muton",
-	NULL
+    "human",
+    "sectoid",
+    "muton",
+    NULL
 };
 
 static const char *armour_names_human[] = { 
-	"none",
-	"standard",
-	"power",
-	"flying",
-	NULL
+    "none",
+    "standard",
+    "power",
+    "flying",
+    NULL
 };
 
 static const char *armour_names_alien[] = { 
-	"standard",
-	NULL
+    "standard",
+    NULL
 };
 
 static const char **armour_names;
 
 static const char *appearance_names_human[] = { 
-	"blonde guy", 
-	"hispanic guy", 
-	"oriental guy",
-	"black guy",
-	"blonde girl", 
-	"brunette girl", 
-	"oriental girl",
-	"black girl",
-	NULL
+    "blonde guy", 
+    "hispanic guy", 
+    "oriental guy",
+    "black guy",
+    "blonde girl", 
+    "brunette girl", 
+    "oriental girl",
+    "black girl",
+    NULL
 };
 
 static const char *appearance_names_alien[] = { 
-	"standard", 
-	NULL
+    "standard", 
+    NULL
 };
 
 static const char **appearance_names = NULL;
 
 static int common_change_button_proc(
-	const char *title, 
-	const char **names, 
-	int msg, DIALOG *d, int c)
+    const char *title, 
+    const char **names, 
+    int msg, DIALOG *d, int c)
 {
-	int result = d_button_proc(msg, d, c);
-	if (result == D_CLOSE) {
+    int result = d_button_proc(msg, d, c);
+    if (result == D_CLOSE) {
 
-		std::vector<std::string> gui_list;
-		for (int i = 0; names[i] != NULL; i++)
-			gui_list.push_back(names[i]);
+        std::vector<std::string> gui_list;
+        for (int i = 0; names[i] != NULL; i++)
+            gui_list.push_back(names[i]);
 
-		if (gui_list.size() > 1)
-			d->d1 = gui_select_from_list(D_WIDTH, D_HEIGHT, title, gui_list, d->d1);
-		fixup_unit_info();
-		return D_REDRAW;
-	}
-	return result;
+        if (gui_list.size() > 1)
+            d->d1 = gui_select_from_list(D_WIDTH, D_HEIGHT, title, gui_list, d->d1);
+        fixup_unit_info();
+        return D_REDRAW;
+    }
+    return result;
 }
 
 static int race_change_button_proc(int msg, DIALOG *d, int c)
@@ -1135,58 +1136,58 @@ static DIALOG *sol_dialog = NULL;
 
 static int d_agup_slider_pro2(int msg, DIALOG * d, int c)
 {
-	char s[100];
-	int v;
-	v = d_agup_slider_proc(msg, d, c);
-	switch (msg) {
-		case MSG_DRAW:
-			sprintf(s, "%3d", d->d2);
-			text_mode(agup_bg_color);
-			gui_textout(screen, s, d->x + d->w, d->y + 4, d->fg, 0);
-			break;
-		case MSG_CLICK:
-		case MSG_CHAR:
-			if (d == &sol_dialog[D_STRENGTH])
-			{
-				if (d->d2 > 40) d->d2 = 40;
-				if (d->d2 < 25) d->d2 = 25;
-			}
-			else
-			{
-				if (d->d2 > 80) d->d2 = 80;
-				if (d->d2 < 50) d->d2 = 50;
-			}
+    char s[100];
+    int v;
+    v = d_agup_slider_proc(msg, d, c);
+    switch (msg) {
+        case MSG_DRAW:
+            sprintf(s, "%3d", d->d2);
+            text_mode(agup_bg_color);
+            gui_textout(screen, s, d->x + d->w, d->y + 4, d->fg, 0);
+            break;
+        case MSG_CLICK:
+        case MSG_CHAR:
+            if (d == &sol_dialog[D_STRENGTH])
+            {
+                if (d->d2 > 40) d->d2 = 40;
+                if (d->d2 < 25) d->d2 = 25;
+            }
+            else
+            {
+                if (d->d2 > 80) d->d2 = 80;
+                if (d->d2 < 50) d->d2 = 50;
+            }
 
-			points = sol_dialog[D_TIME].d2 +
-			         sol_dialog[D_HEALTH].d2 +
-			         sol_dialog[D_FIRE_ACCUR].d2 +
-			         sol_dialog[D_THRU_ACCUR].d2 +
-					 sol_dialog[D_STAMINA].d2 +
-					 (sol_dialog[D_STRENGTH].d2 * 2) +
-					 sol_dialog[D_REACTION].d2;
+            points = sol_dialog[D_TIME].d2 +
+                     sol_dialog[D_HEALTH].d2 +
+                     sol_dialog[D_FIRE_ACCUR].d2 +
+                     sol_dialog[D_THRU_ACCUR].d2 +
+                     sol_dialog[D_STAMINA].d2 +
+                     (sol_dialog[D_STRENGTH].d2 * 2) +
+                     sol_dialog[D_REACTION].d2;
 
-			if (points > MAXPOINTS && d == &sol_dialog[D_STRENGTH]) {
-				points -= d->d2 * 2;
-				d->d2 = (MAXPOINTS - points) / 2;
-				points += d->d2 * 2;
-			} else if (points > MAXPOINTS) {
-				points -= d->d2;
-				d->d2 = MAXPOINTS - points;
-				points += d->d2;
-			}
+            if (points > MAXPOINTS && d == &sol_dialog[D_STRENGTH]) {
+                points -= d->d2 * 2;
+                d->d2 = (MAXPOINTS - points) / 2;
+                points += d->d2 * 2;
+            } else if (points > MAXPOINTS) {
+                points -= d->d2;
+                d->d2 = MAXPOINTS - points;
+                points += d->d2;
+            }
 
-			scare_mouse();
+            scare_mouse();
 
-			SEND_MESSAGE(d, MSG_DRAW, 0);
+            SEND_MESSAGE(d, MSG_DRAW, 0);
             sprintf(points_str, _("Points remain: %2d "), MAXPOINTS - points);
-			SEND_MESSAGE(&sol_dialog[D_POINTS], MSG_DRAW, 0);
+            SEND_MESSAGE(&sol_dialog[D_POINTS], MSG_DRAW, 0);
 
-			unscare_mouse();
-			break;
-		default:
-			break;
-	}
-	return v;
+            unscare_mouse();
+            break;
+        default:
+            break;
+    }
+    return v;
 }
 
 /**
@@ -1195,28 +1196,28 @@ static int d_agup_slider_pro2(int msg, DIALOG * d, int c)
  */
 static void fixup_unit_info()
 {
-	if (sol_dialog[D_RACE].d1 == 0) {
+    if (sol_dialog[D_RACE].d1 == 0) {
         armour_names     = armour_names_human;
         appearance_names = appearance_names_human;
-	} else {
+    } else {
         armour_names     = armour_names_alien;
         appearance_names = appearance_names_alien;
-	}
-	if (sol_dialog[D_ARMOUR].d1 >= get_list_size(armour_names))
-		sol_dialog[D_ARMOUR].d1 = 0;
-	if (sol_dialog[D_APPEARANCE].d1 >= get_list_size(appearance_names))
-		sol_dialog[D_APPEARANCE].d1 = 0;
+    }
+    if (sol_dialog[D_ARMOUR].d1 >= get_list_size(armour_names))
+        sol_dialog[D_ARMOUR].d1 = 0;
+    if (sol_dialog[D_APPEARANCE].d1 >= get_list_size(appearance_names))
+        sol_dialog[D_APPEARANCE].d1 = 0;
 
-	DIALOG *d;
-	d = &sol_dialog[D_RACE];
-	d->w = text_length(font, race_names[d->d1]) + 6;
-	d->dp = (void *)race_names[d->d1];
-	d = &sol_dialog[D_APPEARANCE];
-	d->w = text_length(font, appearance_names[d->d1]) + 6;
-	d->dp = (void *)appearance_names[d->d1];
-	d = &sol_dialog[D_ARMOUR];
-	d->w = text_length(font, armour_names[d->d1]) + 6;
-	d->dp = (void *)armour_names[d->d1];
+    DIALOG *d;
+    d = &sol_dialog[D_RACE];
+    d->w = text_length(font, race_names[d->d1]) + 6;
+    d->dp = (void *)race_names[d->d1];
+    d = &sol_dialog[D_APPEARANCE];
+    d->w = text_length(font, appearance_names[d->d1]) + 6;
+    d->dp = (void *)appearance_names[d->d1];
+    d = &sol_dialog[D_ARMOUR];
+    d->w = text_length(font, armour_names[d->d1]) + 6;
+    d->dp = (void *)armour_names[d->d1];
 }
 
 /**
@@ -1265,46 +1266,46 @@ void Editor::edit_soldier()
 
     ::sol_dialog = sol_dialog;
 
-	sol_dialog[D_BRAVERY].flags  |= D_DISABLED;
+    sol_dialog[D_BRAVERY].flags  |= D_DISABLED;
 
-	sol_dialog[D_NAME].dp       = man->md.Name;
-	sol_dialog[D_TIME].d2       = man->md.TimeUnits;
-	sol_dialog[D_HEALTH].d2     = man->md.Health;
-	sol_dialog[D_STAMINA].d2    = man->md.Stamina;
-	sol_dialog[D_REACTION].d2   = man->md.Reactions;
-	sol_dialog[D_STRENGTH].d2   = man->md.Strength;
-	sol_dialog[D_FIRE_ACCUR].d2 = man->md.Firing;
-	sol_dialog[D_THRU_ACCUR].d2 = man->md.Throwing;
-	sol_dialog[D_BRAVERY].d2    = man->md.Bravery;
+    sol_dialog[D_NAME].dp       = man->md.Name;
+    sol_dialog[D_TIME].d2       = man->md.TimeUnits;
+    sol_dialog[D_HEALTH].d2     = man->md.Health;
+    sol_dialog[D_STAMINA].d2    = man->md.Stamina;
+    sol_dialog[D_REACTION].d2   = man->md.Reactions;
+    sol_dialog[D_STRENGTH].d2   = man->md.Strength;
+    sol_dialog[D_FIRE_ACCUR].d2 = man->md.Firing;
+    sol_dialog[D_THRU_ACCUR].d2 = man->md.Throwing;
+    sol_dialog[D_BRAVERY].d2    = man->md.Bravery;
 
-	points = sol_dialog[D_TIME].d2 + sol_dialog[D_HEALTH].d2 +
-	         sol_dialog[D_FIRE_ACCUR].d2 + sol_dialog[D_THRU_ACCUR].d2 +
-			 sol_dialog[D_STAMINA].d2 + (sol_dialog[D_STRENGTH].d2 * 2) +
-			 sol_dialog[D_REACTION].d2;
-	sprintf(points_str, _("Points remain: %2d "), MAXPOINTS - points);
+    points = sol_dialog[D_TIME].d2 + sol_dialog[D_HEALTH].d2 +
+             sol_dialog[D_FIRE_ACCUR].d2 + sol_dialog[D_THRU_ACCUR].d2 +
+             sol_dialog[D_STAMINA].d2 + (sol_dialog[D_STRENGTH].d2 * 2) +
+             sol_dialog[D_REACTION].d2;
+    sprintf(points_str, _("Points remain: %2d "), MAXPOINTS - points);
 
-	sol_dialog[D_POINTS].fg = gui_fg_color;
-	sol_dialog[D_POINTS].bg = gui_bg_color;
+    sol_dialog[D_POINTS].fg = gui_fg_color;
+    sol_dialog[D_POINTS].bg = gui_bg_color;
 
     while (mouse_b & 3) rest(1);
 
-	if (man->md.SkinType == S_XCOM_0 || 
-	    man->md.SkinType == S_XCOM_1 || 
-	    man->md.SkinType == S_XCOM_2 || 
-	    man->md.SkinType == S_XCOM_3) {
-		appearance_names = appearance_names_human;
-		armour_names     = armour_names_human;
-		if (man->md.Appearance >= 4) man->md.Appearance = 0;
-		sol_dialog[D_RACE].d1 = 0;
-	} else {
-		appearance_names = appearance_names_alien;
-		armour_names     = armour_names_alien;
-		if (man->md.SkinType == S_SECTOID)
-			sol_dialog[D_RACE].d1 = 1;
-		else
-			sol_dialog[D_RACE].d1 = 2;
-		man->md.Appearance = 0;
-	}
+    if (man->md.SkinType == S_XCOM_0 || 
+        man->md.SkinType == S_XCOM_1 || 
+        man->md.SkinType == S_XCOM_2 || 
+        man->md.SkinType == S_XCOM_3) {
+        appearance_names = appearance_names_human;
+        armour_names     = armour_names_human;
+        if (man->md.Appearance >= 4) man->md.Appearance = 0;
+        sol_dialog[D_RACE].d1 = 0;
+    } else {
+        appearance_names = appearance_names_alien;
+        armour_names     = armour_names_alien;
+        if (man->md.SkinType == S_SECTOID)
+            sol_dialog[D_RACE].d1 = 1;
+        else
+            sol_dialog[D_RACE].d1 = 2;
+        man->md.Appearance = 0;
+    }
 
     switch (man->md.SkinType) {
         case S_XCOM_0 : sol_dialog[D_ARMOUR].d1 = 0; break;
@@ -1313,64 +1314,64 @@ void Editor::edit_soldier()
         case S_XCOM_3 : sol_dialog[D_ARMOUR].d1 = 3; break;
         case S_SECTOID: sol_dialog[D_ARMOUR].d1 = 0; break;
         default:        sol_dialog[D_ARMOUR].d1 = 0; break;
-	}
+    }
 
-	sol_dialog[D_APPEARANCE].d1 = man->md.Appearance + (man->md.fFemale ? 4 : 0);
+    sol_dialog[D_APPEARANCE].d1 = man->md.Appearance + (man->md.fFemale ? 4 : 0);
 
-	fixup_unit_info();
+    fixup_unit_info();
 
-	set_dialog_color(sol_dialog, gui_fg_color, gui_bg_color);
-	centre_dialog(sol_dialog);
+    set_dialog_color(sol_dialog, gui_fg_color, gui_bg_color);
+    centre_dialog(sol_dialog);
     popup_dialog(sol_dialog, -1);
 
-	man->md.fFemale = sol_dialog[D_APPEARANCE].d1 >= 4;
-	man->md.Appearance = sol_dialog[D_APPEARANCE].d1 % 4;
-	switch (sol_dialog[D_RACE].d1) {
-		case  0: man->md.SkinType = sol_dialog[D_ARMOUR].d1 + 1; break;
-		case  1: man->md.SkinType = S_SECTOID; break;
-		default: man->md.SkinType = S_MUTON; break;
-	}
+    man->md.fFemale = sol_dialog[D_APPEARANCE].d1 >= 4;
+    man->md.Appearance = sol_dialog[D_APPEARANCE].d1 % 4;
+    switch (sol_dialog[D_RACE].d1) {
+        case  0: man->md.SkinType = sol_dialog[D_ARMOUR].d1 + 1; break;
+        case  1: man->md.SkinType = S_SECTOID; break;
+        default: man->md.SkinType = S_MUTON; break;
+    }
 
-	man->md.TimeUnits  = sol_dialog[D_TIME].d2;
-	man->md.Health     = sol_dialog[D_HEALTH].d2;
-	man->md.Stamina    = sol_dialog[D_STAMINA].d2;
-	man->md.Reactions  = sol_dialog[D_REACTION].d2;
-	man->md.Strength   = sol_dialog[D_STRENGTH].d2;
-	man->md.Firing     = sol_dialog[D_FIRE_ACCUR].d2;
-	man->md.Throwing   = sol_dialog[D_THRU_ACCUR].d2;
-	man->md.Bravery    = sol_dialog[D_BRAVERY].d2;
+    man->md.TimeUnits  = sol_dialog[D_TIME].d2;
+    man->md.Health     = sol_dialog[D_HEALTH].d2;
+    man->md.Stamina    = sol_dialog[D_STAMINA].d2;
+    man->md.Reactions  = sol_dialog[D_REACTION].d2;
+    man->md.Strength   = sol_dialog[D_STRENGTH].d2;
+    man->md.Firing     = sol_dialog[D_FIRE_ACCUR].d2;
+    man->md.Throwing   = sol_dialog[D_THRU_ACCUR].d2;
+    man->md.Bravery    = sol_dialog[D_BRAVERY].d2;
 
-	man->process_MANDATA();
+    man->process_MANDATA();
 
-	::sol_dialog = NULL;
+    ::sol_dialog = NULL;
 }
 
 static std::vector<std::string> eqsets;
 
 void change_equipment_callback(const char *name)
 {
-	eqsets.push_back(name);
+    eqsets.push_back(name);
 }
 
 void Editor::copy_soldier(Soldier *src)
 {
-	buffer.empty = false;
-	
-	src->build_ITEMDATA();
-	
-	buffer.md = src->md;
-	buffer.id = src->id;
+    buffer.empty = false;
+    
+    src->build_ITEMDATA();
+    
+    buffer.md = src->md;
+    buffer.id = src->id;
 }
 
 void Editor::paste_soldier(Soldier *dest)
 {
-	if (buffer.empty) return;
-	
-	dest->md = buffer.md;
-	dest->id = buffer.id;
-	
-	dest->process_MANDATA();
-	dest->process_ITEMDATA();
+    if (buffer.empty) return;
+    
+    dest->md = buffer.md;
+    dest->id = buffer.id;
+    
+    dest->process_MANDATA();
+    dest->process_ITEMDATA();
 }
          
 /**
@@ -1382,83 +1383,83 @@ void Editor::paste_soldier(Soldier *dest)
  */
 void Editor::change_equipment()
 {
-	// Get list of available equipment sets
-	eqsets.clear();
-	LUA_REGISTER_FUNCTION(L, change_equipment_callback);
-	lua_safe_dostring(L, "for name, data in EquipmentTable do if data.enabled then change_equipment_callback(name) end end");
+    // Get list of available equipment sets
+    eqsets.clear();
+    LUA_REGISTER_FUNCTION(L, change_equipment_callback);
+    lua_safe_dostring(L, "for name, data in EquipmentTable do if data.enabled then change_equipment_callback(name) end end");
 
-	if (eqsets.size() > 0) {
-		int result = gui_select_from_list(
-			300, 200, _("Select equipment set"), 
-			eqsets, 0);
+    if (eqsets.size() > 0) {
+        int result = gui_select_from_list(
+            300, 200, _("Select equipment set"), 
+            eqsets, 0);
 
-		lua_pushstring(L, "SetEquipment");
-		lua_gettable(L, LUA_GLOBALSINDEX);
-		lua_pushstring(L, eqsets[result].c_str());
-		lua_safe_call(L, 1, 0);
-	} else {
-		alert( "", _("Remote player does not have any of your equipment sets"), "", _("OK"), NULL, 0, 0);
-	}
+        lua_pushstring(L, "SetEquipment");
+        lua_gettable(L, LUA_GLOBALSINDEX);
+        lua_pushstring(L, eqsets[result].c_str());
+        lua_safe_call(L, 1, 0);
+    } else {
+        alert( "", _("Remote player does not have any of your equipment sets"), "", _("OK"), NULL, 0, 0);
+    }
 }
 
 int Editor::do_mapselect()
 {
-	int x = mouse_x, y = mouse_y;
+    int x = mouse_x, y = mouse_y;
 
-	if (x + terrain_bmp->w >= 640)
-		x = 640 - terrain_bmp->w;
-	if (y + terrain_bmp->h >= 400)
-		y = 400 - terrain_bmp->h;
+    if (x + terrain_bmp->w >= 640)
+        x = 640 - terrain_bmp->w;
+    if (y + terrain_bmp->h >= 400)
+        y = 400 - terrain_bmp->h;
 
-	blit(terrain_bmp, screen, 0, 0, x, y, terrain_bmp->w, terrain_bmp->h);
+    blit(terrain_bmp, screen, 0, 0, x, y, terrain_bmp->w, terrain_bmp->h);
 
-	int mouse_leftr = 0, mouse_rightr = 0;
-	if (!(mouse_b & 1)) mouse_leftr  = 1;
-	if (!(mouse_b & 2)) mouse_rightr = 1;
+    int mouse_leftr = 0, mouse_rightr = 0;
+    if (!(mouse_b & 1)) mouse_leftr  = 1;
+    if (!(mouse_b & 2)) mouse_rightr = 1;
 
-	//show_mouse(screen);
-	//text_mode(0);
+    //show_mouse(screen);
+    //text_mode(0);
 
-	while (!keypressed()) {
-		if (CHANGE) {
+    while (!keypressed()) {
+        if (CHANGE) {
 
-			clear(screen2);
+            clear(screen2);
 
-			//m_map->set_sel(mouse_x, mouse_y);
-			m_map->draw();
-			blit(terrain_bmp, screen2, 0, 0, x, y, terrain_bmp->w, terrain_bmp->h);
-			draw_sprite(screen2, mouser, mouse_x, mouse_y);
-			blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
+            //m_map->set_sel(mouse_x, mouse_y);
+            m_map->draw();
+            blit(terrain_bmp, screen2, 0, 0, x, y, terrain_bmp->w, terrain_bmp->h);
+            draw_sprite(screen2, mouser, mouse_x, mouse_y);
+            blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
 
-			//int tt = (mouse_y-y) / 40 * 5 + (mouse_x-x) / 40;
-			//textprintf(screen, font, x, y-10, 1, "tt=%02d", tt);
+            //int tt = (mouse_y-y) / 40 * 5 + (mouse_x-x) / 40;
+            //textprintf(screen, font, x, y-10, 1, "tt=%02d", tt);
 
-			draw_sprite(screen, mouser, mouse_x, mouse_y);
+            draw_sprite(screen, mouser, mouse_x, mouse_y);
 
-			CHANGE = 0;
-		}
+            CHANGE = 0;
+        }
 
-		if ((mouse_b & 1) && (mouse_leftr)) { //left
-			int tt = (mouse_y - y) / 40 * 5 + (mouse_x - x) / 40;
-			if ((tt >= 0) && (tt < 25))
-				return tt;
+        if ((mouse_b & 1) && (mouse_leftr)) { //left
+            int tt = (mouse_y - y) / 40 * 5 + (mouse_x - x) / 40;
+            if ((tt >= 0) && (tt < 25))
+                return tt;
 
-			mouse_leftr = 0;
-			break;
-		}
+            mouse_leftr = 0;
+            break;
+        }
 
-		if ((mouse_b & 2) && (mouse_rightr)) { //right
-			mouse_rightr = 0;
-			break;
-		}
+        if ((mouse_b & 2) && (mouse_rightr)) { //right
+            mouse_rightr = 0;
+            break;
+        }
 
-		if (!(mouse_b & 1)) mouse_leftr = 1;
-		if (!(mouse_b & 2)) mouse_rightr = 1;
+        if (!(mouse_b & 1)) mouse_leftr = 1;
+        if (!(mouse_b & 2)) mouse_rightr = 1;
 
-	}
-	//show_mouse(NULL);
+    }
+    //show_mouse(NULL);
 
-	//destroy_bitmap(terrain_bmp);
-	return -1;
+    //destroy_bitmap(terrain_bmp);
+    return -1;
 }                                                                        
 
