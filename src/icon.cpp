@@ -430,5 +430,5 @@ int Icon::inside(int mx, int my)
 
 void Icon::show_eot()
 {
-	tac00->show_strech(screen, 0, 0, 640, 400);
+	tac00->show_strech(screen, 0, 0, SCREEN_W, SCREEN_H);
 }

@@ -32,13 +32,14 @@ enum MAINMENU_ITEMS
 {
 	MAINMENU_BACKGROUND = 0,
 	MAINMENU_QUIT,
-	MAINMENU_ABOUT,
-	MAINMENU_EDITOR,
-	MAINMENU_HOTSEAT,
-	MAINMENU_TCPIP,
-    MAINMENU_INTERNET,
 	MAINMENU_LOADGAME,
-	MAINMENU_COUNT
+	MAINMENU_HOTSEAT,
+    MAINMENU_INTERNET,
+	MAINMENU_COUNT,
+	// Currently disabled menu items come next
+	MAINMENU_ABOUT, // has problems with color depth > 8
+	MAINMENU_TCPIP, // has problems with color depth > 8, also uses old network code
+	MAINMENU_EDITOR // does not support all terrains
 };
 
 void initmainmenu();

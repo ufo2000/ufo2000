@@ -132,7 +132,7 @@ static int d_mainmenu_button_proc(int msg, DIALOG *d, int c)
 	return D_O_K;
 }
 
-#define MENU_LEFT           341
+#define MENU_LEFT           (SCREEN_W - 640 + 341)
 #define MENU_TOP            115
 #define MENU_BTN_STEP       8
 #define MENU_BTN_W          237
@@ -172,16 +172,14 @@ int do_mainmenu()
     
     the_dialog[MAINMENU_BACKGROUND].proc = d_mainmenu_background_proc;
 
-    the_dialog[MAINMENU_INTERNET].dp    = (void *) "internet";
+    the_dialog[MAINMENU_INTERNET].dp    = (void *) "connect to internet server";
     the_dialog[MAINMENU_TCPIP].dp       = (void *) "tcp/ip";
-    the_dialog[MAINMENU_HOTSEAT].dp     = (void *) "hotseat";
+    the_dialog[MAINMENU_HOTSEAT].dp     = (void *) "start hotseat game";
     the_dialog[MAINMENU_EDITOR].dp      = (void *) "editor";
     the_dialog[MAINMENU_LOADGAME].dp    = (void *) "load saved game";
     the_dialog[MAINMENU_ABOUT].dp       = (void *) "about";
     the_dialog[MAINMENU_QUIT].dp        = (void *) "quit";
     
-//	the_dialog[MAINMENU_LOADGAME].proc = NULL;
-
     BS_DISABLED.font    = large;
     BS_IDLE.font        = large;    
     BS_SELECTED.font    = large;

@@ -2204,7 +2204,10 @@ void Soldier::try_shoot()
 		FIRE_y = map->sel_row * 16 + 8;
 	}
 
-	// There are many reasons why you cannot shoot infinitely ;)
+	// Perform some checks to determine if we can keep targeting mode after 
+	// this shot. So we need to check if TWO shots can be made (one right now 
+	// and another one after left clicking mouse in a targeting mode again)
+
 	if (!havetime(target.time * 2 * FIRE_num)) {
 		TARGET = 0;
 	}
@@ -2251,14 +2254,15 @@ void Soldier::try_reaction_shot(Soldier *the_target)
 	FIRE_x = the_target->x * 16 + 8;
 	FIRE_y = the_target->y * 16 + 8;
 
-	// There are many reasons why you cannot shoot infinitely ;)
-	if (!havetime(target.time * 2 * FIRE_num)) {
+	// Check that we can fire at least one shot using current settings
+
+	if (!havetime(target.time * FIRE_num)) {
 		FIRE_num = 0;
 		return;
 	}
 
 	if (!target.item->is_laser() && !target.item->is_cold_weapon() &&
-	        ((target.item->m_ammo == NULL) || (target.item->m_ammo->m_rounds < FIRE_num + 1))) {
+	        ((target.item->m_ammo == NULL) || (target.item->m_ammo->m_rounds < FIRE_num))) {
 		FIRE_num = 0;
 		return;
 	}
@@ -2298,10 +2302,11 @@ void Soldier::shoot(int zd, int xd, int yd, int ISLOCAL)
 		REAL fi = acos((REAL)(zd - z0) / ro);
 		REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
 		REAL zA = sqrt(ro);
-		//apply_accuracy(fi, te);
 		apply_throwing_accuracy(fi, te, target.item->data()->weight);
 
 		thru(z0, x0, y0, ro, fi, te, zA, target.place, target.time);
+		// !!! Hack - reaction temporarily disabled to prevent grenades bug
+		chances = 0;
 	} else if (target.action == AIMEDTHROW) {
 		REAL ro = sqrt((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0));
 		REAL fi = acos((REAL)(zd - z0) / ro);
@@ -2309,6 +2314,8 @@ void Soldier::shoot(int zd, int xd, int yd, int ISLOCAL)
 		apply_accuracy(fi, te);
 
 		aimedthrow(z0, x0, y0, fi, te, target.place, target.time);
+		// !!! Hack - reaction temporarily disabled to prevent grenades bug
+		chances = 0;
 	} else if (target.action == PUNCH) {
 		REAL ro = sqrt((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0));
 		REAL fi = acos((REAL)(zd - z0) / ro);
