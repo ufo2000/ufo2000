@@ -116,7 +116,7 @@ ifdef static
 	SERVER_LIBS = -static -lNL -pthread
 else
 	LIBS += -lNL ${shell allegro-config --libs}
-	SERVER_LIBS = -lNL
+	SERVER_LIBS = -lNL -pthread
 endif
 endif
 

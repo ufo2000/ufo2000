@@ -452,6 +452,9 @@ void initmain(int argc, char *argv[])
     FLAGS = 0;
 	push_config_state();
 	set_config_file(F("$(home)/ufo2000.ini"));
+	
+	install_keyboard();
+
 	if (get_config_int("Flags", "F_CLEARSEEN", 0)) FLAGS |= F_CLEARSEEN;      // clear seen every time
 	if (get_config_int("Flags", "F_SHOWROUTE", 0)) FLAGS |= F_SHOWROUTE;      // show pathfinder matrix
 	if (get_config_int("Flags", "F_SHOWLOFCELL", 0)) FLAGS |= F_SHOWLOFCELL;  // show cell's LOF & BOF
@@ -513,8 +516,7 @@ void initmain(int argc, char *argv[])
 	install_timer();
 	console<<"install_mouse"<<std::endl;
 	install_mouse();
-	console<<"install_keyboard"<<std::endl;
-	install_keyboard();
+
     {
         bool VERBOSE_SOUNDCHECK = false;
         
