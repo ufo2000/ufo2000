@@ -195,10 +195,10 @@ void Map::draw_path_from(Soldier * s)
 	TU_max = s->ud.MaxTU;
 	TU_color = 1;			// COLOR_WHITE
     // Todo: change this color to have some contrast to terrain (e.g. arctic)
-	path_show(s->z, s->x, s->y, way, waylen);
+	path_show(s->z, s->x, s->y, way, waylen, s);
 }
 
-void Map::path_show(int _z, int _x, int _y, char *way, int waylen)
+void Map::path_show(int _z, int _x, int _y, char *way, int waylen, Soldier *sld)
 {
 	//text_mode(0);
 	//textprintf(screen, font, 0, SCREEN2H, COLOR_WHITE, "waylen=%d ", waylen);
@@ -228,8 +228,7 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen)
 			//printsmall(sx, sy, 1, time_of_dst);
 			TU -= time_of_dst;
 
-            // Todo: use value of reserved-time instead of fixed value
-            if (TU < 30) {          // (approx.) TU for Autoshot 
+            if (TU < sld->tus_reserved(NULL)) {          // NULL - don't show any error messages
                 TU_color = 32;      // COLOR_RED00
             }
 			
@@ -239,7 +238,7 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen)
               //TU_color += 4;      // COLOR_GRAY04
                 TU_color =  4;      // COLOR_GRAY04
 			}
-			if (TU <0) break;
+			if (TU < 0) break;
 			printsmall_center(sx, sy, xcom1_color(TU_color), TU);
 		}
 

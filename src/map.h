@@ -166,7 +166,7 @@ public:
 	int findneibo(int &dz, int &dx, int &dy, int value);
 	int setneibos(int oz, int ox, int oy, int value);
 	int pathfind(int sz, int sx, int sy, int dz, int dx, int dy, char *way);
-	void path_show(int _z, int _x, int _y, char *way, int waylen);
+	void path_show(int _z, int _x, int _y, char *way, int waylen, Soldier *sld);
 	void draw_path_from(Soldier *s);
 	int walk_time(int z, int x, int y);
 

@@ -227,6 +227,7 @@ public:
 	int havetime(int ntime, int use_energy = 0);
 	void spend_time(int tm, int use_energy = 0);
 	int walktime(int _dir);
+	int tus_reserved(std::string *error);
 
 	State state() { return m_state; }
 

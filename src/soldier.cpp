@@ -1299,6 +1299,49 @@ int Soldier::move(int ISLOCAL)
 	return 1;
 }
 
+int Soldier::tus_reserved(std::string *error)
+{
+	int time = 0;
+
+	Item *it = rhand_item();
+	if(!it) it = lhand_item();	//no item in right hand - use item in left hand
+	
+    if(it) {					//if soldier has got at least one item in hands
+		switch(m_ReserveTimeMode) {
+			case RESERVE_FREE:
+			break;
+		
+			case RESERVE_SNAP:
+			if (it->obdata_accuracy(1)) {
+				time = required(it->obdata_time(1));
+                if (error) *error = _("Time units are reserved for snap shot.");
+			}
+			break;
+		
+			case RESERVE_AIM:
+			if (it->obdata_accuracy(2)) {
+				time = required(it->obdata_time(2));
+                if (error) *error = _("Time units are reserved for aimed shot.");
+			}
+			break;
+		
+			case RESERVE_AUTO:
+			if (it->obdata_accuracy(0)) {
+				time = (required(it->obdata_time(0)) + 2) / 3 * 3;
+                if (error) *error = _("Time units are reserved for auto shot.");
+			}
+			break;
+		}
+		
+		if(it->is_grenade() && it->delay_time() > 0 && m_ReserveTimeMode != RESERVE_FREE) {
+			time = required(25);
+            if (error) *error = _("Time units are reserved for grenade throw.");
+		}
+	}
+	
+	return time;
+}
+
 /**
  * Test if soldier has reserved time for shooting.
  * Returns true if he has enough time for the next action.
@@ -1308,44 +1351,8 @@ bool Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
     if(!ISLOCAL) 			// during enemy turn: don't check for reserved time
 		return havetime(walk_time, use_energy);
 
-	Item *it = rhand_item();
-	if(!it) it = lhand_item();	//no item in right hand - use item in left hand
-
-	int time = 0;
-	std::string error = "";
-
-    if(it) {					//if soldier has got at least one items in hands
-		switch(m_ReserveTimeMode) {
-			case RESERVE_FREE:
-			break;
-		
-			case RESERVE_SNAP:
-			if (it->obdata_accuracy(1)) {
-				time = required(it->obdata_time(1));
-                error = _("Time units are reserved for snap shot.");
-			}
-			break;
-		
-			case RESERVE_AIM:
-			if (it->obdata_accuracy(2)) {
-				time = required(it->obdata_time(2));
-                error = _("Time units are reserved for aimed shot.");
-			}
-			break;
-		
-			case RESERVE_AUTO:
-			if (it->obdata_accuracy(0)) {
-				time = (required(it->obdata_time(0)) + 2) / 3 * 3;
-                error = _("Time units are reserved for auto shot.");
-			}
-			break;
-		}
-		
-		if(it->is_grenade() && it->delay_time() > 0 && m_ReserveTimeMode != RESERVE_FREE) {
-			time = required(25);
-            error = _("Time units are reserved for grenade throw.");
-		}
-	}
+    std::string error = "";
+	int time = tus_reserved(&error);
 	
 	if(!havetime(walk_time + time, 0) && havetime(time, 0)) {
 		if(error != "")
