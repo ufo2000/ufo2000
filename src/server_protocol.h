@@ -23,13 +23,16 @@
 #define SRV_USER_BUSY          11
 
 #define SRV_GAME_PACKET        12
+#define SRV_ENDGAME            13
 
 class ServerClientUfo: public ServerClient
 {
 	std::set<std::string>  m_challenged_opponents;
 	ServerClientUfo       *m_opponent;
+	bool                   m_busy;
 public:
-	ServerClientUfo(ServerDispatch *d, NLsocket s): ServerClient(d, s), m_opponent(NULL) { }
+	ServerClientUfo(ServerDispatch *d, NLsocket s)
+		: ServerClient(d, s), m_opponent(NULL), m_busy(false) { }
 	virtual ~ServerClientUfo();
 	bool recv_packet(NLulong id, const std::string &packet);
 };

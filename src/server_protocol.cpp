@@ -1,5 +1,7 @@
 #include "server_protocol.h"
 
+#define MAX_USERNAME_SIZE 16
+
 ServerClient *ServerDispatch::CreateServerClient(NLsocket socket)
 {
 	return new ServerClientUfo(this, socket);
@@ -53,8 +55,8 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 
 			printf("user login. login = '%s', password = '%s'\n", login.c_str(), password.c_str());
 
-			if (m_server->m_clients_by_name.find(login) != m_server->m_clients_by_name.end()) {
-				send_packet_back(SRV_FAIL, "login failed (two users with the same login)");
+			if (login.size() > MAX_USERNAME_SIZE || m_server->m_clients_by_name.find(login) != m_server->m_clients_by_name.end()) {
+				send_packet_back(SRV_FAIL, "");
 				m_error = true;
 				break;
 			}
@@ -64,9 +66,14 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 	    // send user list to a newly created user
 	    	std::map<std::string, ServerClient *>::iterator it = m_server->m_clients_by_name.begin();
 	    	while (it != m_server->m_clients_by_name.end()) {
-				printf("send user online: %s\n", it->first.c_str());
-				it->second->send_packet_back(SRV_USER_ONLINE, m_name);
-				send_packet_back(SRV_USER_ONLINE, it->first);
+	    		ServerClientUfo *opponent = dynamic_cast<ServerClientUfo *>(it->second);
+	    		
+				printf("send user online: %s\n", opponent->m_name.c_str());
+				opponent->send_packet_back(SRV_USER_ONLINE, m_name);
+				if (opponent->m_busy)
+					send_packet_back(SRV_USER_BUSY, opponent->m_name);
+				else
+					send_packet_back(SRV_USER_ONLINE, opponent->m_name);
 				it++;
 	    	}
 			m_server->m_clients_by_name[m_name] = this;
@@ -83,21 +90,32 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 
 			ServerClientUfo *opponent = dynamic_cast<ServerClientUfo *>(it->second);
 
+        //	Check that the opponent is not busy now
+			if (opponent->m_busy) {
+				printf("Warning: opponent '%s' is busy\n", packet.c_str());
+				send_packet_back(SRV_USER_BUSY, packet);
+				break;
+			}
+
         //	Try to find self in the opponent's challenge list
         	if (opponent->m_challenged_opponents.find(m_name) != opponent->m_challenged_opponents.end()) {
+            //	opponent found in the challenge list
         		send_packet_all(SRV_USER_BUSY, m_name);
 				opponent->send_packet_all(SRV_USER_BUSY, packet);
         		send_packet_back(SRV_GAME_START_JOIN, packet);
         		opponent->send_packet_back(SRV_GAME_START_HOST, m_name);
         		m_opponent = opponent;
         		opponent->m_opponent = this;
-        		break;
-        	}
-
-        //	Insert the opponent into challenge list
-			m_challenged_opponents.insert(packet);
-			opponent->send_packet_back(SRV_USER_CHALLENGE_IN, m_name);
-			send_packet_back(SRV_USER_CHALLENGE_OUT, packet);
+        		m_busy = true;
+        		opponent->m_busy = true;
+        		m_challenged_opponents.clear();
+        		opponent->m_challenged_opponents.clear();
+        	} else {
+	        //	insert the opponent into challenge list
+				m_challenged_opponents.insert(packet);
+				opponent->send_packet_back(SRV_USER_CHALLENGE_IN, m_name);
+				send_packet_back(SRV_USER_CHALLENGE_OUT, packet);
+			}
 			break;
 		}
 		case SRV_MESSAGE: {
@@ -112,6 +130,28 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 			} else {
 				printf("Warning: game packet from '%s', no opponent to forward\n", m_name.c_str());
 			}
+			break;
+		}
+		case SRV_ENDGAME: {
+			if (m_opponent) m_opponent->m_opponent = NULL;
+			m_opponent = NULL;
+			m_busy = false;
+
+		//	Report other players status
+	    	std::map<std::string, ServerClient *>::iterator it = m_server->m_clients_by_name.begin();
+	    	while (it != m_server->m_clients_by_name.end()) {
+	    		ServerClientUfo *opponent = dynamic_cast<ServerClientUfo *>(it->second);
+	    		if (opponent->m_name != m_name) {
+					opponent->send_packet_back(SRV_USER_ONLINE, m_name);
+					if (opponent->m_busy)
+						send_packet_back(SRV_USER_BUSY, opponent->m_name);
+					else
+						send_packet_back(SRV_USER_ONLINE, opponent->m_name);
+				}
+				it++;
+	    	}
+
+			break;
 		}
 	}
 

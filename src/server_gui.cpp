@@ -29,6 +29,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "sound.h"
 #include "multiplay.h"
 
+#define BORDER_COLOR xcom1_color(4)
+#define TITLE_COLOR  xcom1_color(2)
+
 void draw_border(BITMAP *bmp, int x, int y, int w, int h, int color)
 {
 	line(bmp, x + 1, y + 0, x + w - 2, y + 0, color);
@@ -57,10 +60,10 @@ public:
 	{
 		BITMAP *temp_bmp = create_bitmap(m_width, m_height);
 		clear_to_color(temp_bmp, xcom1_color(15));
-		draw_border(temp_bmp, 0, 0, m_width - 1, m_height - 1, xcom1_color(1));
+		draw_border(temp_bmp, 0, 0, m_width - 1, m_height - 1, BORDER_COLOR);
 		if (m_title != "") {
-			textout_centre(temp_bmp, m_fnt, m_title.c_str(), 1 + (m_width - 5) / 2, 1, xcom1_color(1));
-			line(temp_bmp, 0, text_height(m_fnt), m_width - 2, text_height(m_fnt), xcom1_color(1));
+			textout_centre(temp_bmp, m_fnt, m_title.c_str(), 1 + (m_width - 5) / 2, 1, TITLE_COLOR);
+			line(temp_bmp, 0, text_height(m_fnt), m_width - 2, text_height(m_fnt), BORDER_COLOR);
 		}
 		m_chield->redraw_full(temp_bmp, 2, 2 + m_title_height);
 		if (bmp == screen) scare_mouse_area(x, y, m_width, m_height);
@@ -105,7 +108,8 @@ enum USER_STATUS
 	USER_STATUS_BUSY,          //!< user is playing with someone (not you)
 	USER_STATUS_CHALLENGE_IN,  //!< you have received a challenge from this user
 	USER_STATUS_CHALLENGE_OUT, //!< you have sent a challenge to this user
-	USER_STATUS_OFFLINE        //!< user has disconnected from the server (to be removed from the list)
+	USER_STATUS_OFFLINE,       //!< user has disconnected from the server (to be removed from the list)
+	USER_STATUS_SELF           //!< own name in the list of connected players
 };
 
 struct UserInfo
@@ -119,7 +123,8 @@ struct UserInfo
 
 #define COLOR_YELLOW   makecol(255, 255, 0)
 #define COLOR_GREEN    xcom1_color(50)
-#define COLOR_DARKGRAY xcom1_color(4)
+#define COLOR_GRAY     xcom1_color(3)
+#define COLOR_RED      xcom1_color(32)
 
 class UsersList: public VisualObject
 {
@@ -149,8 +154,8 @@ public:
 				resize(-1, -1);
 				return;
 			}
-		assert(status != USER_STATUS_OFFLINE);
-		m_users.push_back(UserInfo(name, status));
+		if (status != USER_STATUS_OFFLINE)
+			m_users.push_back(UserInfo(name, status));
 		resize(-1, -1);
 	}
 
@@ -165,10 +170,11 @@ public:
 			text_mode(-1);
 			int color;
 			switch (m_users[i].status) {
-				case USER_STATUS_BUSY: color = COLOR_DARKGRAY; break;
+				case USER_STATUS_BUSY: color = COLOR_RED; break;
 				case USER_STATUS_CHALLENGE_IN: color = COLOR_GREEN; break;
 				case USER_STATUS_CHALLENGE_OUT: color = COLOR_YELLOW; break;
-				default: color = xcom1_color(2); break;
+				case USER_STATUS_SELF: color = xcom1_color(1); break;
+				default: color = COLOR_GRAY; break;
 			}
 
 			textout(temp_bmp, m_font, m_users[i].name.c_str(), 0, 
@@ -257,6 +263,8 @@ static initHawkNL HawkNL;
 
 int connect_internet_server()
 {
+	lobby_init_mouse();
+
     std::auto_ptr<ClientServerUfo> server(new ClientServerUfo());
     if (!server->connect(cfg_get_server_host(), 2000))
     	return -1;
@@ -266,12 +274,12 @@ int connect_internet_server()
 		return -1;
     }
 
-	lobby_init_mouse();
-
 	ConsoleWindow *chat = new ConsoleWindow(SCREEN_W, SCREEN_H, g_small_font);
-	WindowBorder *chat_border = new WindowBorder(chat, "ufo2000 internet server", large);
+	WindowBorder *chat_border = new WindowBorder(chat, 
+		std::string("ufo2000 internet server (") + cfg_get_server_host() + std::string(")"), large);
 	chat_border->set_full_redraw();
 	UsersList *users = new UsersList(large);
+	users->update_user_info(g_server_login, USER_STATUS_SELF);
 	WindowBorder *users_border = new WindowBorder(users, "users online", large);
 	users_border->set_full_redraw();
 
@@ -280,17 +288,13 @@ int connect_internet_server()
 	chat->printf("There are two windows here: chat console in the left window\n");
 	chat->printf("and the list of online players in the right\n");
 	chat->printf("\n");
-	chat->printf("white player name - available for chat\n");
+	chat->printf(xcom1_color(1), "white player name - that's your own name\n");
+	chat->printf(COLOR_GRAY, "gray player name - available for chat\n");
 	chat->printf(COLOR_YELLOW, "yellow player name - you have sent a challenge to this player\n");
 	chat->printf(COLOR_GREEN, "green player name - you can accept a challenge from this player\n");
-	chat->printf(COLOR_DARKGRAY, "darkgray player name - the player is busy playing with the others\n");
+	chat->printf(COLOR_RED, "red player name - the player is busy playing with someone else\n");
 	chat->printf("\n");
-	chat->printf("currently the followind commands are available for debugging:\n");
-	chat->printf("  add [username]\n");
-	chat->printf("  del [username]\n");
-	chat->printf("  host [username]\n");
-	chat->printf("  join [username]\n");
-	chat->printf("  busy [username]\n");
+	chat->printf("You can left click on player names to select them as your opponents\n");
 	chat->printf("\n");
 
 	chat_border->resize(SCREEN_W - users_border->get_width(), SCREEN_H);
@@ -316,7 +320,7 @@ int connect_internet_server()
 				case SRV_USER_CHALLENGE_IN: users->update_user_info(packet, USER_STATUS_CHALLENGE_IN); break;
 				case SRV_USER_CHALLENGE_OUT: users->update_user_info(packet, USER_STATUS_CHALLENGE_OUT); break;
 				case SRV_USER_BUSY: users->update_user_info(packet, USER_STATUS_BUSY); break;
-				case SRV_MESSAGE: chat->printf(xcom1_color(32), "%s", packet.c_str()); break;
+				case SRV_MESSAGE: chat->printf(COLOR_GRAY, "%s", packet.c_str()); break;
 				case SRV_GAME_START_HOST:
 					alert(" ", "  Game should start as host now ", " ", "    OK    ", NULL, 1, 0);
 		            HOST = 1;
@@ -327,7 +331,10 @@ int connect_internet_server()
 		                gameloop();
 		                closegame();
 		            }
-					return -1;
+
+					server->send_packet(SRV_ENDGAME, "");
+					lobby_init_mouse();
+					break;
 				case SRV_GAME_START_JOIN:
 					alert(" ", "  Game should start as client now ", " ", "    OK    ", NULL, 1, 0);
 		            HOST = 0;
@@ -338,7 +345,10 @@ int connect_internet_server()
 		                gameloop();
 		                closegame();
 		            }
-					return -1;
+
+					server->send_packet(SRV_ENDGAME, "");
+					lobby_init_mouse();
+					break;
 			}
 
 			users_border->resize(-1, -1);
@@ -368,7 +378,6 @@ int connect_internet_server()
 						break;
 					default:
 						soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
-						chat->printf("%s clicked\n", name.c_str());
 						break;
 				}
 				users_border->resize(-1, -1);
@@ -391,7 +400,7 @@ int connect_internet_server()
 				change_screen_mode();
 				lobby_init_mouse();
 			}
-			if (scancode == KEY_ESC && askmenu("EXIT GAME")) break;
+			if (scancode == KEY_ESC && askmenu("DISCONNECT FROM SERVER")) break;
 
 			if (chat->process_keyboard_input(keycode, scancode)) {
 				server->send_packet(SRV_MESSAGE, chat->get_text());
