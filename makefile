@@ -177,15 +177,24 @@ clean:
 # Update the translations of game messages to different languages 
 # using gettext tools - see manual at
 # http://www.gnu.org/software/gettext/manual/gettext.html
-lng: $(SRCS)
+lng-de: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
-	msgmerge.exe --update translations/ufo2000-de.po translations/ufo2000.pot
+	msgmerge --update translations/ufo2000-de.po translations/ufo2000.pot
 	msgfmt -c translations/ufo2000-de.po
-	msgmerge.exe --update translations/ufo2000-fr.po translations/ufo2000.pot
+
+lng-fr: $(SRCS)
+	xgettext -o translations/ufo2000.pot --keyword=_ $^
+	msgmerge --update translations/ufo2000-fr.po translations/ufo2000.pot
 	msgfmt -c translations/ufo2000-fr.po
-	msgmerge.exe --update translations/ufo2000-ru.po translations/ufo2000.pot
+
+lng-ru: $(SRCS)
+	xgettext -o translations/ufo2000.pot --keyword=_ $^
+	msgmerge --update translations/ufo2000-ru.po translations/ufo2000.pot
 	msgfmt -c translations/ufo2000-ru.po
-	msgmerge.exe --update translations/ufo2000-by.po translations/ufo2000.pot
+
+lng-by: $(SRCS)
+	xgettext -o translations/ufo2000.pot --keyword=_ $^
+	msgmerge --update translations/ufo2000-by.po translations/ufo2000.pot
 	msgfmt -c translations/ufo2000-by.po
 
 binary-gz: all server
