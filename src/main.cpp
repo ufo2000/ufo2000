@@ -70,6 +70,16 @@ int g_p2_start_sit=0;           //!< If player 2 starts sitting - 0 by default
 int g_tie;                      //   Flags denoting which players accepted draw
 int g_random_init[2];           //   For initializing Random
 
+int GameErrorColour[-ERR_MINUS_NUM];
+const char GameErrorMessage[-ERR_MINUS_NUM][STDBUFSIZE] = {
+    "Success.",
+    "Not Enough Time Units!",
+    "Not Enough Energy!",
+    "Out Of Ammo!",
+    "No Item To Use!",
+    "Out Of Range!"
+};
+
 //ReserveTime_Mode ReserveTimeMode;     // TODO: should be platoon- or soldier-specific
 
 /**
@@ -763,6 +773,14 @@ void initmain(int argc, char *argv[])
             
         Map::new_GEODATA(&mapdata); 
     }
+
+    // Error codes are negative.
+    GameErrorColour[-OK]             = COLOR_SYS_OK;
+    GameErrorColour[-ERR_NO_TUS]     = COLOR_ORANGE;
+    GameErrorColour[-ERR_NO_ENERGY]  = COLOR_ORANGE;
+    GameErrorColour[-ERR_NO_AMMO]    = COLOR_ORANGE;
+    GameErrorColour[-ERR_NO_ITEM]    = COLOR_SYS_FAIL;
+    GameErrorColour[-ERR_DISTANCE]   = COLOR_YELLOW;
 
     delete print_win;
 }
@@ -1611,15 +1629,6 @@ static LONG WINAPI TopLevelExceptionFilter(PEXCEPTION_POINTERS pExceptionInfo)
 }
 #endif
 
-const char GameErrorMessage[-ERR_MINUS_NUM][STDBUFSIZE] = {
-    "Success.",
-    "Not Enough Time Units!",
-    "Not Enough Energy!",
-    "Out Of Ammo!",
-    "No Item To Use!",
-    "Out Of Range!"
-};
-
 /**
  * @brief  Show the reason why the requested action could not be performed.
  */
@@ -1632,7 +1641,7 @@ void report_game_error(int chk)
     chk = -chk; // Error codes are negative.
     if(FLAGS & F_ENDTURNSND)
         soundSystem::getInstance()->play(SS_BUTTON_PUSH_2);
-    g_console->printf(COLOR_SYS_FAIL, GameErrorMessage[chk]);
+    g_console->printf(GameErrorColour[chk], GameErrorMessage[chk]);
 }
 
 /**
