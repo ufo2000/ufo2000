@@ -1,17 +1,18 @@
 ##############################################################################
 # Compiling ufo2000: make {win32=1} {debug=1}                                #
 #                                                                            #
-# Define win32=1 when compiling with Mingw32 gcc compiler for windows        #
+# Define win32=1 when compiling with Mingw gcc compiler for windows          #
+# Define xmingw=1 when compiling win32 binary with Mingw gcc crosscompiler   #
 # Define debug=1 when you want to build debug version of ufo2000             #
 #                                                                            #
-# Running just make builds the release version of ufo2000 for *nix           #
+# Just typing 'make' builds the release version of ufo2000 for *nix          #
 # (Linux, FreeBSD, ...)                                                      #
 #                                                                            #
-# The game depends on Allegro (4.0.x) and Expat library, so you need to      #
-# install them before running make                                           #
+# The game depends on Allegro (4.0.x), Expat and HawkNL libraries, so you    #
+# need to install them before running make                                   #
 #                                                                            #
-# Also it is highly recommended that you have subversion client installed    #
-# ???                                                                        #
+# Also it is highly recommended but not necessery to have subversion         #
+# client installed                                                           #
 ##############################################################################
 
 CC = g++
@@ -22,6 +23,12 @@ CFLAGS += -pipe -DUFO_SVNVERSION=\"$(UFO_SVNVERSION)\"
 OBJDIR = obj
 NAME = ufo2000
 SERVER_NAME = ufo2000-srv
+
+ifdef xmingw
+    CC = i386-mingw32msvc-g++
+    LD = i386-mingw32msvc-g++
+    win32 = 1
+endif
 
 VPATH = src src/jpgalleg
 
