@@ -166,43 +166,6 @@ bool Item::get_ammo_list(const std::string item_name, std::vector<std::string> &
 	}
 }
 
-int Item::explo_range(int type)
-{
-	int range = 5;
-
-	switch (type) {
-		case CANNON_HE_AMMO:
-		case CANNON_I_AMMO:
-			range = 4;
-			break;
-		case AUTO_CANNON_HE_AMMO:
-			range = 3;
-			break;
-		case AUTO_CANNON_I_AMMO:
-			range = 3;
-			break;
-		case GRENADE:
-		case SMOKE_GRENADE:
-			range = 5;
-			break;
-		case HIGH_EXPLOSIVE:
-		case ALIEN_GRENADE:
-			range = 8;
-			break;
-		case SMALL_ROCKET:
-		case INCENDIARY_ROCKET:
-			range = 6;
-			break;
-		case LARGE_ROCKET:
-			range = 10;
-			break;
-		case PROXIMITY_GRENADE:
-			range = 3;
-			break;
-	}
-	return range;
-}
-
 /**
  * Show object stats information in the armoury
  */
@@ -428,6 +391,8 @@ char* Item::get_damage_name()
         return damage_names[damage_type];
     return damage_names[7];
 }
+
+int Item::explo_range(int type) { return 1; } //dummy, to be deleted
 
 int Item::health_max(int _type)
 {

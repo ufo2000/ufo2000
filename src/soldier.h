@@ -52,6 +52,16 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define APUNCH 0
 #define ATHROW 1
 
+#define DAMAGEDIR_FRONT      0
+#define DAMAGEDIR_FRONTLEFT  1
+#define DAMAGEDIR_LEFT       2
+#define DAMAGEDIR_REARLEFT   3
+#define DAMAGEDIR_REAR       4
+#define DAMAGEDIR_REARRIGHT  5
+#define DAMAGEDIR_RIGHT      6
+#define DAMAGEDIR_FRONTRIGHT 7
+#define DAMAGEDIR_UNDER      8
+
 enum State { SIT = 0, STAND, MARCH, FALL, LIE };
 
 /**
@@ -204,7 +214,7 @@ public:
 	int do_armour_check(int &pierce, int damdir);
 	void apply_wound(int hitloc);
 	void hit(int sniper, int pierce, int type, int hitdir);
-	void explo_hit(int sniper, int pierce, int type, int hitdir, int dist);      //silent
+	void explo_hit(int sniper, int pierce, int type, int hitdir);      //silent
 
 	int ismoving();
 	int is_marching() { return (m_state == MARCH); }
@@ -212,7 +222,7 @@ public:
 	void spend_time(int tm, int use_energy = 0);
 	int walktime(int _dir);
 	int tus_reserved(std::string *error);
-
+    int get_dir() { return dir; }
 	State state() { return m_state; }
 
 	void unlink();

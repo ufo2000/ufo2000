@@ -1207,7 +1207,7 @@ void Map::destroy_cell_part(int lev, int col, int row, int _part)
 		}
 					
 		if (m_terrain->m_mcd[ct].HE_Strength > 0)
-			explode(-1, lev, col, row, HIGH_EXPLOSIVE, 3, m_terrain->m_mcd[ct].HE_Strength);
+			explode(-1, lev * 12 - 6, col * 16 , row * 16, HIGH_EXPLOSIVE, 3, m_terrain->m_mcd[ct].HE_Strength);
 
 		rebuild_visi(lev, col, row);
 	}
@@ -1380,77 +1380,69 @@ int Map::calc_visible_cells(Soldier *watcher, int z, int x, int y, int dir, char
 	return en;
 }
 
-
-#define TE_STEP (PI / 64.0)
-
-int Map::explode(int sniper, int lev, int col, int row, int type, int maxrange, int damage)
+double distance_3d(double v1, double v2, double v3)
 {
-	soundSystem::getInstance()->play(SS_CV_GRENADE_BANG);
-
-	char *field = new char[level * width * 10 * height * 10];
-	memset(field, 0, level * width * 10 * height * 10);
-
-	for (int ll = lev - 1; ll <= lev + 1; ll++) {
-		if ((ll < 0) || (ll >= level))
-			continue;
-		int range = maxrange - abs(lev - ll);
-		if (range <= 0)
-			continue;
-		//break;
-
-		//REAL fi = PI/2.0;
-		for (REAL te = -PI; te < PI; te += TE_STEP) {
-			int dam = damage;
-			int hitdir;
-
-			// l is how many squares the damage is out from the center.
-			for (int l = 0; l < range; l++) {
-				int nz = ll;
-				int nx = col + (int)floor(l * cos(te) + 0.5);
-				int ny = row + (int)floor(l * sin(te) + 0.5);
-
-				if (!cell_inside(nz, nx, ny))
-					break;
-
-				dam -= (damage / (range + range / 2)) * l;
-				if (dam < 1) dam = 1;
-
-				if (field[nz * width * 10 * height * 10 + nx * height * 10 + ny] != 0)
-					continue;
-				field[nz * width * 10 * height * 10 + nx * height * 10 + ny] = 1;
-
-				// Figure out which way the damage is going.
-				// 567
-				// 4 0
-				// 321
-				if (te < ((-7 * PI) / 8))
-					hitdir = 4;
-				else if (te < ((-5 * PI) / 8))
-					hitdir = 3;
-				else if (te < ((-3 * PI) / 8))
-					hitdir = 2;
-				else if (te < ((-PI) / 8))
-					hitdir = 1;
-				else if (te < (PI / 8))
-					hitdir = 0;
-				else if (te < ((3 * PI) / 8))
-					hitdir = 7;
-				else if (te < ((5 * PI) / 8))
-					hitdir = 6;
-				else if (te < ((7 * PI) / 8))
-					hitdir = 5;
-				else
-					hitdir = 4;
-
-				// Range gets passed along here so we can see if we need to hit underarmor.
-				explocell(sniper, nz, nx, ny, dam, type, hitdir, l);
-			}
-		}
-	}
-	delete field;
-	return 1;
+    // this procedure probably should be moved somewhere else
+    return sqrt( v1*v1 + v2*v2 + v3*v3 );
 }
 
+int calculate_hitdir(double dz, double dx, double dy)
+{
+    double UNDER_ARMOR_ANGLE = PI/3; // to rules.h ?
+    
+    int dir = DAMAGEDIR_UNDER;
+    double hor_dist = distance_3d(dx, dy, 0);
+    if (atan(dz / hor_dist) >= -UNDER_ARMOR_ANGLE) {
+        dir = int(round( - 2 + (4.0/PI)*atan2(dx, dy) ));
+        if (hor_dist==0) dir = 0; // this should not really happen
+        if (dir < 0) dir += 8;
+    }
+    //printf("dz, dx, dy: %f, %f, %f, %f, %d \n", dz, dx, dy, atan(dz/hor_dist), dir );
+    return dir;
+}
+
+int Map::explode(int sniper, int z, int x, int y, int type, int max_range, int max_damage)
+{
+    // max range is unused, max_damage is not realy needed, as it can be get from item type
+
+    // TODO probably there should be damage_type instead of type
+    int damage_type = Item::obdata_damageType(type);
+    int damage, hit_dir = 0;
+    
+    // move to rules.h
+    double EXPL_BORDER_DAMAGE = 0.5; // how much damage does explosion on its border
+    double HEIGHT_RATIO = 2; // how high is one level in squares
+    
+    // should be sound associated with given weapon
+    soundSystem::getInstance()->play(SS_CV_GRENADE_BANG);
+    
+    // convert to coords relative to center of a cell
+    double lev = double(z)/12 - 0.5;
+    double col = double(x)/16 - 0.5;
+    double row = double(y)/16 - 0.5;
+    
+    //printf("z, x, y        : %d, %d, %d \n", z, x, y);
+    //printf("lev, col, row  : %f, %f, %f \n", lev, col, row);
+    
+    double range = (double(max_damage) / 10) - 2;
+    for (int l = 0; l <= level; l++)
+        for (int r = int(floor(row - range)); r <= int(ceil(row + range)); r++)
+            for (int c = int(floor(col - range)); c <= int(ceil(col + range)); c++) {
+                double distance = distance_3d(row - double(r), col - double(c), (lev - double(l)) * HEIGHT_RATIO);
+                if (distance <= range) {
+                    damage = int ( ( EXPL_BORDER_DAMAGE + (1 - EXPL_BORDER_DAMAGE)*(range - distance)/range )*double(max_damage) );
+                    if (damage > 0 && cell_inside(l, c, r)) {
+                        if (man(l, c, r) != NULL) {
+                            //printf("l, c, r        : %i, %i, %i \n", l, c, r);
+                            hit_dir = calculate_hitdir((lev - double(l)) * HEIGHT_RATIO, double(c) - col, double(r) - row);
+                        }
+                        explocell(sniper, l, c, r, damage, damage_type, hit_dir);
+                    }
+                }
+            }
+    return 1;
+} 
+  
 bool Map::check_mine(int lev, int col, int row) 
 {
 	for (int c = col - 1; c <= col + 1; c++) {
@@ -1463,39 +1455,43 @@ bool Map::check_mine(int lev, int col, int row)
 	return false;
 }
 
-void Map::explocell(int sniper, int lev, int col, int row, int damage, int type, int hitdir, int range)
+void Map::explocell(int sniper, int lev, int col, int row, int damage, int damage_type, int hitdir)
 {
+    int DEFAULT_SMOKE_TIME = 2; // move to rules.h
+  
 	set_smog_state(lev, col, row, 8);
 	set_smog_time(lev, col, row, 0);
-
+  
  	//for(int i=0; i<4; i++) {
  	for (int i = 3; i >= 0; i--) {
  		if (mcd(lev, col, row, i)->Fuel > smog_time(lev, col, row)) {
  			set_smog_time(lev, col, row, mcd(lev, col, row, i)->Fuel);
  			if (mcd(lev, col, row, i)->Armour < damage) {
 
- 				if ((type==INCENDIARY_ROCKET)|(type==AUTO_CANNON_I_AMMO)|(type==CANNON_I_AMMO)) {
+ 				if (damage_type == DT_INC) {
  					set_fire_time(lev, col, row, mcd(lev, col, row, i)->Fuel);
  					set_fire_state(lev, col, row, 4);
  				}
  			}
  		} else {
- 			set_smog_time(lev,col,row,2);
+ 			set_smog_time(lev, col, row, DEFAULT_SMOKE_TIME);
  		}
- 		if ((mcd(lev, col, row, i)->Armour < damage)&&(type!=STUN_MISSILE)) {
+ 		if ((mcd(lev, col, row, i)->Armour < damage) && (damage_type != DT_STUN)) {
  			destroy_cell_part(lev, col, row, i);
  		}
  	}
+  
 	place(lev, col, row)->damage_items(damage);
-
-	// Range gets passed along here so we can see if we need to hit underarmor.
-	if (man(lev, col, row) != NULL)
-		man(lev, col, row)->explo_hit(sniper, damage, Item::obdata_damageType(type), hitdir, range);
+	if (man(lev, col, row) != NULL) {
+      if (hitdir != DAMAGEDIR_UNDER)
+          hitdir = (man(lev, col, row)->get_dir() + (hitdir + 4)) % 8;
+	 	  man(lev, col, row)->explo_hit(sniper, damage, damage_type, hitdir);
+  }
 }
 
 /**
  * End-of-turn - save game state into a buffer as a large block of text
- */ 
+ */                                        
 int Map::eot_save(char *buf, int & buf_size)
 {
 	buf_size += sprintf(buf + buf_size, "\r\nmap level=%d, width=%d, height=%d\r\n", level, width, height);

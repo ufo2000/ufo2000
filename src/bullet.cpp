@@ -646,10 +646,10 @@ int Bullet::incendiary() {
 
 void Bullet::detonate()
 {
-	int range = Item::explo_range(type);
+	int range = Item::explo_range(type); //now unused
 	int damage = Item::obdata_damage(type);
 
-	map->explode(owner, lev, col, row, type, range, damage);
+    map->explode(owner, z, x, y, type, range, damage);
 }
 
 void Bullet::hitman()

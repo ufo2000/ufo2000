@@ -1126,16 +1126,6 @@ static double randval(double min, double max)
 #define HITLOC_LEFTLEG  4
 #define HITLOC_RIGHTLEG 5
 
-#define DAMAGEDIR_FRONT      0
-#define DAMAGEDIR_FRONTLEFT  1
-#define DAMAGEDIR_LEFT       2
-#define DAMAGEDIR_REARLEFT   3
-#define DAMAGEDIR_REAR       4
-#define DAMAGEDIR_REARRIGHT  5
-#define DAMAGEDIR_RIGHT      6
-#define DAMAGEDIR_FRONTRIGHT 7
-#define DAMAGEDIR_UNDER      8
-
 /**
  * Check if a shot goes thru the armor
  */
@@ -1234,6 +1224,7 @@ void Soldier::apply_wound(int hitloc)
 
 void Soldier::hit(int sniper, int pierce, int type, int hitdir)
 {
+    // TODO look at this closer
     int damagedir = (dir + (hitdir + 4)) % 8; // Becomes DAMAGEDIR_*, except DAMAGEDIR_UNDER...
     int hitloc;
 
@@ -1340,9 +1331,12 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir)
     }
 }
 
-void Soldier::explo_hit(int sniper, int pierce, int type, int hitdir, int dist) //silent
+void Soldier::explo_hit(int sniper, int pierce, int type, int hitdir) //silent
 {
-    int damagedir = (dir + (hitdir + 4)) % 8; // Becomes DAMAGEDIR_*, except DAMAGEDIR_UNDER...
+    // TODO del this
+	// int damagedir = (dir + (hitdir + 4)) % 8; // Becomes DAMAGEDIR_*, except DAMAGEDIR_UNDER...
+	// int damagedir = hitdir;
+  
     int hitloc;
 
     // Give credit to the sniper for inflicting damage if it's not stun damage.
@@ -1360,11 +1354,14 @@ void Soldier::explo_hit(int sniper, int pierce, int type, int hitdir, int dist) 
     this->m_platoon->get_stats()->get_stat_for_SID(NID)->inc_damage_taken(pierce);
 
     damage_items(pierce); // Items are OUTSIDE the armour, after all.
-
+  
+    // TODO del this
     // If minimal range, hit under armour. Otherwise, hit armour normally.
-    if ((dist < 2) && ((hitloc = do_armour_check(pierce, DAMAGEDIR_UNDER)) == -1)) return;
-    else if ((dist >= 2) && (hitloc = do_armour_check(pierce, damagedir)) == -1) return;
-
+	//if ((dist < 2) && ((hitloc = do_armour_check(pierce, DAMAGEDIR_UNDER)) == -1)) return;
+	//else if ((dist >= 2) && (hitloc = do_armour_check(pierce, damagedir)) == -1) return;
+  
+    if ((hitloc = do_armour_check(pierce, hitdir)) == -1) return;
+    
     if (type == DT_STUN) // Did we get stunned?
     {
         ud.CurStun += pierce;
