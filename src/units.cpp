@@ -747,7 +747,12 @@ void Units::execute_scenario(Map *map, int map_change_allowed)
 		
 			net->send_options(scenario->type, i, scenario->options[scenario->type][i]->value);
 			if (scenario->options[scenario->type][i]->reset_deploy)
+			{
 				mapdata.load_game = 77;
+				// We need to update the deployment type not only in
+				// the option, but also in the scenario.
+				scenario->update_deploy_type();
+			}
 		}
 	}
 }

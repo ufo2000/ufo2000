@@ -39,6 +39,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 enum OptionType {OPT_NONE, OPT_SWITCH, OPT_NUMBER, OPT_HIDDEN};
 
+enum DeployType {DEP_LEFT, DEP_RIGHT, DEP_CENTER, DEP_SURROUND};
+
 class Option 
 {
 public:
@@ -150,16 +152,6 @@ private:
 	bool			platoon_break (PanPos pos, int num_of_men_sel);
 	bool			platoon_capture (Platoon *platoon, char *first_soldier, PanPos pos, char buf[10000], int len);
 	
-	bool            place_common (PanPos pos, int x, int y);
-	bool            place_assassin (PanPos pos, int x, int y);
-	bool            place_hold (PanPos pos, int x, int y);
-	bool            place_break (PanPos pos, int x, int y);
-	
-	void			deploy_common (PanPos pos, int x, int y, int color);
-	void			deploy_assassin (PanPos pos, int x, int y, int color);
-	void			deploy_hold (PanPos pos, int x, int y, int color);	
-	void			deploy_break (PanPos pos, int x, int y, int color);
-	
 	bool			use_escape (Soldier *sld, Item *it);
 	bool			use_assassin (Soldier *sld, Item *it);
 public:
@@ -173,6 +165,7 @@ public:
     Option			*options[SCENARIO_NUMBER][3];
 	
 	int				type;
+	DeployType		deploy_type[2]; // specifies the deployment areas for the squads.
 	const char		*name[SCENARIO_NUMBER];
 	const char		*briefing_left[SCENARIO_NUMBER][8];
 	const char	 	*briefing_right[SCENARIO_NUMBER][8];
@@ -185,5 +178,6 @@ public:
 	bool		    is_correct_platoon (long points, Platoon *platoon, char *first_soldier, PanPos pos, char buf[10000], int len, int num_of_men_sel);
 	bool            is_correct_place (PanPos pos, int x, int y);
 	void			draw_deploy_zone (PanPos pos, int x, int y, int color);
+	void			update_deploy_type ();
 	bool			can_use (Soldier *sld, Item *it);
 };

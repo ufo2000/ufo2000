@@ -214,6 +214,8 @@ void Scenario::new_scenario (int sc_type)
 	//	g_console->printf(briefing_right[type]);
 		
 	new_coords();
+	// We need to set the deployment type at the initialization stage.
+	update_deploy_type();
 }
 
 bool Scenario::new_scenario (std::string sc_name)
@@ -899,174 +901,98 @@ bool Scenario::platoon_capture (Platoon *platoon, char *first_soldier, PanPos po
 
 bool Scenario::is_correct_place (PanPos pos, int x, int y)
 {
-	switch (type) {
-	    case SC_DEATHMATCH:
-	    break;
+	switch (pos == POS_LEFT ? deploy_type[0] : deploy_type[1]) {
+		case DEP_LEFT:
+		return x < 10;
 
-	    case SC_ESCAPE:
-	    break;
+		case DEP_RIGHT:
+		return x >= (mapdata.x_size - 1) * 10;
 
-	    case SC_SABOTAGE:
-	    break;
+		case DEP_CENTER:
+		return x >= (mapdata.x_size - 2) * 10 / 2 && x < (mapdata.x_size - 2) * 10 / 2 + 20 && y >= (mapdata.y_size - 2) * 10 / 2 && y < (mapdata.y_size - 2) * 10 / 2 + 20;
 
-	    case SC_CONTROL:
-	    break;
-
-	    case SC_ASSASSIN:
-	    return place_assassin(pos, x, y);
-	    break;
-	    
-	    case SC_HOLD:
-		return place_hold(pos, x, y);
-		break;
-		
-		case SC_BREAK:
-		return place_break(pos, x, y);
-		break;
-		
-		case SC_CAPTURE:
-		break;
+		case DEP_SURROUND:
+		return x < 5 || x >= mapdata.x_size * 10 - 5 || y < 5 || y >= mapdata.y_size * 10 - 5;
 	}
-
-	return place_common(pos, x, y);
-}
-
-bool Scenario::place_common (PanPos pos, int x, int y)
-{
-    if (pos == POS_LEFT) {
-		if (x > 9)
-			return false;
-	} else {
-		if (x < (mapdata.x_size - 1) * 10)
-			return false;
-	}
-	
-	return true;
-}
-
-bool Scenario::place_assassin (PanPos pos, int x, int y)
-{
-	if (pos == POS_LEFT) {
-	    if (x < 5 || x > mapdata.x_size * 10 - 6 || y < 5 || y > mapdata.y_size * 10 - 6)
-	        return true;
-	} else {
-	    if (x > (mapdata.x_size - 2) * 10 / 2 && x < (mapdata.x_size - 2) * 10 / 2 + 20 && y > (mapdata.y_size - 2) * 10 / 2 && y < (mapdata.y_size - 2) * 10 / 2 + 20)
-	        return true;
-	}
-	
-	return false;
-}
-
-bool Scenario::place_hold (PanPos pos, int x, int y)
-{
-	if (options[SC_HOLD][1]->value) {
-		if (pos == POS_LEFT) {
-    	    if (x >= (mapdata.x_size - 2) * 10 / 2 && x < (mapdata.x_size - 2) * 10 / 2 + 20 && y >= (mapdata.y_size - 2) * 10 / 2 && y < (mapdata.y_size - 2) * 10 / 2 + 20)
-		        return true;
-		} else {
-		    if (x < 5 || x > mapdata.x_size * 10 - 6 || y < 5 || y > mapdata.y_size * 10 - 6)
-		        return true;
-		}
-	} else
-		return place_common(pos, x, y);
-
-	return false;
-}
-
-bool Scenario::place_break (PanPos pos, int x, int y)
-{
-	if (options[SC_BREAK][0]->value) {
-		if (pos == POS_LEFT) {
-    	    if (x > (mapdata.x_size - 2) * 10 / 2 && x < (mapdata.x_size - 2) * 10 / 2 + 20 && y > (mapdata.y_size - 2) * 10 / 2 && y < (mapdata.y_size - 2) * 10 / 2 + 20)
-		        return true;
-		} else {
-		    if (x < 5 || x > mapdata.x_size * 10 - 6 || y < 5 || y > mapdata.y_size * 10 - 6)
-		        return true;
-		}
-	} else
-		return place_common(pos, x, y);
 
 	return false;
 }
 
 void Scenario::draw_deploy_zone (PanPos pos, int x, int y, int color)
 {
+	switch (pos == POS_LEFT ? deploy_type[0] : deploy_type[1]) {
+		case DEP_LEFT:
+		rect(screen2, x, y, x + 10 * 4, y + mapdata.y_size * 10 * 4 - 1, color);
+		break;
+
+		case DEP_RIGHT:
+		rect(screen2, x + (mapdata.x_size - 1) * 10 * 4, y, x + mapdata.x_size * 10 * 4 - 1, y + mapdata.y_size * 10 * 4 - 1, color);
+		break;
+
+		case DEP_CENTER:
+		rect(screen2, x + (mapdata.x_size - 2) * 10 / 2 * 4, y + (mapdata.y_size - 2) * 10 / 2 * 4, x + (mapdata.x_size - 2) * 10 / 2 * 4 + 20 * 4, y + (mapdata.y_size - 2) * 10 / 2 * 4 + 20 * 4, color);
+		break;
+
+		case DEP_SURROUND:
+		rect(screen2, x, y, x + mapdata.x_size * 10 * 4 - 1, y + mapdata.y_size * 10 * 4 - 1, color);
+		rect(screen2, x + 5 * 4, y + 5 * 4, x + mapdata.x_size * 10 * 4 - 5 * 4, y + mapdata.y_size * 10 * 4 - 5 * 4, color);
+		break;
+	}
+}
+
+void Scenario::update_deploy_type ()
+{
 	switch (type) {
 	    case SC_DEATHMATCH:
+		deploy_type[0] = DEP_LEFT;
+		deploy_type[1] = DEP_RIGHT;
 	    break;
 
 	    case SC_ESCAPE:
+		deploy_type[0] = DEP_LEFT;
+		deploy_type[1] = DEP_RIGHT;
 	    break;
 
 	    case SC_SABOTAGE:
+		deploy_type[0] = DEP_LEFT;
+		deploy_type[1] = DEP_RIGHT;
 	    break;
 
 	    case SC_CONTROL:
+		deploy_type[0] = DEP_LEFT;
+		deploy_type[1] = DEP_RIGHT;
 	    break;
 
 	    case SC_ASSASSIN:
-	    deploy_assassin(pos, x, y, color);
-	    return;
+		deploy_type[0] = DEP_SURROUND;
+		deploy_type[1] = DEP_CENTER;
 	    break;
 	    
 	    case SC_HOLD:
-		deploy_hold(pos, x, y, color);
-		return;
+		if (options[SC_HOLD][1]->value) {
+			deploy_type[0] = DEP_CENTER;
+			deploy_type[1] = DEP_SURROUND;
+		} else {
+			deploy_type[0] = DEP_LEFT;
+			deploy_type[1] = DEP_RIGHT;
+		}
 		break;
 		
 		case SC_BREAK:
-		deploy_break(pos, x, y, color);
-		return;
+		if (options[SC_BREAK][0]->value) {
+			deploy_type[0] = DEP_CENTER;
+			deploy_type[1] = DEP_SURROUND;
+		} else {
+			deploy_type[0] = DEP_LEFT;
+			deploy_type[1] = DEP_RIGHT;
+		}
 		break;
 		
 		case SC_CAPTURE:
+		deploy_type[0] = DEP_LEFT;
+		deploy_type[1] = DEP_RIGHT;
 		break;
 	}
-	
-	deploy_common(pos, x, y, color);
-}
-
-void Scenario::deploy_common (PanPos pos, int x, int y, int color)
-{
-	if (pos == POS_LEFT) 
-		rect(screen2, x, y, x + 10 * 4, y + mapdata.y_size * 10 * 4 - 1, color);
-	else
-		rect(screen2, x + (mapdata.x_size - 1) * 10 * 4, y, x + mapdata.x_size * 10 * 4 - 1, y + mapdata.y_size * 10 * 4 - 1, color);
-}
-
-void Scenario::deploy_assassin (PanPos pos, int x, int y, int color)
-{
-	if (pos == POS_LEFT) {
-		rect(screen2, x, y, x + mapdata.x_size * 10 * 4 - 1, y + mapdata.y_size * 10 * 4 - 1, color);
-		rect(screen2, x + 5 * 4, y + 5 * 4, x + mapdata.x_size * 10 * 4 - 5 * 4, y + mapdata.y_size * 10 * 4 - 5 * 4, color);
-	} else
-		rect(screen2, x + (mapdata.x_size - 2) * 10 / 2 * 4, y + (mapdata.y_size - 2) * 10 / 2 * 4, x + (mapdata.x_size - 2) * 10 / 2 * 4 + 20 * 4, y + (mapdata.y_size - 2) * 10 / 2 * 4 + 20 * 4, color);
-}
-
-void Scenario::deploy_hold (PanPos pos, int x, int y, int color)
-{
-	if (options[SC_HOLD][1]->value) {
-		if (pos == POS_LEFT)
-			rect(screen2, x + (mapdata.x_size - 2) * 10 / 2 * 4, y + (mapdata.y_size - 2) * 10 / 2 * 4, x + (mapdata.x_size - 2) * 10 / 2 * 4 + 20 * 4, y + (mapdata.y_size - 2) * 10 / 2 * 4 + 20 * 4, color);
-		else {
-			rect(screen2, x, y, x + mapdata.x_size * 10 * 4 - 1, y + mapdata.y_size * 10 * 4 - 1, color);
-			rect(screen2, x + 5 * 4, y + 5 * 4, x + mapdata.x_size * 10 * 4 - 5 * 4, y + mapdata.y_size * 10 * 4 - 5 * 4, color);
-		}  	
-	} else 
-		deploy_common(pos, x, y, color);
-}
-
-void Scenario::deploy_break (PanPos pos, int x, int y, int color)
-{
-	if (options[SC_BREAK][0]->value) {
-		if (pos == POS_LEFT)
-			rect(screen2, x + (mapdata.x_size - 2) * 10 / 2 * 4, y + (mapdata.y_size - 2) * 10 / 2 * 4, x + (mapdata.x_size - 2) * 10 / 2 * 4 + 20 * 4, y + (mapdata.y_size - 2) * 10 / 2 * 4 + 20 * 4, color);
-		else {
-			rect(screen2, x, y, x + mapdata.x_size * 10 * 4, y + mapdata.y_size * 10 * 4 - 1, color);
-			rect(screen2, x + 5 * 4, y + 5 * 4, x + mapdata.x_size * 10 * 4 - 5 * 4, y + mapdata.y_size * 10 * 4 - 5 * 4, color);
-		}  	
-	} else 
-		deploy_common(pos, x, y, color);
 }
 
 bool Scenario::can_use (Soldier *sld, Item *it)
