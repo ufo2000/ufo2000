@@ -78,7 +78,7 @@ void Inventory::draw(int _x, int _y)
 
 	tac01->show(temp, 0, 0);  // Buttons: OK, next & prev.man
     draw_sprite_vh_flip(temp, b5, 255, 137);  // b6 - Button: scroll left
-    rectfill(temp, 288, 32, 319, 57, COLOR_GRAY15);	//hide unused "unload" button
+    rectfill(temp, 288, 32, 319, 57, makecol(255, 0, 255));	//hide unused "unload" button
 
 	sel_man->draw_inventory(temp);
 

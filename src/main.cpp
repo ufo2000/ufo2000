@@ -2261,8 +2261,10 @@ void gameloop()
                     }
                     break;
                 case KEY_SPACE:
-                    g_pause = !g_pause;
-                    break;
+                	if (key[KEY_LSHIFT] || key[KEY_RSHIFT]) {
+                    	g_pause = !g_pause;
+                    	break;
+                    }
                 default:
                     if (g_console->process_keyboard_input(keycode, scancode))
                         net->send_message((char *)g_console->get_text());
@@ -2628,6 +2630,9 @@ int main(int argc, char *argv[])
                 case MAINMENU_SHOW_REPLAY:
                     start_loadreplay();
                     break;
+                case MAINMENU_OPTIONS:
+                	configure();
+                	break;
                 default:
                     continue;
             }

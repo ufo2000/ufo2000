@@ -120,6 +120,7 @@ void Map::initpck()
 void Map::freepck()
 {
 	delete cursor;
+	delete x1;
 	delete scanbord;
 	delete smoke;
 
@@ -392,21 +393,22 @@ void Map::draw(int show_cursor)
 		}
 	}
 	                               
-	//explosions have to be drawn over all other sprites                           
-	for (int lev = l1; lev <= l2; lev++) {
-		for (int row = r1; row <= r2; row++) {
-			for (int col = c2; col >= c1; col--) {
-				if (!seen(lev, col, row)) continue;
+	//explosions have to be drawn over all other sprites
+	std::vector<effect>::iterator exp;	
+	for (exp = explo_spr_list.begin(); exp != explo_spr_list.end(); exp++) {
+		int l = exp->lev, r = exp->row, c = exp->col;
+			
+		if (!(seen(l, c, r)) ||
+			!(l >= l1 && l <= l2) ||
+			!(r >= r1 && r <= r2) ||
+			!(c >= c1 && c <= c2)) continue;
 				
-				sx = x + CELL_SCR_X * col + CELL_SCR_X * row;
-				sy = y - (col) * CELL_SCR_Y + CELL_SCR_Y * row - 26 - lev * CELL_SCR_Z - 1;
+		sx = x + CELL_SCR_X * c + CELL_SCR_X * r;
+		sy = y - (c) * CELL_SCR_Y + CELL_SCR_Y * r - 26 - l * CELL_SCR_Z - 1;
 				
-				int e = explo_state(lev, col, row);
- 				if (e > 0) {
- 					x1->showpck((e - 1) / 2, (sx + 16) - 64, (sy + 12) - 32);
- 				}
- 			}
- 		}
+		int e = exp->state;
+		if (e >= 0)
+ 			x1->showpck(e / 2, (sx + 16) - 64, (sy + 12) - 32);
  	}
 
 	m_cell[sel_lev][sel_col][sel_row]->MOUSE = 0;
@@ -451,6 +453,15 @@ void Map::smoker()
 		for (int i = 0; i < 10 * width; i++)
 			for (int j = 0; j < 10 * height; j++)
 				cell(k, i, j)->cycle_smoke();
+				
+	std::vector<effect>::iterator exp = explo_spr_list.begin();
+	while (exp != explo_spr_list.end()) {
+		exp->state++;
+		if (exp->state > 15)
+			exp = explo_spr_list.erase(exp);
+		else
+			exp++;
+	}
 }
 
 
@@ -1433,7 +1444,11 @@ int Map::explode(int z, int x, int y, int max_damage)
     double HEIGHT_RATIO = 2; // how high is one level in squares
     int DEFAULT_SMOKE_TIME = 2; // how many half-turns will the smoke cloud exist
     
-    set_explo_state(z / 12, x / 16, y / 16, 1);
+    effect eff;
+    eff.lev = z / 12; eff.col = x / 16; eff.row = y / 16;
+	eff.state = 0 - explo_spr_list.size();
+    explo_spr_list.push_back(eff);
+    
     soundSystem::getInstance()->play(SS_CV_GRENADE_BANG);
     
     // convert to coords relative to center of a cell
@@ -1479,7 +1494,10 @@ int Map::explode(int sniper, int z, int x, int y, int type)
     double EXPL_BORDER_DAMAGE = 0.5; // how much damage does explosion on its border
     double HEIGHT_RATIO = 2; // how high is one level in squares
     
-    set_explo_state(z / 12, x / 16, y / 16, 1);
+    effect eff;
+    eff.lev = z / 12; eff.col = x / 16; eff.row = y / 16;
+	eff.state = 0 - explo_spr_list.size();
+    explo_spr_list.push_back(eff);
     // should be sound associated with given weapon
     soundSystem::getInstance()->play(SS_CV_GRENADE_BANG);
     
@@ -1502,7 +1520,7 @@ int Map::explode(int sniper, int z, int x, int y, int type)
                         if (distance <= explo_range)
                         	explocell(sniper, l, c, r, damage, damage_type, hit_dir);
                         if (distance <= smoke_range)
-                        	smokecell(l, c, r, smoke_time);
+                        	smokecell(l, c, r, smoke_time);                    
                     }
                 }
             }

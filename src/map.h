@@ -104,6 +104,9 @@ private:
 
     Cell ****m_cell;
     TerraPCK *m_terrain;
+    
+    typedef struct { int lev, col, row, state; } effect;	//should it be used for fire and smoke? 
+    std::vector<effect> explo_spr_list;
 
     static int m_animation_cycle;
     PF_MODE m_pathfind_mode;
@@ -343,15 +346,6 @@ public:
     void dec_smog_time(int lev, int col, int row)
     {
         m_cell[lev][col][row]->m_smog_time--;
-    }
-    
-    int explo_state(int lev, int col, int row)
-    {
-    	return m_cell[lev][col][row]->m_explo_state;
-    }
-    void set_explo_state(int lev, int col, int row, int value)
-    {
-    	m_cell[lev][col][row]->m_explo_state = value;
     }
     
     int isStairs(int lev, int col, int row)

@@ -39,7 +39,6 @@ private:
 	int m_smog_time;
  	int m_fire_state;
  	int m_fire_time;
- 	int m_explo_state;
 
 	int MOUSE;
 	char visi[3][3][3];

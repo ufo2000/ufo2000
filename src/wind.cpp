@@ -121,6 +121,8 @@ ConsoleWindow::~ConsoleWindow()
 
 void ConsoleWindow::redraw_full(BITMAP *bmp, int x, int y)
 {
+	m_status_line->resize(m_width, -1);	//probably should be moved somewhere else
+
 	acquire_bitmap(bmp);
 	BITMAP *temp_bmp = create_bitmap(m_width, m_height);
 	clear_to_color(temp_bmp, COLOR_BLACK1);
