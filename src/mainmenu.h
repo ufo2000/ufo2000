@@ -37,9 +37,10 @@ enum MAINMENU_ITEMS
     MAINMENU_INTERNET,
 	MAINMENU_COUNT,
 	// Currently disabled menu items come next
-	MAINMENU_ABOUT, // has problems with color depth > 8
-	MAINMENU_TCPIP, // has problems with color depth > 8, also uses old network code
-	MAINMENU_EDITOR // does not support all terrains
+	MAINMENU_ABOUT,  // has problems with color depth > 8
+	MAINMENU_TCPIP,  // has problems with color depth > 8, also uses old network code
+	MAINMENU_EDITOR, // does not support all terrains
+	MAINMENU_TOTAL_COUNT
 };
 
 void initmainmenu();
