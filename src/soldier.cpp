@@ -927,14 +927,13 @@ int Soldier::move(int ISLOCAL)
 	}
 
 	if (m_state == MARCH) {
+		if ((phase == 3 || phase == 7) && map->visible(z, x, y)) play(S_TRAMP1, 128);
 		phase++;
 
 		//1) time = time_of_src/2 + time_of_dest/2;
 		//2) time = time_of_dest;
 
 		if (phase == 4) {
-			play(S_TRAMP1, 128);
-
 			map->set_man(z, x, y, NULL);
 
 			x += DIR_DELTA_X(dir);
@@ -950,7 +949,6 @@ int Soldier::move(int ISLOCAL)
 		}
 
 		if (phase >= 8) {
-			play(S_TRAMP2, 128);
 			phase = 0;
 			spend_time(walktime( -1));
 
