@@ -38,6 +38,8 @@ else
 	DISTNAME := ufo2000
 endif
 
+CX = g++
+CC = gcc
 CFLAGS = -funsigned-char -Wall -Wno-deprecated-declarations -DDEBUGMODE
 OBJDIR = obj
 NAME = ufo2000
@@ -60,8 +62,8 @@ ifdef WINDIR
 endif
 
 ifdef xmingw
-    CC = i386-mingw32msvc-g++
-    LD = i386-mingw32msvc-g++
+    CX = i386-mingw32msvc-g++
+    CC = i386-mingw32msvc-gcc
     win32 = 1
 endif
 
@@ -137,16 +139,16 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/%.o: %.cpp
-	g++ -MMD $(CFLAGS) -c $< -o $@
+	$(CX) -MMD $(CFLAGS) -c $< -o $@
 
 $(OBJDIR)/%.o: %.c
-	gcc -MMD $(CFLAGS) -c $< -o $@
+	$(CC) -MMD $(CFLAGS) -c $< -o $@
 
 $(NAME): $(OBJS)
-	g++ $(CFLAGS) -o $@ $^ $(LIBS) $(SUBSYSTEM)
+	$(CX) $(CFLAGS) -o $@ $^ $(LIBS) $(SUBSYSTEM)
 
 $(SERVER_NAME): $(OBJS_SERVER)
-	g++ $(CFLAGS) -o $@ $^ -lNL
+	$(CX) $(CFLAGS) -o $@ $^ -lNL
 
 clean:
 	$(RM) $(OBJDIR)/*.o
