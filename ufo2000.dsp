@@ -235,6 +235,10 @@ SOURCE=.\src\persist.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\pfxopen.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\place.cpp
 # End Source File
 # Begin Source File
@@ -384,6 +388,10 @@ SOURCE=.\src\pck.h
 # Begin Source File
 
 SOURCE=.\src\persist.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\pfxopen.h
 # End Source File
 # Begin Source File
 
