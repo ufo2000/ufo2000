@@ -19,7 +19,7 @@ EquipmentTable = {}
 -- path and returns something starting with 'valgrind' in this case.
 -- The following line forces the game to use current directory as
 -- a path to data files in this case
-if string.find(ufo2000_dir, "^valgrind") then ufo2000_dir, home_dir = nil, nil end
+if string.find(ufo2000_dir, "^%S+valgrind") then ufo2000_dir, home_dir = nil, nil end
 
 -- directories for data files from the original x-com and ufo2000
 ufo2000_dir  = ufo2000_dir or "."
@@ -230,6 +230,14 @@ end
 
 -- adds new item
 function AddXcomItem(item)
+    if ItemsTable[item.index] then Warning("Duplicate item with index %d - ignored", item.index) return end
+    if ItemsTable[item.name] then Warning("Duplicate item with name '%s' - ignored", item.name) return end
+    if not item.pInv then Warning("Invalid 'pInv' property for item '%s' - ignored", item.name) return end
+    if not item.pMap then Warning("Invalid 'pMap' property for item '%s' - ignored", item.name) return end
+    if type(item.pHeld) ~= "table" then Warning("Invalid 'pHeld' property for item '%s' - ignored", item.name) return end
+    for i = 1, 8 do
+        if not item.pHeld[i] then Warning("Invalid 'pHeld' property for item '%s' - ignored", item.name) return end
+    end
     ItemsTable[item.index] = item
     ItemsTable[item.name] = item
 end
@@ -269,7 +277,14 @@ function AddEquipment(x)
     end
 
     local sorted_tbl = {}
-    for k, v in x.Layout do table.insert(sorted_tbl, {v[3], ItemsTable[v[3]]}) end
+    for k, v in x.Layout do 
+	    local name = v[3]
+	    if not ItemsTable[name] then 
+		    Warning("Equipment set '%s' refers to invalid item '%s' - ignored", x.Name, name) 
+			return 
+        end
+	    table.insert(sorted_tbl, {name, ItemsTable[name]}) 
+	end
     table.sort(sorted_tbl, function(a, b) return a[1] < b[1] end)
     x.Crc32 = 0
     for _, v in ipairs(sorted_tbl) do 
