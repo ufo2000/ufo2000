@@ -520,6 +520,9 @@ int connect_internet_server()
 						FS_MusicPlay(F(cfg_get_net1_music_file_name()));
 					lobby_init_mouse();
 					break;
+                case SRV_KEEP_ALIVE:
+                    server->send_packet(SRV_KEEP_ALIVE, "alive.");
+                    break;
                 default:
                     break;
 			}
