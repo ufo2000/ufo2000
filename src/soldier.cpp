@@ -946,9 +946,7 @@ int Soldier::move(int ISLOCAL)
 
     // Vertical movements
     if (m_state == MARCH) {
-
         if(move_dir > DIR_NULL) {
-            map->set_man(z, x, y, NULL);
             int tu_cost;
             int zd, xd, yd;
             map->step_dest(z, x, y, move_dir, can_fly(), zd, xd, yd, tu_cost);
@@ -956,6 +954,7 @@ int Soldier::move(int ISLOCAL)
                 finish_march(ISLOCAL);
             else
             {
+                map->set_man(z, x, y, NULL);
                 z = zd;
                 x = xd;
                 y = yd;
