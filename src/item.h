@@ -235,32 +235,6 @@ struct Target
 //#define Snakeman_Corpse     0x33
 //#define Ethereal_Corpse     0x34
 #define Muton_Corpse        0x35
-//#define Floater_Corpse      0x36
-//#define Celatid_Corpse      0x37
-//#define Silacoid_Corpse     0x38
-//#define Chryssalid_Corpse   0x39
-//#define reaper_corpse_1     0x3a
-//#define reaper_corpse_2     0x3b
-//#define reaper_corpse_3     0x3c
-//#define reaper_corpse_4     0x3d
-//#define cyber_1             0x3e
-//#define cyber_2             0x3f
-//#define cyber_3             0x40
-//#define cyber_4             0x41
-//#define secto_1             0x42
-//#define secto_2             0x43
-//#define secto_3             0x44
-//#define secto_4             0x45
-//#define hover_1             0x46
-//#define hover_2             0x47
-//#define hover_3             0x48
-//#define hover_4             0x49
-//#define TANK1               0x4a
-//#define TANK_2              0x4b
-//#define TANK_3              0x4c
-//#define TANK_4              0x4d
-//#define CIVM                0x4e
-//#define CIVF                0x4f
 
 inline int Item::is_explo() 
 {

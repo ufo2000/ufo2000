@@ -79,7 +79,7 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp dirty.cpp           \
        multiplay.cpp packet.cpp pck.cpp place.cpp                     \
        platoon.cpp soldier.cpp sound.cpp spk.cpp terrapck.cpp         \
        units.cpp video.cpp wind.cpp crc32.cpp persist.cpp             \
-       jpgalleg.c decode.c encode.c io.c minimap.cpp about.cpp        \
+       jpgalleg.c decode.c encode.c io.c minimap.cpp                  \
        stats.cpp server_protocol.cpp server_transport.cpp             \
        server_gui.cpp server_config.cpp music.cpp scenario.cpp        \
        aalg.c aase.c abeos.c abitmap.c agtk.c agup.c ans.c            \

@@ -70,7 +70,6 @@ public:
 	int do_mapselect();
 	void load_map();
 	void save_map();
-	void create_map();
 };
 
 #endif

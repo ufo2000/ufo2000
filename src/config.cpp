@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002       ufo2000 development team
+Copyright (C) 2002-2004  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -234,7 +234,6 @@ void saveini()
 {
 	set_config_file(F("$(home)/ufo2000.ini"));
 
-//	set_config_string(gen, "server", HOSTNAME);
 	set_config_int(gen, "width", SCREEN2W);
 	set_config_int(gen, "height", SCREEN2H);
 
@@ -252,160 +251,7 @@ void saveini()
 	set_config_string("Server", "password", g_server_password.c_str());
 	set_config_int("Server", "autologin", g_server_autologin);
 }
-/*
-static int USETRANS = 1;
 
-int selectplaymode()
-{
-	SPK * back01 = new SPK("geograph/back01.scr");
-	SPK *back03 = new SPK("geograph/back03.scr");
-
-	install_int_ex(drawit_timer, BPS_TO_TIMER(10));      //ticks each second
-	position_mouse(320, 200);
-	set_mouse_range(0, 0, 639, 399);
-
-	RGB pal[PAL_SIZE];
-	setpal(pal, 0xC18);
-
-	RGB_MAP rgb_table;
-	COLOR_MAP trans_table_left;
-	COLOR_MAP trans_table_right;
-	int ttl = 0, ttr = 0;
-
-	create_rgb_table(&rgb_table, pal, NULL);
-	RGB_MAP *rgb_map_old = rgb_map;
-	rgb_map = &rgb_table;
-
-	//create_trans_table(&trans_table_left,  pal, 0, 0, 0, cf);
-	//create_trans_table(&trans_table_right, pal, 0, 0, 0, cf);
-	BITMAP *scr = create_bitmap(320, 200); clear(scr);
-	BITMAP *left = create_bitmap(76, 149); clear(left);
-	BITMAP *right = create_bitmap(97, 101); clear(right);
-	back01->show(scr, 0, 0);
-	blit(scr, left, 127, 28, 0, 0, left->w, left->h);
-	blit(scr, right, 205, 98, 0, 0, right->w, right->h);
-
-	int o;
-	for (o = 0; o < right->w*right->h; o++) {
-		int v = spr_get(right, o);
-		if ((v == 238) || (v == 239))
-			spr_set(right, o, 0);
-	}
-
-	for (o = 0; o < left->w*left->h; o++) {
-		int v = spr_get(left, o);
-		if ((v == 238) || (v == 239))
-			spr_set(left, o, 0);
-	}
-
-
-	int DONE = 0;
-	int ishost = -1;
-	int lp = 0, rp = 0;
-	DRAWIT = 1;
-	text_mode( -1);
-
-	while (!DONE) {
-		if (CHANGE) {
-			if (mouse_b & 1) {
-				lp = 1;
-			}
-			if (mouse_b & 2) {
-				rp = 1;
-			}
-			if (lp) {
-				if (!(mouse_b & 1)) {
-					if (mouse_inside(0 * 2, 0 * 2, 100 * 2, 150 * 2)) {
-						ishost = 1;
-						break;
-					}
-					if (mouse_inside(200 * 2, 0 * 2, 320 * 2, 150 * 2)) {
-						ishost = 0;
-						break;
-					}
-					lp = 0;
-					//break;
-				}
-			}
-			if (rp) {
-				if (!(mouse_b & 2)) {
-					break;
-				}
-			}
-			CHANGE = 0;
-			DRAWIT = 1;
-		}
-		if (DRAWIT) {
-			if (mouse_inside(0 * 2, 0 * 2, 100 * 2, 150 * 2)) {
-				ttl++; ttr--;
-			} else if (mouse_inside(200 * 2, 0 * 2, 320 * 2, 150 * 2)) {
-				ttr++; ttl--;
-			} else {
-				ttr--; ttl--;
-			}
-			if (ttl < 0) ttl = 0; if (ttl > 14) ttl = 14;
-			if (ttr < 0) ttr = 0; if (ttr > 14) ttr = 14;
-			if (USETRANS) {
-				create_trans_table(&trans_table_left, pal, ttl * 16, ttl * 16, ttl * 16, NULL);
-				create_trans_table(&trans_table_right, pal, ttr * 16, ttr * 16, ttr * 16, NULL);
-			}
-			back03->show(scr, 0, 0);
-			if (mouse_inside(0 * 2, 0 * 2, 100 * 2, 150 * 2))
-				textout(scr, font, "Server", 0, 141, xcom1_color(1));
-			if (mouse_inside(200 * 2, 0 * 2, 320 * 2, 150 * 2))
-				textout(scr, font, "Client", 272, 141, xcom1_color(1));
-			if (USETRANS) {
-				color_map = &trans_table_left;
-				draw_trans_sprite(scr, left, 0, 0);
-				color_map = &trans_table_right;
-				draw_trans_sprite(scr, right, 223, 48);
-			} else {
-				if (ttl > 0)
-					draw_sprite(scr, left, 0, 0);
-				if (ttr > 0)
-					draw_sprite(scr, right, 223, 48);
-			}
-			draw_sprite(scr, mouser, mouse_x / 2, mouse_y / 2);
-			stretch_blit(scr, screen, 0, 0, 320, 200, 0, 0, 640, 400);
-
-			DRAWIT = 0;
-		}
-
-		if (keypressed()) {
-			int c = readkey();
-			switch (c >> 8) {
-				case KEY_ESC:
-					DONE = 1;
-					break;
-			}
-		}
-	}
-
-	rgb_map = rgb_map_old;
-
-	position_mouse(320, 200);
-
-	remove_int(drawit_timer);
-	delete(back01);
-	delete(back03);
-	destroy_bitmap(right);
-	destroy_bitmap(left);
-	destroy_bitmap(scr);
-
-	fade_out(10);
-	clear(screen);
-
-	return ishost;
-}
-*/
-/*
-int setsocketplay()
-{
-	int host = selectplaymode();
-	net->gametype = SOCK;
-	return host;
-}
-*/
 int sethotseatplay()
 {
 	net->gametype = GAME_TYPE_HOTSEAT;
@@ -431,7 +277,6 @@ static int d_slider_pro2(int msg, DIALOG *d, int c)
 		case MSG_DRAW:
 			sprintf(s, "%2d", d->d2);
 			text_mode(d->bg);
-			//gui_textout(screen, s, d->x+d->w, d->y+4, d->fg, 0);
 			gui_textout(screen, s, d->x - 18, d->y + 4, d->fg, 0);
 			break;
 		default:
@@ -457,6 +302,9 @@ static DIALOG config_dlg[] = {
 	{ NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL }
 };
 
+/**
+ * Animation speed and other settings dialog available from battlescape
+ */
 void configure()
 {
 	config_dlg[SPEED_UNIT].d2 = speed_unit;

@@ -30,7 +30,7 @@ FilesTable = {
 	["$(home)/ufo2000.log"]           = { },
 	["$(home)/ufo2000.tmp"]           = { },
 	["$(home)/ufo2000.sav"]           = { },
-	["$(home)/cur_map.dat"]           = { },
+	["$(home)/cur_map.lua"]           = { },
 	["$(home)/cur_p1.dat"]            = { },
 	["$(home)/cur_p2.dat"]            = { },
 

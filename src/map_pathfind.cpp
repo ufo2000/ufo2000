@@ -42,29 +42,7 @@ int Map::setneibos(int oz, int ox, int oy, int value)
 
 		if ((dx < 0) || (dy < 0) || (dx >= width * 10) || (dy >= height * 10))
 			continue;
-/*
-		if (isStairs(oz, ox, oy)) {
-			if (dir == DIR_WEST) {
-				if (pfval(dz, dx, dy) == GOOD_CELL)
-					set_pfval(dz, dx, dy, value);
-				else
-					if (pfval(dz, dx, dy) == LAST_CELL)
-						return 0;
-			}
-			continue;
-		}
 
-		if (isStairs(dz, dx, dy)) {
-			if (dir == DIR_EAST) {
-				if (pfval(dz, dx, dy) == GOOD_CELL)
-					set_pfval(dz, dx, dy, value);
-				else
-					if (pfval(dz, dx, dy) == LAST_CELL)
-						return 0;
-			}
-			continue;
-		}
-*/
 		if (pfval(dz, dx, dy) == GOOD_CELL)
 			set_pfval(dz, dx, dy, value);
 		else
@@ -93,23 +71,7 @@ int Map::findneibo(int & _dz, int & _dx, int & _dy, int value)
 
 		if (pfval(oz, ox, oy) != value)
 			continue;
-/*
-		if (isStairs(oz, ox, oy)) {
-			if (dir == DIR_EAST) {
-				_dz = oz; _dy = oy; _dx = ox;
-				return dir;
-			}
-			continue;
-		}
 
-		if (isStairs(dz, dx, dy)) {
-			if (dir == DIR_WEST) {
-				_dz = oz; _dy = oy; _dx = ox;
-				return dir;
-			}
-			continue;
-		}
-*/
 		if (passable(oz, ox, oy, DIR_REVERSE(dir))) {
 			if (walk_time(oz, ox, oy) < good_dir_time) {
 				_dz = oz; _dy = oy; _dx = ox;

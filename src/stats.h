@@ -24,23 +24,21 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "global.h"
 
-//////////////////////////////////////////////////////////////////////////////
-/// StatEntry                                                              ///
-/// A class that holds all of the statistics for a single soldier          ///
-//////////////////////////////////////////////////////////////////////////////
-
+/**
+ * A class that holds all of the statistics for a single soldier
+ */
 class StatEntry: public persist::BaseObject
 { 
 	DECLARE_PERSISTENCE(StatEntry);
 private:
-	int         SID;              // The soldier's ID
-	char        name[26];         // The name of the soldier
-	int         kills;            // The number of soldiers he's killed
-	int         dead;             // Is he dead?
-	int         damage_inflicted; // How much damage did he inflict?
-	int         damage_taken;     // How much damage did he take?
-	StatEntry  *next;             // The next statistics entry.
-	StatEntry  *prev;             // The previous statistics entry.
+	int         SID;              //!< The soldier's ID
+	char        name[26];         //!< The name of the soldier
+	int         kills;            //!< The number of soldiers he's killed
+	int         dead;             //!< Is he dead?
+	int         damage_inflicted; //!< How much damage did he inflict?
+	int         damage_taken;     //!< How much damage did he take?
+	StatEntry  *next;             //!< The next statistics entry.
+	StatEntry  *prev;             //!< The previous statistics entry.
 public:
 	StatEntry()
 	{
@@ -77,11 +75,9 @@ public:
 	virtual bool Read(persist::Engine &archive);
 };
 
-//////////////////////////////////////////////////////////////////////////////
-/// Statistics                                                             ///
-/// A class that holds all of the statistics for a platoon                 ///
-//////////////////////////////////////////////////////////////////////////////
-
+/*
+ * A class that holds all of the statistics for a platoon
+ */
 class Statistics: public persist::BaseObject
 {
 	DECLARE_PERSISTENCE(Statistics);

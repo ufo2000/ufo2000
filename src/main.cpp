@@ -48,7 +48,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "config.h"
 #include "mainmenu.h"
 #include "editor.h"
-#include "about.h"
 #include "video.h"
 #include "keys.h"
 #include "crc32.h"
@@ -77,7 +76,6 @@ Scenario *scenario;
 TerrainSet *terrain_set;
 Icon *icon;
 Inventory *inventory;
-About *about;
 Editor *editor;
 Platoon *p1, *p2;
 Platoon *platoon_local, *platoon_remote;
@@ -633,9 +631,6 @@ void initmain(int argc, char *argv[])
 	console<<"new inventory"<<std::endl;
 	inventory = new Inventory();
 
-	console<<"new about"<<std::endl;
-	about = new About();
-
 	console<<"new editor"<<std::endl;
 	editor = new Editor();
 
@@ -671,7 +666,6 @@ void closemain()
 	delete terrain_set;
 	delete net;
 	delete editor;
-	delete about;
 	delete inventory;
 	delete icon;
 	delete g_console;
@@ -1684,7 +1678,6 @@ int main(int argc, char *argv[])
             h = -1;
             switch (mm) {
                 case MAINMENU_ABOUT:
-                    about->show();
                     continue;
                 case MAINMENU_EDITOR:
 					FS_MusicPlay(F(cfg_get_editor_music_file_name()));

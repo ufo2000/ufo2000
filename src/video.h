@@ -49,16 +49,6 @@ int tftd_color(int c);
 
 #define xcom_color(c) xcom1_color(c)
 
-inline void spr_set(BITMAP *dest, int ofs, char val)
-{
-	*((char *)dest->dat + ofs) = val;
-}
-
-inline int spr_get(BITMAP *dest, int ofs)
-{
-	return * ((char *)dest->dat + ofs);
-}
-
 inline int mouse_inside(int x1, int y1, int x2, int y2)
 {
 	return ((mouse_x >= x1) && (mouse_x <= x2) && (mouse_y >= y1) && (mouse_y <= y2));

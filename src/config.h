@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002       ufo2000 development team
+Copyright (C) 2002-2004  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,14 +24,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 void loadini();
 void saveini();
 
-int setmodemplay();
-int setnetplay();
-int setsocketplay();
 int sethotseatplay();
-int setdplayplay();
 
 void configure();
-void aboutinfo();
 
 int cfg_get_base_accuracy();
 int cfg_get_screen_x_res();
