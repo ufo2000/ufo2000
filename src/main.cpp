@@ -406,9 +406,6 @@ public:
 };
 
 
-#define FADE_SPEED 20
-
-
 /**
  * Fatal errors: display error message, exit program
  */
@@ -829,7 +826,6 @@ void initmain(int argc, char *argv[])
     mouse_callback = mouser_proc;
     //keyboard_callback = keyboard_proc;
 
-    fade_out(FADE_SPEED);
     clear(screen);
 
     if (!exists(F("$(home)/cur_map.lua")) || 
@@ -1471,7 +1467,6 @@ void endgame_stats()
         platoon_local = ptemp;
     }
 
-    fade_out(10);
     clear(screen);
 
     reset_video();
@@ -2291,8 +2286,6 @@ void gameloop()
     
         endgame_stats();
     }
-
-    fade_out(10);
 
     net->send_quit();
 

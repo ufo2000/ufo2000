@@ -120,47 +120,9 @@ void change_screen_mode()
     }
 }
 
-/**
- * Table for translation from TFTD to XCOM color palette 
- * taken from XCOMUTIL
- */
-static int tftd_color_table[256] = {
-    0x00, 0x01, 0x51, 0xE2, 0xE6, 0x75, 0x75, 0x8B, 
-    0x00, 0x25, 0x26, 0x27, 0x29, 0x2B, 0x27, 0x00, 
-    0x10, 0x10, 0x10, 0x11, 0x12, 0x13, 0x13, 0x96, 
-    0x97, 0xA5, 0xA6, 0xA7, 0x4A, 0x4C, 0x4E, 0x4F, 
-    0xB0, 0xB0, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 
-    0x57, 0x09, 0x0A, 0x5B, 0x0B, 0x0C, 0x0D, 0x0E, 
-    0x01, 0x02, 0x03, 0x52, 0x04, 0x05, 0x06, 0xF1, 
-    0xF2, 0xF4, 0x09, 0x0A, 0x0B, 0x0C, 0xFB, 0xFD, 
-    0xA3, 0xA3, 0xA4, 0xA4, 0xA5, 0xA6, 0xA6, 0xA7, 
-    0x5D, 0x5D, 0x5E, 0x5F, 0x5F, 0x0E, 0x0E, 0xAF, 
-    0x40, 0x41, 0x42, 0x43, 0x43, 0x44, 0x44, 0x45, 
-    0x46, 0x47, 0x48, 0x49, 0x4A, 0x4C, 0x3F, 0x0E, 
-    0xD0, 0xD1, 0x33, 0x33, 0x34, 0x34, 0x35, 0x36, 
-    0x38, 0x38, 0x39, 0x3B, 0x4B, 0x4B, 0x4C, 0xAD, 
-    0xAD, 0x4E, 0x4F, 0x4F, 0x4F, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x10, 0x10, 0x11, 0x12, 0x12, 0x13, 0x14, 0x15, 
-    0x97, 0x47, 0x47, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 
-    0x90, 0x91, 0x92, 0x93, 0x13, 0x96, 0x45, 0x47, 
-    0x48, 0x4A, 0x13, 0x17, 0x9B, 0xC3, 0xC6, 0xEC, 
-    0x11, 0x12, 0x12, 0x13, 0x14, 0x14, 0x15, 0x66, 
-    0x67, 0x99, 0xA7, 0xA8, 0xA8, 0xA9, 0x5F, 0x4E, 
-    0x14, 0x14, 0x15, 0x16, 0x16, 0x17, 0x17, 0x18, 
-    0x19, 0x1A, 0x9B, 0x9C, 0xAA, 0xAA, 0xAB, 0xAC, 
-    0xE0, 0x03, 0x04, 0xE4, 0xF1, 0xF3, 0xF6, 0xF8, 
-    0xF8, 0xF9, 0xFA, 0xFB, 0x0D, 0xFD, 0xFD, 0x0E, 
-    0xB3, 0xB4, 0xB4, 0xB5, 0xA1, 0xA2, 0xA3, 0x59, 
-    0x5A, 0x5B, 0x5B, 0x5C, 0x5D, 0x5E, 0x5E, 0x5F, 
-    0xB2, 0xB3, 0xB3, 0xB4, 0xB5, 0xB5, 0xB7, 0xB7, 
-    0x59, 0x5A, 0x5B, 0x5C, 0x5D, 0x0C, 0xEF, 0xFC, 
-    0xD0, 0xD0, 0xD1, 0xD1, 0xD2, 0xD3, 0xD4, 0xD4, 
-    0x87, 0x89, 0x3A, 0x3B, 0x3C, 0x3D, 0xFE, 0xFF
-};
-
-int xcom1_color_table[256];
-int xcom1_menu_color_table[256];
+static int tftd_color_table[256];
+static int xcom1_color_table[256];
+static int xcom1_menu_color_table[256];
 
 /**
  * Function that converts color from xcom1 game palette to current
@@ -172,10 +134,6 @@ int xcom1_menu_color_table[256];
 int (*xcom1_color)(int c);
 int (*xcom1_menu_color)(int c);
 int (*xcom1_darken_color)(int c, int level);
-
-static int xcom1_color_8bpp(int c) { return c; }
-static int xcom1_menu_color_8bpp(int c) { return c; }
-static int xcom1_darken_color_8bpp(int c, int level) { return c + level * 2; }
 
 static int xcom1_color_high_bpp(int c)
 {
@@ -200,55 +158,99 @@ int tftd_color(int c)
     return tftd_color_table[c];
 }
 
-static void ufo2k_set_gfx_mode(int gfx_driver, int min_color_depth)
+#define MINIMUM_XRES 640
+#define MINIMUM_YRES 480
+
+/**
+ * Set video mode
+ */
+static void ufo2k_set_gfx_mode(int gfx_driver)
 {
-    ASSERT(min_color_depth % 8 == 0);
-    int color_depth = min_color_depth;
-
+    static int ufo2k_color_depth = -1;
+    static int ufo2k_xres = -1;
+    static int ufo2k_yres = -1;
+    static int ufo2k_gfx_driver = -1;
+    static bool switch_mode_failed = false;
+    
+    // Check if graphics mode is already set, just switch 
+    // fullscreen/windowed mode while keeping the same screen resolution
+    // in this case
+    if (ufo2k_color_depth > 0) {
+        // If we already had problems switching mode - do not even try again
+        if (switch_mode_failed) return;
+        if (gfx_driver == ufo2k_gfx_driver) return;
+        // Try to set new screen mode
+        if (set_gfx_mode(gfx_driver, ufo2k_xres, ufo2k_yres, 0, 0) == 0) {
+            ufo2k_gfx_driver = gfx_driver;
+            return;
+        }
+        // Switch failed for some reason, try to set last known good configuration
+        switch_mode_failed = true;
+        if (set_gfx_mode(ufo2k_gfx_driver, ufo2k_xres, ufo2k_yres, 0, 0) == 0) return;
+        // Panic - can't even restore old mode
+        ASSERT(false);
+        return;
+    }
+    
+    // Some sanity checks
+    int color_depth = cfg_get_min_color_depth();
+    if (color_depth == 0) color_depth = desktop_color_depth();
+    if (color_depth < 16) color_depth = 16;
+    if (color_depth > 32) color_depth = 32;
+    if (color_depth % 8 != 0) color_depth = 16;
+    
+    int xres = cfg_get_screen_x_res();
+    int yres = cfg_get_screen_y_res();
+    if (xres < MINIMUM_XRES) xres = MINIMUM_XRES;
+    if (yres < MINIMUM_YRES) yres = MINIMUM_YRES;
+    
     while (true) {
-
         if (color_depth > 32) {
-        //  Still did not manage to set video mode
+            // Did not manage to set video mode
             fprintf(stderr, "Error: set_gfx_mode() failed (%s).\n", allegro_error);
             exit(1);
         }
 
+        // Try both the video modes selected in the ufo200.ini file and 640x480
         set_color_depth(color_depth);
+        if (set_gfx_mode(gfx_driver, xres, yres, 0, 0) == 0)
+            break;
+        if (xres != MINIMUM_XRES && yres != MINIMUM_YRES) {
+            if (set_gfx_mode(gfx_driver, MINIMUM_XRES, MINIMUM_YRES, 0, 0) == 0) {
+                xres = MINIMUM_XRES;
+                yres = MINIMUM_YRES;
+                break;
+            }
+        }
 
-    //  Try both the video modes selected in the ini-file and 640x480.
-        int exit_code = set_gfx_mode(gfx_driver, cfg_get_screen_x_res(), cfg_get_screen_y_res(), 0, 0);
-        if (exit_code == 0) break;
-        exit_code = set_gfx_mode(gfx_driver, 640, 480, 0, 0);
-        if (exit_code == 0) break;
-    //  Try next color depth
+        // Try next color depth
         color_depth += 8;
     }
 
-    if (color_depth == 8) {
-        xcom1_color        = xcom1_color_8bpp;
-        xcom1_menu_color   = xcom1_menu_color_8bpp;
-        xcom1_darken_color = xcom1_darken_color_8bpp;
-    } else {
-    //  Create tables for translation from xcom1 palette colors
-    //  to colors for currently selected video mode
-        xcom1_color_table[0]      = makecol(255, 0, 255);
-        xcom1_menu_color_table[0] = makecol(255, 0, 255);
-        tftd_color_table[0]       = makecol(255, 0, 255);
+    ufo2k_color_depth = color_depth;
+    ufo2k_xres = xres;
+    ufo2k_yres = yres;
+    ufo2k_gfx_driver = gfx_driver;
+    
+    // Create tables for translation from xcom1 palette colors
+    // to colors for currently selected video mode
+    xcom1_color_table[0]      = makecol(255, 0, 255);
+    xcom1_menu_color_table[0] = makecol(255, 0, 255);
+    tftd_color_table[0]       = makecol(255, 0, 255);
 
-        for (int c = 1; c < 256; c++)
-        {
-            const RGB & rgb = ((RGB *)datafile[DAT_GAMEPAL_BMP].dat)[c];
-            xcom1_color_table[c] = makecol(rgb.r << 2, rgb.g << 2, rgb.b << 2);
-            const RGB & menu_rgb = ((RGB *)datafile[DAT_MENUPAL_BMP].dat)[c];
-            xcom1_menu_color_table[c] = makecol(menu_rgb.r << 2, menu_rgb.g << 2, menu_rgb.b << 2);
-            const RGB & tftd_rgb = ((RGB *)datafile[DAT_TFTDPAL_BMP].dat)[c];
-            tftd_color_table[c] = makecol(tftd_rgb.r << 2, tftd_rgb.g << 2, tftd_rgb.b << 2);
-        }
-
-        xcom1_color        = xcom1_color_high_bpp;
-        xcom1_menu_color   = xcom1_menu_color_high_bpp;
-        xcom1_darken_color = xcom1_darken_color_high_bpp;
+    for (int c = 1; c < 256; c++)
+    {
+        const RGB & rgb = ((RGB *)datafile[DAT_GAMEPAL_BMP].dat)[c];
+        xcom1_color_table[c] = makecol(rgb.r << 2, rgb.g << 2, rgb.b << 2);
+        const RGB & menu_rgb = ((RGB *)datafile[DAT_MENUPAL_BMP].dat)[c];
+        xcom1_menu_color_table[c] = makecol(menu_rgb.r << 2, menu_rgb.g << 2, menu_rgb.b << 2);
+        const RGB & tftd_rgb = ((RGB *)datafile[DAT_TFTDPAL_BMP].dat)[c];
+        tftd_color_table[c] = makecol(tftd_rgb.r << 2, tftd_rgb.g << 2, tftd_rgb.b << 2);
     }
+
+    xcom1_color        = xcom1_color_high_bpp;
+    xcom1_menu_color   = xcom1_menu_color_high_bpp;
+    xcom1_darken_color = xcom1_darken_color_high_bpp;
 }
 
 static void normalize_screen2_size()
@@ -263,10 +265,10 @@ static void normalize_screen2_size()
 void set_video_mode()
 {
     if (FLAGS & F_FULLSCREEN)
-        ufo2k_set_gfx_mode(GFX_AUTODETECT_FULLSCREEN, cfg_get_min_color_depth());
+        ufo2k_set_gfx_mode(GFX_AUTODETECT_FULLSCREEN);
     else
-        ufo2k_set_gfx_mode(GFX_AUTODETECT_WINDOWED, cfg_get_min_color_depth());
-
+        ufo2k_set_gfx_mode(GFX_AUTODETECT_WINDOWED);
+    
     normalize_screen2_size();
 
     if (set_display_switch_mode(SWITCH_BACKGROUND) == -1) set_display_switch_mode(SWITCH_BACKAMNESIA);

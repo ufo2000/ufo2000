@@ -943,7 +943,6 @@ void Editor::show()
     destroy_bitmap(screen2);
     screen2 = create_bitmap(SCREEN2W, SCREEN2H); clear(screen2);
 
-    fade_out(10);
     clear(screen);
 }
 

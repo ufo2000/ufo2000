@@ -164,7 +164,6 @@ int Connect::do_chat()
 	destroy_bitmap(scr);
 	destroy_bitmap(backscr);
 
-	fade_out(10);
 	clear(screen);
 	return net->SEND;
 }
@@ -277,7 +276,6 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 
 			destroy_bitmap(screen2);
 			screen2 = create_bitmap(SCREEN2W, SCREEN2H); clear(screen2);
-			fade_out(10);
 			clear(screen);
 			return 0;
 		}
@@ -460,7 +458,6 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 	g_console->redraw(screen, 0, SCREEN2H);
 	destroy_bitmap(screen2);
 	screen2 = create_bitmap(SCREEN2W, SCREEN2H); clear(screen2);
-	fade_out(10);
 	clear(screen);
   //lua_message( "Exit : Connect::do_planner" );
 	return net->SEND;

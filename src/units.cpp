@@ -743,7 +743,6 @@ void Units::execute_main(Map *map, int map_change_allowed)
 				//if (is_selected(i)) // don't edit selected
 				//	return;
 				if (editor->set_man(name[i])) {
-					fade_out(10);
 					clear(screen);
 
 					editor->show();
