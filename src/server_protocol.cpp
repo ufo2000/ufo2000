@@ -128,7 +128,7 @@ ServerClient *ServerDispatch::CreateServerClient(NLsocket socket)
 ServerClientUfo::~ServerClientUfo()
 {
 	if (m_name != "") {
-	//	send information that the user is offline to al other users
+	//	send information that the user is offline to all other users
 		send_packet_all(SRV_USER_OFFLINE, m_name);
 
 	//	remove this user from challenge lists of other players
@@ -146,7 +146,10 @@ ServerClientUfo::~ServerClientUfo()
 	}
 //	if there is opponent playing with this user, remove pointer to
 //	self from opponent's data
-	if (m_opponent != NULL) {
+	if (m_opponent != NULL && m_opponent->m_opponent != NULL) {
+    //	A hack to notify remote player that current player has disconnected
+		m_opponent->send_packet_back(SRV_GAME_PACKET, "_Xmes_Something bad happened to remote player and he disconnected from server");
+		m_opponent->send_packet_back(SRV_GAME_PACKET, "_Xmes_The only thing you can do now is to return to the server chat :-(");
 		m_opponent->m_opponent = NULL;
 	}
 }
