@@ -1,14 +1,26 @@
-Changes in version 0.?.??        ?? ??? 2003
+Changes in version 0.4.0      ??? ?? ??? 2003
    - new sound system allowing use of both original and collector's edition files
      and simple reassignment of sounds
-   -
+   - reaction (opportunity) fire
+   - enemy turn replay for hotseat game
+   - strength and energy statistics
+   - different armor types support
+   - 3 additional terrain types (desert, forest, mountain)
+   - end of game screen
+   - use of internet server to find opponents
+   - other minor improvements
 
-Changes in version 0.3.60        21 Jun 2003
-   - proximity grenades crashes should be at last fixed (cross your fingers)
-   - some changes that should prevent soldier attributes cheating
-   - flicker and loading bug for minimap fixed
-   - footstep sounds for unseen enemies should not be heared now
-   - sounds are loaded from XCOM Collectors' edition files and not from original files.
+Changes in version 0.3.60     Sat 21 Jun 2003
+   - improved chat console: added support for unicode, xcom fonts and multiple languages
+   - added local and remote version compatibility check for network play
+   - time limit for game turns is now supported
+   - some new sounds and also background music added
+   - added mutons and sectoids (only their skins)
+   - accuracy calculation algorithm changed
+   - fixed fullscreen related problems in linix version
+   - better looking main menu
+   - fixed bug with proximity grenades
+   - many other bugfixes
 
 Changes in version 0.3.51     Sat 2 Nov 2002
    - merged incendiary ammunition patch

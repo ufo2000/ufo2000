@@ -11,28 +11,24 @@
              Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
              Copyright (C) 2002-2003  ufo2000 development team
 
-The development of UFO2000 is continued after about a year of
-inactivity. Now UFO2000 is back and supported by a group called the
-"ufo2000 development team". The original author, Alexander Ivanov, has 
-neither time nor desire for doing all the work alone. It is very 
-difficult for a single person to maintain such a project. In addition, 
-the game is completely free (GPL) and nobody earns a single cent from 
-it. For information, read the file COPYING, located in your UFO2000 
-folder.
+The development of UFO2000 is continued after about a year of inactivity. 
+Now UFO2000 is back and is improved by cooperative efforts of several
+developers, "ufo2000 development team" to be short. For the information 
+about who has contributed to UFO2000, read AUTHORS file in UFO2000 
+directory. The original author, Alexander Ivanov, is currently not 
+involved in the development process anymore, but he already has done 
+a great work, many thanks to him! Without his excellent work this game 
+would never come to existence.
 
-The versions from 0.3.20 onward do not have a single author. In fact, 
-there are several people who have contributed their pieces of code to 
-this version (the original author, Alexander Ivanov, is among them).
+This game is free software (GPL). For more information about the 
+license, read the file COPYING, located in your UFO2000 directory. 
 
 Anyone can take part in UFO2000 development. Any help would be 
-appreciated. Please visit http://sourceforge.net/projects/ufo2000/ and 
-submit your comments, ideas, bugreports and patches there.
+appreciated. Please visit http://ufo2000.sourceforge.net/ web page.
+There you can subscribe to ufo2000 mailing list and submit your 
+comments, ideas, bugreports and patches.
 
-Primary tasks for this version branch (0.3.xx) are:
-- fix all the known bugs.
-- cleanup and comment the sources.
-
-See CHANGELOG for full change listings.
+See ChangeLog file for full change listings.
 
 This file was revised and added to by Jeremy Walker, aka Kuroshi X.
 
@@ -46,9 +42,15 @@ game, X-COM: UFO Defense (UFO: Enemy Unknown).
 It requires X-COM game files from the folders:
    GEODATA GEOGRAPH MAPS SOUND TERRAIN UFOGRAPH UFOINTRO UNITS
 
-The Windows version is compiled with VC6 and requires DirectX 6 or 
-above. There are also djgpp and linux versions.
+The Windows version can be compiled either with Microsoft Visual C++ 6.0 or 
+free Mingw GCC compiler.
 
+The game also compiles and works in Linux and FreeBSD operating system.
+Probably the game will also work in other UNIX like systems. If you managed 
+to successfully compile and run UFO2000 in one of them, please let us know.
+
+More detailed information about compiling UFO2000 can be found in INSTALL
+file from UFO2000 directory.
 
 ===============
 Map Editor
@@ -104,9 +106,6 @@ all "SEND" options are green. The game will only begin after all these
 options are green. Adjusting your players or changing the map will 
 revert all words to red.
 
-For a hotseat game, you can press F10 to "START" (your "SEND" must 
-still be green, though).
-
 To return to main menu, press ESC.
 
 
@@ -156,7 +155,9 @@ ALT-X       Quick exit to OS
 Cursors &   change size of map screen
 Keypad +/-  
 
-Right CTRL  Switch between rus/lat if enabled in INI.
+Right CTRL + 'b', 'd', 'e', 'p' or 'r' Switch between Belarusian, German,
+        English, Polish and Russian keymaps (other languages can be
+        selected in ufo2000.ini file)
 
 Left CTRL   Show route of selected man to the cursor cell with TU cost.
  		In targeting mode it shows the trajectory of your shots and
@@ -168,14 +169,6 @@ Left SHIFT  Allows precise aiming if held down until after firing with
 
 ENTER       send message
 BKSP        remove last character in message
-
-F11   Notifying mode on/off used for checking if connect is ok. 
-      Sends "NOTE" packet each second to remote computer and receive
- 	the responce. If such packet do not come through, the counter of
- 	seconds activated starting from last packet received and shown in
- 	top right corner of Info window. If it is necessary to fulfill
- 	ceaseless modem command in terminal, e.g. "atdp123456", better
- 	turn the notifying mode off in advance.
 
 F12         save the screen to "snapshot.pcx" file 
 
@@ -194,16 +187,7 @@ width=500            #Battle Screen width
 height=280           #Battle Screen height
 map_width=4          #   "NEW" map size
 map_height=4         #   map_width*map_height <= 36 !
-russian=yes          #no disable CTRL rus/lat,  yes - enable
-bloodymenu=no        #no - no bloody menu, yes - yes!
 sound=yes            #yes - sound fx on, no - off
-comport=2            #   modem COM port (not for windows version)
-                     #   1 - COM1, 2 - COM2, 3 - COM3, ...
-digvoices=16         # ^2  (2, 4, 8, ...)  number of voices for fx
-modules=no           #   not used
-modvoices=8          #      "
-modname=templsun.xm  #      "
-modvolume=125        #      "
 speed_unit = 30      #Sets unit speed. *1
 speed_bullet = 30    #Same as above, but for game projectiles.
 speed_mapscroll = 30 #Same as above, but for map scrolling.
@@ -224,50 +208,5 @@ F_SELECTENEMY = 1 # Set to 0 to disable blue markers above enemy soldiers
 UFO1, so you can use any "soldier.dat" from that game. However, you 
 must write the correct platoon_size in ufo2000.ini (e.g. number of 
 soldiers in "soldier.dat").
-
-===============
-Authors
-===============
-
-ufo2000 development team members:
-- Alexander Ivanov aka 'sanami'
-- Serge Semashko aka 'ssvb'
-- Alexander Sabourenkov aka 'lxnt'
-- Roman Vil'chenko aka 'tavy'
-
-===============
-Contributors
-===============
-
-Josh Day <koralt@yahoo.com>
-
-  UFO data files structs
-
-Anton Dobrinin aka Gargantua 
-
-  A patch for new fire and smoke code, incendiary ammo and proximity grenades.
-
-===============
-Thanks
-===============
-
-Consultant:
-   Josh Day <koralt@yahoo.com>
-
-Additional artwork:
-   "ppzaba" <zaba@peterlink.ru>
-
-General in Chief of Gameplay:
-   Ромка 'Tavy', tavy_@chat.ru
-
-Quality assurance:
-   Dima Ivanov
-   Tarantul@mail.kz, 2:6083/1.42
-
-   EvilOne, evilone@omen.ru
-   Anton (Zerocool), antonio_neo@chat.ru
-   
-   Olivier Ripoll
-   Павел Саныч aka MapcuaHuH [VMA]
 
 --END OF FILE--

@@ -1,0 +1,97 @@
+==============================================================================
+== The following people are currently working on UFO2000
+==============================================================================
+
+Current project leader:
+   Serge Semashko
+
+Programming:
+   Steven Melenchuk
+   Alexander Sabourenkov
+   Serge Semashko
+
+==============================================================================
+== The following people have contributed to UFO2000 development
+==============================================================================
+
+Original idea and programming:
+   Alexander Ivanov aka Sanami
+      * The only author and developer of UFO2000 up to version 0.3.11
+
+Programming:
+   Anton Dobrinin aka Gargantua
+      * New fire and smoke code, incendiary ammo and proximity grenades
+
+   Steven Melenchuk aka Grunt
+      * Reaction fire
+      * Strength and energy statistics
+      * Different armor types support
+      * End of game screen
+
+   Alexander Sabourenkov aka lxnt
+      * Bugfixes and code cleanup
+      * Unicode support for X-COM fonts
+      * Sound loading code
+
+   Serge Semashko
+      * Bugfixes and code cleanup
+      * Data files integrity checking
+      * Save/load feature
+      * Support for additional terrain types
+      * Truecolor graphics support
+      * New chat console and minimap screen
+      * Replay of enemy turns in hotseat game
+
+   Александр Чернобровый aka Dream
+      * Some performance improvements and fixes to UFO2000 code
+
+Artwork and other game related data files:
+   Munkeylord
+      * Muton and sectoid inventory screen pictures
+      * Several X-COM mods and permission to use them in UFO2000
+
+   "ppzaba" <zaba@peterlink.ru>
+
+Manual writing and translations:
+   Bunie
+      * Finnish translation of game manual
+
+   Dolny and Sir-Torpeda
+      * Polish translation of game manual
+
+   Roman Vil'chenko aka Tavy
+      * Very good and detailed game manual in Russian
+
+   Jeremy Walker aka Kuroshi X
+      * Update and spellchecking for the English version of game manual
+
+Testing the game, bugreports and valuable suggestions:
+   Anton (Zerocool), antonio_neo@chat.ru
+   Bunie
+   BurningSectoid
+   Dima Ivanov Tarantul@mail.kz, 2:6083/1.42
+   Dolny
+   Eszekesze
+   EvilOne, evilone@omen.ru
+   Jammers
+   Jeremy Walker aka Kuroshi X
+   J-F Pruneau
+   Olivier Ripoll
+   Photek
+   Roman Vil'chenko
+   Thrawn
+   Павел Саныч aka MapcuaHuH [VMA]
+   Александр Чернобровый aka Dream
+
+Other:
+   Alexander Sabourenkov aka lxnt
+      * Excellent reliable and fast hosting for UFO2000, subversion 
+        repository and mailing list administration
+
+   Dolny
+      * UFO2000 forum administration
+
+   Josh Day <koralt@yahoo.com>
+      * UFO data files format information
+
+==============================================================================
