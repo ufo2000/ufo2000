@@ -491,14 +491,22 @@ void Place::damage_items(int dam)
 	}*/
 }
 
-void Place::check_mine() {
-	Item *it;
-	it = m_item;
-	if (it!=NULL)
-		if ((it->is_grenade())&&(it->type == PROXIMITY_GRENADE)&&(it->delay_time()<=0))
-			elist->detonate(it);
-}
+/**
+ * Explodes proximity mine if this place has one
+ */
+void Place::check_mine() 
+{
+	Item *it = m_item;
 
+	while (it != NULL) {
+		if ((it->is_grenade()) && (it->type == PROXIMITY_GRENADE) && (it->delay_time() <= 0)) {
+			it->unlink();
+			elist->detonate(it);
+			return;
+		}
+		it = it->next;
+	}
+}
 
 void Place::draw_deselect_time(int PLACE_NUM, int time)
 {

@@ -222,11 +222,6 @@ void Bullet::move()
 					state = READY;
 					break;
 				}
-				/*if (i >= ro) {
-				 map->m_cell[0][dcol][drow].place.put(ditem, dcol, drow);
-				 state = READY;
-				 break;
-				}*/
 			}
 			break;
 		case ST_AIMEDTHROW:
@@ -275,9 +270,10 @@ void Bullet::move()
 				}
 			}
 			if (incendiary()) {
-					  detonate();
-					  state = READY;
-					  break;
+				detonate();
+				item  = NULL;
+				state = READY;
+				break;
 			}
 			phase++;
 			if (phase == 2 * PHASE)

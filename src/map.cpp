@@ -1386,32 +1386,14 @@ int Map::explode(int lev, int col, int row, int type, int maxrange, int damage)
 	return 1;
 }
 
-void Map::check_mine(int lev, int col, int row) {
-char *field = new char[level * width*10 * height*10];
-	memset(field, 0, level * width*10 * height*10);
-
-	for(int ll=lev-1; ll<=lev+1; ll++) {
-		if ((ll < 0) || (ll >= level))
-			continue;
-		int range = 2 - abs(lev-ll);
-		if (range <= 0)
-			continue;
-		for(float te=-PI; te < PI; te += TE_STEP) {
-			for(int l=0; l<range; l++) {
-				int nz, nx, ny;
-				nz = ll;
-				nx = col + (int)floor(l * cos(te)+0.5);
-				ny = row + (int)floor(l * sin(te)+0.5);
-				if (!cell_inside(nz, nx, ny))
-					break;
-				if (field[nz*width*10*height*10 + nx*width*10 + ny] != 0)
-					continue;
-				field[nz*width*10*height*10 + nx*width*10 + ny] = 1;
-				place(nz, nx, ny)->check_mine();
-			}
+void Map::check_mine(int lev, int col, int row) 
+{
+	for (int c = col - 1; c <= col + 1; c++) {
+		for (int r = row - 1; r <= row + 1; r++) {
+			if (!cell_inside(lev, c, r)) continue;
+			place(lev, c, r)->check_mine();
 		}
 	}
-	delete (field);
 }
 
 void Map::explocell(int lev, int col, int row, int damage, int type)
