@@ -2007,6 +2007,7 @@ void Soldier::panic()
 	ud.CurTU = 0;
 	m_place[P_ARM_LEFT]->dropall(z, x, y);
 	m_place[P_ARM_RIGHT]->dropall(z, x, y);
+	change_morale(20);
 		
 	net->send_panic(NID);
 		
