@@ -284,7 +284,7 @@ extern volatile unsigned int ANIMATION;
 /**
  * Draw "3D" Battlescape-Map
  */
-void Map::draw()
+void Map::draw(int show_cursor)
 {
 	m_animation_cycle = (ANIMATION / 3) % 8;
 
@@ -311,7 +311,7 @@ void Map::draw()
 
 					draw_cell_pck(sx, sy, lev, col, row, 0, seen(lev, col, row));
 
-					if (m_cell[sel_lev][col][row]->MOUSE) {
+					if (m_cell[sel_lev][col][row]->MOUSE && show_cursor) {
 						if (lev == sel_lev) {
 							if ((m_cell[lev][col][row]->soldier_here()) && (visible(lev, col, row)))
 								mtype = 1;
@@ -363,7 +363,7 @@ void Map::draw()
 						}
 					}
 
-					if (m_cell[sel_lev][col][row]->MOUSE) {
+					if (m_cell[sel_lev][col][row]->MOUSE && show_cursor) {
 						if (lev == sel_lev) {
 							if ((TARGET) && (target.action == THROW))
 								cursor->showpck(15, sx, sy);

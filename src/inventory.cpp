@@ -69,8 +69,12 @@ void Inventory::draw(int _x, int _y)
 	
 	m_mouse_range = new MouseRange(x, y, x + 320, y + 200);
 	
-	BITMAP *temp = create_bitmap(321, 200);
+	BITMAP *temp = create_bitmap(321, 199);
 	clear_bitmap(temp);
+	
+	set_trans_blender(0, 0, 0, 160);
+    draw_trans_sprite(screen2, temp, x, y);
+    clear_to_color(temp, makecol(255, 0, 255));
 
 	tac01->show(temp, 0, 0);  // Buttons: OK, next & prev.man
     draw_sprite_vh_flip(temp, b5, 255, 137);  // b6 - Button: scroll left
@@ -118,8 +122,7 @@ void Inventory::draw(int _x, int _y)
 
 	}
 	
-	set_trans_blender(0, 0, 0, 192);
-    draw_trans_sprite(screen2, temp, x, y);
+    draw_sprite(screen2, temp, x, y);
     destroy_bitmap(temp);
     
     if (sel_item != NULL && key[KEY_LCONTROL])

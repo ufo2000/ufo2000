@@ -1123,8 +1123,10 @@ void build_screen(int & select_y)
     int icon_nr = -9;
     clear_to_color(screen2, BACKCOLOR);
 
+	int show_cursor = (MODE == MAP3D || MODE == WATCH) && (!icon->inside(mouse_x, mouse_y));
+
     map->set_sel(mouse_x, mouse_y);
-    map->draw();
+    map->draw(show_cursor);
 
     if(sel_man && !sel_man->ismoving() && (MODE == MAP3D || MODE == WATCH)) {
         if(key[KEY_LCONTROL])
