@@ -950,29 +950,38 @@ int Soldier::move(int ISLOCAL)
         if(move_dir > DIR_NULL) {
             map->set_man(z, x, y, NULL);
             int tu_cost;
-            map->step_dest(z, x, y, move_dir, can_fly(), z, x, y, tu_cost);
-            map->set_man(z, x, y, this);
-            spend_time(tu_cost, 1);
-            m_place[P_MAP] = map->place(z, x, y);
-
-            if (this == sel_man) {
-                //map->center(this);
-                map->sel_lev = z;
-            }
-
-            calc_visible_cells();
-
-            curway++;
-            if (curway >= waylen) {
-                move_dir = dir;
+            int zd, xd, yd;
+            map->step_dest(z, x, y, move_dir, can_fly(), zd, xd, yd, tu_cost);
+            if (time_reserve(tu_cost, ISLOCAL) != OK)
                 finish_march(ISLOCAL);
-            } else {
-                if (time_reserve(walktime(way[curway]), ISLOCAL) != OK)
+            else
+            {
+                z = zd;
+                x = xd;
+                y = yd;
+                map->set_man(z, x, y, this);
+                spend_time(tu_cost, 1);
+                m_place[P_MAP] = map->place(z, x, y);
+
+                if (this == sel_man) {
+                    //map->center(this);
+                    map->sel_lev = z;
+                }
+
+                calc_visible_cells();
+
+                curway++;
+                if (curway >= waylen) {
+                    move_dir = dir;
                     finish_march(ISLOCAL);
-                else
-                    move_dir = way[curway];
-                    if( way[curway] < 8)
-                        dir = way[curway];
+                } else {
+                    if (time_reserve(walktime(way[curway]), ISLOCAL) != OK)
+                        finish_march(ISLOCAL);
+                    else
+                        move_dir = way[curway];
+                        if( way[curway] < 8)
+                            dir = way[curway];
+                }
             }
             return 1;
         }
