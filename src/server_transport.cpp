@@ -257,8 +257,12 @@ void ServerDispatch::Run(NLsocket sock)
 
 			if (readlen == NL_INVALID) {
 				NLenum err = nlGetError();
-				if (err == NL_MESSAGE_END || err == NL_SOCK_DISCONNECT)
+				if (err == NL_MESSAGE_END || err == NL_SOCK_DISCONNECT) {
 					client->m_error = true;
+				} else {
+					server_log("socket read error %d: user '%s' from %s\n",
+						err, client->m_name.c_str(), client->m_ip.c_str());
+				}
             }
 
             HandleSocket(s[i]);
@@ -276,6 +280,10 @@ void ServerDispatch::Run(NLsocket sock)
 			if (size_written != NL_INVALID) {
 				client->m_stream_out.erase(client->m_stream_out.begin(), 
 					client->m_stream_out.begin() + size_written);
+			} else {
+				NLenum err = nlGetError();
+				server_log("socket write error %d: user '%s' from %s\n",
+					err, client->m_name.c_str(), client->m_ip.c_str());
 			}
 
 			if (client->m_http && client->m_stream_out.empty())
