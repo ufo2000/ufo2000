@@ -32,7 +32,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define SC_ASSASSIN     4
 #define SC_HOLD         5
 #define SC_BREAK		6
-#define SCENARIO_NUMBER 7
+#define SC_CAPTURE		7
+#define SCENARIO_NUMBER 8
 
 enum OptionType {OPT_NONE, OPT_SWITCH, OPT_NUMBER};
 
@@ -110,6 +111,7 @@ private:
 	void			init_assassin ();
 	void			init_hold ();
 	void			init_break ();      
+	void			init_capture ();
 	
 	int             conditions_common ();
 	int             conditions_escape ();
@@ -118,12 +120,14 @@ private:
 	int             conditions_assassin ();
 	int             conditions_hold ();
 	int				conditions_break ();
+	int				conditions_capture ();
 
 	bool            minimap_escape (int lev, int col, int row, Map *m_map);
 	bool            minimap_sabotage (int lev, int col, int row);
 	void            minimap_control (BITMAP *bmp, int x, int y);
 	bool            minimap_assassin (int lev, int col, int row, Map *m_map);
 	bool			minimap_rescue (int col, int row);               
+	bool			minimap_capture (int lev, int col, int row, Map *m_map);
 	
 	bool            platoon_common (long points, PanPos pos, char buf[10000], int len);
 	bool            platoon_escape (Platoon *platoon, PanPos pos, char *first_soldier);
@@ -131,6 +135,7 @@ private:
 	bool            platoon_assassin (Platoon *platoon, PanPos pos, char *first_soldier);
 	bool            platoon_hold (PanPos pos, int num_of_men_sel);
 	bool			platoon_break (PanPos pos, int num_of_men_sel);
+	bool			platoon_capture (Platoon *platoon, char *first_soldier, PanPos pos, char buf[10000], int len);
 	
 	bool            place_common (PanPos pos, int x, int y);
 	bool            place_assassin (PanPos pos, int x, int y);

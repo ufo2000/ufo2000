@@ -53,6 +53,7 @@ Scenario::Scenario (int sc_type)
 	init_assassin();
 	init_hold();
 	init_break();       
+	init_capture();
 	
 	rules[0] = 3;	//all explosives allowed
 	rules[1] = 10;	//10k points limit
@@ -177,6 +178,24 @@ void Scenario::init_break ()
 	options[SC_BREAK][2] = new Option(OPT_NONE);
 }              
 
+void Scenario::init_capture ()
+{
+	name[SC_CAPTURE] = "Capture";
+	                                
+	briefing_left[SC_CAPTURE][0] = "You must capture enemy leader (first selected    ";
+	briefing_left[SC_CAPTURE][1] = "soldier). To do this you must stun him and bring ";
+	briefing_left[SC_CAPTURE][2] = "to your edge of the map. Leader is always visible";
+	briefing_left[SC_CAPTURE][3] = "on your minimap.                                 ";
+	
+	briefing_right[SC_CAPTURE][0] = "You must save your leader (first selected man)   ";
+	briefing_right[SC_CAPTURE][1] = "from capturing by enemy. He is always visible on ";
+	briefing_right[SC_CAPTURE][2] = "your opponent's minimap.                         ";
+	
+	options[SC_CAPTURE][0] = new Option(OPT_SWITCH, 0, "Leader can have two-handed weapons", "Leader can't have two-handed weapons", false);
+	options[SC_CAPTURE][1] = new Option(OPT_NONE);
+	options[SC_CAPTURE][2] = new Option(OPT_NONE);
+}
+
 void Scenario::new_scenario (int sc_type)
 {
 	if (sc_type <= -1)
@@ -278,6 +297,10 @@ int Scenario::check_conditions ()
 		
 		case SC_BREAK:
 		n = conditions_break();
+		break;
+		
+		case SC_CAPTURE:
+		n = conditions_capture();
 		break;
 	}	
 	if (n != 0) return n;
@@ -459,7 +482,7 @@ int Scenario::conditions_hold ()
 	}
 	
 	return win + loss;
-}
+}                               
 
 int Scenario::conditions_break ()
 {
@@ -492,6 +515,32 @@ int Scenario::conditions_break ()
 	return win + loss;
 }
 			
+int Scenario::conditions_capture ()
+{
+	int win = 0, loss = 0;
+	
+	Soldier *vip;
+	
+	if (p2->findman(2000) == NULL) {
+		loss = 1;
+		win = 2;
+	} else {
+		vip = p2->findman(2000);
+		if (vip->is_stunned()) {
+			for (int i = 0; i < mapdata.y_size * 10; i++) {
+				if (map->cell(0, 0, i)->get_place()->isthere(vip->body())) {
+					if (platoon_local->belong(vip))
+						loss = 1;
+					else
+						win = 2;
+					break;
+				}
+			}	
+		}
+	}	
+	
+	return win + loss;
+}
 
 bool Scenario::is_target_on_minimap (int lev, int col, int row, Map *m_map)
 {
@@ -518,6 +567,10 @@ bool Scenario::is_target_on_minimap (int lev, int col, int row, Map *m_map)
 		break;
 		
 		case SC_BREAK:
+		break;
+		
+		case SC_CAPTURE:
+		return minimap_capture(lev, col, row, m_map);
 		break;
 	}
 	
@@ -590,6 +643,18 @@ bool Scenario::minimap_assassin (int lev, int col, int row, Map *m_map)
 	return false;
 }
 
+bool Scenario::minimap_capture (int lev, int col, int row, Map *m_map)
+{
+    if (m_map->man(lev, col, row) != NULL) {
+		if (m_map->man(lev, col, row)->get_NID() == 1000 && p2->belong(m_map->man(lev, col, row)) && p2 == platoon_remote)
+			return true;
+		if (m_map->man(lev, col, row)->get_NID() == 2000 && p2->belong(m_map->man(lev, col, row)) && p2 == platoon_remote)
+		    return true;
+	}
+
+	return false;
+}
+
 bool Scenario::is_correct_platoon (long points, Platoon *platoon, char *first_soldier, PanPos pos, char buf[10000], int len, int num_of_men_sel)
 {
 	bool n = true;
@@ -619,6 +684,10 @@ bool Scenario::is_correct_platoon (long points, Platoon *platoon, char *first_so
 	    
 	    case SC_BREAK:
 	    n = platoon_break (pos, num_of_men_sel);
+	    break;
+	    
+	    case SC_CAPTURE:
+	    n = platoon_capture (platoon, first_soldier, pos, buf, len);
 	    break;
 	}
 	
@@ -739,6 +808,49 @@ bool Scenario::platoon_break (PanPos pos, int num_of_men_sel)
 	return true;
 }
 
+bool Scenario::platoon_capture (Platoon *platoon, char *first_soldier, PanPos pos, char buf[10000], int len)
+{
+	if (pos == POS_LEFT) {
+		bool stun_rod = false, stun_gun = false, stun_bomb = false;
+		
+		for (int i = 0; i < len; i++) {
+			if (buf[i] == STUN_ROD)
+				stun_rod = true;
+			if (buf[i] == SMALL_LAUNCHER)
+				stun_gun = true;
+			if (buf[i] == STUN_MISSILE)
+				stun_bomb = true;
+		}
+
+		if (!stun_rod && (!stun_gun || !stun_bomb)) {
+		    g_console->printf("You must have at least one stun rod or one loaded stun launcher.");
+			return false;
+		}
+	} else {
+		if (!options[SC_CAPTURE][0]->value) {
+	    	char buf2[10000]; memset(buf2, 0, sizeof(buf2));
+			int len2 = 0;
+			extern int weapon[];
+
+			platoon->findman(first_soldier)->build_items_stats (buf2, len2);
+   	
+			for (int w = 0; w < 40; w++) {
+				int num = 0;
+				for (int i = 0; i < len2; i++) {
+					if (weapon[w] == buf2[i])
+						num++;
+				}
+				if ((Item::obdata_twoHanded(weapon[w]) > 0) && (num > 0)) {
+					g_console->printf("Soldier #1 can't have two-handed weapons!");
+					return false;
+				}
+			}
+		}
+	}
+	
+	return true;
+}
+
 bool Scenario::is_correct_place (PanPos pos, int x, int y)
 {
 	switch (type) {
@@ -764,6 +876,9 @@ bool Scenario::is_correct_place (PanPos pos, int x, int y)
 		
 		case SC_BREAK:
 		return place_break(pos, x, y);
+		break;
+		
+		case SC_CAPTURE:
 		break;
 	}
 
@@ -856,6 +971,9 @@ void Scenario::draw_deploy_zone (PanPos pos, int x, int y, int color)
 		case SC_BREAK:
 		deploy_break(pos, x, y, color);
 		return;
+		break;
+		
+		case SC_CAPTURE:
 		break;
 	}
 	
