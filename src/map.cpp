@@ -842,13 +842,13 @@ int Map::stopWALK(int oz, int ox, int oy, int part)
 
 	if (m_terrain->m_mcd[ct].TU_Walk == 255) return 1;
 
-	if ((part == 0 || part == 3) && pfval(oz, ox, oy) != 0)	{
-		if (man(oz, ox, oy)) return 1;
-		if (isStairs(oz, ox, oy) && ((oz + 1 >= level) || man(oz + 1, ox, oy))) return 1;
-		for (int z = oz; z > 0 && mcd(z, ox, oy, 0)->No_Floor; z--) {
-			if (man(z - 1, ox, oy)) return 1;
-		}
-	}
+    if (part == 0 || part == 3) {
+        if (man(oz, ox, oy)) return 1;
+        if (isStairs(oz, ox, oy) && ((oz + 1 >= level) || !passable(oz + 1, ox, oy))) return 1;
+        for (int z = oz; z > 0 && mcd(z, ox, oy, 0)->No_Floor && !isStairs(z - 1, ox, oy); z--) {
+            if (!passable(z - 1, ox, oy)) return 1;
+        }
+    }
 
 	return 0;
 }
@@ -885,7 +885,7 @@ int Map::passable(int oz, int ox, int oy, int dir)
 	if (height_d - height_o > 10) return 0;
 
 //	Do the rest of checks
-	if (!passable(oz, ox, oy)) return 0;
+	if (!passable(oz, dx, dy)) return 0;
 
 	switch (dir) {
 		case DIR_EAST:
@@ -1483,7 +1483,7 @@ void Map::explocell(int sniper, int lev, int col, int row, int damage, int type,
 }
 
 /**
- * End-of-turn - Save
+ * End-of-turn - save game state into a buffer as a large block of text
  */ 
 int Map::eot_save(char *buf, int & buf_size)
 {
@@ -1997,4 +1997,3 @@ std::string TerrainSet::select_terrain_gui_dialog(
 	
 	return gui_list[result];
 }
-
