@@ -342,10 +342,9 @@ class Terrain
 {
 	struct block_info { int x_size; int y_size; int z_size; int rand_weight; };
 
-	std::string                      m_name;
+	std::string             m_name;
 	std::vector<block_info> m_blocks;
-	int                              m_rand_weight;
-	int                              m_blocks_count;
+	int                     m_rand_weight;
 
 	int get_random_block();
 

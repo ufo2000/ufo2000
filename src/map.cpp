@@ -1560,28 +1560,31 @@ bool Map::Read(persist::Engine &archive)
 
 #undef map
 
+#define MAP_BLOCKS_LIMIT 100
+
 Terrain::Terrain(const char *fileprefix, const char *name, int rand_weight):
-	m_name(name), m_rand_weight(rand_weight), m_blocks_count(0)
+	m_name(name), m_rand_weight(rand_weight)
 {
-	while (true) {
-		assert(m_blocks_count < 100);
+	m_blocks.resize(MAP_BLOCKS_LIMIT);
+	for (int index = 0; index < m_blocks.size(); index++) {
 		char fname[256];
-		sprintf(fname, "maps/%s%02d.map", fileprefix, m_blocks_count);
+		sprintf(fname, "maps/%s%02d.map", fileprefix, index);
 		int fh = OPEN_ORIG(fname, O_RDONLY | O_BINARY);
-		if (fh == -1) break;
+		if (fh == -1)
+		{
+			m_blocks[index].rand_weight = 0;
+			continue;
+		}
 		unsigned char tmp[3];
 		read(fh, &tmp, sizeof(tmp));
-		m_blocks.resize(m_blocks_count + 1);
 		assert(tmp[0] % 10 == 0);
 		assert(tmp[1] % 10 == 0);
-		m_blocks[m_blocks_count].x_size      = tmp[0] / 10;
-		m_blocks[m_blocks_count].y_size      = tmp[1] / 10;
-		m_blocks[m_blocks_count].z_size      = tmp[2];
-		m_blocks[m_blocks_count].rand_weight = 100;
-		m_blocks_count++;
+		m_blocks[index].x_size      = tmp[0] / 10;
+		m_blocks[index].y_size      = tmp[1] / 10;
+		m_blocks[index].z_size      = tmp[2];
+		m_blocks[index].rand_weight = 100;
 		close(fh);
 	}
-	assert(m_blocks_count > 0);
 }
 
 Terrain::~Terrain()
@@ -1592,12 +1595,14 @@ int Terrain::get_random_block()
 {
 	int randmax = 0, i;
 
-	for (i = 0; i < m_blocks_count; i++)
+	for (i = 0; i < m_blocks.size(); i++)
 		randmax += m_blocks[i].rand_weight;
+
+	assert(randmax > 0);
 
     int randval = rand() % randmax;
 
-	for (i = 0; i < m_blocks_count; i++) {
+	for (i = 0; i < m_blocks.size(); i++) {
 		randval -= m_blocks[i].rand_weight;
 		if (randval < 0) return i;
 	}
