@@ -1136,7 +1136,7 @@ void endgame_stats()
 	StatEntry *temp;
 	Platoon *ptemp;
 
-	if ((net->gametype == GAME_TYPE_HOTSEAT) && (turn % 2 != 0))
+	if ((net->gametype == GAME_TYPE_HOTSEAT) && !(turn % 2)) //turn % 2 != 0 - wrong
 	{
 		ptemp = platoon_remote;
 		platoon_remote = platoon_local; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1163,7 +1163,7 @@ void endgame_stats()
 
 	StatEntry *devastating = platoon_local->get_stats()->get_most_inflicted();
 	temp = platoon_remote->get_stats()->get_most_inflicted();
-	if (temp->get_inflicted() > mvp->get_inflicted())
+	if (temp->get_inflicted() > devastating->get_inflicted()) //why mvp?
 	{
 		devastating_remote = 1;
 		devastating = temp;
@@ -1171,13 +1171,20 @@ void endgame_stats()
 
 	StatEntry *coward = platoon_local->get_stats()->get_least_inflicted();
 	temp = platoon_remote->get_stats()->get_least_inflicted();
-	if (temp->get_inflicted() < mvp->get_inflicted())
+	if (temp->get_inflicted() < coward->get_inflicted()) //why mvp?
 	{
-		coward_remote = 0;
+		coward_remote = 1; //why 0?
 		coward = temp;
 	}
+	else 
+		if(temp->get_inflicted() == coward->get_inflicted())
+		{
+			// (turn%2!=0) means p1 wins and now p1=platon_local. lets make loser most coward
+			coward_remote = (turn%2)?1:0;
+			coward = (turn%2)?temp:coward;
+		}
 
-	if ((net->gametype == GAME_TYPE_HOTSEAT) && (turn % 2 != 0))
+	if ((net->gametype == GAME_TYPE_HOTSEAT) && !(turn % 2))
 	{
 		ptemp = platoon_remote;
 		platoon_remote = platoon_local; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1968,7 +1975,7 @@ void test1()
     while (!DONE) { 
         if (keypressed()) {
             int scancode;
-            int keycode = ureadkey(&scancode);
+            ureadkey(&scancode);
 
             switch (scancode) {
                 case KEY_ESC:
@@ -1984,8 +1991,6 @@ void test1()
                     } else {
                         color_chart2(); test=0;
                     } 
-                    //textprintf(screen, font, 1, 32*12, COLOR_WHITE, 
-                    //    "scancode: %d, keycode: %d", scancode,keycode ); 
             }
         }
     }
