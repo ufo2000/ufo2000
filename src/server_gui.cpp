@@ -539,8 +539,8 @@ int connect_internet_server()
 					case USER_STATUS_READY:
 					case USER_STATUS_CHALLENGE_IN:
 					case USER_STATUS_CHALLENGE_OUT:
-						if (mouse_leftr) server->challenge(name);
-						if (mouse_rightr) server->decline_challenge(name);
+						if (mouse_b & 1) server->challenge(name); 
+						else if (mouse_b & 2) server->decline_challenge(name);
 						break;
 					default:
 						soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
