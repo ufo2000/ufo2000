@@ -50,7 +50,9 @@ SPK::~SPK()
 void SPK::load(const char *fname)
 {
 	std::string fullname = F(fname);
-	assert(exists(fullname.c_str()));
+	if (!exists(fullname.c_str())) {
+		fullname = F("$(ufo2000)/arts/empty.spk");
+	}
 	m_datlen = file_size(fullname.c_str());
 	if (m_dat != NULL) delete [] m_dat;
 	m_dat = new unsigned char[m_datlen];

@@ -60,7 +60,9 @@ pkg_postinst() {
 	echo
 	einfo "UFO2000 will use data files from these demos. But they only allow"
 	einfo "you to use a limited set of terrain types and unit skins in game."
-	einfo "If you have a full version of 'XCOM: UFO Defense', you can get"
-	einfo "more features by copying all the files from installed XCOM to"
+	einfo "If you have full versions of 'XCOM: UFO Defense' or 'XCOM: Terror From"
+	einfo "the Deep', you can get more features in UFO2000 by copying all the"
+	einfo "files from the directories where you have these games installed to"
 	einfo "   ${GAMES_DATADIR}/${PN}/XCOM"
+	einfo "   ${GAMES_DATADIR}/${PN}/TFTD"
 }
