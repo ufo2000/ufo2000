@@ -31,12 +31,14 @@ protected:
 
 	static char m_fname[0x100];
 
-	BITMAP *pckdat2bmp(const unsigned char *data, int size);
+	BITMAP *pckdat2bmp(const unsigned char *data, int size, int tftd_flag);
+
+	bool m_tftd_flag;
 
 public:
 	int m_imgnum;
 
-	PCK(const char *pckfname);
+	PCK(const char *pckfname, int tftd_flag = 0);
 	~PCK();
 
 	int loadpck(const char *pckfname);

@@ -23,6 +23,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "pck.h"
 
+#pragma pack(1)
+
 struct MCD
 {
 //!	Each frame is an index into the ____.TAB file; it rotates between the frames constantly.
@@ -104,7 +106,13 @@ struct MCD
 	unsigned char Target_Type;
 	unsigned char u61;
 	unsigned char u62;
+
+//	End of X-COM data, ufo2000 specific data comes next
+
+	int pck_base;
 };
+
+#pragma pack()
 
 class TerraPCK : public PCK
 {
@@ -117,16 +125,16 @@ private:
 	void loadmcd(int start, int size);
 	void create_blackbmp(int start, int size);
 
-	int m_mcdstart[10];
-	int m_mcdnum;
 public:
 	std::vector<MCD> m_mcd;
 	MCD empty;
 
-	TerraPCK(const char *pckfname);
+	int is_tftd() { return m_tftd_flag; }
+
+	TerraPCK(const char *pckfname, int tftd_flag);
 	~TerraPCK();
 
-	void add(const char *pckfname);
+	void add(const char *pckfname, int tftd_flag);
 	void showblackpck(int num, int xx, int yy);
 
 	int mcdstart(int mcd_num);

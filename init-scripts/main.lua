@@ -129,6 +129,9 @@ local function AddXcomMap(ti, map_filename)
 	return nil
 end
 
+tftd_palette = 1
+xcom_palette = 0
+
 -- adds new terrain
 function AddXcomTerrain(terrain)
 	if TerrainTable[terrain.Index] then
@@ -137,12 +140,13 @@ function AddXcomTerrain(terrain)
 		return nil
 	end
 
-	local tmp = {}
-	tmp.Index = terrain.Index
-	tmp.Name  = terrain.Name
-	tmp.Tiles = {}
-	tmp.Maps  = {}
-	tmp.Crc32 = UpdateCrc32(0, tmp.Name)
+	local tmp    = {}
+	tmp.Index    = terrain.Index
+	tmp.Name     = terrain.Name
+	tmp.Tiles    = {}
+	tmp.Palettes = {}
+	tmp.Maps     = {}
+	tmp.Crc32    = UpdateCrc32(0, tmp.Name)
 
 	for k, v in ipairs(terrain.Tiles) do
 		local pck_fname = LocateFile(string.gsub(v, "%.[^%.]*$", ".pck"))
@@ -157,6 +161,11 @@ function AddXcomTerrain(terrain)
 			tmp.Crc32 = UpdateCrc32(tmp.Crc32, mcd_data)
 			tmp.Crc32 = UpdateCrc32(tmp.Crc32, tab_data)
 			tmp.Tiles[k] = pck_fname;
+			if string.find(v, "^%$%(tftd%)") then
+				tmp.Palettes[k] = tftd_palette
+			else
+				tmp.Palettes[k] = xcom_palette
+			end
 		else
 			Warning("AddXcomTerrain: '%s' terrain - FAILED (can't locate '%s', '%s' or '%s')",
 				terrain.Name, pck_fname, mcd_fname, tab_fname) 

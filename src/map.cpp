@@ -36,9 +36,11 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 unsigned short *Map::m_loftemp = NULL;
 int Map::m_loftemp_num = 0;
-char *Map::m_scang = NULL;
+char *Map::m_scang_xcom = NULL;
+char *Map::m_scang_tftd = NULL;
 SPK *Map::scanbord = NULL;
 PCK *Map::smoke = NULL, *Map::cursor = NULL, *Map::floorob = NULL;
+int Map::m_animation_cycle = 0;
 
 //			  dirs		0  1  2  3  4  5  6  7
 int Map::dir2ofs[8] = {1, 1, 0, -1, -1, -1, 0, 1};
@@ -66,19 +68,34 @@ void load_terrain_pck(int tid, TerraPCK *&terrain_pck)
 	lua_pushstring(L, "Tiles");
 	lua_gettable(L, -2);
 	assert(lua_istable(L, -1));
+	int tiles_table = lua_gettop(L);
+    // Enter 'Palettes' table
+	lua_pushstring(L, "Palettes");
+	lua_gettable(L, -3);
+	assert(lua_istable(L, -1));
+	int palettes_table = lua_gettop(L);
 
     // Load all tiles from 'Tiles' table
 	int index = 1;
 	while (1) {
-		lua_pushnumber(L, index++);
-		lua_gettable(L, -2);
+		lua_pushnumber(L, index);
+		lua_gettable(L, tiles_table);
 		if (!lua_isstring(L, -1)) break;
 		const char *pckname = lua_tostring(L, -1);
+
+		lua_pushnumber(L, index);
+		lua_gettable(L, palettes_table);
+		assert(lua_isnumber(L, -1));
+		int tftd_flag = (int)lua_tonumber(L, -1);
+
 		if (terrain_pck == NULL)
-			terrain_pck = new TerraPCK(pckname);
+			terrain_pck = new TerraPCK(pckname, tftd_flag);
 		else
-			terrain_pck->add(pckname);
-		lua_pop(L, 1);
+			terrain_pck->add(pckname, tftd_flag);
+
+		lua_pop(L, 2);
+
+		index++;
 	}
 
 	lua_settop(L, stack_top);
@@ -94,8 +111,15 @@ void Map::initpck()
 	int fh = open(F("$(xcom)/geodata/scang.dat"), O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	int fl = filelength(fh);
-	m_scang = new char[fl];
-	read(fh, m_scang, fl);
+	m_scang_xcom = new char[fl];
+	read(fh, m_scang_xcom, fl);
+	close(fh);
+
+	fh = open(F("$(tftd)/geodata/scang.dat"), O_RDONLY | O_BINARY);
+	assert(fh != -1);
+	fl = filelength(fh);
+	m_scang_tftd = new char[fl];
+	read(fh, m_scang_tftd, fl);
 	close(fh);
 
 	fh = open(F("$(xcom)/geodata/loftemps.dat"), O_RDONLY | O_BINARY);
@@ -114,7 +138,8 @@ void Map::freepck()
 	delete scanbord;
 	delete smoke;
 
-	delete [] m_scang;
+	delete [] m_scang_xcom;
+	delete [] m_scang_tftd;
 	delete [] m_loftemp;
 }
 
@@ -266,8 +291,14 @@ void Map::drawitem(int itype, int gx, int gy)
 void Map::draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type, int _seen)
 {
 	int i = m_cell[_lev][_col][_row]->type[_type];
-	assert(m_terrain->mcdstart(i) >= 0);
-	int frame = m_terrain->m_mcd[i].Frame[0]; // + m_terrain->mcdstart(i);
+	assert(i < (int)m_terrain->m_mcd.size());
+
+	int frame;
+	
+	if (!m_terrain->m_mcd[i].UFO_Door)
+		frame = m_terrain->m_mcd[i].pck_base + m_terrain->m_mcd[i].Frame[m_animation_cycle];
+	else
+		frame = m_terrain->m_mcd[i].pck_base + m_terrain->m_mcd[i].Frame[7];
 
 	_y -= m_terrain->m_mcd[i].P_Level;
 
@@ -281,9 +312,12 @@ void Map::draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type,
 	}
 }
 
+extern volatile unsigned int ANIMATION;
 
 void Map::draw()
 {
+	m_animation_cycle = (ANIMATION / 3) % 8;
+
 	int sx, sy;
 	int mtype = 0;
 
@@ -483,6 +517,9 @@ void Map::draw2d()
 	int cx = SCREEN2W / 2;
 	int cy = SCREEN2H / 2;
 
+	int tftd_flag = m_terrain->is_tftd();
+	char *scang = tftd_flag ? m_scang_tftd : m_scang_xcom;
+
 	set_sel(cx, cy);
 
 	int r1 = sel_row - 18; if (r1 < 0) r1 = 0;
@@ -503,9 +540,8 @@ void Map::draw2d()
 							mt += 35;
 
 							for (int i = 0; i < 16; i++)
-								if (m_scang[mt * 16 + i])
-									//putpixel(screen2, X+col*4+(3-i/4), Y+row*4+i%4, m_scang[mt*16+i]);
-									scang4x4[i] = m_scang[mt * 16 + i];
+								if (scang[mt * 16 + i])
+									scang4x4[i] = scang[mt * 16 + i];
 						}
 					}
 
@@ -513,7 +549,8 @@ void Map::draw2d()
 						if (scang4x4[i])
 							putpixel(screen2,
 							         cx + ( -sel_col + col) * 4 + (3 - i / 4),
-							         cy + ( -sel_row + row) * 4 + i % 4, scang4x4[i]);
+							         cy + ( -sel_row + row) * 4 + i % 4, 
+							         tftd_flag ? tftd_color(scang4x4[i]) : xcom_color(scang4x4[i]));
 
 					if (man(lev, col, row) != NULL) {
 						if (platoon_local->belong(man(lev, col, row)))
@@ -530,7 +567,7 @@ void Map::draw2d()
 			}
 
 	scanbord->show(screen2, cx - 160 + 4, cy - 100 + 12);
-	text_mode( -1);
+	text_mode(-1);
 	textprintf(screen2, large, cx - 160 + 281 + 4, cy - 100 + 74 + 12, xcom1_color(66), "%d", sel_lev);
 }
 
@@ -539,6 +576,9 @@ BITMAP *Map::create_bitmap_of_map()
 {
 	char scang4x4[16];
 	BITMAP *bmp = create_bitmap(width * 10 * 4, height * 10 * 4);
+
+	int tftd_flag = m_terrain->is_tftd();
+	char *scang = tftd_flag ? m_scang_tftd : m_scang_xcom;
 
 	for (int lev = 0; lev <= sel_lev; lev++) {
 		for (int row = 0; row < height*10; row++) {
@@ -549,14 +589,15 @@ BITMAP *Map::create_bitmap_of_map()
 					if (mt > 0) {
 						mt += 35;
 						for (int i = 0; i < 16; i++)
-							if (m_scang[mt * 16 + i])
-								scang4x4[i] = m_scang[mt * 16 + i];
+							if (scang[mt * 16 + i])
+								scang4x4[i] = scang[mt * 16 + i];
 					}
 				}
 
 				for (int i = 0; i < 16; i++)
 					if (scang4x4[i])
-						putpixel(bmp, col * 4 + (3 - i / 4), row * 4 + i % 4, xcom1_color(scang4x4[i]));
+						putpixel(bmp, col * 4 + (3 - i / 4), row * 4 + i % 4, 
+							m_terrain->is_tftd() ? tftd_color(scang4x4[i]) : xcom_color(scang4x4[i]));
 			}
 		}
 	}
@@ -952,28 +993,21 @@ int Map::open_door(int z, int x, int y, int dir)
 			break;
 	}
 	if (door > 0) {
-		//m_cell[doorz][doorx][doory].type[door] = 0;
 
 		int ct = cell(doorz, doorx, doory)->type[door];
 		int mcd = m_terrain->m_mcd[ct].Alt_MCD;
+		assert(mcd < (int)m_terrain->m_mcd.size());
 
-		if (mcd > 0) {
-			int ms = m_terrain->mcdstart(ct);
-			if (ms != -1) {
-				mcd = mcd + ms;
-
-				m_cell[doorz][doorx][doory]->type[door] = 0;
-				if (door == 2) {
-					m_cell[doorz][doorx][doory + 1]->type[1] = mcd;
-					rebuild_visi(doorz, doorx, doory + 1);
-				} else {
-					m_cell[doorz][doorx][doory - 1]->type[2] = mcd;
-					rebuild_visi(doorz, doorx, doory - 1);
-				}
-			}
-
-			rebuild_visi(doorz, doorx, doory);
+		m_cell[doorz][doorx][doory]->type[door] = 0;
+		if (door == 2) {
+			m_cell[doorz][doorx][doory + 1]->type[1] = mcd;
+			rebuild_visi(doorz, doorx, doory + 1);
+		} else {
+			m_cell[doorz][doorx][doory - 1]->type[2] = mcd;
+			rebuild_visi(doorz, doorx, doory - 1);
 		}
+
+		rebuild_visi(doorz, doorx, doory);
 
 		return 1;
 	}
@@ -1145,22 +1179,14 @@ void Map::destroy_cell_part(int lev, int col, int row, int _part)
 	int ct = m_cell[lev][col][row]->type[_part];
 	if (ct > 0) {
 		int mcd = m_terrain->m_mcd[ct].Die_MCD;
+		assert(mcd < (int)m_terrain->m_mcd.size());
 
-		if (mcd > 0) {
-			if ((_part == 0) && (lev > 0)) {
-				m_cell[lev][col][row]->type[_part] = 0;
-				return ;
-			}
-
-
-			int ms = m_terrain->mcdstart(ct);
-			if (ms != -1) {
-				mcd = mcd + ms;
-				m_cell[lev][col][row]->type[_part] = mcd;
-			} else
-				m_cell[lev][col][row]->type[_part] = 0;
-		} else
+		if ((_part == 0) && (lev > 0)) {
 			m_cell[lev][col][row]->type[_part] = 0;
+			return ;
+		}
+
+		m_cell[lev][col][row]->type[_part] = mcd;
 
 		rebuild_visi(lev, col, row);
 	}

@@ -81,7 +81,8 @@ Platoon *platoon_local, *platoon_remote;
 Soldier *sel_man = NULL;
 Explosive *elist;
 
-volatile int CHANGE=1;
+volatile unsigned int ANIMATION = 0;
+volatile int CHANGE = 1;
 volatile int MOVEIT = 0;
 volatile int FLYIT = 0;
 volatile int NOTICE = 1;
@@ -97,6 +98,7 @@ END_OF_FUNCTION(mouser_proc);
 
 void timer_handler()
 {
+	ANIMATION++;
 	MOVEIT++;
 }
 END_OF_FUNCTION(timer_handler);
@@ -540,7 +542,7 @@ void initmain(int argc, char *argv[])
 	initvideo();
 
 	LOCK_VARIABLE(CHANGE); LOCK_FUNCTION(mouser_proc);
-	LOCK_VARIABLE(MOVEIT); LOCK_FUNCTION(timer_handler);
+	LOCK_VARIABLE(MOVEIT); LOCK_VARIABLE(ANIMATION); LOCK_FUNCTION(timer_handler);
 	LOCK_VARIABLE(FLYIT); LOCK_FUNCTION(timer_handler2);
 	LOCK_VARIABLE(NOTICE); LOCK_VARIABLE(g_time_left); LOCK_FUNCTION(timer_1s);
 	LOCK_VARIABLE(MAPSCROLL); LOCK_FUNCTION(timer_handler4);

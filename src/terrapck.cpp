@@ -30,10 +30,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 unsigned char TerraPCK::m_tbb[0xFFFF];
 unsigned short TerraPCK::m_tbs[0xFFF];
 
-TerraPCK::TerraPCK(const char *pckfname) : PCK(pckfname)
+TerraPCK::TerraPCK(const char *pckfname, int tftd_flag) : PCK(pckfname, tftd_flag)
 {
-	m_mcdnum = 0;
-	m_mcdstart[m_mcdnum] = 0;
 	assert(m_imgnum > 0);
 	create_blackbmp(0, m_imgnum);
 	strcpy(m_fname, pckfname);
@@ -51,29 +49,30 @@ TerraPCK::~TerraPCK()
 	}
 }
 
-void TerraPCK::add(const char *pckfname)
+void TerraPCK::add(const char *pckfname, int tftd_flag)
 {
 	strcpy(m_fname, pckfname);
 
 	int fh = open(F(m_fname), O_RDONLY | O_BINARY);
 	assert(fh != -1);
-	int newlen = read(fh, m_tbb, 0xFFFF);
+	int fsize = filelength(fh);
+	assert(fsize < 0xFFFF);
+	int newlen = read(fh, m_tbb, fsize);
 	assert(newlen > 0);
 	close(fh);
 
 	strcpy(strrchr(m_fname, '.') + 1, "tab");
 	fh = open(F(m_fname), O_RDONLY | O_BINARY);
 	assert(fh != -1);
-	int newnum = read(fh, (char *)m_tbs, 0xFFF) >> 1;
+	fsize = filelength(fh);
+	assert(fsize < 0xFFF);
+	int newnum = read(fh, (char *)m_tbs, fsize) >> 1;
 	assert(newnum > 0);
 	close(fh);
 	m_tbs[newnum] = newlen;
-#ifdef DEBUG
-	cprintf(" newlen = %d newnum = %d", newlen, newnum);
-#endif
 	m_bmp.resize(m_imgnum + newnum);
 	for (int num = 0; num < newnum; num++)
-		m_bmp[m_imgnum + num] = pckdat2bmp(&m_tbb[m_tbs[num]], m_tbs[num + 1] - m_tbs[num]);
+		m_bmp[m_imgnum + num] = pckdat2bmp(&m_tbb[m_tbs[num]], m_tbs[num + 1] - m_tbs[num], tftd_flag);
 
 	create_blackbmp(m_imgnum, newnum);
 	loadmcd(m_imgnum, newnum);
@@ -87,17 +86,17 @@ void TerraPCK::loadmcd(int pck_base, int size)
 	assert(fh != -1);
 	long fsize = filelength(fh);
 	assert(fsize % 62 == 0);
-	long oldcount = m_mcdstart[m_mcdnum];
+	long oldcount = m_mcd.size();
 	long newcount = fsize / 62;
 	m_mcd.resize(oldcount + newcount);
 	for (int i = 0; i < newcount; i++) {
 		read(fh, &m_mcd[oldcount + i], 62);
-		for (int j = 0; j < 8; j++)
-			m_mcd[oldcount + i].Frame[j] += pck_base;
+		assert(offsetof(MCD, pck_base) == 62);
+		m_mcd[oldcount + i].Alt_MCD += oldcount;
+		m_mcd[oldcount + i].Die_MCD += oldcount;
+		m_mcd[oldcount + i].pck_base = pck_base;
 	}
 	close(fh);
-	m_mcdnum++;
-	m_mcdstart[m_mcdnum] = oldcount + newcount;
 }
 
 void TerraPCK::create_blackbmp(int start, int size)
@@ -115,12 +114,4 @@ void TerraPCK::create_blackbmp(int start, int size)
 void TerraPCK::showblackpck(int num, int xx, int yy)
 {
 	draw_sprite(screen2, m_blackbmp[num], xx, yy - 6);
-}
-
-int TerraPCK::mcdstart(int mcd_num)
-{
-	for (int i = 0; i < m_mcdnum; i++)
-		if (mcd_num < m_mcdstart[i + 1])
-			return m_mcdstart[i];
-	return -1;
 }

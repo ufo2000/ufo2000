@@ -200,7 +200,34 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 100, Name = "Atlantis",
+	Index = 100, Name = "Seabed",
+	Tiles =	{
+		"$(tftd)/terrain/blanks.*",
+		"$(tftd)/terrain/sand.*",
+		"$(tftd)/terrain/rocks.*",
+		"$(tftd)/terrain/weeds.*",
+		"$(tftd)/terrain/debris.*",
+		"$(tftd)/terrain/ufobits.*"
+	},
+	Maps = {
+		"$(tftd)/maps/seabed00.map",
+		"$(tftd)/maps/seabed01.map",
+		"$(tftd)/maps/seabed02.map",
+		"$(tftd)/maps/seabed03.map",
+		"$(tftd)/maps/seabed04.map",
+		"$(tftd)/maps/seabed05.map",
+		"$(tftd)/maps/seabed06.map",
+		"$(tftd)/maps/seabed07.map",
+		"$(tftd)/maps/seabed08.map",
+		"$(tftd)/maps/seabed09.map",
+		"$(tftd)/maps/seabed10.map",
+		"$(tftd)/maps/seabed11.map",
+		"$(tftd)/maps/seabed12.map"
+	}
+}
+
+AddXcomTerrain {
+	Index = 103, Name = "Atlantis",
 	Tiles =	{
 		"$(tftd)/terrain/blanks.*",
 		"$(tftd)/terrain/sand.*",
@@ -221,5 +248,38 @@ AddXcomTerrain {
 		"$(tftd)/maps/atlan10.map",
 		"$(tftd)/maps/atlan11.map",
 		"$(tftd)/maps/atlan12.map"
+	}
+}
+
+AddXcomTerrain {
+	Index = 112, Name = "Port",
+	Tiles =	{
+		"$(tftd)/terrain/blanks.*",
+		"$(tftd)/terrain/sea.*",
+		"$(tftd)/terrain/port01.*",
+		"$(tftd)/terrain/port02.*"
+	},
+	Maps = {
+		"$(tftd)/maps/port00.map",
+		"$(tftd)/maps/port01.map",
+		"$(tftd)/maps/port02.map",
+		"$(tftd)/maps/port03.map",
+		"$(tftd)/maps/port04.map",
+		"$(tftd)/maps/port05.map",
+		"$(tftd)/maps/port06.map",
+		"$(tftd)/maps/port07.map",
+		"$(tftd)/maps/port08.map",
+		"$(tftd)/maps/port09.map",
+		"$(tftd)/maps/port10.map",
+		"$(tftd)/maps/port11.map",
+		"$(tftd)/maps/port12.map",
+		"$(tftd)/maps/port13.map",
+		"$(tftd)/maps/port14.map",
+		"$(tftd)/maps/port15.map",
+		"$(tftd)/maps/port16.map",
+		"$(tftd)/maps/port17.map",
+		"$(tftd)/maps/port18.map",
+		"$(tftd)/maps/port19.map",
+		"$(tftd)/maps/port20.map"
 	}
 }

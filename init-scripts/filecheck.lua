@@ -20,7 +20,7 @@ local function X(a) return tonumber(a, 16) end
 ------------------------------------------------------------------------------
 
 FilesTable = {
-	["$(ufo2000)/ufo2000.dat"]        = { Crc32 = X("0x8EA4C104") },
+	["$(ufo2000)/ufo2000.dat"]        = { Crc32 = X("0x8536FF43") },
 	["$(ufo2000)/keyboard.dat"]       = { Crc32 = X("0xC796755E") },
 	["$(ufo2000)/soundmap.xml"]       = { Crc32 = X("0x00000000") },
 

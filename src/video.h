@@ -45,6 +45,9 @@ void initpal(char *fname);
 extern int (*xcom1_color)(int c);
 extern int (*xcom1_menu_color)(int c);
 extern int (*xcom1_darken_color)(int c, int level);
+int tftd_color(int c);
+
+#define xcom_color(c) xcom1_color(c)
 
 inline void spr_set(BITMAP *dest, int ofs, char val)
 {

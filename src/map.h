@@ -70,7 +70,8 @@ class Map: public persist::BaseObject
 private: 
 	static PCK *cursor;
 	static SPK *scanbord;
-	static char *m_scang;
+	static char *m_scang_xcom;
+	static char *m_scang_tftd;
 	static unsigned short *m_loftemp;
 	static int m_loftemp_num;
 
@@ -82,6 +83,8 @@ private:
 
 	Cell ****m_cell;
 	TerraPCK *m_terrain;
+
+	static int m_animation_cycle;
 
 public:
 	MinimapArea *m_minimap_area;

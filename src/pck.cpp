@@ -30,8 +30,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 char PCK::m_fname[0x100];
 
-PCK::PCK(const char *pckfname)
+PCK::PCK(const char *pckfname, int tftd_flag)
 {
+	m_tftd_flag = tftd_flag;
 	m_imgnum = 0;
 	loadpck(pckfname);
 }
@@ -67,7 +68,7 @@ int PCK::add_image(BITMAP *bmp)
  * @param size size of frame data
  * @return     bitmap with a frame image
  */
-BITMAP *PCK::pckdat2bmp(const unsigned char *data, int size)
+BITMAP *PCK::pckdat2bmp(const unsigned char *data, int size, int tftd_flag)
 {
 	BITMAP *bmp = create_bitmap(32, 48);
 	clear_to_color(bmp, xcom1_color(0));
@@ -83,7 +84,8 @@ BITMAP *PCK::pckdat2bmp(const unsigned char *data, int size)
 			case 0x00: 
 				ofs++; break;
 			default:
-				putpixel(bmp, ofs % 32, ofs / 32, xcom1_color(data[j]));
+				putpixel(bmp, ofs % 32, ofs / 32, 
+					tftd_flag ? tftd_color(data[j]) : xcom1_color(data[j]));
 				ofs++;
 				break;
 		}
@@ -115,7 +117,7 @@ int PCK::loadpck(const char *pckfname)
     //	Just a single frame from .pck file
 		m_imgnum = 1;
 		m_bmp.resize(m_imgnum);
-		m_bmp[0] = pckdat2bmp(pck, pcksize);
+		m_bmp[0] = pckdat2bmp(pck, pcksize, m_tftd_flag);
 		delete [] pck;
 		return 1;
 	} 
@@ -132,7 +134,7 @@ int PCK::loadpck(const char *pckfname)
 		tab[m_imgnum] = pcksize;
 		m_bmp.resize(m_imgnum);
 		for (int i = 0; i < m_imgnum; i++)
-			m_bmp[i] = pckdat2bmp(&pck[tab[i]], tab[i + 1] - tab[i]);
+			m_bmp[i] = pckdat2bmp(&pck[tab[i]], tab[i + 1] - tab[i], 1);
 	} else {
     //	16-bit records in .tab file (UFO1)
 		unsigned short *tab = (unsigned short *)tabdata;
@@ -140,7 +142,7 @@ int PCK::loadpck(const char *pckfname)
 		tab[m_imgnum] = pcksize;
 		m_bmp.resize(m_imgnum);
 		for (int i = 0; i < m_imgnum; i++)
-			m_bmp[i] = pckdat2bmp(&pck[tab[i]], tab[i + 1] - tab[i]);
+			m_bmp[i] = pckdat2bmp(&pck[tab[i]], tab[i + 1] - tab[i], 0);
 	}
 
 	delete [] pck;
@@ -151,12 +153,17 @@ int PCK::loadpck(const char *pckfname)
 
 void PCK::showpck(int num, int xx, int yy)
 {
-	assert(num < m_imgnum);
+	if (num >= m_imgnum) {
+		return;
+	}
 	draw_sprite(screen2, m_bmp[num], xx, yy - 6);
 }
 
 void PCK::showpck(int num)
 {
+	if (num >= m_imgnum) {
+		return;
+	}
 	assert(num < m_imgnum);
 	showpck(num, 0, 0);
 }

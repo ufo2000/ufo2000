@@ -112,8 +112,8 @@ void Soldier::initpck()
 	m_spk[2][0][0] = new SPK("$(xcom)/ufograph/man_2.spk");
 	m_spk[3][0][0] = new SPK("$(xcom)/ufograph/man_3.spk");
 
-	m_spk[4][0][0] = new SPK("$(ufo2000)/ufo2000.dat#SECTOID_SPK");
-	m_spk[5][0][0] = new SPK("$(ufo2000)/ufo2000.dat#MUTON_SPK");
+	m_spk[4][0][0] = new SPK("$(ufo2000)/newunits/sectoid.spk");
+	m_spk[5][0][0] = new SPK("$(ufo2000)/newunits/muton.spk");
 
 	SPK *unibord = new SPK("$(xcom)/ufograph/unibord.pck");
 	m_unibord = create_bitmap(320, 200); clear_to_color(m_unibord, xcom1_color(15));
