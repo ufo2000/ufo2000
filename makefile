@@ -120,13 +120,13 @@ LIBS = -lexpat
 
 ifdef ttf
 ifdef win32
-	LIBS += -lft
+	LIBS += -lfreetype
 else
 	CFLAGS += ${shell freetype-config --cflags}
 	LIBS += ${shell freetype-config --libs}
-	SRCS += ji_font.c
 endif
 	CFLAGS += -DHAVE_FREETYPE
+	SRCS += ji_font.c
 endif
 
 ifdef dumbogg
@@ -190,7 +190,7 @@ $(OBJDIR)/%.o: %.c
 	$(CC) -MMD $(CFLAGS) -c $< -o $@
 
 $(NAME): $(OBJS)
-	$(CX) $(CFLAGS) -o $@ $^ $(LIBS) $(SUBSYSTEM) -Wl,-Map -Wl,ufo2000.map
+	$(CX) $(CFLAGS) -o $@ $^ $(LIBS) $(SUBSYSTEM)
 
 $(SERVER_NAME): $(OBJS_SERVER)
 	$(CX) $(CFLAGS) -o $@ $^ $(SERVER_LIBS)
@@ -263,11 +263,6 @@ win32-beta-installer: all server
 	makensis $(DISTNAME)/ufo2000.nsi
 	cp $(DISTNAME)/$(DISTNAME)-beta.exe $(DISTNAME)-beta.exe
 	svn delete --force $(DISTNAME)
-
-install: all server
-# Copy to game-directory for testing.
-# Note: copy changed ufo2000.dat, lua-scripts, translations etc. by hand !
-	cp ufo2000.exe ufo2000-srv.exe /ufo2000
 
 source-bz2: 
 # create tar.bz2 archive with ufo2000 sources (on *nix systems)

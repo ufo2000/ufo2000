@@ -47,13 +47,13 @@ static int uni_xlate_tab[256] = {
 /* latin (basic latin + some of Latin 1 starts here*/
 
 /* basic latin (ascii) */
-	
+    
         0x0021, 0x0022, 0x0023, 0x0024, 0x0025, 0x0026, 0x0027, 
 0x0028, 0x0029, 0x002A, 0x002B, 0x002C, 0x002D, 0x002E, 0x002F,
-	
+    
 0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 0x0035, 0x0036, 0x0037, 
 0x0038, 0x0039, 0x003A, 0x003B, 0x003C, 0x003D, 0x003E, 0x003F,
-	
+    
 0x0040, 0x0041, 0x0042, 0x0043, 0x0044, 0x0045, 0x0046, 0x0047, 
 0x0048, 0x0049, 0x004A, 0x004B, 0x004C, 0x004D, 0x004E, 0x004F,
 
@@ -61,13 +61,13 @@ static int uni_xlate_tab[256] = {
 0x0058, 0x0059, 0x005A, 0x005B, 0x005C, 0x005D, 0x005E, 0x005F,
 
 0x00A3, /* Pound sign (at the place of grave accent) */ 
-	
-	0x0061, 0x0062, 0x0063, 0x0064, 0x0065, 0x0066, 0x0067, 
+    
+    0x0061, 0x0062, 0x0063, 0x0064, 0x0065, 0x0066, 0x0067, 
 0x0068, 0x0069, 0x006A, 0x006B, 0x006C, 0x006D, 0x006E, 0x006F,
 
 0x0070, 0x0071, 0x0072, 0x0073, 0x0074, 0x0075, 0x0076, 0x0077, 
 0x0078, 0x0079, 0x007A, 0x007B, 0x007C, 0x007D, 0x007E, 
-	
+    
 /* parts of Latin-1 */
 0x00A9, /* Copyright sign */
 0x00C7, /* Latin capital c with cedilla */
@@ -116,7 +116,7 @@ static int uni_xlate_tab[256] = {
 
 0x00E1, /* latin small letter a with acute */
 
-/* cyrillic  begins here. */	
+/* cyrillic  begins here. */    
 
 0x10000, 0x10000, 0x10000, 0x10000, 0x10000, 0x10000, 0x10000, 0x10000, /* 32 unused glyphs - same as first 32 of latin table.*/
 0x10000, 0x10000, 0x10000, 0x10000, 0x10000, 0x10000, 0x10000, 0x10000, 
@@ -198,7 +198,7 @@ static int uni_xlate_tab[256] = {
 0x042D , /* Cyrillic Capital Ee*/
 0x044E , /* Cyrillic Small  Ju*/
 0x042E , /* Cyrillic Capital Ju*/
-	
+    
 
 0x10000, 0x10000, 0x10000, 0x10000, 0x10000, 0x10000, 0x10000, 0x10000, /* 21 unused glyphs. */
 0x10000, 0x10000, 0x10000, 0x10000, 0x10000, 0x10000, 0x10000, 0x10000, 
@@ -237,7 +237,7 @@ and draw nothing if they both fail.
  * for all glyphs and is stored in both uaf_internal_data and FONT structs
  */
 struct uaf_glyph_rect {
-	short y,w;
+    short y,w;
 };
 
 /** Represents a fontcache entry for given texmode and fgcolor.
@@ -245,22 +245,22 @@ struct uaf_glyph_rect {
  * Also the key element - textmode and foreground color values.
  */
 struct uaf_fontcache {
-	BITMAP *U00, *U04;
-	int tmode, fgcol;
+    BITMAP *U00, *U04;
+    int tmode, fgcol;
 };
 
 /** Container for all the lowlevel font data. Holds original font data, 
  * rect pointers, fontcache root and miscellaneous data.
  */
 struct uaf_internal_data {
-	unsigned char  *origU00, *origU04; /* origdata point to copies of loaded original data. */
-	uaf_glyph_rect rectU00[256], rectU04[256];
-	int cachecount;
-	uaf_fontcache *cache;
-	
-	int max_w, max_h;
-	int space_width; /* width of U0020 character. say, 2/3 of maxwidth (16 or 8) */
-	int base_color; /* color to use if blitting with fg color <0. */
+    unsigned char  *origU00, *origU04; /* origdata point to copies of loaded original data. */
+    uaf_glyph_rect rectU00[256], rectU04[256];
+    int cachecount;
+    uaf_fontcache *cache;
+    
+    int max_w, max_h;
+    int space_width; /* width of U0020 character. say, 2/3 of maxwidth (16 or 8) */
+    int base_color; /* color to use if blitting with fg color <0. */
 };
 /*
 static void dump_font_info(AL_CONST FONT *f) {
@@ -287,69 +287,69 @@ static void dump_font_info(AL_CONST FONT *f) {
  * glyph bitmaps - 128. 
  */
 static uaf_fontcache * uaf_make_cacheentry(AL_CONST FONT *f, int tmode, int fgcol) {
-	uaf_internal_data *idat = (uaf_internal_data *) (f->data);
-	uaf_fontcache *newcache;
+    uaf_internal_data *idat = (uaf_internal_data *) (f->data);
+    uaf_fontcache *newcache;
 
-	newcache = (uaf_fontcache *)malloc(sizeof(uaf_fontcache) * (idat->cachecount+1));
+    newcache = (uaf_fontcache *)malloc(sizeof(uaf_fontcache) * (idat->cachecount+1));
         
-	if (idat->cachecount > 0) {
-		memmove(newcache, idat->cache, sizeof(uaf_fontcache) * (idat->cachecount));
+    if (idat->cachecount > 0) {
+        memmove(newcache, idat->cache, sizeof(uaf_fontcache) * (idat->cachecount));
         free(idat->cache);
         idat->cache = newcache;
-		newcache = idat->cache + idat->cachecount;
-	} else {
-		idat->cache = newcache;
-	}
-	idat->cachecount++;
-	newcache->tmode = tmode; 
-	newcache->fgcol = fgcol;
-	
-	int x,y,origval;
-	
-	/* Construct the bitmaps to put into the cache. 
-	   Note that all the dimensions are retained, 
-	   and the same rect-pointers are used for all cache entries. 
-	*/
-	newcache->U00 = create_bitmap(idat->max_w, idat->max_h * 128);
-	newcache->U04 = create_bitmap(idat->max_w, idat->max_h * 128);
-	ASSERT(newcache->U00 != NULL && newcache->U04 != NULL);
-	if (tmode > 0) {
-		clear_to_color(newcache->U00, tmode);
-		clear_to_color(newcache->U04, tmode);
-	} else {
-		clear_to_color(newcache->U00, xcom1_color(0));
-		clear_to_color(newcache->U04, xcom1_color(0));
-	}
+        newcache = idat->cache + idat->cachecount;
+    } else {
+        idat->cache = newcache;
+    }
+    idat->cachecount++;
+    newcache->tmode = tmode; 
+    newcache->fgcol = fgcol;
+    
+    int x,y,origval;
+    
+    /* Construct the bitmaps to put into the cache. 
+       Note that all the dimensions are retained, 
+       and the same rect-pointers are used for all cache entries. 
+    */
+    newcache->U00 = create_bitmap(idat->max_w, idat->max_h * 128);
+    newcache->U04 = create_bitmap(idat->max_w, idat->max_h * 128);
+    ASSERT(newcache->U00 != NULL && newcache->U04 != NULL);
+    if (tmode > 0) {
+        clear_to_color(newcache->U00, tmode);
+        clear_to_color(newcache->U04, tmode);
+    } else {
+        clear_to_color(newcache->U00, xcom1_color(0));
+        clear_to_color(newcache->U04, xcom1_color(0));
+    }
 
-	int font_color_table[6] = {
-		xcom1_darken_color(fgcol, 0),
-		xcom1_darken_color(fgcol, 1),
-		xcom1_darken_color(fgcol, 2),
-		xcom1_darken_color(fgcol, 3),
-		xcom1_darken_color(fgcol, 4),
-		xcom1_darken_color(fgcol, 5),
-	};
+    int font_color_table[6] = {
+        xcom1_darken_color(fgcol, 0),
+        xcom1_darken_color(fgcol, 1),
+        xcom1_darken_color(fgcol, 2),
+        xcom1_darken_color(fgcol, 3),
+        xcom1_darken_color(fgcol, 4),
+        xcom1_darken_color(fgcol, 5),
+    };
 
-	for (y = 0; y < idat->max_h * 128 ; y++) {
-		for (x=0; x<idat->max_w; x++) {
-			origval = *(idat->origU00 + x + y * idat->max_w);
-			if (origval > 0 && origval < 6) {
-				putpixel(newcache->U00, x, y, font_color_table[origval]);
-			}
-			origval = *(idat->origU04 + x + y * idat->max_w);
-			if (origval > 0 && origval < 6) {
-				putpixel(newcache->U04, x, y, font_color_table[origval]);
-			}
-		}
-	}
-	return newcache;
+    for (y = 0; y < idat->max_h * 128 ; y++) {
+        for (x=0; x<idat->max_w; x++) {
+            origval = *(idat->origU00 + x + y * idat->max_w);
+            if (origval > 0 && origval < 6) {
+                putpixel(newcache->U00, x, y, font_color_table[origval]);
+            }
+            origval = *(idat->origU04 + x + y * idat->max_w);
+            if (origval > 0 && origval < 6) {
+                putpixel(newcache->U04, x, y, font_color_table[origval]);
+            }
+        }
+    }
+    return newcache;
 }
 /** Just returns the common glyph height.
  * @param f The 'this' pointer.
  * @return Glyph height.
  */ 
 static int uaf_font_height(AL_CONST FONT *f) {
-	return f->height;
+    return f->height;
 }
 
 /** Finds glyph width for given UTF16 character.
@@ -360,40 +360,40 @@ static int uaf_font_height(AL_CONST FONT *f) {
  * It is assumed to be in UTF16 encoding. If it is not found, return 0.
  */
 static int uaf_char_length(AL_CONST FONT *f, int ch) {
-	uaf_internal_data *idat = (uaf_internal_data *) (f->data);
+    uaf_internal_data *idat = (uaf_internal_data *) (f->data);
 
-	if (ch == 0x0020) { // special space case.
-		return idat->space_width;
-	}
-	
-	switch (ch >> 8) {
-		case 0: /* basic latin & latin-1 */
-			if ( idat->rectU00[ch & 0xFF].w > 0 ) {
-				return idat->rectU00[ch & 0xFF].w;
-			} else {
-				if ( ch != allegro_404_char) {
-					return f->vtable->char_length(f,allegro_404_char);
-				} else {
-					return 0;
-				}
-			}
-		case 4: /* cyrillic */
-			if ( idat->rectU04[ch & 0xFF].w > 0 ) {
-				return idat->rectU04[ch & 0xFF].w;
-			} else {
-				if ( ch != allegro_404_char) {
-					return f->vtable->char_length(f,allegro_404_char);
-				} else {
-					return 0;
-				}
-			}
-		default: /* unicode section not implemented. */
-			if (ch != allegro_404_char) {
-				return idat->rectU00[allegro_404_char].w;
-			} else {
-				return 0;
-			}
-	}
+    if (ch == 0x0020) { // special space case.
+        return idat->space_width;
+    }
+    
+    switch (ch >> 8) {
+        case 0: /* basic latin & latin-1 */
+            if ( idat->rectU00[ch & 0xFF].w > 0 ) {
+                return idat->rectU00[ch & 0xFF].w;
+            } else {
+                if ( ch != allegro_404_char) {
+                    return f->vtable->char_length(f,allegro_404_char);
+                } else {
+                    return 0;
+                }
+            }
+        case 4: /* cyrillic */
+            if ( idat->rectU04[ch & 0xFF].w > 0 ) {
+                return idat->rectU04[ch & 0xFF].w;
+            } else {
+                if ( ch != allegro_404_char) {
+                    return f->vtable->char_length(f,allegro_404_char);
+                } else {
+                    return 0;
+                }
+            }
+        default: /* unicode section not implemented. */
+            if (ch != allegro_404_char) {
+                return idat->rectU00[allegro_404_char].w;
+            } else {
+                return 0;
+            }
+    }
 }
 
 /** Calculates a string width in pixels using char_length routine. 
@@ -412,7 +412,7 @@ static int uaf_text_length(AL_CONST FONT *f, AL_CONST char *text) {
         w += f->vtable->char_length(f, ch);
     }
    
-    return w;	
+    return w;   
 }
 
 /** Renders a glyph corresponding to given char at given position in given bitmap.
@@ -427,87 +427,87 @@ static int uaf_text_length(AL_CONST FONT *f, AL_CONST char *text) {
  * @return Glyph width in pixels.
  */
 static int uaf_render_char(AL_CONST FONT *f, int ch, int fg, int bg, BITMAP *bmp, int x, int y) {
-	uaf_fontcache *thecache = NULL;
-	uaf_internal_data *idat = (uaf_internal_data *) (f->data);
-	int i, gotcache = 0, srcy, srcw, srch;
-	BITMAP *srcbmp;
-	
+    uaf_fontcache *thecache = NULL;
+    uaf_internal_data *idat = (uaf_internal_data *) (f->data);
+    int i, gotcache = 0, srcy, srcw, srch;
+    BITMAP *srcbmp;
+    
     /* dump_font_info(f); */
     
-	if (ch == 0x0020) { /* skip space. */
-		return idat->space_width;
-	}
-	
-	if (fg < 0) {
-		fg = idat->base_color;
-	}
-	
-	if ( idat->cachecount != 0 )  {
-		/* try to find matching cache entry. */
-		for (i=0; i<idat->cachecount; i++) {
-			thecache = idat->cache + i;
-			if ( (thecache->tmode == bg) && (thecache->fgcol == fg) ) {
-				gotcache = 1;
-				break;
-			}
-		}
-	}
-	
-	/* cache miss: create */
-	if ((!gotcache) || idat->cachecount == 0 ) {
-		thecache = uaf_make_cacheentry(f, bg, fg);
-	}
-	
-	srch = f->height;
-	
-	switch (ch >> 8) {
-		case 0: /* basic latin & latin-1 */
-			if (idat->rectU00[ch & 0xFF].w >= 0) {
-				srcbmp = thecache->U00;
-				srcw = idat->rectU00[ch & 0xFF].w;
-				srcy = idat->rectU00[ch & 0xFF].y;
-				break;
-			} else { /* w<0 : glyph does not exist. */
-				if (ch != allegro_404_char) {
-					return f->vtable->render_char(f, allegro_404_char, fg, bg, bmp, x, y);
-				} else {
-					return 0; /* prevent loop */
-				}
-			}
-			
-		case 4: /* cyrillic */
-			if (idat->rectU04[ch & 0xFF].w >= 0) {
-				srcbmp = thecache->U04;
-				srcw = idat->rectU04[ch & 0xFF].w;
-				srcy = idat->rectU04[ch & 0xFF].y;
-				break;
-			} else { /* w<0 : glyph does not exist. */
-				if (ch != allegro_404_char) {
-					return f->vtable->render_char(f, allegro_404_char, fg, bg, bmp, x, y);
-				} else {
-					return 0; /* prevent loop */
-				}
-			}
-		default: /* unicode section not implemented. */
-			if (ch != allegro_404_char) {
-				return f->vtable->render_char(f, allegro_404_char, fg, bg, bmp, x, y);
-			} else {
-				return 0;
-			}
-	}
-	if (srcw > 0) {
-		/* do ze blit. Fgcol is already normalized. */
-		acquire_bitmap(bmp);
-		
-		if (bg > 0) {
-			blit(srcbmp, bmp, 0, srcy, x, y, srcw, f->height);
-		} else {
-			masked_blit(srcbmp, bmp, 0, srcy, x, y, srcw, f->height);
-		}
-		
-		release_bitmap(bmp);
-	}
-	return srcw;
+    if (ch == 0x0020) { /* skip space. */
+        return idat->space_width;
+    }
+    
+    if (fg < 0) {
+        fg = idat->base_color;
+    }
+    
+    if ( idat->cachecount != 0 )  {
+        /* try to find matching cache entry. */
+        for (i=0; i<idat->cachecount; i++) {
+            thecache = idat->cache + i;
+            if ( (thecache->tmode == bg) && (thecache->fgcol == fg) ) {
+                gotcache = 1;
+                break;
+            }
+        }
+    }
+    
+    /* cache miss: create */
+    if ((!gotcache) || idat->cachecount == 0 ) {
+        thecache = uaf_make_cacheentry(f, bg, fg);
+    }
+    
+    srch = f->height;
+    
+    switch (ch >> 8) {
+        case 0: /* basic latin & latin-1 */
+            if (idat->rectU00[ch & 0xFF].w >= 0) {
+                srcbmp = thecache->U00;
+                srcw = idat->rectU00[ch & 0xFF].w;
+                srcy = idat->rectU00[ch & 0xFF].y;
+                break;
+            } else { /* w<0 : glyph does not exist. */
+                if (ch != allegro_404_char) {
+                    return f->vtable->render_char(f, allegro_404_char, fg, bg, bmp, x, y);
+                } else {
+                    return 0; /* prevent loop */
+                }
+            }
+            
+        case 4: /* cyrillic */
+            if (idat->rectU04[ch & 0xFF].w >= 0) {
+                srcbmp = thecache->U04;
+                srcw = idat->rectU04[ch & 0xFF].w;
+                srcy = idat->rectU04[ch & 0xFF].y;
+                break;
+            } else { /* w<0 : glyph does not exist. */
+                if (ch != allegro_404_char) {
+                    return f->vtable->render_char(f, allegro_404_char, fg, bg, bmp, x, y);
+                } else {
+                    return 0; /* prevent loop */
+                }
+            }
+        default: /* unicode section not implemented. */
+            if (ch != allegro_404_char) {
+                return f->vtable->render_char(f, allegro_404_char, fg, bg, bmp, x, y);
+            } else {
+                return 0;
+            }
+    }
+    if (srcw > 0) {
+        /* do ze blit. Fgcol is already normalized. */
+        acquire_bitmap(bmp);
+        
+        if (bg > 0) {
+            blit(srcbmp, bmp, 0, srcy, x, y, srcw, f->height);
+        } else {
+            masked_blit(srcbmp, bmp, 0, srcy, x, y, srcw, f->height);
+        }
+        
+        release_bitmap(bmp);
+    }
+    return srcw;
 }
 
 /** Renders a string. @see uaf_render_char, as this one does no more than 
@@ -526,23 +526,23 @@ static void uaf_render(AL_CONST FONT *f, AL_CONST char *text, int fg, int bg, BI
  * @param f The 'this' pointer.
  */
 static void uaf_destroy(FONT *f) {
-	uaf_internal_data *idat = (uaf_internal_data *) (f->data);
+    uaf_internal_data *idat = (uaf_internal_data *) (f->data);
     
-	free(idat->origU00);
+    free(idat->origU00);
     
-	if (idat->origU04 != NULL) 
+    if (idat->origU04 != NULL) 
         free(idat->origU04);
     
-	if (idat->cachecount > 0) {
-		for(int i=0; i < idat->cachecount; i++) {
-			if (idat->cache[i].U00 != NULL) 
-				destroy_bitmap(idat->cache[i].U00);
-			if (idat->cache[i].U04 != NULL) 
-				destroy_bitmap(idat->cache[i].U04);
-		}
-		free(idat->cache);
-	}
-	free(f->data);
+    if (idat->cachecount > 0) {
+        for(int i=0; i < idat->cachecount; i++) {
+            if (idat->cache[i].U00 != NULL) 
+                destroy_bitmap(idat->cache[i].U00);
+            if (idat->cache[i].U04 != NULL) 
+                destroy_bitmap(idat->cache[i].U04);
+        }
+        free(idat->cache);
+    }
+    free(f->data);
 }
 
 /** Creates a FONT structure to be ready for use. 
@@ -557,22 +557,22 @@ static void uaf_destroy(FONT *f) {
  * Both pointers are assumed to point to buffers of at least 128 * w * h bytes.
  */
 static FONT *create_font(unsigned char *data00, unsigned char *data04, int w, int h, int base_color) {
-	uaf_internal_data *idata;
-	FONT *f;
-	
-	f = (FONT *) malloc(sizeof(FONT));
-	ASSERT(f != NULL);
-	f->vtable = (FONT_VTABLE *) malloc(sizeof(FONT_VTABLE));
-	ASSERT(f->vtable != NULL);
-	
-	idata = (uaf_internal_data *) malloc(sizeof(uaf_internal_data));
-	ASSERT(idata != NULL);
-	
-	f->height = h;
-	f->data = idata;
-	
-	idata->origU00 = (unsigned char *) malloc(w*h*128);
-	ASSERT(idata->origU00 != NULL);
+    uaf_internal_data *idata;
+    FONT *f;
+    
+    f = (FONT *) malloc(sizeof(FONT));
+    ASSERT(f != NULL);
+    f->vtable = (FONT_VTABLE *) malloc(sizeof(FONT_VTABLE));
+    ASSERT(f->vtable != NULL);
+    
+    idata = (uaf_internal_data *) malloc(sizeof(uaf_internal_data));
+    ASSERT(idata != NULL);
+    
+    f->height = h;
+    f->data = idata;
+    
+    idata->origU00 = (unsigned char *) malloc(w*h*128);
+    ASSERT(idata->origU00 != NULL);
         memmove(idata->origU00, data00, w*h*128);
         
         if (data04 != NULL) {
@@ -582,71 +582,71 @@ static FONT *create_font(unsigned char *data00, unsigned char *data04, int w, in
         } else {
                 idata->origU04 = NULL;
         }
-	
-	idata->cachecount = 0;
-	idata->space_width = w / 2;
-	
-	idata->max_w = w;
-	idata->max_h = h;
-	idata->base_color = base_color;
-	
-	f->vtable->font_height = uaf_font_height;
-	f->vtable->char_length = uaf_char_length;
-	f->vtable->text_length = uaf_text_length;
-	f->vtable->render_char = uaf_render_char;
-	f->vtable->render = uaf_render;
-	f->vtable->destroy = uaf_destroy;
-	
-	int i;
-	/* initialize rect-pointer tables with "unknown" glyphs */
-	for(i=0; i<256; i++) {
-		idata->rectU00[i].w = -1;
-		idata->rectU04[i].w = -1;
-	}
-	
-	
-	int U, Ul, Uh, row, col, curw, maxcolw;
-	/* precalculate font widths in origUxx members. */
-	for(i=0; i<128; i++) { // orig font
-		U = uni_xlate_tab[i];
-		if (U == 0x10000) { // unused glyph. skip.
-			continue;
-		}
-		/* Calculate glyph width. All but one empty columns at the right 
-		   side are stripped. Calculate maximum width of the glyph, and 
-		   set actual width to be one more than the value we've got, 
-		   but w at most.
-		*/
-		maxcolw = 0; 
-		for (row=0; row <h; row++) {
+    
+    idata->cachecount = 0;
+    idata->space_width = w / 2;
+    
+    idata->max_w = w;
+    idata->max_h = h;
+    idata->base_color = base_color;
+    
+    f->vtable->font_height = uaf_font_height;
+    f->vtable->char_length = uaf_char_length;
+    f->vtable->text_length = uaf_text_length;
+    f->vtable->render_char = uaf_render_char;
+    f->vtable->render = uaf_render;
+    f->vtable->destroy = uaf_destroy;
+    
+    int i;
+    /* initialize rect-pointer tables with "unknown" glyphs */
+    for(i=0; i<256; i++) {
+        idata->rectU00[i].w = -1;
+        idata->rectU04[i].w = -1;
+    }
+    
+    
+    int U, Ul, Uh, row, col, curw, maxcolw;
+    /* precalculate font widths in origUxx members. */
+    for(i=0; i<128; i++) { // orig font
+        U = uni_xlate_tab[i];
+        if (U == 0x10000) { // unused glyph. skip.
+            continue;
+        }
+        /* Calculate glyph width. All but one empty columns at the right 
+           side are stripped. Calculate maximum width of the glyph, and 
+           set actual width to be one more than the value we've got, 
+           but w at most.
+        */
+        maxcolw = 0; 
+        for (row=0; row <h; row++) {
                         curw = 0;
-			for (col=0; col<w; col++) {
-				if ( idata->origU00[i*w*h + row*w + col] != 0 ) {
-					curw = col + 1;
-				}
-			}
-			if (maxcolw < curw) {
-				maxcolw = curw;
-			}
-		}
-		curw = maxcolw < w ? maxcolw - 1 : w - 1;
-		/* figure out where to put it. */
-		Ul = U & 0xFF;
-		Uh = U >> 8;
-		if (Uh == 0) {
-			idata->rectU00[Ul].y = i*h;
-			idata->rectU00[Ul].w = curw;
-			continue;
-		}
-		if ((Uh == 4 ) && (data04 != NULL)) {
-			idata->rectU04[Ul].y = i*h;
-			idata->rectU04[Ul].w = curw;
-			continue;
-		}
-		/* hmm. unsupported section. skip.*/
-		continue; 
-	}
-	if (data04 != NULL) { /* if we have the cyr data ... */
+            for (col=0; col<w; col++) {
+                if ( idata->origU00[i*w*h + row*w + col] != 0 ) {
+                    curw = col + 1;
+                }
+            }
+            if (maxcolw < curw) {
+                maxcolw = curw;
+            }
+        }
+        curw = maxcolw < w ? maxcolw - 1 : w - 1;
+        /* figure out where to put it. */
+        Ul = U & 0xFF;
+        Uh = U >> 8;
+        if (Uh == 0) {
+            idata->rectU00[Ul].y = i*h;
+            idata->rectU00[Ul].w = curw;
+            continue;
+        }
+        if ((Uh == 4 ) && (data04 != NULL)) {
+            idata->rectU04[Ul].y = i*h;
+            idata->rectU04[Ul].w = curw;
+            continue;
+        }
+        /* hmm. unsupported section. skip.*/
+        continue; 
+    }
+    if (data04 != NULL) { /* if we have the cyr data ... */
                 for(i=0; i<128; i++) { /* unofcyr font */
                         U = uni_xlate_tab[i + 128];
                         if (U == 0x10000) { /* unused glyph. skip. */
@@ -680,67 +680,70 @@ static FONT *create_font(unsigned char *data00, unsigned char *data04, int w, in
                         }
                         /* hmm. unsupported section. skip.*/
                         continue; 
-                }	
+                }   
         }
-	
-	return f;
+    
+    return f;
 }
 
 /* UFO2000-specific code below. */
 
 /** 'Large' UFO font. */
-FONT *large;
+FONT *large = NULL;
 
 /** 'Small' UFO font. */
-FONT *g_small_font;
+FONT *g_small_font = NULL;
 
 /** constructs a 'small' font */
 void create_small_font() 
 {
-#ifdef HAVE_FREETYPE	
-	g_small_font = ji_font_load_ttf(F("$(ufo2000)/fonts/DejaVuSansMono-Roman.ttf"));
-	ji_font_set_aa_mode(g_small_font, makecol(92, 92, 92));
-	ji_font_set_size(g_small_font, 12);
-
-	if (!g_small_font)
-		g_small_font = font;
-#else
-	int fl, fh;
-
-	fh = open(F("$(xcom)/geodata/smallset.dat"), O_RDONLY | O_BINARY);
-	ASSERT(fh != -1);
-	fl = filelength(fh);
-	unsigned char *dat_lat = new unsigned char[fl];
-	unsigned char *dat_cyr = (unsigned char *)datafile[DAT_SMALLSET_CYR].dat;
-	read(fh, dat_lat, fl);
-	close(fh);
-	g_small_font = create_font(dat_lat, dat_cyr, 8, 9, 1);
-	delete []dat_lat;
+    int fh = open(F("$(xcom)/geodata/smallset.dat"), O_RDONLY | O_BINARY);
+    if (fh == -1) {
+        // If we can't load x-com font, fallback to TTF font or 
+        // as the last resort - to standard allegro bitmap font
+#ifdef HAVE_FREETYPE    
+        g_small_font = ji_font_load_ttf(F("$(ufo2000)/fonts/DejaVuSansMono-Roman.ttf"));
+        if (g_small_font) {
+            ji_font_set_aa_mode(g_small_font, makecol(64, 64, 64));
+            ji_font_set_size(g_small_font, 12);
+        }
 #endif
+        if (!g_small_font) g_small_font = font;
+        return;
+    }
+    int fl = filelength(fh);
+    unsigned char *dat_lat = new unsigned char[fl];
+    unsigned char *dat_cyr = (unsigned char *)datafile[DAT_SMALLSET_CYR].dat;
+    read(fh, dat_lat, fl);
+    close(fh);
+    g_small_font = create_font(dat_lat, dat_cyr, 8, 9, 1);
+    delete []dat_lat;
 }
 
 /** constructs a 'large' font */
 void create_large_font() 
 {
-	int fl, fh;
+    int fh = open(F("$(xcom)/geodata/biglets.dat"), O_RDONLY | O_BINARY);
+    if (fh == -1) {
+        // If we can't load x-com font, fallback to TTF font or 
+        // as the last resort - to standard allegro bitmap font
 #ifdef HAVE_FREETYPE
-	large = ji_font_load_ttf(F("$(ufo2000)/fonts/DejaVuSansMono-Roman.ttf"));
-	if (large) {
-		ji_font_set_aa_mode(large, makecol(92, 92, 92));
-		ji_font_set_size(large, 20);
-	}
-	if (!large) large = font;
-#else
-	fh = open(F("$(xcom)/geodata/biglets.dat"), O_RDONLY | O_BINARY);
-	ASSERT(fh != -1);
-	fl = filelength(fh);
-	unsigned char *dat_lat = new unsigned char[fl];
-	unsigned char *dat_cyr = (unsigned char *)datafile[DAT_BIGLETS_CYR].dat;
-	read(fh, dat_lat, fl);
-	close(fh);
-	large = create_font(dat_lat, dat_cyr, 16, 16, 1);
-	delete []dat_lat;
+        large = ji_font_load_ttf(F("$(ufo2000)/fonts/DejaVuSansMono-Roman.ttf"));
+        if (large) {
+            ji_font_set_aa_mode(large, makecol(64, 64, 64));
+            ji_font_set_size(large, 20);
+        }
 #endif
+        if (!large) large = font;
+        return;
+    }
+    int fl = filelength(fh);
+    unsigned char *dat_lat = new unsigned char[fl];
+    unsigned char *dat_cyr = (unsigned char *)datafile[DAT_BIGLETS_CYR].dat;
+    read(fh, dat_lat, fl);
+    close(fh);
+    large = create_font(dat_lat, dat_cyr, 16, 16, 1);
+    delete []dat_lat;
 }
 
 /** Destroys a 'small' font.
@@ -748,16 +751,16 @@ void create_large_font()
  */
 void free_small_font() 
 {
-	if (g_small_font != font)
-		destroy_font(g_small_font);
+    if (g_small_font != font)
+        destroy_font(g_small_font);
 }
 
 /** Destroys a 'large' font. 
  * Uses allegro function to reach destructor in the vtable.
  */
 void free_large_font(){
-	if (large != font)
-		destroy_font(large);
+    if (large != font)
+        destroy_font(large);
 }
 
 
@@ -770,83 +773,83 @@ void free_large_font(){
 */
 void printsmall_x(BITMAP *bmp, int x, int y, int col, int value)
 {
-	static char digit[10][5][4] = {
-	                                  {"000",      //0
-	                                   "0 0",
-	                                   "0 0",
-	                                   "0 0",
-	                                   "000"},
+    static char digit[10][5][4] = {
+                                      {"000",      //0
+                                       "0 0",
+                                       "0 0",
+                                       "0 0",
+                                       "000"},
 
-	                                  {" 0 ",      //1
-	                                   "00 ",
-	                                   " 0 ",
-	                                   " 0 ",
-	                                   "000"},
+                                      {" 0 ",      //1
+                                       "00 ",
+                                       " 0 ",
+                                       " 0 ",
+                                       "000"},
 
-	                                  {"000",      //2
-	                                   "  0",
-	                                   "000",
-	                                   "0  ",
-	                                   "000"},
+                                      {"000",      //2
+                                       "  0",
+                                       "000",
+                                       "0  ",
+                                       "000"},
 
-	                                  {"000",      //3
-	                                   "  0",
-	                                   "000",
-	                                   "  0",
-	                                   "000"},
+                                      {"000",      //3
+                                       "  0",
+                                       "000",
+                                       "  0",
+                                       "000"},
 
-	                                  {"0 0",      //4
-	                                   "0 0",
-	                                   "000",
-	                                   "  0",
-	                                   "  0"},
+                                      {"0 0",      //4
+                                       "0 0",
+                                       "000",
+                                       "  0",
+                                       "  0"},
 
-	                                  {"000",      //5
-	                                   "0  ",
-	                                   "000",
-	                                   "  0",
-	                                   "000"},
+                                      {"000",      //5
+                                       "0  ",
+                                       "000",
+                                       "  0",
+                                       "000"},
 
-	                                  {"000",      //6
-	                                   "0  ",
-	                                   "000",
-	                                   "0 0",
-	                                   "000"},
+                                      {"000",      //6
+                                       "0  ",
+                                       "000",
+                                       "0 0",
+                                       "000"},
 
-	                                  {"000",      //7
-	                                   "  0",
-	                                   "  0",
-	                                   "  0",
-	                                   "  0"},
+                                      {"000",      //7
+                                       "  0",
+                                       "  0",
+                                       "  0",
+                                       "  0"},
 
-	                                  {"000",      //8
-	                                   "0 0",
-	                                   "000",
-	                                   "0 0",
-	                                   "000"},
+                                      {"000",      //8
+                                       "0 0",
+                                       "000",
+                                       "0 0",
+                                       "000"},
 
-	                                  {"000",      //9
-	                                   "0 0",
-	                                   "000",
-	                                   "  0",
-	                                   "000"}
-	                              };
+                                      {"000",      //9
+                                       "0 0",
+                                       "000",
+                                       "  0",
+                                       "000"}
+                                  };
 
-	char buf[100];
-	//itoa(value, buf, 10);
-	sprintf(buf, "%d", value);
+    char buf[100];
+    //itoa(value, buf, 10);
+    sprintf(buf, "%d", value);
 
-	for (unsigned int i = 0; i < strlen(buf); i++)
-		for (int yy = 0; yy < 5; yy++)
-			for (int xx = 0; xx < 3; xx++)
-				if (digit[buf[i] - '0'][yy][xx] != ' ')
-					putpixel(bmp, x + i * 4 + xx, y + yy, col);
+    for (unsigned int i = 0; i < strlen(buf); i++)
+        for (int yy = 0; yy < 5; yy++)
+            for (int xx = 0; xx < 3; xx++)
+                if (digit[buf[i] - '0'][yy][xx] != ' ')
+                    putpixel(bmp, x + i * 4 + xx, y + yy, col);
 
 }
 /** Prints a number with center alignment. @see printsmall. */
 void printsmall_center_x(BITMAP *bmp, int x, int y, int col, int value)
 {
-	char buf[100];
-	sprintf(buf, "%d", value);
-	printsmall_x(bmp, x - strlen(buf) * 4 / 2, y, col, value);
+    char buf[100];
+    sprintf(buf, "%d", value);
+    printsmall_x(bmp, x - strlen(buf) * 4 / 2, y, col, value);
 }
