@@ -295,22 +295,41 @@ end
 -- global table which stores messages translated to current language
 TranslatedMessages = {}
 
+-- Each translation in the po-file consists of two entries on separate lines,
+-- msgid with the original text, and msgstr with the translated text.  E.g.:
+--   msgid "CANCEL"
+--   msgstr "ABBRUCH"
 local function load_translated_messages(tbl, filename)
 	local mode
 	local key
 	local str
 
--- Each translation in the po-file consists of two entries on separate lines,
--- msgid with the original text, and msgstr with the translated text.  E.g.:
---   msgid "CANCEL"
---   msgstr "ABBRUCH"
+	-- process a single translation message: key -> str
+	local function add_translation_string(key, str)
+		if mode == "msgstr" and key ~= "" and str ~= "" then 
+			-- validate c-string format for translation and original message
+			-- (primitive and not quite correct for all cases, but should catch 
+			-- some errors)
+			local function get_c_string_format_digest(msg)
+				local result = ""
+				for x in string.gfind(msg, "%%[%.%-%d]*[l]?([suidxfc])") do 
+					result = result .. x
+				end
+				return result
+			end
+
+			if get_c_string_format_digest(key) ~= get_c_string_format_digest(str) then
+				Error("Invalid translation for '%s' in the language file", key)
+			end
+
+			tbl[key] = str 
+		end
+	end
+
 	for l in io.lines(filename) do
 		if string.find(l, "^%s*msgid") then
-                --Message("load_translated_messages: '%s'", l )
 			assert(mode == nil or mode == "msgstr")
-			if mode == "msgstr" and key ~= "" and str ~= "" then 
-				tbl[key] = str 
-			end
+			add_translation_string(key, str)
 			mode = "msgid"
 			str = ""
 		elseif string.find(l, "^%s*msgstr") then
@@ -321,10 +340,10 @@ local function load_translated_messages(tbl, filename)
 		end
 	
 		local _, _, string_data = string.find(l, "^[^#]*\"(.*)\"$")
-		if string_data then
-			str = str .. string_data
-		end
+		if string_data then str = str .. string_data end
 	end
+
+	add_translation_string(key, str)
 
 	return tbl
 end
