@@ -2570,6 +2570,38 @@ void Soldier::calc_bullet_start(int xs, int ys, int zs, int* xr, int* yr, int *z
 	*yr = ys * 16 + 8 + DIR_DELTA_Y(dir) * 4;
 }
 
+void Soldier::calc_shot_stat(int zd, int xd, int yd)
+{
+	int x0, y0, z0;
+	calc_bullet_start (x, y, z, &x0, &y0, &z0);
+
+	REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
+
+	int shoot_cnt=0;
+
+	for(int cic=0;cic<1000;cic++)
+	{
+		REAL fi = acos((REAL)(zd - z0) / ro);
+		REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
+		apply_accuracy(fi, te);
+	
+		for(int i=3;1;i++) {
+			int x = (int)(x0 + i * cos(te) * sin(fi));
+			int y = (int)(y0 + i * sin(te) * sin(fi));
+			int z = (int)(z0 + i * cos(fi));
+	
+			if (!map->inside(z, x, y))			break;
+		    if (!map->pass_lof_cell(z, x, y))	break;
+		    if (platoon_remote->check_for_hit(z, x, y) ||
+		        platoon_local->check_for_hit(z, x, y)) {
+					shoot_cnt++;
+					break;
+				}
+		}
+	}
+	g_console->printf(COLOR_SYS_INFO1,"ToShoot = %d%%",shoot_cnt/10);
+}
+
 void Soldier::shoot(int zd, int xd, int yd, int ISLOCAL)
 {
 	ASSERT(target.action != NONE);
@@ -2612,19 +2644,27 @@ void Soldier::shoot(int zd, int xd, int yd, int ISLOCAL)
 		punch(z0, x0, y0, fi, te, target.place, target.time);
 	} else {
 		if (target.item->is_laser()) {
-			REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
-			REAL fi = acos((REAL)(zd - z0) / ro);
-			REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
-			apply_accuracy(fi, te);
-
-			beam(z0, x0, y0, fi, te, target.place, target.time);
+			if(key[KEY_LCONTROL] && (FLAGS & F_REACTINFO)) calc_shot_stat(zd, xd, yd);
+			else
+			{
+				REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
+				REAL fi = acos((REAL)(zd - z0) / ro);
+				REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
+				apply_accuracy(fi, te);
+	
+				beam(z0, x0, y0, fi, te, target.place, target.time);
+			}
 		} else {
-			REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
-			REAL fi = acos((REAL)(zd - z0) / ro);
-			REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
-			apply_accuracy(fi, te);
-
-			fire(z0, x0, y0, fi, te, target.place, target.time);
+			if(key[KEY_LCONTROL] && (FLAGS & F_REACTINFO)) calc_shot_stat(zd, xd, yd);
+			else
+			{
+				REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
+				REAL fi = acos((REAL)(zd - z0) / ro);
+				REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
+				apply_accuracy(fi, te);
+	
+				fire(z0, x0, y0, fi, te, target.place, target.time);
+			}
 		}
 	}
 }
@@ -2901,7 +2941,7 @@ int Soldier::do_reaction_fire(Soldier *the_target, int place, int shot_type)
 		try_reaction_shot(the_target);
 		if (FIRE_num > 0) // If FIRE_num is set, we're firing shots, so...
 		{
-			g_console->printf(COLOR_SYS_INFO1,"Reaction fire with %s!",type_str);
+			if(FLAGS & F_REACTINFO) g_console->printf(COLOR_SYS_INFO1,"Reaction fire with %s!",type_str);
 			return 1;
 		}
 	}

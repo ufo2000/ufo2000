@@ -233,6 +233,7 @@ public:
 	Bullet *bullet() { return m_bullet; }
 
 	void calc_bullet_start(int xs, int ys, int zs, int* xr, int* yr, int *zr); //calculates starting position for a bullet
+	void calc_shot_stat(int zd, int xd, int yd);
 
 	bool is_active()
 	{
