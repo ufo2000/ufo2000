@@ -542,6 +542,7 @@ int Editor::load_clip()
 
 static int d_agup_slider_pro2(int msg, DIALOG *d, int c);
 static char slider_text[8][20];
+static char label_text[ 4][20];
 
 static int points;
 static char points_str[100];
@@ -642,17 +643,17 @@ static DIALOG sol_dialog[] = {
 	//(dialog proc)      (x)           (y)                   (w)      (h)  (fg) (bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
     { d_agup_shadow_box_proc, DX,           DY,                   D_WIDTH,     D_HEIGHT, FG,  BG, 0, 0, 0, 0, NULL, NULL, NULL},
     { d_agup_button_proc,     DX + 200,     DY + SSY + SH*13 + 4, 100,     20,  FG,  BG, 0, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL},
-    { d_agup_rtext_proc,      DX + STX,     DY + SSY - SH*1,      STW,     16,  FG,  BG, 0, 0, 0, 0, (void *)_("Name:"), NULL, NULL},
+    { d_agup_rtext_proc,      DX + STX,     DY + SSY - SH*1,      STW,     16,  FG,  BG, 0, 0, 0, 0, (void *)label_text[0], NULL, NULL},
     { d_agup_edit_proc,       DX + SSX,     DY + SSY - SH*1 - 4, 23*8,     16,  FG,  BG, 0, 0, 22, 0, NULL, NULL, NULL},
     { d_agup_text_proc,       DX + 100,     DY + SSY + SH*12 + 2,  100,     16,  FG,  BG, 0, 0, 0, 0, (void *)points_str, NULL, NULL},
 
-    { d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*0 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)_("Race:"), NULL, NULL},
+    { d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*0 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)label_text[1], NULL, NULL},
     { race_change_button_proc,DX + SSX,     DY + SSY + SH*0 - 6,    0, 16 + 4,  FG,  BG, 0, D_EXIT, 0, 0, NULL, NULL, NULL},
 
-    { d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*1 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)_("Armour:"), NULL, NULL},
+    { d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*1 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)label_text[2], NULL, NULL},
     { armour_change_button_proc,DX + SSX,     DY + SSY + SH*1 - 6,    0, 16 + 4,  FG,  BG, 0, D_EXIT, 0, 0, NULL, NULL, NULL},
 
-    { d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*2 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)_("Appearance:"), NULL, NULL},
+    { d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*2 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)label_text[3], NULL, NULL},
     { appearance_change_button_proc,DX + SSX,     DY + SSY + SH*2 - 6,    0, 16 + 4,  FG,  BG, 0, D_EXIT, 0, 0, NULL, NULL, NULL},
 
 	{ d_agup_rtext_proc,  DX + STX, DY + STY + SH*3,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)slider_text[0], NULL, NULL},
@@ -768,6 +769,12 @@ static void fixup_unit_info()
 void Editor::edit_soldier()
 {
 	set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
+
+	// Labels for dialog:
+    sprintf(label_text[0], _("Name:")       );
+    sprintf(label_text[1], _("Race:")       );
+    sprintf(label_text[2], _("Armour:")     );
+    sprintf(label_text[3], _("Appearance:") );
 
 	// Attributes
     sprintf(slider_text[0], _("Time Units") );
