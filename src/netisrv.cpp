@@ -19,6 +19,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include "server_protocol.h"
 #include "global.h"
 #include <string>
 #include <vector>
@@ -214,6 +215,17 @@ void lobby_init_mouse()
 
 int connect_internet_server()
 {
+    if (!nlInit()) return -1;
+    if (!nlSelectNetwork(NL_IP)) return -1;
+    nlEnable(NL_SOCKET_STATS);
+
+    ClientServerUfo *server = new ClientServerUfo();
+    if (!server->connect("localhost", 2000))
+    	return -1;
+
+    char buf[64];
+    server->login(std::string("user") + std::string(itoa(rand(), buf, 10)), "");
+
 	lobby_init_mouse();
 
 	ConsoleWindow *chat = new ConsoleWindow(SCREEN_W, SCREEN_H, g_small_font);
@@ -222,9 +234,6 @@ int connect_internet_server()
 	UsersList *users = new UsersList(large);
 	WindowBorder *users_border = new WindowBorder(users, "users online", large);
 	users_border->set_full_redraw();
-
-	users->update_user_info("player1", USER_STATUS_READY);
-	users->update_user_info("player2", USER_STATUS_CHALLENGE_IN);
 
 //	Write greetings and the short help to the chat console
 	chat->printf("You have just connected to ufo2000 internet server\n");
@@ -251,6 +260,23 @@ int connect_internet_server()
 
 	while (true)
 	{
+		NLulong id;
+		std::string packet;
+		if (server->recv_packet(id, packet))
+		{
+			switch (id)
+			{
+				case SRV_USER_ONLINE: users->update_user_info(packet.c_str(), USER_STATUS_READY); break;
+				case SRV_MESSAGE: chat->printf("%s", packet.c_str()); break;
+			}
+
+				users_border->resize(-1, -1);
+				users_border->resize(users_border->get_width(), SCREEN_H);
+				chat_border->resize(SCREEN_W - users_border->get_width(), SCREEN_H);
+				chat_border->set_full_redraw();
+				users_border->set_full_redraw();
+		}
+
 		chat_border->redraw(screen, 0, 0);
 		users_border->redraw(screen, SCREEN_W - users_border->get_width(), 0);
 
@@ -279,6 +305,8 @@ int connect_internet_server()
 			if (scancode == KEY_ESC && askmenu("EXIT GAME")) break;
 
 			if (chat->process_keyboard_input(keycode, scancode)) {
+				server->send_packet(SRV_MESSAGE, chat->get_text());
+
 				if (strncmp(chat->get_text(), "add ", 4) == 0)
 					users->update_user_info(chat->get_text() + 4, USER_STATUS_READY);
 				if (strncmp(chat->get_text(), "del ", 4) == 0)
@@ -302,6 +330,8 @@ int connect_internet_server()
 	delete users_border;
 	delete chat;
 	delete chat_border;
+
+    nlShutdown();
 
 	return -1;
 }
