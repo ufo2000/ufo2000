@@ -16,7 +16,7 @@ Some description<PROJECT_DESCRIPTION_END>
 <CONFIG_ADDITIONAL_START>
 <CONFIG_ADDITIONAL_END>
 <CONFIG_FILES_START>
-ufo2000<CONFIG_FILES_END>
+<CONFIG_FILES_END>
 <MAKEFILE_AM_START>
 <MAKEFILE_AM_END>
 
@@ -52,7 +52,7 @@ anjuta.program.arguments=
 preferences.build.option.jobs=0
 preferences.build.option.silent=0
 preferences.build.option.autosave=0
-preferences.anjuta.make.options=debug=1
+preferences.anjuta.make.options=dumbogg=1 debug=1
 preferences.make=make
 preferences.build.option.keep.going=1
 preferences.build.option.warn.undef=0
@@ -109,7 +109,8 @@ module.include.files=\
 	src/server.h\
 	src/inventory.h\
 	src/place.h\
-	src/version.h
+	src/version.h\
+	ufo2000.h
 
 module.source.name=.
 module.source.type=
@@ -187,7 +188,13 @@ module.doc.files=\
 	AUTHORS\
 	INSTALL\
 	ChangeLog\
-	COPYING
+	COPYING\
+	readme_en.txt\
+	readme_es.txt\
+	readme_fi.txt\
+	readme_fr.txt\
+	readme_pl.txt\
+	techinfo.txt
 
 module.po.files=
 

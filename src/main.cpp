@@ -396,14 +396,24 @@ void initmain(int argc, char *argv[])
 	luaopen_string(L);
 	luaopen_io(L);
 
+#ifndef DATA_DIR
+	// Set current directory to the place where ufo2000 executable was started from
+	// if no data directory location was specified
+	char ufo2000_dir[512];
+	get_executable_name(ufo2000_dir, sizeof(ufo2000_dir));
+	char *p = get_filename(ufo2000_dir);
+	ASSERT(p > ufo2000_dir);
+	*(p - 1) = '\0';
 #ifdef WIN32
-	// Win32-version has all data files in a single directory where it was installed
-	char ufo2000_dir[MAX_PATH];
-	GetModuleFileName(NULL, ufo2000_dir, sizeof(ufo2000_dir));
-	if (strrchr(ufo2000_dir, '\\')) *strrchr(ufo2000_dir, '\\') = '\0';
-	char *p = ufo2000_dir;
+	// Convert '\\' to '/' even in Windows to keep consistency
+	// ('/' is used as path separator everywhere), DOS is dead,
+	// so this will not cause any problems
+	p = ufo2000_dir;
 	while (*p != '\0') { if (*p == '\\') *p = '/'; p++; }
-	SetCurrentDirectory(ufo2000_dir);
+#endif	
+	
+	chdir(ufo2000_dir);
+	
 	lua_pushstring(L, "ufo2000_dir");
 	lua_pushstring(L, ufo2000_dir);
 	lua_settable(L, LUA_GLOBALSINDEX);
@@ -633,7 +643,7 @@ void closemain()
              <<__TIME__<<" "
              <<__DATE__<<"\n"
              <<"\nCopyright (C) 2000-2001  Alexander Ivanov aka Sanami"
-             <<"\nCopyright (C) 2002-2003  ufo2000 development team"
+             <<"\nCopyright (C) 2002-2004  ufo2000 development team"
              <<"\n\n"
              <<"http://ufo2000.sourceforge.net/\n"
              <<"http://ufo2000.lxnt.info/\n\n";
@@ -1554,7 +1564,7 @@ void start_loadgame()
 	DONE = 0;
 
 	resize_screen2(0, 0);
-	clear_to_color(screen, 58);      //!!!!!
+	clear_to_color(screen, xcom_color(58));
 	gameloop();
 	closegame();
 }
