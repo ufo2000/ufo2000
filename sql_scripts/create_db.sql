@@ -34,4 +34,5 @@ CREATE TABLE ufo2000_game_packets
  id integer,
  sender integer, -- 1-player1, 2-player2
  date text,
+ command text,
  primary key(game,id));
