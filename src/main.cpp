@@ -964,7 +964,9 @@ void switch_turn()
         case 3:
         win = loss = 1;
         break;
-    }
+    }      
+    
+    elist->step(0);
 }
 
 /**
@@ -975,7 +977,7 @@ void send_turn()
     ASSERT(MODE != WATCH);
     platoon_local->restore_moved();
     switch_turn();
-    elist->step(-1);
+    
     int crc = build_crc();
     net->send_endturn(crc);
 
@@ -1030,7 +1032,6 @@ void recv_turn(int crc)
     if (net->gametype == GAME_TYPE_REPLAY) {
         switch_turn();
         platoon_local->restore();
-        platoon_remote->restore();
 		
         Platoon *pt = platoon_local;
         platoon_local = platoon_remote;
@@ -1041,7 +1042,7 @@ void recv_turn(int crc)
 
     ASSERT(MODE == WATCH);
     switch_turn();
-    elist->step(0);
+    
     check_crc(crc);
 
     platoon_local->restore();
@@ -1194,9 +1195,25 @@ void savegame(const char *filename)
  * Opens stream for replay file and saves game position to it
  */
 void savereplay(const char *filename)
-{
+{   
+	//When engine will read packets from replay file it will expect packets are send
+	//from remote platoon to local platoon. So if local player goes first we have to
+	//swap platoons in replay.
+    if(HOST) {
+        Platoon *pt = platoon_local;
+        platoon_local = platoon_remote;
+        platoon_remote = pt;
+    }
+
     net->m_replay_file = new std::fstream(filename, std::ios::binary | std::ios::out);
     savegame_stream(*net->m_replay_file);
+    
+    //Restoring platoons for current game
+    if(HOST) {
+        Platoon *pt = platoon_local;
+        platoon_local = platoon_remote;
+        platoon_remote = pt;
+    }
 }
 
 void savegame_stream(std::iostream &stream)
