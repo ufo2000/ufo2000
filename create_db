@@ -1,0 +1,1 @@
+sqlite3 ufo2000.db <sql_scripts/create_db.sql
