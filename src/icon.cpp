@@ -31,6 +31,11 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "wind.h"
 #include "config.h"
 
+//! firemenu foreground color
+#define _FG xcom1_color(1)
+//! firemenu background color
+#define _BG xcom1_color(15)
+
 void cprintf(char *str)
 {
 	text_mode(0); textprintf(screen, font, 1, 1, xcom1_color(1), "%s", str);
@@ -98,16 +103,16 @@ void Icon::firemenu(int iplace)
 		return ;
 
 	static char dstr[5][100];
-	static DIALOG the_dialog[] = {
-	                                 //(dialog proc)  (x)  (y)  (w)  (h)  (fg) (bg) (key) (flags)  (d1) (d2)	 (dp)					(dp2) (dp3)
-	                                 { firemenu_dialog_proc, 41, 150, 237, 25, 1, 0, 0, D_EXIT, 0, 0, (void *)dstr[0], NULL, NULL},
-	                                 { firemenu_dialog_proc, 41, 120, 237, 25, 1, 0, 0, D_EXIT, 0, 0, (void *)dstr[1], NULL, NULL},
-	                                 { firemenu_dialog_proc, 41, 90, 237, 25, 1, 0, 0, D_EXIT, 0, 0, (void *)dstr[2], NULL, NULL},
-	                                 { firemenu_dialog_proc, 41, 60, 237, 25, 1, 0, 0, D_EXIT, 0, 0, (void *)dstr[3], NULL, NULL},
-	                                 { firemenu_dialog_proc, 41, 30, 237, 25, 1, 0, 0, D_EXIT, 0, 0, (void *)dstr[4], NULL, NULL},
-	                                 { NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL}
-	                             };
 
+	static DIALOG the_dialog[] = {
+	//	           dialog proc,  x,   y,   w,  h,  fg,  bg, key,  flags, d1, d2,              dp,  dp2,  dp3
+		{ firemenu_dialog_proc, 41, 150, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[0], NULL, NULL},
+		{ firemenu_dialog_proc, 41, 120, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[1], NULL, NULL},
+		{ firemenu_dialog_proc, 41,  90, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[2], NULL, NULL},
+		{ firemenu_dialog_proc, 41,  60, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[3], NULL, NULL},
+		{ firemenu_dialog_proc, 41,  30, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[4], NULL, NULL},
+		{                 NULL,  0,   0,   0,  0, _FG, _BG,   0,      0,  0,  0,            NULL, NULL, NULL}
+	};
 
 	for (int d = 0; d < 5; d++) {
 		the_dialog[d].x = (SCREEN2W - 237) / 2;
@@ -250,35 +255,35 @@ int Icon::doprime(Item *it)
 	int DS = 18;
 
 	static DIALOG dPrime[] = {
-	                             // (dialog proc)  (x)			 (y)			 (w)  (h) (fg) (bg) (key) (flags)  (d1)  (d2)  (dp)					(dp2) (dp3)
-	                             { d_button_proc, DX, DY - 17, 98, 15, 1, 0, 0, D_EXIT, 0, 0, (void *)"Cancel", NULL, NULL},
-	                             { d_button_proc, DX, DY, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"0", NULL, NULL},
-	                             { d_button_proc, DX + (DS + 2) * 1, DY, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"1", NULL, NULL},
-	                             { d_button_proc, DX + (DS + 2) * 2, DY, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"2", NULL, NULL},
-	                             { d_button_proc, DX + (DS + 2) * 3, DY, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"3", NULL, NULL},
-	                             { d_button_proc, DX + (DS + 2) * 4, DY, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"4", NULL, NULL},
-	                             { d_button_proc, DX, DY + (DS + 2) * 1, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"5", NULL, NULL},
-	                             { d_button_proc, DX + (DS + 2) * 1, DY + (DS + 2) * 1, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"6", NULL, NULL},
-	                             { d_button_proc, DX + (DS + 2) * 2, DY + (DS + 2) * 1, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"7", NULL, NULL},
-	                             { d_button_proc, DX + (DS + 2) * 3, DY + (DS + 2) * 1, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"8", NULL, NULL},
-	                             { d_button_proc, DX + (DS + 2) * 4, DY + (DS + 2) * 1, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"9", NULL, NULL},
-	                             { d_button_proc, DX, DY + (DS + 2) * 2, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"10", NULL, NULL},
-	                             { d_button_proc, DX + (DS + 2) * 1, DY + (DS + 2) * 2, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"11", NULL, NULL},
-	                             { d_button_proc, DX + (DS + 2) * 2, DY + (DS + 2) * 2, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"12", NULL, NULL},
-	                             { d_button_proc, DX + (DS + 2) * 3, DY + (DS + 2) * 2, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"13", NULL, NULL},
-	                             { d_button_proc, DX + (DS + 2) * 4, DY + (DS + 2) * 2, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"14", NULL, NULL},
-	                             { d_button_proc, DX, DY + (DS + 2) * 3, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"15", NULL, NULL},
-	                             { d_button_proc, DX + (DS + 2) * 1, DY + (DS + 2) * 3, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"16", NULL, NULL},
-	                             { d_button_proc, DX + (DS + 2) * 2, DY + (DS + 2) * 3, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"17", NULL, NULL},
-	                             { d_button_proc, DX + (DS + 2) * 3, DY + (DS + 2) * 3, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"18", NULL, NULL},
-	                             { d_button_proc, DX + (DS + 2) * 4, DY + (DS + 2) * 3, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"19", NULL, NULL},
-	                             { d_button_proc, DX, DY + (DS + 2) * 4, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"20", NULL, NULL},
-	                             { d_button_proc, DX + (DS + 2) * 1, DY + (DS + 2) * 4, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"21", NULL, NULL},
-	                             { d_button_proc, DX + (DS + 2) * 2, DY + (DS + 2) * 4, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"22", NULL, NULL},
-	                             { d_button_proc, DX + (DS + 2) * 3, DY + (DS + 2) * 4, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"23", NULL, NULL},
-	                             { d_button_proc, DX + (DS + 2) * 4, DY + (DS + 2) * 4, DS, DS, 1, 0, 0, D_EXIT, 0, 0, (void *)"24", NULL, NULL},
-	                             { NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL}
-	                         };
+	//	    dialog proc, x                , y                ,  w,  h,  fg,  bg, key,  flags, d1, d2, dp              ,  dp2,  dp3
+		{ d_button_proc, DX               , DY - 17          , 98, 15, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"Cancel", NULL, NULL},
+		{ d_button_proc, DX               , DY               , DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"0"     , NULL, NULL},
+		{ d_button_proc, DX + (DS + 2) * 1, DY               , DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"1"     , NULL, NULL},
+		{ d_button_proc, DX + (DS + 2) * 2, DY               , DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"2"     , NULL, NULL},
+		{ d_button_proc, DX + (DS + 2) * 3, DY               , DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"3"     , NULL, NULL},
+		{ d_button_proc, DX + (DS + 2) * 4, DY               , DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"4"     , NULL, NULL},
+		{ d_button_proc, DX               , DY + (DS + 2) * 1, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"5"     , NULL, NULL},
+		{ d_button_proc, DX + (DS + 2) * 1, DY + (DS + 2) * 1, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"6"     , NULL, NULL},
+		{ d_button_proc, DX + (DS + 2) * 2, DY + (DS + 2) * 1, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"7"     , NULL, NULL},
+		{ d_button_proc, DX + (DS + 2) * 3, DY + (DS + 2) * 1, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"8"     , NULL, NULL},
+		{ d_button_proc, DX + (DS + 2) * 4, DY + (DS + 2) * 1, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"9"     , NULL, NULL},
+		{ d_button_proc, DX               , DY + (DS + 2) * 2, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"10"    , NULL, NULL},
+		{ d_button_proc, DX + (DS + 2) * 1, DY + (DS + 2) * 2, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"11"    , NULL, NULL},
+		{ d_button_proc, DX + (DS + 2) * 2, DY + (DS + 2) * 2, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"12"    , NULL, NULL},
+		{ d_button_proc, DX + (DS + 2) * 3, DY + (DS + 2) * 2, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"13"    , NULL, NULL},
+		{ d_button_proc, DX + (DS + 2) * 4, DY + (DS + 2) * 2, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"14"    , NULL, NULL},
+		{ d_button_proc, DX               , DY + (DS + 2) * 3, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"15"    , NULL, NULL},
+		{ d_button_proc, DX + (DS + 2) * 1, DY + (DS + 2) * 3, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"16"    , NULL, NULL},
+		{ d_button_proc, DX + (DS + 2) * 2, DY + (DS + 2) * 3, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"17"    , NULL, NULL},
+		{ d_button_proc, DX + (DS + 2) * 3, DY + (DS + 2) * 3, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"18"    , NULL, NULL},
+		{ d_button_proc, DX + (DS + 2) * 4, DY + (DS + 2) * 3, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"19"    , NULL, NULL},
+		{ d_button_proc, DX               , DY + (DS + 2) * 4, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"20"    , NULL, NULL},
+		{ d_button_proc, DX + (DS + 2) * 1, DY + (DS + 2) * 4, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"21"    , NULL, NULL},
+		{ d_button_proc, DX + (DS + 2) * 2, DY + (DS + 2) * 4, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"22"    , NULL, NULL},
+		{ d_button_proc, DX + (DS + 2) * 3, DY + (DS + 2) * 4, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"23"    , NULL, NULL},
+		{ d_button_proc, DX + (DS + 2) * 4, DY + (DS + 2) * 4, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"24"    , NULL, NULL},
+		{          NULL, 0                , 0                ,  0,  0,   0,   0,   0,      0,  0,  0, NULL            , NULL, NULL}
+	};
 
 	return do_dialog(dPrime, -1);
 }

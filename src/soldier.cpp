@@ -2474,15 +2474,15 @@ void Soldier::drawinfo(int x, int y)
 	textout(screen2, g_small_font, md.Name, x + 134, y + 32, xcom1_color(130));
 
 
-	drawbar(71, 64, 170 + x, 41 + y, ud.CurTU, ud.MaxTU);
+	drawbar(xcom1_color(71), xcom1_color(64), 170 + x, 41 + y, ud.CurTU, ud.MaxTU);
 	//textprintf(screen2, font, x+136, y+41, 64, "%d", ud.CurTU);
 	printsmall(x + 136, y + 42, xcom1_color(64), ud.CurTU);
 
-	drawbar(21, 16, 170 + x, 45 + y, ud.CurEnergy, ud.MaxEnergy);
+	drawbar(xcom1_color(21), xcom1_color(16), 170 + x, 45 + y, ud.CurEnergy, ud.MaxEnergy);
 	//textprintf(screen2, font, x+154, y+41, 16, "%d", ud.CurEnergy);
 	printsmall(x + 154, y + 42, xcom1_color(16), ud.CurEnergy);
 
-	drawbar(37, 32, 170 + x, 49 + y, ud.CurHealth, ud.MaxHealth);
+	drawbar(xcom1_color(37), xcom1_color(32), 170 + x, 49 + y, ud.CurHealth, ud.MaxHealth);
 	//textprintf(screen2, font, x+136, y+49, 32, "%d", ud.CurHealth);
 	printsmall(x + 136, y + 50, xcom1_color(32), ud.CurHealth);
 
@@ -2495,7 +2495,7 @@ void Soldier::drawinfo(int x, int y)
 		putpixel(screen2, 170 + x + ud.MaxHealth + 1, 50 + y + 1, 37);
 	}
 
-	drawbar(197, 192, 170 + x, 53 + y, ud.Morale, 100);
+	drawbar(xcom1_color(197), xcom1_color(192), 170 + x, 53 + y, ud.Morale, 100);
 	//textprintf(screen2, font, x+154, y+49, 192, "%d", ud.Morale);
 	printsmall(x + 154, y + 50, xcom1_color(192), ud.Morale);
 }
