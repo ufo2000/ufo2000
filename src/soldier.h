@@ -137,7 +137,11 @@ private:
 	unsigned char m_ReserveTimeMode;
 
 	int NID;
-	int dir, phase;
+	// direction of the face
+	int dir;
+	// direction of the movement
+	int move_dir;
+    int phase;
 	State m_state;
 
 //!	This flag is set after soldier has moved. 
@@ -404,6 +408,8 @@ public:
 
 	virtual bool Write(persist::Engine &archive) const;
 	virtual bool Read(persist::Engine &archive);
+
+	int can_fly();
 };
 
 #endif

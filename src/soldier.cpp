@@ -2906,3 +2906,8 @@ void Soldier::set_reserve_type(int type)
         net->send_reserve_time(NID, type);
     }
 };
+
+int Soldier::can_fly()
+{
+    return 0; // skin()->get_type()==S_XCOM_3;
+}
