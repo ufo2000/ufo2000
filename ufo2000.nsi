@@ -1,6 +1,6 @@
-; UFO2000 NSIS Installer v1.4 (see bottom for version history)
+; UFO2000 NSIS Installer v1.4.1 (see bottom for version history)
 ;
-; This script was made by Daniel "SupSuper" Albano (supsuper@mail.pt) with Venis IX.
+; This script was made by Daniel "SupSuper" Albano (supsuper@gmail.com) with Venis IX.
 ; UFO2000 is a massive multiplayer game based on XCOM saga: http://ufo2000.sourceforge.net
 
 ;--------------------------------
@@ -232,40 +232,50 @@ Function SearchCallback
 	tftddemo: MessageBox MB_YESNOCANCEL|MB_DEFBUTTON1|MB_ICONQUESTION "Terror from the Deep Demo was found in this folder:$\r$\n$R0$\r$\n$\r$\nIs this correct?" IDNO end IDCANCEL cancel
 	StrCpy $TFTDDEMO_FOLDER $R0
 		
-	check1: StrCmp $XCOM_FOLDER "" check2 check1_1
-	check1_1: StrCmp $TFTD_FOLDER "" check2 finish
+	check1: StrCmp $XCOM_FOLDER "" check2
+	StrCmp $TFTD_FOLDER "" check2 finish
 	
-	check2: StrCmp $XCOMDEMO_FOLDER "" check3 check2_1
-	check2_1: StrCmp $TFTDDEMO_FOLDER "" check3 finish
+	check2: StrCmp $XCOMDEMO_FOLDER "" check3
+	StrCmp $TFTDDEMO_FOLDER "" check3 finish
 	
-	check3: StrCmp $XCOMDEMO_FOLDER "" check4 check3_1
-	check3_1: StrCmp $TFTD_FOLDER "" check4 finish
+	check3: StrCmp $XCOMDEMO_FOLDER "" check4
+	StrCmp $TFTD_FOLDER "" check4 finish
 	
-	check4: StrCmp $XCOM_FOLDER "" check5 check4_1
-	check4_1: StrCmp $TFTDDEMO_FOLDER "" check5 finish
+	check4: StrCmp $XCOM_FOLDER "" check5
+	StrCmp $TFTDDEMO_FOLDER "" check5 finish
 	
-	check5: StrCmp $TFTD_FOLDER "" check6 check5_1
-	check5_1: StrCmp $XCOM_FOLDER "" check6 finish
+	check5: StrCmp $TFTD_FOLDER "" check6
+	StrCmp $XCOM_FOLDER "" check6 finish
 	
-	check6: StrCmp $TFTDDEMO_FOLDER "" check7 check6_1
-	check6_1: StrCmp $XCOMDEMO_FOLDER "" check7 finish
+	check6: StrCmp $TFTDDEMO_FOLDER "" check7
+	StrCmp $XCOMDEMO_FOLDER "" check7 finish
 	
-	check7: StrCmp $TFTD_FOLDER "" check8 check7_1
-	check7_1: StrCmp $XCOMDEMO_FOLDER "" check8 finish
+	check7: StrCmp $TFTD_FOLDER "" check8
+	StrCmp $XCOMDEMO_FOLDER "" check8 finish
 	
-	check8: StrCmp $TFTDDEMO_FOLDER "" end check8_1
-	check8_1: StrCmp $XCOM_FOLDER "" end finish
+	check8: StrCmp $TFTDDEMO_FOLDER "" end
+	StrCmp $XCOM_FOLDER "" end finish
 	
 	finish: Push "stop"
 	Goto end
 	cancel:
 	Push "stop"
 	StrCpy $XCOM_FOLDER " "
-	Call SelectOption
 	end:
 FunctionEnd
 
 ;Custom pages
+
+;(uses InstallOptions.dll)
+
+LangString TEXT_SELOPT_TITLE ${LANG_ENGLISH} "How to Find X-Com"
+LangString TEXT_SELOPT_SUBTITLE ${LANG_ENGLISH} "Select how can the installer find X-Com."
+LangString TEXT_SEARCH_TITLE ${LANG_ENGLISH} "Search for X-Com"
+LangString TEXT_SEARCH_SUBTITLE ${LANG_ENGLISH} "The installer is searching for installed X-Com games."
+LangString TEXT_XCOMFOLDER_TITLE ${LANG_ENGLISH} "Choose X-Com Location"
+LangString TEXT_XCOMFOLDER_SUBTITLE ${LANG_ENGLISH} "Choose the folder where you have X-Com installed in."
+LangString TEXT_DEMOSEL_TITLE ${LANG_ENGLISH} "Download X-Com Demo"
+LangString TEXT_DEMOSEL_SUBTITLE ${LANG_ENGLISH} "Choose which X-Com demos you want installed."
 
 Function SearchXcom
 	ReadRegStr $0 HKLM "Software\${GAME_NAME}" "Install_Dir"
@@ -279,28 +289,20 @@ Function SearchXcom
 	!insertmacro MUI_HEADER_TEXT "$(TEXT_SEARCH_TITLE)" "$(TEXT_SEARCH_SUBTITLE)"
 	;(uses Dialogs.dll)
 	Dialogs::Folder $HWNDPARENT "Search Folder" "Select a folder to search in:" "C:\" ${VAR_0}
+	StrCmp $0 "" end
 	Push $0
 	Exch $EXEDIR
 	StrCpy $0 $EXEDIR
 	Exch $EXEDIR
 	!insertmacro CallFindFiles $0 "geodata" SearchCallback
-	StrCmp $XCOM_FOLDER "" next end
-	next: StrCmp $XCOMDEMO_FOLDER "" xcom_err end
+	StrCmp $XCOM_FOLDER "" next reset
+	next: StrCmp $XCOMDEMO_FOLDER "" xcom_err reset
 	xcom_err: MessageBox MB_OK|MB_DEFBUTTON1|MB_ICONSTOP "X-Com wasn't found!"
 	Call SelectOption
+	reset: StrCmp $XCOM_FOLDER " " res end
+	res: StrCpy $XCOM_FOLDER ""
 	end:
 FunctionEnd
-
-;(uses InstallOptions.dll)
-
-LangString TEXT_SELOPT_TITLE ${LANG_ENGLISH} "How to Find X-Com"
-LangString TEXT_SELOPT_SUBTITLE ${LANG_ENGLISH} "Select how can the installer find X-Com."
-LangString TEXT_SEARCH_TITLE ${LANG_ENGLISH} "Search for X-Com"
-LangString TEXT_SEARCH_SUBTITLE ${LANG_ENGLISH} "The installer is searching for installed X-Com games."
-LangString TEXT_XCOMFOLDER_TITLE ${LANG_ENGLISH} "Choose X-Com Location"
-LangString TEXT_XCOMFOLDER_SUBTITLE ${LANG_ENGLISH} "Choose the folder where you have X-Com installed in."
-LangString TEXT_DEMOSEL_TITLE ${LANG_ENGLISH} "Download X-Com Demo"
-LangString TEXT_DEMOSEL_SUBTITLE ${LANG_ENGLISH} "Choose which X-Com demos you want installed."
 
 Function SelectOption
 	ReadRegStr $0 HKLM "Software\${GAME_NAME}" "Install_Dir"
@@ -410,7 +412,7 @@ Section "${GAME_NAME} (required)" MainSec
 	xcomdemo_no:
 	
 	IfFileExists $TFTD_FOLDER tftd tftd_no
-	tftd: CopyFiles $TFTDDEMO_FOLDER\*.* $INSTDIR\TFTD
+	tftd: CopyFiles $TFTD_FOLDER\*.* $INSTDIR\TFTD
 	tftd_no:
 	
 	IfFileExists $TFTDDEMO_FOLDER tftddemo tftddemo_no
@@ -557,6 +559,13 @@ Section "Uninstall"
 SectionEnd
 
 ; Version History
+;
+; 1.4.1 (2nd Sep 2004)
+;
+; - Fixed bug #0000065: "Cancelling the search for X-Com files hangs up the installer."
+; - Fixed bug #0000066: "Installer does not copy TFTD files correctly."
+; - Fixed bug #0000046: "Search for x-com games installer option (was: Only Warehouse-maps)"
+; - Did some cleanup on the Search X-Com code
 ;
 ; 1.4 (28th Jun 2004)
 ;
