@@ -28,6 +28,43 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "place.h"
 #include "skin.h"
 
+struct UNITDATA
+{
+    unsigned char CurTU;        //!< The number of TUs the unit has currently
+    unsigned char CurHealth;    //!< Current Health
+    unsigned char CurStun;      //!< The stun level: if this is higher than CurHealth, they're stunned.
+    unsigned char CurEnergy;    //!< Current Energy
+    unsigned char CurReactions; //!< Current Reaction
+    unsigned char CurStrength;  //!< Current Strength
+    unsigned char CurFront;     //!< Current armor on the front
+    unsigned char CurLeft;      //!< Current armor at the left side
+    unsigned char CurRight;     //!< Current armor at the right side
+    unsigned char CurRear;      //!< Current armor on the rear
+    unsigned char CurUnder;     //!< Current armor at the bottom
+    unsigned char CurFAccuracy; //!< current Firing Accuracy (might go down when wounded)
+    unsigned char CurTAccuracy; //!< current Throwing Accuracy
+    unsigned char MaxTU;        //!< The maximum number of TUs the unit has
+    unsigned char MaxHealth;    //!< Maximum Health
+    unsigned char MaxEnergy;    //!< Maximum Energy
+    unsigned char MaxStrength;  //!< Maximum Strength
+    unsigned char MaxFront;     //!< Maximum armor on the front
+    unsigned char MaxLeft;      //!< Maximum armor at the left side
+    unsigned char MaxRight;     //!< Maximum armor at the right side
+    unsigned char MaxRear;      //!< Maximum armor on the rear
+    unsigned char MaxUnder;     //!< Maximum armor at the bottom
+    unsigned char MaxFA;        // ?
+    unsigned char MaxTA;        // ?
+    
+    unsigned char Morale;
+    unsigned char HeadWound;    //!< Number of fatal wounds in the head.
+    unsigned char TorsoWound;
+    unsigned char RArmWound;    //!< Right arm wounds
+    unsigned char LArmWound;
+    unsigned char RLegWound;
+    unsigned char LLegWound;
+    char          Name[26];     //!< The unit name!!
+};
+
 #define P_SHL_RIGHT       0
 #define P_SHL_LEFT        1
 #define P_ARM_RIGHT       2

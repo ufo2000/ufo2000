@@ -323,7 +323,6 @@ void Soldier::process_ITEMDATA()
 void Soldier::build_ITEMDATA()
 {
     memset(&id, 0, sizeof(id));
-    strcpy(id.name, md.Name);
 
     for (int i = 0; i < NUMBER_OF_PLACES; i++) {
         m_place[i]->build_ITEMDATA(i, &id);
