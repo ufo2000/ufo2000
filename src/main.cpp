@@ -259,10 +259,9 @@ void print(char *str)
 
 #define FADE_SPEED 20
 
-//////////////////////////////////////////////////////////////////////////////
-/// Function to check if all necessery files exist and are OK              ///
-//////////////////////////////////////////////////////////////////////////////
 
+/** Function to check if all necessary files exist and are OK
+*/
 void check_data_files()
 {
 	// Checking data files integrity
@@ -297,7 +296,7 @@ void initmain(int argc, char *argv[])
 	allegro_init();
 	register_bitmap_file_type("jpg", load_jpg, NULL);
 	set_color_conversion(COLORCONV_REDUCE_TO_256);
-    
+
     FLAGS = 0;
 	push_config_state();
 	set_config_file("ufo2000.ini");
@@ -371,13 +370,13 @@ void initmain(int argc, char *argv[])
 
 	set_video_mode();
 	set_palette(black_palette);
-    
+
 	PALETTE pal;
 	BITMAP *text_back = load_memory_jpg(datafile[DAT_TEXT_BACK].dat, pal);
-    
+
 	stretch_blit(text_back, screen, 0, 0, text_back->w, text_back->h, 0, 0, screen->w, screen->h);
     fade_from(black_palette, pal, (64 - FADE_SPEED)/3 + FADE_SPEED);
-	
+
 	print_win = new Wind(text_back, 15, 300, 625, 390, 255);
 	print("allegro_init");
 
@@ -584,10 +583,8 @@ void next_turn(int crc)
 
 int GAMELOOP = 0;
 
-//////////////////////////////////////////////////////////////////////////////
-/// Redraw field of view and minimap on the screen                         ///
-//////////////////////////////////////////////////////////////////////////////
-
+/** Redraw field of view and minimap on the screen
+*/
 void build_screen(int & select_y)
 {
 	clear_to_color(screen2, BACKCOLOR);
@@ -602,7 +599,7 @@ void build_screen(int & select_y)
 		case MAP2D:
 			map->draw2d();
 			break;
-		case WATCH:     ///////////////////////////////////////////////
+		case WATCH:
 		case MAP3D:
 			map->set_sel(mouse_x, mouse_y);
 			map->draw();
@@ -649,10 +646,8 @@ void build_screen(int & select_y)
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////
-/// Main loop of the tactical part of the game                             ///
-//////////////////////////////////////////////////////////////////////////////
-
+/** Main loop of the tactical part of the game
+*/
 void savegame()
 {
 	std::fstream f("ufo2000.sav", std::ios::binary | std::ios::out);
