@@ -59,49 +59,54 @@ void initmainmenu2()
 
 void initmainmenu()
 {
-	if (!BLOODYMENU) {
-		initmainmenu2();
-		return ;
-	}
-
-	menuback = LOADBITMAP_ORIG("ufointro/pict5.lbm", menupal);
-	create_rgb_table(&rgb_table, menupal, NULL);
-	rgb_map = &rgb_table;
-	create_light_table(&light_table, menupal, 0, 0, 0, NULL);
-
-	menuscr = create_bitmap(320, 200);
-	spotlight = create_bitmap(128, 128); clear(spotlight);
-	for (int i = 0; i < 256; i++)
-		circlefill(spotlight, 64, 64, 64 - i / 4, i);
-
-	wempty = new Word();
-	//winet = new Word("inet");
-	winet = new Word(BWD_INET);
-	//wipx = new Word("ipx");
-	wipx = new Word(BWD_IPX);
-	//wmodem = new Word("modem");
-	wmodem = new Word(BWD_MODEM);
-	//wdos = new Word("dos");
-	wdos = new Word(BWD_DOS);
-	//wabout = new Word("about");
-	wabout = new Word(BWD_ABOUT);
-	//wcfg = new Word("cfg");
-	wcfg = new Word(BWD_CFG);
-	/*wipx->savebwd();
-	wmodem->savebwd();
-	wdos->savebwd();
-	wabout->savebwd();
-	wcfg->savebwd();
-	winet->savebwd();*/
+    if (!BLOODYMENU) {
+        initmainmenu2();
+        return ;
+    }
+    
+    menuback = LOADBITMAP_ORIG("ufointro/pict5.lbm", menupal);
+    create_rgb_table(&rgb_table, menupal, NULL);
+    rgb_map = &rgb_table;
+    create_light_table(&light_table, menupal, 0, 0, 0, NULL);
+    
+    menuscr = create_bitmap(320, 200);
+    spotlight = create_bitmap(128, 128); clear(spotlight);
+    for (int i = 0; i < 256; i++)
+        circlefill(spotlight, 64, 64, 64 - i / 4, i);
+    
+    wempty = new Word();
+    //winet = new Word("inet");
+    winet = new Word(BWD_INET);
+    //wipx = new Word("ipx");
+    wipx = new Word(BWD_IPX);
+    //wmodem = new Word("modem");
+    wmodem = new Word(BWD_MODEM);
+    //wdos = new Word("dos");
+    wdos = new Word(BWD_DOS);
+    //wabout = new Word("about");
+    wabout = new Word(BWD_ABOUT);
+    //wcfg = new Word("cfg");
+    wcfg = new Word(BWD_CFG);
+    /*wipx->savebwd();
+    wmodem->savebwd();
+    wdos->savebwd();
+    wabout->savebwd();
+    wcfg->savebwd();
+    winet->savebwd();*/
 }
 
+/** Event handler for main menu buttons. */
 static int d_baton_proc(int msg, DIALOG *d, int c)
 {
 	int state1, state2;
-	int g;
+	int g, rval = D_O_K;
+    FONT *_font;
+    _font = font;
+    font = large;
 
 	switch (msg) {
 		case MSG_DRAW:
+            font = large;
 			if (d->flags & D_SELECTED) {
 				g = 1;
 				state1 = d->bg;
@@ -110,7 +115,7 @@ static int d_baton_proc(int msg, DIALOG *d, int c)
 				g = 0;
 				state1 = (d->flags & D_DISABLED) ? gui_mg_color : d->fg;
 				state2 = d->bg;
-			}
+            }
 
 			if ((d->flags & D_GOTFOCUS) &&
 			        (!(d->flags & D_SELECTED) || !(d->flags & D_EXIT))) {
@@ -134,9 +139,10 @@ static int d_baton_proc(int msg, DIALOG *d, int c)
 			}
 			break;
 		default:
-			return d_button_proc(msg, d, c);
+            rval = d_button_proc(msg, d, c);
 	}
-	return D_O_K;
+    font = _font;
+	return rval;
 }
 
 /*
@@ -283,10 +289,8 @@ int do_mainmenu2()
 	text_mode( -1);
 	textprintf(screen, font, 0, 0, 1, "heap: %ld", dpmi_free_mem.largest_available_free_block_in_bytes);
 #endif
-#ifdef WIN32
 	text_mode( -1);
-	textprintf(screen, font, 0, 0, 1, "UFO2000 %s", UFO_VERSION_STRING);
-#endif
+	textprintf(screen, small, 0, 0, 1, "UFO2000 %s", UFO_VERSION_STRING);
 
 	int v = do_dialog(the_dialog, -1);
 	

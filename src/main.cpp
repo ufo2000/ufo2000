@@ -296,7 +296,7 @@ void initmain(int argc, char *argv[])
 	set_uformat(U_ASCII);
 	allegro_init();
 	register_bitmap_file_type("jpg", load_jpg, NULL);
-
+        set_color_conversion(COLORCONV_NONE); // or in debug mode allegro bombs out. God knows what happens in release mode. 
 	FLAGS = 0;
 	push_config_state();
 	set_config_file("ufo2000.ini");
@@ -481,25 +481,27 @@ void closemain()
 	closesound();
 
 	allegro_exit();
-	printf("\nUFO 2000 remake\nCopyright Sanami  (C) %s %s\n%s version\n\n", __TIME__, __DATE__, UFO_VERSION_STRING);
+	printf("\nUFO 2000 remake version %s\nCopyright Sanami  (C) %s %s\n\n", UFO_VERSION_STRING, __TIME__, __DATE__);
 #ifdef DJGPP
-	printf("DJGPP 2.03, ");
+	puts("DJGPP 2.03, ");
 #endif
-	printf("Allegro %s", ALLEGRO_VERSION_STR);
+	printf("Allegro %s on %s", ALLEGRO_VERSION_STR, ALLEGRO_PLATFORM_STR);
 #ifdef USE_JGMOD
 	printf(", JGMOD %s", JGMOD_VERSION_STR);
 #endif
 #ifdef DJGPP
-	printf(", COMLib 1.0");
-	printf(", Jonipx");
+	puts(", COMLib 1.0");
+	puts(", Jonipx");
 	printf("\n%s", __lsck_get_version());
 #endif
 
-	printf("\n\nYakutsk nightware");
+	puts("\n\nYakutsk nightware");
 
-	printf("\n\nhttp://sourceforge.net/projects/ufo2000/");
-	printf("\nhttp://pages.ykt.ru/ufo2000/");
+	puts("\nhttp://sourceforge.net/projects/ufo2000/");
+	puts("\nhttp://pages.ykt.ru/ufo2000/");
+    puts("\nhttp://ufo2k-allegro.lxnt.info/");
 
+    putchar('\n');
 	exit(0);
 }
 
