@@ -77,19 +77,19 @@ void ConsoleStatusLine::redraw_fast(BITMAP *bmp, int x, int y)
  * @param keycode allegro key code obtained by readkey() function
  * @return true if there is ready line inside of internal buffer (ENTER pressed)
  */
-bool ConsoleStatusLine::process_keyboard_input(int keycode)
+bool ConsoleStatusLine::process_keyboard_input(int keycode, int scancode)
 {
-	if (keycode >> 8 == KEY_ENTER)
+	if (scancode == KEY_ENTER)
 		return true;
 
-	if (keycode >> 8 == KEY_BACKSPACE) {
+	if (scancode == KEY_BACKSPACE) {
 		if (backspace()) m_need_redraw = true;
 		return false;
 	}
+	if (keycode == 0) return false;
 
-	int c = keymaper(keycode & 0xFF);
 	char tmp[6];
-	int size = usetc(tmp, c);
+	int size = usetc(tmp, keycode);
 	m_text.append(tmp, tmp + size);
 	if (text_length(m_font, m_text.c_str()) > m_width) backspace();
 	m_need_redraw = true;
@@ -183,14 +183,14 @@ void ConsoleWindow::printf(const char *fmt, ...)
  * @return        true if a new line has been just inserted into a buffer
  *                this line can be read by get_text() function
  */
-bool ConsoleWindow::process_keyboard_input(int keycode)
+bool ConsoleWindow::process_keyboard_input(int keycode, int scancode)
 {
-	if (keycode >> 8 == KEY_ENTER) {
+	if (scancode == KEY_ENTER) {
 		print(m_status_line->get_text().c_str());
 		m_status_line->set_text("");
 		return true;
 	}
-	m_status_line->process_keyboard_input(keycode);
+	m_status_line->process_keyboard_input(keycode, scancode);
 	return false;
 }
 

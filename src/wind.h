@@ -89,7 +89,7 @@ public:
 	void redraw_full(BITMAP *bmp, int x, int y);
 	void redraw_fast(BITMAP *bmp, int x, int y);
 
-	bool process_keyboard_input(int keycode);
+	bool process_keyboard_input(int keycode, int scancode);
 
 	const std::string &get_text() const { return m_text; }
 	void set_text(const std::string & text) { m_text = text; }
@@ -120,7 +120,7 @@ public:
 	void printf(int color, const char *fmt, ...);
 	void printf(const char *fmt, ...);
 
-	bool process_keyboard_input(int keycode);
+	bool process_keyboard_input(int keycode, int scancode);
 
 	const char *get_text();
 	bool resize(int width, int height);

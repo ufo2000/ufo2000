@@ -329,9 +329,10 @@ int Connect::do_chat()
 		process_keyswitch();
 
 		if (keypressed()) {
-			int c = readkey();
+			int scancode;
+			int keycode = ureadkey(&scancode);
 
-			switch (c >> 8) {
+			switch (scancode) {
 				case KEY_F4:
 				case KEY_F5:
 					info_win->redraw_full();
@@ -348,7 +349,7 @@ int Connect::do_chat()
 					//DONE = 1;
 					break;
 				default:
-					if (g_console->process_keyboard_input(c))
+					if (g_console->process_keyboard_input(keycode, scancode))
 						net->send_raw((char *)g_console->get_text());
 			}
 		}
@@ -512,9 +513,10 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 		if (keypressed()) {
 			CHANGE = 1;
 
-			int c = readkey();
+			int scancode;
+			int keycode = ureadkey(&scancode);
 
-			switch (c >> 8) {
+			switch (scancode) {
 				case KEY_F1:
 					if (FLAGS & F_RAWMESSAGES) {
 						FLAGS &= ~F_RAWMESSAGES;
@@ -554,7 +556,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 					}
 					break;
 				default:
-					if (g_console->process_keyboard_input(c))
+					if (g_console->process_keyboard_input(keycode, scancode))
 						net->send_message((char *)g_console->get_text());
 			}
 		}

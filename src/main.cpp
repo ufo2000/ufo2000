@@ -412,7 +412,15 @@ void initmain(int argc, char *argv[])
 	Item::initbigobs();
 
 	print("new console window");
-	g_console = new ConsoleWindow(screen->w, screen->h - SCREEN2H, font);
+	std::string consolefont = get_config_string("General", "consolefont", "default");
+	FONT * fnt = font;
+	if (consolefont == "xcom_small") {
+		fnt = g_small_font;
+	} else if (consolefont == "xcom_large") {
+		fnt = large;
+	}
+	g_console = new ConsoleWindow(screen->w, screen->h - SCREEN2H, fnt);
+
 	print("new icon");
 	icon = new Icon((SCREEN2W - 320) / 2, SCREEN2H - 56);
 	print("new inventory");
@@ -884,14 +892,15 @@ void gameloop()
 		process_keyswitch();
 
 		if (keypressed()) {
-			int c = readkey();
+			int scancode;
+			int keycode = ureadkey(&scancode);
 
-			if (c == KEY_X << 8) {
+			if (scancode == KEY_X) {
 				//DONE=1;
 				closemain();
 			}
 
-			switch (c >> 8) {
+			switch (scancode) {
 				case KEY_PGUP:
 					if (map->sel_lev < map->level - 1) {
 						map->sel_lev++;
@@ -985,7 +994,7 @@ void gameloop()
 						DONE = 1;
 					break;
 				default:
-					if (g_console->process_keyboard_input(c))
+					if (g_console->process_keyboard_input(keycode, scancode))
 						net->send_message((char *)g_console->get_text());
 			}
 			CHANGE = 1;
