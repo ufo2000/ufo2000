@@ -694,29 +694,37 @@ static FONT *create_font(unsigned char *data00, unsigned char *data04, int w, in
 /** 'Large' UFO font. */
 FONT *large = NULL;
 
+#ifdef HAVE_FREETYPE
 GLYPH_FACE *g_large_font_face;
 GLYPH_KEEP *g_large_font_keep;
 GLYPH_REND *g_large_font_rend;
+#endif
 
 /** 'Small' UFO font. */
 FONT *g_small_font = NULL;
+#ifdef HAVE_FREETYPE
 GLYPH_FACE *g_small_font_face;
 GLYPH_KEEP *g_small_font_keep;
 GLYPH_REND *g_small_font_rend;
+#endif
 
 FONT *g_console_font = NULL;
+#ifdef HAVE_FREETYPE
 static GLYPH_FACE *g_console_font_face;
 static GLYPH_KEEP *g_console_font_keep;
 static GLYPH_REND *g_console_font_rend;
+#endif
 static int g_console_font_size = 9;
 
 void set_console_font_size(int size)
 {
     if (size < 9) size = 9;
     g_console_font_size = size;
+#ifdef HAVE_FREETYPE	
     if (g_console_font_rend) {
         gk_rend_set_size_pixels(g_console_font_rend, g_console_font_size, g_console_font_size);
     }
+#endif	
 }
 
 int get_console_font_size()
@@ -804,7 +812,7 @@ void destroy_fonts()
         destroy_font(large);
     if (g_console_font != font)
         destroy_font(g_console_font);
-
+#ifdef HAVE_FREETYPE
     if (g_console_font_rend) gk_done_renderer(g_console_font_rend);
     if (g_small_font_rend) gk_done_renderer(g_small_font_rend);
     if (g_large_font_rend) gk_done_renderer(g_large_font_rend);
@@ -818,6 +826,7 @@ void destroy_fonts()
     if (g_large_font_face) gk_unload_face(g_large_font_face);
     
     gk_library_cleanup();
+#endif	
 }
 
 /** Prints a number in a 3x5 font onto a given position on the bitmap.
