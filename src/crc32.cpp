@@ -24,20 +24,18 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <string>
 #include "pfxopen.h"
 
-//////////////////////////////////////////////////////////////////////////////
-/// Table needed to check data files integrity                             ///
-//////////////////////////////////////////////////////////////////////////////
-
+/**
+ * Table needed to check data files integrity
+ */
 struct { const char *mName; unsigned long mCrc32; } DataFilesCrc32[] =
 {
-/*
     { "./geodata.dat", 0x00000000 },
     { "./soldier.dat", 0x00000000 },
     { "./armoury.set", 0x00000000 },
     { "./items.dat", 0x00000000 },
     { "./ufo2000.ini", 0x00000000 },
     { "./ufo2000.dat", 0x3014DC2B },
-*/
+
     { "./sound/sound1.cat", 0x514BD2C6 },
     { "./sound/sound2.cat", 0x432F7EBF },
 
@@ -471,11 +469,21 @@ unsigned long update_crc32(unsigned long InitCrc, void *pInBuff, unsigned long I
 	return InitCrc;
 }
 
-
+/**
+ * Function that checks CRC32 of file
+ *
+ * @param filename name of the file
+ * @param crc32    value of CRC32 that file must have
+ * @return         true if there are no problems with checked file
+ *                 
+ * @note           If crc32 argument of function is 0 then only file 
+ *                 existence is checked but file content is ignored
+ */
 bool check_file_crc32(const char *filename, unsigned long crc32)
 {
 	char buffer[1024];
 	FILE *f = FOPEN_ORIG(filename, "rb");
+	if (f == NULL) f = FOPEN_OWN(filename, "rb");
 	
 	if (f == NULL) return false; 
 	if (crc32 == 0)	{
