@@ -46,10 +46,12 @@ PCK::~PCK()
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////
-/// $$$ Hack, used only to add knife and kastet                            ///
-//////////////////////////////////////////////////////////////////////////////
-
+/**
+ * $$$ Hack, used only to add knife and kastet
+ *
+ * @param bmp - pointer to bitmap that is added as a new frame
+ * @return    - index of added frame
+ */
 int PCK::add_image(BITMAP *bmp)
 {
 	m_bmp.resize(m_imgnum + 1);
@@ -58,10 +60,13 @@ int PCK::add_image(BITMAP *bmp)
 	return m_imgnum++;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-/// Decode single frame from PCK file and store it in bitmap               ///
-//////////////////////////////////////////////////////////////////////////////
-
+/**
+ * Decode single frame from PCK file and store it in bitmap
+ *
+ * @param data - pointer to data buffer for a frame from PCK file
+ * @param size - size of frame data
+ * @return     - bitmap with a frame image
+ */
 BITMAP *PCK::pckdat2bmp(const unsigned char *data, int size)
 {
 	BITMAP *bmp = create_bitmap(32, 48); clear(bmp);
@@ -82,10 +87,12 @@ BITMAP *PCK::pckdat2bmp(const unsigned char *data, int size)
 	return bmp;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-/// Load all frames from .pck file and append them to already loaded set   ///
-//////////////////////////////////////////////////////////////////////////////
-
+/**
+ * Load all frames from .pck file and append them to already loaded set
+ *
+ * @param pckfname - name of PCK file to be loaded
+ * @return         - number of frames loaded
+ */
 int PCK::loadpck(const char *pckfname)
 {
 	int fh = OPEN_ORIG(pckfname, O_RDONLY | O_BINARY);
@@ -155,15 +162,18 @@ void PCK::drawpck(int num, BITMAP *dest, int y)
 	draw_sprite(dest, m_bmp[num], 0, y - 6);
 }
 
-//////////////////////////////////////////////////////////////////////////////
-/// Function for debugging and dumping .pck files only                     ///
-//////////////////////////////////////////////////////////////////////////////
+/* Parameters for saving data in BMP format */
 
 #define SIZE 16
 
 #define OUT_WIDTH  32 // 64
 #define OUT_HEIGHT 48 // 118
 
+/**
+ * Function for debugging and dumping .pck files only
+ *
+ * @param fname - name of the file to which this PCK file is saved in BMP format
+ */
 void PCK::save_as_bmp(const char *fname)
 {
 	int rows = ((m_imgnum + SIZE - 1) / SIZE);
