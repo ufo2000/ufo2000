@@ -53,10 +53,13 @@ static char weapon_in_use[] = {
 	RIFLE , RIFLE_CLIP ,
 	Plasma_Pistol , Plasma_Pistol_Clip ,
 	Plasma_Rifle , Plasma_Rifle_Clip ,
-	LASER_PISTOL , LASER_GUN ,
-	HEAVY_CANNON , CANNON_HE_AMMO, CANNON_I_AMMO ,
-	AUTO_CANNON , AUTO_CANNON_HE_AMMO, AUTO_CANNON_I_AMMO ,
-	GRENADE , HIGH_EXPLOSIVE , PROXIMITY_GRENADE , SMOKE_GRENADE ,
+	Heavy_Plasma , Heavy_Plasma_Clip ,
+	LASER_PISTOL , LASER_GUN , HEAVY_LASER ,
+	HEAVY_CANNON , CANNON_AP_AMMO , CANNON_HE_AMMO, CANNON_I_AMMO ,
+	AUTO_CANNON , AUTO_CANNON_AP_AMMO , AUTO_CANNON_HE_AMMO, AUTO_CANNON_I_AMMO ,
+	ROCKET_LAUNCHER , SMALL_ROCKET , LARGE_ROCKET , INCENDIARY_ROCKET ,
+	GRENADE , ALIEN_GRENADE , HIGH_EXPLOSIVE , PROXIMITY_GRENADE , SMOKE_GRENADE ,
+	STUN_ROD , SMALL_LAUNCHER , STUN_MISSILE ,
 	KASTET , KNIFE
 };
 
@@ -499,7 +502,7 @@ static char slider_text[8][14];
 
 static int d_skin_proc(int msg, DIALOG *d, int c);
 
-#define MAXPOINTS (4*60)
+#define MAXPOINTS (7*60)
 static int points;
 static char points_str[100];
 
@@ -547,13 +550,24 @@ static int d_slider_pro2(int msg, DIALOG * d, int c)
 			break;
 		case MSG_CLICK:
 		case MSG_CHAR:
-			if (d->d2 > 80) d->d2 = 80;
-			if (d->d2 < 50) d->d2 = 50;
+			if (d == &sol_dialog[D_STRENGTH])
+			{
+				if (d->d2 > 40) d->d2 = 40;
+				if (d->d2 < 25) d->d2 = 25;
+			}
+			else
+			{
+				if (d->d2 > 80) d->d2 = 80;
+				if (d->d2 < 50) d->d2 = 50;
+			}
 
 			points = sol_dialog[D_TIME].d2 +
 			         sol_dialog[D_HEALTH].d2 +
 			         sol_dialog[D_FIRE_ACCUR].d2 +
-			         sol_dialog[D_THRU_ACCUR].d2;
+			         sol_dialog[D_THRU_ACCUR].d2 +
+					 sol_dialog[D_STAMINA].d2 +
+					 (sol_dialog[D_STRENGTH].d2 * 2) +
+					 sol_dialog[D_REACTION].d2;
 
 			if (points > MAXPOINTS) {
 				points -= d->d2;
@@ -606,9 +620,9 @@ void Editor::edit_soldier()
 	sprintf(slider_text[6], "Throwing");
 	sprintf(slider_text[7], "Bravery");
 
-	sol_dialog[D_STAMINA].flags  |= D_DISABLED;
-	sol_dialog[D_REACTION].flags |= D_DISABLED;
-	sol_dialog[D_STRENGTH].flags |= D_DISABLED;
+//	sol_dialog[D_STAMINA].flags  |= D_DISABLED;
+//	sol_dialog[D_REACTION].flags |= D_DISABLED;
+//	sol_dialog[D_STRENGTH].flags |= D_DISABLED;
 	sol_dialog[D_BRAVERY].flags  |= D_DISABLED;
 
 	sol_dialog[D_NAME].dp       = man->md.Name;
@@ -630,7 +644,9 @@ void Editor::edit_soldier()
 	sol_dialog[D_ICON].d2   = get_skin_index(man->md.SkinType, man->md.fFemale);
 
 	points = sol_dialog[D_TIME].d2 + sol_dialog[D_HEALTH].d2 +
-	         sol_dialog[D_FIRE_ACCUR].d2 + sol_dialog[D_THRU_ACCUR].d2;
+	         sol_dialog[D_FIRE_ACCUR].d2 + sol_dialog[D_THRU_ACCUR].d2 +
+			 sol_dialog[D_STAMINA].d2 + (sol_dialog[D_STRENGTH].d2 * 2) +
+			 sol_dialog[D_REACTION].d2;
 	sprintf(points_str, "points remain %3d", MAXPOINTS - points);
 
 	position_mouse(320, 200);

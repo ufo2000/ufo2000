@@ -154,6 +154,14 @@ void Net::close()
 	}
 }
 
+Soldier *Net::findman(int NID)
+{
+	Soldier *ss = platoon_remote->findman(NID);
+	if (ss == NULL) ss = platoon_local->findman(NID);
+
+	return ss;
+}
+
 void Net::send_message(const std::string &msg)
 {
 	send(std::string("_Xmes_") + msg);
@@ -433,7 +441,7 @@ int Net::recv_open_door()
 
 	pkt >> NID;
 
-	Soldier * ss = platoon_remote->findman(NID);
+	Soldier *ss = findman(NID);
 	if (ss != NULL) {
 		SEND = 0;
 		if (!ss->open_door())
@@ -461,7 +469,7 @@ int Net::recv_change_pose()
 
 	pkt >> NID;
 
-	Soldier * ss = platoon_remote->findman(NID);
+	Soldier *ss = findman(NID);
 	if (ss != NULL) {
 		SEND = 0;
 		if (!ss->change_pose()) {
@@ -498,7 +506,7 @@ int Net::recv_prime_grenade()
 	pkt >> delay_time;
 	pkt >> req_time;
 
-	Soldier *ss = platoon_remote->findman(NID);
+	Soldier *ss = findman(NID);
 	if (ss != NULL) {
 		SEND = 0;
 		if (!ss->prime_grenade(iplace, delay_time, req_time))
@@ -528,7 +536,7 @@ int Net::recv_unload_ammo()
 
 	pkt >> NID;
 
-	Soldier *ss = platoon_remote->findman(NID);
+	Soldier *ss = findman(NID);
 	if (ss != NULL) {
 		SEND = 0;
 		if (!ss->unload_ammo(itaken)) {
@@ -560,7 +568,7 @@ int Net::recv_load_ammo()
 	pkt >> NID;
 	pkt >> iplace;
 
-	Soldier *ss = platoon_remote->findman(NID);
+	Soldier *ss = findman(NID);
 	if (ss != NULL) {
 		SEND = 0;
 		if (!ss->load_ammo(iplace, itaken)) {
@@ -668,7 +676,7 @@ int Net::recv_select_item()
 	pkt >> ix;
 	pkt >> iy;
 
-	Soldier *ss = platoon_remote->findman(NID);
+	Soldier *ss = findman(NID);
 	if (ss != NULL) {
 		SEND = 0;
 		itaken = ss->getitem(iplace, ix, iy);
@@ -707,7 +715,7 @@ int Net::recv_deselect_item()
 	pkt >> iy;
 	pkt >> req_time;
 
-	Soldier *ss = platoon_remote->findman(NID);
+	Soldier *ss = findman(NID);
 	if (ss != NULL) {
 		if (itaken != NULL) {
 			SEND = 0;
@@ -748,7 +756,7 @@ int Net::recv_move()
 	pkt >> col;
 	pkt >> row;
 
-	Soldier *ss = platoon_remote->findman(NID);
+	Soldier *ss = findman(NID);
 	if (ss != NULL) {
 		SEND = 0;
 		ss->wayto(lev, col, row);
@@ -779,7 +787,7 @@ int Net::recv_face()
 	pkt >> col;
 	pkt >> row;
 
-	Soldier *ss = platoon_remote->findman(NID);
+	Soldier *ss = findman(NID);
 	if (ss != NULL) {
 		SEND = 0;
 		ss->faceto(col, row);
@@ -824,7 +832,7 @@ int Net::recv_thru()
 	pkt >> iplace;
 	pkt >> req_time;
 
-	Soldier *ss = platoon_remote->findman(NID);
+	Soldier *ss = findman(NID);
 	if (ss != NULL) {
 		SEND = 0;
 		if (!ss->thru(z0, x0, y0, ro, fi, te, zA, iplace, req_time)) {
@@ -867,7 +875,7 @@ int Net::recv_beam()
 	pkt >> iplace;
 	pkt >> req_time;
 
-	Soldier *ss = platoon_remote->findman(NID);
+	Soldier *ss = findman(NID);
 	if (ss != NULL) {
 		SEND = 0;
 		if (!ss->beam(z0, x0, y0, fi, te, iplace, req_time)) {
@@ -911,7 +919,7 @@ int Net::recv_fire()
 	pkt >> iplace;
 	pkt >> req_time;
 
-	Soldier *ss = platoon_remote->findman(NID);
+	Soldier *ss = findman(NID);
 	if (ss != NULL) {
 		SEND = 0;
 		if (!ss->fire(z0, x0, y0, fi, te, iplace, req_time)) {
@@ -955,7 +963,7 @@ int Net::recv_punch()
 	pkt >> iplace;
 	pkt >> req_time;
 
-	Soldier *ss = platoon_remote->findman(NID);
+	Soldier *ss = findman(NID);
 	if (ss != NULL) {
 		SEND = 0;
 		if (!ss->punch(z0, x0, y0, fi, te, iplace, req_time)) {
@@ -999,7 +1007,7 @@ int Net::recv_aimedthrow()
 	pkt >> iplace;
 	pkt >> req_time;
 
-	Soldier *ss = platoon_remote->findman(NID);
+	Soldier *ss = findman(NID);
 	if (ss != NULL) {
 		SEND = 0;
 		if (!ss->aimedthrow(z0, x0, y0, fi, te, iplace, req_time)) {

@@ -108,6 +108,7 @@ public:
 	int is_laser() { return is_laser(m_type); };
 	int is_grenade();
 	int is_cold_weapon();
+	int is_stun_rod();
 	int is_knife();
 
 	int loadclip(Item *clip);
@@ -149,6 +150,8 @@ public:
 	int health();
 	void draw_health(int GRAPH, int gx, int gy);
 	int damage(int dam);
+
+	Place *get_place() { return m_place; }
 
 	virtual bool Write(persist::Engine &archive) const;
 	virtual bool Read(persist::Engine &archive);

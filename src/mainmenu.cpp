@@ -30,6 +30,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "version.h"
 #include "pfxopen.h"
 
+#include "sound.h"
+
 static int old_mouse_x = -1, old_mouse_y = -1;
 
 static PALLETE menupal;
@@ -136,6 +138,8 @@ static int d_mainmenu_button_proc(int msg, DIALOG *d, int c)
 #define MENU_BTN_W          237
 #define MENU_BTN_H          32
 
+extern MIDI *g_menu_midi_music;
+
 /** Initializes and runs button-based main menu. It is implemented as an Allegro gui dialog.
  */
 int do_mainmenu()
@@ -200,7 +204,13 @@ int do_mainmenu()
 	else
 		position_mouse(550, 180);
 
+	play_midi(g_menu_midi_music, 1);
+	soundSystem::getInstance()->play(SS_WINDOW_OPEN_1);
+
 	int v = do_dialog(the_dialog, -1);
+
+	play_midi(NULL, 1);
+	soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
 	
 	old_mouse_x = mouse_x;
 	old_mouse_y = mouse_y;

@@ -72,7 +72,44 @@ void Bullet::punch(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 void Bullet::fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 {
     
-	soundSystem::getInstance()->play(SS_CV_RIFLE_SHOT);
+//	soundSystem::getInstance()->play(SS_CV_RIFLE_SHOT);
+	switch(_type)
+	{
+		case PISTOL_CLIP:
+			soundSystem::getInstance()->play(SS_CV_PISTOL_SHOT);
+			break;
+		case RIFLE_CLIP:
+		default:
+			soundSystem::getInstance()->play(SS_CV_RIFLE_SHOT);
+			break;
+		case CANNON_AP_AMMO:
+		case CANNON_HE_AMMO:
+		case CANNON_I_AMMO:
+ 		        soundSystem::getInstance()->play(SS_CV_HEAVY_CANNON_SHOT);
+			break;
+		case AUTO_CANNON_AP_AMMO:
+		case AUTO_CANNON_HE_AMMO:
+		case AUTO_CANNON_I_AMMO:
+ 		        soundSystem::getInstance()->play(SS_CV_AUTO_CANNON_SHOT);
+			break;
+		case SMALL_ROCKET:
+		case LARGE_ROCKET:
+		case INCENDIARY_ROCKET:
+ 		        soundSystem::getInstance()->play(SS_RL_LAUNCH);
+			break;
+		case Plasma_Pistol_Clip:
+			soundSystem::getInstance()->play(SS_PLASMA_PISTOL_SHOT);
+			break;
+		case Plasma_Rifle_Clip:
+			soundSystem::getInstance()->play(SS_PLASMA_RIFLE_SHOT);
+			break;
+		case Heavy_Plasma_Clip:
+			soundSystem::getInstance()->play(SS_PLASMA_HEAVY_SHOT);
+			break;
+		case STUN_MISSILE:
+			soundSystem::getInstance()->play(SS_ALIEN_SMALL_LAUNCH);
+			break;
+	}
 	state = FLY;
 
 	z0 = _z0; x0 = _x0; y0 = _y0;
@@ -85,7 +122,20 @@ void Bullet::fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 
 void Bullet::beam(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 {
-	soundSystem::getInstance()->play(SS_LASER_RIFLE_SHOT);
+//	soundSystem::getInstance()->play(SS_LASER_RIFLE_SHOT);
+	switch(_type)
+	{
+		case LASER_PISTOL:
+			soundSystem::getInstance()->play(SS_LASER_PISTOL_SHOT);
+			break;			
+		case LASER_GUN:
+		default:
+			soundSystem::getInstance()->play(SS_LASER_RIFLE_SHOT);
+			break;
+		case HEAVY_LASER:
+			soundSystem::getInstance()->play(SS_LASER_HEAVY_SHOT);
+			break;
+	}
 	state = BEAM;
 
 	z0 = _z0; x0 = _x0; y0 = _y0;
@@ -185,7 +235,44 @@ void Bullet::move()
 				   ) {
 					hitcell();
 					state = HIT;
-					soundSystem::getInstance()->play(SS_CV_BULLET_BOUNCE);
+					switch(type)
+					{
+						case PISTOL_CLIP:
+						case RIFLE_CLIP:
+						default:
+							soundSystem::getInstance()->play(SS_CV_BULLET_HIT);
+							break;
+						case CANNON_AP_AMMO:
+						case AUTO_CANNON_AP_AMMO:
+				 		    soundSystem::getInstance()->play(SS_CV_CANNON_AP_HIT);
+							break;
+						case CANNON_HE_AMMO:
+						case AUTO_CANNON_HE_AMMO:
+				 		    soundSystem::getInstance()->play(SS_CV_CANNON_HE_HIT);
+							break;
+						case CANNON_I_AMMO:
+						case AUTO_CANNON_I_AMMO:
+				 		    soundSystem::getInstance()->play(SS_CV_CANNON_IN_HIT);
+							break;
+						case SMALL_ROCKET:
+			 		        soundSystem::getInstance()->play(SS_SMALL_ROCKET_HIT);
+							break;
+						case LARGE_ROCKET:
+			 		        soundSystem::getInstance()->play(SS_HE_ROCKET_HIT);
+							break;
+						case INCENDIARY_ROCKET:
+			 		        soundSystem::getInstance()->play(SS_IN_ROCKET_HIT);
+							break;
+						case Plasma_Pistol_Clip:
+						case Plasma_Rifle_Clip:
+						case Heavy_Plasma_Clip:
+							soundSystem::getInstance()->play(SS_PLASMA_HIT);
+							break;
+						case STUN_MISSILE:
+							soundSystem::getInstance()->play(SS_ALIEN_SMALL_HIT);
+							break;
+					}
+
 					break;
 				}
 			}
@@ -554,7 +641,8 @@ int Bullet::explodable()
 	        (type == AUTO_CANNON_HE_AMMO) ||
 	        (type == SMALL_ROCKET) ||
 	        (type == LARGE_ROCKET) ||
-	        (type == INCENDIARY_ROCKET))
+	        (type == INCENDIARY_ROCKET) ||
+			(type == STUN_MISSILE))
 		return 1;
 	return 0;
 }
@@ -579,9 +667,41 @@ void Bullet::detonate()
 
 void Bullet::hitman()
 {
+	// Here, we figure out which direction the bullet is facing.
+	// 567
+	// 4 0
+	// 321
+	int hitdir;
+	REAL theangle = te;
+
+	while (theangle < 0)
+		theangle += (2 * PI);
+	while (theangle > (2 * PI))
+		theangle -= (2 * PI);
+
+	if (theangle < (PI / 8))
+		hitdir = 0;
+	else if (theangle < ((3 * PI) / 8))
+		hitdir = 7;
+	else if (theangle < ((5 * PI) / 8))
+		hitdir = 6;
+	else if (theangle < ((7 * PI) / 8))
+		hitdir = 5;
+	else if (theangle < ((9 * PI) / 8))
+		hitdir = 4;
+	else if (theangle < ((11 * PI) / 8))
+		hitdir = 3;
+	else if (theangle < ((13 * PI) / 8))
+		hitdir = 2;
+	else if (theangle < ((15 * PI) / 8))
+		hitdir = 1;
+	else
+		hitdir = 0;
+
+
 	map->apply_hit(z, x, y, type);
-	platoon_remote->apply_hit(z, x, y, type);
-	platoon_local->apply_hit(z, x, y, type);
+	platoon_remote->apply_hit(z, x, y, type, hitdir);
+	platoon_local->apply_hit(z, x, y, type, hitdir);
 }
 
 bool Bullet::Write(persist::Engine &archive) const

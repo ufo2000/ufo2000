@@ -114,6 +114,9 @@ void Item::initobdata()
 
 	obdata[PROXIMITY_GRENADE].damage = 30;
 
+	obdata[STUN_ROD].accuracy[0] = 100;     	//apunch
+	obdata[STUN_ROD].damage = 100;
+
 	delete []buf;
 }
 
@@ -298,7 +301,15 @@ int Item::is_laser(int type)
 
 int Item::is_cold_weapon()
 {
-	if ((m_type == KASTET) || (m_type == KNIFE))
+	// Stun rod hack, so it can be used to stun!
+	if ((m_type == KASTET) || (m_type == KNIFE) || (m_type == STUN_ROD))
+		return 1;
+	return 0;
+}
+
+int Item::is_stun_rod()
+{
+	if ((m_type == STUN_ROD))
 		return 1;
 	return 0;
 }

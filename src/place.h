@@ -71,6 +71,8 @@ public:
 	//int save(char *n1, int NID, char *n2, int ip, char *txt);
 	int eot_save(int ip, char *txt);
 
+	int count_weight();
+
 	void scroll_left();
 	void scroll_right();
 

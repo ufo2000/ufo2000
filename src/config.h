@@ -34,6 +34,18 @@ void configure();
 void aboutinfo();
 
 int cfg_get_base_accuracy();
-const char *cfg_get_music_file_name();
+const char *cfg_get_menu_music_file_name();
+const char *cfg_get_setup_music_file_name();
+const char *cfg_get_editor_music_file_name();
+const char *cfg_get_combat_music_file_name();
+const char *cfg_get_win_music_file_name();
+const char *cfg_get_lose_music_file_name();
+
+extern MIDI                  *g_menu_midi_music;
+extern MIDI                  *g_setup_midi_music;
+extern MIDI                  *g_editor_midi_music;
+extern MIDI                  *g_combat_midi_music;
+extern MIDI                  *g_win_midi_music;
+extern MIDI                  *g_lose_midi_music;
 
 #endif

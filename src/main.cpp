@@ -162,10 +162,16 @@ PLAYERDATA *pd_local, *pd_remote;
 int local_platoon_size;
 extern int RECALC_VISIBILITY;
 
+// For endgame.
+int win;
+int loss;
+
 //simple all of new - rem about rand in sol's constructors
 //can diff on remote comps
 void restartgame()
 {
+	win = 0;
+	loss = 0;
 	//map = new Map(4,4);
 	//map->load("floor0.map", Map::cultivat);
 	//map = new Map("GEODATA.DAT");
@@ -214,6 +220,10 @@ void restartgame()
 		MODE = WATCH;
 	}
 
+	// Initial statistics get set properly here (strength effect on TU, mostly).
+	platoon_local->restore();
+	platoon_remote->restore();
+
 	//sel_man = NULL;
 	sel_man = platoon_local->captain();
 	map->center(sel_man);
@@ -223,8 +233,13 @@ void restartgame()
 
 int initgame()
 {
+	play_midi(g_setup_midi_music, 1);
 	if (!net->init())
+	{
+		play_midi(NULL, 0);
 		return 0;
+	}
+	play_midi(NULL, 0);
 
 	install_timers(speed_unit, speed_bullet, speed_mapscroll);
 	//mouse_callback = mouser_proc;
@@ -631,6 +646,15 @@ void next_turn(int crc)
 		platoon_remote = pt;
 
 		sel_man = platoon_local->captain();
+		while (sel_man && (sel_man->state() == STUN))
+		{
+			sel_man = sel_man->next();
+			if (sel_man == platoon_local->captain())
+			{
+				sel_man = NULL;
+				break;
+			}
+		}
 		if (sel_man != NULL)
 			map->center(sel_man);
 
@@ -645,10 +669,21 @@ void next_turn(int crc)
 		net->send_endturn(bcrc);
 	}
 
+	// Instead of resetting both platoons every second turn, we reset them at the start of their turn.
+	// Therefore, a team keeps their leftover TUs through the duration of the enemy turn - vital for reaction fire.
 	if (turn % 2 == 0) {
 		map->step();      //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		platoon_local->restore();
-		platoon_remote->restore();
+		if (HOST || (net->gametype == HOTSEAT))
+			platoon_local->restore();
+		else
+			platoon_remote->restore();
+	}
+	else
+	{
+		if (HOST && (net->gametype != HOTSEAT))
+			platoon_remote->restore();
+		else
+			platoon_local->restore();
 	}
 
 	elist->step(crc);
@@ -657,6 +692,38 @@ void next_turn(int crc)
 		"Next turn. local = %d, remote = %d soldiers",
 		platoon_local->num_of_men(),
 		platoon_remote->num_of_men());
+
+	Soldier *check;
+
+	if (platoon_remote->captain() != NULL) // Win?
+	{
+		check = platoon_remote->captain();
+		while (check && (check->state() == STUN))
+		{
+			check = check->next();
+			if (check == platoon_remote->captain())
+				break;
+		}
+		if (((check == platoon_remote->captain()) && (check->state() == STUN)) || (check == NULL))
+			win = 1;
+	}
+	else
+		win = 1;
+
+	if (platoon_local->captain() != NULL) // Loss?
+	{
+		check = platoon_local->captain();
+		while (check && (check->state() == STUN))
+		{
+			check = check->next();
+			if (check == platoon_local->captain())
+				break;
+		}
+		if (((check == platoon_local->captain()) && (check->state() == STUN)) || (check == NULL))
+			loss = 1;
+	}
+	else
+		loss = 1;
 }
 
 int GAMELOOP = 0;
@@ -809,7 +876,7 @@ void gameloop()
 {
 	int mouse_leftr = 1, mouse_rightr = 1, select_y = 0;
 
-//	play_midi(g_midi_music, 1);
+	play_midi(g_combat_midi_music, 1);
 
 	clear_keybuf();
 	GAMELOOP = 1;
@@ -836,6 +903,8 @@ void gameloop()
 		g_console->redraw(screen, 0, SCREEN2H);
 
 		net->check();
+
+		if (win || loss) break;
 
 		if (NOTICE) {
 			if (NOTICEdemon) {
@@ -1108,9 +1177,118 @@ void gameloop()
 	play_midi(NULL, 0);
 
 	GAMELOOP = 0;
-	net->send_quit();
+
+
+	if (win || loss)
+	{
+		SPK *back;
+		BITMAP *scr = create_bitmap(320, 200); clear(scr);
+		char winner[14];
+
+		fade_out(10);
+		clear(screen);
+
+		reset_video();
+		set_mouse_range(0, 0, 639, 299);
+
+		DONE = 0;
+
+		// So, if win and loss are BOTH set, go to the bottom case even if it's a hotseat game.
+		if ((win && !loss) || (net->gametype == HOTSEAT && !(win && loss)))
+		{
+			play_midi(g_win_midi_music, 1);
+			back = new SPK("geograph/back01.scr");
+			if (net->gametype != HOTSEAT)
+			{
+				if (HOST) strcpy(winner, "SERVER WINS!");
+				else strcpy(winner, "CLIENT WINS!");
+			}
+			else
+			{
+				if (win)
+				{
+					if (turn % 2 == 0) strcpy(winner, "SERVER WINS!");
+					else strcpy(winner, "CLIENT WINS!");
+				}
+				else
+				{
+					if (turn % 2 == 0) strcpy(winner, "CLIENT WINS!");
+					else strcpy(winner, "SERVER WINS!");
+				}
+			}
+		}
+		else
+		{
+			play_midi(g_lose_midi_music, 1);
+			back = new SPK("geograph/back02.scr");
+			if (win && loss) strcpy(winner, "DRAW!");
+			else if (HOST) strcpy(winner, "CLIENT WINS!");
+			else strcpy(winner, "SERVER WINS!");
+		}
+
+		back->show(scr, 0, 0);
+
+		g_console->set_full_redraw();
+
+		//TODO: Statistics screen
+
+		while(!DONE)
+		{
+			net->check();
+
+			if (CHANGE)	{
+				back->show(scr, 0, 0);
+				stretch_blit(scr, screen, 0, 0, 320, (SCREEN2H/2), 0, 0, 640, (SCREEN2H/2)*2);
+				textprintf_centre(screen, large, 320, 24, xcom1_color(1), "%s", winner);
+				draw_sprite(screen, mouser, mouse_x, mouse_y);
+				if (mouse_y > (SCREEN2H/2)*2-16) g_console->set_full_redraw(); //!!!!!!!!!!!!!!!!!!!!!
+				CHANGE = 0;
+			}
+
+			g_console->redraw(screen, 0, SCREEN2H);
+
+			if ((mouse_b & 1) && (mouse_leftr)) { //left
+				mouse_leftr = 0;
+				CHANGE = 1;
+			}
+			if ((mouse_b & 2) && (mouse_rightr)) { //right
+				mouse_rightr = 0;
+				CHANGE = 1;
+			}
+
+			if (!(mouse_b & 1)) {
+				mouse_leftr = 1;
+				CHANGE = 1;
+			}
+
+			if (!(mouse_b & 2)) {
+				mouse_rightr = 1;
+				CHANGE = 1;
+			}
+
+			if (keypressed()){
+				int scancode;
+				int keycode = ureadkey(&scancode);
+
+				switch (scancode) {
+				case KEY_ESC:
+					if (askmenu("EXIT GAME"))
+						DONE = 1;
+					break;
+				default:
+					if (g_console->process_keyboard_input(keycode, scancode))
+						net->send_message((char *)g_console->get_text());
+				}
+				CHANGE = 1;
+			}
+		}
+		play_midi(NULL, 0);
+	}
 
 	fade_out(10);
+
+	net->send_quit();
+
 	//readkey();
 	clear(screen);
 }
@@ -1217,7 +1395,9 @@ int main(int argc, char *argv[])
                     about->show();
                     continue;
                 case MAINMENU_EDITOR:
+					play_midi(g_editor_midi_music, 1);
                     editor->do_mapedit();
+					play_midi(NULL, 0);
                     continue;
                 case MAINMENU_HOTSEAT:
                     h = sethotseatplay();

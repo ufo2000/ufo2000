@@ -173,7 +173,8 @@ void Units::print(int gcol)
 		}
 	}
 	//textout(screen2, small, "INFO", gx, 160, 1);
-	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, xcom1_color(50), "total men points=%d", points);
+	// Moved down...
+	// textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, xcom1_color(50), "total men points=%d", points);
 
 
 	char buf[10000]; memset(buf, 0, sizeof(buf));
@@ -193,7 +194,9 @@ void Units::print(int gcol)
 	/*if (pos == POS_LEFT)
 		draw_items_stats(0, 160+10, buf, len);
 	else*/
-	draw_items_stats(gx, 160 + 10, buf, len);
+	int damage_points = draw_items_stats(gx, 160 + 10, buf, len);
+
+	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, xcom1_color(50), "Total points=%d", points + damage_points);
 }
 
 void Units::build_items_stats(ITEMDATA *id, char *buf, int &len)
@@ -206,23 +209,28 @@ void Units::build_items_stats(ITEMDATA *id, char *buf, int &len)
 //extern char weapon_in_use[16];
 extern int weapon[];
 
-void Units::draw_items_stats(int gx, int gy, char *buf, int len)
+int Units::draw_items_stats(int gx, int gy, char *buf, int len)
 {
 	int aa = 0;
+	int damage_points = 0;
 	for (int w = 0; w < 40; w++) {
-		if (Item::obdata[weapon[w]].isAmmo)
-			continue;
 		int num = 0;
 		for (int i = 0; i < len; i++) {
 			if (weapon[w] == buf[i])
 				num++;
 		}
+		// Count damage for platoon costs.
+		if ((Item::obdata[weapon[w]].damage > 0) && (num > 0)) damage_points += (Item::obdata[weapon[w]].damage * num);
+		if (Item::obdata[weapon[w]].isAmmo) continue;
 		if (num != 0) {
 			textprintf(screen2, g_small_font, gx + (aa / 72) * 90, gy + (aa % 72),
 			           xcom1_color(1), "%s=%d", Item::obdata[weapon[w]].name, num);
 			aa += 9;
+			
 		}
 	}
+
+	return damage_points;
 }
 
 
@@ -262,12 +270,17 @@ void Units::print_simple(int gcol)
 
 	int points = 0;
 	for (i = 0; i < pd_remote->size; i++) {
-		points += pd_remote->md[i].TimeUnits +
+/*		points += pd_remote->md[i].TimeUnits +
 		          pd_remote->md[i].Health +
 		          pd_remote->md[i].Firing +
-		          pd_remote->md[i].Throwing;
+		          pd_remote->md[i].Throwing; */
+		points += (((pd_remote->md[i].TimeUnits * 2) + pd_remote->md[i].Stamina) / 2) +
+	        pd_remote->md[i].Health +
+			(pd_remote->md[i].Reactions * 2) +
+	        ((pd_remote->md[i].Firing + pd_remote->md[i].Throwing) / 2) +
+			(pd_remote->md[i].Strength * 2) +
+			g_skins[get_skin_index(pd_remote->md[i].SkinType, pd_remote->md[i].fFemale)].armour_values[0];
 	}
-	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, xcom1_color(50), "total men points=%d", points);
 
 	char buf[10000]; memset(buf, 0, sizeof(buf));
 	int len = 0;
@@ -279,7 +292,9 @@ void Units::print_simple(int gcol)
 	/*if (pos == POS_LEFT)
 		draw_items_stats(0, 160+10, buf, len);
 	else*/
-	draw_items_stats(gx, 160 + 10, buf, len);
+	points += draw_items_stats(gx, 160 + 10, buf, len);
+
+	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, xcom1_color(50), "Total points=%d", points);
 }
 
 void Units::draw_text()

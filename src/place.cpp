@@ -449,6 +449,19 @@ int Place::eot_save(int ip, char *txt)
 	return len;
 }
 
+int Place::count_weight()
+{
+	Item *t = m_item;
+	int weight = 0;
+
+	while (t != NULL)
+	{
+		weight += t->data()->weight;
+		t = t->m_next;
+	}
+	return weight;
+}
+
 void Place::destroy_all_items()
 {
 	Item *t, *t2;

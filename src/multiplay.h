@@ -48,6 +48,8 @@ private:
 	Item *itaken;
 	Connect *connect;
 
+	Soldier *findman(int NID);
+
 	int recv_notice();
 	int recv_quit();
 	int recv_restart();

@@ -39,16 +39,54 @@ static char *gen = "General";
 static char *edit = "Editor";
 
 static int base_accuracy = 75;
-static std::string midi_file_name;
+static std::string menu_midi_file_name;
+static std::string setup_midi_file_name;
+static std::string editor_midi_file_name;
+static std::string combat_midi_file_name;
+static std::string win_midi_file_name;
+static std::string lose_midi_file_name;
+
+// Music.
+MIDI                  *g_menu_midi_music;
+MIDI                  *g_setup_midi_music;
+MIDI                  *g_editor_midi_music;
+MIDI                  *g_combat_midi_music;
+MIDI                  *g_win_midi_music;
+MIDI                  *g_lose_midi_music;
 
 int cfg_get_base_accuracy()
 {
 	return base_accuracy;
 }
 
-const char *cfg_get_music_file_name()
+const char *cfg_get_menu_music_file_name()
 {
-	return midi_file_name.c_str();
+	return menu_midi_file_name.c_str();
+}
+ 
+const char *cfg_get_setup_music_file_name()
+{
+	return setup_midi_file_name.c_str();
+}
+
+const char *cfg_get_editor_music_file_name()
+{
+	return editor_midi_file_name.c_str();
+}
+
+const char *cfg_get_combat_music_file_name()
+{
+	return combat_midi_file_name.c_str();
+}
+
+const char *cfg_get_win_music_file_name()
+{
+	return win_midi_file_name.c_str();
+}
+
+const char *cfg_get_lose_music_file_name()
+{
+	return lose_midi_file_name.c_str();
 }
 
 void loadini()
@@ -91,7 +129,19 @@ void loadini()
 	g_time_limit = get_config_int(gen, "time_limit", -1);
 
 //	base_accuracy = get_config_int(gen, "accuracy", 75);
-	midi_file_name = get_config_string(gen, "music", "sound/gmtactic.mid");
+	menu_midi_file_name = get_config_string(gen, "menu_music", "sound/gmstory.mid");
+	setup_midi_file_name = get_config_string(gen, "setup_music", "sound/gmenbase.mid");
+	editor_midi_file_name = get_config_string(gen, "editor_music", "sound/gmdefend.mid");
+	combat_midi_file_name = get_config_string(gen, "combat_music", "sound/gmtactic.mid");
+	win_midi_file_name = get_config_string(gen, "win_music", "sound/gmwin.mid");
+	lose_midi_file_name = get_config_string(gen, "lose_music", "sound/gmlose.mid");
+
+	g_menu_midi_music = load_midi(cfg_get_menu_music_file_name());
+	g_setup_midi_music = load_midi(cfg_get_setup_music_file_name());
+	g_editor_midi_music = load_midi(cfg_get_editor_music_file_name());
+	g_combat_midi_music = load_midi(cfg_get_combat_music_file_name());
+	g_win_midi_music = load_midi(cfg_get_win_music_file_name());
+	g_lose_midi_music = load_midi(cfg_get_lose_music_file_name());
 }
 
 void saveini()

@@ -135,10 +135,18 @@ void Icon::firemenu(int iplace)
 		}
 
 		if (it->is_cold_weapon()) {
-			waccur[i] = sel_man->TAccuracy(it->data()->accuracy[APUNCH]);
+			// Stun rod hack.
+			if (it->is_stun_rod())
+				waccur[i] = 100;
+			else
+				waccur[i] = sel_man->TAccuracy(it->data()->accuracy[APUNCH]);
 			wtime[i] = sel_man->required(25);
 			if (sel_man->havetime(wtime[i])) {
-				sprintf(dstr[i], "PUNCH       ACC>%02d%% TUS>%02d", waccur[i], wtime[i]);
+				// More stun rod hack.
+				if (it->is_stun_rod())
+					sprintf(dstr[i], "STUN        ACC>%02d%% TUS>%02d", waccur[i], wtime[i]);
+				else
+					sprintf(dstr[i], "PUNCH       ACC>%02d%% TUS>%02d", waccur[i], wtime[i]);
 				the_dialog[i].proc = firemenu_dialog_proc;
 				waction[i] = PUNCH;
 				i++;
@@ -404,7 +412,7 @@ void Icon::info()
 	if (sel_man != NULL) {
 		sel_man->drawinfo(x, y);
 	}
-	textprintf(screen2, font, x + 112, y + 41, xcom1_color(1), "%02d", turn);
+	textprintf(screen2, font, x + 112, y + 41, xcom1_color(1), "%02d", (turn / 2) + 1);
 }
 
 int Icon::inside(int mx, int my)

@@ -50,7 +50,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 struct SKIN_INFO { 
 	const char *Name; 
 	int         SkinType; 
-	int         fFemale; 
+	int         fFemale;
+	int         armour_values[5];
 };
 
 extern SKIN_INFO g_skins[];
@@ -58,7 +59,7 @@ extern int g_skins_count;
 
 int get_skin_index(int skin_type, int female_flag);
 
-enum State { SIT = 0, STAND, MARCH, DIE };
+enum State { SIT = 0, STAND, MARCH, STUN, DIE };
 
 //////////////////////////////////////////////////////////////////////////////
 /// A class which describes unit with all his equipment, health status and ///
@@ -100,6 +101,11 @@ private:
 	// This flag is set after soldier has moved. Needed for correct work of
 	// switch to next soldier button
 	int MOVED;
+
+	// Determines if a shot being fired is a reaction shot or not.
+	int REACTION;
+
+	Item *body; // If we get stunned, this points to the corpse.
 
 	// The number of shots to be done and aiming point. Soldier cannot be saved
 	// before all shots have been processed
@@ -170,6 +176,7 @@ public:
 	int unload_ammo(Item *it);
 	int load_ammo(int iplace, Item *it);
 	void die();
+	void stun();
 
 	void apply_accuracy(REAL &fi, REAL &te);
 	void apply_throwing_accuracy(REAL &fi, REAL &te, int weight);
@@ -179,7 +186,8 @@ public:
 
 	void precise_aiming();
 	void try_shoot();
-	void shoot(int tlev, int tcol, int trow);
+	void try_reaction_shot(Soldier *the_target);
+	void shoot(int tlev, int tcol, int trow, int ISLOCAL);
 	int thru(int z0, int x0, int y0, REAL ro, REAL fi, REAL te, REAL zA, int iplace, int req_time);
 	int beam(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int iplace, int req_time);
 	int fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int iplace, int req_time);
@@ -187,15 +195,19 @@ public:
 	int aimedthrow(int z0, int x0, int y0, REAL fi, REAL te, int iplace, int req_time);
 
 	int check_for_hit(int _z, int _x, int _y);
-	void apply_hit(int _z, int _x, int _y, int _type);
-	void hit(int pierce);
-	void explo_hit(int pierce);      //silent
+	void apply_hit(int _z, int _x, int _y, int _type, int _hitdir);
+	int do_armour_check(int &pierce, int damdir);
+	void apply_wound(int hitloc);
+	void hit(int pierce, int type, int hitdir);
+	void explo_hit(int pierce, int type, int hitdir, int dist);      //silent
 
 	int ismoving();
 	int is_marching() { return (m_state == MARCH); }
-	int havetime(int ntime);
-	void spend_time(int tm);
+	int havetime(int ntime, int use_energy = 0);
+	void spend_time(int tm, int use_energy = 0);
 	int walktime(int _dir);
+
+	State state() { return m_state; }
 
 	void unlink();
 	Soldier *nextman();
@@ -205,6 +217,9 @@ public:
 	void set_next(Soldier *s) { m_next = s; }
 	void set_prev(Soldier *s) { m_prev = s; }
 	Bullet *bullet() { return m_bullet; }
+
+	int check_reaction_fire(Soldier *the_target);
+	int do_reaction_fire(Soldier *the_target, Item *it, int shot_type);
 /*
 	inline void create_map_place()
 	{
@@ -216,6 +231,8 @@ public:
 	}
 */
 	int eot_save(char *txt);
+
+	int count_weight();
 
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	int calc_ammunition_cost();

@@ -40,7 +40,7 @@ Platoon::Platoon(int PID, int num)
 
 	Soldier *s1 = NULL, *s2;
 	for (int i = 0; i < size; i++) {
-		s2 = new Soldier(i);
+		s2 = new Soldier(i+PID);
 		if (s1 != NULL) {
 			s1->set_next(s2);
 			s2->set_prev(s1);
@@ -59,7 +59,7 @@ Platoon::Platoon(int PID, PLAYERDATA * pd)
 
 	Soldier *s1 = NULL, *s2;
 	for (int i = 0; i < size; i++) {
-		s2 = new Soldier(i, pd->lev[i], pd->col[i], pd->row[i], &pd->md[i], &pd->id[i]);
+		s2 = new Soldier(i+PID, pd->lev[i], pd->col[i], pd->row[i], &pd->md[i], &pd->id[i]);
 		if (s1 != NULL) {
 			s1->set_next(s2);
 			s2->set_prev(s1);
@@ -94,21 +94,34 @@ void Platoon::move(int ISLOCAL)
 {
 	Soldier *ss = man;
 	while (ss != NULL) {
-		if (ss->move(ISLOCAL) == 0) { //dead
-			if (ss == man)
-				man = man->nextman();      //!!ret this if no other
-			if (ss == man) {
-				//if (ISLOCAL)
-				// net->send_message("\n...\n...\nall soldier are dead\n...\n...\n");
-				man = NULL;
+		if (ss->move(ISLOCAL) == 0) { //dead, or stunned
+			if (ss->ud.CurHealth == 0) // dead. New captain for platoon needed.
+			{
+				if (ss == man)
+					man = man->nextman();      //!!ret this if no other
+				if (ss == man) {
+					//if (ISLOCAL)
+					// net->send_message("\n...\n...\nall soldier are dead\n...\n...\n");
+					man = NULL;
+				}
 			}
 			if (ss == sel_man) sel_man = NULL;
 			Soldier *s = ss;
 			ss = ss->next();
-			s->die();
-			size--;
-			delete s;
-			RECALC_VISIBILITY = 1;
+			if (s->ud.CurHealth == 0) // dead.
+			{
+				s->die();
+				size--;
+				delete s;
+				RECALC_VISIBILITY = 1;
+			}
+			else
+			  if (s->x != -1)
+			  {
+			 	s->stun();
+				RECALC_VISIBILITY = 1;
+			  }
+			
 		} else {
 			ss = ss->next();
 		}
@@ -116,7 +129,8 @@ void Platoon::move(int ISLOCAL)
 	if (RECALC_VISIBILITY && ISLOCAL) {
 		ss = man;
 		while (ss != NULL) {
-			ss->calc_visible_cells();
+			if (ss->state() != STUN)
+				ss->calc_visible_cells();
 			ss = ss->next();
 		}
 		VISIBILITY_CHANGED = 1;
@@ -128,8 +142,10 @@ void Platoon::move(int ISLOCAL)
 		memset(visible_cells, 0, sizeof(visible_cells));
 		ss = man;
 		while (ss != NULL) {
-			for (int i = 0; i < 4 * 6*10 * 6*10; i++) {
-				visible_cells[i] |= ss->m_visible_cells[i];
+			if (ss->state() != STUN) {
+				for (int i = 0; i < 4 * 6*10 * 6*10; i++) {
+					visible_cells[i] |= ss->m_visible_cells[i];
+				}
 			}
 			ss = ss->next();
 		}
@@ -221,14 +237,14 @@ Soldier *Platoon::next_not_moved_man(Soldier *sel_man)
 {
 	//sel_man->MOVED = 1; //in icon done
 	Soldier *ss = sel_man->next();
-	while (ss != NULL) {
+	while ((ss != NULL) && (ss->state() != STUN)) {
 		if (!ss->MOVED)
 			return ss;
 		ss = ss->next();
 	}
 
 	ss = man;
-	while ((ss != NULL) && (ss != sel_man)) {
+	while ((ss != NULL) && (ss != sel_man) && (ss->state() != STUN)) {
 		if (!ss->MOVED)
 			return ss;
 		ss = ss->next();
@@ -254,7 +270,7 @@ int Platoon::nomoves()
 {
 	Soldier *ss = man;
 	while (ss != NULL) {
-		if (ss->ismoving())
+		if ((ss->ismoving()) && (ss->state() != STUN))
 			return 0;
 		ss = ss->next();
 	}
@@ -362,16 +378,29 @@ int Platoon::check_for_hit(int z, int x, int y)
 }
 
 
-void Platoon::apply_hit(int z, int x, int y, int type)
+void Platoon::apply_hit(int z, int x, int y, int type, int hitdir)
 {
 	Soldier *ss = man;
 
 	while (ss != NULL) {
-		ss->apply_hit(z, x, y, type);
+		ss->apply_hit(z, x, y, type, hitdir);
 		ss = ss->next();
 	}
 }
 
+int Platoon::check_reaction_fire(Soldier *target)
+{
+	Soldier *ss = man;
+	int total = 0;
+	while (ss != NULL)
+	{
+		if ((ss->state() != STUN) && (ss->check_reaction_fire(target)))
+			total++;
+		// Of course, it helps if you check everyone in the platoon....
+		ss = ss->next();
+	}
+	return total;
+}
 
 void Platoon::save_FULLDATA(char *fn)
 {

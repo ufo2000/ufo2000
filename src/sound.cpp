@@ -17,7 +17,6 @@
 #include "sysworkarounds.h"
 #include "sound.h"
 
-
 struct sound_sym_maptable_t {
     SoundSym_e_t symcode;
     const char * sym;
@@ -153,8 +152,9 @@ static const sound_sym_maptable_t KNOWN_SYMS[] = {
 { SS_TRAILER__SYM, "SS_TRAILER__SYM" }
 };
 
+// SS_TRAILER__SYM used here because sizeof(KNOWN_SYMS) > the number of sounds.
 static SoundSym_e_t getSymCode(const char *const sym) {
-    for (unsigned i = 0 ; i < sizeof(KNOWN_SYMS); i++) {
+    for (unsigned i = 0 ; i < SS_TRAILER__SYM; i++) {
         if ( 0 == strcmp(sym, KNOWN_SYMS[i].sym) )
             return KNOWN_SYMS[i].symcode;
     }
@@ -162,7 +162,7 @@ static SoundSym_e_t getSymCode(const char *const sym) {
 }
 
 static const char *getSymString(const SoundSym_e_t symcode) {
-    for (unsigned i = 0 ; i < sizeof(KNOWN_SYMS); i++) {
+    for (unsigned i = 0 ; i < SS_TRAILER__SYM; i++) {
         if ( symcode == KNOWN_SYMS[i].symcode)
             return KNOWN_SYMS[i].sym;
     }
@@ -405,7 +405,7 @@ This code unconditionally shifts the sample 2 positions to achieve maximum
 volume. */
 
 SAMPLE *raw2sample(const std::string& buf) {
-    SAMPLE *spl = create_sample(8, 0, 11025, buf.size());
+    SAMPLE *spl = create_sample(8, 0, 8000, buf.size());
 /* above returns NULL if len == 0 */
     if (spl == NULL)
         return NULL;

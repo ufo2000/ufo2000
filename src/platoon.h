@@ -56,7 +56,7 @@ public:
 	Soldier *next_not_moved_man(Soldier *sel_man);
 	Place *find_item(Item *it, int &lev, int &col, int &row);
 	int check_for_hit(int z, int x, int y);
-	void apply_hit(int z, int x, int y, int type);
+	void apply_hit(int z, int x, int y, int type, int hitdir);
 
 	int nobullfly();
 	int nomoves();
@@ -67,6 +67,8 @@ public:
 
 	Soldier *captain() { return man; }
 	int num_of_men() { return size; }
+
+	int check_reaction_fire(Soldier *target);
 
 	void save_MANDATA(char *fn);
 	void load_MANDATA(char *fn);

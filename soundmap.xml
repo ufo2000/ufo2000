@@ -43,29 +43,50 @@
                 <alias sym="cv-auto-cannon-shot" />
              </sample>
 <!-- #03 --> <sample sym="door-click" /> 
-<!-- #04 --> <sample sym="cv-rifle-shot" /> 
+<!-- #04 --> <sample sym="cv-rifle-shot"> 
+                <alias sym="cv-pistol-shot" /> 
+             </sample>
 <!-- #05 --> <sample sym="unknown" /> 
-<!-- #06 --> <sample sym="unknown" /> 
+<!-- #06 --> <sample sym="muton-death" /> 
 <!-- #07 --> <sample sym="unknown" /> 
-<!-- #08 --> <sample sym="unknown" /> 
-<!-- #09 --> <sample sym="unknown" /> 
-<!-- #10 --> <sample sym="unknown" /> 
-<!-- #11 --> <sample sym="laser-pistol-shot" /> 
+<!-- #08 --> <sample sym="snakeman-death" /> 
+<!-- #09 --> <sample sym="chryssalid-death" /> 
+<!-- #10 --> <sample sym="sectoid-death" /> 
+<!-- #11 --> <sample sym="laser-pistol-shot"> 
+                <alias sym="laser-rifle-shot" /> 
+                <alias sym="laser-heavy-shot" />
+                <alias sym="laser-HWP-shot" />
+             </sample>
 <!-- #12 --> <sample sym="unknown" /> 
 <!-- #13 --> <sample sym="unknown" /> 
 <!-- #14 --> <sample sym="unknown" /> 
-<!-- #15 --> <sample sym="unknown" /> 
+<!-- #15 --> <sample sym="step-hover"> 
+		<alias sym="step-alien-hover" />
+             </sample>
 <!-- #16 --> <sample sym="unknown" /> 
 <!-- #17 --> <sample sym="clip-load" /> 
-<!-- #18 --> <sample sym="plasma-rifle-shot" /> 
+<!-- #18 --> <sample sym="plasma-rifle-shot"> 
+                <alias sym="plasma-pistol-shot" />
+                <alias sym="plasma-heavy-shot" />
+                <alias sym="plasma-HWP-shot" />
+             </sample>
 <!-- #19 --> <sample sym="plasma-hit" /> 
 <!-- #20 --> <sample sym="alien-ext-door" /> 
 <!-- #21 --> <sample sym="alien-int-door" /> 
-<!-- #22 --> <sample sym="cv-bullet-bounce" /> 
+<!-- #22 --> <sample sym="cv-bullet-bounce"> 
+                <alias sym="cv-bullet-hit" />
+                <alias sym="cannon-ap-hit" />
+             </sample>
 <!-- #23 --> <sample sym="HWP-death" /> 
-<!-- #24 --> <sample sym="unknown" /> 
+<!-- #24 --> <sample sym="step-human-metal"> 
+                <alias sym="step-sectoid-metal" />
+                <alias sym="step-muton-metal" />
+             </sample>
 <!-- #25 --> <sample sym="unknown" /> 
-<!-- #26 --> <sample sym="unknown" /> 
+<!-- #26 --> <sample sym="step-human"> 
+                <alias sym="step-sectoid" />
+                <alias sym="step-muton" />
+             </sample>
 <!-- #27 --> <sample sym="unknown" /> 
 <!-- #28 --> <sample sym="unknown" /> 
 <!-- #29 --> <sample sym="unknown" /> 
@@ -77,13 +98,15 @@
 <!-- #35 --> <sample sym="unknown" /> 
 <!-- #36 --> <sample sym="unknown" /> 
 <!-- #37 --> <sample sym="unknown" /> 
-<!-- #38 --> <sample sym="unknown" /> 
+<!-- #38 --> <sample sym="item-put"> 
+                 <alias sym="grenade-fall" />
+             </sample>
 <!-- #39 --> <sample sym="unknown" /> 
 <!-- #40 --> <sample sym="unknown" /> 
-<!-- #41 --> <sample sym="unknown" /> 
+<!-- #41 --> <sample sym="male-death" /> 
 <!-- #42 --> <sample sym="unknown" /> 
 <!-- #43 --> <sample sym="unknown" /> 
-<!-- #44 --> <sample sym="unknown" /> 
+<!-- #44 --> <sample sym="female-death" /> 
 <!-- #45 --> <sample sym="unknown" /> 
 <!-- #46 --> <sample sym="unknown" /> 
 <!-- #47 --> <sample sym="unknown" /> 
@@ -98,13 +121,15 @@
                 <alias sym="HWP-blaster-launch" />
                 <alias sym="alien-small-launch" />
             </sample>
-<!-- #54 --> <sample sym="unknown" /> 
+<!-- #54 --> <sample sym="stunrod-hit" /> 
     </file>
     
     <file name="sound/sound2.cat" >  <!-- Original UFO file, 14 samples -->
-<!-- #00 --> <sample sym="unknown" /> 
-<!-- #01 --> <sample sym="unknown" /> 
-<!-- #02 --> <sample sym="unknown" /> 
+<!-- #00 --> <sample sym="button-push-1"> 
+                 <alias sym="button-push-2" />
+             </sample>
+<!-- #01 --> <sample sym="window-open-1" /> 
+<!-- #02 --> <sample sym="window-open-2" /> 
 <!-- #03 --> <sample sym="unknown" /> 
 <!-- #04 --> <sample sym="unknown" /> 
 <!-- #05 --> <sample sym="unknown" /> 
@@ -112,57 +137,111 @@
 <!-- #07 --> <sample sym="unknown" /> 
 <!-- #08 --> <sample sym="unknown" /> 
 <!-- #09 --> <sample sym="unknown" /> 
-<!-- #10 --> <sample sym="unknown" /> 
+<!-- #10 --> <sample sym="small-rocket-hit"> 
+                 <alias sym="he-rocket-hit" />
+                 <alias sym="in-rocket-hit" />
+                 <alias sym="hwp-rocket-hit" />
+                 <alias sym="hwp-blaster-hit" />
+                 <alias sym="hwp-blaster-hit" />
+                 <alias sym="alien-small-hit" />
+                 <alias sym="alien-blaster-hit" />
+                 <alias sym="cv-grenade-bang" />
+                 <alias sym="smoke-grenade-bang" />
+                 <alias sym="high-explosive-bang" />
+                 <alias sym="proxy-grenade-bang" />
+                 <alias sym="alien-grenade-bang" />
+                 <alias sym="cannon-he-hit" />
+                 <alias sym="cannon-in-hit" />
+             </sample>
 <!-- #11 --> <sample sym="unknown" /> 
 <!-- #12 --> <sample sym="unknown" /> 
 <!-- #13 --> <sample sym="unknown" /> 
     </file>
     
     <file name="sound/sample.cat" >  <!-- Collector's Edition file, 14 samples -->
-<!-- #00 --> <sample sym="unknown" /> 
-<!-- #01 --> <sample sym="unknown" /> 
-<!-- #02 --> <sample sym="unknown" /> 
+<!-- #00 --> <sample sym="button-push-1" /> 
+<!-- #01 --> <sample sym="window-open-1" /> 
+<!-- #02 --> <sample sym="window-open-2" /> 
 <!-- #03 --> <sample sym="unknown" /> 
 <!-- #04 --> <sample sym="unknown" /> 
 <!-- #05 --> <sample sym="unknown" /> 
-<!-- #06 --> <sample sym="unknown" /> 
+<!-- #06 --> <sample sym="button-push-2" /> 
 <!-- #07 --> <sample sym="unknown" /> 
 <!-- #08 --> <sample sym="unknown" /> 
 <!-- #09 --> <sample sym="unknown" /> 
-<!-- #10 --> <sample sym="unknown" /> 
+<!-- #10 --> <sample sym="small-rocket-hit"> 
+                 <alias sym="he-rocket-hit" />
+                 <alias sym="in-rocket-hit" />
+                 <alias sym="hwp-rocket-hit" />
+                 <alias sym="hwp-blaster-hit" />
+                 <alias sym="hwp-blaster-hit" />
+                 <alias sym="alien-small-hit" />
+                 <alias sym="alien-blaster-hit" />
+                 <alias sym="cv-grenade-bang" />
+                 <alias sym="smoke-grenade-bang" />
+                 <alias sym="high-explosive-bang" />
+                 <alias sym="proxy-grenade-bang" />
+                 <alias sym="alien-grenade-bang" />
+                 <alias sym="cannon-he-hit" />
+                 <alias sym="cannon-in-hit" />
+             </sample>
 <!-- #11 --> <sample sym="unknown" /> 
 <!-- #12 --> <sample sym="unknown" /> 
 <!-- #13 --> <sample sym="unknown" /> 
+
     </file>
     
     <file name="sound/sample2.cat" >    <!-- Collector's Edition file, 55 samples -->
-<!-- #00 --> <sample sym="unknown" /> 
-<!-- #01 --> <sample sym="unused"  />  <!-- Error reading wave. : Not RIFF WAVE.-->
-<!-- #02 --> <sample sym="unknown" /> 
-<!-- #03 --> <sample sym="unknown" /> 
-<!-- #04 --> <sample sym="unknown" /> 
+<!-- #00 --> <sample sym="step-snake" /> 
+<!-- #01 --> <sample sym="unused"  /> 
+<!-- #02 --> <sample sym="cv-heavy-cannon-shot"> 
+                <alias sym="cv-auto-cannon-shot" />
+             </sample>
+<!-- #03 --> <sample sym="door-click" /> 
+<!-- #04 --> <sample sym="cv-rifle-shot"> 
+                <alias sym="cv-pistol-shot" /> 
+             </sample>
 <!-- #05 --> <sample sym="unknown" /> 
-<!-- #06 --> <sample sym="unknown" /> 
+<!-- #06 --> <sample sym="muton-death" /> 
 <!-- #07 --> <sample sym="unknown" /> 
-<!-- #08 --> <sample sym="unknown" /> 
-<!-- #09 --> <sample sym="unknown" /> 
-<!-- #10 --> <sample sym="unknown" /> 
-<!-- #11 --> <sample sym="unknown" /> 
+<!-- #08 --> <sample sym="snakeman-death" /> 
+<!-- #09 --> <sample sym="chryssalid-death" /> 
+<!-- #10 --> <sample sym="sectoid-death" /> 
+<!-- #11 --> <sample sym="laser-pistol-shot"> 
+                <alias sym="laser-rifle-shot" /> 
+                <alias sym="laser-heavy-shot" />
+                <alias sym="laser-HWP-shot" />
+             </sample>
 <!-- #12 --> <sample sym="unknown" /> 
 <!-- #13 --> <sample sym="unknown" /> 
 <!-- #14 --> <sample sym="unknown" /> 
-<!-- #15 --> <sample sym="unknown" /> 
+<!-- #15 --> <sample sym="step-hover"> 
+		<alias sym="step-alien-hover" />
+             </sample>
 <!-- #16 --> <sample sym="unknown" /> 
-<!-- #17 --> <sample sym="unknown" /> 
-<!-- #18 --> <sample sym="unknown" /> 
-<!-- #19 --> <sample sym="unknown" /> 
-<!-- #20 --> <sample sym="unknown" /> 
-<!-- #21 --> <sample sym="unknown" /> 
-<!-- #22 --> <sample sym="unknown" /> 
-<!-- #23 --> <sample sym="unknown" /> 
-<!-- #24 --> <sample sym="unknown" /> 
+<!-- #17 --> <sample sym="clip-load" /> 
+<!-- #18 --> <sample sym="plasma-rifle-shot"> 
+                <alias sym="plasma-pistol-shot" />
+                <alias sym="plasma-heavy-shot" />
+                <alias sym="plasma-HWP-shot" />
+             </sample>
+<!-- #19 --> <sample sym="plasma-hit" /> 
+<!-- #20 --> <sample sym="alien-ext-door" /> 
+<!-- #21 --> <sample sym="alien-int-door" /> 
+<!-- #22 --> <sample sym="cv-bullet-bounce"> 
+                <alias sym="cv-bullet-hit" />
+                <alias sym="cannon-ap-hit" />
+             </sample>
+<!-- #23 --> <sample sym="HWP-death" /> 
+<!-- #24 --> <sample sym="step-human-metal"> 
+                <alias sym="step-sectoid-metal" />
+                <alias sym="step-muton-metal" />
+             </sample>
 <!-- #25 --> <sample sym="unknown" /> 
-<!-- #26 --> <sample sym="unknown" /> 
+<!-- #26 --> <sample sym="step-human"> 
+                <alias sym="step-sectoid" />
+                <alias sym="step-muton" />
+             </sample>
 <!-- #27 --> <sample sym="unknown" /> 
 <!-- #28 --> <sample sym="unknown" /> 
 <!-- #29 --> <sample sym="unknown" /> 
@@ -174,13 +253,15 @@
 <!-- #35 --> <sample sym="unknown" /> 
 <!-- #36 --> <sample sym="unknown" /> 
 <!-- #37 --> <sample sym="unknown" /> 
-<!-- #38 --> <sample sym="unknown" /> 
+<!-- #38 --> <sample sym="item-put"> 
+                 <alias sym="grenade-fall" />
+             </sample>
 <!-- #39 --> <sample sym="unknown" /> 
 <!-- #40 --> <sample sym="unknown" /> 
-<!-- #41 --> <sample sym="unknown" /> 
+<!-- #41 --> <sample sym="male-death" /> 
 <!-- #42 --> <sample sym="unknown" /> 
 <!-- #43 --> <sample sym="unknown" /> 
-<!-- #44 --> <sample sym="unknown" /> 
+<!-- #44 --> <sample sym="female-death" /> 
 <!-- #45 --> <sample sym="unknown" /> 
 <!-- #46 --> <sample sym="unknown" /> 
 <!-- #47 --> <sample sym="unknown" /> 
@@ -188,9 +269,14 @@
 <!-- #49 --> <sample sym="unknown" /> 
 <!-- #50 --> <sample sym="unknown" /> 
 <!-- #51 --> <sample sym="unknown" /> 
-<!-- #52 --> <sample sym="unknown" /> 
-<!-- #53 --> <sample sym="unknown" /> 
-<!-- #54 --> <sample sym="unknown" /> 
+<!-- #52 --> <sample sym="rl-launch" > 
+                <alias sym="HWP-launch" />
+            </sample>
+<!-- #53 --> <sample sym="alien-blaster-launch" > 
+                <alias sym="HWP-blaster-launch" />
+                <alias sym="alien-small-launch" />
+            </sample>
+<!-- #54 --> <sample sym="stunrod-hit" /> 
     </file>
 
     <file name="sound/sample3.cat" >  <!-- Collector's Edition file, 32 samples -->

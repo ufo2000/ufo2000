@@ -35,10 +35,16 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SKIN_INFO g_skins[] =
 {
-	{ "male",    S_XCOM_0,  0 },
-	{ "female",  S_XCOM_0,  1 },
-	{ "sectoid", S_SECTOID, 0 },
-	{ "muton",   S_MUTON,   0 }
+	{ "male",    S_XCOM_0,  0, {  5,  5,  5,  5,  5} },
+	{ "female",  S_XCOM_0,  1, {  5,  5,  5,  5,  5} },
+	{ "armour_m",S_XCOM_1,  0, { 50, 40, 40, 30, 30} },
+	{ "armour_f",S_XCOM_1,  1, { 50, 40, 40, 30, 30} },
+	{ "power_m", S_XCOM_2,  0, {100, 80, 80, 70, 60} },
+	{ "power_f", S_XCOM_2,  1, {100, 80, 80, 70, 60} },
+	{ "fly_m",   S_XCOM_3,  0, {110, 90, 90, 80, 70} },
+	{ "fly_f",   S_XCOM_3,  1, {110, 90, 90, 80, 70} },
+	{ "sectoid", S_SECTOID, 0, {  4,  3,  3,  2,  2} },
+	{ "muton",   S_MUTON,   0, { 20, 20, 20, 20, 10} }
 };
 
 int g_skins_count = sizeof(g_skins) / sizeof(g_skins[0]);
@@ -406,19 +412,28 @@ void Soldier::process_MANDATA()
 	if (md.Firing > 80) md.Firing = 80;
 	if (md.Throwing < 50) md.Throwing = 50;
 	if (md.Throwing > 80) md.Throwing = 80;
+	if (md.Stamina < 50) md.Stamina = 50;
+	if (md.Stamina > 80) md.Stamina = 80;
+	if (md.Strength < 25) md.Strength = 25;
+	if (md.Strength > 40) md.Strength = 40;
+	if (md.Reactions < 50) md.Reactions = 50;
+	if (md.Reactions > 80) md.Reactions = 80;
 
-	if (md.TimeUnits + md.Health + md.Firing + md.Throwing > 240) {
+	if (md.TimeUnits + md.Health + md.Firing + md.Throwing + md.Stamina + (md.Strength * 2) + md.Reactions > 420) {
 		md.TimeUnits = 50;
 		md.Health    = 50;
 		md.Firing    = 50;
 		md.Throwing  = 50;
+		md.Stamina   = 50;
+		md.Reactions = 50;
+		md.Strength  = 25;
 	}
 
 	strcpy(ud.Name, md.Name);
 	ud.MaxTU = md.TimeUnits;
 	ud.MaxHealth = md.Health;
 	ud.MaxStrength = md.Strength;
-	ud.MaxEnergy = 100;
+	ud.MaxEnergy = md.Stamina;
 
 //	Verify that md.SkinType and md.fFemale have valid values
 	int skin_index = get_skin_index(md.SkinType, md.fFemale);
@@ -435,12 +450,12 @@ void Soldier::process_MANDATA()
 	ud.RLegWound = 0;
 	ud.LLegWound = 0;
 
-	int armour[5] = {12, 8, 8, 5, 2};
-	ud.MaxFront = armour[0];
-	ud.MaxLeft = armour[1];
-	ud.MaxRight = armour[2];
-	ud.MaxRear = armour[3];
-	ud.MaxUnder = armour[4];
+	// Set the armour values based on the skin.
+	ud.MaxFront = g_skins[skin_index].armour_values[0];
+	ud.MaxLeft = g_skins[skin_index].armour_values[1];
+	ud.MaxRight = g_skins[skin_index].armour_values[2];
+	ud.MaxRear = g_skins[skin_index].armour_values[3];
+	ud.MaxUnder = g_skins[skin_index].armour_values[4];
 
 	ud.CurTU = ud.MaxTU;
 	ud.CurHealth = ud.MaxHealth;
@@ -499,10 +514,18 @@ void Soldier::destroy_all_items()
 
 int Soldier::calc_ammunition_cost()
 {
-	int p = md.TimeUnits +
+	// TUs with stamina as they determine how far you go in a turn.
+	// TUs twice as important because they get used up twice as fast.
+	// Reactions is doubled because it means doing damage in enemy's turn!
+	// Strength is two for one points wise, so double the value that's in there.
+	// Accuracy averaged into one value.
+	// The amount of armour we have matters, too!
+	int p = (((md.TimeUnits * 2) + md.Stamina) / 2) +
 	        md.Health +
-	        md.Firing +
-	        md.Throwing;
+			(md.Reactions * 2) +
+	        ((md.Firing + md.Throwing) / 2) +
+			(md.Strength * 2) +
+			g_skins[get_skin_index(md.SkinType, md.fFemale)].armour_values[0];
 
 	return p;
 }
@@ -519,13 +542,75 @@ void Soldier::restore()
 {
 	seen_enemy_num = 0;
 	MOVED = 0;
-	ud.CurTU = ud.MaxTU;
+	// Percent of TUs: the lesser of 100% or ((strength / weight) * 100%).
+	ud.CurTU = (count_weight() > ud.CurStrength) ? (ud.MaxTU * ud.CurStrength / count_weight()) : ud.MaxTU;
+	if (ud.CurTU < 0) ud.CurTU = 0;
 	//ud.CurHealth = ud.MaxHealth;
 	//ud.CurStrength = ud.MaxStrength;
-	//ud.CurEnergy = ud.MaxEnergy;
+	// Regain 33% of energy per turn. Should this be 43%?
+	ud.CurEnergy = ((ud.CurEnergy + (ud.MaxEnergy / 3)) >= ud.MaxEnergy) ? ud.MaxEnergy : ud.CurEnergy + (ud.MaxEnergy / 3);
 	//ud.Morale = 100;
 	//ud.CurFAccuracy = ud.MaxFA;
 	//ud.CurTAccuracy = ud.MaxTA;
+
+	if (ud.CurStun > 0) // Do we have stun damage?
+	{
+		int i = 5; //(int)randval(1, 11);
+		if (m_state == STUN) // Are we currently stunned?
+		{
+			if (ud.CurStun > i)
+				ud.CurStun -= i;
+			else
+				ud.CurStun = 0;
+			if (ud.CurStun < ud.CurHealth) // This means we should wake up, so find the body!
+			{
+				int z0, x0, y0, found = 0;
+				Place *target = body->get_place();
+				for (z0 = 0; z0 < map->level; z0++)
+				{
+					for (x0 = 0; x0 < map->width*10; x0++)
+					{
+						for (y0 = 0; y0 < map->height*10; y0++)
+						{
+							if (target == map->place(z0, x0, y0))
+							{
+								found = 1;
+								break;
+							}
+							if (found)
+								break;
+						}
+						if (found)
+							break;
+					}
+					if (found)
+						break;
+				}
+				if (found) // In other words, are we not being carried?
+				{
+					if (map->man(z0, x0, y0) == NULL) // Don't get up if you're being stood upon.
+					{
+						z = z0;
+						x = x0;
+						y = y0;
+						body->unlink();
+						delete body;
+						map->set_man(z0, x0, y0, this); // Get back into action.
+						m_state = STAND;
+						phase = 0;
+					}
+				}
+			}
+		}
+		else
+		{
+			if (ud.CurStun > i)
+				ud.CurStun -= i;
+			else
+				ud.CurStun = 0;
+		}
+	}
+
 }
 
 #define Y_SIT 5
@@ -535,7 +620,18 @@ void Soldier::restore()
 void Soldier::draw()
 {
 	int head_frame = 32;
-	if (md.fFemale) head_frame = 16 * 16 + 11;
+
+	// The female appearance of the power suit is the flying suit.
+	// This icky-looking switch causes the proper suit to be displayed regardless of gender.
+	switch(md.SkinType)
+	{
+	default:
+		if (!md.fFemale) break;
+	case S_XCOM_3:
+		head_frame = 16 * 16 + 11;
+	case S_XCOM_2:
+		break;
+	}
 
 	int gx = map->x + CELL_SCR_X * x + CELL_SCR_X * y;
 	int gy = map->y - (x + 1) * CELL_SCR_Y + CELL_SCR_Y * y - 18 - z * CELL_SCR_Z;
@@ -547,7 +643,7 @@ void Soldier::draw()
 	}
 
 
-	if (m_state == DIE) {
+	if ((m_state == DIE) || (m_state == STUN)) {
 		m_pck[md.SkinType]->showpck(264 + phase / 3, gx, gy);
 		return ;
 	}
@@ -588,7 +684,7 @@ void Soldier::draw()
 	}
 
 	switch (state) {
-		case DIE: break;      //neverhap
+		case DIE: case STUN: break;      //neverhap
 		case SIT:
 			m_pck[md.SkinType]->drawpck(dir + 8 * arm1, image, Y_SIT);
 			m_pck[md.SkinType]->drawpck(dir + head_frame, image, Y_SIT + 1);      //head
@@ -737,6 +833,16 @@ void Soldier::draw_unibord(int gx, int gy)
 			rect(screen2, gx + 170, gy + 32 + i * 10, gx + 170 + param[i].max, gy + 36 + i * 10, xcom1_color(param[i].col));
 			if (param[i].cur)
 				rectfill(screen2, gx + 170, gy + 33 + i * 10, gx + 170 + param[i].cur - 1, gy + 35 + i * 10, xcom1_color(param[i].col - 4));
+
+			// special case for the health bar
+			if (i == 2) // draw stun damage
+				if (ud.CurStun > 0)
+				{
+					if (ud.CurStun < ud.CurHealth)
+						rectfill(screen2, gx + 170, gy + 33 + i * 10, gx + 170 + ud.CurStun - 1, gy + 35 + i * 10, xcom1_color(80));
+					else
+						rectfill(screen2, gx + 170, gy + 33 + i * 10, gx + 170 + ud.CurHealth - 1, gy + 35 + i * 10, xcom1_color(80));
+				}
 		}
 	}
 
@@ -788,7 +894,8 @@ void Soldier::draw_enemy_seen(int select_y)
 		int color = 39;
 		rectfill(screen2, x1, y1, x2, y2, xcom1_color(color));
 
-		num[0] = i + '0';
+		// Start at 1 instead of 0.
+		num[0] = ((i + 1) % 10) + '0';
 		textout(screen2, font, num, x1 + 5, y1 + 4, xcom1_color(16));
 
 		//	Draw numbers above seen enemies
@@ -845,7 +952,7 @@ void Soldier::turnto(int destdir)
 
 int Soldier::ismoving()
 {
-	return ((m_state == MARCH) || (m_state == DIE) || (!m_bullet->ready()) ||
+	return ((m_state == MARCH) || (m_state == DIE) || (m_state == STUN) || (!m_bullet->ready()) ||
 	        (curway != -1) || (waylen != 0));
 }
 
@@ -897,6 +1004,8 @@ void Soldier::calc_visible_cells()
 
 int Soldier::move(int ISLOCAL)
 {
+	if (z == -1) return 0; // auto-return 0 if stunned
+
 	if ((z > 0) && map->mcd(z, x, y, 0)->No_Floor) {
 		if (!map->isStairs(z - 1, x, y)) {
 			map->set_man(z, x, y, NULL);
@@ -928,7 +1037,7 @@ int Soldier::move(int ISLOCAL)
 	map->set_man(z, x, y, this);      //preventor!!
 	m_place[P_MAP] = map->place(z, x, y);
 
-	if (m_state == DIE) {
+	if ((m_state == DIE) || (m_state == STUN)) {
 		//textprintf(screen, font, 1, 100, 1, "phase=%d", phase);
 		if (phase < 2 * 3)
 			phase++;
@@ -938,7 +1047,20 @@ int Soldier::move(int ISLOCAL)
 
 	if (m_state == MARCH) {
 		if ((phase == 3 || phase == 7) && map->visible(z, x, y))
-            soundSystem::getInstance()->play(SS_STEP_HUMAN, 128);
+		{
+		    switch(md.SkinType)
+		    {
+		      case S_SECTOID:
+		        soundSystem::getInstance()->play(SS_STEP_SECTOID, 128);
+	            break;
+		      case S_MUTON:
+		        soundSystem::getInstance()->play(SS_STEP_MUTON, 128);
+	            break;
+		      default:
+		        soundSystem::getInstance()->play(SS_STEP_HUMAN, 128);
+	            break;
+			}
+		}
 		phase++;
 
 		//1) time = time_of_src/2 + time_of_dest/2;
@@ -961,17 +1083,43 @@ int Soldier::move(int ISLOCAL)
 
 		if (phase >= 8) {
 			phase = 0;
-			spend_time(walktime( -1));
+			// If we're moving along a diagonal, use 1.5 times the cost, as in the original game itself.
+			// Please note that walktime( -1 ) returns the time of a horizontal move, whereas
+			// walktime( dir ) factors in the diagonal move multiplier.
+			if ((dir == 1)
+			 || (dir == 3)
+			 || (dir == 5)
+			 || (dir == 7))
+				spend_time((walktime( -1 ) * 1.5), 1);
+			else
+				spend_time(walktime( -1 ), 1);
 
 			curway++;
 			if (curway >= waylen) {
 				finish_march(ISLOCAL);
 			} else {
-				if (!havetime(walktime(way[curway])))
+				if (!havetime(walktime(way[curway]), 1))
 					finish_march(ISLOCAL);
 				else
 					dir = way[curway];
 			}
+
+			// Check for reaction fire.
+			if (ISLOCAL)
+			{
+				int i = platoon_remote->check_reaction_fire(this);
+				if (i) { // In other words, if more than 0 shots were fired.
+					finish_march(ISLOCAL);
+				}
+			}
+			// If we enable this bit, then two reaction shots can be fired!
+/*			else
+			{
+				int i = platoon_local->check_reaction_fire(this);
+				if (i) {
+					finish_march(ISLOCAL);
+				}
+			} */
 
 			if (map->check_mine(z, x, y))
 			{
@@ -1001,7 +1149,8 @@ int Soldier::move(int ISLOCAL)
 		} else {
 			if (FIRE_num && m_bullet->ready()) {
 				FIRE_num--;
-				shoot(FIRE_z, FIRE_x, FIRE_y);
+				// The ISLOCAL bit is for reaction fire...
+				shoot(FIRE_z, FIRE_x, FIRE_y, ISLOCAL);
 			}
 		}
 	}
@@ -1023,7 +1172,7 @@ void Soldier::wayto(int dest_lev, int dest_col, int dest_row)
 			waylen--;
 		}
 
-		if ((waylen < 2) || (!havetime(walktime(way[1])))) {
+		if ((waylen < 2) || (!havetime(walktime(way[1]), 1))) {
 			curway = -1;
 			waylen = 0;
 		} else {
@@ -1090,42 +1239,408 @@ void Soldier::faceto(int dest_col, int dest_row)
 	}
 }
 
-
-void Soldier::hit(int pierce)
+static double randval(double min, double max)
 {
+	double std = (double)rand() / (double)(RAND_MAX - 1);
+	return min + std * (max - min);
+}
+
+#define HITLOC_HEAD     0
+#define HITLOC_TORSO    1
+#define HITLOC_LEFTARM  2
+#define HITLOC_RIGHTARM 3
+#define HITLOC_LEFTLEG  4
+#define HITLOC_RIGHTLEG 5
+
+#define DAMAGEDIR_FRONT      0
+#define DAMAGEDIR_FRONTLEFT  1
+#define DAMAGEDIR_LEFT       2
+#define DAMAGEDIR_REARLEFT   3
+#define DAMAGEDIR_REAR       4
+#define DAMAGEDIR_REARRIGHT  5
+#define DAMAGEDIR_RIGHT      6
+#define DAMAGEDIR_FRONTRIGHT 7
+#define DAMAGEDIR_UNDER      8
+
+// I can't believe that pierce is passed by reference here.
+// But, how else am I going to do this?
+int Soldier::do_armour_check(int &pierce, int damdir)
+{
+	int hitloc;
+	int damagedir = damdir;
+	int pierce1 = (pierce / 2), pierce2 = (pierce / 2);
+
+	switch(damagedir)
+	{
+	case DAMAGEDIR_FRONT:
+		if (ud.CurFront >= pierce)
+		{
+			ud.CurFront -= pierce; // Can't get through the armour.
+			return -1;
+		}
+
+		pierce -=  ud.CurFront;
+		ud.CurFront = 0;
+
+		// Until we can get the random values transmitted over the net, we can't use 'em.
+/*		i = (int)randval(0, 4);
+		if (i >= 3)
+			hitloc = HITLOC_HEAD;
+		else */
+			hitloc = HITLOC_TORSO;
+		break;
+	case DAMAGEDIR_FRONTLEFT:
+		// Split this evenly between the two pieces of armour.
+		if (ud.CurFront >= pierce1)
+		{
+			ud.CurFront -= pierce1;
+			pierce1 = 0;
+		}
+		else
+		{
+			pierce1 -= ud.CurFront;
+			ud.CurFront = 0;
+		}
+		if (ud.CurLeft >= pierce2)
+		{
+			ud.CurLeft -= pierce2;
+			pierce2 = 0;
+		}
+		else
+		{
+			pierce2 -= ud.CurLeft;
+			ud.CurLeft = 0;
+		}
+		if ((pierce1 + pierce2) == 0) return -1; // Can't get through the armor.
+
+		// Pick a random location when the random values can be transmitted.
+		hitloc = HITLOC_LEFTARM;
+		break;
+	case DAMAGEDIR_LEFT:
+		if (ud.CurLeft >= pierce)
+		{
+			ud.CurLeft -= pierce; // Can't get through the armour.
+			return -1;
+		}
+
+		pierce -=  ud.CurLeft;
+		ud.CurLeft = 0;
+
+/*		i = (int)randval(0, 4);
+		switch(i)
+		{
+		default:
+		case 0:
+			hitloc = HITLOC_TORSO;
+			break;
+		case 1:
+			hitloc = HITLOC_LEFTARM;
+			break;
+		case 2: */
+			hitloc = HITLOC_LEFTLEG;
+/*			break;
+		case 3:
+			hitloc = HITLOC_HEAD;
+			break;
+		} */
+		break;
+	case DAMAGEDIR_REARLEFT:
+		// Split this evenly between the two pieces of armour.
+		if (ud.CurRear >= pierce1)
+		{
+			ud.CurRear -= pierce1;
+			pierce1 = 0;
+		}
+		else
+		{
+			pierce1 -= ud.CurRear;
+			ud.CurRear = 0;
+		}
+		if (ud.CurLeft >= pierce2)
+		{
+			ud.CurLeft -= pierce2;
+			pierce2 = 0;
+		}
+		else
+		{
+			pierce2 -= ud.CurLeft;
+			ud.CurLeft = 0;
+		}
+		if ((pierce1 + pierce2) == 0) return -1; // Can't get through the armour.
+
+		// Pick a random location when the random values can be transmitted.
+		hitloc = HITLOC_LEFTARM;
+		break;
+	case DAMAGEDIR_REAR:
+		if (ud.CurRear >= pierce)
+		{
+			ud.CurRear -= pierce; // Can't get through the armour.
+			return -1;
+		}
+
+		pierce -=  ud.CurRear;
+		ud.CurRear = 0;
+
+		// Until we can get the random values transmitted over the net, we can't use 'em.
+/*		i = (int)randval(0, 4);
+		if (i >= 3)
+			hitloc = HITLOC_HEAD;
+		else */
+			hitloc = HITLOC_TORSO;
+		break;
+	case DAMAGEDIR_REARRIGHT:
+		// Split this evenly between the two pieces of armour.
+		if (ud.CurRear >= pierce1)
+		{
+			ud.CurRear -= pierce1;
+			pierce1 = 0;
+		}
+		else
+		{
+			pierce1 -= ud.CurRear;
+			ud.CurRear = 0;
+		}
+		if (ud.CurRight >= pierce2)
+		{
+			ud.CurRight -= pierce2;
+			pierce2 = 0;
+		}
+		else
+		{
+			pierce2 -= ud.CurRight;
+			ud.CurLeft = 0;
+		}
+		if ((pierce1 + pierce2) == 0) return -1; // Can't get through the armuor.
+
+		// Pick a random location when the random values can be transmitted.
+		hitloc = HITLOC_RIGHTARM;
+		break;
+	case DAMAGEDIR_RIGHT:
+		if (ud.CurRight >= pierce)
+		{
+			ud.CurRight -= pierce; // Can't get through the armour.
+			return -1;
+		}
+
+		pierce -=  ud.CurRight;
+		ud.CurRight = 0;
+
+/*		i = (int)randval(0, 4);
+		switch(i)
+		{
+		default:
+		case 0:
+			hitloc = HITLOC_TORSO;
+			break;
+		case 1:
+			hitloc = HITLOC_RIGHTARM;
+			break;
+		case 2: */
+			hitloc = HITLOC_RIGHTLEG;
+/*			break;
+		case 3:
+			hitloc = HITLOC_HEAD;
+			break;
+		} */
+		break;
+	case DAMAGEDIR_FRONTRIGHT:
+		// Split this evenly between the two pieces of armour.
+		if (ud.CurFront >= pierce1)
+		{
+			ud.CurFront -= pierce1;
+			pierce1 = 0;
+		}
+		else
+		{
+			pierce1 -= ud.CurFront;
+			ud.CurFront = 0;
+		}
+		if (ud.CurRight >= pierce2)
+		{
+			ud.CurRight -= pierce2;
+			pierce2 = 0;
+		}
+		else
+		{
+			pierce2 -= ud.CurRight;
+			ud.CurLeft = 0;
+		}
+		if ((pierce1 + pierce2) == 0) return -1; // Can't get through the armuor.
+
+		// Pick a random location when the random values can be transmitted.
+		hitloc = HITLOC_RIGHTARM;
+		break;
+	case DAMAGEDIR_UNDER:
+		// Special case.
+		if (ud.CurUnder >= pierce)
+		{
+			ud.CurUnder -= pierce;
+			return -1; // Nope.
+		}
+
+		pierce -= ud.CurUnder;
+		ud.CurUnder = 0;
+
+		hitloc = HITLOC_TORSO;
+		break;
+	default:
+		hitloc = HITLOC_TORSO;
+		break;
+	}
+
+	return hitloc;
+}
+
+void Soldier::apply_wound(int hitloc)
+{
+	// This SHOULD apply from 1-3 wounds, but random values can't be transmitted at the moment.
+	switch(hitloc)
+	{
+	case HITLOC_HEAD:
+		ud.HeadWound++;
+		break;
+	case HITLOC_TORSO:
+	default:
+		ud.TorsoWound++;
+		break;
+	case HITLOC_LEFTARM:
+		ud.LArmWound++;
+		break;
+	case HITLOC_RIGHTARM:
+		ud.RArmWound++;
+		break;
+	case HITLOC_LEFTLEG:
+		ud.LLegWound++;
+		break;
+	case HITLOC_RIGHTLEG:
+		ud.RLegWound++;
+		break;
+	}
+	return;
+}
+
+void Soldier::hit(int pierce, int type, int hitdir)
+{
+	int damagedir = (dir + (hitdir + 4)) % 8; // Becomes DAMAGEDIR_*, except DAMAGEDIR_UNDER...
+	int hitloc;
+
+	if ((hitloc = do_armour_check(pierce, damagedir)) == -1) return; // Can't pierce the armour.
+
+	if (type == DT_STUN)
+	{
+		ud.CurStun += pierce;
+		if (ud.CurStun >= ud.CurHealth)
+		{
+			m_state = STUN;
+			phase = 0;
+		}
+		return;
+	}
+
 	if (ud.CurHealth <= pierce) // ud.CurHealth is unsigned
 	{
 		ud.CurHealth = 0;
 		if (m_state != DIE)
 		{
-			soundSystem::getInstance()->play(SS_MALE_DEATH);
+			switch(md.SkinType)
+			{
+			    case S_SECTOID:
+				soundSystem::getInstance()->play(SS_SECTOID_DEATH);
+				break;
+			    case S_MUTON:
+				soundSystem::getInstance()->play(SS_MUTON_DEATH);
+				break;
+			    default:
+				if (md.fFemale == 1)
+				    soundSystem::getInstance()->play(SS_FEMALE_DEATH);
+				else
+				    soundSystem::getInstance()->play(SS_MALE_DEATH);
+			}
 			m_state = DIE;
 			phase = 0;
 		}
 	}
 	else {
+		apply_wound(hitloc);
 		ud.CurHealth -= pierce;
-        soundSystem::getInstance()->play(SS_MALE_WOUND);
+		switch(md.SkinType)
+		{
+		    case S_SECTOID:
+			soundSystem::getInstance()->play(SS_SECTOID_WOUND);
+			break;
+		    case S_MUTON:
+			soundSystem::getInstance()->play(SS_MUTON_WOUND);
+			break;
+		    default:
+			if (md.fFemale == 1)
+			    soundSystem::getInstance()->play(SS_FEMALE_WOUND);
+			else
+			    soundSystem::getInstance()->play(SS_MALE_WOUND);
+		}
+
+		if (ud.CurStun >= ud.CurHealth)
+		{
+			m_state = STUN;
+			phase = 0;
+		}
 	}
 }
 
-void Soldier::explo_hit(int pierce) //silent
+void Soldier::explo_hit(int pierce, int type, int hitdir, int dist) //silent
 {
-	damage_items(pierce);
+	int damagedir = (dir + (hitdir + 4)) % 8; // Becomes DAMAGEDIR_*, except DAMAGEDIR_UNDER...
+	int hitloc;
+
+	damage_items(pierce); // Items are OUTSIDE the armour, after all.
+
+	// If minimal range, hit under armour. Otherwise, hit armour normally.
+	if ((dist < 2) && ((hitloc = do_armour_check(pierce, DAMAGEDIR_UNDER)) == -1)) return;
+	else if ((hitloc = do_armour_check(pierce, damagedir)) == -1) return;
+
+	if (type == DT_STUN) // Did we get stunned?
+	{
+		ud.CurStun += pierce;
+		if (ud.CurStun >= ud.CurHealth)
+		{
+			m_state = STUN;
+			phase = 0;
+		}
+		return;
+	}
 
 	if (ud.CurHealth <= pierce) // ud.CurHealth is unsigned
 	{
 		ud.CurHealth = 0;
 		if (m_state != DIE)
 		{
-			soundSystem::getInstance()->play(SS_MALE_DEATH);
+			switch(md.SkinType)
+			{
+			    case S_SECTOID:
+				soundSystem::getInstance()->play(SS_SECTOID_DEATH);
+				break;
+			    case S_MUTON:
+				soundSystem::getInstance()->play(SS_MUTON_DEATH);
+				break;
+			    default:
+				if (md.fFemale == 1)
+				    soundSystem::getInstance()->play(SS_FEMALE_DEATH);
+				else
+				    soundSystem::getInstance()->play(SS_MALE_DEATH);
+			}
 			m_state = DIE;
 			phase = 0;
 		}
 	}
 	else
 	{
+		apply_wound(hitloc);
 		ud.CurHealth -= pierce;
+
+		if (ud.CurStun >= ud.CurHealth)
+		{
+			m_state = STUN;
+			phase = 0;
+		}
 	}
 }
 
@@ -1155,6 +1670,39 @@ void Soldier::die()
 	map->place(z, x, y)->put(new Item(ctype));
 
 	g_console->printf(xcom1_color(132), "%s killed.", md.Name);
+}
+
+
+void Soldier::stun()
+{
+	if (z == -1) return; // already stunned.
+	map->set_man(z, x, y, NULL);
+
+	z = map->find_ground(z, x, y);
+	for (int i = 0; i < 8; i++)
+		m_place[i]->dropall(z, x, y);
+
+	/////////type of body
+	int ctype;
+	if (md.SkinType == S_XCOM_0)
+		ctype = CORPSE;
+	else if (md.SkinType == S_XCOM_1)
+		ctype = CORPSE_ARMOUR;
+	else if ((md.SkinType == S_XCOM_2) || (md.SkinType == S_XCOM_3))
+		ctype = CORPSE_POWER_SUIT;
+	else if (md.SkinType == S_SECTOID)
+		ctype = Sectoid_Corpse;
+	else
+		ctype = Muton_Corpse;
+
+	body = new Item(ctype);
+	map->place(z, x, y)->put(body);
+
+	x = -1;
+	y = -1;
+	z = -1;
+
+	g_console->printf(xcom1_color(132), "%s stunned.", md.Name);
 }
 
 
@@ -1375,17 +1923,22 @@ int Soldier::load_ammo(int iplace, Item * it)
 	return 1;
 }
 
-void Soldier::spend_time(int tm)
+void Soldier::spend_time(int tm, int use_energy)
 {
 	ud.CurTU -= tm;
+	if (use_energy) ud.CurEnergy -= (tm / 2);
 
 	if (FLAGS & F_ENDLESS_TU) {
 		if (ud.CurTU < 32) ud.CurTU = ud.MaxTU;
+		if (ud.CurEnergy < 16) ud.CurEnergy = ud.MaxEnergy;
 	}
 }
 
-int Soldier::havetime(int ntime) // !!! do check of energy & others
+int Soldier::havetime(int ntime, int use_energy)
 {
+	if (use_energy)
+		return ((ud.CurTU >= ntime) && (ud.CurEnergy >= (ntime / 2)));
+
 	return (ud.CurTU >= ntime);
 }
 
@@ -1398,6 +1951,14 @@ int Soldier::walktime(int _dir)
 	}
 	int time_of_dst = map->mcd(dz, dx, dy, 0)->TU_Walk;
 	time_of_dst += map->mcd(dz, dx, dy, 3)->TU_Walk;
+
+	if ((_dir == 1)
+	 || (_dir == 3)
+	 || (_dir == 5)
+	 || (_dir == 7))
+	    time_of_dst *= 1.5; // Diagonal move multiplier.
+	// Only used with havetime(). Actual movement calls walktime(-1).
+
 
 	return time_of_dst;
 }
@@ -1434,12 +1995,6 @@ int Soldier::TAccuracy(int peraccur)
 	int ac = (ud.CurTAccuracy * peraccur) / 100;
 	ac = (ac * ud.CurHealth) / ud.MaxHealth;
 	return ac;
-}
-
-static double randval(double min, double max)
-{
-	double std = (double)rand() / (double)(RAND_MAX - 1);
-	return min + std * (max - min);
 }
 
 void Soldier::apply_accuracy(REAL & fi, REAL & te)
@@ -1500,10 +2055,10 @@ int Soldier::check_for_hit(int _z, int _x, int _y)
 }
 
 
-void Soldier::apply_hit(int _z, int _x, int _y, int _wtype)
+void Soldier::apply_hit(int _z, int _x, int _y, int _wtype, int _hitdir)
 {
 	if (check_for_hit(_z, _x, _y)) {
-		hit(Item::obdata[_wtype].damage);
+		hit(Item::obdata[_wtype].damage, Item::obdata[_wtype].damageType, _hitdir);
 	}
 }
 
@@ -1568,6 +2123,8 @@ void Soldier::precise_aiming()
 
 void Soldier::try_shoot()
 {
+	REACTION = 0; // Very important!
+
 	// Moving soldier cannot shoot
 	if (ismoving()) return ;
 
@@ -1614,8 +2171,58 @@ void Soldier::try_shoot()
 	faceto(map->sel_col, map->sel_row);
 }
 
+// Note the absence of map->sel_*, since the aim is to hit the target's position.
+// So instead of using map->sel_*, we use the_target->*.
+void Soldier::try_reaction_shot(Soldier *the_target)
+{
+	REACTION = 1; // Also very important - reaction shots don't provoke reaction shots.
+ 
+	// Moving soldier cannot shoot
+	if (ismoving()) return;
 
-void Soldier::shoot(int zd, int xd, int yd)
+	if ((z == the_target->z) && (x == the_target->x) && (y == the_target->y)) return;
+
+	if (FIRE_num != 0) return;
+
+	// This shouldn't happen, but check anyways!
+	if (target.action == PUNCH) {
+		if ((z != the_target->z) || (abs(x - the_target->x) > 1) || (abs(y - the_target->y) > 1))
+			return ;
+	}
+
+	if (target.action == AUTOSHOT)
+		FIRE_num = 3;
+	else
+		FIRE_num = 1;
+
+	FIRE_z = the_target->z * 12 + 8;
+	FIRE_x = the_target->x * 16 + 8;
+	FIRE_y = the_target->y * 16 + 8;
+
+	// There are many reasons why you cannot shoot infinitely ;)
+	if (!havetime(target.time * 2 * FIRE_num)) {
+		FIRE_num = 0;
+		return;
+	}
+
+	if (!target.item->is_laser() && !target.item->is_cold_weapon() &&
+	        ((target.item->m_ammo == NULL) || (target.item->m_ammo->m_rounds < FIRE_num + 1))) {
+		FIRE_num = 0;
+		return;
+	}
+
+	if (target.action != SNAPSHOT && target.action != AIMEDSHOT &&
+	        target.action != AUTOSHOT && target.action != PUNCH) {
+		FIRE_num = 0;
+		return;
+	}
+
+	// Face to target
+	faceto(the_target->x, the_target->y);
+	return;
+}
+
+void Soldier::shoot(int zd, int xd, int yd, int ISLOCAL)
 {
 	assert(target.action != NONE);
 	assert(target.item != NULL);
@@ -1623,6 +2230,8 @@ void Soldier::shoot(int zd, int xd, int yd)
 	int z0 = z * 12 + 8; if (m_state == SIT) z0 -= 4;
 	int x0 = x * 16 + 8;
 	int y0 = y * 16 + 8;
+
+	int chances = (target.time / 4); // How many chances at a reaction shot do we get? TUs / 4.
 
 	if (target.action == THROW) {
 		zd -= 8;
@@ -1672,6 +2281,13 @@ void Soldier::shoot(int zd, int xd, int yd)
 			fire(z0, x0, y0, fi, te, target.place, target.time);
 		}
 	}
+
+	if (!REACTION)            // If this shot isn't a reaction shot,
+		while (chances-- > 0) // then give a chance at a reaction shot for every four TUs used.
+		{
+			if (ISLOCAL) platoon_remote->check_reaction_fire(this);
+			else platoon_local->check_reaction_fire(this);
+		}
 }
 
 
@@ -1770,14 +2386,15 @@ void Soldier::draw_bullet_way()
 
 void Soldier::showspk()
 {
+	// Why did these have "% 4" before? They prevented the flying suit from displaying.
 	switch (md.SkinType) {
 		case S_XCOM_0:
 		case S_XCOM_1:
-			m_spk[(md.SkinType - 1) % 3][md.fFemale][md.Appearance]->show(screen2, 0, 0);
+			m_spk[(md.SkinType - 1) % 4][md.fFemale][md.Appearance]->show(screen2, 0, 0);
 			break;
 		case S_XCOM_2:
 		case S_XCOM_3:
-			m_spk[(md.SkinType - 1) % 3][0][0]->show(screen2, 0, 0);
+			m_spk[(md.SkinType - 1) % 4][0][0]->show(screen2, 0, 0);
 			break;
 		case S_SECTOID:
 			m_spk[4][0][0]->show(screen2, 0, 0);
@@ -1844,9 +2461,115 @@ void Soldier::drawinfo(int x, int y)
 	//textprintf(screen2, font, x+136, y+49, 32, "%d", ud.CurHealth);
 	printsmall(x + 136, y + 50, xcom1_color(32), ud.CurHealth);
 
+	if (ud.CurStun > 0) // draw stun bar
+	{
+		if (ud.CurStun < ud.CurHealth)
+			hline(screen2, 170 + x, 50 + y, 170 + x + ud.CurStun, 80);
+		else
+			hline(screen2, 170 + x, 50 + y, 170 + x + ud.CurHealth, 80);
+		putpixel(screen2, 170 + x + ud.MaxHealth + 1, 50 + y + 1, 37);
+	}
+
 	drawbar(197, 192, 170 + x, 53 + y, ud.Morale, 100);
 	//textprintf(screen2, font, x+154, y+49, 192, "%d", ud.Morale);
 	printsmall(x + 154, y + 50, xcom1_color(192), ud.Morale);
+}
+
+#define AUTO   0
+#define SNAP   1
+#define AIMED  2
+
+int Soldier::check_reaction_fire(Soldier *the_target)
+{
+	// Translate target's cell into a value used by m_visible_cells.
+	int width_10 = 10 * map->width, height_10 = 10 * map->height,
+		n = the_target->y + (the_target->x * height_10) + (the_target->z * width_10 * height_10);
+	calc_visible_cells(); //!!
+	if(m_visible_cells[n] != 0) // Can we see this cell?
+	{
+		// Ok, check for reaction fire.
+		// Compare the reaction figures.
+		float total_reactions = ud.CurReactions;
+		float tu_ratio; 
+		if (the_target->ud.CurTU > 0) tu_ratio = ud.CurTU / the_target->ud.CurTU;
+		else tu_ratio = 999;
+
+		assert(the_target->ud.CurReactions > 0); // Shouldn't happen, but...
+		
+		if (((float)ud.CurReactions / (float)the_target->ud.CurReactions) < total_reactions)
+			total_reactions = ((float)ud.CurReactions / (float)the_target->ud.CurReactions);
+
+		total_reactions /= 2;
+
+		if (tu_ratio < 1) total_reactions *= tu_ratio;
+		
+		if (randval(0, 1) < total_reactions)
+		{
+			// We can make a reaction shot.
+			// Check to see if right hand holds a weapon and if it's loaded.
+			Item *it = item(P_ARM_RIGHT);
+			if ((it != NULL) && ((it->data()->isGun && it->haveclip()) || it->is_laser()))
+			{
+				// We found a weapon, so what kind of shot can we make?
+				if (do_reaction_fire(the_target, it, AIMED)) return 1;
+				if (do_reaction_fire(the_target, it, SNAP)) return 1;
+				if (do_reaction_fire(the_target, it, AUTO)) return 1;
+			}
+
+			// No luck with right arm, go to left arm.
+			it = item(P_ARM_LEFT);
+			if ((it != NULL) && ((it->data()->isGun && it->haveclip()) || it->is_laser()))
+			{
+				if (do_reaction_fire(the_target, it, AIMED)) return 1;
+				if (do_reaction_fire(the_target, it, SNAP)) return 1;
+				if (do_reaction_fire(the_target, it, AUTO)) return 1;
+			}
+
+			// No luck whatsoever. Fuhgeddabouddit.
+			return 0;
+		}
+		else return 0; // Can't react fast enough. No go.
+	}
+	return 0; // Can't see cell. Abort.
+}
+
+int Soldier::do_reaction_fire(Soldier *the_target, Item *it, int shot_type)
+{
+	int tus;
+
+	// Can this item make this type of shot?
+	if(it->data()->accuracy[shot_type])
+	{
+		// How many TUs do we use?
+		tus = required(it->data()->time[shot_type]);
+		if (shot_type == AUTO) tus = (tus + 2) / 3 * 3; // this was taken from firemenu
+		if (tus <= ud.CurTU)
+		{
+			// We have enough time to make the shot. Set up target.
+			target.accur = FAccuracy(it->data()->accuracy[shot_type], it->data()->twoHanded);
+			target.time = tus;
+			switch(shot_type)
+			{
+			case AIMED:
+				target.action = AIMEDSHOT;
+				break;
+			case AUTO:
+				target.action = AUTOSHOT;
+				break;
+			case SNAP:
+				target.action = SNAPSHOT;
+				break;
+			}
+			target.item = it;
+			target.place = P_ARM_RIGHT;
+			try_reaction_shot(the_target);
+			if (FIRE_num > 0) // If FIRE_num is set, we're firing shots, so...
+				return 1;
+		}
+	}
+
+	// Nope.
+	return 0;
 }
 
 /*
@@ -1879,6 +2602,13 @@ int Soldier::eot_save(char *txt)
 	return len;
 }
 
+int Soldier::count_weight()
+{
+	int weight = 0;
+	for (int i = 0; i < 8; i++) weight += m_place[i]->count_weight();
+
+	return weight;
+}
 
 bool Soldier::Write(persist::Engine &archive) const
 {

@@ -388,7 +388,7 @@ void Map::step()
  					for (int h=0; h<4; h++)
  						damage_cell_part(k,i,j,h,PISTOL_CLIP);
  					if (man(k, i, j) != NULL)
- 						man(k, i, j)->hit(10);
+ 						man(k, i, j)->hit(10, DT_INC, 8); //DAMAGEDIR_UNDER
  					if (fire_time(k,i,j) > 1)
  						set_fire_state(k,i,j,1);
  					if (fire_time(k,i,j) == 1)
@@ -1356,7 +1356,9 @@ int Map::explode(int lev, int col, int row, int type, int maxrange, int damage)
 		//REAL fi = PI/2.0;
 		for (REAL te = -PI; te < PI; te += TE_STEP) {
 			int dam = damage;
+			int hitdir;
 
+			// l is how many squares the damage is out from the center.
 			for (int l = 0; l < range; l++) {
 				int nz = ll;
 				int nx = col + (int)floor(l * cos(te) + 0.5);
@@ -1372,7 +1374,31 @@ int Map::explode(int lev, int col, int row, int type, int maxrange, int damage)
 					continue;
 				field[nz * width * 10 * height * 10 + nx * width * 10 + ny] = 1;
 
-				explocell(nz, nx, ny, dam, type);
+				// Figure out which way the damage is going.
+				// 567
+				// 4 0
+				// 321
+				if (te < ((-7 * PI) / 8))
+					hitdir = 4;
+				else if (te < ((-5 * PI) / 8))
+					hitdir = 3;
+				else if (te < ((-3 * PI) / 8))
+					hitdir = 2;
+				else if (te < ((-PI) / 8))
+					hitdir = 1;
+				else if (te < (PI / 8))
+					hitdir = 0;
+				else if (te < ((3 * PI) / 8))
+					hitdir = 7;
+				else if (te < ((5 * PI) / 8))
+					hitdir = 6;
+				else if (te < ((7 * PI) / 8))
+					hitdir = 5;
+				else
+					hitdir = 4;
+
+				// Range gets passed along here so we can see if we need to hit underarmor.
+				explocell(nz, nx, ny, dam, type, hitdir, l);
 			}
 		}
 	}
@@ -1393,7 +1419,7 @@ bool Map::check_mine(int lev, int col, int row)
 	return false;
 }
 
-void Map::explocell(int lev, int col, int row, int damage, int type)
+void Map::explocell(int lev, int col, int row, int damage, int type, int hitdir, int range)
 {
 	set_smog_state(lev, col, row, 8);
 	set_smog_time(lev, col, row, 0);
@@ -1418,8 +1444,9 @@ void Map::explocell(int lev, int col, int row, int damage, int type)
 	//place(_z, _x, _y)->damage_items(Item::obdata[_wtype].damage);
 	place(lev, col, row)->damage_items(damage);
 
+	// Range gets passed along here so we can see if we need to hit underarmor.
 	if (man(lev, col, row) != NULL)
-		man(lev, col, row)->explo_hit(damage);
+		man(lev, col, row)->explo_hit(damage, Item::obdata[type].damageType, hitdir, range);
 }
 
 
