@@ -1182,6 +1182,9 @@ void Map::destroy_cell_part(int lev, int col, int row, int _part)
 		}
 
 		m_cell[lev][col][row]->type[_part] = mcd;
+		
+		if (m_terrain->m_mcd[ct].HE_Strength > 0)
+			explode(-1, lev, col, row, HIGH_EXPLOSIVE, 3, m_terrain->m_mcd[ct].HE_Strength);
 
 		rebuild_visi(lev, col, row);
 	}
