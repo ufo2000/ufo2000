@@ -627,10 +627,15 @@ void Soldier::restore()
 
 void Soldier::draw_head(int head_frame, int dir, BITMAP *image, int delta)
 {
-	if (md.SkinType == S_XCOM_0 && (md.Appearance == 1 || md.Appearance == 2)) {
-		m_add1->drawpck(dir + (md.Appearance - 1) * 8 + md.fFemale * 16, image, delta);
-	} else if (md.SkinType == S_XCOM_1 && (md.Appearance == 1 || md.Appearance == 2)) {
-		m_add1->drawpck(dir + 32 + (md.Appearance - 1) * 8 + md.fFemale * 16, image, delta);
+	int Appearance = md.Appearance;
+	// we don't have a picture for black complection, so change it to brunette
+    // when displaying head
+	if (Appearance == 3) Appearance = 2;
+
+	if (md.SkinType == S_XCOM_0 && (Appearance == 1 || Appearance == 2)) {
+		m_add1->drawpck(dir + (Appearance - 1) * 8 + md.fFemale * 16, image, delta);
+	} else if (md.SkinType == S_XCOM_1 && (Appearance == 1 || Appearance == 2)) {
+		m_add1->drawpck(dir + 32 + (Appearance - 1) * 8 + md.fFemale * 16, image, delta);
 	} else {
 		m_pck[md.SkinType]->drawpck(dir + head_frame, image, delta);      //head
 	}
