@@ -103,7 +103,7 @@ ConsoleWindow::ConsoleWindow(int width, int height, FONT *font)
 	m_width = width;
 	m_height = height;
 	m_font = font;
-	m_status_line = new ConsoleStatusLine(width, font);
+	m_status_line = new ConsoleStatusLine(width, font, xcom1_color(1));
 	m_need_redraw = true;
 }
 
@@ -213,7 +213,7 @@ void ConsoleWindow::printf(const char *fmt, ...)
 bool ConsoleWindow::process_keyboard_input(int keycode, int scancode)
 {
 	if (scancode == KEY_ENTER) {
-		print(m_status_line->get_text().c_str());
+		printf("%s", m_status_line->get_text().c_str());
 		m_status_line->set_text("");
 		return true;
 	}

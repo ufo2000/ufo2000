@@ -225,7 +225,7 @@ void Net::check()
 		queue->put((char *)packet.data(), packet.size());
 		if (FLAGS & F_RAWMESSAGES) {
 			g_console->printf("put:[%d]", packet.size());
-			g_console->print(packet.c_str());
+			g_console->printf("%s", packet.c_str());
 		}
 	}
 
@@ -236,7 +236,7 @@ void Net::check()
 
 	if (FLAGS & F_RAWMESSAGES) {
 		g_console->printf("get:[%d]", packet.size());
-		g_console->print(packet.c_str());
+		g_console->printf("%s", packet.c_str());
 	}
 
 	log("recv:[%s]\n", packet.c_str());
@@ -1167,7 +1167,7 @@ int Net::recv_unit_data_size()
 
 	if (size == 0) { //begin send
 		memset(pd_remote, 0, sizeof(PLAYERDATA));
-		g_console->print("pd recv begin");
+		g_console->printf("%s", "pd recv begin");
 	} else { //end send
 		//info->printstr("pd recv end\n");
 		pd_remote->size = size;

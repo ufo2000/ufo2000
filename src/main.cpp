@@ -333,7 +333,7 @@ void display_error_message(const std::string &error_text)
 #ifdef WIN32
 	MessageBox(NULL, error_text.c_str(), "UFO2000 Error!", MB_OK);
 #else
-	fprintf(stderr, "%s", error_text.c_str());
+	fprintf(stderr, "\n%s\n", error_text.c_str());
 #endif
 	exit(1);
 }
@@ -686,7 +686,7 @@ void check_crc(int crc)
 {
 	int bcrc = build_crc();
 	if (crc != bcrc) {
-		g_console->print("wrong wholeCRC");
+		g_console->printf("%s", "wrong wholeCRC");
 		g_console->printf("crc=%d, bcrc=%d", crc, bcrc);
 	}
 }

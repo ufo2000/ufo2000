@@ -443,7 +443,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 
 		net->check();
 		if (mapdata.load_game == 77) { //new	mapdata
-			g_console->print("mapdata generated");
+			g_console->printf("%s", "mapdata generated");
 			mapdata.load_game = 0;
 			delete map;
 			destroy_bitmap(map2d);

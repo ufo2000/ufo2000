@@ -453,7 +453,7 @@ void Units::execute(Map *map, int map_change_allowed)
 				net->send_map_data(&mapdata);
 				mapdata.load_game = 77;
 			} else {
-				g_console->print("invalid GEODATA file.");
+				g_console->printf("%s", "invalid GEODATA file.");
 			}
 		}
 	}
