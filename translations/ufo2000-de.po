@@ -1,4 +1,4 @@
-# UFO2000 - Language-File: German
+# UFO2000 - Language-File: DE=German
 # Copyright (C) 2001-2004 ufo2000 development team
 # This file is distributed under the same license as the UFO2000 package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2004.
@@ -8,14 +8,14 @@
 # ausw_hlen: auswählen  _ndern: ändern
 # k_nnen: können  f_r: für  
 # ##
-# !! Comments have to be placed before the "msgid"-line, 
+# !! Comments for an entry have to be placed before its "msgid"-line, 
 # !! and must start with "# ".
 
 msgid ""
 msgstr ""
 "Project-Id-Version: UFO2000\n"
-"POT-Creation-Date: 2004-11-08 17:33+0100\n"
-"PO-Revision-Date: 2004-11-10 14:14+0100\n"
+"POT-Creation-Date: 2004-11-12 14:10+0100\n"
+"PO-Revision-Date: 2004-11-10 14:15+0100\n"
 "Last-Translator: HaJo Gurt <gurt@gmx.de>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -197,8 +197,8 @@ msgstr "Aussehen:"
 
 #: src/editor.cpp:723 src/editor.cpp:798
 #, c-format
-msgid "points remain: %d  "
-msgstr "Rest-Punkte: %d"
+msgid "points remain: %2d "
+msgstr "Rest-Punkte: %2d "
 
 #: src/editor.cpp:773
 msgid "Time Units"

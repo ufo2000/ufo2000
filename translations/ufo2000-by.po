@@ -1,12 +1,14 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# UFO2000 - Language-File: BY=Belarusian
+# Copyright (C) 2001-2004 ufo2000 development team
+# This file is distributed under the same license as the UFO2000 package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2004.
+# ##
+# !! Comments for an entry have to be placed before its "msgid"-line, 
+# !! and must start with "# ".
 msgid ""
 msgstr ""
 "Project-Id-Version: UFO2000\n"
-"POT-Creation-Date: 2004-11-10 23:01+0100\n"
+"POT-Creation-Date: 2004-11-12 14:10+0100\n"
 "PO-Revision-Date: unknown\n"
 "Last-Translator: Serge Semashko\n"
 "Language-Team: Belarusian\n"
@@ -162,7 +164,7 @@ msgstr ""
 
 #: src/editor.cpp:724 src/editor.cpp:805
 #, c-format
-msgid "points remain: %d  "
+msgid "points remain: %2d "
 msgstr ""
 
 #: src/editor.cpp:774
@@ -543,31 +545,31 @@ msgstr ""
 msgid " OK "
 msgstr ""
 
-#: src/mainmenu.cpp:183
+#: src/mainmenu.cpp:201
 msgid "connect to internet server"
 msgstr "далучыцца да сэрвера"
 
-#: src/mainmenu.cpp:184
+#: src/mainmenu.cpp:202
 msgid "start hotseat game"
 msgstr "пачаць hotseat гульню"
 
-#: src/mainmenu.cpp:185
+#: src/mainmenu.cpp:203
 msgid "editor"
 msgstr "рэдактар"
 
-#: src/mainmenu.cpp:186
+#: src/mainmenu.cpp:204
 msgid "load saved game"
 msgstr "загрузіць захаваную гульню"
 
-#: src/mainmenu.cpp:187
+#: src/mainmenu.cpp:205
 msgid "about"
 msgstr "аб стваральніках"
 
-#: src/mainmenu.cpp:188
+#: src/mainmenu.cpp:206
 msgid "tip of the day"
 msgstr ""
 
-#: src/mainmenu.cpp:190
+#: src/mainmenu.cpp:208
 msgid "quit"
 msgstr "выхад"
 
@@ -1446,79 +1448,79 @@ msgstr ""
 msgid "Health>"
 msgstr ""
 
-#: src/soldier.cpp:923
+#: src/soldier.cpp:920
 msgid "TIME UNITS"
 msgstr ""
 
-#: src/soldier.cpp:924
+#: src/soldier.cpp:921
 msgid "ENERGY"
 msgstr ""
 
-#: src/soldier.cpp:925
+#: src/soldier.cpp:922
 msgid "HEALTH"
 msgstr ""
 
-#: src/soldier.cpp:926
+#: src/soldier.cpp:923
 msgid "FATAL WOUNDS"
 msgstr ""
 
-#: src/soldier.cpp:927
+#: src/soldier.cpp:924
 msgid "BRAVERY"
 msgstr ""
 
-#: src/soldier.cpp:928
+#: src/soldier.cpp:925
 msgid "MORALE"
 msgstr ""
 
-#: src/soldier.cpp:929
+#: src/soldier.cpp:926
 msgid "REACTIONS"
 msgstr ""
 
-#: src/soldier.cpp:930
+#: src/soldier.cpp:927
 msgid "FIRING ACCURACY"
 msgstr ""
 
-#: src/soldier.cpp:931
+#: src/soldier.cpp:928
 msgid "THROWING ACCURACY"
 msgstr ""
 
-#: src/soldier.cpp:932
+#: src/soldier.cpp:929
 msgid "STRENGTH"
 msgstr ""
 
-#: src/soldier.cpp:935
+#: src/soldier.cpp:932
 msgid "FRONT ARMOUR"
 msgstr ""
 
-#: src/soldier.cpp:936
+#: src/soldier.cpp:933
 msgid "LEFT ARMOUR"
 msgstr ""
 
-#: src/soldier.cpp:937
+#: src/soldier.cpp:934
 msgid "RIGHT ARMOUR"
 msgstr ""
 
-#: src/soldier.cpp:938
+#: src/soldier.cpp:935
 msgid "REAR ARMOUR"
 msgstr ""
 
-#: src/soldier.cpp:939
+#: src/soldier.cpp:936
 msgid "UNDER ARMOUR"
 msgstr ""
 
-#: src/soldier.cpp:1328
+#: src/soldier.cpp:1325
 msgid "Time units are reserved for snap shot."
 msgstr ""
 
-#: src/soldier.cpp:1335
+#: src/soldier.cpp:1332
 msgid "Time units are reserved for aimed shot."
 msgstr ""
 
-#: src/soldier.cpp:1342
+#: src/soldier.cpp:1339
 msgid "Time units are reserved for auto shot."
 msgstr ""
 
-#: src/soldier.cpp:1349
+#: src/soldier.cpp:1346
 msgid "Time units are reserved for grenade throw."
 msgstr ""
 
@@ -1535,133 +1537,133 @@ msgstr ""
 msgid "Total points=%d (of %d)"
 msgstr ""
 
-#: src/units.cpp:360
+#: src/units.cpp:365
 msgid "NEW"
 msgstr ""
 
-#: src/units.cpp:361
+#: src/units.cpp:366
 msgid "LOAD"
 msgstr ""
 
-#: src/units.cpp:362
+#: src/units.cpp:367
 msgid "SAVE"
 msgstr ""
 
-#: src/units.cpp:371
+#: src/units.cpp:376
 #, c-format
 msgid "Explosives level: %d"
 msgstr ""
 
-#: src/units.cpp:372
+#: src/units.cpp:377
 #, c-format
 msgid "Points limit: %d000"
 msgstr ""
 
-#: src/units.cpp:373
+#: src/units.cpp:378
 msgid "No turns limit"
 msgstr ""
 
-#: src/units.cpp:373
+#: src/units.cpp:378
 #, c-format
 msgid "Turns limit: %d"
 msgstr ""
 
-#: src/units.cpp:374
+#: src/units.cpp:379
 msgid "No time limit"
 msgstr ""
 
-#: src/units.cpp:374
+#: src/units.cpp:379
 #, c-format
 msgid "Time limit: %d sec"
 msgstr ""
 
-#: src/units.cpp:375
+#: src/units.cpp:380
 #, c-format
 msgid "Exploration level: %d"
 msgstr ""
 
-#: src/units.cpp:376
+#: src/units.cpp:381
 msgid "Editor: ground on"
 msgstr ""
 
-#: src/units.cpp:376
+#: src/units.cpp:381
 msgid "Editor: ground off"
 msgstr ""
 
-#: src/units.cpp:394
+#: src/units.cpp:399
 msgid "All explosives are prohibited."
 msgstr ""
 
-#: src/units.cpp:398
+#: src/units.cpp:403
 msgid "High explosives, all rockets and"
 msgstr ""
 
-#: src/units.cpp:399
+#: src/units.cpp:404
 msgid "alien grenades are prohibited."
 msgstr ""
 
-#: src/units.cpp:403
+#: src/units.cpp:408
 msgid "Large rockets and alien grenades"
 msgstr ""
 
-#: src/units.cpp:404
+#: src/units.cpp:409
 msgid "are prohibited."
 msgstr ""
 
-#: src/units.cpp:408
+#: src/units.cpp:413
 msgid "All explosives are allowed."
 msgstr ""
 
-#: src/units.cpp:434 src/units.cpp:447
+#: src/units.cpp:439 src/units.cpp:452
 msgid "no"
 msgstr ""
 
-#: src/units.cpp:466
+#: src/units.cpp:471
 msgid "Map isn't explored at all."
 msgstr ""
 
-#: src/units.cpp:470
+#: src/units.cpp:475
 msgid "Deployment area is explored."
 msgstr ""
 
-#: src/units.cpp:474
+#: src/units.cpp:479
 msgid "The entire map is explored."
 msgstr ""
 
-#: src/units.cpp:590
+#: src/units.cpp:595
 #, c-format
 msgid "Total points=%d"
 msgstr ""
 
-#: src/units.cpp:606
+#: src/units.cpp:611
 msgid "SERVER"
 msgstr ""
 
-#: src/units.cpp:609
+#: src/units.cpp:614
 msgid "CLIENT"
 msgstr ""
 
-#: src/units.cpp:616
+#: src/units.cpp:621
 msgid "SEND"
 msgstr ""
 
-#: src/units.cpp:623
+#: src/units.cpp:628
 msgid "START"
 msgstr ""
 
-#: src/units.cpp:959
+#: src/units.cpp:976
 msgid "load GEODATA.lua file"
 msgstr ""
 
-#: src/units.cpp:963
+#: src/units.cpp:980
 msgid "Invalid map file."
 msgstr ""
 
-#: src/units.cpp:981
+#: src/units.cpp:998
 msgid "Save GEODATA.lua file"
 msgstr ""
 
-#: src/units.cpp:983
+#: src/units.cpp:1000
 msgid "Can't save geodata."
 msgstr ""
 

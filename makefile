@@ -1,4 +1,6 @@
 ##############################################################################
+# makefile for ufo2000                                                       #
+#                                                                            #
 # Compiling ufo2000: make {debug=1} {xmingw=1} {dumbogg=1}                   #
 #                                                                            #
 # Define xmingw=1 when compiling win32 binary with Mingw gcc crosscompiler   #
@@ -172,13 +174,15 @@ clean:
 	$(RM) $(OBJDIR)/*.d
 	$(RM) $(NAME)
 
-# update the translations of game messages to different languages 
+# Update the translations of game messages to different languages 
 # using gettext tools - see manual at
 # http://www.gnu.org/software/gettext/manual/gettext.html
 lng: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
 	msgmerge.exe --update translations/ufo2000-de.po translations/ufo2000.pot
 	msgfmt -c translations/ufo2000-de.po
+	msgmerge.exe --update translations/ufo2000-fr.po translations/ufo2000.pot
+	msgfmt -c translations/ufo2000-fr.po
 	msgmerge.exe --update translations/ufo2000-ru.po translations/ufo2000.pot
 	msgfmt -c translations/ufo2000-ru.po
 	msgmerge.exe --update translations/ufo2000-by.po translations/ufo2000.pot
@@ -243,3 +247,5 @@ docs:
 
 -include $(DEPS)
 -include $(DEPS_SERVER)
+
+#.

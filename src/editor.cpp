@@ -721,7 +721,7 @@ static int d_agup_slider_pro2(int msg, DIALOG * d, int c)
 			scare_mouse();
 
 			SEND_MESSAGE(d, MSG_DRAW, 0);
-            sprintf(points_str, _("points remain: %d  "), MAXPOINTS - points);
+            sprintf(points_str, _("points remain: %2d "), MAXPOINTS - points);
 			SEND_MESSAGE(&sol_dialog[D_POINTS], MSG_DRAW, 0);
 
 			unscare_mouse();
@@ -802,7 +802,7 @@ void Editor::edit_soldier()
 	         sol_dialog[D_FIRE_ACCUR].d2 + sol_dialog[D_THRU_ACCUR].d2 +
 			 sol_dialog[D_STAMINA].d2 + (sol_dialog[D_STRENGTH].d2 * 2) +
 			 sol_dialog[D_REACTION].d2;
-	sprintf(points_str, _("points remain: %d  "), MAXPOINTS - points);
+	sprintf(points_str, _("points remain: %2d "), MAXPOINTS - points);
 	
 	sol_dialog[D_POINTS].fg = gui_fg_color;
 	sol_dialog[D_POINTS].bg = gui_bg_color;
