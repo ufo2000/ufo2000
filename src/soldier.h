@@ -134,7 +134,7 @@ private:
 
 	static void initbof();
 	
-	bool time_reserve(int walk_time);
+	bool time_reserve(int walk_time, int ISLOCAL, int use_energy = 1);
 
 public:
 

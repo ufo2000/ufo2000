@@ -1211,7 +1211,7 @@ int Soldier::move(int ISLOCAL)
 				if (curway >= waylen) {
 					finish_march(ISLOCAL);
 				} else {
-					if (!time_reserve(walktime(way[curway])))
+					if (!time_reserve(walktime(way[curway]), ISLOCAL))
 						finish_march(ISLOCAL);
 					else
 						dir = way[curway];
@@ -1258,8 +1258,11 @@ int Soldier::move(int ISLOCAL)
 	return 1;
 }
 
-bool Soldier::time_reserve(int walk_time)
+bool Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
 {
+	if(!ISLOCAL)
+		return havetime(walk_time, use_energy);
+
 	Item *it = rhand_item();
 	if(!it) it = lhand_item();	//no item in right hand - use item in left hand
 
@@ -1294,11 +1297,13 @@ bool Soldier::time_reserve(int walk_time)
 		}
 	}
 	
-	if(!havetime(time, 1)) {
+	if(!havetime(time, 0)) {
 		if(error != "")
 			g_console->printf(xcom1_color(40), error.c_str());
 		return false;
-	} else 
+	} else if(use_energy && !havetime(walk_time, 1))
+		return false;
+	else
 		return true;
 }
 
@@ -1317,7 +1322,8 @@ void Soldier::wayto(int dest_lev, int dest_col, int dest_row)
 			waylen--;
 		}
 
-		if ((waylen < 2) || (!time_reserve(walktime(way[1])))) {
+		int ISLOCAL = platoon_local->belong(this);
+		if ((waylen < 2) || (!time_reserve(walktime(way[1]), ISLOCAL))) {
 			curway = -1;
 			waylen = 0;
 		} else {
@@ -1403,7 +1409,8 @@ void Soldier::faceto(int dest_col, int dest_row)
 	if (nturns < 0) nturns = -nturns;
 	if (nturns > 4)
 		nturns = 8 - nturns;
-	if (time_reserve(nturns)) {
+	int ISLOCAL = platoon_local->belong(this);
+	if (time_reserve(nturns, ISLOCAL, 0)) {
 		spend_time(nturns);
 		net->send_face(NID, dest_col, dest_row);
 		way[0] = ang >> 5; curway = 0; waylen = 0;
