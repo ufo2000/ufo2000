@@ -36,6 +36,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #endif
 
 #include "server_config.h"
+#include "sqlite/sqlite3_plus.h"
 
 #ifndef SERVER_LOG_FILENAME
 #define SERVER_LOG_FILENAME "ufo2000-srv.log"
@@ -344,6 +345,12 @@ bool add_user(const std::string &login, const std::string &password)
     FILE *f = fopen(config_file_pathname.c_str(), "at");
     fprintf(f, "\naccept_user = %s:%s", login.c_str(), password.c_str());
     fclose(f);
+    
+    sqlite3::connection con("ufo2000.db");
+    std::string s="";
+    s+="insert into ufo2000_users values('"+login+"','"+password+"');";
+    con.executenonquery(s.c_str());
+
     return true;
 }
 
