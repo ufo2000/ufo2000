@@ -194,7 +194,7 @@ dofile(ufo2000_dir .. "/init-scripts/filecheck.lua")
 -- access to filesystem, the code below enforces this restriction
 io.open = function(fname, mode)
 	if mode and (string.find(mode, "r%+") or string.find(mode, "[aw]")) then
-		Error("Security problem: attempt to open '%s' for write", fname)
+		Error("Sandbox violation: attempt to open '%s' for write", fname)
 		return nil
 	end
 	return io_open_unrestricted(fname, mode)

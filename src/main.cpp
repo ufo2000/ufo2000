@@ -396,6 +396,8 @@ void initmain(int argc, char *argv[])
 	luaopen_base(L);
 	luaopen_string(L);
 	luaopen_io(L);
+	LUA_REGISTER_CLASS(L, Place);
+	LUA_REGISTER_CLASS_METHOD(L, Place, add_item);
 	
 #ifdef LINUX
 	// Do not silently exit on broken network connection

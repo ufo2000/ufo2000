@@ -330,42 +330,26 @@ int Place::isthere(Item *it)
 	return 0;
 }
 
-void Place::save_bin(char *fn)
+void Place::save_to_file(const char *fn, const char *prefix)
 {
-	char buf[3 * 1000];
-	int buf_size = 0;
+	FILE *fh = fopen(F(fn), "wt");
+	ASSERT(fh != NULL);
 
 	Item *it = m_item;
 	while (it != NULL) {
-		buf[buf_size++] = it->m_type;
-		buf[buf_size++] = it->m_x;
-		buf[buf_size++] = it->m_y;
+		fprintf(fh, "%s:add_item(%d, %d, \"%s\")\n", prefix, it->m_x, it->m_y, it->name());
 		it = it->m_next;
 	}
-
-	int fh = open(F(fn), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, 0644);
-	ASSERT(fh != -1);
-	write(fh, buf, buf_size);
-	close(fh);
+	fclose(fh);
 }
 
-void Place::load_bin(const char *fn)
+void Place::add_item(int x, int y, const char *item_name)
 {
-	char buf[3 * 1000];
-	int buf_size;
-
-	int fh = open(F(fn), O_RDONLY | O_BINARY);
-	ASSERT(fh != -1);
-	buf_size = read(fh, buf, sizeof(buf));
-	close(fh);
-
-	for (int i = 0; i < buf_size; ) {
-		int type = buf[i++];
-		int x = buf[i++];
-		int y = buf[i++];
-		if (type > 0 && type < Item::obdata_num)
-			put(new Item(type), x, y);
-	}
+	for (int i = 0; i < Item::obdata_num; i++)
+		if (strcmp(Item::obdata_name(i), item_name) == 0) {
+			put(new Item(i), x, y);
+			return;
+		}
 }
 
 void Place::build_ITEMDATA(int ip, ITEMDATA * id) //don't save clip rounds

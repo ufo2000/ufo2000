@@ -40,7 +40,6 @@ private:
 	void set(int x, int y, int w, int h);
 public:
 
-	Place() { }
 	Place(int x, int y, int w, int h);
 	virtual ~Place();
 
@@ -65,10 +64,11 @@ public:
 	Item *item_under_mouse();
 	int isthere(Item *it);
 
-	void save_bin(char *fn);
-	void load_bin(const char *fn);
+	void add_item(int x, int y, const char *item_name);
+
+	void save_to_file(const char *filename, const char *prefix);
+
 	int save_items(char *fs, int _z, int _x, int _y, char *txt);
-	//int save(char *n1, int NID, char *n2, int ip, char *txt);
 	int eot_save(int ip, char *txt);
 
 	int count_weight();

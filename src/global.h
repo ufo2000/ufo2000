@@ -53,6 +53,32 @@ extern "C" {
 #include "lauxlib.h"
 }
 
+#include "LuaPlus/LuaPlusCD.h"
+
+#define LUA_REGISTER_CLASS(L, classname) \
+	lua_pushstring(L, #classname); \
+	lua_newtable(L); \
+	lua_pushstring(L, "__index"); \
+	lua_pushvalue(L, -2); \
+	lua_settable(L, -3); \
+	lua_settable(L, LUA_GLOBALSINDEX); \
+	
+#define LUA_REGISTER_CLASS_METHOD(L, classname, methodname) \
+	lua_pushstring(L, #classname); \
+	lua_gettable(L, LUA_GLOBALSINDEX); \
+	lua_pushstring(L, #methodname); \
+	lua_pushobjectdirectclosure(L, (classname*)0, &classname::methodname, 0); \
+	lua_settable(L, -3); \
+	lua_pop(L, 1);
+
+#define LUA_PUSH_OBJECT_POINTER(L, classname, objectptr) \
+	lua_pushstring(L, #classname); \
+	lua_gettable(L, LUA_GLOBALSINDEX); \
+	lua_boxpointer(L, objectptr); \
+	lua_pushvalue(L, -2); \
+	lua_setmetatable(L, -2); \
+	lua_remove(L, -2);
+
 #include <nl.h>
 
 // We rely on HawkNL in defining data types of proper system independent size

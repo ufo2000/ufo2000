@@ -25,7 +25,7 @@ FilesTable = {
 
 	["$(home)/geodata.dat"]           = { Origin = "$(ufo2000)/geodata.default.dat" },
 	["$(home)/soldier.dat"]           = { Origin = "$(ufo2000)/soldier.default.dat" },
-	["$(home)/armoury.set"]           = { Origin = "$(ufo2000)/armoury.default.set" },
+	["$(home)/armoury.lua"]           = { Origin = "$(ufo2000)/armoury.default.lua" },
 	["$(home)/items.dat"]             = { Origin = "$(ufo2000)/items.default.dat" },
 	["$(home)/ufo2000.ini"]           = { Origin = "$(ufo2000)/ufo2000.default.ini" },
 	["$(home)/init-scripts.log"]      = { },

@@ -76,7 +76,15 @@ Editor::Editor()
 	destroy_bitmap(image);
 
 	m_armoury = new Place(0, 220, 20, 9);
-	m_armoury->load_bin("$(home)/armoury.set");
+
+	lua_pushstring(L, "Armoury");
+	LUA_PUSH_OBJECT_POINTER(L, Place, m_armoury);
+	lua_settable(L, LUA_GLOBALSINDEX);
+
+	lua_dofile(L, F("$(home)/armoury.lua"));
+	
+//	m_armoury->load_lua("$(home)/armoury.lua");
+//	m_armoury->load_bin("$(home)/armoury.set");
 	//armoury.put(new Item(KASTET));
 	//armoury.put(new Item(KNIFE));
 	/*for(int i=0; i<40; i++) {
@@ -387,7 +395,7 @@ void Editor::show(int NEXTPREV)
 				case KEY_F1:
 					//edit_soldier();
 					if (askmenu("SAVE ARMOURY")) {
-						m_armoury->save_bin("$(home)/armoury.set");
+						m_armoury->save_to_file("$(home)/armoury.lua", "Armoury");
 					}
 					break;
 				case KEY_F2:
