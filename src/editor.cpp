@@ -235,7 +235,7 @@ bool Editor::handle_mouse_leftclick()
         load_clip();
     return false;
 };
-
+#if 0
 /**
  * Quick-Setup: on keypress (F5..F8),
  * change attributes of current soldier to a set of predefined values
@@ -437,6 +437,8 @@ void prep_soldier( int NID, int s_type )
     }
 
 };
+
+#endif
 
 static char *names_A[] = {
     ("Aaron"),

@@ -37,294 +37,297 @@ IMPLEMENT_PERSISTENCE(Bullet, "Bullet");
 
 Bullet::Bullet(Soldier *man)
 {
-	state = READY;
-	phase = 0;
-	item  = NULL;
-	owner = man->get_NID();
+    state = READY;
+    phase = 0;
+    item  = NULL;
+    owner = man->get_NID();
 }
 
 void Bullet::punch(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 {
-	//play(S_PUNCH);
-	state = ST_PUNCH;
+    //play(S_PUNCH);
+    state = ST_PUNCH;
 
-	z0 = _z0; x0 = _x0; y0 = _y0;
-	fi = _fi; te = _te;
-	type = _type;
+    z0 = _z0; x0 = _x0; y0 = _y0;
+    fi = _fi; te = _te;
+    type = _type;
 
-	for (i = 3; i < 24; i++) {
-		z = (int)(z0 + i * cos(fi));
-		x = (int)(x0 + i * cos(te) * sin(fi));
-		y = (int)(y0 + i * sin(te) * sin(fi));
+    for (i = 3; i < 24; i++) {
+        z = (int)(z0 + i * cos(fi));
+        x = (int)(x0 + i * cos(te) * sin(fi));
+        y = (int)(y0 + i * sin(te) * sin(fi));
 
-		if ((!map->inside(z, x, y)) ||
-		        (!map->pass_lof_cell(z, x, y)))
-			break;
-		if (platoon_remote->check_for_hit(z, x, y) ||
-		        platoon_local->check_for_hit(z, x, y)
-		   )
-			break;
-	}
+        if ((!map->inside(z, x, y)) ||
+                (!map->pass_lof_cell(z, x, y)))
+            break;
+        if (platoon_remote->check_for_hit(z, x, y) ||
+                platoon_local->check_for_hit(z, x, y)
+           )
+            break;
+    }
 /*
-	x0 += (int)(8 * cos(te) * sin(fi));
-	y0 += (int)(8 * sin(te) * sin(fi));
-	z0 += (int)(8 * cos(fi));
+    x0 += (int)(8 * cos(te) * sin(fi));
+    y0 += (int)(8 * sin(te) * sin(fi));
+    z0 += (int)(8 * cos(fi));
 */
-	i = 0;
+    i = 0;
 }
 
 void Bullet::fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 {
-	state = FLY;
+    state = FLY;
 
-	z0 = _z0; x0 = _x0; y0 = _y0;
-	fi = _fi; te = _te;
-	type = _type;
+    z0 = _z0; x0 = _x0; y0 = _y0;
+    fi = _fi; te = _te;
+    type = _type;
 
-	i = 3;
-	move();
+    i = 3;
+    move();
 }
 
 void Bullet::beam(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 {
-	state = BEAM;
+    state = BEAM;
 
-	z0 = _z0; x0 = _x0; y0 = _y0;
-	fi = _fi; te = _te;
-	type = _type;
+    z0 = _z0; x0 = _x0; y0 = _y0;
+    fi = _fi; te = _te;
+    type = _type;
 
-	for (i = 3; i < 100000; i++) {
-		z = (int)(z0 + i * cos(fi));
-		x = (int)(x0 + i * cos(te) * sin(fi));
-		y = (int)(y0 + i * sin(te) * sin(fi));
+    for (i = 3; i < 100000; i++) {
+        z = (int)(z0 + i * cos(fi));
+        x = (int)(x0 + i * cos(te) * sin(fi));
+        y = (int)(y0 + i * sin(te) * sin(fi));
 
-		if ((!map->inside(z, x, y)) ||
-		        (!map->pass_lof_cell(z, x, y)))
-			break;
-		if (platoon_remote->check_for_hit(z, x, y) ||
-		        platoon_local->check_for_hit(z, x, y)
-		   )
-			break;
-	}
+        if ((!map->inside(z, x, y)) ||
+                (!map->pass_lof_cell(z, x, y)))
+            break;
+        if (platoon_remote->check_for_hit(z, x, y) ||
+                platoon_local->check_for_hit(z, x, y)
+           )
+            break;
+    }
 /*
-	x0 += (int)(8 * cos(te) * sin(fi));
-	y0 += (int)(8 * sin(te) * sin(fi));
-	z0 += (int)(8 * cos(fi));
+    x0 += (int)(8 * cos(te) * sin(fi));
+    y0 += (int)(8 * sin(te) * sin(fi));
+    z0 += (int)(8 * cos(fi));
 */
-	i = 0;
+    i = 0;
 }
 
 void Bullet::thru(int _z0, int _x0, int _y0, REAL _ro, REAL _fi, REAL _te, REAL _zA, Item *_item)
 {
-	//play(S_THROW);
-	state = THROWN;
+    //play(S_THROW);
+    state = THROWN;
 
-	z0 = _z0; x0 = _x0; y0 = _y0;
-	ro = _ro; fi = _fi; te = _te;
-	zA = _zA; item = _item;
+    z0 = _z0; x0 = _x0; y0 = _y0;
+    ro = _ro; fi = _fi; te = _te;
+    zA = _zA; item = _item;
 
-	i = 4;
-	move();
+    i = 4;
+    move();
 }
 
 void Bullet::aimedthrow(int _z0, int _x0, int _y0, REAL _fi, REAL _te, Item *_item)
 {
-	//play(S_AIMEDTHROW);
-	state = ST_AIMEDTHROW;
+    //play(S_AIMEDTHROW);
+    state = ST_AIMEDTHROW;
 
-	z0 = _z0; x0 = _x0; y0 = _y0;
-	/*ro = _ro;*/ fi =      _fi;      te =      _te;
-	item = _item;
-	type = item->itemtype();
+    z0 = _z0; x0 = _x0; y0 = _y0;
+    /*ro = _ro;*/ fi =      _fi;      te =      _te;
+    item = _item;
+    type = item->itemtype();
 
-	i = 3;
-	move();
+    i = 3;
+    move();
 }
 
 void Bullet::hitcell()
 {
-	if (z < 0) z = 0;
-	else
-		if (z >= map->level * 12) z = map->level * 12 - 1;
+    if (z < 0) z = 0;
+    else
+        if (z >= map->level * 12) z = map->level * 12 - 1;
 
-	if (x < 0) x = 0;
-	else
-		if (x >= map->width * 10 * 16) x = map->width * 10 * 16 - 1;
+    if (x < 0) x = 0;
+    else
+        if (x >= map->width * 10 * 16) x = map->width * 10 * 16 - 1;
 
-	if (y < 0) y = 0;
-	else
-		if (y >= map->height * 10 * 16) y = map->height * 10 * 16 - 1;
+    if (y < 0) y = 0;
+    else
+        if (y >= map->height * 10 * 16) y = map->height * 10 * 16 - 1;
 
-	lev = z / 12;      //if (lev >= map->level) lev = map->level - 1;
-	col = x / 16;      //if (col >= map->width*10) col = map->width*10 - 1;
-	row = y / 16;      //if (row >= map->height*10) row = map->height*10 - 1;
+    lev = z / 12;      //if (lev >= map->level) lev = map->level - 1;
+    col = x / 16;      //if (col >= map->width*10) col = map->width*10 - 1;
+    row = y / 16;      //if (row >= map->height*10) row = map->height*10 - 1;
 }
 
 
 void Bullet::move()
 {
-	int j;
-	REAL zK;
+    int j;
+    REAL zK;
 
-	switch (state) {
-		case READY:
-			break;
-		case FLY:
-			for (j = 0; j < 8; j++) {
-				i++;
+    switch (state) {
+        case READY:
+            break;
+        case FLY:
+            for (j = 0; j < 8; j++) {
+                i++;
 
-				x = (int)(x0 + i * cos(te) * sin(fi));
-				y = (int)(y0 + i * sin(te) * sin(fi));
-				z = (int)(z0 + i * cos(fi));
-				//text_mode(0);
-				//textprintf(screen, font, 0, SCREEN2H+20, 1, "(%f,%f,%f)", z, x, y);
+                x = (int)(x0 + i * cos(te) * sin(fi));
+                y = (int)(y0 + i * sin(te) * sin(fi));
+                z = (int)(z0 + i * cos(fi));
+                //text_mode(0);
+                //textprintf(screen, font, 0, SCREEN2H+20, 1, "(%f,%f,%f)", z, x, y);
 
-				if ((!map->inside(z, x, y)) ||
-				        (!map->pass_lof_cell(z, x, y)) ||
-				        platoon_remote->check_for_hit(z, x, y) ||
-				        platoon_local->check_for_hit(z, x, y)
-				   ) {
+                if ((!map->inside(z, x, y)) ||
+                        (!map->pass_lof_cell(z, x, y)) ||
+                        platoon_remote->check_for_hit(z, x, y) ||
+                        platoon_local->check_for_hit(z, x, y)
+                   ) {
                     explodes = map->inside(z, x, y);
-					hitcell();
-					state = HIT;
-					switch(type)
-					{
-						case PISTOL_CLIP:
-						case RIFLE_CLIP:
-						default:
-							soundSystem::getInstance()->play(SS_CV_BULLET_HIT);
-							break;
-						case CANNON_AP_AMMO:
-						case AUTO_CANNON_AP_AMMO:
-				 		    soundSystem::getInstance()->play(SS_CV_CANNON_AP_HIT);
-							break;
-						case CANNON_HE_AMMO:
-						case AUTO_CANNON_HE_AMMO:
-				 		    soundSystem::getInstance()->play(SS_CV_CANNON_HE_HIT);
-							break;
-						case CANNON_I_AMMO:
-						case AUTO_CANNON_I_AMMO:
-				 		    soundSystem::getInstance()->play(SS_CV_CANNON_IN_HIT);
-							break;
-						case SMALL_ROCKET:
-			 		        soundSystem::getInstance()->play(SS_SMALL_ROCKET_HIT);
-							break;
-						case LARGE_ROCKET:
-			 		        soundSystem::getInstance()->play(SS_HE_ROCKET_HIT);
-							break;
-						case INCENDIARY_ROCKET:
-			 		        soundSystem::getInstance()->play(SS_IN_ROCKET_HIT);
-							break;
-						case Plasma_Pistol_Clip:
-						case Plasma_Rifle_Clip:
-						case Heavy_Plasma_Clip:
-							soundSystem::getInstance()->play(SS_PLASMA_HIT);
-							break;
-						case STUN_MISSILE:
-							soundSystem::getInstance()->play(SS_ALIEN_SMALL_HIT);
-							break;
-					}
+                    hitcell();
+                    state = HIT;
+                    
+                    soundSystem::getInstance()->play(Item::obdata_get_sound(type));
+/*
+                    switch(type)
+                    {
+                        case PISTOL_CLIP:
+                        case RIFLE_CLIP:
+                        default:
+                            soundSystem::getInstance()->play(SS_CV_BULLET_HIT);
+                            break;
+                        case CANNON_AP_AMMO:
+                        case AUTO_CANNON_AP_AMMO:
+                            soundSystem::getInstance()->play(SS_CV_CANNON_AP_HIT);
+                            break;
+                        case CANNON_HE_AMMO:
+                        case AUTO_CANNON_HE_AMMO:
+                            soundSystem::getInstance()->play(SS_CV_CANNON_HE_HIT);
+                            break;
+                        case CANNON_I_AMMO:
+                        case AUTO_CANNON_I_AMMO:
+                            soundSystem::getInstance()->play(SS_CV_CANNON_IN_HIT);
+                            break;
+                        case SMALL_ROCKET:
+                            soundSystem::getInstance()->play(SS_SMALL_ROCKET_HIT);
+                            break;
+                        case LARGE_ROCKET:
+                            soundSystem::getInstance()->play(SS_HE_ROCKET_HIT);
+                            break;
+                        case INCENDIARY_ROCKET:
+                            soundSystem::getInstance()->play(SS_IN_ROCKET_HIT);
+                            break;
+                        case Plasma_Pistol_Clip:
+                        case Plasma_Rifle_Clip:
+                        case Heavy_Plasma_Clip:
+                            soundSystem::getInstance()->play(SS_PLASMA_HIT);
+                            break;
+                        case STUN_MISSILE:
+                            soundSystem::getInstance()->play(SS_ALIEN_SMALL_HIT);
+                            break;
+                    }
+*/
+                    break;
+                }
+            }
+            break;
+        case BEAM:
+            i++;
+            if (i > 8) {
+                hitcell();
+                state = HIT;
+                break;
+            }
+            break;
+        case THROWN:
+            zK = 4 * zA / ro / ro;
+            for (j = 0; j < 3; j++) {
+                i++;
 
-					break;
-				}
-			}
-			break;
-		case BEAM:
-			i++;
-			if (i > 8) {
-				hitcell();
-				state = HIT;
-				break;
-			}
-			break;
-		case THROWN:
-			zK = 4 * zA / ro / ro;
-			for (j = 0; j < 3; j++) {
-				i++;
+                x = (int)(x0 + i * cos(te) * sin(fi));
+                y = (int)(y0 + i * sin(te) * sin(fi));
+                z = (int)(z0 + i * cos(fi) - zK * (i - ro / 2.0) * (i - ro / 2.0) + zA);
 
-				x = (int)(x0 + i * cos(te) * sin(fi));
-				y = (int)(y0 + i * sin(te) * sin(fi));
-				z = (int)(z0 + i * cos(fi) - zK * (i - ro / 2.0) * (i - ro / 2.0) + zA);
+                if ((!map->inside(z, x, y)) ||
+                        (!map->pass_lof_cell(z, x, y))) {
+                    i -= 1;      //prevent fall over wall
+                    x = (int)(x0 + i * cos(te) * sin(fi));
+                    y = (int)(y0 + i * sin(te) * sin(fi));
+                    z = (int)(z0 + i * cos(fi) - zK * (i - ro / 2.0) * (i - ro / 2.0) + zA);
 
-				if ((!map->inside(z, x, y)) ||
-				        (!map->pass_lof_cell(z, x, y))) {
-					i -= 1;      //prevent fall over wall
-					x = (int)(x0 + i * cos(te) * sin(fi));
-					y = (int)(y0 + i * sin(te) * sin(fi));
-					z = (int)(z0 + i * cos(fi) - zK * (i - ro / 2.0) * (i - ro / 2.0) + zA);
+                    hitcell();      //lev = 0; //!!!!
+                    lev = map->find_ground(lev, col, row);
+                    map->place(lev, col, row)->put(item);
+                    elist->check_for_detonation(0, item);
+                    item = NULL;
+                    state = READY;
+                    platoon_local->set_visibility_changed();
+                    break;
+                }
+            }
+            break;
+        case ST_AIMEDTHROW:
+            for (j = 0; j < 3; j++) {
+                i++;
 
-					hitcell();      //lev = 0; //!!!!
-					lev = map->find_ground(lev, col, row);
-					map->place(lev, col, row)->put(item);
-					elist->check_for_detonation(0, item);
-					item = NULL;
-					state = READY;
-					platoon_local->set_visibility_changed();
-					break;
-				}
-			}
-			break;
-		case ST_AIMEDTHROW:
-			for (j = 0; j < 3; j++) {
-				i++;
+                x = (int)(x0 + i * cos(te) * sin(fi));
+                y = (int)(y0 + i * sin(te) * sin(fi));
+                z = (int)(z0 + i * cos(fi));
 
-				x = (int)(x0 + i * cos(te) * sin(fi));
-				y = (int)(y0 + i * sin(te) * sin(fi));
-				z = (int)(z0 + i * cos(fi));
+                if ((!map->inside(z, x, y)) || (i > 16 * 5) ||
+                        (!map->pass_lof_cell(z, x, y)) ||
+                        platoon_remote->check_for_hit(z, x, y) ||
+                        platoon_local->check_for_hit(z, x, y)
+                   ) {
+                    //i -= 1; //prevent fall over wall
+                    x = (int)(x0 + i * cos(te) * sin(fi));
+                    y = (int)(y0 + i * sin(te) * sin(fi));
+                    z = (int)(z0 + i * cos(fi));
 
-				if ((!map->inside(z, x, y)) || (i > 16 * 5) ||
-				        (!map->pass_lof_cell(z, x, y)) ||
-				        platoon_remote->check_for_hit(z, x, y) ||
-				        platoon_local->check_for_hit(z, x, y)
-				   ) {
-					//i -= 1; //prevent fall over wall
-					x = (int)(x0 + i * cos(te) * sin(fi));
-					y = (int)(y0 + i * sin(te) * sin(fi));
-					z = (int)(z0 + i * cos(fi));
+                    hitcell();      //lev = 0; //!!!!
+                    hitman();
+                    lev = map->find_ground(lev, col, row);
+                    map->place(lev, col, row)->put(item);
+                    item  = NULL;
+                    state = READY;
+                    break;
+                }
+            }
+            break;
+        case ST_PUNCH:
+            i++;
+            if (i > 8) {
+                hitcell();
+                state = HIT;
+                break;
+            }
+            break;
+        case HIT:
+            if (phase == 0) {
+                if (explodable() && explodes) {
+                    detonate();
+                    item  = NULL;
+                    state = READY;
+                    break;
+                }
+            }
+            if (incendiary() && explodes) {
+                detonate();
+                item  = NULL;
+                state = READY;
+                break;
+            }
+            phase++;
+            if (phase == 2 * PHASE)
+                hitman();
 
-					hitcell();      //lev = 0; //!!!!
-					hitman();
-					lev = map->find_ground(lev, col, row);
-					map->place(lev, col, row)->put(item);
-					item  = NULL;
-					state = READY;
-					break;
-				}
-			}
-			break;
-		case ST_PUNCH:
-			i++;
-			if (i > 8) {
-				hitcell();
-				state = HIT;
-				break;
-			}
-			break;
-		case HIT:
-			if (phase == 0) {
-				if (explodable() && explodes) {
-					detonate();
-					item  = NULL;
-					state = READY;
-					break;
-				}
-			}
-			if (incendiary() && explodes) {
-				detonate();
-				item  = NULL;
-				state = READY;
-				break;
-			}
-			phase++;
-			if (phase == 2 * PHASE)
-				hitman();
-
-			if (phase > 9 * PHASE) {
-				phase = 0;
-				item  = NULL;
-				state = READY;
-			}
-	}
+            if (phase > 9 * PHASE) {
+                phase = 0;
+                item  = NULL;
+                state = READY;
+            }
+    }
 }
 
 #define NORMAL_PROJECTILE 26
@@ -333,73 +336,72 @@ void Bullet::move()
 
 void draw_bullet_trace(int x0, int y0, int z0, int x, int y, int z, int length, int color)
 {
-	double dx = x - x0;
-	double dy = y - y0;
-	double dz = z - z0;
+    double dx = x - x0;
+    double dy = y - y0;
+    double dz = z - z0;
 
-	double total_trace_length = sqrt(dx * dx + dy * dy + dz * dz);
+    double total_trace_length = sqrt(dx * dx + dy * dy + dz * dz);
 
-	if (total_trace_length > length) {
-		x0 = (int)(x - dx * length / total_trace_length);
-		y0 = (int)(y - dy * length / total_trace_length);
-		z0 = (int)(z - dz * length / total_trace_length);
-	}
+    if (total_trace_length > length) {
+        x0 = (int)(x - dx * length / total_trace_length);
+        y0 = (int)(y - dy * length / total_trace_length);
+        z0 = (int)(z - dz * length / total_trace_length);
+    }
 
-	int xg1 = map->x + x0 + y0;
-	int yg1 = (int)(map->y - (x0 + 1) / 2.0 + y0 / 2.0 - z0 * 2.0 - 2);
+    int xg1 = map->x + x0 + y0;
+    int yg1 = (int)(map->y - (x0 + 1) / 2.0 + y0 / 2.0 - z0 * 2.0 - 2);
 
-	int xg2 = map->x + x + y;
-	int yg2 = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
+    int xg2 = map->x + x + y;
+    int yg2 = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
 
-	for (int i = 0; i < length; i++) {
-		double k = (double)i / (double)length;
-		k = k * k;
-		int x = (int)(xg2 + (xg1 - xg2) * k);
-		int y = (int)(yg2 + (yg1 - yg2) * k);
+    for (int i = 0; i < length; i++) {
+        double k = (double)i / (double)length;
+        k = k * k;
+        int x = (int)(xg2 + (xg1 - xg2) * k);
+        int y = (int)(yg2 + (yg1 - yg2) * k);
 
-		putpixel(screen2, x, y, color);
-	}
+        putpixel(screen2, x, y, color);
+    }
 }
 
 void Bullet::draw()
 {
-	int xg, yg;
-	double xt, yt, zt;
-	int xg2, yg2;
-	int xe, ye, ze;
+    int xg, yg;
+    double xt, yt, zt;
+    int xg2, yg2;
+    int xe, ye, ze;
 
-	switch (state) {
-		case READY:
-			break;
+    switch (state) {
+        case READY:
+            break;
 
-		case FLY: {
+        case FLY: {
             if (!map->visible(z / 12, x / 16, y / 16)) return;
             
-			xg = map->x + x + y;
-			yg = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
+            xg = map->x + x + y;
+            yg = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
 
-			int len = 15, c = 16;
+            int len = 15, c = 16;
 
-			switch (type) {
-				case Plasma_Pistol_Clip: len = 15; c = 50; break;
-				case Plasma_Rifle_Clip: len = 20; c = 51; break;
-				case Heavy_Plasma_Clip: len = 30; c = 52; break;
-			}
+            if (Item::obdata_damageType(type) == DT_PLAS) {
+                len = 30; 
+                c = 52;
+            }
 
-			draw_bullet_trace(x0, y0, z0, x, y, z, len, xcom1_color(c + 5));
-			putpixel(screen2, xg, yg, xcom1_color(c));
-			circle(screen2, xg, yg, 1, xcom1_color(c + 2));
+            draw_bullet_trace(x0, y0, z0, x, y, z, len, xcom1_color(c + 5));
+            putpixel(screen2, xg, yg, xcom1_color(c));
+            circle(screen2, xg, yg, 1, xcom1_color(c + 2));
 
-			break;
-		}
-		case BEAM:
-			/*xg = map->x + x0 + y0;
-			yg = (int)(map->y - (x0 + 1) / 2.0 + y0 / 2.0 - z0 * 2.0 - 2);
+            break;
+        }
+        case BEAM:
+            /*xg = map->x + x0 + y0;
+            yg = (int)(map->y - (x0 + 1) / 2.0 + y0 / 2.0 - z0 * 2.0 - 2);
 
-			xg2 = map->x + x + y;
-			yg2 = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
+            xg2 = map->x + x + y;
+            yg2 = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
 
-			line(screen2, xg, yg, xg2, yg2, xcom1_color(143 + i));*/
+            line(screen2, xg, yg, xg2, yg2, xcom1_color(143 + i));*/
             for (int j = 3; j < 100000; j++) {
                 zt = z0 + j * cos(fi);
                 xt = x0 + j * cos(te) * sin(fi);
@@ -420,106 +422,106 @@ void Bullet::draw()
                 
                 putpixel(screen2, xg, yg, xcom1_color(143 + i));
             }
-			break;
+            break;
 
-		case THROWN:
+        case THROWN:
             if (!map->visible(z / 12, x / 16, y / 16)) return;
 
-			xg = map->x + x + y;
-			yg = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
+            xg = map->x + x + y;
+            yg = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
 
-			if ((xg > -32) && (xg < SCREEN2W) && (yg >= -34) && (yg < SCREEN2H)) {
-				map->drawitem(item->obdata_pMap(), xg - 16, yg - 26);
-				//circle(screen2, xg, yg, 1, 32);
-			}
+            if ((xg > -32) && (xg < SCREEN2W) && (yg >= -34) && (yg < SCREEN2H)) {
+                map->drawitem(item->obdata_pMap(), xg - 16, yg - 26);
+                //circle(screen2, xg, yg, 1, 32);
+            }
 
-			xg2 = map->x + x + y;
-			yg2 = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - 2);
-			putpixel(screen2, xg2, yg2, 0);
-			//circle(screen2, xg2, yg2, 1, 0);
+            xg2 = map->x + x + y;
+            yg2 = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - 2);
+            putpixel(screen2, xg2, yg2, 0);
+            //circle(screen2, xg2, yg2, 1, 0);
 
-			break;
+            break;
 
-		case ST_AIMEDTHROW:
-			xg = map->x + x + y;
-			yg = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
+        case ST_AIMEDTHROW:
+            xg = map->x + x + y;
+            yg = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
 
-			xe = (int)(x0 + (i - 7) * cos(te) * sin(fi));
-			ye = (int)(y0 + (i - 7) * sin(te) * sin(fi));
-			ze = (int)(z0 + (i - 7) * cos(fi));
+            xe = (int)(x0 + (i - 7) * cos(te) * sin(fi));
+            ye = (int)(y0 + (i - 7) * sin(te) * sin(fi));
+            ze = (int)(z0 + (i - 7) * cos(fi));
 
-			xg2 = map->x + xe + ye;
-			yg2 = (int)(map->y - (xe + 1) / 2.0 + ye / 2.0 - ze * 2.0 - 2);
+            xg2 = map->x + xe + ye;
+            yg2 = (int)(map->y - (xe + 1) / 2.0 + ye / 2.0 - ze * 2.0 - 2);
 
-			line(screen2, xg, yg, xg2, yg2, COLOR_WHITE);
+            line(screen2, xg, yg, xg2, yg2, COLOR_WHITE);
 
-			/*if ( (xg>-32)&&(xg<SCREEN2W)&&(yg>=-34)&&(yg<SCREEN2H) ) {
-			 map->drawitem(item->data()->pMap, xg-16, yg-26);
-			 //circle(screen2, xg, yg, 1, 32);
-			}*/
-			break;
+            /*if ( (xg>-32)&&(xg<SCREEN2W)&&(yg>=-34)&&(yg<SCREEN2H) ) {
+             map->drawitem(item->data()->pMap, xg-16, yg-26);
+             //circle(screen2, xg, yg, 1, 32);
+            }*/
+            break;
 
-		case ST_PUNCH:
-			xg = map->x + x0 + y0;
-			yg = (int)(map->y - (x0 + 1) / 2.0 + y0 / 2.0 - z0 * 2.0 - 2);
+        case ST_PUNCH:
+            xg = map->x + x0 + y0;
+            yg = (int)(map->y - (x0 + 1) / 2.0 + y0 / 2.0 - z0 * 2.0 - 2);
 
-			//xg2 = map->x + xd + yd;
-			//yg2 = map->y - (xd+1)/2 + yd/2 - zd*23.5/12.0;
-			xg2 = map->x + x + y;
-			yg2 = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
+            //xg2 = map->x + xd + yd;
+            //yg2 = map->y - (xd+1)/2 + yd/2 - zd*23.5/12.0;
+            xg2 = map->x + x + y;
+            yg2 = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
 
-			line(screen2, xg, yg, xg2, yg2, xcom1_color(143 + i));
-			break;
+            line(screen2, xg, yg, xg2, yg2, xcom1_color(143 + i));
+            break;
 
-		case HIT:
+        case HIT:
             if (!map->visible(z / 12, x / 16, y / 16)) return;
-		
-			xg = map->x + x + y;
-			yg = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
+        
+            xg = map->x + x + y;
+            yg = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
 
-			if ((xg > -32) && (xg < SCREEN2W) && (yg >= -34) && (yg < SCREEN2H)) {
-				switch (type) {
-					case LASER_PISTOL: case LASER_GUN: case HEAVY_LASER:
-						Map::smoke->showpck(LASER_PROJECTILE + phase / PHASE, xg - 16, yg - 10);
-						break;
-					case Plasma_Pistol_Clip: case Plasma_Rifle_Clip: case Heavy_Plasma_Clip:
-						Map::smoke->showpck(PLASMA_PROJECTILE + phase / PHASE, xg - 16, yg - 10);
-						break;
-					default:
-						Map::smoke->showpck(NORMAL_PROJECTILE + phase / PHASE, xg - 16, yg - 10);
-						break;
-				}
-			}
-			break;
-	}
+            if ((xg > -32) && (xg < SCREEN2W) && (yg >= -34) && (yg < SCREEN2H)) {
+                switch (Item::obdata_damageType(type)) {
+                    case DT_LAS:
+                        Map::smoke->showpck(LASER_PROJECTILE + phase / PHASE, xg - 16, yg - 10);
+                        break;
+                    case DT_PLAS:
+                        Map::smoke->showpck(PLASMA_PROJECTILE + phase / PHASE, xg - 16, yg - 10);
+                        break;
+                    default:
+                        Map::smoke->showpck(NORMAL_PROJECTILE + phase / PHASE, xg - 16, yg - 10);
+                        break;
+                }
+            }
+            break;
+    }
 }
 
 static void dotted_line_proc(BITMAP *bmp, int x, int y, int color)
 {
-	static unsigned char counter = 0;
-	counter--;
-	if (counter % 5 == 0)
-		putpixel(bmp, x, y, color);
+    static unsigned char counter = 0;
+    counter--;
+    if (counter % 5 == 0)
+        putpixel(bmp, x, y, color);
 }
 
 
 void Bullet::showline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 {
-	if ((z_s == z_d) && (x_s == x_d) && (y_s == y_d))
-		return ;
+    if ((z_s == z_d) && (x_s == x_d) && (y_s == y_d))
+        return ;
 
-	int xd, yd, zd;
-	int xg, yg;
-	int xg2, yg2;
+    int xd, yd, zd;
+    int xg, yg;
+    int xg2, yg2;
 
-	sel_man->calc_bullet_start(x_s, y_s, z_s, &x0, &y0, &z0); //start point as made in soldier::shoot
-	xd = x_d * 16 + 8; yd = y_d * 16 + 8; zd = z_d * 12 + 8;  //target in the center
+    sel_man->calc_bullet_start(x_s, y_s, z_s, &x0, &y0, &z0); //start point as made in soldier::shoot
+    xd = x_d * 16 + 8; yd = y_d * 16 + 8; zd = z_d * 12 + 8;  //target in the center
 
-	REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
-	REAL fi = acos((REAL)(zd - z0) / ro);
-	REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
+    REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
+    REAL fi = acos((REAL)(zd - z0) / ro);
+    REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
 
-	int i;
+    int i;
     for (i = 3; i < 100000; i++) {
         zd = (int)(z0 + i * cos(fi));
         xd = (int)(x0 + i * cos(te) * sin(fi));
@@ -539,133 +541,133 @@ void Bullet::showline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
             break;
     }
 
-	xg = map->x + x0 + y0;
-	yg = (int)(map->y - (x0 + 1) / 2 + y0 / 2 - z0 * 2.0 - 2);
+    xg = map->x + x0 + y0;
+    yg = (int)(map->y - (x0 + 1) / 2 + y0 / 2 - z0 * 2.0 - 2);
 
-	xg2 = map->x + xd + yd;
-	yg2 = (int)(map->y - (xd + 1) / 2 + yd / 2 - zd * 2.0 - 2);
+    xg2 = map->x + xd + yd;
+    yg2 = (int)(map->y - (xd + 1) / 2 + yd / 2 - zd * 2.0 - 2);
 
-	do_line(screen2, xg, yg, xg2, yg2, COLOR_YELLOW, dotted_line_proc);
+    do_line(screen2, xg, yg, xg2, yg2, COLOR_YELLOW, dotted_line_proc);
 
 
-	i = 1000;
-	zd = (int)(z0 + i * cos(fi));
-	xd = (int)(x0 + i * cos(te) * sin(fi));
-	yd = (int)(y0 + i * sin(te) * sin(fi));
+    i = 1000;
+    zd = (int)(z0 + i * cos(fi));
+    xd = (int)(x0 + i * cos(te) * sin(fi));
+    yd = (int)(y0 + i * sin(te) * sin(fi));
 
-	xg = xg2;
-	yg = yg2;
+    xg = xg2;
+    yg = yg2;
 
-	xg2 = map->x + xd + yd;
-	yg2 = (int)(map->y - (xd + 1) / 2 + yd / 2 - zd * 2.0 - 2);
+    xg2 = map->x + xd + yd;
+    yg2 = (int)(map->y - (xd + 1) / 2 + yd / 2 - zd * 2.0 - 2);
 
-	//line(screen2, xg, yg, xg2, yg2, 144);
-	do_line(screen2, xg, yg, xg2, yg2, COLOR_BROWN, dotted_line_proc);
+    //line(screen2, xg, yg, xg2, yg2, 144);
+    do_line(screen2, xg, yg, xg2, yg2, COLOR_BROWN, dotted_line_proc);
 }
 
 
 void Bullet::showthrow(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 {
-	int xd, yd, zd;
-	int color = 50;
+    int xd, yd, zd;
+    int color = 50;
 
-	x0 = x_s * 16 + 8; y0 = y_s * 16 + 8; z0 = z_s * 12 + 8;
-	xd = x_d * 16 + 8; yd = y_d * 16 + 8; zd = z_d * 12 + 0;
+    x0 = x_s * 16 + 8; y0 = y_s * 16 + 8; z0 = z_s * 12 + 8;
+    xd = x_d * 16 + 8; yd = y_d * 16 + 8; zd = z_d * 12 + 0;
 
-	ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
+    ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
 
-	fi = acos((zd - z0) / ro);
-	te = atan2((double)(yd - y0), (double)(xd - x0));
+    fi = acos((zd - z0) / ro);
+    te = atan2((double)(yd - y0), (double)(xd - x0));
 
-	REAL zA = sqrt(ro);
-	REAL zK = 4 * zA / ro / ro;
+    REAL zA = sqrt(ro);
+    REAL zK = 4 * zA / ro / ro;
 
-	x = x0; y = y0; z = z0;
-	i = 8;
-	int throwable = 1;
+    x = x0; y = y0; z = z0;
+    i = 8;
+    int throwable = 1;
 
-	while (z > 0) {
-		if (i > 18.0 * 16)
-			color = 33;       // red
-		else
-			color = 50;       // green
+    while (z > 0) {
+        if (i > 18.0 * 16)
+            color = 33;       // red
+        else
+            color = 50;       // green
 
-		x = (int)(x0 + i * cos(te) * sin(fi));
-		y = (int)(y0 + i * sin(te) * sin(fi));
-		z = (int)(z0 + i * cos(fi) - zK * (i - ro / 2.0) * (i - ro / 2.0) + zA);
+        x = (int)(x0 + i * cos(te) * sin(fi));
+        y = (int)(y0 + i * sin(te) * sin(fi));
+        z = (int)(z0 + i * cos(fi) - zK * (i - ro / 2.0) * (i - ro / 2.0) + zA);
 
-		if (throwable) {
-			if ((!map->inside(z, x, y)) ||
-			        (!map->pass_lof_cell(z, x, y)))
-				throwable = 0;
-			//break;
-			if (platoon_remote->check_for_hit(z, x, y) ||
-			        platoon_local->check_for_hit(z, x, y))
-				throwable = 0;
-			//break;
-		}
+        if (throwable) {
+            if ((!map->inside(z, x, y)) ||
+                    (!map->pass_lof_cell(z, x, y)))
+                throwable = 0;
+            //break;
+            if (platoon_remote->check_for_hit(z, x, y) ||
+                    platoon_local->check_for_hit(z, x, y))
+                throwable = 0;
+            //break;
+        }
 
-		int xg = map->x + x + y;
-		int yg = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
+        int xg = map->x + x + y;
+        int yg = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
 
-		if ((xg > -32) && (xg < SCREEN2W) && (yg >= -34) && (yg < SCREEN2H)) {
-			if (throwable)
-				circle(screen2, xg, yg, 1, color);
-			else
-				putpixel(screen2, xg, yg, color + 4);
-		}
-		i++;
-	}
+        if ((xg > -32) && (xg < SCREEN2W) && (yg >= -34) && (yg < SCREEN2H)) {
+            if (throwable)
+                circle(screen2, xg, yg, 1, color);
+            else
+                putpixel(screen2, xg, yg, color + 4);
+        }
+        i++;
+    }
 }
 
 
 int Bullet::calc_throw(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 {
-	int xd, yd, zd;
+    int xd, yd, zd;
 
-	x0 = x_s; y0 = y_s; z0 = z_s;
-	xd = x_d; yd = y_d; zd = z_d;
+    x0 = x_s; y0 = y_s; z0 = z_s;
+    xd = x_d; yd = y_d; zd = z_d;
 
-	ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
+    ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
 
-	fi = acos((double)((zd - z0) / ro));
-	te = atan2((double)(yd - y0), (double)(xd - x0));
+    fi = acos((double)((zd - z0) / ro));
+    te = atan2((double)(yd - y0), (double)(xd - x0));
 
-	REAL zA = sqrt(ro);
-	REAL zK = 4 * zA / ro / ro;
+    REAL zA = sqrt(ro);
+    REAL zK = 4 * zA / ro / ro;
 
-	x = x0; y = y0; z = z0;
-	i = 8;
+    x = x0; y = y0; z = z0;
+    i = 8;
 
-	while (z > 0) {
-		i++;
+    while (z > 0) {
+        i++;
 
-		x = (int)(x0 + i * cos(te) * sin(fi));
-		y = (int)(y0 + i * sin(te) * sin(fi));
-		z = (int)(z0 + i * cos(fi) - zK * (i - ro / 2.0) * (i - ro / 2.0) + zA);
-	}
-	return i;
+        x = (int)(x0 + i * cos(te) * sin(fi));
+        y = (int)(y0 + i * sin(te) * sin(fi));
+        z = (int)(z0 + i * cos(fi) - zK * (i - ro / 2.0) * (i - ro / 2.0) + zA);
+    }
+    return i;
 }
 
 
 int Bullet::explodable()
 {
-	if ((type == CANNON_HE_AMMO) ||
-	        (type == AUTO_CANNON_HE_AMMO) ||
-	        (type == SMALL_ROCKET) ||
-	        (type == LARGE_ROCKET) ||
-	        (type == INCENDIARY_ROCKET) ||
-			(type == STUN_MISSILE))
-		return 1;
-	return 0;
+    if ((type == CANNON_HE_AMMO) ||
+            (type == AUTO_CANNON_HE_AMMO) ||
+            (type == SMALL_ROCKET) ||
+            (type == LARGE_ROCKET) ||
+            (type == INCENDIARY_ROCKET) ||
+            (type == STUN_MISSILE))
+        return 1;
+    return 0;
 }
 
 int Bullet::incendiary() {
-	if ((type == INCENDIARY_ROCKET)||
-		(type == AUTO_CANNON_I_AMMO) ||
-		(type == CANNON_I_AMMO))
-		return 1;
-	return 0;
+    if ((type == INCENDIARY_ROCKET)||
+        (type == AUTO_CANNON_I_AMMO) ||
+        (type == CANNON_I_AMMO))
+        return 1;
+    return 0;
 }
 
 void Bullet::detonate()
@@ -675,57 +677,57 @@ void Bullet::detonate()
 
 void Bullet::hitman()
 {
-	// Here, we figure out which direction the bullet is facing.
-	// 567
-	// 4 0
-	// 321
-	int hitdir;
-	REAL theangle = te;
+    // Here, we figure out which direction the bullet is facing.
+    // 567
+    // 4 0
+    // 321
+    int hitdir;
+    REAL theangle = te;
 
-	while (theangle < 0)
-		theangle += (2 * PI);
-	while (theangle > (2 * PI))
-		theangle -= (2 * PI);
+    while (theangle < 0)
+        theangle += (2 * PI);
+    while (theangle > (2 * PI))
+        theangle -= (2 * PI);
 
-	if (theangle < (PI / 8))
-		hitdir = 0;
-	else if (theangle < ((3 * PI) / 8))
-		hitdir = 7;
-	else if (theangle < ((5 * PI) / 8))
-		hitdir = 6;
-	else if (theangle < ((7 * PI) / 8))
-		hitdir = 5;
-	else if (theangle < ((9 * PI) / 8))
-		hitdir = 4;
-	else if (theangle < ((11 * PI) / 8))
-		hitdir = 3;
-	else if (theangle < ((13 * PI) / 8))
-		hitdir = 2;
-	else if (theangle < ((15 * PI) / 8))
-		hitdir = 1;
-	else
-		hitdir = 0;
+    if (theangle < (PI / 8))
+        hitdir = 0;
+    else if (theangle < ((3 * PI) / 8))
+        hitdir = 7;
+    else if (theangle < ((5 * PI) / 8))
+        hitdir = 6;
+    else if (theangle < ((7 * PI) / 8))
+        hitdir = 5;
+    else if (theangle < ((9 * PI) / 8))
+        hitdir = 4;
+    else if (theangle < ((11 * PI) / 8))
+        hitdir = 3;
+    else if (theangle < ((13 * PI) / 8))
+        hitdir = 2;
+    else if (theangle < ((15 * PI) / 8))
+        hitdir = 1;
+    else
+        hitdir = 0;
 
 
-	map->apply_hit(z, x, y, type);
-	platoon_remote->apply_hit(owner, z, x, y, type, hitdir);
-	platoon_local->apply_hit(owner, z, x, y, type, hitdir);
+    map->apply_hit(z, x, y, type);
+    platoon_remote->apply_hit(owner, z, x, y, type, hitdir);
+    platoon_local->apply_hit(owner, z, x, y, type, hitdir);
 }
 
 bool Bullet::Write(persist::Engine &archive) const
 {
-	PersistWriteBinary(archive, *this);
+    PersistWriteBinary(archive, *this);
 
-	PersistWriteObject(archive, item);
+    PersistWriteObject(archive, item);
 
-	return true;
+    return true;
 }
 
 bool Bullet::Read(persist::Engine &archive)
 {
-	PersistReadBinary(archive, *this);
+    PersistReadBinary(archive, *this);
 
-	PersistReadObject(archive, item);
+    PersistReadObject(archive, item);
 
-	return true;
+    return true;
 }

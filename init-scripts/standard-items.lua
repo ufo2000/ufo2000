@@ -700,6 +700,7 @@ AddXcomItem {
 	isAmmo = 1,
 	reloadTime = 15,
 	isAlien = 1,
+	sound = "plasma-hit",
 }
 
 AddXcomItem {
@@ -747,6 +748,7 @@ AddXcomItem {
 	isAmmo = 1,
 	reloadTime = 15,
 	isAlien = 1,
+	sound = "plasma-hit",
 }
 
 AddXcomItem {
@@ -793,6 +795,7 @@ AddXcomItem {
 	isAmmo = 1,
 	reloadTime = 15,
 	isAlien = 1,
+	sound = "plasma-hit",
 }
 
 AddXcomItem {
