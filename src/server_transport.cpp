@@ -23,6 +23,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
 #include "server.h"
+#include "server_protocol.h"
 #include "server_config.h"
 
 #include <stdio.h>
@@ -439,7 +440,18 @@ int ClientServer::recv_packet(NLulong &id, std::string &packet)
         	return -1;
     }
 
-	return stream_to_packet(m_stream, id, packet) == 1;
+    int result = stream_to_packet(m_stream, id, packet);
+    if (result < 0) return result;
+
+    if (result && (id == SRV_KEEP_ALIVE)) {
+   		// send the same packet back to the server to confirm that 
+   		// we are still online, the rest of client code does not 
+   		// even need to know that we have received this packet
+   		send_packet(id, packet);
+   		return 0;
+   	}
+
+	return result;
 }
 
 int ClientServer::wait_packet(NLulong &id, std::string &buffer)
