@@ -30,7 +30,6 @@ ConsoleStatusLine::ConsoleStatusLine(int width, FONT *font, int color)
 	m_width = width;
 	m_height = text_height(font);
 	m_font = font;
-	m_need_redraw = true;
 	m_color = color;
 }
 
@@ -62,15 +61,18 @@ void ConsoleStatusLine::redraw_full(BITMAP *bmp, int x, int y)
 	int len = text_length(m_font, m_text.c_str());
 	if (len > 0)
 		line(temp_bmp, len, 0, len, m_height - 1, xcom1_color(1));
+	if (bmp == screen) scare_mouse_area(x, y, m_width, m_height);
 	blit(temp_bmp, bmp, 0, 0, x, y, m_width, m_height);
+	if (bmp == screen) unscare_mouse();
 	destroy_bitmap(temp_bmp);
-	m_need_redraw = false;
 	release_bitmap(bmp);
 }
 
-void ConsoleStatusLine::redraw_fast(BITMAP *bmp, int x, int y)
+bool ConsoleStatusLine::resize(int width, int height)
 {
-	if (m_need_redraw) redraw_full(bmp, x, y);
+	if (height != -1) return false;
+	m_width = width;
+	return true;
 }
 
 /**
@@ -85,7 +87,7 @@ bool ConsoleStatusLine::process_keyboard_input(int keycode, int scancode)
 		return true;
 
 	if (scancode == KEY_BACKSPACE) {
-		if (backspace()) m_need_redraw = true;
+		if (backspace()) set_full_redraw();
 		return false;
 	}
 	if (keycode == 0) return false;
@@ -94,7 +96,7 @@ bool ConsoleStatusLine::process_keyboard_input(int keycode, int scancode)
 	int size = usetc(tmp, keycode);
 	m_text.append(tmp, tmp + size);
 	if (text_length(m_font, m_text.c_str()) > m_width) backspace();
-	m_need_redraw = true;
+	set_full_redraw();
 	return false;
 }
 
@@ -115,7 +117,7 @@ ConsoleWindow::~ConsoleWindow()
 void ConsoleWindow::redraw_full(BITMAP *bmp, int x, int y)
 {
 	acquire_bitmap(bmp);
-	BITMAP * temp_bmp = create_bitmap(m_width, m_height);
+	BITMAP *temp_bmp = create_bitmap(m_width, m_height);
 	clear_to_color(temp_bmp, xcom1_color(15));
 	int lines_to_show = (m_height - m_status_line->get_height()) / text_height(m_font);
 	for (int i = m_lines_text.size() - 1, j = 1; i >= 0 && j <= lines_to_show; i--, j++) {
@@ -125,7 +127,9 @@ void ConsoleWindow::redraw_full(BITMAP *bmp, int x, int y)
 			m_lines_color[i]);
 	}
 	m_status_line->redraw_full(temp_bmp, 0, m_height - m_status_line->get_height());
+	if (bmp == screen) scare_mouse_area(x, y, m_width, m_height);
 	blit(temp_bmp, bmp, 0, 0, x, y, m_width, m_height);
+	if (bmp == screen) unscare_mouse();
 	destroy_bitmap(temp_bmp);
 	m_need_redraw = false;
 	release_bitmap(bmp);
@@ -134,9 +138,9 @@ void ConsoleWindow::redraw_full(BITMAP *bmp, int x, int y)
 void ConsoleWindow::redraw_fast(BITMAP *bmp, int x, int y)
 {
 	if (m_need_redraw)
-		redraw_full(bmp, x, y);
+		ConsoleWindow::redraw_full(bmp, x, y);
 	else
-		m_status_line->redraw_fast(bmp, x, y + m_height - m_status_line->get_height());
+		m_status_line->redraw(bmp, x, y + m_height - m_status_line->get_height());
 }
 
 /**
@@ -240,6 +244,8 @@ const char *ConsoleWindow::get_text()
  */
 bool ConsoleWindow::resize(int width, int height)
 {
+	m_status_line->resize(width, -1);
+	m_width = width;
 	m_height = height;
 	m_need_redraw = true;
 	return true;

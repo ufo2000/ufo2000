@@ -24,11 +24,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <allegro.h>
 #include <stdio.h>
 
-#ifdef WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <winalleg.h>
-#endif
-
 #include <stdarg.h>
 
 #include "global.h"
@@ -52,10 +47,16 @@ public:
 //!	Draws complete object image
 	virtual void redraw_full(BITMAP *bmp, int x, int y) = 0;
 //!	Draws only changes since last draw (default implementation just calls draw_full)
-	virtual void redraw_fast(BITMAP *bmp, int x, int y)
-	{
-		redraw_full(bmp, x, y);
-	}
+	virtual void redraw_fast(BITMAP *bmp, int x, int y) { }
+//!	Gets the width of object
+	virtual int get_width() const { return m_width; }
+//!	Gets the height of object
+	virtual int get_height() const { return m_height; }
+//!	Changes object size if possible, returns true if anything has changed
+	virtual bool resize(int width, int height) { return false; }
+
+//!	Sets internal variable so that the next redraw will be full redraw
+	void set_full_redraw() { m_switch_in_counter = -1; }
 //!	Function that determines whether full redraw is needed and calls proper function
 	void redraw(BITMAP *bmp, int x, int y)
 	{
@@ -66,12 +67,6 @@ public:
 			redraw_fast(bmp, x, y);
 		}
 	}
-//!	Gets the width of object
-	int get_width() const { return m_width; }
-//!	Gets the height of object
-	int get_height() const { return m_height; }
-//!	Sets internal variable so that the next redraw will be full redraw
-	void set_full_redraw() { m_switch_in_counter = -1; }
 };
 
 /**
@@ -83,7 +78,6 @@ class ConsoleStatusLine : public VisualObject
 	std::string m_text;
 	FONT *m_font;
 	int m_color;
-	bool m_need_redraw;
 
 	bool backspace();
 
@@ -91,8 +85,8 @@ public:
 	ConsoleStatusLine(int width, FONT *font = g_small_font, int color = xcom1_color(1));
 	virtual ~ConsoleStatusLine();
 
-	void redraw_full(BITMAP *bmp, int x, int y);
-	void redraw_fast(BITMAP *bmp, int x, int y);
+	virtual void redraw_full(BITMAP *bmp, int x, int y);
+	virtual bool resize(int width, int height);
 
 	bool process_keyboard_input(int keycode, int scancode);
 
@@ -116,8 +110,8 @@ public:
 	ConsoleWindow(int width, int height, FONT *font = font);
 	virtual ~ConsoleWindow();
 
-	void redraw_full(BITMAP *bmp, int x, int y);
-	void redraw_fast(BITMAP *bmp, int x, int y);
+	virtual void redraw_full(BITMAP *bmp, int x, int y);
+	virtual void redraw_fast(BITMAP *bmp, int x, int y);
 
 	void print(const char *text, int color = xcom1_color(48));
 /*
@@ -143,7 +137,7 @@ __attribute__ __format__ for non-static member functions.
 	bool process_keyboard_input(int keycode, int scancode);
 
 	const char *get_text();
-	bool resize(int width, int height);
+	virtual bool resize(int width, int height);
 };
 
 class Wind

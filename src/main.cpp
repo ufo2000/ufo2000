@@ -1479,11 +1479,9 @@ int main(int argc, char *argv[])
                 case MAINMENU_TCPIP:
                     h = setsocketplay();
                     break;
-#ifdef HAVE_DPLAY
-                case MAINMENU_DPLAY:
-                    h = setdplayplay();
+                case MAINMENU_INTERNET:
+                    h = connect_internet_server();
                     break;
-#endif
                 case MAINMENU_LOADGAME:
                     start_loadgame();
                     break;

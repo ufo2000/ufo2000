@@ -157,6 +157,10 @@ SOURCE=.\src\keys.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\netisrv.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\main.cpp
 # End Source File
 # Begin Source File

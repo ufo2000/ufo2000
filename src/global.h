@@ -385,6 +385,7 @@ void recv_turn(int crc);
 void send_turn();
 
 bool nomoves();
+int connect_internet_server();
 
 #define CELL_SCR_X 16
 #define CELL_SCR_Y 8

@@ -172,17 +172,13 @@ int do_mainmenu()
     
     the_dialog[MAINMENU_BACKGROUND].proc = d_mainmenu_background_proc;
 
+    the_dialog[MAINMENU_INTERNET].dp    = (void *) "internet";
     the_dialog[MAINMENU_TCPIP].dp       = (void *) "tcp/ip";
     the_dialog[MAINMENU_HOTSEAT].dp     = (void *) "hotseat";
     the_dialog[MAINMENU_EDITOR].dp      = (void *) "editor";
     the_dialog[MAINMENU_LOADGAME].dp    = (void *) "load saved game";
     the_dialog[MAINMENU_ABOUT].dp       = (void *) "about";
     the_dialog[MAINMENU_QUIT].dp        = (void *) "quit";
-
-    
-#if defined(HAVE_DPLAY)
-    the_dialog[MAINMENU_DPLAY].dp = (void *) "DirectPlay";
-#endif
     
 	the_dialog[MAINMENU_LOADGAME].proc = NULL;
 
