@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /G5 /MT /W3 /GX /O1 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "ALLEGRO_STATICLINK" /YX /J /FD /c
+# ADD CPP /nologo /G5 /MT /W3 /GR /GX /O1 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /J /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x419 /d "NDEBUG"
@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 user32.lib gdi32.lib ole32.lib ddraw.lib dplay.lib dsound.lib dinput.lib winmm.lib dxguid.lib alleg_s.lib wsock32.lib nlstatic.lib /nologo /subsystem:windows /map /machine:I386
+# ADD LINK32 user32.lib gdi32.lib ole32.lib ddraw.lib dplay.lib dsound.lib dinput.lib winmm.lib dxguid.lib alleg.lib wsock32.lib libexpat.lib hawknl.lib /nologo /subsystem:windows /map /machine:I386
 
 !ELSEIF  "$(CFG)" == "ufo2000 - Win32 Debug"
 
