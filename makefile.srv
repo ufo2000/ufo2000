@@ -32,7 +32,7 @@ ifdef debug
 	NAME := ${addsuffix -debug,$(NAME)}
 	SERVER_NAME := ${addsuffix -debug,$(SERVER_NAME)}
 else
-	CFLAGS += -O -mcpu=i686 -s
+	CFLAGS += -O -mcpu=i686
 endif
 
 ifdef win32

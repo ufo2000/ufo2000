@@ -24,6 +24,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include <stdio.h>
 #include <nl.h>
+#include <signal.h>
 #include "server.h"
 #include "server_config.h"
 
@@ -38,6 +39,13 @@ void printErrorExit(void)
 
 	nlShutdown();
 	exit(1);
+}
+
+int g_server_reload_config_flag = 0;
+
+void reload_config(int s)
+{
+	g_server_reload_config_flag = 1;
 }
 
 int main()
@@ -64,6 +72,10 @@ int main()
 
     server_log("server started\n");
 	load_config();
+
+#ifndef WIN32
+	signal(SIGHUP, reload_config);
+#endif
 
 	ServerDispatch *server = new ServerDispatch();
 	server->Run(serversock);
