@@ -24,6 +24,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 bool FS_MusicInit();
 void FS_MusicClose();
+void FS_SetVolume(int volume);
 bool FS_MusicPlay(const char *filename);
 
 #endif

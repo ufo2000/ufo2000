@@ -49,7 +49,16 @@ void *ThreadFunc(void *data)
 {
 	while (!thread_exit_flag) {
 		nlMutexLock(&mutex);
-		if (dp) al_poll_duh(dp);
+		if (dp) {
+			if (al_poll_duh(dp)) {
+				al_stop_duh(dp);
+				dp = al_start_duh(duh, 2, 0, 1.0f, 4096, 44100);
+				DUH_SIGRENDERER *sr = al_duh_get_sigrenderer(dp);
+				DUMB_IT_SIGRENDERER *itsr = duh_get_it_sigrenderer(sr);
+				dumb_it_set_loop_callback(itsr, &dumb_it_callback_terminate, NULL);
+				dumb_it_set_xm_speed_zero_callback(itsr, &dumb_it_callback_terminate, NULL);
+			}
+		}
 		nlMutexUnlock(&mutex);
 		usleep(10000);
 	}
@@ -133,7 +142,22 @@ bool FS_MusicPlay(const char *filename)
 	if (!duh) duh = dumb_load_it(filename);
 	if (!duh) duh = dumb_load_ogg(filename, 1);
 	if (duh) dp = al_start_duh(duh, 2, 0, 1.0f, 4096, 44100);
+
+	DUH_SIGRENDERER *sr = al_duh_get_sigrenderer(dp);
+	DUMB_IT_SIGRENDERER *itsr = duh_get_it_sigrenderer(sr);
+	dumb_it_set_loop_callback(itsr, &dumb_it_callback_terminate, NULL);
+	dumb_it_set_xm_speed_zero_callback(itsr, &dumb_it_callback_terminate, NULL);
+
 	nlMutexUnlock(&mutex);
 #endif
 	return true;
+}
+
+void FS_SetVolume(int volume)
+{
+#ifdef HAVE_DUMBOGG
+	nlMutexLock(&mutex);
+	nlMutexUnlock(&mutex);
+#endif
+	set_volume(-1, volume);
 }
