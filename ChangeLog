@@ -1,0 +1,103 @@
+Changes in version 0.3.50     Tue 13 Aug 2002
+   - added 4 more terrain types, now the following terrains are 
+     supported: cultivated, city, polar, jungle and mars
+   - explored terrain is not darkened now at the end
+     of each turn in hotseat game
+
+Changes in version 0.3.40     Sun 28 Jul 2002
+   - fixed TUs wrap around bug
+   - fixed crash when walking near map borders
+   - fixed some problems with unit collision detection code
+     (when units used stairs or were falling down from upper levels)
+   - added female soldiers skins
+   - some changes in data integrity check code, should work
+     better than earlier, but if you have any problems, please report
+   - added code for using JPG images (jpgalleg) and converted
+     initial background picture to JPG => reduced size but
+     worse quality (mainly because of 24 => 8 bit conversion)
+   - now the game starts in fulscreen mode again (better for newbees,
+     harder for debugging ;-)
+   - revised english readme file (thanks to Jeremy Walker)
+
+Changes in version 0.3.31     Sun 14 Jul 2002
+   - fixed network game synchronization bug with soldiers walking across 
+     stairs (hotseat was not affected by this bug)
+   - added tcp/ip game in win32-version (network game without DirectPlay)
+   - disabled close window button (in previous version after hitting this button
+     the window disappeared but the process remained in memory)
+   - now client can't change map in planner for hotseat game
+   - added a new flag to ufo2000.ini (F_FILECHECK) which selects if
+     the program checks data files presence and integrity
+
+Changes in version 0.3.30     Sun 7 Jul 2002
+   - added save/load ability
+
+Changes in version 0.3.20     Sun 23 Jun 2002
+   - source code changed to compile with the latest allegro library 
+     (4.0.1 at this moment)
+   - added game speed settings dialogue ('?' icon)
+   - numerous bugfixes and cosmetic improvements
+
+Changes in version 0.3.11     Mon 23 Apr 2001
+   - items destruction disabled (have bug)
+
+Changes in version 0.3.1      Sat 21 Apr 2001
+   - stop march with right mouse
+   - stop march if see enemy
+   - pathfinder fixed
+   - more realistic grenades
+   - save/load units presets
+   - fix rename bug in planner
+   - add map editor
+   - items destruction
+
+Changes in version 0.3.0      Fri 30 Mar 2001
+   - fix walk sit/stand bug
+   - full 3d
+   - add init printer
+   - add cold weapon
+   - become GPL GNU
+
+Changes in version 0.2.9      Wed 21 Feb 2001
+   - fix delaytime bug
+   - add log replayer
+   - soldier editor
+   - mission planner
+   - precise aiming
+
+Changes in version 0.1.9beta  Fri 02 Feb 2001
+   - new pathfinder
+   - add scang map graph
+   - better mcd files support
+   - use of loftemps
+   - 3d world
+   - log ability
+   - net packet changed
+   - misc improvements
+
+Changes in version 0.1.5      Tue 14 Nov 2000
+   - add hotseat
+   - linux version
+   - win version
+
+Changes in version 0.1.4      Sun 10 Sep 2000
+   - fix bug in multiplayer
+   - speedup pck's draw
+   - add screen resize
+   - add TCP/IP with libsocket
+   - add black pck bitmaps
+   - add connect chat
+   - add geodata operations
+   - faceto bug fix
+
+Changes in version 0.1.3      Thu 17 Aug 2000
+   - nobloodymenu add
+   - anglization
+   - фикс smoke был виден всегда
+
+Changes in version 0.1.2      Mon 14 Aug 2000
+   - перевел под allegro 3.9.32 & jgmod 0.98
+   - фикс ошибки изображения идущего солдата
+   - поворот стоит времени
+   - добавил about
+   - fade in&out

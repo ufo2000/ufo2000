@@ -1,0 +1,149 @@
+/*
+This file is part of "UFO 2000" aka "X-COM: Gladiators"
+                    http://ufo2000.sourceforge.net/
+Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
+Copyright (C) 2002       ufo2000 development team
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+*/
+#ifndef MULTIPLAY_H
+#define MULTIPLAY_H
+#include <stdio.h>
+#include "item.h"
+#include "soldier.h"
+#include "map.h"
+#include "connect.h"
+#include "packet.h"
+
+enum GameType {HOTSEAT, MODEM, IPX, SOCK, DPLAY};
+
+class Net
+{
+public:
+	int SEND;
+
+	void send_raw(char *str);
+	int recv_raw(char *str);
+	void send(char *dat, int size);
+private:
+	void send(char *_str);
+
+	FILE *flog;
+	BQ *queue;
+	Packet pkt;
+
+	Item *itaken;
+	Connect *connect;
+
+	void send();
+
+	int recv_notice();
+	int recv_quit();
+	int recv_restart();
+	int recv_endturn();
+	int recv_open_door();
+	int recv_change_pose();
+	int recv_prime_grenade();
+	int recv_unload_ammo();
+	int recv_load_ammo();
+
+	int recv_detonate_item();
+	int recv_explode();
+
+	int recv_select_item();
+	int recv_deselect_item();
+
+	int recv_move();
+	int recv_face();
+
+	int recv_thru();
+	int recv_beam();
+	int recv_fire();
+	int recv_punch();
+	int recv_aimedthrow();
+
+	int recv_shoot();
+	//int recv_time();
+
+	int recv_add_unit();
+	int recv_select_unit();
+	int recv_deselect_unit();
+	int recv_unit_data_size();
+	int recv_unit_data();
+	int recv_map_data();
+public:
+	GameType gametype;
+
+	Net();
+	~Net();
+	int init();
+	void close();
+	void check();
+	void log(char *str);
+	void log(char *str, char *str2);
+	void error(char *str);
+
+	void send_message(char *mess);
+
+	void send_notice();
+	void send_quit();
+	void send_restart();
+	void send_endturn(int crc);
+
+	void send_open_door(int NID);
+	void send_change_pose(int NID);
+	void send_prime_grenade(int NID, int iplace, int delay_time, int req_time);
+	void send_unload_ammo(int NID);
+	void send_load_ammo(int NID, int iplace);
+
+	void send_detonate_item(int lev, int col, int row, int iplace, int ix, int iy);
+	void send_explode(int lev, int col, int row, int type, int range, int damage);
+
+	void send_select_item(int NID, int iplace, int ix, int iy);
+	void send_deselect_item(int NID, int iplace, int ix, int iy, int req_time);
+
+	void send_move(int NID, int lev, int col, int row);
+	void send_face(int NID, int col, int row);
+
+	void send_thru(int NID, int z0, int x0, int y0, REAL ro, REAL fi, REAL te, REAL zA, int iplace, int req_time);
+	void send_beam(int NID, int _z0, int _x0, int _y0, REAL _fi, REAL _te, int iplace, int req_time);
+	void send_fire(int NID, int _z0, int _x0, int _y0, REAL _fi, REAL _te, int iplace, int req_time);
+	void send_aimedthrow(int NID, int _z0, int _x0, int _y0, REAL _fi, REAL _te, int iplace, int req_time);
+	void send_punch(int NID, int _z0, int _x0, int _y0, REAL _fi, REAL _te, int iplace, int req_time);
+
+	///void send_shoot(int NID, int x, int y, int tcol, int trow,
+	//					 int iplace, int btype, int whit, int ttime, int harm);
+	//void send_time(int NID, int time);
+	//void command(Command cmd, const char *types, ...);
+
+	void send_add_unit(int num, char *name, int cost);
+	void send_select_unit(int num, int mx, int my);
+	void send_deselect_unit(int num);
+
+	void send_unit_data_size(int size);
+	void send_unit_data(int num, int lev, int col, int row, MANDATA *md, ITEMDATA *id);
+	void send_map_data(GEODATA *gd);
+
+	void send_finish_planner();
+	int recv_finish_planner();
+	void send_confirm_finish_planner();
+	int recv_confirm_finish_planner();
+
+	void replay_load(char *fn);
+	void replay();
+};
+
+
+#endif

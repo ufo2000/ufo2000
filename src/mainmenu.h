@@ -1,0 +1,48 @@
+/*
+This file is part of "UFO 2000" aka "X-COM: Gladiators"
+                    http://ufo2000.sourceforge.net/
+Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
+Copyright (C) 2002       ufo2000 development team
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+*/
+#ifndef MAINMENU_H
+#define MAINMENU_H
+
+#ifdef DJGPP
+#error DJGPP is now not supported
+#endif
+
+#ifdef WIN32
+#define MAINMENU_LOADGAME 6
+#define MAINMENU_DPLAY    5
+#define MAINMENU_TCPIP    4
+#define MAINMENU_HOTSEAT  3
+#define MAINMENU_EDITOR   2
+#define MAINMENU_ABOUT    1
+#define MAINMENU_QUIT     0
+#else
+#define MAINMENU_LOADGAME 5
+#define MAINMENU_TCPIP    4
+#define MAINMENU_HOTSEAT  3
+#define MAINMENU_EDITOR   2
+#define MAINMENU_ABOUT    1
+#define MAINMENU_QUIT     0
+#endif
+
+void initmainmenu();
+int do_mainmenu();
+
+#endif

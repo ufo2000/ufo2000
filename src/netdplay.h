@@ -1,0 +1,30 @@
+/*
+This file is part of "UFO 2000" aka "X-COM: Gladiators"
+                    http://ufo2000.sourceforge.net/
+Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
+Copyright (C) 2002       ufo2000 development team
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+*/
+#ifndef NETDPLAY_H
+#define NETDPLAY_H
+
+int initdplaygame();
+void closedplaygame();
+int packet_recv_dplay(char *pkt);      //!!!ret size of pkt, not 1
+void packet_send_dplay(char *pkt);
+void packet_send_dplay(char *pkt, int size);
+
+#endif
