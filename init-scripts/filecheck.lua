@@ -44,8 +44,6 @@ FilesTable = {
 	["$(ufo2000)/arts/menu.jpg"]      = { Crc32 = X("0x00000000") },
 	["$(ufo2000)/arts/empty.spk"]     = { Crc32 = X("0x00000000") },
 
-	["$(xcom)/ufointro/pict2.lbm"] = { Crc32 = X("0x783E3C9D"),
-		Fallback = "$(ufo2000)/arts/menu.jpg" },
 	["$(xcom)/ufointro/pict4.lbm"] = { Crc32 = X("0x8178ADD1"),
 		Fallback = "$(ufo2000)/arts/text_back.jpg" },
 	["$(xcom)/ufointro/pict5.lbm"] = { Crc32 = X("0xA8543964"),

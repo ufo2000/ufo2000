@@ -116,11 +116,12 @@ void Map::initpck()
 	close(fh);
 
 	fh = open(F("$(tftd)/geodata/scang.dat"), O_RDONLY | O_BINARY);
-	assert(fh != -1);
-	fl = filelength(fh);
-	m_scang_tftd = new char[fl];
-	read(fh, m_scang_tftd, fl);
-	close(fh);
+	if (fh != -1) {
+		fl = filelength(fh);
+		m_scang_tftd = new char[fl];
+		read(fh, m_scang_tftd, fl);
+		close(fh);
+	}
 
 	fh = open(F("$(xcom)/geodata/loftemps.dat"), O_RDONLY | O_BINARY);
 	assert(fh != -1);
@@ -519,6 +520,7 @@ void Map::draw2d()
 
 	int tftd_flag = m_terrain->is_tftd();
 	char *scang = tftd_flag ? m_scang_tftd : m_scang_xcom;
+	assert(scang);
 
 	set_sel(cx, cy);
 
@@ -579,6 +581,7 @@ BITMAP *Map::create_bitmap_of_map()
 
 	int tftd_flag = m_terrain->is_tftd();
 	char *scang = tftd_flag ? m_scang_tftd : m_scang_xcom;
+	assert(scang);
 
 	for (int lev = 0; lev <= sel_lev; lev++) {
 		for (int row = 0; row < height*10; row++) {
