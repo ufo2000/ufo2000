@@ -1014,6 +1014,19 @@ void send_turn()
  */
 void recv_turn(int crc)
 {
+    // In replay mode pass of the turn is simple
+    if (net->gametype == GAME_TYPE_REPLAY) {
+        switch_turn();
+        platoon_local->restore();
+        platoon_remote->restore();
+		
+        Platoon *pt = platoon_local;
+        platoon_local = platoon_remote;
+        platoon_remote = pt;
+		
+        return;
+    }
+
     ASSERT(MODE == WATCH);
     switch_turn();
     elist->step(0);
@@ -1160,6 +1173,15 @@ void savegame(const char *filename)
     savegame_stream(f);
 }
 
+/**
+ * Opens stream for replay file and saves game position to it
+ */
+void savereplay(const char *filename)
+{
+    net->m_replay_file = new std::fstream(filename, std::ios::binary | std::ios::out);
+    savegame_stream(*net->m_replay_file);
+}
+
 void savegame_stream(std::iostream &stream)
 {
     char sign[64];
@@ -1196,6 +1218,16 @@ bool loadgame(const char *filename)
     if (!f.is_open()) return false;
 
     return loadgame_stream(f);
+}
+
+/**
+ * Opens stream for replay file and loads game position from it
+ */
+bool loadreplay(const char *filename)
+{
+    net->m_replay_file = new std::fstream(filename, std::ios::binary | std::ios::in);
+    if (!net->m_replay_file->is_open()) return false;
+    return loadgame_stream(*net->m_replay_file);
 }
 
 bool loadgame_stream(std::iostream &stream)
@@ -1704,6 +1736,10 @@ void view_level_down()
  */
 void gameloop()
 {
+    // If it's not replay mode, this code start to write information into replay file
+    if (net->gametype != GAME_TYPE_REPLAY)
+        savereplay(F("$(home)/replay.sav"));
+
     int select_y = 0;
     int mouse_leftr = 1, mouse_rightr = 1;
     int old_mouse_z = mouse_z; // mouse wheel status on the previous cycle
@@ -2154,6 +2190,10 @@ void gameloop()
     net->send_quit();
 
     clear(screen);
+
+    // Closes replay file (input or output according to mode, play or replay)
+    delete net->m_replay_file;
+    net->m_replay_file = NULL;
 }
 
 void faststart()
@@ -2212,6 +2252,10 @@ void faststart()
 
 void start_loadgame()
 {
+/* It fixes existing problem with crash when game is loaded after some other 
+game have been played before. I don't know how to fix it in other way.*/
+    win = 0; loss = 0; 
+
     HOST = sethotseatplay();
 
     install_timers(speed_unit, speed_bullet, speed_mapscroll);
@@ -2235,6 +2279,41 @@ void start_loadgame()
     gameloop();
     closegame();
 }
+
+/**
+ * Dirty function which starts replay of the game
+ */
+void start_loadreplay()
+{
+/* It fixes existing problem with crash when game is loaded after some other 
+game have been played before. I don't know how to fix it in other way.*/
+    win = 0; loss = 0; 
+
+    HOST = 0;
+    net->gametype = GAME_TYPE_REPLAY;
+
+    install_timers(speed_unit, speed_bullet, speed_mapscroll);
+
+    reset_video();
+    clear_to_color(screen, COLOR_BLACK1);
+
+    if (!loadreplay(F("$(home)/replay.sav"))) {
+        alert( "", _("Replay is not available or was saved by incompatible version"), "", _("OK"), NULL, 0, 0);
+        return;
+    }
+    battle_report( "# %s: %d\n", _("START REPLAY"), turn );
+
+    inithotseatgame();
+
+    DONE = 0;
+
+    MODE = WATCH;
+    sel_man = NULL;
+
+    gameloop();
+    closegame();
+}
+
 
 /**
  * Test / Debug
@@ -2405,6 +2484,9 @@ int main(int argc, char *argv[])
                     break;
                 case MAINMENU_LOADGAME:
                     start_loadgame();
+                    break;
+                case MAINMENU_SHOW_REPLAY:
+                    start_loadreplay();
                     break;
                 default:
                     continue;

@@ -121,6 +121,11 @@ void Platoon::recalc_visibility()
 	if (!m_visibility_changed) return;
 
 	memset(m_visible, 0, sizeof(m_visible));
+        
+    // In replay mode all map is visible
+    if (net->gametype == GAME_TYPE_REPLAY)
+        memset(m_visible, 1, sizeof(m_visible));
+
 
 	Soldier *ss = man;
 	while (ss != NULL) {
@@ -420,6 +425,10 @@ void Platoon::apply_hit(int sniper, int z, int x, int y, int type, int hitdir)
 
 int Platoon::check_reaction_fire(Soldier *target)
 {
+    // Reaction fire isn't calculated in replay mode
+    if (net->gametype == GAME_TYPE_REPLAY)
+        return 0;
+
 	std::vector<Soldier *> soldiers;
 	Soldier *ss = man;
 	while (ss != NULL) {

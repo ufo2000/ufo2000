@@ -28,7 +28,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "server_protocol.h"
 #define map g_map
 
-enum GameType {GAME_TYPE_HOTSEAT, GAME_TYPE_INTERNET_SERVER};
+enum GameType {GAME_TYPE_HOTSEAT, GAME_TYPE_INTERNET_SERVER, GAME_TYPE_REPLAY};
 
 void inithotseatgame();
 void closehotseatgame();
@@ -107,6 +107,7 @@ private:
     int recv_initrand();
 	
 public:
+	std::fstream *m_replay_file;
 	ClientServerUfo *m_internet_server;
 	GameType gametype;
 

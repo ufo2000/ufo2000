@@ -157,7 +157,10 @@ void Net::close()
 			break;
 	}
 	delete queue;
-	queue = NULL;
+/* It fixes existing problem with crash when game is loaded after some other 
+game have been played before. I suppose "queue" will be deleted in destructor 
+in any case.*/
+    queue = new BQ(1000);
 }
 
 Soldier *Net::findman(int NID)
@@ -173,10 +176,15 @@ void Net::send_message(const std::string &msg)
 	send(std::string("_Xmes_") + msg);
 }
 
+extern int GAMELOOP;
+
 void Net::send()
 {
-	ASSERT(pkt.str_len() > 0);
-	send(pkt.str());
+    if (GAMELOOP && (net->gametype != GAME_TYPE_REPLAY))
+        *m_replay_file<<pkt.str()<<"\n";
+
+    ASSERT(pkt.str_len() > 0);
+    send(pkt.str());
 }
 
 void Net::send(const std::string &pkt)
@@ -194,6 +202,8 @@ void Net::send(const std::string &pkt)
 		case GAME_TYPE_INTERNET_SERVER:
 			m_internet_server->send_packet(SRV_GAME_PACKET, pkt);
 			break;
+       case GAME_TYPE_REPLAY:
+           break;
 		default:
 			ASSERT(false);
 	}
@@ -213,16 +223,24 @@ int Net::recv(std::string &pkt)
 				pkt = "";
 				return 0;
 			} else {
-				return pkt.size();
+                if ((net->gametype != GAME_TYPE_REPLAY) && GAMELOOP)
+                    *m_replay_file<<pkt<<"\n";
+
+                return pkt.size();
 			}
+        case GAME_TYPE_REPLAY:
+            // loads packet from replay file up to \n, needs to 
+            // be rewritten in a proper way
+            char buffer[1000];
+            m_replay_file->getline(buffer, 1000);
+            pkt = buffer;
+            return pkt.size();
 		default:
 			ASSERT(false);
 			break;
 	}
 	return 0;
 }
-
-extern int GAMELOOP;
 
 /**
  * Receive packets from network and check them
@@ -741,6 +759,7 @@ int Net::recv_move()
 	if (ss != NULL) {
 		ASSERT(ss->is_active());
 		SEND = 0;
+		if (net->gametype == GAME_TYPE_REPLAY) sel_man = ss;
 		ss->wayto(lev, col, row);
 		SEND = 1;
 		return 1;
