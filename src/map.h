@@ -30,6 +30,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "place.h"
 #include "soldier.h"
 #include "platoon.h"
+#include "minimap.h"
 
 enum DIRECTION
 {
@@ -66,7 +67,10 @@ private:
 
 	Cell ****m_cell;
 	TerraPCK *m_terrain;
+
 public:
+	MinimapArea *m_minimap_area;
+
 	static PCK *floorob, *smoke;
 	static void initpck();
 	static void freepck();
@@ -220,11 +224,11 @@ public:
 
 	int visible(int lev, int col, int row)
 	{
-		return m_cell[lev][col][row]->m_visible;
+		return platoon_local->is_visible(lev, col, row);
 	}
 	void set_visible(int lev, int col, int row, int value)
 	{
-		m_cell[lev][col][row]->m_visible = value;
+		platoon_local->set_visible(lev, col, row, value);
 	}
 
 	int seen(int lev, int col, int row)

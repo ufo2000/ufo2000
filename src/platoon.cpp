@@ -134,7 +134,7 @@ void Platoon::move(int ISLOCAL)
 			ss = ss->next();
 		}
 		map->update_visible_cells(visible_cells);
-		//VISIBILITY_CHANGED = 0;
+		VISIBILITY_CHANGED = 0;
 	}
 }
 

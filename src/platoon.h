@@ -32,13 +32,12 @@ private:
 	long     ID;
 	long     size;
 
+	int m_visible[4][10 * 6][10 * 6];
 	int m_seen[4][10 * 6][10 * 6];
 
 public:
 	Platoon() { memset(m_seen, 0, sizeof(m_seen)); }
 	Platoon(int PID, int num);
-//	Platoon(int PID, int num, int *z, int *x, int *y);
-//	Platoon(int PID, int num, int *z, int *x, int *y, MANDATA *mdat, ITEMDATA *idat);
 	Platoon(int PID, PLAYERDATA *pd);
 	virtual ~Platoon();
 	void destroy();
@@ -65,8 +64,6 @@ public:
 	int realsize();
 	int freeNID();
 	void del(int SID);
-	//void add();
-	//void create(int PID, int psize);
 
 	Soldier *captain() { return man; }
 	int num_of_men() { return size; }
@@ -85,6 +82,8 @@ public:
 
 	int is_seen(int lev, int col, int row) { return m_seen[lev][col][row]; }
 	void set_seen(int lev, int col, int row, int value) { m_seen[lev][col][row] = value; }
+	int is_visible(int lev, int col, int row) { return m_visible[lev][col][row]; }
+	void set_visible(int lev, int col, int row, int value) { m_visible[lev][col][row] = value; }
 
 	virtual bool Write(persist::Engine &archive) const;
 	virtual bool Read(persist::Engine &archive);

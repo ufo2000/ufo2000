@@ -101,6 +101,8 @@ Map::Map(GEODATA &mapdata)
 	//terrain = cultivat;
 	//textout(screen, font, "Map::Map press key", 0,0, 1); readkey();
 	build_visi();
+
+	m_minimap_area = new MinimapArea(this, screen->w - SCREEN2W, SCREEN2H);
 }
 
 Map::Map(int l, int c, int r, int _ter, unsigned char *_map)
@@ -117,6 +119,8 @@ Map::Map(int l, int c, int r, int _ter, unsigned char *_map)
 	loadterrain(gd.terrain);
 	m_terrain_set = gd.terrain;
 	loadmaps(gd.mapdata);
+
+	m_minimap_area = new MinimapArea(this, screen->w - SCREEN2W, SCREEN2H);
 }
 
 Map::~Map()
@@ -156,6 +160,8 @@ void Map::destroy()
 
 	delete [] m_cell;
 	delete m_terrain;
+
+	delete m_minimap_area;
 }
 
 
@@ -452,51 +458,8 @@ void Map::move(int ofs_x, int ofs_y)
 
 void Map::svga2d()
 {
-	int color;
-
-	BITMAP *map2d = create_bitmap(width * 10 * 3, height * 10 * 3);      //no clear
-
-	int height_10 = height * 10, width_10 = width * 10;
-
-	for (int row = 0; row < height_10; row++) {
-		for (int col = 0; col < width_10; col++) {
-			Cell &cell = *m_cell[0][col][row];
-
-			color = cell.type[0];
-
-			if (visible(0, col, row)) color += 0x64;
-
-			if (cell.soldier_here()) {
-				if (visible(0, col, row)) {
-					if (platoon_local->belong(cell.get_soldier()))
-						color = 144;      //yellow
-					else
-						color = 32;      //red
-					rectfill(map2d, col * 3, row * 3, col * 3 + S, row * 3 + S, xcom1_color(color));
-					continue;
-				}
-			}
-
-			if (cell.type[2])
-				rectfill(map2d, col * 3 + S, row * 3, col * 3 + S, row * 3 + S, xcom1_color(m_cell[0][col][row]->type[2]));
-			else
-				if (cell.type[1])
-					rectfill(map2d, col * 3, row * 3, col * 3 + S, row * 3, xcom1_color(m_cell[0][col][row]->type[1]));
-				else
-					rectfill(map2d, col * 3, row * 3, col * 3 + S, row * 3 + S, xcom1_color(color));
-
-			if (cell.type[3])
-				circlefill(map2d, col * 3 + S / 2, row * 3 + S / 2, S / 2, xcom1_color(m_cell[0][col][row]->type[3]));
-		}
-	}
-
-	blit(map2d, screen, 0, 0, SCREEN2W + 16, 40, map2d->w, map2d->h);
-
-	destroy_bitmap(map2d);
+	m_minimap_area->redraw(screen, SCREEN2W, 0);
 }
-
-//#define X 0
-//#define Y 0
 
 void Map::draw2d()
 {
@@ -551,10 +514,8 @@ void Map::draw2d()
 				}
 			}
 
-	//circle(screen2, cx, cy, 4, 1);
 	scanbord->show(screen2, cx - 160 + 4, cy - 100 + 12);
 	text_mode( -1);
-	//textprintf(screen2, font, cx-160+283 + 4, cy-100+77 + 12, 1, "%d", sel_lev);
 	textprintf(screen2, large, cx - 160 + 281 + 4, cy - 100 + 74 + 12, xcom1_color(66), "%d", sel_lev);
 }
 
@@ -584,9 +545,6 @@ BITMAP *Map::create_bitmap_of_map()
 			}
 		}
 	}
-	//scanbord->show(screen2, 0, 0);
-	//text_mode(-1);
-	//textprintf(screen2, font, 283, 77, 1, "%d", sel_lev);
 	return bmp;
 }
 
@@ -1615,6 +1573,8 @@ bool Map::Read(persist::Engine &archive)
 				PersistReadObject(archive, m_cell[lev][col][row]);
 
     loadterrain(m_terrain_set);
+
+	m_minimap_area = new MinimapArea(this, screen->w - SCREEN2W, SCREEN2H);
 
 	return true;
 }

@@ -29,6 +29,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <winalleg.h>
 #endif
 
+#include "global.h"
 #include "dirty.h"
 #include "keys.h"
 #include "font.h"
@@ -67,6 +68,8 @@ public:
 	int get_width() const { return m_width; }
 //!	Gets the height of object
 	int get_height() const { return m_height; }
+//!	Sets internal variable so that the next redraw will be full redraw
+	void set_full_redraw() { m_switch_in_counter = -1; }
 };
 
 /**

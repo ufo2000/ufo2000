@@ -32,8 +32,6 @@ Cell::Cell()
 
 	type[0] = 0; type[1] = 0; type[2] = 0; type[3] = 0;
 
-	m_visible = 0;
-//	m_seen = 0;
 	m_smog_state = 0;
 	m_smog_time = 0;
 	m_fire_state = 0;

@@ -407,7 +407,8 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 	screen2 = create_bitmap(640, SCREEN2H - 1); clear(screen2);
 	set_mouse_range(0, 0, 639, SCREEN2H - 1);
 
-	g_console->redraw_full(screen, 0, SCREEN2H);
+	g_console->set_full_redraw();
+	g_console->redraw(screen, 0, SCREEN2H);
 
 	Map *map = new Map(mapdata);
 	BITMAP *map2d = map->create_bitmap_of_map();

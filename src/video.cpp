@@ -38,6 +38,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "wind.h"
 #include "../ufo2000.h"
 #include "pfxopen.h"
+#include "global.h"
+#include "map.h"
 
 unsigned long FLAGS = 0;
 /*
@@ -360,8 +362,9 @@ void resize_screen2(int vw, int vh)
 	destroy_bitmap(screen2);
 	screen2 = create_bitmap(SCREEN2W, SCREEN2H);
 
-	clear_to_color(screen, xcom1_color(15));
-	g_console->resize(640, screen->h - SCREEN2H);
+//	clear_to_color(screen, xcom1_color(15));
+	map->m_minimap_area->resize(screen->w - SCREEN2W, SCREEN2H);
+	g_console->resize(screen->w, screen->h - SCREEN2H);
 	icon->setxy((SCREEN2W - 320) / 2, SCREEN2H - 56);
 	set_mouse_range(0, 0, SCREEN2W - 1, SCREEN2H - 1);
 	position_mouse(SCREEN2W / 2, SCREEN2H / 2);

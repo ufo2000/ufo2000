@@ -34,9 +34,6 @@ class Cell: public persist::BaseObject
 {
 	DECLARE_PERSISTENCE(Cell);
 private:
-	int m_visible;
-//	int m_seen;
-
 	int m_smog_state;
 	int m_smog_time;
  	int m_fire_state;

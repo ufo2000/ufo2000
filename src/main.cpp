@@ -543,7 +543,8 @@ void next_turn(int crc)
 
 	if (net->gametype == HOTSEAT) {
 		icon->show_eot();
-		g_console->redraw_full(screen, 0, SCREEN2H);
+		map->m_minimap_area->set_full_redraw();
+		g_console->set_full_redraw();
 
 		Platoon *pt = platoon_local;
 		platoon_local = platoon_remote;
