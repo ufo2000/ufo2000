@@ -1083,7 +1083,7 @@ int Soldier::tus_reserved(std::string *error)
         
             case RESERVE_AUTO:
             if (it->obdata_accuracy(0)) {
-                time = required(it->obdata_time(0)) * it->obdata_autoShots;
+                time = required(it->obdata_time(0)) * it->obdata_autoShots();
                 if (error) *error = _("Time units are reserved for auto shot.");
             }
             break;
