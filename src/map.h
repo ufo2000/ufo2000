@@ -57,15 +57,25 @@ enum DIRECTION
 enum PF_MODE {PF_TRUE, PF_DISPLAY};
 
 //! x increment when moving specified direction
-#define DIR_DELTA_X(dir)  dir2ofs[dir]
+#define DIR_DELTA_X(dir)  (dir < DIR_NULL ? dir2ofs[dir] : 0)
 //! y increment when moving specified direction 
-#define DIR_DELTA_Y(dir)  dir2ofs[((dir)+6)%8]
-//! reverses specified direction
-#define DIR_REVERSE(dir)  (((dir)+4)%8)
+#define DIR_DELTA_Y(dir)  (dir < DIR_NULL ? dir2ofs[((dir)+6)%8] : 0)
+//! reverses specified plain direction
+inline int DIR_REVERSE(int dir)
+{
+    ASSERT(dir >= 0 && dir < DIR_NUM);
+    if (dir < DIR_NULL)
+        return (((dir)+4)%8);
+    if (dir > DIR_NULL)
+        return DIR_NULL + (3 - (dir - DIR_NULL));
+    return DIR_NULL;
+}
 //! check if the specified direction is diagonal
 inline int DIR_DIAGONAL(int dir)
 {
-    ASSERT(dir >= 0 && dir < 8);
+    ASSERT(dir >= 0 && dir < DIR_NUM);
+    if (dir >= DIR_NULL)
+        return 0;
     return dir % 2;
 }
 
