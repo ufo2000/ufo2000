@@ -1154,6 +1154,9 @@ void Map::destroy_cell_part(int lev, int col, int row, int _part)
 			m_cell[lev][col][row]->type[_part] = 0;
 			return ;
 		}
+		
+		if (_part == 0 && lev == 0 && mcd == 0)
+			mcd = 1;					//"scorched earth" instead of blank space on the ground level
 
 		m_cell[lev][col][row]->type[_part] = mcd;
 		
