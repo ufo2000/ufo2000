@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFO2000\n"
 "POT-Creation-Date: 2004-11-08 17:33+0100\n"
-"PO-Revision-Date: 2004-11-10 12:12+0100\n"
+"PO-Revision-Date: 2004-11-10 13:13+0100\n"
 "Last-Translator: HaJo Gurt <gurt@gmx.de>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -1697,45 +1697,49 @@ msgstr "Passwort:"
 msgid "Connecting to server..."
 msgstr "Verbindungsaufnahme zum Server..."
 
+#: src/server_gui.cpp:401
+msgid "ufo2000 internet server ("
+msgstr "UFO2000 Internet-Server ("
+
 #: src/server_gui.cpp:405
 msgid "users online"
 msgstr "Users online"
 
 #: src/server_gui.cpp:409
-msgid "You have just connected to ufo2000 internet server\n"
-msgstr "Sie haben Verbindung mit dem UFO2000 Internet-Server aufgenommen.\n"
+msgid "You have just connected to ufo2000 internet server"
+msgstr "Sie haben Verbindung mit dem UFO2000 Internet-Server aufgenommen."
 
 #: src/server_gui.cpp:410
-msgid "There are two windows here: chat console in the left window\n"
-msgstr "Sie sehen hier zwei Fenster:  links die Chat-Konsole,\n"
+msgid "There are two windows here: chat console in the left window"
+msgstr "Sie sehen hier zwei Fenster:  links die Chat-Konsole,"
 
 #: src/server_gui.cpp:411
-msgid "and the list of online players in the right\n"
-msgstr "rechts die Liste der anwesenden Spieler.\n"
+msgid "and the list of online players in the right"
+msgstr "rechts die Liste der anwesenden Spieler."
 
 #: src/server_gui.cpp:413
-msgid "white player name - that's your own name\n"
-msgstr "Weiss - Ihr Spielername\n"
+msgid "white player name - that's your own name"
+msgstr "Weiss - Ihr Spielername"
 
 #: src/server_gui.cpp:414
-msgid "gray player name - available for chat\n"
-msgstr "Grau  - Ein anderer Spieler\n"
+msgid "gray player name - available for chat"
+msgstr "Grau  - Ein anderer Spieler"
 
 #: src/server_gui.cpp:415
-msgid "yellow player name - you have sent a challenge to this player\n"
-msgstr "Gelb  - Sie haben diesem Spieler eine Herausforderung gesendet.\n"
+msgid "yellow player name - you have sent a challenge to this player"
+msgstr "Gelb  - Sie haben diesem Spieler eine Herausforderung gesendet."
 
 #: src/server_gui.cpp:416
-msgid "green player name - you can accept a challenge from this player\n"
-msgstr "Grün  - Sie können eine Herausforderung von diesem Spieler annehmen.\n"
+msgid "green player name - you can accept a challenge from this player"
+msgstr "Grün  - Sie können eine Herausforderung von diesem Spieler annehmen."
 
 #: src/server_gui.cpp:417
-msgid "red player name - the player is busy playing with someone else\n"
-msgstr "Rot   - Spielt gerade mit jemand anderem.\n"
+msgid "red player name - the player is busy playing with someone else"
+msgstr "Rot   - Spielt gerade mit jemand anderem."
 
 #: src/server_gui.cpp:419
-msgid "You can left click on player names to select them as your opponents\n"
-msgstr "Durch anklicken eines Namens können sie eine Herausforderung senden.\n"
+msgid "You can left click on player names to select them as your opponents"
+msgstr "Durch anklicken eines Namens können sie eine Herausforderung senden."
 
 #: src/server_gui.cpp:438
 msgid "  Connection lost  "
@@ -1743,23 +1747,23 @@ msgstr " Verbindung ging verloren "
 
 #: src/server_gui.cpp:449
 #, c-format
-msgid "%s is back from a game\n"
-msgstr "%s ist zurück von einem Spiel\n"
+msgid "%s is back from a game"
+msgstr "%s ist zurück von einem Spiel"
 
 #: src/server_gui.cpp:451
 #, c-format
-msgid "%s is here\n"
-msgstr "Anwesend: %s\n"
+msgid "%s is here"
+msgstr "Anwesend: %s"
 
 #: src/server_gui.cpp:458
 #, c-format
-msgid "%s disconnected\n"
-msgstr "%s hat sich abgemeldet.\n"
+msgid "%s disconnected"
+msgstr "%s hat sich abgemeldet."
 
 #: src/server_gui.cpp:473
 #, c-format
-msgid "%s left chat to play a game\n"
-msgstr "%s hat den Chat verlassen, um ein Spiel zu spielen.\n"
+msgid "%s left chat to play a game"
+msgstr "%s hat den Chat verlassen, um ein Spiel zu spielen."
 
 #: src/server_gui.cpp:586
 msgid "DISCONNECT FROM SERVER"

@@ -285,8 +285,8 @@ static char label_text[5][32];
 static char buttontext[2][16];
 
 static DIALOG config_dlg[] = {
-    //                   x    y   w    h   fg  bg  ...
-    { d_shadow_box_proc, 0,   0, 388, 200, FG, BG, 0, 0, 0, 0, NULL, NULL, NULL },
+    //                   x    y   w    h   fg  bg key flags d1 d2  dp   dp2   dp3
+    { d_shadow_box_proc, 0,   0, 388, 200, FG, BG, 0, 0,    0, 0, NULL, NULL, NULL },
     { d_text_proc,      72,   8, 144,  16, FG, BG, 0, 0, 0, 0, (void *)label_text[0], NULL, NULL },
     { d_slider_pro2,    24,  40, 136,  16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
     { d_slider_pro2,    24,  64, 136,  16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },

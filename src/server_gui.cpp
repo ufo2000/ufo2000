@@ -398,7 +398,7 @@ int connect_internet_server()
 
 	std::auto_ptr<ConsoleWindow> chat(new ConsoleWindow(SCREEN_W, SCREEN_H, cfg_get_console_font()));
 	std::auto_ptr<WindowBorder> chat_border(new WindowBorder(chat.get(), 
-		std::string("ufo2000 internet server (") + cfg_get_server_host() + std::string(")"), large));
+		std::string( _("ufo2000 internet server (") ) + cfg_get_server_host() + std::string(")"), large));
 	chat_border->set_full_redraw();
 	std::auto_ptr<UsersList> users(new UsersList(large));
 	users->update_user_info(g_server_login, USER_STATUS_SELF);
@@ -406,17 +406,17 @@ int connect_internet_server()
 	users_border->set_full_redraw();
 
 	// Write greetings and the short help to the chat console
-    chat->printf(COLOR_SYS_HEADER, _("You have just connected to ufo2000 internet server\n") );
-    chat->printf(COLOR_SYS_HEADER, _("There are two windows here: chat console in the left window\n") );
-    chat->printf(COLOR_SYS_HEADER, _("and the list of online players in the right\n") );
+    chat->printf(COLOR_SYS_HEADER, _("You have just connected to ufo2000 internet server") );
+    chat->printf(COLOR_SYS_HEADER, _("There are two windows here: chat console in the left window") );
+    chat->printf(COLOR_SYS_HEADER, _("and the list of online players in the right") );
 	chat->printf("\n");
-    chat->printf(COLOR_WHITE,      _("white player name - that's your own name\n") );
-    chat->printf(COLOR_GRAY,       _("gray player name - available for chat\n") );
-    chat->printf(COLOR_YELLOW,     _("yellow player name - you have sent a challenge to this player\n") );
-    chat->printf(COLOR_GREEN,      _("green player name - you can accept a challenge from this player\n") );
-    chat->printf(COLOR_RED00,      _("red player name - the player is busy playing with someone else\n") );
+    chat->printf(COLOR_WHITE,      _("white player name - that's your own name") );
+    chat->printf(COLOR_GRAY,       _("gray player name - available for chat") );
+    chat->printf(COLOR_YELLOW,     _("yellow player name - you have sent a challenge to this player") );
+    chat->printf(COLOR_GREEN,      _("green player name - you can accept a challenge from this player") );
+    chat->printf(COLOR_RED00,      _("red player name - the player is busy playing with someone else") );
 	chat->printf("\n");
-    chat->printf(COLOR_SYS_PROMPT, _("You can left click on player names to select them as your opponents\n") );
+    chat->printf(COLOR_SYS_PROMPT, _("You can left click on player names to select them as your opponents") );
 	chat->printf("\n");
 
 	chat_border->resize(SCREEN_W - users_border->get_width(), SCREEN_H);
@@ -446,16 +446,16 @@ int connect_internet_server()
 					if (users->get_user_status(packet) != USER_STATUS_READY) {
 						soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
 						if (users->get_user_status(packet) == USER_STATUS_BUSY)
-                            chat->printf(COLOR_DARKGRAY, _("%s is back from a game\n"), packet.c_str());
+                            chat->printf(COLOR_DARKGRAY, _("%s is back from a game"), packet.c_str());
 						else
-                            chat->printf(COLOR_DARKGRAY, _("%s is here\n"), packet.c_str());
+                            chat->printf(COLOR_DARKGRAY, _("%s is here"), packet.c_str());
 					}
 					users->update_user_info(packet, USER_STATUS_READY);
 					break;
 				case SRV_USER_OFFLINE:
 					if (users->get_user_status(packet) != USER_STATUS_OFFLINE) {
 						soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
-                        chat->printf(COLOR_DARKGRAY, _("%s disconnected\n"), packet.c_str());
+                        chat->printf(COLOR_DARKGRAY, _("%s disconnected"), packet.c_str());
 					}
 					users->update_user_info(packet, USER_STATUS_OFFLINE);
 					break;
@@ -473,7 +473,7 @@ int connect_internet_server()
 					if (users->get_user_status(packet) != USER_STATUS_BUSY &&
 							users->get_user_status(packet) != USER_STATUS_OFFLINE) {
 						soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
-                        chat->printf(COLOR_DARKGRAY, _("%s left chat to play a game\n"), packet.c_str());
+                        chat->printf(COLOR_DARKGRAY, _("%s left chat to play a game"), packet.c_str());
 					}
 					users->update_user_info(packet, USER_STATUS_BUSY);
 					break;

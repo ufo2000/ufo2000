@@ -77,17 +77,23 @@ const char *gettext(const char *str)
 	    lua_settop(L, stack_top);
         return str;   // no translation-table available
 	}
+  //lua_message( std::string("gettext: '") + str );  // debug
+
 	lua_pushstring(L, str);
 	lua_gettable(L, -2);
 	if (!lua_isstring(L, -1)) {
 	    lua_settop(L, stack_top);
-		return str;
+		return str;   // ?
 	}
 
     // Let's hope that the translated strings are never deleted from
     // the 'TranslatedMessages' table
 	const char *translated_str = lua_tostring(L, -1);
     lua_settop(L, stack_top);
+
+  //char test[1000];
+  //sprintf( test, "gettext: '%s'='%s'", str, translated_str );
+  //lua_message( test );
     return translated_str;
 };
 
@@ -95,6 +101,7 @@ const char *gettext(const char *str)
  * Get a line of text from the textfile tips-xx.txt via lua-script,
  * where xx is the language-code (en=english, de=german, etc.)
  * Tip #0 contains the total number of tips in the file.
+ * If no file exists, SetLanguage() puts one tip into the table.
  */
 const char *get_tip( const int tip_nr )
 { 
@@ -162,12 +169,12 @@ void showtip()
     int x1 = x0+xM, y1 = y0+yM,    w1 = w0-2*xM, h1 =    th;  // Title
     int x2 = x0+xM, y2 = y1+2*th,  w2 = w1,      h2 =  4*th;  // Textbox
     int x3 = x0+xM, y3 = y2+h2+th, w3 = w1/3-xM, h3 =  2*th;  // Button1
-    int p1 = x3,    p2 = p1+w3+xM, p3 = x0+w0-xM-w3;          // Buttons
+    int p1 = x3,    p2 = p1+w3+xM, p3 = x0+w0-xM-w3;          // Button-positions
     p2 = x0 + (w0/2) - w3/2;
 
     static DIALOG the_dialog[] =
     {
-        /* (dialog proc)     (x) (y) (w) (h) (fg) (bg) (key) (flags) (d1) (d2) (dp)             (dp2) (dp3) */
+        // (dialog proc)     (x) (y) (w) (h) (fg) (bg) (key) (flags) (d1) (d2) (dp)             (dp2) (dp3)
         { d_shadow_box_proc, x0, y0, w0, h0, _FG, _BG,   0,  0,       0,   0,  NULL,            NULL, NULL }, 
         { d_text_proc,       x1, y1, w1, h1, _FG, _BG,   0,  0,       0,   0,  (void *) title,  NULL, NULL },
         { d_textbox_proc,    x2, y2, w2, h2, _FG, _BG,   0,  0,       0,   0,  (void *) line1,  NULL, NULL },
@@ -364,7 +371,12 @@ int select_help()
         { NULL,               0,    0,    0,    0, _FG, _BG,   0,  0,       0,   0,  NULL,              NULL, NULL }
     };
 
-    ret = do_dialog(the_dialog, -1);
+  //ret = do_dialog(the_dialog, -1);
+	centre_dialog(the_dialog);
+	set_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
+	set_dialog_color(the_dialog, COLOR_BLACK1, COLOR_WHITE);
+	ret = popup_dialog(the_dialog, -1);
+
     sel = the_dialog[ 2 ].d1;   // from listbox-entry
   //return sel;
 
