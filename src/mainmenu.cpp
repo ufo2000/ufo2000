@@ -107,27 +107,44 @@ static int d_mainmenu_background_proc(int msg, DIALOG *d, int c)
 
 static int d_mainmenu_button_proc(int msg, DIALOG *d, int c) 
 {
-    buttonState *the_state = &BS_IDLE;
     
 	switch (msg) {
+        case MSG_GOTMOUSE:
+            d->dp2 = &BS_GOTFOCUS;
+            return D_REDRAWME;
+        
+        case MSG_LOSTMOUSE:
+            d->dp2 = &BS_IDLE;
+            d->d2 = 0;
+            return D_REDRAWME;
+        
 		case MSG_DRAW:
-			if (d->flags & D_DISABLED) {
-                the_state = &BS_DISABLED;
+            d_draw_baton(screen, d->x, d->y, d->w, d->h, (buttonState *)d->dp2, (char *)d->dp);
+            break;
+        
+        case MSG_LPRESS:
+        case MSG_MPRESS:
+        case MSG_RPRESS:
+            d->dp2 = &BS_SELECTED;
+            d->d2 = 1;
+            return D_REDRAWME;
+        
+        case MSG_LRELEASE: 
+        case MSG_MRELEASE: 
+        case MSG_RRELEASE:
+            if (d->d2) 
+                return D_CLOSE;
+            else
                 break;
-			}
-            if (d->flags & D_SELECTED) {
-                the_state = &BS_SELECTED;
-                break;
-            }
-            if ((d->flags & D_GOTFOCUS) || (d->flags & D_GOTMOUSE) ) {
-                the_state = &BS_GOTFOCUS;
-                break;
-            }
-			break;
+        
+        case MSG_IDLE:
+            usleep(5000);
+            break;
+            
 		default:
-            return d_button_proc(msg, d, c);
+            break;
 	}
-    d_draw_baton(screen, d->x, d->y, d->w, d->h, the_state, (char *)d->dp);
+    
 	return D_O_K;
 }
 
@@ -140,6 +157,7 @@ static int d_mainmenu_button_proc(int msg, DIALOG *d, int c)
 #define MENU_BTN_H          32
 
 extern MIDI *g_menu_midi_music;
+
 
 /** Initializes and runs button-based main menu. 
  * It is implemented as an Allegro gui dialog.
@@ -170,7 +188,7 @@ int do_mainmenu()
         the_dialog[i].d1  = 0;
         the_dialog[i].d2  = 0;
         the_dialog[i].dp  = NULL;
-        the_dialog[i].dp2 = NULL;
+        the_dialog[i].dp2 = &BS_IDLE;
         the_dialog[i].dp3 = NULL;
     }
     
