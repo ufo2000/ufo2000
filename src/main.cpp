@@ -65,8 +65,9 @@ ConsoleWindow *g_console;
 int g_time_limit;               //!< Limit of time for a single turn in seconds
 volatile int g_time_left;       //!< Current counter for time left for this turn
 int last_time_left;             //!< Time of last screen-update for g_time_left
-int g_p2_start_sit=0;               //!< If player 2 starts sitting - 0 by default
-
+int g_p2_start_sit=0;           //!< If player 2 starts sitting - 0 by default
+int g_tie;                      //   Flags denoting which players accepted draw
+int g_random_init[2];           //   For initializing Random
 
 //ReserveTime_Mode ReserveTimeMode;     // TODO: should be platoon- or soldier-specific
 
@@ -204,19 +205,16 @@ int getsomerand()
  */
 void initrand()
 {
-    int chk, random_init[2];
-    Mode old_MODE;
-    char tmp[128];
-    old_MODE = MODE;
-    MODE = WATCH; // for net->recv(buf)
-    std::string buf;
-    random_init[0] = getsomerand();
-    sprintf(tmp, "%d", random_init[0]);
-    net->send(tmp);
-    while (!net->recv(buf)) rest(1); // Too rude and should be escapable
-    chk = sscanf(buf.c_str(), "%d", &random_init[1]);
-    ASSERT(chk == 1);
-    cur_random->init(random_init[HOST] * 3600 + random_init[!HOST]);
+    Mode old_MODE = MODE;
+    MODE = WATCH;
+    g_random_init[0] = getsomerand();
+    g_random_init[1] = -1;
+    net->send_initrand(g_random_init[0]);
+    do {
+        rest(1);
+        net->check();
+    } while (g_random_init[1] == -1);
+    cur_random->init(g_random_init[HOST] * 3600 + g_random_init[!HOST]);
     MODE = old_MODE;
 }
 
@@ -297,6 +295,7 @@ int initgame()
 
     reset_video();
     restartgame();
+    g_tie = 0; // Clear tie flags for the new game.
     initrand();
     //clear_to_color(screen, 58); //!!!!!
     
@@ -815,6 +814,7 @@ int build_crc()
 {
     char buf[200000]; memset(buf, 0, sizeof(buf));
     int buf_size = 0;
+    buf_size += sprintf(buf + buf_size, "%s\n", g_version_id.c_str());
 
     p1->eot_save(buf, buf_size);
     p2->eot_save(buf, buf_size);
@@ -1247,15 +1247,15 @@ int damage_color( int damage )
 }
 
 /**
- * Display combat-statistics after a game
+ * Note: These stats have several quirks, e.g.
+ * kills and damage to own men contribute to your 'success',
+ * damage from explosions might be accounted several times,
+ * stun-damage is not accounted at all,
+ * a scout who gets no kills himself is hardly a coward, etc.
+ * @brief  Display combat-statistics after a game
+ * @sa     Soldier::explo_hit()
  */
 void endgame_stats()
-// Note: These stats have several quirks, e.g.
-// kills and damage to own men contribute to your 'success',
-// damage from explosions might be accounted several times,
-// stun-damage is not accounted at all, 
-// a scout who gets no kills himself is hardly a coward, etc.
-// See also: Soldier::explo_hit()
 {
     lua_message( "Enter: endgame_stats" );
     net->send_debug_message("result:%s", (win == loss) ? ("draw") : (win ? "victory" : "defeat"));
@@ -1615,7 +1615,8 @@ void gameloop()
 {
     int mouse_leftr = 1, mouse_rightr = 1, select_y = 0;
     int color1;
-    int b1 = 0;
+    int b1 = 0, k, who;
+    char buf[STDBUFSIZE];
 
     MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
     resize_screen2(0, 0);
@@ -1663,6 +1664,12 @@ void gameloop()
         g_console->redraw(screen, 0, SCREEN2H);
 
         net->check();
+
+    if (g_tie == 3) // Check if both players accepted the draw.
+    {
+        win = loss = 1;
+        DONE = 1;
+    }
 
         if (win || loss) break;
 
@@ -1992,17 +1999,29 @@ void gameloop()
                         MODE = MAP3D;
                     } else {
                         temp_mouse_range_ptr = new MouseRange(0, 0, SCREEN_W - 1, SCREEN_H - 1);
-                      //b1 = alert3( "", _("ABORT MISSION ?"), "",
-                      //             _("YES=RESIGN"), _("OFFER DRAW"), _("NO=CONTINUE"), 0,0,1 );
-                        b1 = alert( "", _("ABORT MISSION ?"), "",
-                                     _("YES=RESIGN"), _("NO=CONTINUE"), 0,1 );
+                        who = (p1 == platoon_local);
+                        k = (1 << who);
+                        b1 = alert3("", _("ABORT MISSION ?"), "", _("YES=RESIGN"),
+                            (g_tie & k) ? _("RECALL DRAW OFFER") : _("OFFER DRAW"),
+                            _("NO=CONTINUE"), 0, 0, 1);
+                      //  b1 = alert( "", _("ABORT MISSION ?"), "",
+                      //      _("YES=RESIGN"), _("NO=CONTINUE"), 0,1 );
                         delete temp_mouse_range_ptr;
                         if (b1 == 1) {
                             DONE = 1;
                             battle_report( "# %s\n", _("Game aborted") );
-                        }
-                        if (b1 == 2) {
-                            // Todo: process draw-button
+                        } else if (b1 == 2) {
+                            g_tie ^= k;
+                            net->send_tie(who);
+                            if (g_tie == 3) {
+                                sprintf(buf, "%s", _("Local: Draw offer accepted"));
+                            } else if (g_tie & k) {
+                                sprintf(buf, "%s", _("Local: Draw offered"));
+                            } else {
+                                sprintf(buf, "%s", _("Local: Draw offer recalled"));
+                            }
+                            g_console->printf(COLOR_SYS_PROMPT, buf);
+                            battle_report("# %s\n", buf);
                         }
                     }
                     break;

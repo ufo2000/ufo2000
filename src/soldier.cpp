@@ -979,17 +979,17 @@ int Soldier::tus_reserved(std::string *error)
 bool Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
 {
     if(!ISLOCAL)            // during enemy turn: don't check for reserved time
-        return havetime(walk_time, use_energy);
+        return (havetime(walk_time, use_energy) == OK);
 
     std::string error = "";
     int time = tus_reserved(&error);
     
-    if(!havetime(walk_time + time, 0) && havetime(time, 0)) {
+    if((havetime(walk_time + time, 0) != OK) && (havetime(time, 0) == OK)) {
         if(error != "")
             g_console->printf(COLOR_SYS_INFO1, error.c_str());
         return false;
     } else {
-        return havetime(walk_time, use_energy);
+        return (havetime(walk_time, use_energy) == OK);
     }
 }
 
@@ -1026,7 +1026,7 @@ bool Soldier::use_elevator(int dz)
 // Todo: Flying armor
 {
     // Check map borders and available time units
-    if (z + dz >= map->level || z + dz < 0 || !havetime(10))
+    if (z + dz >= map->level || z + dz < 0 || (havetime(10) != OK))
         return false;
     // Check that the soldier is standing on elevator and can use it
     if (!map->mcd(z, x, y, 0)->Gravlift || !map->mcd(z + dz, x, y, 0)->Gravlift)
@@ -1649,7 +1649,7 @@ int Soldier::deselect_item(Item *&it, int it_place, int &req_time)
 {
     for (int i = 0; i < NUMBER_OF_PLACES; i++) {
         req_time = calctime(it_place, i);
-        if (havetime(req_time)) {
+        if (havetime(req_time) == OK) {
             if (m_place[i]->mdeselect(it)) {
                 spend_time(req_time);
                 return i;
@@ -1723,7 +1723,7 @@ int Soldier::place(Place *pl)
 int Soldier::open_door()
 // Todo: Different sounds for different types of doors
 {
-    if (havetime(6)) {
+    if (havetime(6) == OK) {
         if (map->open_door(z, x, y, dir)) {
             soundSystem::getInstance()->play(SS_DOOR_CLICK);
             spend_time(6);
@@ -1776,7 +1776,7 @@ int Soldier::prime_grenade(int iplace, int delay_time, int req_time)
 {
     ASSERT((iplace == P_ARM_RIGHT) || (iplace == P_ARM_LEFT));
 
-    if (havetime(req_time)) {
+    if (havetime(req_time) == OK) {
         Item * it = item(iplace);
         ASSERT(it != NULL);
 
@@ -1803,7 +1803,7 @@ int Soldier::unload_ammo(Item * it)
     if ((rhand_item() != NULL) || (lhand_item() != NULL))
         return 0;
 
-    if (havetime(8)) {
+    if (havetime(8) == OK) {
         putitem(it, P_ARM_RIGHT);
         putitem(it->unload(), P_ARM_LEFT);
 
@@ -1824,7 +1824,7 @@ int Soldier::load_ammo(int iplace, Item * it)
     if (it == NULL)
         return 0;
 
-    if (!havetime(15)) return 0;
+    if (havetime(15) != OK) return 0;
 
     Item *gun = item(iplace);
     if (gun == NULL)
@@ -1863,18 +1863,22 @@ void Soldier::spend_time(int tm, int use_energy)
 
 /**
  * Function that checks if the soldier has time units and energy required
- * to do something. For actions that require energy. 
+ * to do something. For actions that require energy, use_energy should be 1.
  *
  * @param ntime       time required to perform an action
  * @param use_energy  flag which shows whether the action requires energy 
  *                    to perform
+ * @result            Error code from GameErrorCodes.
+ * @sa                GameErrorCodes
  */
 int Soldier::havetime(int ntime, int use_energy)
 {
     if (use_energy)
-        return ((ud.CurTU >= ntime) && (ud.CurEnergy >= (ntime / 2)));
-
-    return (ud.CurTU >= ntime);
+        if (ud.CurEnergy < (ntime / 2))
+            return ERR_NO_ENERGY;
+    if (ud.CurTU < ntime)
+        return ERR_NO_TUS;
+    return OK;
 }
 
 /**
@@ -2139,7 +2143,7 @@ void Soldier::try_shoot()
     // this shot. So we need to check if TWO shots can be made (one right now 
     // and another one after left clicking mouse in a targeting mode again)
 
-    if (!havetime(target.time * 2 * FIRE_num)) {
+    if (havetime(target.time * 2 * FIRE_num) != OK) {
         TARGET = 0;
     }
 
@@ -2187,7 +2191,7 @@ void Soldier::try_reaction_shot(Soldier *the_target)
 
     // Check that we can fire at least one shot using current settings
 
-    if (!havetime(target.time * FIRE_num)) {
+    if (havetime(target.time * FIRE_num) != OK) {
         FIRE_num = 0;
         return;
     }
@@ -2266,8 +2270,8 @@ void Soldier::shoot(int zd, int xd, int yd, int ISLOCAL)
 
 int Soldier::assign_target(Action action, int iplace)
 {
-    Item * it = item(iplace);
-    if (it == NULL) return -1;
+    Item *it = item(iplace);
+    if (it == NULL) return ERR_NO_ITEM;
     switch (action)
     {
         case THROW:
@@ -2299,14 +2303,14 @@ int Soldier::assign_target(Action action, int iplace)
     target.item = it;
     target.place = iplace;
     target.action = action;
-    return 0;
+    return OK;
 }
 
 int Soldier::do_target_action(int z0, int x0, int y0, int zd, int xd, int yd, Action action, int iplace)
 {
     int chk;
     chk = assign_target(action, iplace);
-    if (chk != 0) return chk;
+    if (chk != OK) return chk;
     switch (action)
     {
         case THROW:
@@ -2334,11 +2338,11 @@ int Soldier::do_target_action(int z0, int x0, int y0, int zd, int xd, int yd, Ac
 
 int Soldier::punch(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time)
 {
-    if (!havetime(req_time))
-        return -1;
+    int chk;
     Item *it = item(iplace);
-    if (it == NULL)
-        return -2;
+    if (it == NULL) return ERR_NO_ITEM;
+    chk = havetime(req_time);
+    if (chk != OK) return chk;
 
     REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
     REAL fi = acos((REAL)(zd - z0) / ro);
@@ -2346,24 +2350,24 @@ int Soldier::punch(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, i
     apply_accuracy(fi, te);
     spend_time(req_time);
     m_bullet->punch(z0, x0, y0, fi, te, it->itemtype());
-    return 0;
+    return OK;
 }
 
 
 int Soldier::thru(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time)
 {
+    int chk;
+    Item *it = item(iplace);
+    if (it == NULL) return ERR_NO_ITEM;
+    chk = havetime(req_time);
+    if (chk != OK) return chk;
     zd -= 8;
     REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
     int ro_real = m_bullet->calc_throw(z0, x0, y0, zd, xd, yd);
     if (ro_real > 18 * 16) {
         TARGET = 1; FIRE_num = 0;
-        return -3;
+        return ERR_DISTANCE;
     }
-    if (!havetime(req_time))
-        return -1;
-    Item *it = item(iplace);
-    if (it == NULL)
-        return -2;
 
     REAL fi = acos((REAL)(zd - z0) / ro);
     REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
@@ -2372,17 +2376,17 @@ int Soldier::thru(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, in
     spend_time(req_time);
     m_place[iplace]->set_item(NULL);
     m_bullet->thru(z0, x0, y0, ro, fi, te, zA, it);
-    return 0;
+    return OK;
 }
 
 
 int Soldier::aimedthrow(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time)
 {
-    if (!havetime(req_time))
-        return -1;
+    int chk;
     Item *it = item(iplace);
-    if (it == NULL)
-        return -2;
+    if (it == NULL) return ERR_NO_ITEM;
+    chk = havetime(req_time);
+    if (chk != OK) return chk;
 
     REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
     REAL fi = acos((REAL)(zd - z0) / ro);
@@ -2391,17 +2395,17 @@ int Soldier::aimedthrow(int z0, int x0, int y0, int zd, int xd, int yd, int ipla
     spend_time(req_time);
     m_place[iplace]->set_item(NULL);
     m_bullet->aimedthrow(z0, x0, y0, fi, te, it);
-    return 0;
+    return OK;
 }
 
 
 int Soldier::beam(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time)
 {
-    if (!havetime(req_time))
-        return -1;
+    int chk;
     Item *it = item(iplace);
-    if (it == NULL)
-        return -2;
+    if (it == NULL) return ERR_NO_ITEM;
+    chk = havetime(req_time);
+    if (chk != OK) return chk;
 
     REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
     REAL fi = acos((REAL)(zd - z0) / ro);
@@ -2410,17 +2414,18 @@ int Soldier::beam(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, in
     spend_time(req_time);
     soundSystem::getInstance()->play(it->get_sound());
     m_bullet->beam(z0, x0, y0, fi, te, it->itemtype());
-    return 0;
+    return OK;
 }
 
 
 int Soldier::fire(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time)
 {
-    if (!havetime(req_time))
-        return -1;
+    int chk;
     Item *it = item(iplace);
-    if ((it == NULL) || (!it->haveclip()) || (it->roundsremain() < 1))
-        return -2;
+    if ((it == NULL)) return ERR_NO_ITEM;
+    if ((!it->haveclip()) || (it->roundsremain() < 1)) return ERR_NO_AMMO;
+    chk = havetime(req_time);
+    if (chk != OK) return chk;
 
     REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
     REAL fi = acos((REAL)(zd - z0) / ro);
@@ -2430,7 +2435,7 @@ int Soldier::fire(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, in
     soundSystem::getInstance()->play(it->get_sound());
     m_bullet->fire(z0, x0, y0, fi, te, it->cliptype());
     it->shot();
-    return 0;
+    return OK;
 }
 
 

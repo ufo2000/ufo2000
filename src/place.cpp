@@ -593,7 +593,7 @@ void Place::draw_deselect_time(int PLACE_NUM, int time)
 		//place_name[PLACE_NUM]
 		//textout(screen2, small, time, gx, gy-8, 66);
 
-		//if (!havetime(time)) { color = COLOR_GRAY; }  // ??
+		//if (havetime(time) != OK) { color = COLOR_GRAY; }  // ??
 		printsmall(gx + 1 + text_length(g_small_font, place_name[PLACE_NUM]), gy - 6, color, time);
 	}
 }

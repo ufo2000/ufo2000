@@ -360,7 +360,14 @@ void Net::check()
 			soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
 			g_console->print(pkt.str(), COLOR_RED00);
 			break;
+        case CMD_TIE:
+            recv_tie();
+            break;
+        case CMD_INITRAND:
+            recv_initrand();
+            break;
 		case CMD_NONE:
+        case COMMAND_NUM:
 			ASSERT(false);
 			break;
 	};
@@ -1399,6 +1406,54 @@ int Net::recv_morale_change()
 	return 1;
 	
 	return 0;
+}
+
+extern int g_tie;
+
+void Net::send_tie(int who)
+{
+    if (!SEND) return;
+    pkt.create(CMD_TIE);
+    pkt << who;
+    send();
+}
+
+int Net::recv_tie()
+{
+    if (gametype == GAME_TYPE_HOTSEAT) return 0; // XOR - Should be done only once.
+    int k, who;
+    char buf[STDBUFSIZE];
+    pkt >> who;
+    k = (1 << who);
+    g_tie ^= k;
+    if (g_tie == 3) {
+        sprintf(buf, "%s", _("Remote: Draw offer accepted"));
+    } else if (g_tie & k) {
+        sprintf(buf, "%s", _("Remote: Draw offered"));
+    } else {
+        sprintf(buf, "%s", _("Remote: Draw offer recalled"));
+    }
+    g_console->printf(COLOR_SYS_PROMPT, buf);
+    battle_report("# %s\n", buf);
+    return 0;
+}
+
+extern int g_random_init[2];
+
+void Net::send_initrand(int init_num)
+{
+    if (!SEND) return;
+    pkt.create(CMD_INITRAND);
+    pkt << init_num;
+    send();
+}
+
+int Net::recv_initrand()
+{
+    int initrand;
+    pkt >> initrand;
+    g_random_init[1] = initrand;
+    return 0;
 }
 
 void Net::send_debug_message(const char *fmt, ...)

@@ -21,8 +21,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef PACKET_H
 #define PACKET_H
 
-#define COMMAND_NUM 32
-
 enum Command {CMD_MESSAGE = -2, CMD_NONE = -1,
               CMD_NOTICE = 0, CMD_QUITGAME, CMD_ENDTURN,              
               CMD_OPENDOOR, CMD_CHANGEPOSE, CMD_PRIMEGRENADE,         
@@ -40,7 +38,8 @@ enum Command {CMD_MESSAGE = -2, CMD_NONE = -1,
               CMD_USE_ELEVATOR,
               CMD_SCENARIO, CMD_RULES, CMD_OPTIONS,
               CMD_PANIC, CMD_MORALE, CMD_RESTIME, CMD_P2_ISSIT,
-              CMD_EQUIPMENT
+              CMD_EQUIPMENT, CMD_TIE, CMD_INITRAND,
+              COMMAND_NUM // COMMAND_NUM - Should be the last command!
              };
 
 

@@ -465,7 +465,6 @@ const char *F(const char *fileid);
 #define CELL_SCR_X 16
 #define CELL_SCR_Y 8
 #define CELL_SCR_Z 24
-const int SQUAD_LIMIT = 20;
 
 #include "../ufo2000.h"
 

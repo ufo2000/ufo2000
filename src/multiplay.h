@@ -96,6 +96,8 @@ private:
 	int recv_panic();
 	int recv_morale_change();
 	int recv_equipment();
+    int recv_tie();
+    int recv_initrand();
 	
 public:
 	ClientServerUfo *m_internet_server;
@@ -156,6 +158,8 @@ public:
 	void send_panic(int NID, int action);
 	void send_morale_change(int delta);
 	void send_equipment();
+    void send_tie(int who);
+    void send_initrand(int init_num);
 
 	void send_finish_planner();
 	int recv_finish_planner();

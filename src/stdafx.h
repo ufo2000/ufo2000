@@ -91,9 +91,12 @@ extern "C" {
 #define usleep(t) Sleep((t + 999) / 1000)
 #endif
 
+/**
+ * Standard game errors are coded with these constants.
+ */
+enum GameErrorCodes {OK = 0, ERR_NO_TUS = -1, ERR_NO_ENERGY = -2,
+ ERR_NO_AMMO = -3, ERR_NO_ITEM = -4, ERR_DISTANCE = -5};
 
-
+const int SQUAD_LIMIT = 20;
 
 #endif //__STDAFX_H__
-
-
