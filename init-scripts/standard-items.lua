@@ -330,7 +330,7 @@ AddXcomItem {
 AddXcomItem {
 	index = 17,
 	cost = 173,
-	name = "LASER GUN",
+	name = "LASER RIFLE",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 0),
 	pMap = pck_image("$(xcom)/units/floorob.pck", 0),
 	damage = 60,
