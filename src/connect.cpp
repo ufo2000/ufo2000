@@ -395,6 +395,9 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 						FLAGS |= F_RAWMESSAGES;
 					}
 					break;
+				case KEY_F9:
+					keyswitch(0);
+					break;
 				case KEY_F10:
 					change_screen_mode();
 					break;

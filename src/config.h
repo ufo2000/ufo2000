@@ -51,6 +51,8 @@ const char *cfg_get_endturn_image_file_name();
 const char *cfg_get_win_image_file_name();
 const char *cfg_get_lose_image_file_name();
 
+FONT *cfg_get_console_font();
+
 extern MIDI                  *g_menu_midi_music;
 extern MIDI                  *g_setup_midi_music;
 extern MIDI                  *g_editor_midi_music;

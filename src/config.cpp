@@ -61,6 +61,8 @@ std::string g_server_password;
 std::string g_server_proxy;
 int         g_server_autologin;
 
+static std::string consolefont;
+
 // Music.
 MIDI                  *g_menu_midi_music;
 MIDI                  *g_setup_midi_music;
@@ -70,6 +72,19 @@ MIDI                  *g_win_midi_music;
 MIDI                  *g_lose_midi_music;
 MIDI                  *g_net1_midi_music;
 MIDI                  *g_net2_midi_music;
+
+FONT *cfg_get_console_font()
+{
+	FONT *fnt = (SCREEN_W >= 800) ? large : g_small_font;
+
+	if (consolefont == "xcom_small") {
+		fnt = g_small_font;
+	} else if (consolefont == "xcom_large") {
+		fnt = large;
+	}
+
+	return fnt;
+}
 
 int cfg_get_base_accuracy()
 {
@@ -206,6 +221,8 @@ void loadini()
 	endturn_image_file_name = get_config_string(gen, "endturn_image", "$(xcom)/ufograph/tac00.scr");
 	win_image_file_name = get_config_string(gen, "win_image", "$(xcom)/geograph/back01.scr");
 	lose_image_file_name = get_config_string(gen, "lose_image", "$(xcom)/geograph/back02.scr");
+
+	consolefont = get_config_string(gen, "consolefont", "xcom_small");
 
 	g_server_host = get_config_string("Server", "host", "127.0.0.1");
 	g_server_proxy = get_config_string("Server", "http_proxy", "auto");

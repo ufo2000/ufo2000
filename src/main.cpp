@@ -451,7 +451,6 @@ void initmain(int argc, char *argv[])
     if (get_config_int("Flags", "F_SOUNDCHECK", 0)) FLAGS |= F_SOUNDCHECK;    // perform soundtest.
     if (get_config_int("Flags", "F_LOGTOSTDOUT", 0)) FLAGS |= F_LOGTOSTDOUT;  // Copy all init console output to stdout.
     if (get_config_int("Flags", "F_DEBUGDUMPS", 0)) FLAGS |= F_DEBUGDUMPS;    // Produce a lot of files with the information which can help in debugging
-	std::string consolefont = get_config_string("General", "consolefont", "xcom_small");
 
 	if (argc > 1) {
 		g_server_login = argv[1];
@@ -545,13 +544,7 @@ void initmain(int argc, char *argv[])
 	Item::initbigobs();
 
 	console<<"new console window"<<std::endl;
-	FONT * fnt = font;
-	if (consolefont == "xcom_small") {
-		fnt = g_small_font;
-	} else if (consolefont == "xcom_large") {
-		fnt = large;
-	}
-	g_console = new ConsoleWindow(SCREEN_W, SCREEN_H - SCREEN2H, fnt);
+	g_console = new ConsoleWindow(SCREEN_W, SCREEN_H - SCREEN2H, cfg_get_console_font());
 
 	console<<"new icon"<<std::endl;
 	icon = new Icon((SCREEN2W - 320) / 2, SCREEN2H - 56);
@@ -1115,6 +1108,9 @@ void endgame_stats()
 				case KEY_DOWN:
 					resize_screen2(0, 10);
 					break;
+				case KEY_F9:
+					keyswitch(0);
+					break;
 				case KEY_F10:
 					change_screen_mode();
 					break;
@@ -1426,12 +1422,7 @@ void gameloop()
 					}
 					break;
 				case KEY_F9:
-					if (FLAGS & F_SEL_ANY_MAN) {
-						if (MODE == WATCH)
-							MODE = MAP3D;
-						else
-							MODE = WATCH;
-					}
+					keyswitch(0);
 					break;
 				case KEY_F10:
 					change_screen_mode();

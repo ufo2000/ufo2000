@@ -378,7 +378,7 @@ int connect_internet_server()
 
 	g_server_autologin = 1; // Remember successful login
 
-	std::auto_ptr<ConsoleWindow> chat(new ConsoleWindow(SCREEN_W, SCREEN_H, g_small_font));
+	std::auto_ptr<ConsoleWindow> chat(new ConsoleWindow(SCREEN_W, SCREEN_H, cfg_get_console_font()));
 	std::auto_ptr<WindowBorder> chat_border(new WindowBorder(chat.get(), 
 		std::string("ufo2000 internet server (") + cfg_get_server_host() + std::string(")"), large));
 	chat_border->set_full_redraw();
@@ -521,19 +521,27 @@ int connect_internet_server()
 		if (keypressed()) {
 			int scancode; int keycode = ureadkey(&scancode);
 
-			if (scancode == KEY_F10) {
-				change_screen_mode();
-				lobby_init_mouse();
-			}
-			if (scancode == KEY_ESC && askmenu("DISCONNECT FROM SERVER")) break;
-
-			if (chat->process_keyboard_input(keycode, scancode)) {
-				server->send_packet(SRV_MESSAGE, chat->get_text());
-				users_border->resize(-1, -1);
-				users_border->resize(users_border->get_width(), SCREEN_H);
-				chat_border->resize(SCREEN_W - users_border->get_width(), SCREEN_H);
-				chat_border->set_full_redraw();
-				users_border->set_full_redraw();
+			switch (scancode) {
+				case KEY_F9:
+					keyswitch(0);
+					break;
+				case KEY_F10:
+					change_screen_mode();
+					lobby_init_mouse();
+					break;
+				case KEY_ESC:
+					if (askmenu("DISCONNECT FROM SERVER"))
+						return -1;
+					break;
+				default:
+					if (chat->process_keyboard_input(keycode, scancode)) {
+						server->send_packet(SRV_MESSAGE, chat->get_text());
+						users_border->resize(-1, -1);
+						users_border->resize(users_border->get_width(), SCREEN_H);
+						chat_border->resize(SCREEN_W - users_border->get_width(), SCREEN_H);
+						chat_border->set_full_redraw();
+						users_border->set_full_redraw();
+					}
 			}
 		}
 		// Do not load cpu so heavy
