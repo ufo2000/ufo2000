@@ -104,4 +104,25 @@ void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, c
     catch(std::exception &ex) {
         server_log("Exception Occured: %s",ex.what());
     }
+
+    try {
+        db_conn.executenonquery("begin transaction;");
+        db_conn.executenonquery("update ufo2000_games set last_received_packed=last_received_packed+1 where id=%d;",game_id);
+        long int last_received_packed = db_conn.executeint32("select last_received_packed from ufo2000_games where id=%d;",game_id);
+        db_conn.executenonquery("commit;");
+
+        time_t now = time(NULL);
+        struct tm * t = localtime(&now);
+        char timebuf[1000];
+        strftime(timebuf, 1000, "%d/%m/%Y %H:%M:%S", t);
+
+        db_conn.executenonquery("\
+            insert into ufo2000_game_packets\
+            (game, id, sender, date, command) values \
+            (%d, %d, %d, '%s', '%s' );",
+            game_id, last_received_packed, sender->position, timebuf, packet.c_str());
+    }
+    catch(std::exception &ex) {
+        server_log("Exception Occured: %s",ex.what());
+    }
 }
