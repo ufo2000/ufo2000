@@ -23,14 +23,18 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 void initsound();
 void closesound();
-void play(int SNUM);
+void play(int SNUM, int vol = 255);
 void play(int SNUM, int vol, int pan, int freq, int loop);
 void setmodvol(int v);
 int getmodvol();
 void setdigvol(int v);
 int getdigvol();
 int modplay(char *modname);
+void playall();
 
+extern MIDI *g_midi_music;
+
+/*
 #define S_SCREAM   0
 #define S_EMPTY    1
 #define S_FIRE     4      //from rifle
@@ -41,5 +45,17 @@ int modplay(char *modname);
 #define S_MESSAGE  20     //come from remote
 #define S_LASER    18     //fire from laser guns 
 //#define S_THROW
+*/
+
+#define S_EXPLODE 26
+#define S_FIRE    18
+#define S_DIE     55
+#define S_LASER   33
+#define S_HIT     36
+#define S_MESSAGE 0
+#define S_THROW   53
+#define S_TRAMP1  40
+#define S_TRAMP2  41
+#define S_DOOR    17
 
 #endif

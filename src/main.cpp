@@ -730,6 +730,8 @@ void gameloop()
 {
 	int mouse_leftr = 1, mouse_rightr = 1, select_y = 0;
 
+	play_midi(g_midi_music, 1);
+
 	clear_keybuf();
 	GAMELOOP = 1;
 	RECALC_VISIBILITY = 1;
@@ -1020,6 +1022,9 @@ void gameloop()
 			CHANGE = 1;
 		}
 	}
+
+	play_midi(NULL, 0);
+
 	GAMELOOP = 0;
 	net->send_quit();
 

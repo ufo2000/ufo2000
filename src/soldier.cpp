@@ -31,6 +31,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "multiplay.h"
 #include "wind.h"
 #include "explo.h"
+#include "config.h"
 
 SKIN_INFO g_skins[] = 
 {
@@ -934,6 +935,8 @@ int Soldier::move(int ISLOCAL)
 		//2) time = time_of_dest;
 
 		if (phase == 4) {
+			play(S_TRAMP1, 128);
+
 			map->set_man(z, x, y, NULL);
 
 			x += DIR_DELTA_X(dir);
@@ -949,6 +952,7 @@ int Soldier::move(int ISLOCAL)
 		}
 
 		if (phase >= 8) {
+			play(S_TRAMP2, 128);
 			phase = 0;
 			spend_time(walktime( -1));
 
@@ -1087,7 +1091,7 @@ void Soldier::hit(int pierce)
 	}
 	else {
 		ud.CurHealth -= pierce;
-		play(S_WOUND);
+//		play(S_WOUND);
 	}
 }
 
@@ -1100,6 +1104,7 @@ void Soldier::explo_hit(int pierce) //silent
 		ud.CurHealth = 0;
 		if (m_state != DIE)
 		{
+			play(S_DIE);
 			m_state = DIE;
 			phase = 0;
 		}
@@ -1274,6 +1279,7 @@ int Soldier::open_door()
 {
 	if (havetime(6)) {
 		if (map->open_door(z, x, y, dir)) {
+			play(S_DOOR);
 			spend_time(6);
 			net->send_open_door(NID);
 			return 1;
@@ -1425,8 +1431,8 @@ static double randval(double min, double max)
 
 void Soldier::apply_accuracy(REAL & fi, REAL & te)
 {
-	REAL TE_STEP = (PI / 8. / (double)(g_base_accuracy));
-	REAL FI_STEP = (PI / 32. / (double)(g_base_accuracy));
+	REAL TE_STEP = (PI / 8. / (double)(cfg_get_base_accuracy()));
+	REAL FI_STEP = (PI / 32. / (double)(cfg_get_base_accuracy()));
 
 	double acc = 100. * 100. / (double)(target.accur * target.accur);
 

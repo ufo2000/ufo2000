@@ -33,4 +33,7 @@ int setdplayplay();
 void configure();
 void aboutinfo();
 
+int cfg_get_base_accuracy();
+const char *cfg_get_music_file_name();
+
 #endif

@@ -37,8 +37,9 @@ struct { const char *mName; unsigned long mCrc32; } DataFilesCrc32[] =
     { "./ufo2000.dat", 0x67D1EC7A },
     { "./keyboard.dat", 0x359B7143 },
 
-    { "./sound/sound1.cat", 0x514BD2C6 },
-    { "./sound/sound2.cat", 0x432F7EBF },
+    { "./sound/sample.cat", 0xF89E1194 },
+    { "./sound/sample2.cat", 0xCEB4FB6E },
+    { "./sound/sample3.cat", 0x505D7A30 },
 
     { "./geodata/biglets.dat", 0xEBC00F20 },
     { "./geodata/loftemps.dat", 0x7B354479 },

@@ -20,6 +20,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #include "global.h"
 #include <string.h>
+#include <string>
 #include "spk.h"
 #include "video.h"
 #include "config.h"
@@ -37,7 +38,18 @@ static int USETRANS = 1;
 static char *gen = "General";
 static char *edit = "Editor";
 
-int g_base_accuracy = 100;
+static int base_accuracy = 75;
+static std::string midi_file_name;
+
+int cfg_get_base_accuracy()
+{
+	return base_accuracy;
+}
+
+const char *cfg_get_music_file_name()
+{
+	return midi_file_name.c_str();
+}
 
 void loadini()
 {
@@ -50,7 +62,7 @@ void loadini()
 	SCREEN2W = get_config_int(gen, "width", 430);
 	SCREEN2H = get_config_int(gen, "height", 280);
 
-	// check screen dimensions as set in .ini for too low or too high settings
+//	check screen dimensions as set in .ini for too low or too high settings
 
 	if (SCREEN2W > 640) SCREEN2W = 640;
 	if (SCREEN2H > 380) SCREEN2H = 380;
@@ -78,7 +90,8 @@ void loadini()
 
 	g_time_limit = get_config_int(gen, "time_limit", -1);
 
-	g_base_accuracy = get_config_int(gen, "accuracy", 100);
+//	base_accuracy = get_config_int(gen, "accuracy", 75);
+	midi_file_name = get_config_string(gen, "music", "sound/gmtactic.mid");
 }
 
 void saveini()
