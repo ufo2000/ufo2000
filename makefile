@@ -8,32 +8,30 @@ INCLUDES = ${shell allegro-config --cflags}
 CFLAGS += $(INCLUDES)
 LIBS = $(addprefix -l,$(LIBRARIES)) ${shell allegro-config --libs }
 
-OBJS = about.o bullet.o cell.o config.o connect.o dirty.o editor.o explo.o \
-       font.o icon.o inventory.o item.o keys.o main.o mainmenu.o \
-       map.o map_pathfind.o multiplay.o netdplay.o netipx.o netmdm.o netsock.o \
-       packet.o pck.o place.o platoon.o soldier.o sound.o spk.o \
-       terrapck.o units.o video.o wind.o word.o crc32.o persist.o jpeg.o pfxopen.o
+SRCS = about.cpp bullet.cpp cell.cpp config.cpp connect.cpp dirty.cpp \
+       editor.cpp explo.cpp font.cpp icon.cpp inventory.cpp item.cpp  \
+       keys.cpp main.cpp mainmenu.cpp map.cpp map_pathfind.cpp        \
+       multiplay.cpp netdplay.cpp netipx.cpp netmdm.cpp netsock.cpp   \
+       packet.cpp pck.cpp place.cpp platoon.cpp soldier.cpp sound.cpp \
+       spk.cpp terrapck.cpp units.cpp video.cpp wind.cpp word.cpp     \
+       crc32.cpp persist.cpp jpeg.cpp pfxopen.cpp
 
-SRCS_DIR = ./src
+OBJS = $(addprefix obj/,$(SRCS:.cpp=.o))
+DEPS = $(addprefix obj/,$(SRCS:.cpp=.d))
 
 NAME = ufo2000
 
-all:  makefile.dep $(NAME)
+all:  $(NAME)
 
-%.o: $(SRCS_DIR)/%.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
+obj/%.o: src/%.cpp
+	$(CC) -MMD $(CFLAGS) -c $< -o $@
 
 $(NAME): $(OBJS)
 	$(LD) $(CFLAGS) -o $@ $^ $(LIBS)
 
 clean:
-	$(RM) *.o
+	$(RM) obj/*.o
+	$(RM) obj/*.d
 	$(RM) $(NAME)
-	$(RM) makefile.dep
 
-
-makefile.dep: $(SRCS_DIR)/*.cpp $(SRCS_DIR)/*.h
-	$(RM) makefile.dep
-	g++ -MM -DLINUX $(INCLUDES) $(SRCS_DIR)/*.cpp >> makefile.dep
-
--include makefile.dep
+-include $(DEPS)

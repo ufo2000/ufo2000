@@ -396,7 +396,6 @@ int FINISH_PLANNER = 0;
 
 int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 {
-	int sendbuf_len = 0;
 	int mouse_leftr = 1, mouse_rightr = 1;
 	int DONE = 0;
 	//HOST = 0;
@@ -500,12 +499,12 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 
 		if (!(mouse_b & 1)) {
 			mouse_leftr = 1;
-			CHANGE = 1;
+//			CHANGE = 1;
 		}
 
 		if (!(mouse_b & 2)) {
 			mouse_rightr = 1;
-			CHANGE = 1;
+//			CHANGE = 1;
 		}
 
 		process_keyswitch();

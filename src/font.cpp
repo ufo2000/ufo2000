@@ -263,7 +263,7 @@ struct uaf_internal_data {
 	int space_width; /* width of U0020 character. say, 2/3 of maxwidth (16 or 8) */
 	int base_color; /* color to use if blitting with fg color <0. */
 };
-
+/*
 static void dump_font_info(AL_CONST FONT *f) {
     uaf_internal_data *idat = (uaf_internal_data *) (f->data);
     uaf_fontcache *thecache;
@@ -276,7 +276,7 @@ static void dump_font_info(AL_CONST FONT *f) {
         }
     }    
 }
-
+*/
 /** Creates fontcache entry for given textmode and fgcolor. Gets invoked on a cache miss.
  * Assumes that bitmaps are/should be/will be in system memory and are of 8 bit depth. 
  * @param f The 'this' pointer.

@@ -54,7 +54,7 @@ static int keymap[128] =
 void prepare_keymap(const char *eng, const char *lng)
 {
 	assert(get_uformat() == U_UTF8);
-	assert(strlen(eng) == ustrlen(lng));
+	assert((int)strlen(eng) == (int)ustrlen(lng));
 
 	for (int i = 0; i < 128; i++) {
 		const char * p = strchr(eng, (char)i);

@@ -83,7 +83,7 @@ volatile int g_switch_in_counter;
  * task in win32. All the information drawn on screen is lost, so we
  * need some way to detect this situation.
  */
-static void switch_in_callback()
+void switch_in_callback()
 {
 	g_switch_in_counter++;
 }
