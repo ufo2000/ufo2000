@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002       ufo2000 development team
+Copyright (C) 2002-2003  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,8 +30,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 IMPLEMENT_PERSISTENCE(Platoon, "Platoon");
 
-int VISIBILITY_CHANGED = 1;
-
 Platoon::Platoon(int PID, int num)
 {
 	StatEntry *current;
@@ -56,6 +54,8 @@ Platoon::Platoon(int PID, int num)
 		}
 		s1 = s2;
 	}
+
+	m_visibility_changed = 1;
 }
 
 Platoon::Platoon(int PID, PLAYERDATA * pd)
@@ -82,6 +82,7 @@ Platoon::Platoon(int PID, PLAYERDATA * pd)
 		}
 		s1 = s2;
 	}
+	m_visibility_changed = 1;
 }
 
 
@@ -103,8 +104,6 @@ void Platoon::destroy()
 	delete m_stats;
 }
 
-
-int RECALC_VISIBILITY = 1;
 
 void Platoon::move(int ISLOCAL)
 {
@@ -129,44 +128,40 @@ void Platoon::move(int ISLOCAL)
 				s->die();
 				size--;
 				delete s;
-				RECALC_VISIBILITY = 1;
+				m_visibility_changed = 1;
 			}
 			else
 			  if (s->x != -1)
 			  {
 			 	s->stun();
-				RECALC_VISIBILITY = 1;
+				m_visibility_changed = 1;
 			  }
 			
 		} else {
 			ss = ss->next();
 		}
 	}
-	if (RECALC_VISIBILITY && ISLOCAL) {
-		ss = man;
-		while (ss != NULL) {
-			if (ss->state() != STUN)
-				ss->calc_visible_cells();
-			ss = ss->next();
-		}
-		VISIBILITY_CHANGED = 1;
-		RECALC_VISIBILITY = 0;
-	}
 
-	if (ISLOCAL && VISIBILITY_CHANGED) {
-		char visible_cells[4 * 6 * 10 * 6 * 10];
-		memset(visible_cells, 0, sizeof(visible_cells));
+	if (m_visibility_changed) {
+		
+		memset(m_visible, 0, sizeof(m_visible));
+
 		ss = man;
 		while (ss != NULL) {
 			if (ss->state() != STUN) {
-				for (int i = 0; i < 4 * 6*10 * 6*10; i++) {
-					visible_cells[i] |= ss->m_visible_cells[i];
-				}
+				ss->calc_visible_cells();
+				int n = 0, k, i, j, width_10 = 10 * map->width, height_10 = 10 * map->height;
+				for (k = 0; k < map->level; k++)
+					for (i = 0; i < width_10; i++)
+						for (j = 0; j < height_10; j++) {
+							m_visible[k][i][j] |= ss->m_visible_cells[n++];
+							m_seen[k][i][j] |= m_visible[k][i][j];
+						}
 			}
 			ss = ss->next();
 		}
-		map->update_visible_cells(visible_cells);
-		VISIBILITY_CHANGED = 0;
+
+		m_visibility_changed = 0;
 	}
 }
 
@@ -347,23 +342,6 @@ int Platoon::freeNID()
 		ss = ss->next();
 	}
 	return i;
-}
-
-
-void Platoon::del(int SID)
-{
-	Soldier *ss = man;
-
-	while (ss != NULL) {
-		if (ss->NID == SID) {
-			if (ss == man)
-				man = ss->next();
-			ss->unlink();
-			delete(ss);
-			return ;
-		}
-		ss = ss->next();
-	}
 }
 
 

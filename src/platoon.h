@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002       ufo2000 development team
+Copyright (C) 2002-2003  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,6 +38,8 @@ private:
 
 	Statistics *m_stats;
 
+	int m_visibility_changed;
+
 public:
 	Platoon() { memset(m_seen, 0, sizeof(m_seen)); }
 	Platoon(int PID, int num);
@@ -62,13 +64,13 @@ public:
 	Place *find_item(Item *it, int &lev, int &col, int &row);
 	int check_for_hit(int z, int x, int y);
 	void apply_hit(int sniper, int z, int x, int y, int type, int hitdir);
+	void set_visibility_changed() { m_visibility_changed = true; }
 
 	int nobullfly();
 	int nomoves();
 
 	int realsize();
 	int freeNID();
-	void del(int SID);
 
 	Soldier *captain() { return man; }
 	int num_of_men() { return size; }

@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002       ufo2000 development team
+Copyright (C) 2002-2003  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -156,7 +156,6 @@ GEODATA mapdata;
 PLAYERDATA pd1, pd2;
 PLAYERDATA *pd_local, *pd_remote;
 int local_platoon_size;
-extern int RECALC_VISIBILITY;
 
 // For endgame.
 int win;
@@ -224,7 +223,6 @@ void restartgame()
 	sel_man = platoon_local->captain();
 	map->center(sel_man);
 	DONE = 0; TARGET = 0; turn = 0;
-	RECALC_VISIBILITY = 1;
 }
 
 int initgame()
@@ -662,8 +660,6 @@ int build_crc()
 	return crc;
 }
 
-extern int RECALC_VISIBILITY;
-
 /**
  * Check that no moves are performed on the map, so that it is save to end turn or
  * do something similar
@@ -775,7 +771,7 @@ void send_turn()
 		if (sel_man != NULL)
 			map->center(sel_man);
 
-		RECALC_VISIBILITY = 1;
+		platoon_local->set_visibility_changed();
 
 		alert(" ", "  NEXT TURN  ", " ", "    OK    ", NULL, 1, 0);
 	}
@@ -968,7 +964,9 @@ void gameloop()
 
 	clear_keybuf();
 	GAMELOOP = 1;
-	RECALC_VISIBILITY = 1;
+
+	platoon_local->set_visibility_changed();
+	platoon_remote->set_visibility_changed();
 
 	if (MODE != WATCH) {
 		g_time_left = g_time_limit;
@@ -1016,7 +1014,6 @@ void gameloop()
 		}
 
 		while (MOVEIT > 0) {
-			//map->clearvis();
 			if (FLAGS & F_CLEARSEEN)
 				map->clearseen();
 
@@ -1218,6 +1215,7 @@ void gameloop()
 						if (!loadgame("ufo2000.sav")) {
 							alert("saved game not found", "", "", "OK", NULL, 0, 0);
 						}
+						inithotseatgame();
 					}
 					break;
 				case KEY_F5:
@@ -1544,6 +1542,7 @@ void start_loadgame()
    		alert("saved game not found", "", "", "OK", NULL, 0, 0);
    		return;
    	}
+	inithotseatgame();
 
 	map->center(sel_man);
 	DONE = 0;

@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002       ufo2000 development team
+Copyright (C) 2002-2003  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -584,15 +584,6 @@ int Map::center2d(int xx, int yy)
 	return 0;
 }
 
-void Map::clearvis()
-{
-	for (int k = 0; k < level; k++)
-		for (int i = 0; i < 10*width; i++)
-			for (int j = 0; j < 10*height; j++) {
-				set_visible(k, i, j, 0);
-			}
-}
-
 void Map::clearseen()
 {
 	for (int k = 0; k < level; k++)
@@ -702,11 +693,11 @@ void Map::build_visi()
 	}
 }
 
-extern int RECALC_VISIBILITY;
-
 void Map::rebuild_visi(int z, int x, int y)
 {
-	RECALC_VISIBILITY = 1;
+	platoon_local->set_visibility_changed();
+	platoon_remote->set_visibility_changed();
+
 	for (int lev = z - 1; lev <= z + 1; lev++) {
 		if ((lev < 0) || (lev >= level))
 			continue;
@@ -1259,23 +1250,6 @@ int Map::find_ground(int lev, int col, int row)
 	return lev;
 }
 
-void Map::update_visible_cells(char *visible_cells)
-{
-	int n = 0, k, i, j, width_10 = 10 * width, height_10 = 10 * height;
-	for (k = 0; k < level; k++)
-		for (i = 0; i < width_10; i++)
-			for (j = 0; j < height_10; j++)
-				set_visible(k, i, j, visible_cells[n++]);
-
-	if (FLAGS & F_CLEARSEEN) {
-		n = 0;
-		for (k = 0; k < level; k++)
-			for (i = 0; i < width_10; i++)
-				for (j = 0; j < height_10; j++)
-					set_seen(k, i, j, visible_cells[n++]);
-	}
-}
-
 #define FI_STEP (PI / 64.0)
 #define TE_STEP (PI / 64.0)
 
@@ -1284,11 +1258,12 @@ static char field[8 * 6*10 * 6*10];
 int Map::calc_visible_cells(int z, int x, int y, int dir, char *visicells, int *ez, int *ex, int *ey)
 {
 	//fixed 3d
-	set_seen(z, x, y, 1);
+//	set_seen(z, x, y, 1);
+
 	visicells[z * width * 10 * height * 10 + x * width * 10 + y] = 1;
 	if (z > 0) {
 		if (isStairs(z - 1, x, y)) {
-			set_seen(z - 1, x, y, 1);
+//			set_seen(z - 1, x, y, 1);
 			visicells[(z - 1) * width * 10 * height * 10 + x * width * 10 + y] = 1;
 		}
 	}
@@ -1324,7 +1299,7 @@ int Map::calc_visible_cells(int z, int x, int y, int dir, char *visicells, int *
 				if (!m_cell[oz][ox][oy]->visi[vz - oz + 1][vx - ox + 1][vy - oy + 1]) break;
 
 				visicells[vz * width * 10 * height * 10 + vx * width * 10 + vy] = 1;
-				set_seen(vz, vx, vy, 1);
+//				set_seen(vz, vx, vy, 1);
 
 				if (field[vz * width * 10 * height * 10 + vx * width * 10 + vy] == 0)
 					if (man(vz, vx, vy) != NULL) {

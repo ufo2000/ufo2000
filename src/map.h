@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002       ufo2000 development team
+Copyright (C) 2002-2003  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -75,7 +75,6 @@ private:
 	static int m_loftemp_num;
 
 	GEODATA gd;
-//	int m_terrain_num;
 	int m_terrain_set;
 
 	static int dir2ofs[8];
@@ -144,9 +143,7 @@ public:
 	void build_visi_cell(int lev, int col, int row);
 	int stopLOS_level(int dx, int dy, int lev, int col, int row);
 	int haveGROUND(int lev, int col, int row);
-	void update_visible_cells(char *visible_cells);
 
-	void clearvis();
 	void clearseen();
 
 	int scroll(int mx, int my);

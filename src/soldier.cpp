@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002       ufo2000 development team
+Copyright (C) 2002-2003  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -964,6 +964,7 @@ int Soldier::ismoving()
 
 void Soldier::calc_visible_cells()
 {
+	m_platoon->set_visibility_changed();
 	memset(m_visible_cells, 0, sizeof(m_visible_cells));
 
 	int i, j;
@@ -1020,10 +1021,7 @@ int Soldier::move(int ISLOCAL)
 				//map->center(this);
 				map->sel_lev = z;
 			}
-			if (ISLOCAL) {
-				calc_visible_cells();
-				VISIBILITY_CHANGED = 1;
-			}
+			calc_visible_cells();
 		}
 	}
 	if (map->isStairs(z, x, y)) {
@@ -1034,10 +1032,7 @@ int Soldier::move(int ISLOCAL)
 			//map->center(this);
 			map->sel_lev = z;
 		}
-		if (ISLOCAL) {
-			calc_visible_cells();
-			VISIBILITY_CHANGED = 1;
-		}
+		calc_visible_cells();
 	}
 
 	map->set_man(z, x, y, this);      //preventor!!
@@ -1089,10 +1084,7 @@ int Soldier::move(int ISLOCAL)
 			map->set_man(z, x, y, this);
 			m_place[P_MAP] = map->place(z, x, y);
 
-			if (ISLOCAL) {
-				calc_visible_cells();
-				VISIBILITY_CHANGED = 1;
-			}
+			calc_visible_cells();
 		}
 
 		if (phase >= 8) {
@@ -1146,10 +1138,7 @@ int Soldier::move(int ISLOCAL)
 				turnto(way[curway]);
 			}
 
-			if (ISLOCAL) {
-				calc_visible_cells();
-				VISIBILITY_CHANGED = 1;
-			}
+			calc_visible_cells();
 		} else {
 			if (FIRE_num && m_bullet->ready()) {
 				FIRE_num--;

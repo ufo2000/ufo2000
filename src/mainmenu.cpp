@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002       ufo2000 development team
+Copyright (C) 2002-2003  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -180,7 +180,7 @@ int do_mainmenu()
     the_dialog[MAINMENU_ABOUT].dp       = (void *) "about";
     the_dialog[MAINMENU_QUIT].dp        = (void *) "quit";
     
-	the_dialog[MAINMENU_LOADGAME].proc = NULL;
+//	the_dialog[MAINMENU_LOADGAME].proc = NULL;
 
     BS_DISABLED.font    = large;
     BS_IDLE.font        = large;    
