@@ -895,11 +895,6 @@ void gameloop()
 			int scancode;
 			int keycode = ureadkey(&scancode);
 
-			if (scancode == KEY_X) {
-				//DONE=1;
-				closemain();
-			}
-
 			switch (scancode) {
 				case KEY_PGUP:
 					if (map->sel_lev < map->level - 1) {
