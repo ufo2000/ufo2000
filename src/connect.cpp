@@ -236,6 +236,19 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 	local.set_mouse_range(639, SCREEN2H - 1, map2d_x, 0, map2d_x + map2d->w - 1, map2d->h - 1);
 	editor->build_Units(local);
 
+	if (net->is_network_game()) {
+		// synchronize available equipment with remote machine
+		net->send_equipment();
+	} else {
+		// synchronize available equipment with ourselves :)
+		lua_pushstring(L, "SyncEquipmentInfo");
+		lua_gettable(L, LUA_GLOBALSINDEX);
+		lua_pushstring(L, "QueryEquipmentInfo");
+		lua_gettable(L, LUA_GLOBALSINDEX);
+		lua_safe_call(L, 0, 1);
+		lua_safe_call(L, 1, 0);
+	}
+
     // Synchronize available terrains list
     if (net->is_network_game()) {
 #undef map
@@ -273,6 +286,9 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 	if (!Map::valid_GEODATA(&mapdata)) {
 		Map::new_GEODATA(&mapdata);
 	}
+
+	// Try to set standard equipment
+	lua_safe_dostring(L, "SetEquipment('Standard')");
 
 	mapdata.load_game = 77;
 

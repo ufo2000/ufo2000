@@ -99,6 +99,8 @@ private:
 	
 	int recv_panic();
 	int recv_morale_change();
+	int recv_equipment();
+	
 public:
 	ClientServerUfo *m_internet_server;
 	GameType gametype;
@@ -162,6 +164,7 @@ public:
 	
 	void send_panic(int NID, int action);
 	void send_morale_change(int delta);
+	void send_equipment();
 
 	void send_finish_planner();
 	int recv_finish_planner();

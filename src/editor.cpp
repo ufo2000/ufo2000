@@ -95,11 +95,10 @@ Editor::Editor()
 
 	m_armoury = new Place(0, 220, 20, 9);
 
+	// make armoury object available to lua code
 	lua_pushstring(L, "Armoury");
 	LUA_PUSH_OBJECT_POINTER(L, Place, m_armoury);
 	lua_settable(L, LUA_GLOBALSINDEX);
-
-	lua_safe_dostring(L, "SetEquipment('Standard')");
 
 	if (local_platoon_size > 15) local_platoon_size = 15;      //Maybe we should allow more
 	ASSERT(local_platoon_size > 0);
@@ -118,6 +117,10 @@ Editor::~Editor()
 	delete m_plt;
 	delete tac01;
 	delete m_armoury;
+	// unregister armoury object from lua
+	lua_pushstring(L, "Armoury");
+	lua_pushnil(L);
+	lua_settable(L, LUA_GLOBALSINDEX);
 }
 
 /**
@@ -1392,7 +1395,7 @@ void Editor::change_equipment()
 	// Get list of available equipment sets
 	eqsets.clear();
 	LUA_REGISTER_FUNCTION(L, change_equipment_callback);
-	lua_safe_dostring(L, "for name in EquipmentTable do change_equipment_callback(name) end");
+	lua_safe_dostring(L, "for name, data in EquipmentTable do if data.enabled then change_equipment_callback(name) end end");
 
 	int result = gui_select_from_list(
 		300, 200, "Select equipment set", 

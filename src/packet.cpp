@@ -28,7 +28,7 @@ char *Packet::strCommand[COMMAND_NUM] = {
 	"NOTE", "QUIT", "TURN", "DOOR", "POSE", "PRIM", "UNLO", "LOAD", "TAKE", "DROP", 
 	"MOVE", "FACE", "THRU", "BEAM", "FIRE", "ADUN", "PDSZ", "PDAT", "SEUN", "DEUN", 
 	"MDAT", "STRT", "REST", "PNCH", "AMTR", "TLIM", "TCRC", "ELEV", "SCEN", "RULE",
-	"OPTN", "PANI", "MORL", "RTIM", "P2ST"
+	"OPTN", "PANI", "MORL", "RTIM", "P2ST", "EQUI"
 };
 
 Packet::Packet()
@@ -41,14 +41,7 @@ void Packet::reset()
 	cur = 0; size = 0;
 	memset(data, 0, sizeof(data));
 }
-/*
-void Packet::str2pkt(char *str)
-{
-	reset();
-	strcpy(data, str);
-	size = strlen(data);
-}
-*/
+
 void Packet::create(char *header)
 {
 	reset();

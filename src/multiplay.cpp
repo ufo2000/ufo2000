@@ -357,6 +357,9 @@ void Net::check()
 		case CMD_OPTIONS:
 			recv_options();
 			break;
+		case CMD_EQUIPMENT:
+			recv_equipment();
+			break;
 		case CMD_PANIC:
 			recv_panic();
 			break;
@@ -1384,6 +1387,34 @@ int Net::recv_terrain_crc32()
 
 	return 1;
 }
+
+void Net::send_equipment()
+{
+	if (!SEND) return;
+	pkt.create(CMD_EQUIPMENT);
+	lua_pushstring(L, "QueryEquipmentInfo");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	lua_safe_call(L, 0, 1);
+	ASSERT(lua_isstring(L, -1));
+	pkt << lua_tostring(L, -1);
+	lua_pop(L, 1);
+	send(pkt.str(), pkt.str_len());
+}
+
+int Net::recv_equipment()
+{
+	std::string data;
+	
+	pkt >> data;
+	
+	lua_pushstring(L, "SyncEquipmentInfo");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	lua_pushstring(L, data.c_str());
+	lua_safe_call(L, 1, 0);
+
+	return 1;
+}
+
 
 void Net::send_scenario()
 {

@@ -21,7 +21,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef PACKET_H
 #define PACKET_H
 
-#define COMMAND_NUM 35
+#define COMMAND_NUM 36
 
 enum Command {CMD_MESSAGE = -2, CMD_NONE = -1,
               CMD_NOTICE = 0, CMD_QUITGAME, CMD_ENDTURN,              
@@ -41,6 +41,7 @@ enum Command {CMD_MESSAGE = -2, CMD_NONE = -1,
               CMD_USE_ELEVATOR,
               CMD_SCENARIO, CMD_RULES, CMD_OPTIONS,
               CMD_PANIC, CMD_MORALE, CMD_RESTIME, CMD_P2_ISSIT,
+			  CMD_EQUIPMENT
              };
 
 
@@ -53,7 +54,6 @@ private:
 public:
 	Packet();
 	void reset();
-//	void str2pkt(char *str);
 	void create(char *header);
 	void create(Command cmd);
 	Command command(char *buf, int buf_size);

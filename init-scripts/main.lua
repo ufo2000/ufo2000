@@ -243,22 +243,56 @@ function AddEquipment(x)
 end
 
 local CurrentEquipmentTable
+local CurrentEquipmentName
 
 -- fill armoury with the specified equipment set
 function SetEquipment(name)
-	if EquipmentTable[name] then
-		CurrentEquipmentTable = {}
-		Armoury:destroy_all_items()
+	CurrentEquipmentTable = {}
+	Armoury:destroy_all_items()
+	if EquipmentTable[name] and EquipmentTable[name].enabled then
 		for k, v in EquipmentTable[name].Layout do
 			Armoury:add_item(v[1], v[2], v[3])
 			CurrentEquipmentTable[v[3]] = true
 		end
+		CurrentEquipmentName = name
 	end
 end
 
 -- check if the item is in current equipment set
 function IsItemAllowed(item)
 	return CurrentEquipmentTable[item]
+end
+
+-------------------------------------------------------------------------------
+-- Get a string with all the information about equipment sets on local       --
+-- computer                                                                  --
+-------------------------------------------------------------------------------
+
+function QueryEquipmentInfo()
+	local tmp = ""
+	for name, data in EquipmentTable do
+		tmp = tmp .. "'" .. name .. "'=" .. data.Crc32 .. ";"
+	end
+	return tmp
+end
+
+function SyncEquipmentInfo(remote_equipment)
+	-- parse information about equipment sets available on remote computer
+	local tmp = {}
+	for name, crc32 in string.gfind(remote_equipment, "%'(.-)%'%=(%d+)%;") do 
+		crc32 = tonumber(crc32)
+		tmp[name] = crc32
+	end
+	-- walk through local equipment table and mark equipment sets that are allowed
+	for name, v in EquipmentTable do
+		if tmp[name] == v.Crc32 then
+			v.enabled = true
+		else
+			v.enabled = false
+		end
+	end
+	-- reset armoury (to ensure that we use a valid equipment set)
+	SetEquipment(CurrentEquipmentName or "")
 end
 
 -- return random element from a table 
