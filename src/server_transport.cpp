@@ -125,8 +125,9 @@ void ServerDispatch::HandleSocket(NLsocket socket)
     //  HTTP request        
         client->m_http = true;
         std::string http_reply;
-        http_reply += "HTTP/1.0 200 OK\n";
-        http_reply += "Content-Type: text/html;charset=utf-8\n\n";
+        http_reply += "HTTP/1.1 200 OK\r\n";
+        http_reply += "Content-Type: text/html;charset=utf-8\r\n";
+        http_reply += "Connection: close\r\n\r\n";
         std::string html_body;
         MakeHtmlReport(html_body);
         http_reply += html_body;
