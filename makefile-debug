@@ -18,7 +18,6 @@ SRCS_DIR = ./src
 
 NAME = ufo2000
 
-#all:  makefile.dep $(NAME)
 all:   $(NAME)
 
 %.o: $(SRCS_DIR)/%.cpp
