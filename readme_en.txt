@@ -120,20 +120,26 @@ point to your chosen starting position on the map. Press again to
 confirm. To deselect the soldier click the right mouse button on his/her name.
 
 Info about player units:
-   1) "total men points=..." The sum of parameters (TU, Health,.. )
-      for the selected units.
+   1) "total men points=..." Total points cost for selected units.
    2) Number of weapons of each kind for the selected units.
 
-To generate a new map click "NEW", to load press on "LOAD". If you have 
-adjusted your map size in the ufo2000.ini file, but still have your old 
-map, press "NEW", or load the map you want.
+"Match settings" box:
+   1)Name of scenario selected:
+       Click to select scenario to use and scenario options.
+   2)Name of map selected:
+       Click to select terrain and size of the map and to either generate new
+       or load existing map.
+   3)"Game rules:"
+       Click to set match rules, such as turns limit, time limit, etc.
 
 After finishing your plans, click on your side's "SEND" button
-to send your local playerdata to the other player. "SEND" will 
-then become green. To start the game, players must click "START" after 
+to send your local playerdata to the other player. 
+If your selected men meet all requirments for "SEND" will become green. 
+Else you'll see a message about the error in chat console.
+To start the game, players must click "START" after 
 all "SEND" options are green. The game will only begin after all these 
-options are green. Adjusting your players or changing the map will 
-revert all words to red.
+options are green. Adjusting your players, changing the map, scenario
+or match rules will revert all words to red.
 
 To return to the main menu, press ESC.
 
@@ -153,16 +159,11 @@ you wish to edit your stats again, click the chart on the right.
 
 Each parameter is restricted to be >= 50 and <= 80. The sum of these 
 parameters has a certain limit for each unit, so you can't set all 
-the parameters to maximum. There are no restrictions for the kind and 
-number of each weapon for your units, so during the Mission Planner it 
-is suggested that you look at your enemy's weapon selection. You can save 
-and load various unit/squad configurations with these keys:
+the parameters to maximum. You can save and load various unit/squad 
+configurations with these keys:
 
 F2          Save
 F3          Load
-
-Left CTRL   Shows item damage status (in editor -- max value), this
-Left ALT    also works in the inventory screen during the game.
 
 
 ===============
@@ -183,7 +184,7 @@ Cursors &   change size of map screen
 Keypad +/-  
 
 Right CTRL  Fast switching between two keymaps selected in primary_keyboard 
-            and secondary_keyboard in ufo2000.ini file. 
+F9          and secondary_keyboard in ufo2000.ini file. 
 
 Right CTRL  + 'b', 'd', 'e', 'p' or 'r' Switch between Belarusian, German,
             English, Polish and Russian keymaps (other languages can be
@@ -197,44 +198,12 @@ Left CTRL   Show route of selected man to the cursor cell with TU cost.
 Left SHIFT  Allows precise aiming if held down until after firing with
         the left mouse button.
 
+Left SHIFT  + cursor keys Scroll the map window.
+
 ENTER       send message
 BKSP        remove last character in message
 
 F12         save the screen to "snapshot.pcx" file 
-
-
-===============
-INI file
-("ufo2000.ini")
-===============
-
-(Astericks denote notes listed at the bottom of the section. e.g. '*1')
-
-[General]
-width=500            #Battle Screen width
-height=280           #Battle Screen height
-map_width=4          #   "NEW" map size
-map_height=4         #   map_width*map_height <= 36 !
-sound=yes            #yes - sound fx on, no - off
-speed_unit = 30      #Sets unit speed. *1
-speed_bullet = 30    #Same as above, but for game projectiles.
-speed_mapscroll = 30 #Same as above, but for map scrolling.
-mapscroll = 10       #
-
-[Editor]
-platoon_size=8       #number of soldiers in "soldier.dat" file *2
-last_map_name = c:\ufo2000\geoscape.dat  #last map name
-last_unit_name = team_ru.units           #last unit name
-
-[Flags]
-F_FULLSCREEN = 0  # Set to 1 to start the game in fullscreen mode
-F_SELECTENEMY = 1 # Set to 0 to disable blue markers above enemy soldiers
-
-*1: Can be adjusted in-game, in the options menu.
-*2: The format of the file "soldier.dat" is the same as the one in 
-UFO1, so you can use any "soldier.dat" from that game. However, you 
-must write the correct platoon_size in ufo2000.ini (e.g. number of 
-soldiers in "soldier.dat").
 
 --END OF FILE--
 
