@@ -224,13 +224,13 @@ int initgame()
 
 void closegame()
 {
-	delete p1; 
+	delete p1;
 	p1 = NULL;
-	delete p2; 
+	delete p2;
 	p2 = NULL;
-	delete map; 
+	delete map;
 	map = NULL;
-	delete elist; 
+	delete elist;
 	elist = NULL;
 
 	uninstall_timers();
@@ -314,12 +314,13 @@ void initmain(int argc, char *argv[])
 	if (get_config_int("Flags", "F_SAFEVIDEO", 1)) FLAGS |= F_SAFEVIDEO;      // enable if you experience bugs with video
 	if (get_config_int("Flags", "F_SELECTENEMY", 1)) FLAGS |= F_SELECTENEMY;  // draw blue arrows and numbers above seen enemies
 	if (get_config_int("Flags", "F_FILECHECK", 1)) FLAGS |= F_FILECHECK;      // check for datafiles integrity
-	if (get_config_int("Flags", "F_LARGEFONT", 1)) FLAGS |= F_LARGEFONT;      // use big ufo font for dialogs, console and stuff.
+	if (get_config_int("Flags", "F_LARGEFONT", 0)) FLAGS |= F_LARGEFONT;      // use big ufo font for dialogs, console and stuff.
+    if (get_config_int("Flags", "F_SMALLFONT", 0)) FLAGS |= F_SMALLFONT;      // no, use small font instead.
 	origfiles_prefix = get_config_string("Paths",  "origfiles", NULL); // original ufo files here
 	ownfiles_prefix  = get_config_string("Paths",  "ownfiles",  NULL); // own data files here (ufo2000.dat & bitmaps)
 	gametemp_prefix  = get_config_string("Paths",  "gametemp",  NULL); // game temporary files here (may span launches)
 	runtemp_prefix	 = get_config_string("Paths",  "runtemp",   NULL); // runtime temporary files here (get deleted by the time of exit)
-	
+
 	if (origfiles_prefix != NULL) {
 		origfiles_prefix = ustrdup(origfiles_prefix);
 	}
@@ -332,9 +333,9 @@ void initmain(int argc, char *argv[])
 	if (runtemp_prefix != NULL) {
 		runtemp_prefix = ustrdup(runtemp_prefix);
 	}
-	
+
 	pop_config_state();
-	
+
 	if (FLAGS & F_FILECHECK) check_data_files();
 
 	datafile = load_datafile("#");
@@ -371,6 +372,7 @@ void initmain(int argc, char *argv[])
 	set_palette(black_palette);
 	PALETTE pal;
 //	BITMAP *text_back = load_bitmap("text_back.jpg", pal);
+
 	BITMAP *text_back = load_memory_jpg(datafile[DAT_TEXT_BACK].dat, pal);
 
 	//set_palette(pal);
@@ -457,7 +459,7 @@ void closemain()
 	/*	for(int i=0;i<obdata_num;i++) {
 			delete []obdata[i];
 		}
-		delete []obdata;*/ 
+		delete []obdata;*/
 	//closenet();
 
 	delete terrain_set;

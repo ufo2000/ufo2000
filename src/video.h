@@ -82,5 +82,6 @@ extern unsigned long FLAGS;
 #define F_SELECTENEMY		0x00001000
 #define F_FILECHECK		0x00002000
 #define F_LARGEFONT		0x00004000
+#define F_SMALLFONT		0x00008000
 
 #endif

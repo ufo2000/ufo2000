@@ -119,16 +119,19 @@ void initvideo()
 	font = (FONT*)datafile[DAT_FONT_CYR].dat;
 	create_small_font();
 	create_large_font();
-	
+
 	if (FLAGS & F_LARGEFONT) {
 		font = large;
 	}
+    if (FLAGS & F_SMALLFONT) {
+        font = small;
+    }
 }
 
 void closevideo()
 {
-	free_large_font();	
-	free_small_font();	
+	free_large_font();
+	free_small_font();
 
 	delete [] palettes;
 
@@ -275,7 +278,7 @@ void savescreen()
 	destroy_bitmap(scr);
 }
 
-#define POLY 0x8408 
+#define POLY 0x8408
 //												  16	12	5
 // this is the CCITT CRC 16 polynomial X  + X  + X  + 1.
 // This works out to be 0x1021, but the way the algorithm works
