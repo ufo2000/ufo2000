@@ -34,8 +34,8 @@ struct { const char *mName; unsigned long mCrc32; } DataFilesCrc32[] =
     { "./armoury.set", 0x00000000 },
     { "./items.dat", 0x00000000 },
     { "./ufo2000.ini", 0x00000000 },
-    { "./ufo2000.dat", 0x67D1EC7A },
-    { "./keyboard.dat", 0x359B7143 },
+    { "./ufo2000.dat", 0x8EA4C104 },
+    { "./keyboard.dat", 0xC796755E },
 
     { "./geodata/biglets.dat", 0x00000000 },
     { "./geodata/loftemps.dat", 0x7B354479 },

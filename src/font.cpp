@@ -155,8 +155,13 @@ static int uni_xlate_tab[256] = {
 0x041D , /* Cyrillic Capital N*/
 0x042F , /* Cyrillic Capital Ya*/
 
-0x10000, 0x10000, 0x10000, 0x10000, 0x10000, 0x10000, /* 6 unused glyphs */
+0x045E , /* Belarusian Small U neskladovaya */
+0x040E , /* Belarusian Capital U neskladovaya */
+0x0456 , /* Belarusian Small I */
+0x0406 , /* Belarusian Capital I */
 
+0x0451 , /* Cyrillic Small Yo */
+0x0401 , /* Cyrillic Capital Yo */
 0x0444 , /* Cyrillic Small F */
 0x0438 , /* Cyrillic Small I */
 0x0441 , /* Cyrillic Small S*/
