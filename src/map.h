@@ -36,6 +36,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 enum DIRECTION
 {
+// The first 8 directions are plain directions, they mean a direction where soldier
+// looks to or a direction of movement
     DIR_EAST      = 0,
     DIR_NORTHEAST = 1,
     DIR_NORTH     = 2,
@@ -43,7 +45,13 @@ enum DIRECTION
     DIR_WEST      = 4,
     DIR_SOUTHWEST = 5,
     DIR_SOUTH     = 6,
-    DIR_SOUTHEAST = 7
+    DIR_SOUTHEAST = 7,
+// Next 3 can only be used as directions of movement
+    DIR_NULL      = 8,
+    DIR_UP        = 9,
+    DIR_DOWN      = 10,
+// Number of directions
+    DIR_NUM       = 11
 };
 
 enum PF_MODE {PF_TRUE, PF_DISPLAY};
