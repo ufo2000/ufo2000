@@ -622,6 +622,7 @@ void initmain(int argc, char *argv[])
 
 	lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-items.lua");
 	lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-equipment.lua");
+  //lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-soldiersetup.lua");
 
 	console<<"install_timer"<<std::endl;
 	install_timer();
@@ -796,8 +797,11 @@ void check_crc(int crc)
 	if (crc != bcrc) {
         g_console->printf(COLOR_SYS_FAIL, _("wrong wholeCRC") );
         g_console->printf(COLOR_SYS_INFO, "crc=%d, bcrc=%d", crc, bcrc);
-		net->send_debug_message("crc error");
-	}
+        net->send_debug_message("crc error");
+        FILE *f_br = fopen( "battlereport.txt", "at");
+        fprintf(f_br, "# %s: crc=%d, bcrc=%d\n", _("wrong wholeCRC"), crc, bcrc );
+        fclose(f_br);  // Battlereport
+    }
 }
 
 /**
@@ -1315,7 +1319,7 @@ void endgame_stats()
     textprintf(newscr, g_small_font,  x2+ 0, y2+1*h, COLOR_RED03,  "%s",  txt);
     textprintf(newscr, g_small_font,  x1+68, y2+1*h, COLOR_YELLOW, "%2d", local_dead);
     textprintf(newscr, g_small_font,  x2+68, y2+1*h, COLOR_RED03,  "%2d", remote_dead);
-    fprintf(f_br, "%-30s  %18d %18d\n", txt, local_dead, remote_dead);
+    fprintf(f_br, "%-30s  %14d %14d\n", txt, local_dead, remote_dead);
 
     strcpy(txt, _("Total Damage Inflicted:") );
     textprintf(newscr, g_small_font,  x1+  0, y2+2*h, COLOR_BLUE,   "%s",  txt);
@@ -1394,8 +1398,12 @@ void endgame_stats()
                 textprintf(newscr, font, x,      y, name_color(pl, nr, dead), "%-22s", temp->get_name());
                 textprintf(newscr, font, x+22*w, y, kills_color(kills  ), "%5d", kills  );
                 textprintf(newscr, font, x+28*w, y, damage_color(damage), "%6d", damage );
-                fprintf(f_br, "%-20s: %-22s %5d %6d\n", txt,
-                        temp->get_name(), kills, damage);
+                if (dead)
+                    fprintf(f_br, "%-20s: (%-22s) %5d %6d\n", txt,
+                            temp->get_name(), kills, damage);
+                else
+                    fprintf(f_br, "%-20s:  %-22s  %5d %6d\n", txt,
+                            temp->get_name(), kills, damage);
 
                 temp = temp->getnext();
             }

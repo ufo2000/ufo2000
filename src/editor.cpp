@@ -824,7 +824,6 @@ void Editor::show()
                     if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) { // Shift-F11: 
                         A2++;
                         if (A2 >= 2) A2 = 0;
-                      //man->md.Appearance = A1 % 4;
                         man->md.fFemale    = A2;
                     } else { // F11: 
                         A1 = A1 + (A2 ? 4 : 0);
@@ -898,6 +897,9 @@ void Editor::show()
                     man = man->nextman();
                     break;
 
+              //case KEY_ASTERISK:   // Test
+              //    Editor::do_mapedit();
+              //    break;
 				case KEY_ESC:
 					DONE = 1;
 					break;

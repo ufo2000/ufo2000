@@ -410,7 +410,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 					} else {
 						FLAGS |= F_RAWMESSAGES;
 					}
-                    g_console->printf( COLOR_SYS_INFO1, "%s: %d", "RAWMESSAGES:", F_RAWMESSAGES );
+                    g_console->printf( COLOR_SYS_INFO1, "%s: %d", "RAWMESSAGES:", FLAGS & F_RAWMESSAGES );
 					break;
 				case KEY_F9:
 					keyswitch(0);
