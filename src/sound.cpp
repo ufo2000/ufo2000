@@ -1,9 +1,12 @@
+#include "global.h"
+
 #include <iostream>
 #include <iomanip>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <assert.h>
 
 #include <cstring>
 
@@ -15,7 +18,7 @@
 
 struct sound_sym_maptable_t {
     SoundSym_e_t symcode;
-    const char * const sym;
+    const char * sym;
 };
 
 /** static mapping between enum values and sym attribute values */
@@ -437,6 +440,7 @@ int soundFile::loadFile(const char *fname, std::ostream& log, bool verbose) {
 
 SAMPLE * soundFile::fetchSample(int idx) {
 //    return samples.at(idx);
+    assert(idx >= 0 && idx < samples.size()); // Check if the index is valid
     return samples[idx];
 }
 
@@ -472,8 +476,8 @@ void soundFile::loadCeCat(const std::string& buf, std::ostream& log, bool verbos
 /* TODO: fixup endianness. */
     nsamples /= 8;
     
-    int offsets[nsamples + 1];
-    int lengths[nsamples + 1];
+	std::vector<int> offsets(nsamples + 1);
+	std::vector<int> lengths(nsamples + 1);
     
     count = 0;
     do {
@@ -494,11 +498,11 @@ void soundFile::loadCeCat(const std::string& buf, std::ostream& log, bool verbos
 
         /* seems like the first datbyte is actually datbytes length: 
            it is always 1 or 2, and the same number of datbytes follow. */
-        if (verbose) 
-            log<<"#"<<std::setw(2)<<std::setfill(' ')<<std::dec<<i
+        if (verbose)
+            log<<"#"<<std::setw(2)<<std::setfill((char)' ')<<std::dec<<i
                <<": "<<std::setw(6)<<(lengths[i])
                <<" bytes from 0x"
-               <<std::hex<<std::setfill('0')<<std::setw(5)<<(offsets[i])
+               <<std::hex<<std::setfill((char)'0')<<std::setw(5)<<(offsets[i])
                <<", data bytes:";
             
         if (lengths[i] > 0) {
@@ -548,8 +552,8 @@ void soundFile::loadOrigCat(const std::string& buf, std::ostream& log, bool verb
 /* TODO: fixup endianness. */
     nsamples /= 8;
     
-    int offsets[nsamples + 1];
-    int lengths[nsamples + 1];
+	std::vector<int> offsets(nsamples + 1);
+	std::vector<int> lengths(nsamples + 1);
     
     count = 0;
     do {
@@ -567,11 +571,11 @@ void soundFile::loadOrigCat(const std::string& buf, std::ostream& log, bool verb
     for (i=0; i<nsamples; i++) {
         SAMPLE *smpl;
 
-        if (verbose) 
-            log<<"#"<<std::setw(2)<<std::setfill(' ')<<std::dec<<i
+        if (verbose)
+            log<<"#"<<std::setw(2)<<std::setfill((char)' ')<<std::dec<<i
                <<": "<<std::setw(6)<<(lengths[i])
                <<" bytes from 0x"
-               <<std::hex<<std::setfill('0')<<std::setw(5)<<(offsets[i])
+               <<std::hex<<std::setfill((char)'0')<<std::setw(5)<<(offsets[i])
                <<", data bytes:";
         
         if (lengths[i] > 0) {

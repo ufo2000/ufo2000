@@ -18,12 +18,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
+#include "global.h"
+
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 
-#include "global.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -51,7 +53,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "crc32.h"
 #include "pfxopen.h"
 #ifdef WIN32
-#include <allegro/platform/aintwin.h>
+//#include <allegro/platform/aintwin.h>
 #include "../resource.h"
 #endif
 
@@ -295,7 +297,7 @@ protected:
         return c;
     }
 public:
-    consoleBuf(bool dco) : std::streambuf() {
+    consoleBuf(bool dco) {
         curline.assign("");
         doCout = dco;
     }
