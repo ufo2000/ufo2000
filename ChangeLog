@@ -1,3 +1,28 @@
+Changes in version 0.4.2.???  ??? ?? ??? ????
+   - added support for different mission scenarios (Twilight Owl)
+   - internationalization support, the game now supports English, 
+     German, Spanish, Russian and Belarusian languages (HaJo)
+   - many user interface improvements (HaJo, Twilight Owl)
+   - lots of help messages, help system (HaJo)
+   - map size and type selection, equipment points limit (Twilight Owl)
+   - explosive terrain objects (Twilight Owl)
+   - automatic bugreporting system (Serge)
+   - improved win32-installer (SupSuper)
+   - better looking and themable GUI (Serge)
+   - different look for soldiers in the battlescape (Nail)
+   - correct map generation for 'City' and 'Port' (Twilight Owl)
+   - reserve time buttons are now working (HaJo, Twilight Owl, olegmmm)
+   - more verbose end of game statistics (HaJo)
+   - morale and panic support (Twilight Owl)
+   - sound notifications and information messages in the server chat (Serge)
+   - support for user contributed maps improved, support for custom
+     map generation rules written in lua language (Serge)
+   - cpu usage reduced (Kolotov Alexandr)
+   - squad size limit increased from 10 to 15 (Twilight Owl)
+   - different types of reaction fire depending on time reserve mode (olegmmm)
+   - fixed problems with mouse ranges (Gassa)
+   - many other bugfixes and improvements (special thanks to Gassa, olegmmm)
+
 Changes in version 0.4.0.353  Tue 30 Mar 2004
    - improved win32-installer (it can automatically download x-com demo now)
    - elevators are working now

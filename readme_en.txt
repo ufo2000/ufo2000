@@ -1,6 +1,6 @@
 
               **************************************************
-              **                UFO2000 0.4.0                 **
+              **                UFO2000 0.4.2                 **
               **             aka X-COM: Gladiators            **
               **        http://ufo2000.sourceforge.net/       **
               **                English Manual                **
@@ -192,8 +192,7 @@ F10         Switch Fullscreen/Windowed mode
 
 ESC         Exit to main menu
 
-Cursors &   change size of map screen
-Keypad +/-  
+Cursors     Scroll the map window
 
 Right CTRL  Fast switching between two keymaps selected in primary_keyboard 
 F9          and secondary_keyboard in ufo2000.ini file. 
@@ -210,10 +209,10 @@ Left CTRL   Show route of selected man to the cursor cell with TU cost.
 Left SHIFT  Allows precise aiming if held down until after firing with
         the left mouse button.
 
-Left SHIFT  + cursor keys Scroll the map window.
+Left SHIFT  + cursor keys Change size of map screen
 
-ENTER       send message
-BKSP        remove last character in message
+ENTER       Send message
+BKSP        Remove last character in message
 
 F12         save the screen to "snapshot.pcx" file 
 
