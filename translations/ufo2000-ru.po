@@ -238,7 +238,7 @@ msgstr "Очки Хода"
 
 #: src/editor.cpp:1199
 msgid "Stamina"
-msgstr "Вынослив."
+msgstr "Выносливость"
 
 #: src/editor.cpp:1201
 msgid "Health"
@@ -291,12 +291,12 @@ msgstr "ПРИЦ.БРОСОК ТОЧ>%02d%% ОХ>%02d"
 #: src/icon.cpp:554
 #, c-format
 msgid "PRIME EXPLOSIVE     TUs>%02d"
-msgstr "ВЗВЕСТИ ВЗРЫВЧАТКУ       ОХ>%02d"
+msgstr "ВЗВЕСТИ ВЗРЫВЧАТКУ   ОХ>%02d"
 
 #: src/icon.cpp:561
 #, c-format
 msgid "PRIME GRENADE       TUs>%02d"
-msgstr "ВЗВЕСТИ ГРАНАТУ               ОХ>%02d"
+msgstr "ВЗВЕСТИ ГРАНАТУ      ОХ>%02d"
 
 #: src/icon.cpp:574
 #, c-format
@@ -822,19 +822,19 @@ msgstr ""
 
 #: src/text.cpp:317
 msgid "Reserve Time: None"
-msgstr "Резерв ОД: Нет"
+msgstr "Резерв ОХ: Нет"
 
 #: src/text.cpp:320
 msgid "Reserve Time: Aimed shot"
-msgstr "Резерв ОД: Прицельный Выстрел"
+msgstr "Резерв ОХ: Прицельный Выстрел"
 
 #: src/text.cpp:323
 msgid "Reserve Time: Snapshot"
-msgstr "Резерв ОД: Выстрел На Вскидку"
+msgstr "Резерв ОХ: Выстрел На Вскидку"
 
 #: src/text.cpp:326
 msgid "Reserve Time: Autoshot"
-msgstr "Резерв ОД: Выстрел Очередью"
+msgstr "Резерв ОХ: Выстрел Очередью"
 
 #: src/text.cpp:360
 msgid "Introduction"
@@ -1690,25 +1690,25 @@ msgstr "СОХР."
 #: src/units.cpp:377
 #, c-format
 msgid "Explosives level: %d"
-msgstr "Ур. Взрывчатки: %d"
+msgstr "Уровень Взрывчатки: %d"
 
 #: src/units.cpp:378
 #, c-format
 msgid "Points limit: %d000"
-msgstr "Огр. поинтов: %d000"
+msgstr "Ограничение поинтов: %d000"
 
 #: src/units.cpp:379
 msgid "No turns limit"
-msgstr "Без огр. по ходам"
+msgstr "Без ограничения по ходам"
 
 #: src/units.cpp:379
 #, c-format
 msgid "Turns limit: %d"
-msgstr "Огр. по ходам: %d"
+msgstr "Ограничение по ходам: %d"
 
 #: src/units.cpp:380
 msgid "No time limit"
-msgstr "Без огр. по времени"
+msgstr "Без ограничения по времени"
 
 #: src/units.cpp:380
 #, c-format
