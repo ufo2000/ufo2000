@@ -4,13 +4,9 @@ CFLAGS = -funsigned-char -Wall
 CFLAGS += -pipe -DLINUX
 CFLAGS += -mcpu=i386 
 CFLAGS += -g -pg
-#CFLAGS += -s -O
 INCLUDES = ${shell /tmp/al402/bin/allegro-config --cflags profile}
-#INCLUDES = ${shell /tmp/al402/bin/allegro-config --cflags }
 CFLAGS += $(INCLUDES)
-LIBS = $(addprefix -l,$(LIBRARIES)) ${shell /tmp/al402/bin/allegro-config --static --libs profile } -lc_p 
-#LIBS = $(addprefix -l,$(LIBRARIES)) ${shell /tmp/al402/bin/allegro-config --static --libs debug }
-#LIBS = $(addprefix -l,$(LIBRARIES)) ${shell /tmp/al402/bin/allegro-config --libs }
+LIBS = $(addprefix -l,$(LIBRARIES)) ${shell /tmp/al402/bin/allegro-config --static --libs profile }
 
 OBJS = about.o bullet.o cell.o config.o connect.o dirty.o editor.o explo.o \
        font.o icon.o inventory.o item.o keys.o main.o mainmenu.o \
