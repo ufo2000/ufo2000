@@ -256,6 +256,8 @@ void Map::draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type,
 	assert(m_terrain->mcdstart(i) >= 0);
 	int frame = m_terrain->m_mcd[i].Frame[0]; // + m_terrain->mcdstart(i);
 
+	_y -= m_terrain->m_mcd[i].P_Level;
+
 	assert(frame < m_terrain->m_imgnum);
 
 	if (frame && frame < m_terrain->m_imgnum) {
@@ -1649,12 +1651,12 @@ TerrainSet::TerrainSet()
 {
 	terrain[0] = new Terrain("jungle", "", 100);
 	terrain[1] = new Terrain("culta", "", 200);
-	terrain[2] = new Terrain("forest", "", 0);
+	terrain[2] = new Terrain("forest", "", 100);
 	terrain[3] = new Terrain("xbase_", "", 0);
 	terrain[4] = new Terrain("ubase_", "", 0);
 	terrain[5] = new Terrain("urban", "", 200);
-	terrain[6] = new Terrain("desert", "", 0);
-	terrain[7] = new Terrain("mount", "", 0);
+	terrain[6] = new Terrain("desert", "", 100);
+	terrain[7] = new Terrain("mount", "", 100);
 	terrain[8] = new Terrain("polar", "", 100);
 	terrain[9] = new Terrain("mars", "", 100);
 }

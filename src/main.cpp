@@ -62,7 +62,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 //#define DEBUG
 #define MSCROLL 10
-#define BACKCOLOR 0
+#define BACKCOLOR xcom1_color(15)
 
 Target target;
 int HOST, DONE, TARGET, turn;
@@ -1152,7 +1152,6 @@ void faststart()
 	clear_to_color(screen, 58);      //!!!!!
 	gameloop();
 	closegame();
-	closemain();
 }
 
 void start_loadgame()
