@@ -217,7 +217,7 @@ void Map::loadmaps(unsigned char *_map)
 				lua_pushnumber(L, _map[i]);
 				lua_gettable(L, -2);
 				ASSERT(lua_isstring(L, -1));
-				loadmap(lua_tostring(L, -1), row * 10, col * 10);
+				loadmap(lua_tostring(L, -1), col * 10, row * 10);
 				lua_pop(L, 1);
 			}
 			i++;
@@ -227,7 +227,7 @@ void Map::loadmaps(unsigned char *_map)
 	lua_settop(L, stack_top);
 }
 
-int Map::loadmap(const char *fname, int _r, int _c)
+int Map::loadmap(const char *fname, int _c, int _r)
 {
 	int fh = open(fname, O_RDONLY | O_BINARY);
 	if (fh == -1) return 0;
@@ -240,20 +240,25 @@ int Map::loadmap(const char *fname, int _r, int _c)
 	int h = mbuf[1];
 	int l = mbuf[2];
 
-	_r = _r - 10 + w;
-	_c = _c - 10 + h;
+	_r = _r - 10 + h;
+	_c = _c - 10 + w;
 
 	for (int lev = 0; lev < l; lev++) {
 		int i = 3 + (l - lev - 1) * 4 * w * h;
+		if (i < 3 || i >= size) continue;
+		if (lev >= level) continue;
 
 		for (int col = _c + w - 1 - (w - 10); col >= _c - (w - 10); col--) {
-			for (int row = _r - (h - 10); row < _r + h - (h - 10); row++) {
+			for (int row = _r - (h - 10); row < _r + h - (h - 10); row++, i += 4) {
+				if (i < 3 || i + 4 > size) continue;
+				if (col < 0 || col >= width * 10) continue;
+				if (row < 0 || row >= height * 10) continue;
+
 				m_cell[lev][col][row]->type[0] = mbuf[i + 0];
 				m_cell[lev][col][row]->type[1] = mbuf[i + 1];
 				m_cell[lev][col][row]->type[2] = mbuf[i + 2];
 				m_cell[lev][col][row]->type[3] = mbuf[i + 3];
 				m_cell[lev][col][row]->set_soldier(NULL);
-				i += 4;
 			}
 		}
 	}

@@ -393,7 +393,8 @@ int lua_safe_call(lua_State *L, int narg, int nret)
 int lua_safe_dofile(lua_State *L, const char *name)
 {
 	int status = luaL_loadfile(L, name);
-	if (status == 0) status = lua_safe_call(L, 0, LUA_MULTRET);
+	if (status) display_error_message(lua_tostring(L, -1));
+	status = lua_safe_call(L, 0, LUA_MULTRET);
 	return status;
 }
 
@@ -403,7 +404,8 @@ int lua_safe_dofile(lua_State *L, const char *name)
 int lua_safe_dobuffer(lua_State *L, const char *buff, size_t size, const char *name)
 {
 	int status = luaL_loadbuffer(L, buff, size, name);
-	if (status == 0) status = lua_safe_call(L, 0, LUA_MULTRET);
+	if (status) display_error_message(lua_tostring(L, -1));
+	status = lua_safe_call(L, 0, LUA_MULTRET);
 	return status;
 }
 
