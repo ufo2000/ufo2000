@@ -61,15 +61,22 @@ const char *datetime()
  * into the logfile init-scripts.log
  * This logfile is mostly for debugging.
  */
-void lua_message( const std::string &str1 )
+void lua_message(const std::string &str1)
 {
     char txt1[32], txt2[32];
 
-    sprintf(txt1, "# %s : ", datetime() );
+    sprintf(txt1, "# %s : ", datetime());
     sprintf(txt2, "." );
 
-    lua_safe_dostring(L, (std::string("Message([[%s]], [[") + 
-        txt1 + str1 + txt2 + std::string("]])")).c_str() );
+    lua_pushstring(L, "Message");
+    lua_gettable(L, LUA_GLOBALSINDEX);
+    if (!lua_isfunction(L, -1)) {
+        lua_pop(L, 1);
+        return;
+    }
+    lua_pushstring(L, "%s");
+    lua_pushstring(L, (std::string(txt1) + str1 + txt2).c_str());
+    lua_safe_call(L, 2, 0);
 };
 
 /** 
