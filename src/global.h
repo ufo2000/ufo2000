@@ -395,7 +395,7 @@ extern char last_unit_name[1000];
 //#define _(String) (String)
 #define _(String) gettext(String)
 
-extern char place_name[11][20];
+extern const char *place_name[11];
 
 extern Editor *editor;
 

@@ -233,7 +233,7 @@ void showtip()
 
 // moved here from place.cpp :
 //static char place_name[11][20];
-char place_name[11][20];
+const char *place_name[11];
 
 /**
  * Translations for placenames used in the inventory
@@ -241,17 +241,17 @@ char place_name[11][20];
 void Init_place_names()
 {
   //lua_message( "Enter: Init_place_names" );
-    sprintf(place_name[P_SHL_RIGHT  ], _("RIGHT SHOULDER") );
-    sprintf(place_name[P_SHL_LEFT   ], _("LEFT SHOULDER")  );
-    sprintf(place_name[P_ARM_RIGHT  ], _("RIGHT HAND")     );
-    sprintf(place_name[P_ARM_LEFT   ], _("LEFT HAND")      );
-    sprintf(place_name[P_LEG_RIGHT  ], _("RIGHT LEG")      );
-    sprintf(place_name[P_LEG_LEFT   ], _("LEFT LEG")       );
-    sprintf(place_name[P_BACK       ], _("BACK PACK")      );
-    sprintf(place_name[P_BELT       ], _("BELT")           );
-    sprintf(place_name[P_MAP        ], _("GROUND")         );
-    sprintf(place_name[P_ARMOURY    ], _("ARMOURY")        );
-    sprintf(place_name[P_COMMON_POOL], _("COMMON POOL")    );
+    place_name[P_SHL_RIGHT  ] = _("RIGHT SHOULDER");
+    place_name[P_SHL_LEFT   ] = _("LEFT SHOULDER");
+    place_name[P_ARM_RIGHT  ] = _("RIGHT HAND");
+    place_name[P_ARM_LEFT   ] = _("LEFT HAND");
+    place_name[P_LEG_RIGHT  ] = _("RIGHT LEG");
+    place_name[P_LEG_LEFT   ] = _("LEFT LEG");
+    place_name[P_BACK       ] = _("BACK PACK");
+    place_name[P_BELT       ] = _("BELT");
+    place_name[P_MAP        ] = _("GROUND");
+    place_name[P_ARMOURY    ] = _("ARMOURY");
+    place_name[P_COMMON_POOL] = _("COMMON POOL");
 }
 
 /**
