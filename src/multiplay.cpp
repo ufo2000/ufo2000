@@ -136,6 +136,8 @@ int Net::init()
 			close();
 			return 0;
 		}
+		net->send_debug_message("terrain:%s", 
+			terrain_set->get_terrain_name(mapdata.terrain).c_str());
 	}
 	return 1;
 }
@@ -1349,8 +1351,19 @@ int Net::recv_terrain_crc32()
 	return 1;
 }
 
-void Net::send_error_report(char *report)
+void Net::send_debug_message(const char *fmt, ...)
 {
-	if (gametype == GAME_TYPE_INTERNET_SERVER)
-		m_internet_server->send_packet(SRV_DEBUG_MESSAGE, report);
+	if (gametype != GAME_TYPE_INTERNET_SERVER) return;
+
+	char buffer[1024];
+	memset(buffer, 0, sizeof(buffer));
+
+	va_list arglist;
+	va_start(arglist, fmt);
+
+	uvszprintf(buffer, sizeof(buffer), fmt, arglist);
+
+	va_end(arglist);
+
+	m_internet_server->send_packet(SRV_DEBUG_MESSAGE, buffer);
 }

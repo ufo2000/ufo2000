@@ -693,7 +693,7 @@ void check_crc(int crc)
 	if (crc != bcrc) {
 		g_console->printf("%s", "wrong wholeCRC");
 		g_console->printf("crc=%d, bcrc=%d", crc, bcrc);
-		net->send_error_report("crc error");
+		net->send_debug_message("crc error");
 	}
 }
 
@@ -937,6 +937,8 @@ bool loadgame_stream(std::iostream &stream)
 
 void endgame_stats()
 {
+	net->send_debug_message("result:%s", (win == loss) ? ("draw") : (win ? "victory" : "defeat"));
+
 	BITMAP *back;
 	BITMAP *scr = create_bitmap(320, 200);
 	BITMAP *newscr = create_bitmap(SCREEN_W, SCREEN_H);
@@ -1141,7 +1143,7 @@ static LPTOP_LEVEL_EXCEPTION_FILTER prevExceptionFilter = NULL;
 
 static LONG WINAPI TopLevelExceptionFilter(PEXCEPTION_POINTERS pExceptionInfo)
 {
-	net->send_error_report("crash");
+	net->send_debug_message("crash");
 
 	if (prevExceptionFilter)
 		return prevExceptionFilter(pExceptionInfo);

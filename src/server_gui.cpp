@@ -315,6 +315,34 @@ static bool asklogin()
 	return false;
 }
 
+const char *get_os_type_string()
+{
+	switch (os_type) {
+		case OSTYPE_WIN3    : return "Windows 3.1 or earlier";
+		case OSTYPE_WIN95   : return "Windows 95";
+		case OSTYPE_WIN98   : return "Windows 98";
+		case OSTYPE_WINME   : return "Windows ME";
+		case OSTYPE_WINNT   : return "Windows NT";
+		case OSTYPE_WIN2000 : return "Windows 2000";
+		case OSTYPE_WINXP   : return "Windows XP";
+		case OSTYPE_OS2     : return "OS/2";
+		case OSTYPE_WARP    : return "OS/2 Warp 3";
+		case OSTYPE_DOSEMU  : return "Linux DOSEMU";
+		case OSTYPE_OPENDOS : return "Caldera OpenDOS";
+		case OSTYPE_LINUX   : return "Linux";
+		case OSTYPE_SUNOS   : return "SunOS/Solaris";
+		case OSTYPE_FREEBSD : return "FreeBSD";
+		case OSTYPE_NETBSD  : return "NetBSD";
+		case OSTYPE_IRIX    : return "IRIX";
+		case OSTYPE_QNX     : return "QNX";
+		case OSTYPE_UNIX    : return "Unknown Unix variant";
+		case OSTYPE_BEOS    : return "BeOS";
+		case OSTYPE_MACOS   : return "MacOS";
+		case OSTYPE_UNKNOWN : return "unknown";
+	}
+	return "unknown";
+}
+
 int connect_internet_server()
 {
 	if ((rand() % 2) == 1)
@@ -371,6 +399,10 @@ int connect_internet_server()
 
 	int mouse_leftr = 0, mouse_rightr = 0;
 
+	net->gametype = GAME_TYPE_INTERNET_SERVER;
+	net->m_internet_server = server.get();
+	net->send_debug_message("system:%s", get_os_type_string());
+
 	while (true)
 	{
 		NLulong id;
@@ -398,8 +430,6 @@ int connect_internet_server()
 					alert(" ", "  Game should start as host now ", " ", "    OK    ", NULL, 1, 0);
 					play_midi(NULL, 0);
 		            HOST = 1;
-		            net->gametype = GAME_TYPE_INTERNET_SERVER;
-		            net->m_internet_server = server.get();
 
 		            if (initgame()) {
 		                gameloop();
@@ -421,8 +451,6 @@ int connect_internet_server()
 					alert(" ", "  Game should start as client now ", " ", "    OK    ", NULL, 1, 0);
 					play_midi(NULL, 0);
 		            HOST = 0;
-		            net->gametype = GAME_TYPE_INTERNET_SERVER;
-		            net->m_internet_server = server.get();
 
 		            if (initgame()) {
 		                gameloop();
@@ -513,6 +541,10 @@ int connect_internet_server()
 				users_border->set_full_redraw();
 			}
 		}
+#ifdef WIN32
+		// Do not load cpu so heavy
+		Sleep(1);
+#endif		
 	}
 
 	show_mouse(NULL);

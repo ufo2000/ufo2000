@@ -1,0 +1,389 @@
+------------------------------------------------------------------------------
+-- A script for ufo2000 server log parsing
+-- It displays some statistics in html form that can be used to hold
+-- UFO2000 tournaments
+------------------------------------------------------------------------------
+
+if arg[1] == nil then
+	print("you need to specify ufo2000 server log file in a command line")
+	os.exit()
+end
+
+local time_start = os.clock()
+-- history of played games
+local games_history = {}
+-- table of operating systems used by clients
+local os_table = {}
+-- table of terrain types used in games
+local terrain_table = {}
+-- scores and other information for each player
+local tournament_table = {}
+
+------------------------------------------------------------------------------
+-- server log parsing function
+------------------------------------------------------------------------------
+
+function process_log(filename, history)
+
+	local games = {}
+	local users = {}
+
+	local login_name = nil
+	local login_line_number = nil
+
+	local function gettime(l)
+		local _
+		local t = { isdst = 0 }
+		_, _, t.day, t.month, t.year, t.hour, t.min, t.sec = 
+			string.find(l, "^(%d+)/(%d+)/(%d+) (%d+)%:(%d+)%:(%d+)")
+		return os.time(t)
+	end
+
+	local function strip_name(name)
+		local _, _, stripped_name = string.find(name, "(.*) P%d+$")
+		if stripped_name then return stripped_name end
+		return name
+	end
+
+	local function user_online(name, l)
+		name = strip_name(name)
+		users[name] = {login_time = gettime(l)}
+		if not tournament_table[name] then 
+			tournament_table[name] = {
+				win_count   = 0, 
+				games_count = 0, 
+				time_online = 0,
+				battle_time = 0
+			}
+		end
+	end
+
+	local function user_offline(name, l)
+		name = strip_name(name)
+		if name and users[name] then 
+			local time_bonus = gettime(l) - users[name].login_time
+			tournament_table[name].time_online = tournament_table[name].time_online + time_bonus
+			users[name] = nil
+		end
+	end
+
+	local function user_win(name)
+		if tournament_table[name] then
+			tournament_table[name].win_count = tournament_table[name].win_count + 1
+		end
+	end
+
+	local function user_endgame(name, time_bonus)
+		if tournament_table[name] then
+			tournament_table[name].games_count = tournament_table[name].games_count + 1
+			tournament_table[name].battle_time = tournament_table[name].battle_time + time_bonus
+		end
+	end
+
+	local function startgame(p1, p2, l)
+		local game_info = {["p1"] = p1, ["p2"] = p2, ["exited"] = {}}
+		game_info.start_time = gettime(l)
+		games[p1] = game_info
+		games[p2] = game_info
+	end
+
+	local function endgame(p, l)
+		local game_info = games[p]
+		assert(game_info)
+		if not game_info then return end
+		games[p] = nil
+		if not game_info.end_time then game_info.end_time = gettime(l) end
+	
+		game_info.exited[p] = 1
+		if game_info.exited[game_info.p1] and game_info.exited[game_info.p2] then
+			if game_info.terrain then
+				terrain_table[game_info.terrain] = (terrain_table[game_info.terrain] or 0) + 1 
+			end
+			if game_info.winner or (game_info.terrain == nil and 
+					game_info.version_error == nil and 
+					game_info.connection_error == nil and 
+					game_info.crc_error == nil and
+					os.difftime(game_info.end_time, game_info.start_time) > 3 * 60) then
+
+				user_endgame(game_info.p1, game_info.end_time - game_info.start_time)
+				user_endgame(game_info.p2, game_info.end_time - game_info.start_time)
+				user_win(game_info.winner)
+			end
+			table.insert(history, game_info)
+		end
+	end
+
+	local previous_line = nil
+	local line_number = 0
+	for l in io.lines(filename) do
+		line_number = line_number + 1
+
+		local _, _, p, packet_id, packet_data = string.find(l, "packet from (.-) {id=(%d+), data=(.-)}?$")
+
+		if packet_id == "12" then
+
+			if packet_data == "UFO2000 VERSION CHECK FAILED!" then
+				-- handle version check error
+				games[p].version_error = true
+			elseif packet_data == "_Xcom_QUIT_" or packet_data == "QUIT" then
+				-- handle normal game exit
+				endgame(p, l)
+			else
+				-- handle version number
+				local _, _, version_number = string.find(packet_data, "^UFO2000 REVISION OF YOUR OPPONENT: (%d+)")
+				if version_number then
+					games[p].version = version_number 
+				end
+			end
+
+		elseif packet_id == "14" then
+
+			if packet_data == "crc error" then
+				-- handle crc error
+				games[p].crc_error = true 
+			elseif packet_data == "crash" then
+				-- handle crash
+				games[p].crash_error = true 
+			else
+		    	local _, _, id, value = string.find(packet_data, "^(.-)%:(.*)")
+				
+				if id == "system" then
+					-- handle operating system information
+					if not os_table[value] then os_table[value] = {} end
+					os_table[value][p] = 1
+				elseif id == "terrain" then
+					-- handle terrain type
+					games[p].terrain = value
+				elseif id == "result" and value == "victory" then
+					-- detect who is the winner in a battle
+					games[p].winner = p
+				end
+			end
+
+		elseif not packet_id then
+
+			local _, _, msg = string.find(l, "^%S+%s+%S+%s+(.*)")
+			if not msg then msg = "" end
+
+			-- handle game start
+			local _, _, p1, p2 = string.find(msg, "^game start: '(.-)' vs '(.-)'")
+			if p1 and p2 then
+				if games[p1] ~= nil or games[p2] ~= nil then
+					print("error at line ", line_number)
+				end
+				startgame(p1, p2, l)
+			end
+		
+			-- handle disconnect
+			local _, _, p = string.find(msg, "^connection closed %(name='(.-)', max_ave_traffic=")
+			if p then
+				user_offline(p, l)
+				if games[p] then
+					games[p].connection_error = true
+					endgame(p, l)
+				end
+			end
+
+			if string.find(msg, "^Parent: forked child") then
+			-- handle server restart
+				games = {}
+				previous_line = previous_line or l
+				for k, v in users do user_offline(k, previous_line) end
+				users = {}
+			end
+
+			-- handle user login
+			local _, _, p = string.find(msg, "^user login %(name='(.-)', pwd=")
+			if p then 
+				if login_name then print(login_name, line_number) end
+				login_name = p 
+			end
+
+			if msg == "login ok" and login_name then
+				user_online(login_name, l)
+				login_name = nil
+			end
+
+			if string.find(msg, "^login failed") or string.find(msg, "^registration failed") then
+				login_name = nil
+			end
+		
+		end
+
+		previous_line = l
+	end
+end
+
+------------------------------------------------------------------------------
+-- start making html report
+------------------------------------------------------------------------------
+
+process_log(arg[1], games_history)
+
+-- function that formats time
+function timestring(x)
+	local hours = math.floor(x / 3600)
+	local minutes = math.floor((x - hours * 3600) / 60)
+	local seconds = x - hours * 3600 - minutes * 60
+	local result = ""
+	if hours > 0 then 
+		result = result .. hours .. "h " 
+	end
+	if hours > 0 or minutes > 0 then 
+		result = result .. minutes .. "m " 
+	end
+
+	return result .. seconds .. "s"
+end
+
+io.write("<html><head></head><body>")
+
+-- tournament table
+io.write("<br>")
+io.write("<b>UFO2000 players rating table</b><br>")
+io.write("<table border=1>")
+io.write("<tr><td>rank<td>name<td>games played<td>games won<td>time online<td>battle time<td>score\n")
+local tmp = {}
+for name, data in tournament_table do
+	-- calculate score
+	data.score = data.win_count * 10 + (data.games_count - data.win_count) * 3 + 
+		(data.time_online - data.battle_time) / (30 * 60)
+	table.insert(tmp, {name, data})
+end
+table.sort(tmp, function(a, b) return a[2].score > b[2].score end)
+tournament_table = tmp
+
+for index, data in tournament_table do
+	if data[2].score < 0.3 then break end
+	io.write(string.format(
+		"<tr><td>%d<td>%s<td>%d<td>%d<td>%s<td>%s<td>%d\n", 
+		index,
+		data[1], 
+		data[2].games_count,
+		data[2].win_count,
+		timestring(data[2].time_online),
+		timestring(data[2].battle_time),
+		math.floor(data[2].score)))
+end
+io.write("</table>")
+
+-- complete table of played games
+io.write("<br>")
+io.write("<b>UFO2000 played games statistics table</b><br>")
+io.write("<table border=1>")
+io.write("<tr><td>version<td>player 1<td>player 2<td>terrain type<td>winner<td>time<td>comment\n")
+for k, game_info in ipairs(games_history) do
+	local attrib = ""
+	if game_info.version_error then attrib = attrib .. "ver<br>" end
+	if game_info.crc_error then attrib = attrib .. "crc problems<br>" end
+	if game_info.crash_error then attrib = attrib .. "game crashed<br>" end
+	if game_info.connection_error then attrib = attrib .. "connection lost<br>" end
+	if not string.find(attrib, "ver") then
+		io.write(string.format(
+			"<tr><td>%d<td>%s<td>%s<td>%s<td>%s<td>%s<td>%s\n", 
+			game_info.version, 
+			game_info.p1,
+			game_info.p2,
+			game_info.terrain or "-",
+			game_info.winner or "-",
+			timestring(os.difftime(game_info.end_time, game_info.start_time)), 
+			attrib))
+	end
+end
+io.write("</table>")
+
+-- display terrain types popularity statistics
+io.write("<br>")
+io.write("<b>Terrain types statistics table</b><br>")
+local count = 0
+local tmp = {} 
+for k, v in terrain_table do 
+	count = count + v 
+	table.insert(tmp, {k, v}) 
+end 
+terrain_table = tmp
+table.sort(terrain_table, function (a, b) return a[2] > b[2] end)
+io.write("<table border=1>")
+io.write("<tr><td>terrain type<td>number of times used<td>frequency\n") 
+for k, v in ipairs(terrain_table) do
+	io.write(string.format("<tr><td>%s<td>%d<td>%.1f%%", v[1], v[2], v[2] / count * 100))
+end
+io.write("</table>")
+
+-- display operating systems popularity statistics
+io.write("<br>")
+io.write("<b>Operating systems statistics table</b><br>")
+local count = 0
+local tmp = {} 
+for os_name, os_users in os_table do 
+	local n = 0
+	local userlist = nil
+	for k, v in os_users do 
+		if userlist == nil then userlist = k else userlist = userlist .. ", " .. k end
+		n = n + 1 
+	end
+	count = count + n
+	table.insert(tmp, {os_name, userlist, n}) 
+end 
+terrain_table = tmp
+table.sort(terrain_table, function (a, b) return a[3] > b[3] end)
+io.write("<table border=1>")
+io.write("<tr><td>operating system<td>frequency\n") 
+for k, v in ipairs(terrain_table) do
+	io.write(string.format("<tr><td>%s<td>%.1f%%", v[1], v[3] / count * 100))
+end
+io.write("</table>")
+
+-- game versions stability statistics
+io.write("<br>")
+io.write("<b>UFO2000 versions stability comparison table</b><br>")
+
+local versions = {}
+for k, game_info in ipairs(games_history) do
+	-- require that the game must last at least 5 minutes
+	if not game_info.version_error then
+		if not versions[game_info.version] then 
+			versions[game_info.version] = {total = 0, fail = 0, bad_fail = 0}
+		end
+		local vinfo = versions[game_info.version];
+		vinfo.version = game_info.version
+		local fail_flag, bad_fail_flag
+		for k, v in game_info do
+			if string.find(k, "_error$") then 
+				vinfo[k] = (vinfo[k] or 0) + 1 
+				fail_flag = 1
+				if not game_info.connection_error then
+					bad_fail_flag = 1
+				end
+			end
+		end
+		if fail_flag then
+			vinfo.fail = vinfo.fail + 1 
+			if bad_fail_flag then vinfo.bad_fail = vinfo.bad_fail + 1 end
+			vinfo.total = vinfo.total + 1
+		elseif game_info.winner or os.difftime(game_info.end_time, game_info.start_time) > 5 * 60 then
+			vinfo.total = vinfo.total + 1
+		end
+	end
+end
+
+local tmp = {} for k, v in versions do table.insert(tmp, v) end versions = tmp
+
+table.sort(versions, 
+	function (a, b)
+		return a.version < b.version
+	end)
+
+io.write("<table border=1>")
+io.write("<tr><td>version<td>games played<td>problems encountered<td>internal game problems (crc errors or crashes)\n") 
+for k, v in ipairs(versions) do
+	io.write(string.format(
+		"<tr><td>%d<td>%d<td>%d<td>%d\n", 
+		v.version, 
+		v.total,
+		v.fail,
+		v.bad_fail))
+end
+io.write("</table>")
+io.write("<br>server log processing time: ", os.clock(), "s")
+io.write("</body></html>")

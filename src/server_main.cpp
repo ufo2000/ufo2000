@@ -162,6 +162,8 @@ void reload_config(int s)
 
 int main()
 {
+    server_log("server started\n");
+
 #ifndef WIN32
 	daemonize();
 #endif
@@ -169,13 +171,9 @@ int main()
 	NLsocket serversock;
 	NLenum   type = NL_IP;/* default network type */
 
-    server_log("server started\n");
 	load_config();
 
 	if (!nlInit()) printErrorExit();
-
-	printf("nlGetString(NL_VERSION) = %s\n", nlGetString(NL_VERSION));
-
     if (!nlSelectNetwork(type)) printErrorExit();
 
     nlEnable(NL_SOCKET_STATS);

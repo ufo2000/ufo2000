@@ -107,7 +107,7 @@ public:
 
 	void send_message(const std::string &msg);
 
-	void send_error_report(char *report);
+	void send_debug_message(const char *fmt, ...);
 
 	void send_notice();
 	void send_quit();
