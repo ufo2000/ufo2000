@@ -253,11 +253,8 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen)
 			//printsmall(sx, sy, 1, i);
 			int time_of_dst = mcd(_z, _x , _y, 0)->TU_Walk;
 			time_of_dst += mcd(_z, _x , _y, 3)->TU_Walk;
-			if ((dir == 1)
-			 || (dir == 3)
-			 || (dir == 5)
-			 || (dir == 7))
-			 time_of_dst *= 1.5; // diagonal moves use 1.5 TUs
+			if (DIR_DIAGONAL(dir))
+				time_of_dst = time_of_dst * 3 / 2; // diagonal moves use 1.5 TUs
 			//printsmall(sx, sy, 1, time_of_dst);
 			TU -= time_of_dst;
 			// Keep showing consecutive turns.

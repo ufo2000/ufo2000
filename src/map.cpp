@@ -1595,7 +1595,8 @@ Terrain::Terrain(const char *fileprefix, const char *name, int rand_weight):
 	m_name(name), m_rand_weight(rand_weight)
 {
 	m_blocks.resize(MAP_BLOCKS_LIMIT);
-	for (int index = 0; index < m_blocks.size(); index++) {
+	std::vector<block_info>::size_type index;
+	for (index = 0; index < m_blocks.size(); index++) {
 		char fname[256];
 		sprintf(fname, "maps/%s%02d.map", fileprefix, index);
 		int fh = OPEN_ORIG(fname, O_RDONLY | O_BINARY);
@@ -1622,7 +1623,8 @@ Terrain::~Terrain()
 
 int Terrain::get_random_block()
 {
-	int randmax = 0, i;
+	int randmax = 0;
+	std::vector<block_info>::size_type i;
 
 	for (i = 0; i < m_blocks.size(); i++)
 		randmax += m_blocks[i].rand_weight;

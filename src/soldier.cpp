@@ -1091,7 +1091,7 @@ int Soldier::move(int ISLOCAL)
 			// Please note that walktime( -1 ) returns the time of a horizontal move, whereas
 			// walktime( dir ) factors in the diagonal move multiplier.
 			if (DIR_DIAGONAL(dir))
-				spend_time((walktime(-1) * 1.5), 1);
+				spend_time((walktime(-1) * 3 / 2), 1);
 			else
 				spend_time(walktime(-1), 1);
 
@@ -1981,7 +1981,8 @@ int Soldier::walktime(int _dir)
 	int time_of_dst = map->mcd(dz, dx, dy, 0)->TU_Walk;
 	time_of_dst += map->mcd(dz, dx, dy, 3)->TU_Walk;
 
-	if (_dir != -1 && DIR_DIAGONAL(_dir)) time_of_dst *= 1.5; // Diagonal move multiplier.
+	if (_dir != -1 && DIR_DIAGONAL(_dir))
+		time_of_dst = time_of_dst * 3 / 2; // Diagonal move multiplier.
 	// Only used with havetime(). Actual movement calls walktime(-1).
 
 	return time_of_dst;

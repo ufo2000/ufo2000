@@ -58,7 +58,7 @@ enum DIRECTION
 //! reverses specified direction
 #define DIR_REVERSE(dir)  (((dir)+4)%8)
 //! check if the specified direction is diagonal
-inline DIR_DIAGONAL(int dir)
+inline int DIR_DIAGONAL(int dir)
 {
 	assert(dir >= 0 && dir < 8);
 	return dir % 2;

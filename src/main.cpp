@@ -815,6 +815,8 @@ void build_screen(int & select_y)
 				//icon->sel_item = NULL;
 			}
 			break;
+		default:
+			assert(false);
 	}
 
 	draw_sprite(screen2, mouser, mouse_x, mouse_y);
@@ -831,10 +833,11 @@ void build_screen(int & select_y)
  */
 void savegame(const char *filename)
 {
-	savegame(std::fstream(filename, std::ios::binary | std::ios::out));
+	std::fstream f(filename, std::ios::binary | std::ios::out);
+	savegame_stream(f);
 }
 
-void savegame(std::iostream &stream)
+void savegame_stream(std::iostream &stream)
 {
 	char sign[64];
 	sprintf(sign, "ufo2000 %s (%s %s)\n", UFO_VERSION_STRING, __DATE__, __TIME__);
@@ -868,10 +871,10 @@ bool loadgame(const char *filename)
 	std::fstream f(filename, std::ios::binary | std::ios::in);
 	if (!f.is_open()) return false;
 
-	return loadgame(f);
+	return loadgame_stream(f);
 }
 
-bool loadgame(std::iostream &stream)
+bool loadgame_stream(std::iostream &stream)
 {
 	char sign[64], buff[64];
 	sprintf(sign, "ufo2000 %s (%s %s)\n", UFO_VERSION_STRING, __DATE__, __TIME__);
@@ -1051,6 +1054,8 @@ void gameloop()
 				case MAN:
 					inventory->execute();
 					break;
+				default:
+					assert(false);
 			}
 		}
 
@@ -1089,6 +1094,8 @@ void gameloop()
 				case MAN:
 					inventory->close();
 					break;
+				default:
+					assert(false);
 			}
 		}
 
