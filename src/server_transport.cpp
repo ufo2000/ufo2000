@@ -4,6 +4,9 @@ This file is part of "UFO 2000" aka "X-COM: Gladiators"
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
 Copyright (C) 2002-2003  ufo2000 development team
 
+This file is partially based on clientserver example from HawkNL library
+Copyright (C) 2000-2002  Phil Frisbie, Jr. (phil@hawksoft.com)
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
@@ -42,13 +45,21 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 ServerClient::ServerClient(ServerDispatch *server, NLsocket socket)
 	:m_socket(socket), m_server(server)
 {
-	printf("%p\n", server);
 	m_error = false;
+	nlTime(&m_connection_time);
+	m_max_ave_traffic = 0;
 	m_server->m_clients_by_socket[m_socket] = this;
 }
 
 ServerClient::~ServerClient()
 {
+	if (m_server->m_http) {
+		m_server->m_http_traffic_in  += nlGetSocketStat(m_socket, NL_BYTES_RECEIVED);
+		m_server->m_http_traffic_out += nlGetSocketStat(m_socket, NL_BYTES_SENT);
+	} else {
+		m_server->m_traffic_in  += nlGetSocketStat(m_socket, NL_BYTES_RECEIVED);
+		m_server->m_traffic_out += nlGetSocketStat(m_socket, NL_BYTES_SENT);
+	}
 	m_server->m_clients_by_socket.erase(m_socket);
 	if (m_name != "") m_server->m_clients_by_name.erase(m_name);
 	nlGroupDeleteSocket(m_server->m_group, m_socket);
@@ -56,7 +67,6 @@ ServerClient::~ServerClient()
 }
 
 #define PACKET_HEADER_SIZE 8
-#define PACKET_SIZE_LIMIT  16384
 
 static int decode_packet(std::string &stream, NLulong &id, std::string &packet)
 {
@@ -65,7 +75,7 @@ static int decode_packet(std::string &stream, NLulong &id, std::string &packet)
 	const char *p = stream.data();
 
 	NLulong size = nlSwapl(*(NLulong *)p);
-	if (size > 16384) return -1;
+	if (size > PACKET_SIZE_LIMIT) return -1;
 
 //	if the packet is still not completely transmitted, exit from this cycle
 	if (stream.size() < PACKET_HEADER_SIZE + size) return 0;
@@ -114,6 +124,7 @@ void ServerDispatch::HandleSocket(NLsocket socket)
     if (client->m_name.empty() && stream.size() >= 3 && stream[0] == 'G' && 
     	stream[1] == 'E' && stream[2] == 'T') {
 	//	HTTP request    	
+		m_http = true;
 		std::string http_reply;
 		http_reply += "HTTP/1.0 200 OK\n";
 		http_reply += "Content-Type: text/html;charset=utf-8\n\n";
@@ -131,14 +142,29 @@ void ServerDispatch::HandleSocket(NLsocket socket)
 
 	if (err < 0 || client->m_error)
 	{
-	    printf("SERVER: socket %d closed\n", (int)socket);
-        delete client;
+		printf("SERVER: socket %d closed\n", (int)socket);
+		delete client;
 	}
 }
 
 void ServerDispatch::HandleNewConnections()
 {
-/* check for a new client */
+//	Check timeouts for authentication
+	NLtime now;
+	nlTime(&now);
+
+	std::map<NLsocket, ServerClient *>::iterator it = m_clients_by_socket.begin();
+	while (it != m_clients_by_socket.end()) {
+		ServerClient *client = it->second; it++;
+		if (!client->m_name.empty()) continue;
+		if (get_time_diff(client->m_connection_time, now) > LOGIN_TIME_TIMIT)
+			delete client;
+	}
+
+//	Check limit for the number of connections
+	if (m_clients_by_socket.size() >= CONNECTIONS_COUNT_LIMIT) return;
+
+//	check for a new client
     NLsocket newsock = nlAcceptConnection(m_socket);
     if (newsock == NL_INVALID)
     {
@@ -161,32 +187,46 @@ void ServerDispatch::HandleNewConnections()
 
 void ServerDispatch::Run(NLsocket sock)
 {
-	m_socket = sock;
+	nlTime(&m_connection_time);
+	m_traffic_in       = 0;
+	m_traffic_out      = 0;
+	m_http_traffic_in  = 0;
+	m_http_traffic_out = 0;
+	m_http             = false;
+	m_socket           = sock;
 
     m_group = nlGroupCreate();
 
     while (1) {
     	HandleNewConnections();
         
-    /* check for incoming messages */
+    //	Check for incoming messages
         NLsocket s[MAX_CLIENTS];
         NLint count = nlPollGroup(m_group, NL_READ_STATUS, s, MAX_CLIENTS, 0);
         assert(count != NL_INVALID);
 
-    /* loop through the clients and read the packets */
+	//	Loop through the clients and read the packets
         for (NLint i = 0; i < count; i++) {
-            int readlen;
-	        NLbyte buffer[128];
+			ServerClient *client = m_clients_by_socket[s[i]];
+			int readlen;
+			NLbyte buffer[128];
 
-            while ((readlen = nlRead(s[i], buffer, sizeof(buffer))) > 0) {
-				m_clients_by_socket[s[i]]->m_traffic_in += readlen;
-            	m_clients_by_socket[s[i]]->m_stream.append(buffer, readlen);
-            }
+			while ((readlen = nlRead(s[i], buffer, sizeof(buffer))) > 0) {
+				client->m_stream.append(buffer, readlen);
+            //	Check for traffic limit
+				long ave_traffic = nlGetSocketStat(s[i], NL_AVE_BYTES_RECEIVED);
+				if (ave_traffic > client->m_max_ave_traffic)
+					client->m_max_ave_traffic = ave_traffic;
+				if (ave_traffic > AVE_TRAFFIC_LIMIT) {
+					client->m_error = true;
+					break;
+				}
+			}
 
-            if (readlen == NL_INVALID) {
-                NLenum err = nlGetError();
-                if (err == NL_MESSAGE_END || err == NL_SOCK_DISCONNECT)
-                	m_clients_by_socket[s[i]]->m_error = true;
+			if (readlen == NL_INVALID) {
+				NLenum err = nlGetError();
+				if (err == NL_MESSAGE_END || err == NL_SOCK_DISCONNECT)
+					client->m_error = true;
             }
 
             HandleSocket(s[i]);
@@ -198,7 +238,6 @@ void ServerDispatch::Run(NLsocket sock)
 
 bool ServerClient::send_packet_back(NLulong id, const std::string &packet)
 {
-	m_traffic_out += packet.size();
 	return ::send_packet(m_socket, id, packet);
 }
 
@@ -265,7 +304,7 @@ int ClientServer::recv_packet(NLulong &id, std::string &packet)
 	return decode_packet(m_stream, id, packet) == 1;
 }
 
-int ClientServer::wait_packet(NLulong &id, std::string buffer)
+int ClientServer::wait_packet(NLulong &id, std::string &buffer)
 {
     while (true) {
     	int res = recv_packet(id, buffer);

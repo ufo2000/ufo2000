@@ -24,7 +24,17 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #define MAX_USERNAME_SIZE 16
 
-static std::string tostring(int x)
+static std::string time_to_string(long t)
+{
+	char buffer[32];
+	long hours   = t / (3600 * 1000); t -= hours * (3600 * 1000);
+	long minutes = t / (60 * 1000); t -= minutes * (60 * 1000);
+	long seconds = t / 1000;
+	sprintf(buffer, "%02ld:%02ld:%02ld", hours, minutes, seconds);
+	return buffer;
+}
+
+static std::string num_to_string(int x)
 {
 	char buffer[32];
 	sprintf(buffer, "%d", x);
@@ -33,9 +43,15 @@ static std::string tostring(int x)
 
 void ServerDispatch::MakeHtmlReport(std::string &html_body)
 {
+	NLtime now;
+	nlTime(&now);
+
+	long traffic_in_cur = 0;
+	long traffic_out_cur = 0;
+
 	html_body = "<html><head></head><body>";
 	html_body += "<table border=1>";
-	html_body += "<tr><td>user name<td>bytes received<td>bytes sent";
+	html_body += "<tr><td>user name<td>bytes from<td>bytes to<td>max average traffic<td>time online";
 
 //	Report other players status
 	std::map<std::string, ServerClient *>::iterator it = m_clients_by_name.begin();
@@ -45,17 +61,31 @@ void ServerDispatch::MakeHtmlReport(std::string &html_body)
 		html_body += "<tr><td>";
 		html_body += client->m_name;
 		html_body += "<td>";
-		html_body += tostring(client->m_traffic_out);
+		html_body += num_to_string(nlGetSocketStat(client->m_socket, NL_BYTES_RECEIVED));
+		traffic_in_cur += nlGetSocketStat(client->m_socket, NL_BYTES_RECEIVED);
 		html_body += "<td>";
-		html_body += tostring(client->m_traffic_in);
+		html_body += num_to_string(nlGetSocketStat(client->m_socket, NL_BYTES_SENT));
+		traffic_out_cur += nlGetSocketStat(client->m_socket, NL_BYTES_SENT);
+		html_body += "<td>";
+		html_body += num_to_string(client->m_max_ave_traffic);
+		html_body += "<td>";
+		html_body += time_to_string(get_time_diff(client->m_connection_time, now));
 
 		it++;
 	}
 
 	html_body += "</table>";
 	html_body += "<br>";
-	html_body += "bytes received = number of bytes received by user from server<br>";
-	html_body += "bytes received = number of bytes sent by user to server<br>";
+	html_body += "game server uptime = ";
+	html_body += time_to_string(get_time_diff(m_connection_time, now)) + "<br>";
+	html_body += "total incoming game traffic = ";
+	html_body += num_to_string(m_traffic_in + traffic_in_cur) + "<br>";
+	html_body += "total outcoming game traffic = ";
+	html_body += num_to_string(m_traffic_out + traffic_out_cur) + "<br>";
+	html_body += "total incoming HTTP traffic = ";
+	html_body += num_to_string(m_http_traffic_in) + "<br>";
+	html_body += "total outcoming HTTP traffic = ";
+	html_body += num_to_string(m_http_traffic_out) + "<br>";
 	html_body += "</body><html>";
 }
 
@@ -112,8 +142,21 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 
 			printf("user login. login = '%s', password = '%s'\n", login.c_str(), password.c_str());
 
-			if (login.size() > MAX_USERNAME_SIZE || m_server->m_clients_by_name.find(login) != m_server->m_clients_by_name.end()) {
-				send_packet_back(SRV_FAIL, "");
+			if (login.size() > USERNAME_SIZE_LIMIT) {
+				send_packet_back(SRV_FAIL, "User name is too long");
+				m_error = true;
+				break;
+			}
+
+			if (m_server->m_clients_by_name.find(login) != m_server->m_clients_by_name.end()) {
+				send_packet_back(SRV_FAIL, "User with this name is already online");
+				m_error = true;
+				break;
+			}
+
+		//	check clients number limit
+			if (m_server->m_clients_by_name.size() >= PLAYERS_COUNT_LIMIT) {
+				send_packet_back(SRV_FAIL, "Too many players on server");
 				m_error = true;
 				break;
 			}
@@ -215,20 +258,20 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 	return true;
 }
 
-bool ClientServerUfo::login(const std::string &name, const std::string &pass)
+bool ClientServerUfo::login(const std::string &name, const std::string &pass,
+	std::string &error_message)
 {
 	if (!send_packet(SRV_LOGIN, name + ":" + pass)) {
-		printf("login result: fail connect\n");
+		error_message = "Failed to connect";
 		return false;
 	}
 
-	NLulong id; std::string buffer;
-	if (!wait_packet(id, buffer)) {
-		printf("server closed connection\n");
+	NLulong id;
+	if (!wait_packet(id, error_message)) {
+		error_message = "Failed to connect";
 		return false;
 	}
 
-	printf("login result: %s\n", buffer.c_str());
     return id == SRV_OK;
 };
 

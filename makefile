@@ -21,7 +21,7 @@ CFLAGS = -funsigned-char -Wall
 CFLAGS += -pipe -DUFO_SVNVERSION=\"$(UFO_SVNVERSION)\"
 OBJDIR = obj
 NAME = ufo2000
-SERVER_NAME = server
+SERVER_NAME = ufo2000-srv
 
 VPATH = src src/jpgalleg
 
@@ -102,3 +102,4 @@ source-bz2:
 	svn delete --force ufo2000-r$(UFO_SVNVERSION)-src
 
 -include $(DEPS)
+-include $(DEPS_SERVER)

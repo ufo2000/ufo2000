@@ -61,7 +61,8 @@ public:
 class ClientServerUfo: public ClientServer
 {
 public:
-	bool login(const std::string &name, const std::string &pass);
+	bool login(const std::string &name, const std::string &pass,
+		std::string &error_message);
 	bool message(const std::string &text);
 	bool challenge(const std::string &user);
 };

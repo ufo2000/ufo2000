@@ -274,8 +274,9 @@ int connect_internet_server()
     if (!server->connect(cfg_get_server_host(), 2000))
     	return -1;
 
-    if (!server->login(cfg_get_server_login(), cfg_get_server_password())) {
-		alert(" ", "  Failed to connect to server  ", " ", "    OK    ", NULL, 1, 0);
+    std::string error_message;
+    if (!server->login(cfg_get_server_login(), cfg_get_server_password(), error_message)) {
+		alert(" ", error_message.c_str(), " ", "    OK    ", NULL, 1, 0);
 		return -1;
     }
 

@@ -4,6 +4,9 @@ This file is part of "UFO 2000" aka "X-COM: Gladiators"
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
 Copyright (C) 2002-2003  ufo2000 development team
 
+This file is partially based on clientserver example from HawkNL library
+Copyright (C) 2000-2002  Phil Frisbie, Jr. (phil@hawksoft.com)
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
@@ -25,29 +28,29 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 void printErrorExit(void)
 {
-    NLenum err = nlGetError();
+	NLenum err = nlGetError();
     
-    if(err == NL_SYSTEM_ERROR)
-        printf("System error: %s\n", nlGetSystemErrorStr(nlGetSystemError()));
-    else
-        printf("HawkNL error: %s\n", nlGetErrorStr(err));
+	if (err == NL_SYSTEM_ERROR)
+		printf("System error: %s\n", nlGetSystemErrorStr(nlGetSystemError()));
+	else
+		printf("HawkNL error: %s\n", nlGetErrorStr(err));
 
-    nlShutdown();
-    exit(1);
+	nlShutdown();
+	exit(1);
 }
 
 int main()
 {
-    NLsocket serversock;
-    NLenum   type = NL_IP;/* default network type */
+	NLsocket serversock;
+	NLenum   type = NL_IP;/* default network type */
 
-    if (!nlInit()) printErrorExit();
+	if (!nlInit()) printErrorExit();
 
-    printf("nlGetString(NL_VERSION) = %s\n", nlGetString(NL_VERSION));
-    printf("nlGetString(NL_NETWORK_TYPES) = %s\n", nlGetString(NL_NETWORK_TYPES));
+	printf("nlGetString(NL_VERSION) = %s\n", nlGetString(NL_VERSION));
 
     if (!nlSelectNetwork(type)) printErrorExit();
 
+    nlEnable(NL_SOCKET_STATS);
     serversock = nlOpen(2000, NL_RELIABLE);
     
     if (serversock == NL_INVALID) printErrorExit();
