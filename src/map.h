@@ -191,7 +191,12 @@ public:
 		       (row >= 0) && (row < height * 10) &&
 		       (type >= 0) && (type < 4));
 
-		return &m_terrain->m_mcd[m_cell[lev][col][row]->type[type]];
+		MCD *m = &m_terrain->m_mcd[m_cell[lev][col][row]->type[type]];
+		if (m->Tile_Type != type)
+			return & m_terrain->empty;
+		return m;
+
+//		return &m_terrain->m_mcd[m_cell[lev][col][row]->type[type]];
 	}
 
 	Cell *cell(int lev, int col, int row)

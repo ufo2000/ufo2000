@@ -404,7 +404,10 @@ int Platoon::check_reaction_fire(Soldier *target)
 void Platoon::save_FULLDATA(char *fn)
 {
 	int fh = open(F(fn), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
-	ASSERT(fh != -1);
+	if (fh == -1) {
+		alert(" ", "Can't create specified file", " ", "    OK    ", NULL, 1, 0);
+		return;		
+	}
 	Soldier *ss = man;
 	while (ss != NULL) {
 		write(fh, &ss->md, sizeof(ss->md));

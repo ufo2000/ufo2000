@@ -658,8 +658,8 @@ void Map::center(int lev, int col, int row)
 
 int Map::stopLOS_level(int dx, int dy, int lev, int col, int row)
 {
-	if ((col + dx < 0) || (col + dx >= width * 10) || (row + dy < 0) || (row + dx >= height * 10))
-		return 0;
+	if ((col + dx < 0) || (col + dx >= width * 10) || (row + dy < 0) || (row + dy >= height * 10))
+		return 1;
 	int ld = ofs2dir[dy + 1][dx + 1];
 	if (viewable(lev, col, row, ld))
 		return 0;

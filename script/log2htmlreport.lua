@@ -147,10 +147,10 @@ function process_log(filename, history)
 
 			if packet_data == "crc error" then
 				-- handle crc error
-				games[p].crc_error = true 
+				if games[p] then games[p].crc_error = true end
 			elseif packet_data == "crash" then
 				-- handle crash
-				games[p].crash_error = true 
+				if games[p] then games[p].crash_error = true end
 			else
 		    	local _, _, id, value = string.find(packet_data, "^(.-)%:(.*)")
 				
@@ -160,13 +160,13 @@ function process_log(filename, history)
 					os_table[value][p] = 1
 				elseif id == "terrain" then
 					-- handle terrain type
-					games[p].terrain = value
+					if games[p] then games[p].terrain = value end
 				elseif id == "result" and value == "victory" then
 					-- detect who is the winner in a battle
-					games[p].winner = p
+					if games[p] then games[p].winner = p end
 				elseif id == "assert" then
-					-- detect who is the winner in a battle
-					games[p].assert_error = value
+					-- handle assertion failure
+					if games[p] then games[p].assert_error = value end
 				end
 			end
 
