@@ -57,6 +57,7 @@ protected:
     NLtime          m_connection_time;
 
 	std::string     m_ip;
+	bool            m_http;
 
 	void Run();
 
@@ -91,7 +92,6 @@ public:
 	long                                  m_traffic_out;
 	long                                  m_http_traffic_in;
 	long                                  m_http_traffic_out;
-	bool                                  m_http;
 
 	void HandleNewConnections();
 	void HandleSocket(NLsocket socket);

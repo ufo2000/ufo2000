@@ -49,12 +49,13 @@ ServerClient::ServerClient(ServerDispatch *server, NLsocket socket)
 	m_error = false;
 	nlTime(&m_connection_time);
 	m_max_ave_traffic = 0;
+	m_http = false;
 	m_server->m_clients_by_socket[m_socket] = this;
 }
 
 ServerClient::~ServerClient()
 {
-	if (m_server->m_http) {
+	if (m_http) {
 		m_server->m_http_traffic_in  += nlGetSocketStat(m_socket, NL_BYTES_RECEIVED);
 		m_server->m_http_traffic_out += nlGetSocketStat(m_socket, NL_BYTES_SENT);
 	} else {
@@ -125,7 +126,7 @@ void ServerDispatch::HandleSocket(NLsocket socket)
     if (client->m_name.empty() && stream.size() >= 3 && stream[0] == 'G' && 
     	stream[1] == 'E' && stream[2] == 'T') {
 	//	HTTP request    	
-		m_http = true;
+		client->m_http = true;
 		std::string http_reply;
 		http_reply += "HTTP/1.0 200 OK\n";
 		http_reply += "Content-Type: text/html;charset=utf-8\n\n";
@@ -201,7 +202,6 @@ void ServerDispatch::Run(NLsocket sock)
 	m_traffic_out      = 0;
 	m_http_traffic_in  = 0;
 	m_http_traffic_out = 0;
-	m_http             = false;
 	m_socket           = sock;
 
     m_group = nlGroupCreate();
@@ -217,7 +217,7 @@ void ServerDispatch::Run(NLsocket sock)
         
     //	Check for incoming messages
         NLsocket s[CONNECTIONS_COUNT_LIMIT];
-        NLint count = nlPollGroup(m_group, NL_READ_STATUS, s, CONNECTIONS_COUNT_LIMIT, -1);
+        NLint count = nlPollGroup(m_group, NL_READ_STATUS, s, CONNECTIONS_COUNT_LIMIT, 0);
         assert(count != NL_INVALID);
 
 	//	Loop through the clients and read the packets
