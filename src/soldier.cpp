@@ -752,10 +752,10 @@ void Soldier::draw_enemy_seen(int select_y)
 				{
 					int sx = map->x + 16 * enemy_x[i] + 16 * enemy_y[i] + 12;
 					int sy = map->y - (enemy_x[i] + 1) * 8 + 8 * enemy_y[i] - 29 - 24 * enemy_z[i];
-			
+
 				//	Draw a number over enemy head
 					if (i < 10)	textout(screen2, font, num, sx, sy - 2, 1);
-		 
+
 				//	Draw blue triangle with its point at sx, sy and height 5
 					sx += 3; sy += 10; int j;
 					for (j = 0; j < 5; j++)
@@ -766,7 +766,7 @@ void Soldier::draw_enemy_seen(int select_y)
 					}
 					line(screen2, sx - j, sy - j, sx + j, sy - j, 15);
 				}
-		*/ 
+		*/
 		//	Draw numbers above seen enemies
 		if (FLAGS & F_SELECTENEMY) {
 			int sx = map->x + 16 * enemy_x[i] + 16 * enemy_y[i] + 12;
@@ -1385,7 +1385,7 @@ int Soldier::FAccuracy(int peraccur, int TWOHAND)
 	ac -= (ac * (ud.MaxHealth - ud.CurHealth)) / ud.MaxHealth / 2;
 
 	if (TWOHAND) {
-		if ((lhand_item() != NULL) && (lhand_item() != NULL))
+		if ((rhand_item() != NULL) && (lhand_item() != NULL))
 			ac -= ac / 3;
 	}
 
