@@ -54,7 +54,7 @@ Scenario::Scenario (int sc_type)
 	init_assassin();
 	init_hold();
 	init_break();       
-	init_capture();
+	init_capture();              
 	
 	rules[0] = 3;	//all explosives allowed
 	rules[1] = 15;	//15k points limit
@@ -196,10 +196,18 @@ void Scenario::init_capture ()
 	options[SC_CAPTURE][0] = new Option(OPT_SWITCH, 0, "Leader can have two-handed weapons", "Leader can't have two-handed weapons", false);
 	options[SC_CAPTURE][1] = new Option(OPT_NONE);
 	options[SC_CAPTURE][2] = new Option(OPT_NONE);
-}
+}                                          
 
 void Scenario::new_scenario (int sc_type)
 {
+	//!!!
+	//Diversion/Sabotage temporary disabled
+	if (type == SC_ESCAPE && sc_type == SC_SABOTAGE)
+		sc_type = SC_CONTROL;
+	if (type == SC_CONTROL && sc_type == SC_SABOTAGE)
+		sc_type = SC_ESCAPE;
+	//!!!
+
 	if (sc_type <= -1)
 	    sc_type = SCENARIO_NUMBER - 1;
 	    
@@ -286,7 +294,7 @@ void Scenario::new_coords ()
         break;
         
         case SC_BREAK:
-        break;
+        break;       
 	}
 }
 
