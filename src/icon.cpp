@@ -748,16 +748,26 @@ void Icon::execute(int mx, int my)
 	} else
 	if (button[B_MAN_UP].is_inside(mx, my)) {
 		if (MODE != WATCH) {
-			// Todo: Flying armor
-			if (sel_man->use_elevator(+1))
-				map->center(sel_man);
+		    //Pathfinding version 2:
+			if(map->cell_inside(sel_man->z + 1, sel_man->x, sel_man->y))
+                sel_man->wayto(sel_man->z + 1, sel_man->x, sel_man->y);
+                
+            //Pathfinding version 1:
+			/*if (sel_man->use_elevator(+1))
+			    map->center(sel_man);*/
+			    
 		}
 	} else
 	if (button[B_MAN_DOWN].is_inside(mx, my)) {
 		if (MODE != WATCH) {
-			// Todo: Flying armor
-			if (sel_man->use_elevator(-1))
-				map->center(sel_man);
+			//Pathfinding version 2:
+			if(map->cell_inside(sel_man->z - 1, sel_man->x, sel_man->y))
+		        sel_man->wayto(sel_man->z - 1, sel_man->x, sel_man->y);
+		        
+            //Pathfinding version 1:
+			/*if (sel_man->use_elevator(-1))
+			    map->center(sel_man);*/
+			
 		}
 	} else
 	if (button[B_VIEW_UP].is_inside(mx, my)) {

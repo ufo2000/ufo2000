@@ -1158,12 +1158,13 @@ int Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
 
 void Soldier::wayto(int dest_lev, int dest_col, int dest_row)
 {
-    if ((dest_col != x) || (dest_row != y)) {
-
     //  !!! Hack to fix synchronization problems with stairs
     //  Should make normal pathfinding code to find paths across stairs
     //  Pathfinding version 1
-    //    dest_lev = z;
+    //  dest_lev = z;
+
+    if ((dest_col != x) || (dest_row != y) || (dest_lev != z)) {
+
 
         curway = 1;
         waylen = map->pathfind(z, x, y, dest_lev, dest_col, dest_row, can_fly(), way);
