@@ -170,6 +170,7 @@ public:
 	Platoon *get_platoon() {return m_platoon;}
 	int get_NID() {return NID;}
 
+    void restore_moved();
 	void restore();
 	int move(int ISLOCAL);
 	void calc_visible_cells();

@@ -55,6 +55,7 @@ public:
 	Statistics *get_stats() {return m_stats;}
 
 	void move(int ISLOCAL);
+    void restore_moved();
 	void restore();
 	void bullmove();
 	void bulldraw();

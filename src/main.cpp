@@ -856,6 +856,7 @@ void switch_turn()
 void send_turn()
 {
 	ASSERT(MODE != WATCH);
+	platoon_local->restore_moved();
 	switch_turn();
 	elist->step(-1);
 	int crc = build_crc();

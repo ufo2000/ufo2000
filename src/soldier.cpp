@@ -603,10 +603,21 @@ void Soldier::build_items_stats(char *buf, int &len)
 	}
 }
 
+/**
+ * Restore minimal amount of parameters - even for Watch mode
+ */
+void Soldier::restore_moved()
+{
+    MOVED = 0;
+}
+
+/**
+ * Restore full amount of parameters - at the beginning of the turn
+ */
 void Soldier::restore()
 {
-	seen_enemy_num = 0;
-	MOVED = 0;
+    restore_moved();
+    seen_enemy_num = 0;
 	// Percent of TUs: the lesser of 100% or ((strength / weight) * 100%).
 	ud.CurTU = (count_weight() > ud.CurStrength) ? (ud.MaxTU * ud.CurStrength / count_weight()) : ud.MaxTU;
 	//ud.CurHealth = ud.MaxHealth;

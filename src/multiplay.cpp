@@ -492,17 +492,6 @@ void Net::send_change_pose(int NID)
 	send();
 }
 
-void Net::send_reserve_time(int NID,int res)
-{
-	if (!SEND) return ;
-
-	pkt.create(CMD_RESTIME);
-	pkt << NID;
-	pkt << res;
-	send();
-}
-
-
 int Net::recv_change_pose()
 { // "POSE"
 	int NID;
@@ -521,6 +510,16 @@ int Net::recv_change_pose()
 		error("NID");
 	}
 	return 0;
+}
+
+void Net::send_reserve_time(int NID, int res)
+{
+    if (!SEND) return ;
+
+    pkt.create(CMD_RESTIME);
+    pkt << NID;
+    pkt << res;
+    send();
 }
 
 int Net::recv_reserve_time()
@@ -1467,10 +1466,11 @@ void Net::send_options(int scenario_type, int index, int value)
 	
 	send(pkt.str(), pkt.str_len());
 	
-	local.SEND =
-	local.START = 
-	remote.SEND =
-	remote.START = 0;
+    if (scenario->options[scenario_type][index]->type != OPT_HIDDEN)
+        local.SEND =
+        remote.SEND =
+        local.START = 
+        remote.START = 0;
 }
 
 int Net::recv_options()
@@ -1482,15 +1482,21 @@ int Net::recv_options()
 	pkt >> index;
 	pkt >> scenario->options[scenario_type][index]->value;
 
-	local.SEND =
-	local.START = 
-	remote.SEND =
-	remote.START = 0;
+    if (scenario->options[scenario_type][index]->type != OPT_HIDDEN)
+        local.SEND =
+        local.START = 
+        remote.SEND =
+        remote.START = 0;
 	
-	if (scenario->options[scenario_type][index]->reset_deploy)
-		mapdata.load_game = 77;
+    if (scenario->options[scenario_type][index]->reset_deploy)
+    {
+        mapdata.load_game = 77;
+        // We need to update the deployment type not only in
+        // the option, but also in the scenario.
+        scenario->update_deploy_type();
+    }
 
-	return 1;
+    return 1;
 }
 
 void Net::send_panic(int NID, int action)

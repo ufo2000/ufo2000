@@ -187,7 +187,21 @@ void Platoon::bulldraw()
 	}
 }
 
+/**
+ * Restore minimal amount of parameters - even for Watch mode
+ */
+void Platoon::restore_moved()
+{
+    Soldier *ss = man;
+    while (ss != NULL) {
+        ss->restore_moved();
+        ss = ss->next();
+    }
+}
 
+/**
+ * Restore full amount of parameters - at the beginning of the turn
+ */
 void Platoon::restore()
 {
 	Soldier *ss = man;
