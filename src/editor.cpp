@@ -82,13 +82,13 @@ bool is_item_allowed(int type)
 Editor::Editor()
 {
 	BITMAP *image = create_bitmap(320, 200); clear(image);
-	tac01 = new SPK("$(xcom)/ufograph/tac01.scr");
+    tac01 = new SPK("$(xcom)/ufograph/tac01.scr");  // Picture with buttons
 	tac01->show(image, 0, 0);
-	b123 = create_bitmap(83, 22); clear(b123);
-	blit(image, b123, 45, 0, 0, 0, 83, 22);
-	b4 = create_bitmap(32, 25); clear(b4);
-	blit(image, b4, 224, 21, 0, 0, 32, 25);
-	b5 = create_bitmap(32, 15); clear(b5);
+  //b123 = create_bitmap(83, 22); clear(b123);  // not used ?
+  //blit(image, b123, 45, 0, 0, 0, 83, 22);
+  //b4 = create_bitmap(32, 25); clear(b4);
+  //blit(image, b4, 224, 21, 0, 0, 32, 25);
+    b5 = create_bitmap(32, 15); clear(b5);  // Button for Scroll-left
 	blit(image, b5, 288, 137, 0, 0, 32, 15);
 	destroy_bitmap(image);
 
@@ -311,6 +311,7 @@ void Editor::show()
 	int mouse_leftr = 1, mouse_rightr = 1;
 	int i;
     int color = COLOR_LT_OLIVE;
+    int nr = 0;
 
 	while (!DONE) {
 
@@ -451,15 +452,36 @@ void Editor::show()
 				case KEY_F4:
 					edit_soldier();   // Edit Attributes+Armor
 					break;
-				case KEY_F5:
-					//edit_soldier();
+
+                case KEY_F5:  // Avg. Rifleman
+                    break;
+                case KEY_F6:  // Scout
+                    break;
+                case KEY_F7:  // Sharpshooter
+                    break;
+                case KEY_F8:  // HeavyWeapons
+                    break;
+                case KEY_F9:  // Test: config: load/save/generate single soldier
+                    nr = man->get_NID();  // index of current man: 1001..1015, 2001..2015
+                    nr = nr % 100;  
+                    break;
+
+                case KEY_F10:
+                    change_screen_mode();
+                    break;
+                case KEY_F12:
 					if (askmenu("SAVE ARMOURY")) {
 						m_armoury->save_to_file("$(home)/armoury.lua", "Armoury");
 					}
 					break;
-				case KEY_F10:
-					change_screen_mode();
-					break;
+                case KEY_LEFT:
+                    man = man->prevman();
+                    break;
+                case KEY_RIGHT:
+                    // fallthru
+                case KEY_TAB:   // jump to next soldier
+                    man = man->nextman();
+                    break;
 				case KEY_ESC:
 					DONE = 1;
 					break;
