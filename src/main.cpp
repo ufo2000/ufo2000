@@ -473,18 +473,19 @@ void initmain(int argc, char *argv[])
 		}
 	}
 
-	memset(&mapdata, 0, sizeof(mapdata));
 	if (argc > 1) {
-		int fh = open(argv[1], O_RDONLY | O_BINARY);
-		assert(fh != -1);
-		read(fh, &mapdata, sizeof(mapdata));
-		close(fh);
+		g_server_login = argv[1];
+		g_server_password = argc > 2 ? argv[2] : "";
 	} else {
-		int fh = OPEN_GTEMP("geodata.dat", O_RDONLY | O_BINARY);
-		assert(fh != -1);
-		read(fh, &mapdata, sizeof(mapdata));
-		close(fh);
+		g_server_login = get_config_string("Server", "login", "anonymous");
+		g_server_password = get_config_string("Server", "password", "");
 	}
+
+	memset(&mapdata, 0, sizeof(mapdata));
+	int fh = OPEN_GTEMP("geodata.dat", O_RDONLY | O_BINARY);
+	assert(fh != -1);
+	read(fh, &mapdata, sizeof(mapdata));
+	close(fh);
 
 	set_window_title("UFO2000");
 	set_window_close_button(0);

@@ -26,6 +26,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <memory>
 #include "wind.h"
 #include "config.h"
+#include "sound.h"
 
 void draw_border(BITMAP *bmp, int x, int y, int w, int h, int color)
 {
@@ -116,7 +117,7 @@ struct UserInfo
 };
 
 #define COLOR_YELLOW   makecol(255, 255, 0)
-#define COLOR_GREEN    makecol(0, 255, 0)
+#define COLOR_GREEN    xcom1_color(50)
 #define COLOR_DARKGRAY xcom1_color(4)
 
 class UsersList: public VisualObject
@@ -154,7 +155,7 @@ public:
 
 	virtual void redraw_full(BITMAP *bmp, int x, int y)
 	{
-		m_x = x; m_y = y;
+		m_x = x; m_y = y; // Hack - only has sence when bmp is screen
 		if (m_height == 0 || m_width == 0) return;
 		BITMAP *temp_bmp = create_bitmap(m_width, m_height);
 		clear_to_color(temp_bmp, xcom1_color(15));
@@ -176,6 +177,11 @@ public:
 		blit(temp_bmp, bmp, 0, 0, x, y, m_width, m_height);
 		if (bmp == screen) unscare_mouse();
 		destroy_bitmap(temp_bmp);
+	}
+
+	virtual void redraw_fast(BITMAP *bmp, int x, int y)
+	{
+		m_x = x; m_y = y; // Hack - only has sence when bmp is screen
 	}
 
 	virtual int get_width() const { return m_width; }
@@ -295,15 +301,26 @@ int connect_internet_server()
 	{
 		NLulong id;
 		std::string packet;
-		if (server->recv_packet(id, packet))
+		int res = server->recv_packet(id, packet);
+		if (res == -1) {
+			alert(" ", "  Connecton lost  ", " ", "    OK    ", NULL, 1, 0);
+			return -1;
+		}
+		if (res != 0)
 		{
 			switch (id)
 			{
-				case SRV_USER_ONLINE: users->update_user_info(packet.c_str(), USER_STATUS_READY); break;
-				case SRV_USER_OFFLINE: users->update_user_info(packet.c_str(), USER_STATUS_OFFLINE); break;
-				case SRV_USER_CHALLENGE_IN: users->update_user_info(packet.c_str(), USER_STATUS_CHALLENGE_IN); break;
-				case SRV_USER_CHALLENGE_OUT: users->update_user_info(packet.c_str(), USER_STATUS_CHALLENGE_OUT); break;
-				case SRV_MESSAGE: chat->printf(COLOR_YELLOW, "%s", packet.c_str()); break;
+				case SRV_USER_ONLINE: users->update_user_info(packet, USER_STATUS_READY); break;
+				case SRV_USER_OFFLINE: users->update_user_info(packet, USER_STATUS_OFFLINE); break;
+				case SRV_USER_CHALLENGE_IN: users->update_user_info(packet, USER_STATUS_CHALLENGE_IN); break;
+				case SRV_USER_CHALLENGE_OUT: users->update_user_info(packet, USER_STATUS_CHALLENGE_OUT); break;
+				case SRV_MESSAGE: chat->printf(xcom1_color(32), "%s", packet.c_str()); break;
+				case SRV_GAME_START_HOST:
+					alert(" ", "  Game should start as host now ", " ", "    OK    ", NULL, 1, 0);
+					return -1;
+				case SRV_GAME_START_JOIN:
+					alert(" ", "  Game should start as client now ", " ", "    OK    ", NULL, 1, 0);
+					return -1;
 			}
 
 			users_border->resize(-1, -1);
@@ -325,14 +342,17 @@ int connect_internet_server()
 			if (name != "") {
 				switch (users->get_user_status(name)) {
 					case USER_STATUS_READY:
-						if (server->challenge(name)) {
+						if (server->challenge(name))
 							users->update_user_info(name, USER_STATUS_CHALLENGE_OUT);
-						}
+						break;
+					case USER_STATUS_CHALLENGE_IN:
+						server->challenge(name);
+						break;
 					default:
+						soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
 						chat->printf("%s clicked\n", name.c_str());
 						break;
 				}
-
 				users_border->resize(-1, -1);
 				users_border->resize(users_border->get_width(), SCREEN_H);
 				chat_border->resize(SCREEN_W - users_border->get_width(), SCREEN_H);
