@@ -16,6 +16,7 @@ AddXcomItem {
 	isShootable = 1,
 	isWeapon = 1,
 	isGun = 1,
+	sound = "cv-pistol-shot",
 }
 
 AddXcomItem {
@@ -33,6 +34,7 @@ AddXcomItem {
 	rounds = 12,
 	weight = 3,
 	isAmmo = 1,
+	sound = "cv-bullet-hit",
 }
 
 AddXcomItem {
@@ -54,6 +56,7 @@ AddXcomItem {
 	isWeapon = 1,
 	isGun = 1,
 	twoHanded = 1,
+	sound = "cv-rifle-shot",
 }
 
 AddXcomItem {
@@ -71,6 +74,7 @@ AddXcomItem {
 	rounds = 20,
 	weight = 3,
 	isAmmo = 1,
+	sound = "cv-bullet-hit",
 }
 
 AddXcomItem {
@@ -92,6 +96,7 @@ AddXcomItem {
 	isWeapon = 1,
 	isGun = 1,
 	twoHanded = 1,
+	sound = "cv-heavy-cannon-shot",
 }
 
 AddXcomItem {
@@ -109,6 +114,7 @@ AddXcomItem {
 	rounds = 6,
 	weight = 6,
 	isAmmo = 1,
+	sound = "cv-cannon-AP-hit",
 }
 
 AddXcomItem {
@@ -126,6 +132,7 @@ AddXcomItem {
 	rounds = 6,
 	weight = 6,
 	isAmmo = 1,
+	sound = "cv-cannon-HE-hit",
 }
 
 AddXcomItem {
@@ -143,6 +150,7 @@ AddXcomItem {
 	rounds = 6,
 	weight = 6,
 	isAmmo = 1,
+	sound = "cv-cannon-IN-hit",
 }
 
 AddXcomItem {
@@ -164,6 +172,7 @@ AddXcomItem {
 	isWeapon = 1,
 	isGun = 1,
 	twoHanded = 1,
+	sound = "cv-auto-cannon-shot",
 }
 
 AddXcomItem {
@@ -181,6 +190,7 @@ AddXcomItem {
 	rounds = 14,
 	weight = 5,
 	isAmmo = 1,
+	sound = "cv-cannon-AP-hit",
 }
 
 AddXcomItem {
@@ -198,6 +208,7 @@ AddXcomItem {
 	rounds = 14,
 	weight = 5,
 	isAmmo = 1,
+	sound = "cv-cannon-HE-hit",
 }
 
 AddXcomItem {
@@ -215,6 +226,7 @@ AddXcomItem {
 	rounds = 14,
 	weight = 5,
 	isAmmo = 1,
+	sound = "cv-cannon-IN-hit",
 }
 
 AddXcomItem {
@@ -236,6 +248,7 @@ AddXcomItem {
 	isWeapon = 1,
 	isGun = 1,
 	twoHanded = 1,
+	sound = "rl-launch",
 }
 
 AddXcomItem {
@@ -254,6 +267,7 @@ AddXcomItem {
 	weight = 6,
 	isAmmo = 1,
 	twoHanded = 1,
+	sound = "small-rocket-hit",
 }
 
 AddXcomItem {
@@ -272,6 +286,7 @@ AddXcomItem {
 	weight = 8,
 	isAmmo = 1,
 	twoHanded = 1,
+	sound = "HE-rocket-hit",
 }
 
 AddXcomItem {
@@ -290,6 +305,7 @@ AddXcomItem {
 	weight = 8,
 	isAmmo = 1,
 	twoHanded = 1,
+	sound = "IN-rocket-hit",
 }
 
 AddXcomItem {
@@ -311,6 +327,7 @@ AddXcomItem {
 	isShootable = 1,
 	isWeapon = 1,
 	isGun = 1,
+	sound = "laser-pistol-shot",
 }
 
 AddXcomItem {
@@ -333,6 +350,7 @@ AddXcomItem {
 	isWeapon = 1,
 	isGun = 1,
 	twoHanded = 1,
+	sound = "laser-rifle-shot",
 }
 
 AddXcomItem {
@@ -355,6 +373,7 @@ AddXcomItem {
 	isWeapon = 1,
 	isGun = 1,
 	twoHanded = 1,
+	sound = "laser-heavy-shot",
 }
 
 AddXcomItem {
@@ -555,6 +574,7 @@ AddXcomItem {
 	isGun = 1,
 	twoHanded = 1,
 	isAlien = 1,
+	sound = "plasma-heavy-shot",
 }
 
 AddXcomItem {
@@ -595,6 +615,7 @@ AddXcomItem {
 	isGun = 1,
 	twoHanded = 1,
 	isAlien = 1,
+	sound = "plasma-rifle-shot",
 }
 
 AddXcomItem {
@@ -634,6 +655,7 @@ AddXcomItem {
 	isWeapon = 1,
 	isGun = 1,
 	isAlien = 1,
+	sound = "plasma-pistol-shot",
 }
 
 AddXcomItem {
@@ -714,6 +736,7 @@ AddXcomItem {
 	isGun = 1,
 	twoHanded = 1,
 	isAlien = 1,
+	sound = "alien-small-launch",
 }
 
 AddXcomItem {

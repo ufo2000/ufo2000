@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002       ufo2000 development team
+Copyright (C) 2002-2004  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -73,45 +73,6 @@ void Bullet::punch(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 
 void Bullet::fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 {
-    
-//	soundSystem::getInstance()->play(SS_CV_RIFLE_SHOT);
-	switch(_type)
-	{
-		case PISTOL_CLIP:
-			soundSystem::getInstance()->play(SS_CV_PISTOL_SHOT);
-			break;
-		case RIFLE_CLIP:
-		default:
-			soundSystem::getInstance()->play(SS_CV_RIFLE_SHOT);
-			break;
-		case CANNON_AP_AMMO:
-		case CANNON_HE_AMMO:
-		case CANNON_I_AMMO:
- 		        soundSystem::getInstance()->play(SS_CV_HEAVY_CANNON_SHOT);
-			break;
-		case AUTO_CANNON_AP_AMMO:
-		case AUTO_CANNON_HE_AMMO:
-		case AUTO_CANNON_I_AMMO:
- 		        soundSystem::getInstance()->play(SS_CV_AUTO_CANNON_SHOT);
-			break;
-		case SMALL_ROCKET:
-		case LARGE_ROCKET:
-		case INCENDIARY_ROCKET:
- 		        soundSystem::getInstance()->play(SS_RL_LAUNCH);
-			break;
-		case Plasma_Pistol_Clip:
-			soundSystem::getInstance()->play(SS_PLASMA_PISTOL_SHOT);
-			break;
-		case Plasma_Rifle_Clip:
-			soundSystem::getInstance()->play(SS_PLASMA_RIFLE_SHOT);
-			break;
-		case Heavy_Plasma_Clip:
-			soundSystem::getInstance()->play(SS_PLASMA_HEAVY_SHOT);
-			break;
-		case STUN_MISSILE:
-			soundSystem::getInstance()->play(SS_ALIEN_SMALL_LAUNCH);
-			break;
-	}
 	state = FLY;
 
 	z0 = _z0; x0 = _x0; y0 = _y0;
@@ -124,20 +85,6 @@ void Bullet::fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 
 void Bullet::beam(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 {
-//	soundSystem::getInstance()->play(SS_LASER_RIFLE_SHOT);
-	switch(_type)
-	{
-		case LASER_PISTOL:
-			soundSystem::getInstance()->play(SS_LASER_PISTOL_SHOT);
-			break;			
-		case LASER_GUN:
-		default:
-			soundSystem::getInstance()->play(SS_LASER_RIFLE_SHOT);
-			break;
-		case HEAVY_LASER:
-			soundSystem::getInstance()->play(SS_LASER_HEAVY_SHOT);
-			break;
-	}
 	state = BEAM;
 
 	z0 = _z0; x0 = _x0; y0 = _y0;

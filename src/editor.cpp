@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002       ufo2000 development team
+Copyright (C) 2002-2004  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -58,8 +58,7 @@ static char weapon_in_use[] = {
 	AUTO_CANNON , AUTO_CANNON_AP_AMMO , AUTO_CANNON_HE_AMMO, AUTO_CANNON_I_AMMO ,
 	ROCKET_LAUNCHER , SMALL_ROCKET , LARGE_ROCKET , INCENDIARY_ROCKET ,
 	GRENADE , ALIEN_GRENADE , HIGH_EXPLOSIVE , PROXIMITY_GRENADE , SMOKE_GRENADE ,
-	STUN_ROD , SMALL_LAUNCHER , STUN_MISSILE ,
-	KASTET , KNIFE
+	STUN_ROD , SMALL_LAUNCHER , STUN_MISSILE
 };
 
 Editor::Editor()
@@ -83,15 +82,6 @@ Editor::Editor()
 
 	lua_dofile(L, F("$(home)/armoury.lua"));
 	
-//	m_armoury->load_lua("$(home)/armoury.lua");
-//	m_armoury->load_bin("$(home)/armoury.set");
-	//armoury.put(new Item(KASTET));
-	//armoury.put(new Item(KNIFE));
-	/*for(int i=0; i<40; i++) {
-		Item *it = new Item(weapon[i]);
-		armoury.put(it);
-	}*/
-
 	if (local_platoon_size > 10) local_platoon_size = 10;      //!!!!!!!!!!!
 	ASSERT(local_platoon_size > 0);
 	m_plt = new Platoon(2001, local_platoon_size);
@@ -113,59 +103,22 @@ Editor::~Editor()
 void Editor::load()
 {
 	char path[1000];
-	//strcpy(path, "default.units");
 	strcpy(path, last_unit_name);
 	if (file_select("LOAD UNITS DATA", path, "UNITS")) {
 		m_plt->load_FULLDATA(path);
 		strcpy(last_unit_name, path);
 	}
-	/*
-	//set_mouse_range(0, 0, 639, 399);
-	strcpy(path, "soldier.dat");
-	//if ( file_select("LOAD SOLDIER DATA", path, "DAT") ) {
-		plt->load_MANDATA(path);
-	//}
-	//set_mouse_range(0, 0, 639, 399);
-	//strcpy(path, "soldier_items.dat");
-	strcpy(path, "items.dat");
-	//if ( file_select("LOAD SOLDIER'S ITEMS DATA", path, "DAT") ) {
-		plt->load_ITEMDATA(path);
-	//}
-	//set_mouse_range(0, 0, 639, 399);
-	//armoury.load_bin("armoury.set");
-	//plt->load_MANDATA("soldier.dat");
-	//plt->load_ITEMDATA("soldier_items.dat");
-	*/
 }
 
 
 void Editor::save()
 {
 	char path[1000];
-	//strcpy(path, "default.units");.
 	strcpy(path, last_unit_name);
 	if (file_select("SAVE UNITS DATA", path, "UNITS")) {
 		m_plt->save_FULLDATA(path);
 		strcpy(last_unit_name, path);
 	}
-
-	/*
-	//set_mouse_range(0, 0, 639, 399);
-	strcpy(path, "soldier.dat");
-	//if ( file_select("SAVE SOLDIER DATA", path, "DAT") ) {
-		plt->save_MANDATA(path);
-	//}
-	//set_mouse_range(0, 0, 639, 399);
-	//strcpy(path, "soldier_items.dat");
-	strcpy(path, "items.dat");
-	//if ( file_select("SAVE SOLDIER'S ITEMS DATA", path, "DAT") ) {
-		plt->save_ITEMDATA(path);
-	//}
-	//set_mouse_range(0, 0, 639, 399);
-	//armoury.save_bin("armoury.set");
-	//plt->save_MANDATA("soldier.dat");
-	//plt->save_ITEMDATA("soldier_items.dat");
-	*/
 }
 
 int Editor::set_man(char *name)
@@ -417,7 +370,6 @@ void Editor::show(int NEXTPREV)
 			}
 		}
 	}
-	//save(); //!!!!!!!!!!!!!!!!!!
 	
 	m_plt->save_MANDATA(F("$(home)/soldier.dat"));
 	m_plt->save_ITEMDATA(F("$(home)/items.dat"));
@@ -654,27 +606,6 @@ void Editor::edit_soldier()
 	man->process_MANDATA();
 }
 
-#if 0
-BITMAP *create_terrain_bitmap(int terrain)
-{
-	unsigned char map[36] = {
-	                            24, 19, 14, 9, 4,
-	                            23, 18, 13, 8, 3,
-	                            22, 17, 12, 7, 2,
-	                            21, 16, 11, 6, 1,
-	                            20, 15, 10, 5, 0
-	                        };
-	/*for(int i=0; i<36; i++)
-		map[i] = i;*/
-
-	Map *m = new Map(4, 5, 5, terrain, map);
-
-	BITMAP *bmp = m->create_bitmap_of_map(0);
-	delete m;
-	return bmp;
-}
-#endif
-
 int Editor::do_mapselect()
 {
 	//terrain_bmp = create_terrain_bitmap(1);
@@ -738,121 +669,3 @@ int Editor::do_mapselect()
 	//destroy_bitmap(terrain_bmp);
 	return -1;
 }
-
-#if 0
-void Editor::do_mapedit()
-{
-	platoon_local = m_plt;
-
-	int mouse_leftr = 1, mouse_rightr = 1;
-	m_map = new Map(mapdata);
-	m_map->center(0, m_map->width * 5, m_map->height * 5);
-	m_map->unhide();
-
-	terrain_bmp = create_terrain_bitmap(1);
-
-	reset_video();
-	int ow = SCREEN2W, oh = SCREEN2H;
-
-	//SCREEN2W = 1280; SCREEN2H = 800;
-	SCREEN2W = 640; SCREEN2H = 400;
-	destroy_bitmap(screen2);
-	screen2 = create_bitmap(SCREEN2W, SCREEN2H); clear(screen2);
-
-	position_mouse(320, 200);
-	set_mouse_range(0, 0, 639, 399);
-
-	//m_map->draw();
-
-	int DONE = 0;
-	while (!DONE) {
-		if (CHANGE) { //////////////////////////build screen
-			clear(screen2);
-
-			m_map->set_sel(mouse_x, mouse_y);
-			m_map->draw();
-
-			text_mode( -1);
-			textout(screen2, g_small_font, "F2 Save   F3 Load", 0, 0, xcom1_color(130));
-
-			draw_sprite(screen2, mouser, mouse_x, mouse_y);
-			blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
-			//stretch_blit(screen2, screen, 0,0, screen2->w, screen2->h, 0,0, screen2->w/2, screen2->h/2);
-
-			//stretch_blit(screen2, screen, 0,0, screen2->w, screen2->h, 0,0, 640, 480);
-
-			CHANGE = 0;
-		}
-
-		if (m_map->scroll(mouse_x, mouse_y))
-			CHANGE = 1;
-
-		if ((mouse_b & 1) && (mouse_leftr)) { //left
-			mouse_leftr = 0;
-			CHANGE = 1;
-		}
-		if ((mouse_b & 2) && (mouse_rightr)) { //right
-			mouse_rightr = 0;
-			int col = m_map->sel_col / 10;
-			int row = m_map->sel_row / 10;
-
-			int v = do_mapselect();
-			if (v != -1) {
-				char mname[100];
-				sprintf(mname, "maps/culta%02d.map", v);
-				if (m_map->loadmap(mname, row * 10, col * 10))
-					m_map->set_map_data(col, row, v);
-			}
-			CHANGE = 1;
-		}
-
-		if (!(mouse_b & 1)) {
-			mouse_leftr = 1;
-			CHANGE = 1;
-		}
-
-		if (!(mouse_b & 2)) {
-			mouse_rightr = 1;
-			CHANGE = 1;
-		}
-
-
-		if (keypressed()) {
-			int c = readkey();
-			switch (c >> 8) {
-				case KEY_F2:
-					//if (askmenu("SAVE MAP")) {
-					save_map();
-					//}
-					break;
-				case KEY_F3:
-					//if (askmenu("LOAD DATA")) {
-					load_map();
-					//}
-					break;
-				case KEY_F4:
-					//create_map();
-					break;
-				case KEY_F10:
-					change_screen_mode();
-					break;
-				case KEY_ESC:
-					if (askmenu("FINISH"))
-						DONE = 1;
-					break;
-			}
-			CHANGE = 1;
-		}
-	}
-
-	delete m_map;
-	destroy_bitmap(terrain_bmp);
-
-	destroy_bitmap(screen2);
-	SCREEN2W = ow; SCREEN2H = oh;
-	screen2 = create_bitmap(SCREEN2W, SCREEN2H); clear(screen2);
-
-	fade_out(10);
-	clear(screen);
-}
-#endif

@@ -112,7 +112,7 @@ std::string Item::obdata_get_string(int item_index, const char *property_name)
     // Enter [item_index] table
 	lua_pushnumber(L, item_index);
 	lua_gettable(L, -2);
-	std::string result = "<empty>";
+	std::string result = "";
 	if (lua_istable(L, -1)) {
 	    // Get property value
 		lua_pushstring(L, property_name);
@@ -276,6 +276,14 @@ Item::Item(int _type)
 	ASSERT(m_pInv);
 	m_pMap = obdata_get_bitmap(m_type, "pMap");
 	ASSERT(m_pMap);
+
+	std::string sound = obdata_get_string(m_type, "sound");
+	m_sound = getSymCode(sound.c_str());
+	if (!sound.empty() && m_sound == SS_UNKNOWN) {
+		lua_dostring(L, 
+			(std::string("Warning([[%s]], [[Invalid sound effect identifier - '") + 
+			sound + std::string("']])")).c_str());
+	}
 }
 
 Item::~Item()

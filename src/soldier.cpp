@@ -2453,6 +2453,7 @@ int Soldier::beam(int z0, int x0, int y0, REAL fi, REAL te, int iplace, int req_
 	if (it == NULL)
 		return 0;
 
+	soundSystem::getInstance()->play(it->get_sound());
 	m_bullet->beam(z0, x0, y0, fi, te, it->itemtype());
 	net->send_beam(NID, z0, x0, y0, fi, te, iplace, req_time);
 	return 1;
@@ -2470,6 +2471,7 @@ int Soldier::fire(int z0, int x0, int y0, REAL fi, REAL te, int iplace, int req_
 
 	spend_time(req_time);
 	
+	soundSystem::getInstance()->play(it->get_sound());
 	m_bullet->fire(z0, x0, y0, fi, te, it->cliptype());
 	it->shot();
 

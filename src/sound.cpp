@@ -153,7 +153,7 @@ static const sound_sym_maptable_t KNOWN_SYMS[] = {
 };
 
 // SS_TRAILER__SYM used here because sizeof(KNOWN_SYMS) > the number of sounds.
-static SoundSym_e_t getSymCode(const char *const sym) {
+SoundSym_e_t getSymCode(const char *const sym) {
     for (unsigned i = 0 ; i < SS_TRAILER__SYM; i++) {
         if ( 0 == strcmp(sym, KNOWN_SYMS[i].sym) )
             return KNOWN_SYMS[i].symcode;

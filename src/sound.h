@@ -124,6 +124,7 @@ enum SoundSym_e_t {
     SS_TRAILER__SYM // just so we need not worry about commas when adding above
 };
 
+SoundSym_e_t getSymCode(const char *const sym);
 
 class soundSystem {
     static soundSystem *theInstance;
