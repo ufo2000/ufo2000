@@ -44,7 +44,7 @@ ifdef debug
 	NAME := ${addsuffix -debug,$(NAME)}
 	SERVER_NAME := ${addsuffix -debug,$(SERVER_NAME)}
 else
-	CFLAGS += -O -mcpu=i686 -s
+	CFLAGS += -O -mcpu=i686
 endif
 
 ifdef win32
@@ -67,7 +67,10 @@ DEPS_SERVER = $(addprefix $(OBJDIR)/,$(SRCS_SERVER:.cpp=.d))
 
 ifdef win32
 	OBJS := $(OBJS) Seccast.o 
+ifndef debug
 	SUBSYSTEM := -Wl,--subsystem=windows -e _WinMainCRTStartup
+	CFLAGS += -s
+endif
 endif
 
 ##############################################################################
