@@ -250,10 +250,17 @@ void Scenario::start ()
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 10 * mapdata.x_size; j++) {
 				for (int k = 0; k < 10 * mapdata.y_size; k++) {
-					if (is_deploy_zone(deploy_type[0], j, k))
-						platoon_local->set_seen(i, j, k, 1);
-					if (is_deploy_zone(deploy_type[1], j, k))
-						platoon_remote->set_seen(i, j, k, 1);
+					if (p1 == platoon_local) {
+						if (is_deploy_zone(deploy_type[0], j, k))
+							platoon_local->set_seen(i, j, k, 1);
+						if (is_deploy_zone(deploy_type[1], j, k))
+							platoon_remote->set_seen(i, j, k, 1);
+					} else {
+						if (is_deploy_zone(deploy_type[0], j, k))
+							platoon_remote->set_seen(i, j, k, 1);
+						if (is_deploy_zone(deploy_type[1], j, k))
+							platoon_local->set_seen(i, j, k, 1);
+					}
 				}
 			}
 		}
