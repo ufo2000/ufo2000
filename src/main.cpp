@@ -2205,8 +2205,6 @@ void faststart()
 
     reset_video();
 
-    //restartgame();
-
     bool map_loaded = Map::load_GEODATA("$(home)/cur_map.lua", &mapdata);
     ASSERT(map_loaded);
 
@@ -2226,19 +2224,21 @@ void faststart()
     p2 = new Platoon(2222, &pd2, scenario->deploy_type[1]);
     cur_random = new Random;
 
-    //map->place(0, 0, 0)->put(new Item(KASTET));
-    //map->place(0, 0, 0)->put(new Item(KNIFE));
-
     elist->reset();
-    if (HOST) {
-        platoon_local  = p1;
-        platoon_remote = p2;
-        MODE = MAP3D;
-    } else {
-        platoon_local  = p2;
-        platoon_remote = p1;
-        MODE = WATCH;
-    }
+	
+    platoon_local  = p1;
+    platoon_remote = p2;
+    MODE = MAP3D;
+	
+	// synchronize available equipment with ourselves :)
+	lua_pushstring(L, "SyncEquipmentInfo");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	lua_pushstring(L, "QueryEquipmentInfo");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	lua_safe_call(L, 0, 1);
+	lua_safe_call(L, 1, 0);
+    
+	lua_safe_dostring(L, "SetEquipment('Standard')");
 
     sel_man = platoon_local->captain();
     if (sel_man != NULL) map->center(sel_man);
