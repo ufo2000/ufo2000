@@ -70,7 +70,10 @@ void Inventory::draw(int _x, int _y)
 	m_mouse_range = new MouseRange(x, y, x + 320, y + 200);
 	
 	BITMAP *temp = create_bitmap(321, 199);
-	clear_bitmap(temp);
+	clear_bitmap(temp);                                           
+	
+	if (mouse_inside(x + 50, y + 50, x + 110, y + 142))
+		rect(temp, 50, 50, 110, 142, makecol(255, 0, 0));
 	
 	set_trans_blender(0, 0, 0, 160);
     draw_trans_sprite(screen2, temp, x, y);

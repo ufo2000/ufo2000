@@ -2134,7 +2134,9 @@ int Soldier::eff_FAccuracy()
     int penalty_health = 0;
 	if (ud.MaxHealth != 0) penalty_health = (ac * (ud.MaxHealth - ud.CurHealth)) / ud.MaxHealth / 2;
     int penalty_morale = (ac * (100 - ud.Morale)) / 100 / 2;
-    return ac - penalty_health - penalty_morale;
+    int penalty_fly = is_flying() ? ac * 20 / 100 : 0;
+    ac -= penalty_health + penalty_morale + penalty_fly;
+    return ac < 0 ? 0 : ac;
 }
 
 /**

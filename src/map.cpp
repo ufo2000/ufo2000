@@ -37,6 +37,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #define SCANGSIZE 4
 
+#define TILE_LIGHT 15
+
 uint16 *Map::m_loftemp = NULL;
 int Map::m_loftemp_num = 0;
 SPK *Map::scanbord = NULL;
@@ -245,16 +247,24 @@ int Map::loadmap(const char *fname, int _c, int _r)
 				if (col < 0 || col >= width * 10) continue;
 				if (row < 0 || row >= height * 10) continue;
 
-				m_cell[lev][col][row]->type[0] = mbuf[i + 0];
-				m_cell[lev][col][row]->type[1] = mbuf[i + 1];
-				m_cell[lev][col][row]->type[2] = mbuf[i + 2];
-				m_cell[lev][col][row]->type[3] = mbuf[i + 3];
+				assign_type(lev, col, row, 0, mbuf[i + 0]);
+				assign_type(lev, col, row, 1, mbuf[i + 1]);
+				assign_type(lev, col, row, 2, mbuf[i + 2]);
+				assign_type(lev, col, row, 3, mbuf[i + 3]);
 				m_cell[lev][col][row]->set_soldier(NULL);
 			}
 		}
 	}
 	delete [] mbuf;
 	return 1;
+}
+
+void Map::assign_type(int lev, int col, int row, int part, int type)
+{
+	m_cell[lev][col][row]->type[part] = type;
+	
+	if (m_terrain->m_mcd[type].Light_Source)
+		add_light_source(lev, col, row, TILE_LIGHT);
 }
 
 void Map::drawitem(BITMAP *itype, int gx, int gy)
@@ -354,7 +364,7 @@ void Map::draw(int show_cursor)
 
 					draw_cell_pck(0, 6, lev, col, row, 3, seen(lev, col, row), cell_bmp);
 
-					if (m_cell[lev][col][row]->m_light != 16 && FLAGS & F_SHOWNIGHT) {
+					if (m_cell[lev][col][row]->m_light < 16 && FLAGS & F_SHOWNIGHT) {
 						set_trans_blender(0, 0, 0, 0);
 						draw_lit_sprite(screen2, cell_bmp, sx, sy - 6, 255 * (17 - m_cell[lev][col][row]->m_light) / 16);
 					} else {
@@ -1232,6 +1242,9 @@ void Map::destroy_cell_part(int lev, int col, int row, int _part)
 		int mcd = m_terrain->m_mcd[ct].Die_MCD;
 		ASSERT(mcd < (int)m_terrain->m_mcd.size());
 
+		if (m_terrain->m_mcd[ct].Light_Source)
+			remove_light_source(lev, col, row, TILE_LIGHT);
+
 		if ((_part == 0) && (lev > 0)) {
 			m_cell[lev][col][row]->type[_part] = 0;
 			return ;
@@ -1395,16 +1408,23 @@ int Map::calc_visible_cells(Soldier *watcher, int z, int x, int y, int dir, char
 			int vz, vx, vy;
 			int smokeway = 0;
 			int lightway = 0;
+			int lw_delta = 0;
 
-			for (l = 1; l < 18 - smokeway*3 - lightway/3; l++) { /////////////from smoke
+			for (l = 1; l < 18 - smokeway * 3; l++) { /////////////from smoke
 
 				vx = x + fixtoi(fmul(itofix(l), fmul(cos_te, sin_fi)));
 				vy = y + fixtoi(fmul(itofix(l), fmul(sin_te, sin_fi)));
 				vz = z + fixtoi(fmul(itofix(l), cos_fi));
-
+				
 				if (!cell_inside(vz, vx, vy))
 					break;
 				if ((vz == oz) && (vx == ox) && (vy == oy))
+					continue;
+					
+				lw_delta = 16 - m_cell[vz][vx][vy]->m_light;
+				if (lw_delta < 0) lw_delta = 0;
+					
+				if (m_cell[vz][vx][vy]->m_light < (lightway + lw_delta) / 3)
 					continue;
 
 				if (!m_cell[oz][ox][oy]->visi[vz - oz + 1][vx - ox + 1][vy - oy + 1]) break;
@@ -1427,7 +1447,7 @@ int Map::calc_visible_cells(Soldier *watcher, int z, int x, int y, int dir, char
 				if (!viewable_further(vz, vx, vy)) break;
 
 				if (smog_state(vz, vx, vy) != 0) if (++smokeway > 2) break;
-				lightway += 16 - m_cell[vz][vx][vy]->m_light;
+				lightway += lw_delta;
 			}
 		}
 	}
@@ -1456,14 +1476,15 @@ int calculate_hitdir(double dz, double dx, double dy)
     return dir;
 }
 
+const double EXPL_BORDER_DAMAGE = 0.5; // how much damage does explosion on its border
+const double HEIGHT_RATIO = 2; // how high is one level in squares 
+
 //map object explosion
 int Map::explode(int z, int x, int y, int max_damage)
 {
     int damage_type = 2;	//HE damage type
     int damage, hit_dir = 0;
     
-    double EXPL_BORDER_DAMAGE = 0.5; // how much damage does explosion on its border
-    double HEIGHT_RATIO = 2; // how high is one level in squares
     int DEFAULT_SMOKE_TIME = 2; // how many half-turns will the smoke cloud exist
     
     effect eff;
@@ -1511,10 +1532,6 @@ int Map::explode(int sniper, int z, int x, int y, int type)
     
     if (dam_dev > 0)
     	max_damage = (int) cur_random->getUniform(max_damage * (1.0 - (dam_dev / 100.0)), max_damage * (1.0 + (dam_dev / 100.0)));
-    
-    // move to rules.h
-    double EXPL_BORDER_DAMAGE = 0.5; // how much damage does explosion on its border
-    double HEIGHT_RATIO = 2; // how high is one level in squares
     
     effect eff;
     eff.lev = z / 12; eff.col = x / 16; eff.row = y / 16;
@@ -1593,6 +1610,48 @@ void Map::explocell(int sniper, int lev, int col, int row, int damage, int damag
 		if (hitdir != DAMAGEDIR_UNDER)
 			hitdir = (man(lev, col, row)->get_dir() + (hitdir + 4)) % 8;
 		man(lev, col, row)->explo_hit(sniper, damage, damage_type, hitdir);
+	}
+}
+                        
+const double POWER_TO_RANGE = 2.5;                        
+
+void Map::add_light_source(int lev, int col, int row, int power)
+{
+	double range = power / POWER_TO_RANGE;
+
+	for (int i = int(floor(lev - range)); i <= int(ceil(lev + range)); i++) {
+		for (int j = int(floor(col - range)); j <= int(ceil(col + range)); j++) {
+			for (int k = int(floor(row - range)); k <= int(ceil(row + range)); k++) {
+				double dst = distance_3d(row - k, col - j, (lev - i) * HEIGHT_RATIO); 
+			
+				if (i < 0 || j < 0 || k < 0 ||
+					i >= level || j >= width * 10 || k >= height * 10 ||
+					dst > range)
+						continue;
+						
+				m_cell[i][j][k]->m_light += power - (int)((double)(power - 1) / range * dst);
+			}
+		}
+	}
+}
+
+void Map::remove_light_source(int lev, int col, int row, int power)
+{
+	double range = power / POWER_TO_RANGE;
+
+	for (int i = int(floor(lev - range)); i <= int(ceil(lev + range)); i++) {
+		for (int j = int(floor(col - range)); j <= int(ceil(col + range)); j++) {
+			for (int k = int(floor(row - range)); k <= int(ceil(row + range)); k++) {
+				double dst = distance_3d(row - k, col - j, (lev - i) * HEIGHT_RATIO); 
+			
+				if (i < 0 || j < 0 || k < 0 ||
+					i >= level || j >= width * 10 || k >= height * 10 ||
+					dst > range)
+						continue;
+						
+				m_cell[i][j][k]->m_light -= power - (int)((double)(power - 1) / range * dst);
+			}
+		}
 	}
 }
 

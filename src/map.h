@@ -115,7 +115,8 @@ private:
     void create(int l, int w, int h);
 
     void loadmaps(unsigned char *_map);
-    int loadmap(const char *fname, int _x, int _y);
+    int loadmap(const char *fname, int _x, int _y); 
+    void assign_type(int lev, int col, int row, int part, int type);
 
     static bool load_map_from_top_of_lua_stack(GEODATA *mapdata);
     
@@ -348,6 +349,9 @@ public:
     {
         m_cell[lev][col][row]->m_smog_time--;
     }
+    
+    void add_light_source(int lev, int col, int row, int power);
+    void remove_light_source(int lev, int col, int row, int power);
     
     int isStairs(int lev, int col, int row)
     {
