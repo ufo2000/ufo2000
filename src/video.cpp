@@ -527,7 +527,7 @@ std::string gui_file_select(
         } while(al_findnext(&info) == 0);
         al_findclose(&info);
     }
-    if (data.empty()) return "";
+    if (data.empty() && !edit_box_enabled) return "";
     std::sort(data.begin(), data.end());
     if (edit_box_enabled) {
         std::string result = gui_select_from_list_ex(width, height, title, data, "");
