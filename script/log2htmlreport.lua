@@ -9,6 +9,11 @@ if arg[1] == nil then
 	os.exit()
 end
 
+-- if there is no second command line argument, write output to stdout
+-- if it exists, write output to file
+out = io.stdout 
+if arg[2] ~= nil then out = io.open(arg[2], "wt") end
+
 local time_start = os.clock()
 -- history of played games
 local games_history = {}
@@ -118,7 +123,7 @@ function process_log(filename, history)
 	for l in io.lines(filename) do
 		line_number = line_number + 1
 
-		local _, _, p, packet_id, packet_data = string.find(l, "packet from (.-) {id=(%d+), data=(.-)}?$")
+		local _, _, p, packet_id, packet_data = string.find(l, "packet from (.-) {id=(%d+), data=(.-)[\013}]?$")
 
 		if packet_id == "12" then
 
@@ -169,7 +174,7 @@ function process_log(filename, history)
 			local _, _, p1, p2 = string.find(msg, "^game start: '(.-)' vs '(.-)'")
 			if p1 and p2 then
 				if games[p1] ~= nil or games[p2] ~= nil then
-					print("error at line ", line_number)
+					out:write("error at line ", line_number)
 				end
 				startgame(p1, p2, l)
 			end
@@ -194,10 +199,7 @@ function process_log(filename, history)
 
 			-- handle user login
 			local _, _, p = string.find(msg, "^user login %(name='(.-)', pwd=")
-			if p then 
-				if login_name then print(login_name, line_number) end
-				login_name = p 
-			end
+			if p then login_name = p end
 
 			if msg == "login ok" and login_name then
 				user_online(login_name, l)
@@ -236,13 +238,13 @@ function timestring(x)
 	return result .. seconds .. "s"
 end
 
-io.write("<html><head></head><body>")
+out:write("<html><head></head><body>")
 
 -- tournament table
-io.write("<br>")
-io.write("<b>UFO2000 players rating table</b><br>")
-io.write("<table border=1>")
-io.write("<tr><td>rank<td>name<td>games played<td>games won<td>time online<td>battle time<td>score\n")
+out:write("<br>")
+out:write("<b>UFO2000 players rating table</b><br>")
+out:write("<table border=1>")
+out:write("<tr><td>rank<td>name<td>games played<td>games won<td>time online<td>battle time<td>score\n")
 local tmp = {}
 for name, data in tournament_table do
 	-- calculate score
@@ -255,7 +257,7 @@ tournament_table = tmp
 
 for index, data in tournament_table do
 	if data[2].score < 0.3 then break end
-	io.write(string.format(
+	out:write(string.format(
 		"<tr><td>%d<td>%s<td>%d<td>%d<td>%s<td>%s<td>%d\n", 
 		index,
 		data[1], 
@@ -265,13 +267,13 @@ for index, data in tournament_table do
 		timestring(data[2].battle_time),
 		math.floor(data[2].score)))
 end
-io.write("</table>")
+out:write("</table>")
 
 -- complete table of played games
-io.write("<br>")
-io.write("<b>UFO2000 played games statistics table</b><br>")
-io.write("<table border=1>")
-io.write("<tr><td>version<td>player 1<td>player 2<td>terrain type<td>winner<td>time<td>comment\n")
+out:write("<br>")
+out:write("<b>UFO2000 played games statistics table</b><br>")
+out:write("<table border=1>")
+out:write("<tr><td>version<td>player 1<td>player 2<td>terrain type<td>winner<td>time<td>comment\n")
 for k, game_info in ipairs(games_history) do
 	local attrib = ""
 	if game_info.version_error then attrib = attrib .. "ver<br>" end
@@ -279,7 +281,7 @@ for k, game_info in ipairs(games_history) do
 	if game_info.crash_error then attrib = attrib .. "game crashed<br>" end
 	if game_info.connection_error then attrib = attrib .. "connection lost<br>" end
 	if not string.find(attrib, "ver") then
-		io.write(string.format(
+		out:write(string.format(
 			"<tr><td>%d<td>%s<td>%s<td>%s<td>%s<td>%s<td>%s\n", 
 			game_info.version, 
 			game_info.p1,
@@ -290,11 +292,11 @@ for k, game_info in ipairs(games_history) do
 			attrib))
 	end
 end
-io.write("</table>")
+out:write("</table>")
 
 -- display terrain types popularity statistics
-io.write("<br>")
-io.write("<b>Terrain types statistics table</b><br>")
+out:write("<br>")
+out:write("<b>Terrain types statistics table</b><br>")
 local count = 0
 local tmp = {} 
 for k, v in terrain_table do 
@@ -303,16 +305,16 @@ for k, v in terrain_table do
 end 
 terrain_table = tmp
 table.sort(terrain_table, function (a, b) return a[2] > b[2] end)
-io.write("<table border=1>")
-io.write("<tr><td>terrain type<td>number of times used<td>frequency\n") 
+out:write("<table border=1>")
+out:write("<tr><td>terrain type<td>number of times used<td>frequency\n") 
 for k, v in ipairs(terrain_table) do
-	io.write(string.format("<tr><td>%s<td>%d<td>%.1f%%", v[1], v[2], v[2] / count * 100))
+	out:write(string.format("<tr><td>%s<td>%d<td>%.1f%%", v[1], v[2], v[2] / count * 100))
 end
-io.write("</table>")
+out:write("</table>")
 
 -- display operating systems popularity statistics
-io.write("<br>")
-io.write("<b>Operating systems statistics table</b><br>")
+out:write("<br>")
+out:write("<b>Operating systems statistics table</b><br>")
 local count = 0
 local tmp = {} 
 for os_name, os_users in os_table do 
@@ -327,16 +329,16 @@ for os_name, os_users in os_table do
 end 
 terrain_table = tmp
 table.sort(terrain_table, function (a, b) return a[3] > b[3] end)
-io.write("<table border=1>")
-io.write("<tr><td>operating system<td>frequency\n") 
+out:write("<table border=1>")
+out:write("<tr><td>operating system<td>frequency\n") 
 for k, v in ipairs(terrain_table) do
-	io.write(string.format("<tr><td>%s<td>%.1f%%", v[1], v[3] / count * 100))
+	out:write(string.format("<tr><td>%s<td>%.1f%%", v[1], v[3] / count * 100))
 end
-io.write("</table>")
+out:write("</table>")
 
 -- game versions stability statistics
-io.write("<br>")
-io.write("<b>UFO2000 versions stability comparison table</b><br>")
+out:write("<br>")
+out:write("<b>UFO2000 versions stability comparison table</b><br>")
 
 local versions = {}
 for k, game_info in ipairs(games_history) do
@@ -374,16 +376,16 @@ table.sort(versions,
 		return a.version < b.version
 	end)
 
-io.write("<table border=1>")
-io.write("<tr><td>version<td>games played<td>problems encountered<td>internal game problems (crc errors or crashes)\n") 
+out:write("<table border=1>")
+out:write("<tr><td>version<td>games played<td>problems encountered<td>internal game problems (crc errors or crashes)\n") 
 for k, v in ipairs(versions) do
-	io.write(string.format(
+	out:write(string.format(
 		"<tr><td>%d<td>%d<td>%d<td>%d\n", 
 		v.version, 
 		v.total,
 		v.fail,
 		v.bad_fail))
 end
-io.write("</table>")
-io.write("<br>server log processing time: ", os.clock(), "s")
-io.write("</body></html>")
+out:write("</table>")
+out:write("<br>server log processing time: ", os.clock(), "s")
+out:write("</body></html>")
