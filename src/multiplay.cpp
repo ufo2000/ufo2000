@@ -24,6 +24,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <string.h>
 #include <time.h>
 #include <list>
+
 #include "video.h"
 #include "wind.h"
 #include "explo.h"
@@ -35,6 +36,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "packet.h"
 #include "units.h"
 #include "scenario.h"
+#include "colors.h"
 
 static std::list<std::string> g_hotseat_cmd_queue;
 
@@ -107,6 +109,9 @@ void Net::log(const char *fmt, ...)
 	va_end(arglist);
 }
 
+/**
+ * Call mission-planner for network- and hotseat-games
+ */
 int Net::init()
 {
 	log("%s\n", "init()");
@@ -116,6 +121,7 @@ int Net::init()
 	queue = new BQ(1000);
 
 	connect->reset_uds();
+
 	if (gametype == GAME_TYPE_HOTSEAT) {
 		HOST = 1;
 		if (!connect->do_planner(1))
@@ -223,6 +229,9 @@ int Net::recv(std::string &pkt)
 
 extern int GAMELOOP;
 
+/**
+ * Receive packets from network and check them
+ */
 void Net::check()
 {
 	std::string packet;
@@ -353,7 +362,7 @@ void Net::check()
 			break;
 		case CMD_MESSAGE:
 			soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
-			g_console->print(pkt.str(), xcom1_color(32));
+			g_console->print(pkt.str(), COLOR_RED00);
 			break;
 		case CMD_NONE:
 			ASSERT(false);
@@ -1303,7 +1312,7 @@ int Net::recv_terrain_crc32()
 				it++;
 			}
 			g_console->printf("The following maps can not be used, they are modified or just not installed by remote player:\n");
-			g_console->printf(xcom1_color(32), "%s\n", tlist.c_str());
+			g_console->printf(COLOR_RED00, "%s\n", tlist.c_str());
 		}
 #define map ufo2000_map
 		g_console->printf("\n");

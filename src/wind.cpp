@@ -55,11 +55,11 @@ void ConsoleStatusLine::redraw_full(BITMAP *bmp, int x, int y)
 {
 	acquire_bitmap(bmp);
 	BITMAP * temp_bmp = create_bitmap(m_width, m_height);
-	clear_to_color(temp_bmp, xcom1_color(11));
+	clear_to_color(temp_bmp, COLOR_GRAY11);
 	text_mode(-1); textout(temp_bmp, m_font, m_text.c_str(), 0, 0, m_color);
 	int len = text_length(m_font, m_text.c_str());
 	if (len > 0)
-		line(temp_bmp, len, 0, len, m_height - 1, xcom1_color(1));
+		line(temp_bmp, len, 0, len, m_height - 1, COLOR_WHITE);
 	if (bmp == screen) scare_mouse_area(x, y, m_width, m_height);
 	blit(temp_bmp, bmp, 0, 0, x, y, m_width, m_height);
 	if (bmp == screen) unscare_mouse();
@@ -106,7 +106,7 @@ ConsoleWindow::ConsoleWindow(int width, int height, FONT *font)
 	m_width = width;
 	m_height = height;
 	m_font = font;
-	m_status_line = new ConsoleStatusLine(width, font, xcom1_color(1));
+	m_status_line = new ConsoleStatusLine(width, font, COLOR_WHITE);
 	m_need_redraw = true;
 }
 
@@ -119,7 +119,7 @@ void ConsoleWindow::redraw_full(BITMAP *bmp, int x, int y)
 {
 	acquire_bitmap(bmp);
 	BITMAP *temp_bmp = create_bitmap(m_width, m_height);
-	clear_to_color(temp_bmp, xcom1_color(15));
+	clear_to_color(temp_bmp, COLOR_BLACK1);
 	int lines_to_show = (m_height - m_status_line->get_height()) / text_height(m_font);
 	for (int i = m_lines_text.size() - 1, j = 1; i >= 0 && j <= lines_to_show; i--, j++) {
 		text_mode(-1);
@@ -192,6 +192,9 @@ void ConsoleWindow::vprintf(int color, const char *format, va_list arglist)
     delete[] bigbuf;
 }
 
+// This or next function gets called for:
+//  g_console->printf("%s", "xxxx");
+//  g_console->printf( COLOR_RED, "! Error !");
 void ConsoleWindow::printf(int color, const char *fmt, ...)
 {
 	va_list arglist;
@@ -204,9 +207,10 @@ void ConsoleWindow::printf(const char *fmt, ...)
 {
 	va_list arglist;
 	va_start(arglist, fmt);
-	vprintf(xcom1_color(1), fmt, arglist);
+	vprintf(COLOR_WHITE, fmt, arglist);
 	va_end(arglist);
 }
+
 
 /**
  * Function that processes all keyboard input of console
@@ -480,3 +484,4 @@ void Wind::info(int _x, int _y)
 	           "m_txtbeg=%d, m_txtend=%d, m_txtvis=%d, m_curx=%d, m_cury=%d, m_w=%d, m_h=%d ",
 	           m_txtbeg, m_txtend, m_txtvis, m_curx, m_cury, m_w, m_h);
 }
+

@@ -26,6 +26,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "video.h"
 #include "spk.h"
 
+/**
+ * Process sprite-graphics in SPK-format
+ */
 SPK::SPK()
 {
 	m_dat = NULL;
@@ -46,6 +49,9 @@ SPK::~SPK()
 		delete [] m_dat;
 }
 
+/**
+ * Load SPK-graphics from file
+ */
 void SPK::load(const char *fname)
 {
 	std::string fullname = F(fname);
@@ -60,6 +66,9 @@ void SPK::load(const char *fname)
 	pack_fclose(pfh);
 }
 
+/**
+ * Draw SPK-graphics on screen
+ */
 void SPK::show(BITMAP *_dest, int _x, int _y)
 {
 	BITMAP *bmp = spk2bmp();
@@ -74,6 +83,7 @@ void SPK::show_strech(BITMAP *_dest, int _x, int _y, int _w, int _h)
 	destroy_bitmap(bmp);
 }
 
+// ?? same as SPK::show() 
 void SPK::show_pck(BITMAP *_dest, int _x, int _y)
 {
 	BITMAP *bmp = spk2bmp();
@@ -82,7 +92,9 @@ void SPK::show_pck(BITMAP *_dest, int _x, int _y)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+///                                                                        ///
 /// SPK format:                                                            ///
+///                                                                        ///
 /// 4 bytes: header1                                                       ///
 /// ? bytes: data1                                                         ///
 /// ...                                                                    ///
@@ -96,6 +108,11 @@ void SPK::show_pck(BITMAP *_dest, int _x, int _y)
 /// 2 bytes: size (value should be multiplied by 2 to get size)            ///
 //////////////////////////////////////////////////////////////////////////////
 
+// ?? Format of .scr - files 
+
+/**
+ * Convert graphics from SPK-format to bitmap
+ */
 BITMAP *SPK::spk2bmp()
 {
 	BITMAP *bmp = create_bitmap(320, 200);
@@ -116,7 +133,7 @@ BITMAP *SPK::spk2bmp()
 	while (true) {
 		if (!(i + 2 <= m_datlen)) return bmp;
 		switch (intel_uint16(*(uint16 *)(m_dat + i))) {
-			case 0xFFFF: {
+			case 0xFFFF: {	// Skip-marker
 				if (!(i + 4 <= m_datlen)) return bmp;
 				long size = (long)intel_uint16((*(uint16 *)(m_dat + i + 2))) * 2;
 				i += 4;
@@ -124,18 +141,20 @@ BITMAP *SPK::spk2bmp()
 				j += size;
 				break;
 			}
-			case 0xFFFE: {
-				if (!(i + 4 <= m_datlen)) return bmp;
+			case 0xFFFE: { // Marker for normal data-block
+				if (!(i + 4 <= m_datlen)) 
+					return bmp;
 				long size = (long)intel_uint16((*(uint16 *)(m_dat + i + 2))) * 2;
 				i += 4;
-				if (!(i + size <= m_datlen && j + size <= 64000)) return bmp;
+				if (!(i + size <= m_datlen && j + size <= 64000)) 
+					return bmp;
 				while (size--) {
 					putpixel(bmp, j % 320, j / 320, xcom1_color(m_dat[i++]));
 					j++;
 				}
 				break;
 			}
-			case 0xFFFD:
+			case 0xFFFD:	// End-marker
 				return bmp;
 			default:
 				// error decoding SPK file

@@ -75,7 +75,7 @@ public:
 	virtual bool Read(persist::Engine &archive);
 };
 
-/*
+/**
  * A class that holds all of the statistics for a platoon
  */
 class Statistics: public persist::BaseObject

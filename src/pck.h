@@ -28,6 +28,9 @@ BITMAP *pck_image(const char *filename, int index);
 
 void free_pck_cache();
 
+/**
+ * Class for processing graphics in PCK-format
+ */
 class PCK
 {
 protected:

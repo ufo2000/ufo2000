@@ -119,7 +119,7 @@ private:
 //! Number of chances for reaction fire enemy soldiers get
 	int m_reaction_chances; 
 
-//!	Information for pathfinding It does not need to be saved and can be built
+//!	Information for pathfinding. It does not need to be saved and can be built
 //!	by calling wayto function. If waylen != 0 this soldier is currently moving
 	char way[100];
 	int curway, waylen;

@@ -24,6 +24,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
+
 #include "video.h"
 #include "multiplay.h"
 #include "units.h"
@@ -31,6 +32,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "map.h"
 #include "wind.h"
 #include "scenario.h"
+#include "colors.h"
 
 #define CAPTION			8
 #define COMMENT			3
@@ -40,6 +42,15 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define SWITCH_OFF		40
 #define LOCAL_COLOR		48
 #define REMOTE_COLOR	32
+// From colors.h :
+//  8: COLOR_GRAY08
+//  3: COLOR_GRAY03
+//  5: COLOR_GRAY05
+// 52: COLOR_GREEN04
+// 55: COLOR_GREEN07
+// 40: COLOR_RED08
+// 48: COLOR_GREEN00
+// 32: COLOR_RED00
 
 char buf[10000];
 int len = 0;
@@ -52,6 +63,9 @@ Units::Units()
 	reset();
 }
 
+/**
+ * Initialize data for units
+ */
 void Units::reset()
 {
 	size = 0;
@@ -129,38 +143,42 @@ int Units::add(int num, char *nm, int ct)
 	return 1;
 }
 
+/**
+ * Print list of soldiers to select from,
+ * and box for selecting map and scenario.
+ */
 void Units::print(int gcol)
 {
 	text_mode( -1);
-	int x1, y1, x2, y2, color = xcom1_color(60);
+	int x1, y1, x2, y2, color = COLOR_GREEN12;
 	int i;
 	for (i = 0; i < size; i++) {
 		if (selected == i) {
 			if (pos == POS_LEFT)
-				line(screen2, gx + 20 * 8 + 4, gy + i * 15 + 3, mouse_x, mouse_y, xcom1_color(1));
+				line(screen2, gx + MAN_NAME_LEN * 8 + 4, gy + i * 15 + 3, mouse_x, mouse_y, COLOR_WHITE);
 			else
-				line(screen2, gx - 4, gy + i * 15 + 3, mouse_x, mouse_y, xcom1_color(1));
-			color = xcom1_color(120);
+				line(screen2, gx - 4, gy + i * 15 + 3, mouse_x, mouse_y, COLOR_WHITE);
+			color = COLOR_DK_BLUE;
 		} else
-			if (x[i] != 0) {
+			if (x[i] != 0) {    // soldier selected for mission has a position on the map
 				rectfill(screen2, gmx + col[i] * 4 + 1, gmy + row[i] * 4 + 1,
 				         gmx + col[i] * 4 + 3, gmy + row[i] * 4 + 3,
-				         xcom1_color(144));      //yellow
+				         COLOR_YELLOW);
 				if (pos == POS_LEFT) {
-					line(screen2, gx + 20 * 8 + 4, gy + i * 15 + 3, x[i], y[i], gcol);
+					line(screen2, gx + MAN_NAME_LEN * 8 + 4, gy + i * 15 + 3, x[i], y[i], gcol);
 					//textprintf(screen2, font, gx - 60, gy + i * 15, gcol, "(%d,%d)", col[i], row[i]);
 				} else {
 					line(screen2, gx - 4, gy + i * 15 + 3, x[i], y[i], gcol);
 					//textprintf(screen2, font, gx + 20 * 8 + 5, gy + i * 15, gcol, "(%d,%d)", col[i], row[i]);
 				}
-				color = xcom1_color(53);
+				color = COLOR_GREEN05;	 // background for selected man
 			} else {
-				color = xcom1_color(60);
+				color = COLOR_GREEN12;   // background for unselected man
 			}
 
-		x1 = gx - 2; x2 = gx + 20 * 8 + 2;
+		x1 = gx - 2;          x2 = gx + MAN_NAME_LEN * 8 + 2;	
 		y1 = gy + i * 15 - 2; y2 = y1 + 8 + 3;
-		rectfill(screen2, x1, y1, x2, y2, color);
+		rectfill(screen2, x1, y1, x2, y2, color);   // Background for name-field
 
 		//textprintf(screen2, font, gx, gy+i*15, gcol, "%d", cost[i]);
 		textprintf(screen2, font, gx, gy + i * 15, gcol, "%s", name[i]);
@@ -172,7 +190,7 @@ void Units::print(int gcol)
 	}
 	draw_text();
 	
-	rect(screen2, gmx, SCREEN2H - 71, gmx + gmw, SCREEN2H - 5, xcom1_color(1));
+	rect(screen2, gmx, SCREEN2H - 71, gmx + gmw, SCREEN2H - 5, COLOR_WHITE);
 	textout_centre(screen2, font, "MATCH SETTINGS", gmx + gmw / 2, SCREEN2H - 65, xcom1_color(CAPTION));
 	textout_centre(screen2, font, scenario->name[scenario->type], gmx + gmw / 2, SCREEN2H - 53, xcom1_color(BUTTON));
 	textout_centre(screen2, font, terrain_set->get_terrain_name(mapdata.terrain).c_str(), gmx + gmw / 2, SCREEN2H - 41, xcom1_color(BUTTON));
@@ -196,7 +214,7 @@ void Units::print(int gcol)
 	}
 	//textout(screen2, small, "INFO", gx, 160, 1);
 	// Moved down...
-	// textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, xcom1_color(50), "total men points=%d", points);
+	// textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, COLOR_GREEN, "total men points=%d", points);
 
 	for (i = 0; i < size; i++) {
 		if (x[i] == 0)
@@ -214,7 +232,7 @@ void Units::print(int gcol)
 	else*/
 	damage_points = draw_items_stats(gx, 160 + 10, buf, len);
 
-	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, xcom1_color(50), "Total points=%d", points + damage_points);
+	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, COLOR_GREEN, "Total points=%d", points + damage_points);
 		
 	scenario->draw_deploy_zone(pos, gmx, 0, xcom1_color(LOCAL_COLOR));
 	
@@ -258,8 +276,8 @@ void Units::print(int gcol)
 
 void Units::draw_scenario_window()
 {
-    rect(screen2, gmx + gmw / 2 - 200, SCREEN2H - 320, gmx + gmw / 2 + 200, SCREEN2H - 37, xcom1_color(1));
-    rectfill(screen2, gmx + gmw / 2 - 200 + 1, SCREEN2H - 320 + 1, gmx + gmw / 2 + 200 - 1, SCREEN2H - 37 - 1, xcom1_color(14));
+    rect(    screen2, gmx + gmw / 2 - 200,     SCREEN2H - 320,     gmx + gmw / 2 + 200,     SCREEN2H - 37,     COLOR_WHITE);
+    rectfill(screen2, gmx + gmw / 2 - 200 + 1, SCREEN2H - 320 + 1, gmx + gmw / 2 + 200 - 1, SCREEN2H - 37 - 1, COLOR_GRAY14);
     
     textout_centre(screen2, font, scenario->name[scenario->type], gmx + gmw / 2, SCREEN2H - 310, xcom1_color(SELECTED));
     textout_centre(screen2, font, "<", gmx + gmw / 2 - 150 + 50, SCREEN2H - 310, xcom1_color(BUTTON));
@@ -301,8 +319,8 @@ void Units::draw_scenario_window()
 
 void Units::draw_map_window()
 {
-	rect(screen2, gmx + gmw / 2 - 80, SCREEN2H - 79, gmx + gmw / 2 + 80, SCREEN2H - 37, xcom1_color(1));
-	rectfill(screen2, gmx + gmw / 2 - 80 + 1, SCREEN2H - 79 + 1, gmx + gmw / 2 + 80 - 1, SCREEN2H - 37 - 1, xcom1_color(14));
+	rect(    screen2, gmx + gmw / 2 - 80,     SCREEN2H - 79,     gmx + gmw / 2 + 80,     SCREEN2H - 37,     COLOR_WHITE);
+	rectfill(screen2, gmx + gmw / 2 - 80 + 1, SCREEN2H - 79 + 1, gmx + gmw / 2 + 80 - 1, SCREEN2H - 37 - 1, COLOR_GRAY14);
 
 	textout_centre(screen2, font, terrain_set->get_terrain_name(mapdata.terrain).c_str(), gmx + gmw / 2, SCREEN2H - 73, xcom1_color(BUTTON));
 
@@ -316,8 +334,8 @@ void Units::draw_map_window()
 
 void Units::draw_rules_window()
 {
-	rect(screen2, gmx + gmw / 2 - 80, SCREEN2H - 103, gmx + gmw / 2 + 80, SCREEN2H - 25, xcom1_color(1));
-	rectfill(screen2, gmx + gmw / 2 - 80 + 1, SCREEN2H - 103 + 1, gmx + gmw / 2 + 80 - 1, SCREEN2H - 25 - 1, xcom1_color(14));
+	rect(    screen2, gmx + gmw / 2 - 80,     SCREEN2H - 103,     gmx + gmw / 2 + 80,     SCREEN2H - 25,     COLOR_WHITE);
+	rectfill(screen2, gmx + gmw / 2 - 80 + 1, SCREEN2H - 103 + 1, gmx + gmw / 2 + 80 - 1, SCREEN2H - 25 - 1, COLOR_GRAY14);
 	
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 97, xcom1_color(BUTTON), "Explosives level: %d", scenario->rules[0]);
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 85, xcom1_color(BUTTON), "Points limit: %d000", scenario->rules[1]);
@@ -327,10 +345,13 @@ void Units::draw_rules_window()
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 37, xcom1_color(BUTTON), scenario->rules[4] ? "Editor: ground on" : "Editor: ground off");
 }
 
+/**
+ * Rules0: allowed Explosives
+ */
 void Units::draw_rules_0_window()
 {
-	rect(screen2, gmx + gmw / 2 - 130, SCREEN2H - 139, gmx + gmw / 2 + 130, SCREEN2H - 97, xcom1_color(1));
-	rectfill(screen2, gmx + gmw / 2 - 130 + 1, SCREEN2H - 139 + 1, gmx + gmw / 2 + 130 - 1, SCREEN2H - 97 - 1, xcom1_color(13));
+	rect(    screen2, gmx + gmw / 2 - 130,     SCREEN2H - 139,     gmx + gmw / 2 + 130,     SCREEN2H - 97,     COLOR_WHITE);
+	rectfill(screen2, gmx + gmw / 2 - 130 + 1, SCREEN2H - 139 + 1, gmx + gmw / 2 + 130 - 1, SCREEN2H - 97 - 1, COLOR_GRAY13);
 	
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 133, xcom1_color(SELECTED), "%d", scenario->rules[0]);
 	textout_centre(screen2, font, "<", gmx + gmw / 2 - 20, SCREEN2H - 133, xcom1_color(BUTTON));
@@ -357,30 +378,39 @@ void Units::draw_rules_0_window()
 	}
 }
 
+/**
+ * Rules1: Point-Limit
+ */
 void Units::draw_rules_1_window()
 {
-	rect(screen2, gmx + gmw / 2 - 40, SCREEN2H - 99, gmx + gmw / 2 + 40, SCREEN2H - 85, xcom1_color(1));
-	rectfill(screen2, gmx + gmw / 2 - 40 + 1, SCREEN2H - 99 + 1, gmx + gmw / 2 + 40 - 1, SCREEN2H - 85 - 1, xcom1_color(13));
+	rect(    screen2, gmx + gmw / 2 - 40,     SCREEN2H - 99,     gmx + gmw / 2 + 40,     SCREEN2H - 85,     COLOR_WHITE);
+	rectfill(screen2, gmx + gmw / 2 - 40 + 1, SCREEN2H - 99 + 1, gmx + gmw / 2 + 40 - 1, SCREEN2H - 85 - 1, COLOR_GRAY13);
 	
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 95, xcom1_color(SELECTED), "%d000", scenario->rules[1]);
 	textout_centre(screen2, font, "<", gmx + gmw / 2 - 30, SCREEN2H - 95, xcom1_color(BUTTON));
 	textout_centre(screen2, font, ">", gmx + gmw / 2 + 30, SCREEN2H - 95, xcom1_color(BUTTON));
 }
 
+/**
+ * Rules2: Turns-Limit
+ */
 void Units::draw_rules_2_window()
 {
-	rect(screen2, gmx + gmw / 2 - 30, SCREEN2H - 87, gmx + gmw / 2 + 30, SCREEN2H - 73, xcom1_color(1));
-	rectfill(screen2, gmx + gmw / 2 - 30 + 1, SCREEN2H - 87 + 1, gmx + gmw / 2 + 30 - 1, SCREEN2H - 73 - 1, xcom1_color(13));
+	rect(    screen2, gmx + gmw / 2 - 30,     SCREEN2H - 87,     gmx + gmw / 2 + 30,     SCREEN2H - 73,     COLOR_WHITE);
+	rectfill(screen2, gmx + gmw / 2 - 30 + 1, SCREEN2H - 87 + 1, gmx + gmw / 2 + 30 - 1, SCREEN2H - 73 - 1, COLOR_GRAY13);
 
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 83, xcom1_color(SELECTED), scenario->rules[2] == 0 ? "no" : "%d", scenario->rules[2]);
 	textout_centre(screen2, font, "<", gmx + gmw / 2 - 20, SCREEN2H - 83, xcom1_color(BUTTON));
 	textout_centre(screen2, font, ">", gmx + gmw / 2 + 20, SCREEN2H - 83, xcom1_color(BUTTON));
 }
 
+/**
+ * Rules3: Map explored ?
+ */
 void Units::draw_rules_3_window()
 {
-	rect(screen2, gmx + gmw / 2 - 30, SCREEN2H - 75, gmx + gmw / 2 + 30, SCREEN2H - 61, xcom1_color(1));
-	rectfill(screen2, gmx + gmw / 2 - 30 + 1, SCREEN2H - 75 + 1, gmx + gmw / 2 + 30 - 1, SCREEN2H - 61 - 1, xcom1_color(13));
+	rect(    screen2, gmx + gmw / 2 - 30,     SCREEN2H - 75,     gmx + gmw / 2 + 30,     SCREEN2H - 61,     COLOR_WHITE);
+	rectfill(screen2, gmx + gmw / 2 - 30 + 1, SCREEN2H - 75 + 1, gmx + gmw / 2 + 30 - 1, SCREEN2H - 61 - 1, COLOR_GRAY13);
 	
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 71, xcom1_color(SELECTED), g_time_limit == -1 ? "no" : "%d", g_time_limit);
 	textout_centre(screen2, font, "<", gmx + gmw / 2 - 20, SCREEN2H - 71, xcom1_color(BUTTON));
@@ -412,7 +442,7 @@ int Units::draw_items_stats(int gx, int gy, char *buf, int len)
 		if (Item::obdata_isAmmo(weapon[w])) continue;
 		if (num != 0) {
 			textprintf(screen2, g_small_font, gx + (aa / 72) * 90, gy + (aa % 72),
-			           xcom1_color(1), "%s=%d", Item::obdata_name(weapon[w]).c_str(), num);
+			           COLOR_WHITE, "%s=%d", Item::obdata_name(weapon[w]).c_str(), num);
 			aa += 9;
 			
 		}
@@ -425,24 +455,24 @@ int Units::draw_items_stats(int gx, int gy, char *buf, int len)
 void Units::print_simple(int gcol)
 {
 	text_mode( -1);	
-	int i, x1, y1, x2, y2, color = xcom1_color(60);
+	int i, x1, y1, x2, y2, color = COLOR_GREEN12;
 	for (i = 0; i < size; i++) {
-		if (x[i] != 0) {
+		if (x[i] != 0) {    // unit is selected for mission
 			if (FLAGS & F_PLANNERDBG) { // show lines of remote
 				if (pos == POS_LEFT) {
-					line(screen2, gx + 20 * 8 + 4, gy + i * 15 + 3, x[i], y[i], gcol);
+					line(screen2, gx + MAN_NAME_LEN * 8 + 4, gy + i * 15 + 3, x[i], y[i], gcol);
 				} else {
 					line(screen2, gx - 4, gy + i * 15 + 3, x[i], y[i], gcol);
 				}
 			}
-			color = xcom1_color(53);
+			color = COLOR_GREEN05;
 		} else {
-			color = xcom1_color(60);
+			color = COLOR_GREEN12;
 		}
 
-		x1 = gx - 2; x2 = gx + 20 * 8 + 2;
+		x1 = gx - 2;          x2 = gx + MAN_NAME_LEN * 8 + 2;	
 		y1 = gy + i * 15 - 2; y2 = y1 + 8 + 3;
-		rectfill(screen2, x1, y1, x2, y2, color);
+		rectfill(screen2, x1, y1, x2, y2, color);  // Background for name-field
 
 		//textprintf(screen2, font, gx, gy+i*15, gcol, "%d", cost[i]);
 		textprintf(screen2, font, gx, gy + i * 15, gcol, "%s", name[i]);
@@ -474,16 +504,19 @@ void Units::print_simple(int gcol)
 	else*/
 	points += draw_items_stats(gx, 160 + 10, buf, len);
 
-	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, xcom1_color(50), "Total points=%d", points);
+	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, COLOR_GREEN, "Total points=%d", points);
 }
 
+/**
+ * Draw boxes with SEND and START-buttons
+ */
 void Units::draw_text()
 {
 	text_mode( -1);
 
 	//rect(screen2, gx+50, SCREEN2H-35, gx+20*8-50, SCREEN2H-5, 1);
 	//rect(screen2, gx+40, SCREEN2H-35, gx+20*8-40, SCREEN2H-5, 1);
-	rect(screen2, gx, SCREEN2H - 35, gx + 20 * 8, SCREEN2H - 5, xcom1_color(1));
+	rect(screen2, gx, SCREEN2H - 35, gx + 20 * 8, SCREEN2H - 5, COLOR_WHITE);
 
 	if (pos == POS_LEFT) {
 		//textprintf(screen2, font, gx+56, SCREEN2H-29, 8, "%s", "SERVER");
@@ -507,6 +540,9 @@ void Units::draw_text()
 	textout_centre(screen2, font, "START", gx + 5 * 8, SCREEN2H - 16, xcom1_color(color));
 }
 
+/**
+ * Depending on PlannerState, execute different procedures of mission-planner
+ */
 void Units::execute(Map *map, int map_change_allowed)
 {
 	switch (state) {
@@ -537,6 +573,10 @@ void Units::execute(Map *map, int map_change_allowed)
 	}
 }
 
+/**
+ * Mission-planner: select position for a soldier in deployment-area on map,
+ * ...
+ */
 void Units::execute_main(Map *map, int map_change_allowed)
 {
 	if (selected != -1) {
@@ -577,7 +617,7 @@ void Units::execute_main(Map *map, int map_change_allowed)
 	}
 
 	int x1, y1, x2, y2;
-	x1 = gx - 2; x2 = gx + 20 * 8 + 2;
+	x1 = gx - 2; x2 = gx + MAN_NAME_LEN * 8 + 2;	
 
 	for (int i = 0; i < size; i++) {
 		y1 = gy + i * 15 - 2; y2 = y1 + 8 + 3;
@@ -757,6 +797,10 @@ void Units::execute_scenario(Map *map, int map_change_allowed)
 	}
 }
 
+/**
+ * Select terrain-type & map-size, load map from file,
+ * or generate a new map.
+ */
 void Units::execute_map(Map *map, int map_change_allowed)
 {
         if (!mouse_inside(gmx + gmw / 2 - 80, SCREEN2H - 79, gmx + gmw / 2 + 80, SCREEN2H - 37))
@@ -1012,13 +1056,17 @@ void Units::execute_rules_3(Map *map, int map_change_allowed)
 	}
 }
 
+/**
+ * Process right-click in mission-planner:
+ * select & deselect soldier from list.
+ */
 void Units::execute_right()
 {
 	if (selected != -1) {
 		deselect();
 	} else {
 		int x1, y1, x2, y2;
-		x1 = gx - 2; x2 = gx + 20 * 8 + 2;
+		x1 = gx - 2; x2 = gx + MAN_NAME_LEN * 8 + 2;	
 
 		for (int i = 0; i < size; i++) {
 			y1 = gy + i * 15 - 2; y2 = y1 + 8 + 3;
@@ -1068,14 +1116,17 @@ void Units::restore_mouse_range()
 	::set_mouse_range(0, 0, mx, my);
 }
 
+/**
+ * Draw lines from list of soldiers to their positions in the deployment-area
+ */
 void Units::draw_lines(int gcol)
 {
 	for (int i = 0; i < size; i++) {
 		if (selected == i) {
-			line(screen2, gx + 20 * 8 + 4, gy + i * 15 + 3, mouse_x, mouse_y, xcom1_color(1));
+			line(screen2, gx + MAN_NAME_LEN * 8 + 4, gy + i * 15 + 3, mouse_x, mouse_y, COLOR_WHITE);
 		} else
 			if (x[i] != 0) {
-				line(screen2, gx + 20 * 8 + 4, gy + i * 15 + 3, x[i], y[i], gcol);
+				line(screen2, gx + MAN_NAME_LEN * 8 + 4, gy + i * 15 + 3, x[i], y[i], gcol);
 			}
 	}
 }

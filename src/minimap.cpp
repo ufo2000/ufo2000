@@ -22,6 +22,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "minimap.h"
 #include "map.h"
 #include "scenario.h"
+#include "colors.h"
 
 Minimap::Minimap(Map *map) : m_map(map)
 {
@@ -47,7 +48,7 @@ Minimap::Minimap(Map *map) : m_map(map)
 		m_minimap_seen[l]    = m_map->create_bitmap_of_map(l);
 	}
 	m_minimap_unknown = create_bitmap(m_minimap_visible[0]->w, m_minimap_visible[0]->h);
-	clear_to_color(m_minimap_unknown, xcom1_color(15));
+	clear_to_color(m_minimap_unknown, COLOR_BLACK1);
 
 	m_width  = m_minimap_visible[0]->w + 2;
 	m_height = m_minimap_visible[0]->h + 2;
@@ -56,7 +57,7 @@ Minimap::Minimap(Map *map) : m_map(map)
 		for (i = 0; i < m_minimap_seen[l]->w; i++)	{
 			for (j = 0; j < m_minimap_seen[l]->h; j++) {
 				if ((i + j) % 2 == 1)
-					putpixel(m_minimap_seen[l], i, j, xcom1_color(15));
+					putpixel(m_minimap_seen[l], i, j, COLOR_BLACK1);
 			}
 		}
 	}
@@ -93,10 +94,10 @@ void Minimap::redraw_minimap(BITMAP *bmp, int x, int y, int full_redraw_mode)
 	}
 
 	if (full_redraw_mode) {
-		line(bmp, x + 1, y + 0, x + m_minimap_visible[l]->w, y + 0, xcom1_color(1));
-		line(bmp, x + 1, y + m_minimap_visible[l]->h + 1, x + m_minimap_visible[l]->w, y + m_minimap_visible[l]->h + 1, xcom1_color(1));
-		line(bmp, x + 0, y + 1, x + 0, y + m_minimap_visible[l]->h, xcom1_color(1));
-		line(bmp, x + m_minimap_visible[l]->w + 1, y + 1, x + m_minimap_visible[l]->w + 1, y + m_minimap_visible[l]->h, xcom1_color(1));
+		line(bmp, x + 1, y + 0, x + m_minimap_visible[l]->w, y + 0, COLOR_WHITE);
+		line(bmp, x + 1, y + m_minimap_visible[l]->h + 1, x + m_minimap_visible[l]->w, y + m_minimap_visible[l]->h + 1, COLOR_WHITE);
+		line(bmp, x + 0, y + 1, x + 0, y + m_minimap_visible[l]->h, COLOR_WHITE);
+		line(bmp, x + m_minimap_visible[l]->w + 1, y + 1, x + m_minimap_visible[l]->w + 1, y + m_minimap_visible[l]->h, COLOR_WHITE);
 	}
 
 	x += 1; y += 1;
@@ -136,15 +137,15 @@ void Minimap::redraw_minimap(BITMAP *bmp, int x, int y, int full_redraw_mode)
 						break;
 					case MINIMAP_STATE_FRIEND:
 						blit(m_minimap_visible[l], bmp, col * 4, row * 4, x + col * 4, y + row * 4, 4, 4);
-						rectfill(bmp, x + col * 4, y + row * 4, x + col * 4 + S, y + row * 4 + S, xcom1_color(144));
+						rectfill(bmp, x + col * 4, y + row * 4, x + col * 4 + S, y + row * 4 + S, COLOR_YELLOW);
 						break;
 					case MINIMAP_STATE_ENEMY:
 						blit(m_minimap_visible[l], bmp, col * 4, row * 4, x + col * 4, y + row * 4, 4, 4);
-						rectfill(bmp, x + col * 4, y + row * 4, x + col * 4 + S, y + row * 4 + S, xcom1_color(32));
+						rectfill(bmp, x + col * 4, y + row * 4, x + col * 4 + S, y + row * 4 + S, COLOR_RED00);
 						break;
                     case MINIMAP_STATE_SCTARGET:
-						rect(bmp, x + col * 4, y + row * 4, x + col * 4 + S + 1, y + row * 4 + S + 1, xcom1_color(1));
-						rectfill(bmp, x + col * 4 + 1, y + row * 4 + 1, x + col * 4 + S, y + row * 4 + S, xcom1_color(32));
+						rect(bmp, x + col * 4, y + row * 4, x + col * 4 + S + 1, y + row * 4 + S + 1, COLOR_WHITE);
+						rectfill(bmp, x + col * 4 + 1, y + row * 4 + 1, x + col * 4 + S, y + row * 4 + S, COLOR_RED00);
 						break;
 				}
 				m_minimap_state[col][row] = state;
@@ -172,7 +173,7 @@ void MinimapArea::redraw_full(BITMAP *bmp, int x, int y)
 {
 	acquire_bitmap(bmp);
 	BITMAP *temp_bmp = create_bitmap(m_width, m_height);
-	clear_to_color(temp_bmp, xcom1_color(15));
+	clear_to_color(temp_bmp, COLOR_BLACK1);
 	
 	if (m_width >= m_minimap->get_width()) {
 		m_minimap->set_full_redraw();

@@ -31,18 +31,26 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "wind.h"
 #include "config.h"
 #include "scenario.h"
+#include "colors.h"
 
 //! firemenu foreground color
-#define _FG xcom1_color(1)
+#define _FG COLOR_WHITE
 //! firemenu background color
-#define _BG xcom1_color(15)
+#define _BG COLOR_BLACK1
 
+ReserveTime_Mode ReserveTimeMode; 	// TODO: should be platoon- or soldier-specific
+
+// not used ??
 void cprintf(char *str)
 {
-	text_mode(0); textprintf(screen, font, 1, 1, xcom1_color(1), "%s", str);
+	text_mode(0); textprintf(screen, font, 1, 1, COLOR_WHITE, "%s", str);
 }
 
-
+/**
+ * Read definitions for control-panel (icon-area) on battlescape
+ * from file init-scripts/standard-icons.lua,
+ * then display icons on screen.
+ */
 Icon::Icon()
 {
 	//names in .lua file
@@ -63,7 +71,15 @@ Icon::Icon()
 	button[B_OPTIONS].name = "Options";
 	button[B_DONE].name = "Done";
 	button[B_EXIT].name = "Exit";
+
 	button[B_MAN_STATS].name = "ManStats";
+	button[B_BARCHART].name      = "BarChart";
+	// Todo: read definitions for alternate barchart-layout
+
+	button[B_TIME_FREE].name     = "ResTimeFree";
+	button[B_TIME_AIM].name      = "ResTimeAim";
+	button[B_TIME_SNAP].name     = "ResTimeSnap";
+	button[B_TIME_AUTO].name     = "ResTimeAuto";
 	
 	text[T_TURN_NUMBER].name = "TurnNumber";
 	text[T_MAN_NAME].name = "ManName";
@@ -83,7 +99,7 @@ Icon::Icon()
 		lua_safe_dofile(L, F("$(ufo2000)/init-scripts/icons.lua"));
 		custom_icons = true;
 	} else 
-		lua_safe_dofile(L, F("$(ufo2000)/init-scripts/standart-icons.lua"));	
+		lua_safe_dofile(L, F("$(ufo2000)/init-scripts/standard-icons.lua"));	
 	
 	//image
 	if (custom_icons) {
@@ -349,6 +365,7 @@ Icon::Icon()
 		width = 320;
 		height = 57;
 
+		// Todo: show raised/depressed icon for active reserve-time-button
         iconsbmp = create_bitmap(width, height);
 		blit(image, iconsbmp, 0, 144, 0, 0, iconsbmp->w, iconsbmp->h); 
 		destroy_bitmap(image);
@@ -358,12 +375,19 @@ Icon::Icon()
 	y = SCREEN2H - height;
 }
 
+/**
+ * Cleanup: icon-bitmap and graphic-resource
+ */
 Icon::~Icon()
 {
 	destroy_bitmap(iconsbmp);
 	delete(tac00);
 }
 
+/**
+ * Draw plain control-panel / icon-area, 
+ * then add infos about currently active soldier
+ */
 void Icon::draw()
 {
 	//blit(iconsbmp, screen2, 0, 0, x, y, iconsbmp->w, iconsbmp->h);
@@ -391,6 +415,10 @@ int firemenu_dialog_proc(int msg, DIALOG * d, int c)
 	return d_button_proc(msg, d, c);
 }
 
+/**
+ * Menu to select firing-mode (aimed, snapshot, auto) for weapon in hand, 
+ * or throwing
+ */
 void Icon::firemenu(int iplace)
 {
 	TARGET = 0;
@@ -549,7 +577,9 @@ void Icon::firemenu(int iplace)
 	}
 }
 
-
+/**
+ * Prime grenade: select delay
+ */
 int Icon::doprime(Item *it)
 {
 	int DX = (SCREEN2W - 98) / 2;
@@ -591,6 +621,10 @@ int Icon::doprime(Item *it)
 	return do_dialog(dPrime, -1);
 }
 
+/**
+ * If a button in the control-panel / icon-area was clicked, 
+ * execute its command
+ */
 void Icon::execute(int mx, int my)
 {
 	//int n;
@@ -606,12 +640,14 @@ void Icon::execute(int mx, int my)
 	} else
 	if (button[B_MAN_UP].is_inside(mx, my)) {
 		if (MODE != WATCH) {
+			// Todo: Flying armor
 			if (sel_man->use_elevator(+1))
 				map->center(sel_man);
 		}
 	} else
 	if (button[B_MAN_DOWN].is_inside(mx, my)) {
 		if (MODE != WATCH) {
+			// Todo: Flying armor
 			if (sel_man->use_elevator(-1))
 				map->center(sel_man);
 		}
@@ -623,6 +659,30 @@ void Icon::execute(int mx, int my)
 	if (button[B_VIEW_DOWN].is_inside(mx, my)) {
 		if (map->sel_lev > 0)
 			map->sel_lev--;
+//
+// Test: Buttons for reserving time (Todo: further processing)
+//
+	} else
+	if (button[B_TIME_FREE].is_inside(mx, my)) {
+		ReserveTimeMode = RESERVE_FREE;
+		soundSystem::getInstance()->play(SS_BUTTON_PUSH_1); 
+		g_console->printf(COLOR_SYS_OK, "%s %d", "Reserve time: Free", ReserveTimeMode); 
+	} else
+	if (button[B_TIME_AIM].is_inside(mx, my)) {
+		ReserveTimeMode = RESERVE_AIM;
+		g_console->printf(COLOR_SYS_OK, "%s %d", "Reserve time: Aim", ReserveTimeMode); 
+		soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
+	} else
+	if (button[B_TIME_SNAP].is_inside(mx, my)) {
+		ReserveTimeMode = RESERVE_SNAP;
+		g_console->printf(COLOR_SYS_OK, "%s %d", "Reserve time: Snap", ReserveTimeMode); 
+		soundSystem::getInstance()->play(SS_BUTTON_PUSH_1); 
+	} else
+	if (button[B_TIME_AUTO].is_inside(mx, my)) {
+		ReserveTimeMode = RESERVE_AUTO;
+		g_console->printf(COLOR_SYS_OK, "%s %d", "Reserve time: Auto", ReserveTimeMode); 
+		soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
+// 
 	} else
 	if (button[B_MAP].is_inside(mx, my)) {
 		if (MODE != WATCH)
@@ -634,6 +694,18 @@ void Icon::execute(int mx, int my)
 				sel_man->change_pose();
 			}
 		}
+	} else
+	if (button[B_MAN_STATS].is_inside(mx, my)) {
+		if (MODE != WATCH)
+			MODE = UNIT_INFO;
+//
+// Test: Toggle Stats-BarChart between normal & alternate version (Todo)
+//
+	} else
+	if (button[B_BARCHART].is_inside(mx, my)) {
+		g_console->printf(COLOR_SYS_OK, "%s", "BarChart");
+		soundSystem::getInstance()->play(SS_BUTTON_PUSH_1); 
+//
 	} else
 	if (button[B_INVENTORY].is_inside(mx, my)) {
 		if (MODE != WATCH) {
@@ -694,13 +766,14 @@ void Icon::execute(int mx, int my)
 	} else
 	if (button[B_EXIT].is_inside(mx, my)) {
 		simulate_keypress(KEY_ESC << 8);
-	} else
-	if (button[B_MAN_STATS].is_inside(mx, my)) {
-		if (MODE != WATCH)
-			MODE = UNIT_INFO;
 	}	
 }
 
+/**
+ * Draw infos about current soldier into control-panel / icon-area: 
+ * items in hands, name, stats with bargraphs.
+ * Show Turn-number where XCOM had the rank-picture.
+ */
 void Icon::info()
 {
 	text_mode(-1);
@@ -711,6 +784,9 @@ void Icon::info()
 	draw_text(T_TURN_NUMBER, (turn / 2) + 1, "%02d");
 }
 
+/**
+ * Test if mouse is inside an icon-button
+ */
 int Icon::inside(int mx, int my)
 {
 	if ((mx >= x) && (mx <= x + width) && (my >= y) && (my <= y + height))
@@ -719,6 +795,9 @@ int Icon::inside(int mx, int my)
 		return 0;
 }
 
+/**
+ * Show End-of-turn - Picture
+ */ 
 void Icon::show_eot()
 {
 	BITMAP *eot_back = load_back_image(cfg_get_endturn_image_file_name());
@@ -726,6 +805,9 @@ void Icon::show_eot()
 	destroy_bitmap(eot_back);
 }
 
+/**
+ * Draw the stun-bar inside the health-bar
+ */
 void Icon::draw_stun_bar(int x, int y, int val, int maxval)
 {
 	if (attribute[A_HEALTH].BarDirection == dir_hor) {
@@ -737,11 +819,17 @@ void Icon::draw_stun_bar(int x, int y, int val, int maxval)
 	}
 }
 
+/**
+ * Draw value and stats-bar for an attribute (e.g. TU, energy, health, morale)
+ */
 void Icon::draw_attribute(int attr, int val, int maxval)
 {
 	attribute[attr].Draw(x, y, val, maxval);
 }
 
+/**
+ * Draw text into icon-area, e.g. Turn-number
+ */
 void Icon::draw_text(int txt, char *val)
 {
 	text[txt].Draw(x, y, val);
@@ -752,6 +840,10 @@ void Icon::draw_text(int txt, int val, char *format)
 	text[txt].Draw(x, y, val, format);
 }
 
+/**
+ * Draw item in hand, with additional info: 
+ * available ammo in weapon, delay for primed grenade
+ */
 void Icon::draw_item(int itm, Item *it, int rounds, int prime, bool primed)
 {
 	item[itm].Draw(x, y, it);

@@ -38,6 +38,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <fcntl.h>
 #include <time.h>
 #include <fstream>
+
 #include "version.h"
 #include "pck.h"
 #include "explo.h"
@@ -57,22 +58,48 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "crc32.h"
 #include "music.h"
 #include "scenario.h"
+#include "colors.h"
 
 #include "sysworkarounds.h"
 
 //#define DEBUG
 #define MSCROLL 10
-#define BACKCOLOR xcom1_color(15)
+#define BACKCOLOR COLOR_BLACK1  
 
 Target target;
 int HOST, DONE, TARGET, turn;
-Mode MODE;
+Mode MODE;                      //!< Display-Mode
 ConsoleWindow *g_console;
 
-//! Limit of time for a single turn in seconds
-int g_time_limit;
-//! Current counter for time left for this turn
-volatile int g_time_left;
+int g_time_limit;               //!< Limit of time for a single turn in seconds
+volatile int g_time_left;       //!< Current counter for time left for this turn
+int last_time_left;             //!< Time of last screen-update for g_time_left
+
+//ReserveTime_Mode ReserveTimeMode; 	// TODO: should be platoon- or soldier-specific
+
+/**
+ * Update display of time remaining (for games with time-limit),
+ * plus Warning-sounds when time is running out.
+ */
+// see also: show_time_left() in minimap.h
+void show_time_left()
+{
+	int time_left = g_time_left;
+
+	// Todo: check if minimap is visible, so show time only once on screen:
+	textprintf(screen2, font, 0, 0, COLOR_WHITE, "Time left: %d", time_left);
+
+	if (last_time_left == time_left) 	// Play sounds only once per second
+		return;
+
+	// Possible sounds: SS_WINDOW_OPEN_1, SS_WINDOW_OPEN_2, SS_CLIP_LOAD, SS_ITEM_PUT
+	if ((time_left == 10))  
+		soundSystem::getInstance()->play(SS_WINDOW_OPEN_2); 
+	if ((time_left <=  5))
+		soundSystem::getInstance()->play(SS_ITEM_PUT); 
+
+	last_time_left = time_left;
+}
 
 Net *net;
 Map *map;
@@ -278,11 +305,11 @@ protected:
         if (c == 10) {
             if (print_win != NULL) {
                 curline.append("\r\n");
-                print_win->printstr(curline.c_str(), xcom1_color(1));
+                print_win->printstr(curline.c_str(), COLOR_WHITE);
             } else {
                 curline.append("\n");
                 text_mode( -1);
-                textout(screen, font, curline.c_str(), 0, print_y, xcom1_color(1));
+                textout(screen, font, curline.c_str(), 0, print_y, COLOR_WHITE);
                 print_y += 10;
             }
             curline.assign("");
@@ -304,11 +331,12 @@ public:
 
 
 /**
- * Display error message
+ * Fatal errors: display error message, exit program
  */
 void display_error_message(const std::string &error_text)
 {
 #ifdef WIN32
+	// show errormessage in windows-messagebox:
 	MessageBox(NULL, error_text.c_str(), "UFO2000 Error!", MB_OK);
 #else
 	fprintf(stderr, "\n%s\n", error_text.c_str());
@@ -510,7 +538,7 @@ void initmain(int argc, char *argv[])
 	if (get_config_int("Flags", "F_SHOWLOFCELL", 0)) FLAGS |= F_SHOWLOFCELL;  // show cell's LOF & BOF
 	if (get_config_int("Flags", "F_SHOWLEVELS", 0)) FLAGS |= F_SHOWLEVELS;    // show all level
 	if (get_config_int("Flags", "F_FASTSTART", 0)) FLAGS |= F_FASTSTART;      // skip
-	if (get_config_int("Flags", "F_FULLSCREEN", 0)) FLAGS |= F_FULLSCREEN;    // start fullscreen mode
+	if (get_config_int("Flags", "F_FULLSCREEN",  0)) FLAGS |= F_FULLSCREEN;   // start in fullscreen mode
 	if (get_config_int("Flags", "F_RAWMESSAGES", 0)) FLAGS |= F_RAWMESSAGES;  // show raw net packets
 	if (get_config_int("Flags", "F_SEL_ANY_MAN", 0)) FLAGS |= F_SEL_ANY_MAN;  // allow select any man
 	if (get_config_int("Flags", "F_SWITCHVIDEO", 1)) FLAGS |= F_SWITCHVIDEO;  // allow switch full/window screen mode
@@ -555,7 +583,7 @@ void initmain(int argc, char *argv[])
 
 	BITMAP *text_back = load_back_image(cfg_get_loading_image_file_name());
 	stretch_blit(text_back, screen, 0, 0, text_back->w, text_back->h, 0, 0, SCREEN_W, SCREEN_H);
-	print_win = new Wind(text_back, 15, 300, 625, 390, xcom1_color(255));
+  	print_win = new Wind(text_back, 15, 300, 625, 390, COLOR_BLACK2);
 
     /* to use the init console as an ostream -very handy. */
     consoleBuf consbuf(FLAGS & F_LOGTOSTDOUT);
@@ -737,15 +765,15 @@ bool nomoves()
 }
 
 /**
- * Function that calculates current gamestate crc and compares it with the 
- * passed in argument value
+ * Function that calculates current gamestate crc 
+ * and compares it with the passed in argument value
  */
 void check_crc(int crc)
 {
 	int bcrc = build_crc();
 	if (crc != bcrc) {
-		g_console->printf("%s", "wrong wholeCRC");
-		g_console->printf("crc=%d, bcrc=%d", crc, bcrc);
+		g_console->printf(COLOR_SYS_FAIL, "%s", "wrong wholeCRC");
+		g_console->printf(COLOR_SYS_FAIL, "crc=%d, bcrc=%d", crc, bcrc);
 		net->send_debug_message("crc error");
 	}
 }
@@ -787,6 +815,9 @@ void send_turn()
 	elist->step(-1);
 	int crc = build_crc();
 	net->send_endturn(crc);
+
+	g_console->printf(COLOR_SYS_INFO1, "%s", "Turn end");
+	soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
 
 	platoon_remote->restore();
 
@@ -842,19 +873,21 @@ void recv_turn(int crc)
 	platoon_local->check_morale();
 
 	g_time_left = g_time_limit;
+	last_time_left  = -1;
 	MODE = MAP3D;
 
 	g_console->printf(
-		xcom1_color(192),
+		COLOR_VIOLET00,				// COLOR_SYS_INFO1
 		"Next turn. local = %d, remote = %d soldiers",
 		platoon_local->num_of_men(),
 		platoon_remote->num_of_men());
+	soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
 }
 
 int GAMELOOP = 0;
 
 /**
- * Redraw field of view and minimap on the screen
+ * Redraw battlescape and minimap on the screen
  */
 void build_screen(int & select_y)
 {
@@ -894,8 +927,11 @@ void build_screen(int & select_y)
 
 			icon->draw();
 
+			if (g_time_left > 0) 
+				show_time_left();
+
 			if (MODE == WATCH)
-				textprintf(screen2, font, 0, 0, xcom1_color(1), "%s", "WATCH");
+				textprintf(screen2, font, 0, 0, COLOR_WHITE, "%s", "WATCH");
 			break;
 		case MAN:
 			if (sel_man != NULL) {
@@ -912,12 +948,13 @@ void build_screen(int & select_y)
 
 	draw_sprite(screen2, mouser, mouse_x, mouse_y);
 	blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
-	map->svga2d();
+	map->svga2d();		// Minimap
 
 	if (FLAGS & F_SHOWLOFCELL) {
 		map->show_lof_cell();
 	}
 }
+
 
 /**
  * Save game state to "ufo2000.sav" file
@@ -1118,41 +1155,48 @@ void endgame_stats()
 
 	stretch_blit(back, newscr, 0, 0, back->w, back->h, 0, 0, SCREEN_W, SCREEN_H);
 
-	textprintf_centre(newscr, large, 320, 24, xcom1_color(1), "%s", winner);
+	textprintf_centre(newscr, large, 320, 24, COLOR_RED00, "%s", winner);
 
 	if (net->gametype == GAME_TYPE_HOTSEAT)
 	{
-		textprintf(newscr, g_small_font,   8, 60, xcom1_color(1), "Player 1");
-		textprintf(newscr, g_small_font, 328, 60, xcom1_color(1), "Player 2");
+		//textprintf(newscr, g_small_font,   8, 60, COLOR_WHITE, "Player 1");
+		//textprintf(newscr, g_small_font, 328, 60, COLOR_WHITE, "Player 2");
+		textprintf(newscr, large,  16, 50, COLOR_GREEN, "Player 1");
+		textprintf(newscr, large, 336, 50, COLOR_GREEN, "Player 2");
 	}
 	else
 	{
-		textprintf(newscr, g_small_font,   8, 60, xcom1_color(1), "Your Platoon");
-		textprintf(newscr, g_small_font, 328, 60, xcom1_color(1), "Remote Platoon");
+		//textprintf(newscr, g_small_font,   8, 60, COLOR_GREEN, "Your Platoon");
+		//textprintf(newscr, g_small_font, 328, 60, COLOR_GREEN, "Remote Platoon");
+		textprintf(newscr, large,  16, 50, COLOR_GREEN, "Your Platoon");
+		textprintf(newscr, large, 336, 50, COLOR_GREEN, "Remote Platoon");
 	}
-	textprintf(newscr, g_small_font,  16, 68, xcom1_color(1), "Total Kills: %d", local_kills);
-	textprintf(newscr, g_small_font, 336, 68, xcom1_color(1), "Total Kills: %d", remote_kills);
-	textprintf(newscr, g_small_font,  16, 76, xcom1_color(1), "Deaths: %d", local_dead);
-	textprintf(newscr, g_small_font, 336, 76, xcom1_color(1), "Deaths: %d", remote_dead);
-	textprintf(newscr, g_small_font,  16, 84, xcom1_color(1), "Total Damage Inflicted: %d", local_inflicted);
-	textprintf(newscr, g_small_font, 336, 84, xcom1_color(1), "Total Damage Inflicted: %d", remote_inflicted);
-	textprintf(newscr, g_small_font,  16, 92, xcom1_color(1), "Total Damage Taken: %d", local_taken);
-	textprintf(newscr, g_small_font, 336, 92, xcom1_color(1), "Total Damage Taken: %d", remote_taken);
+	textprintf(newscr, g_small_font,  16, 68, COLOR_RED03,  "Total Kills: %d", local_kills);
+	textprintf(newscr, g_small_font, 336, 68, COLOR_YELLOW, "Total Kills: %d", remote_kills);
 
-	textprintf_centre(newscr, large, 320, 108, xcom1_color(1), "Most Valuable Soldier:");
-	textprintf_centre(newscr, g_small_font, 320, 124, xcom1_color(1), "%s (%s, %d kills)",
+	textprintf(newscr, g_small_font,  16, 76, COLOR_YELLOW, "Deaths: %d", local_dead);
+	textprintf(newscr, g_small_font, 336, 76, COLOR_RED03,  "Deaths: %d", remote_dead);
+
+	textprintf(newscr, g_small_font,  16, 84, COLOR_BLUE,   "Total Damage Inflicted: %d", local_inflicted);
+	textprintf(newscr, g_small_font, 336, 84, COLOR_GRAY,   "Total Damage Inflicted: %d", remote_inflicted);
+
+	textprintf(newscr, g_small_font,  16, 92, COLOR_GRAY,   "Total Damage Taken: %d", local_taken);
+	textprintf(newscr, g_small_font, 336, 92, COLOR_BLUE,   "Total Damage Taken: %d", remote_taken);
+
+	textprintf_centre(newscr, large,        320, 108, COLOR_GOLD, "Most Valuable Soldier:");
+	textprintf_centre(newscr, g_small_font, 320, 124, COLOR_GOLD, "%s (%s, %d kills)",
 		mvp->get_name(), 
 		(mvp_remote) ? ((net->gametype == GAME_TYPE_HOTSEAT) ? "Player 2" : "Remote") : ((net->gametype == GAME_TYPE_HOTSEAT) ? "Player 1" : "Local"),
 		mvp->get_kills());
 
-	textprintf_centre(newscr, large, 320, 140, xcom1_color(1), "Most Devastating Soldier:");
-	textprintf_centre(newscr, g_small_font, 320, 156, xcom1_color(1), "%s (%s, %d damage inflicted)",
+	textprintf_centre(newscr, large,        320, 140, COLOR_MAGENTA, "Most Devastating Soldier:");
+	textprintf_centre(newscr, g_small_font, 320, 156, COLOR_MAGENTA, "%s (%s, %d damage inflicted)",
 		devastating->get_name(), 
 		(devastating_remote) ? ((net->gametype == GAME_TYPE_HOTSEAT) ? "Player 2" : "Remote") : ((net->gametype == GAME_TYPE_HOTSEAT) ? "Player 1" : "Local"),
 		devastating->get_inflicted());
 
-	textprintf_centre(newscr, large, 320, 172, xcom1_color(1), "Most Cowardly Soldier:");
-	textprintf_centre(newscr, g_small_font, 320, 188, xcom1_color(1), "%s (%s, %d damage inflicted)",
+	textprintf_centre(newscr, large,        320, 172, COLOR_ROSE, "Most Cowardly Soldier:");
+	textprintf_centre(newscr, g_small_font, 320, 188, COLOR_ROSE, "%s (%s, %d damage inflicted)",
 		coward->get_name(), 
 		(coward_remote) ? ((net->gametype == GAME_TYPE_HOTSEAT) ? "Player 2" : "Remote") : ((net->gametype == GAME_TYPE_HOTSEAT) ? "Player 1" : "Local"),
 		coward->get_inflicted());
@@ -1163,6 +1207,7 @@ void endgame_stats()
 
 	CHANGE = 1;
 
+	g_console->printf(COLOR_SYS_PROMPT, "%s\n\n", "Press ESC to continue");
 	while (!DONE)
 	{
 		net->check();
@@ -1193,6 +1238,8 @@ void endgame_stats()
 					break;
 				case KEY_F9:
 					keyswitch(0);
+					//g_console->printf(COLOR_SYS_OK, "%s", "Keyboard changed");
+					// ?? Todo: other feedback to user ??
 					break;
 				case KEY_F10:
 					change_screen_mode();
@@ -1242,6 +1289,7 @@ static LONG WINAPI TopLevelExceptionFilter(PEXCEPTION_POINTERS pExceptionInfo)
 void gameloop()
 {
 	int mouse_leftr = 1, mouse_rightr = 1, select_y = 0;
+	int color1;
 	
 	if ((rand() % 2) == 1)
 		FS_MusicPlay(F(cfg_get_combat2_music_file_name()));
@@ -1250,12 +1298,15 @@ void gameloop()
 	
 	clear_keybuf();
 	GAMELOOP = 1;
+	ReserveTimeMode = RESERVE_FREE;
+	color1 = 0;
 
 	platoon_local->set_visibility_changed();
 	platoon_remote->set_visibility_changed();
 
 	if (MODE != WATCH) {
 		g_time_left = g_time_limit;
+		last_time_left  = -1;
 	} else {
 		g_time_left = 0;
 	}
@@ -1283,7 +1334,7 @@ void gameloop()
 		if (NOTICE) {
 			if (NOTICEdemon) {
 				net->send_notice();
-//				g_console->printf("%d", NOTICEremote);
+//				g_console->printf(COLOR_SYS_INFO, "%d", NOTICEremote);
 			}
 			NOTICEremote++;
 			NOTICE = 0;
@@ -1327,7 +1378,7 @@ void gameloop()
 			MAPSCROLL = 0;
 		}
 
-		if ((mouse_b & 1) && (mouse_leftr)) { //left
+		if ((mouse_b & 1) && (mouse_leftr)) { //left mouseclick
 			mouse_leftr = 0;
 			switch (MODE) {
 				case UNIT_INFO:
@@ -1403,7 +1454,7 @@ void gameloop()
 			}
 		}
 
-		if ((mouse_b & 2) && (mouse_rightr)) { //right
+		if ((mouse_b & 2) && (mouse_rightr)) { //right mouseclick
 			mouse_rightr = 0;
 			switch (MODE) {
 				case UNIT_INFO:
@@ -1458,6 +1509,8 @@ void gameloop()
 		if (keypressed()) {
 			int scancode;
 			int keycode = ureadkey(&scancode);
+			int vol;
+			char test[128];
 
 			switch (scancode) {
 				case KEY_PGUP:
@@ -1472,11 +1525,16 @@ void gameloop()
 						position_mouse(mouse_x, mouse_y + 24);
 					}
 					break;
+//				case KEY_MULTIPLY:   // ?? ToDo: Sound on/off
+//					soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
+//					break;
 				case KEY_PLUS_PAD:
-					FS_IncMusicVolume();
+					vol = FS_IncMusicVolume();
+					g_console->printf(COLOR_SYS_OK, "Music Volume: %d", vol );
 					break;
 				case KEY_MINUS_PAD:
-					FS_DecMusicVolume();
+					vol = FS_DecMusicVolume();
+					g_console->printf(COLOR_SYS_OK, "Music Volume: %d", vol );
 					break;
 				case KEY_LEFT:
 					if (key[KEY_LSHIFT])
@@ -1503,8 +1561,11 @@ void gameloop()
 						resize_screen2(0, 10);
 					break;
 				case KEY_F2:
-					if (askmenu("SAVE GAME"))
+					if (askmenu("SAVE GAME")) {
 						savegame(F("$(home)/ufo2000.sav"));
+						// Todo: test if save was successful
+						g_console->printf(COLOR_SYS_OK, "%s", "Game saved");
+					}
 					break;
 				case KEY_F3:
 					if (askmenu("LOAD GAME")) {
@@ -1518,6 +1579,8 @@ void gameloop()
 					break;
 				case KEY_F9:
 					keyswitch(0);
+					// g_console->printf(COLOR_SYS_OK, "%s", "Keyboard changed");
+					// Todo: other form of feedback ??
 					break;
 				case KEY_F10:
 					change_screen_mode();
@@ -1643,13 +1706,107 @@ void start_loadgame()
 	DONE = 0;
 
 	resize_screen2(0, 0);
-	clear_to_color(screen, xcom_color(58));
+	clear_to_color(screen, COLOR_GREEN10);
 	gameloop();
 	closegame();
 }
 
+/**
+ * Test / Debug
+ */
+//! Test: Draw rectangles in all colors as background, 
+//! labeled with white numbers, 
+//! output to screen or save as bitmap-file.
+void color_chart1()
+{
+    //int h = 32, w = 32;   // 32*16=512
+    int h = 22, w = 38;
+    int x =  0, y =  0, color = 0;
+    BITMAP *xx = create_bitmap(16*w, 16*h);  // 24*16,38*16 = 384,608
+    clear(xx);
+    for (int i = 0; i < 16; i++) {
+        for (int j = 0; j < 16; j++) {
+            color = i * 16 + j;
+            x     = j * w;
+            y     = i * h;
+            rectfill( xx, x, y, x + w-1, y + h-1, xcom_color(color) );
+            //textprintf_centre_ex(xx, g_small_font,
+            //    j * 32 + 16, i * 32 + 16,
+            //    xcom_color(1), -1, "%d", i * 16 + j); 
+            //textprintf_centre(xx, g_small_font, x + w/2, y + h/2,
+            //    xcom_color(1), "%d", color );
+	    printsmall_x( xx, x + w/2, y + h/2, xcom_color(1), color );
+        }
+    }
+    //save_bitmap("xcom_palette.bmp", xx, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
+    //blit(xx, screen, 0, 0, 0, 0, SCREEN_W, SCREEN2H);
+    blit( xx, screen, 0, 0, 0, 0, 16*w, 16*h );
+    destroy_bitmap(xx); 
+}
+
+//! Test: Draw text in all colors on black background
+void color_chart2()
+{
+    int color = 0, x = 0, y = 0, h = 22, w = 38;
+    BITMAP *xx = create_bitmap(16*w, 16*h);  // 22*16,38*16=352,608
+    clear(xx);
+    for (int i = 0; i < 16; i++) {
+        for (int j = 0; j < 16; j++) {
+            color = i * 16 + j;
+            x     = j * w;
+            y     = i * h;
+            //rectfill(xx, j*w, i*h, j*w + w-1, i*h + h-1, xcom_color(color) );
+            //textprintf_centre(xx, g_small_font, 
+            //    j*w + w/2, i*h + h/2,
+            //    xcom_color(color), "%d", color );
+	    printsmall_x( xx, x + w/2, y + h/2, xcom_color(color), color );
+        }
+    }
+    //save_bitmap("xcom_pal_text.bmp", xx, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
+    //save_pcx(filename, scr, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
+    blit( xx, screen, 0, 0, 0, 0, 16*w, 16*h );
+    destroy_bitmap(xx); 
+}
+
+//! Test: Call test-routines
+void test1()
+{
+    int DONE = 0, test = 0;
+
+    textprintf(screen, font, 1, 31*12, COLOR_SYS_PROMPT, 
+        "%s", "Colortest - press SPACE to switch, ESC to quit"); 
+
+    while (!DONE) { 
+        if (keypressed()) {
+            int scancode;
+            int keycode = ureadkey(&scancode);
+
+            switch (scancode) {
+                case KEY_ESC:
+                        //if (askmenu("Test ok"))
+                        DONE = 1;
+                    break;
+                //case KEY_UP:
+                //    resize_screen2(0, -10);
+                //    break;
+                default:
+                    if (test == 0 ) {
+                        color_chart1(); test++;
+                    } else {
+                        color_chart2(); test=0;
+                    } 
+                    //textprintf(screen, font, 1, 32*12, COLOR_WHITE, 
+                    //    "scancode: %d, keycode: %d", scancode,keycode ); 
+            }
+        }
+    }
+}
+
 std::string g_version_id;
 
+/**
+ * Main UFO2000 - client-program
+ */
 int main(int argc, char *argv[])
 {
 	char version_id[128];
@@ -1702,9 +1859,8 @@ int main(int argc, char *argv[])
 					FS_MusicPlay(F(cfg_get_editor_music_file_name()));
 //	                editor->do_mapedit();
 					set_palette((RGB *)datafile[DAT_GAMEPAL_BMP].dat);
-					gui_fg_color = xcom1_color(15);
-					gui_bg_color = xcom1_color(1);
-
+					gui_fg_color = COLOR_BLACK1;
+					gui_bg_color = COLOR_WHITE; 
 					alert(" ", "Map editor is currently disabled", " ", "    OK    ", NULL, 1, 0);
 					FS_MusicPlay(NULL);
                     continue;

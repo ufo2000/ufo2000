@@ -28,6 +28,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "platoon.h"
 #include "explo.h"
 #include "multiplay.h"
+#include "colors.h"
 
 #define PHASE 2
 
@@ -422,7 +423,7 @@ void Bullet::draw()
 			xg2 = map->x + xe + ye;
 			yg2 = (int)(map->y - (xe + 1) / 2.0 + ye / 2.0 - ze * 2.0 - 2);
 
-			line(screen2, xg, yg, xg2, yg2, xcom1_color(1));
+			line(screen2, xg, yg, xg2, yg2, COLOR_WHITE);
 
 			/*if ( (xg>-32)&&(xg<SCREEN2W)&&(yg>=-34)&&(yg<SCREEN2H) ) {
 			 map->drawitem(item->data()->pMap, xg-16, yg-26);
@@ -508,7 +509,7 @@ void Bullet::showline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 	xg2 = map->x + xd + yd;
 	yg2 = (int)(map->y - (xd + 1) / 2 + yd / 2 - zd * 2.0 - 2);
 
-	do_line(screen2, xg, yg, xg2, yg2, xcom1_color(144), dotted_line_proc);
+	do_line(screen2, xg, yg, xg2, yg2, COLOR_YELLOW, dotted_line_proc);
 
 
 	i = 1000;
@@ -523,7 +524,7 @@ void Bullet::showline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 	yg2 = (int)(map->y - (xd + 1) / 2 + yd / 2 - zd * 2.0 - 2);
 
 	//line(screen2, xg, yg, xg2, yg2, 144);
-	do_line(screen2, xg, yg, xg2, yg2, xcom1_color(150), dotted_line_proc);
+	do_line(screen2, xg, yg, xg2, yg2, COLOR_BROWN, dotted_line_proc);
 }
 
 

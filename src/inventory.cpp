@@ -25,6 +25,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "map.h"
 #include "multiplay.h"
 #include "soldier.h"
+#include "colors.h"
 
 /**
  * Manage soldiers inventory
@@ -52,9 +53,13 @@ Inventory::~Inventory()
 	delete tac01;
 }
 
+/**
+ * Draw soldiers inventory when in battle
+ */
+// See also: Editor::show(), Soldier::draw_inventory()
 void Inventory::draw()
 { // handle killing in MAN mode
-	tac01->show(screen2, 0, 0);
+	tac01->show(screen2, 0, 0);  // Buttons: OK, next & prev.man
 	//spr_over(screen2, 237, 1, b123);
 	//spr_over(screen2, 288, 32, b4);
 	//spr_over(screen2, 288, 137, b5);
@@ -69,37 +74,41 @@ void Inventory::draw()
 		sel_man->draw_deselect_times(sel_item_place);
 
 		//textprintf(screen2, font, 129, 141, color, "%s", sel_item->data()->name);
-		textprintf(screen2, g_small_font, 128, 140, xcom1_color(50), "%s", sel_item->name().c_str());
+		textprintf(screen2, g_small_font, 128, 140, COLOR_GREEN, "%s", sel_item->name().c_str());
 		if (sel_item->is_grenade()) {
 			if (sel_item->delay_time()) {
-				textout(screen2, g_small_font, "DELAY", 272, 64, xcom1_color(66));
-				textout(screen2, g_small_font, "TIME:", 272, 72, xcom1_color(66));
-				textout(screen2, g_small_font, "LEFT=", 272, 80, xcom1_color(66));
-				textprintf(screen2, g_small_font, 299, 80, xcom1_color(18), "%d", sel_item->delay_time() - 1);
+				textout(screen2, g_small_font, "DELAY", 272, 64, COLOR_LT_OLIVE);
+				textout(screen2, g_small_font, "TIME:", 272, 72, COLOR_LT_OLIVE);
+				textout(screen2, g_small_font, "LEFT=", 272, 80, COLOR_LT_OLIVE);
+				textprintf(screen2, g_small_font, 299, 80, COLOR_ORANGE, "%d", sel_item->delay_time() - 1);
 				//textprintf(screen2, font, 272, 80, color, "%d", sel_item->rounds);
-				rect(screen2, 272, 88, 303, 135, xcom1_color(8));      //clip
+				rect(screen2, 272, 88, 303, 135, COLOR_GRAY08);      //clip
 				PCK::showpck(sel_item->obdata_pInv(), 272, 88 + 8);
 			}
 		}
 
 		if (sel_item->haveclip()) {
-			textout(screen2, g_small_font, "AMMO:", 272, 64, xcom1_color(66));
-			textout(screen2, g_small_font, "ROUNDS", 272, 72, xcom1_color(66));
-			textout(screen2, g_small_font, "LEFT=", 272, 80, xcom1_color(66));
-			textprintf(screen2, g_small_font, 299, 80, xcom1_color(18), "%d", sel_item->roundsremain());
-			rect(screen2, 272, 88, 303, 135, xcom1_color(8));      //clip
+			textout(screen2, g_small_font, "AMMO:",  272, 64, COLOR_LT_OLIVE);
+			textout(screen2, g_small_font, "ROUNDS", 272, 72, COLOR_LT_OLIVE);
+			textout(screen2, g_small_font, "LEFT=",  272, 80, COLOR_LT_OLIVE);
+			textprintf(screen2, g_small_font, 299, 80, COLOR_ORANGE, "%d", sel_item->roundsremain());
+
+			printsmall( 312, 58, COLOR_WHITE, 8); // 8=Time to unload weapon
+			rect(screen2, 272, 88, 303, 135, COLOR_GRAY08);      //clip
 			PCK::showpck(sel_item->clip()->obdata_pInv(), 272, 88 + 8);
 		} else if (sel_item->obdata_isAmmo()) {
-			textout(screen2, g_small_font, "AMMO:", 272, 64, xcom1_color(66));
-			textout(screen2, g_small_font, "ROUNDS", 272, 72, xcom1_color(66));
-			textout(screen2, g_small_font, "LEFT=", 272, 80, xcom1_color(66));
-			textprintf(screen2, g_small_font, 299, 80, xcom1_color(18), "%d", sel_item->m_rounds);
-			rect(screen2, 272, 88, 303, 135, xcom1_color(8));      //clip
+			printsmall( 34, 85, COLOR_WHITE, 15); // 15=Time to load weapon
+
+			textout(screen2, g_small_font, "AMMO:",  272, 64, COLOR_LT_OLIVE);
+			textout(screen2, g_small_font, "ROUNDS", 272, 72, COLOR_LT_OLIVE);
+			textout(screen2, g_small_font, "LEFT=",  272, 80, COLOR_LT_OLIVE);
+			textprintf(screen2, g_small_font, 299, 80, COLOR_ORANGE, "%d", sel_item->m_rounds);
+			rect(screen2, 272, 88, 303, 135, COLOR_GRAY08);      //clip
 			PCK::showpck(sel_item->obdata_pInv(), 272, 88 + 8);
 		}
 
 		if (key[KEY_LCONTROL]) {
-			sel_item->od_info(mouse_x, mouse_y, xcom1_color(1));
+			sel_item->od_info(mouse_x, mouse_y, COLOR_WHITE);
 		} else {
 			PCK::showpck(sel_item->obdata_pInv(),
 			                mouse_x - sel_item->obdata_width()  * 16 / 2,
@@ -109,10 +118,17 @@ void Inventory::draw()
 	}
 }
 
-
+/**
+ * Process mouse-clicks on inventory-screen during battle
+ */
 void Inventory::execute()
 {
+
 	if (sel_item == NULL) {
+		if (mouse_inside( 50, 50, 110, 142)) {  // Picture of soldier (in Powerarmor)
+			//g_console->printf(COLOR_SYS_DEBUG, "x,y: %d %d", mouse_x, mouse_y); 
+			MODE = UNIT_INFO;	// switch to stats-display
+		} 
 		if (mouse_inside(237, 1, 271, 22)) {  //ok
 			MODE = MAP3D;
 			//map->place(sel_man->z, sel_man->x, sel_man->y)->viscol=0; //!!reset vis
@@ -172,7 +188,10 @@ void Inventory::execute()
 
 }
 
-
+/**
+ * Put selected item back to its old place,
+ * e.g. when exiting the inventory-screen
+ */
 void Inventory::backput()
 {
 	if (sel_item != NULL) {

@@ -25,6 +25,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "video.h"
 #include "config.h"
 #include "multiplay.h"
+#include "colors.h"
 
 extern void install_timers(int _speed_unit, int _speed_bullet, int _speed_mapscroll);
 extern void uninstall_timers();
@@ -314,7 +315,7 @@ void configure()
 
 	centre_dialog(config_dlg);
 	set_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
-	set_dialog_color(config_dlg, xcom1_color(15), xcom1_color(1));
+	set_dialog_color(config_dlg, COLOR_BLACK1, COLOR_WHITE);
 
 	if (popup_dialog(config_dlg, -1) == OK_BUTTON) {
 		if (config_dlg[SPEED_UNIT].d2)

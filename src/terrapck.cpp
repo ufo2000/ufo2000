@@ -24,8 +24,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
+
 #include "video.h"
 #include "terrapck.h"
+#include "colors.h"
 
 TerraPCK::TerraPCK(const char *pckfname, int tftd_flag) : PCK(pckfname, tftd_flag)
 {
@@ -118,7 +120,7 @@ void TerraPCK::create_blackbmp(int start, int size)
 		clear_to_color(m_blackbmp[num], xcom1_color(0));
 		for (int i = 0; i < 32 * 48; i++)
 			if (getpixel(m_bmp[num], i % 32, i / 32) != bitmap_mask_color(m_bmp[num]))
-				putpixel(m_blackbmp[num], i % 32, i / 32, xcom1_color(15));
+				putpixel(m_blackbmp[num], i % 32, i / 32, COLOR_BLACK1);
 	}
 }
 

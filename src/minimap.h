@@ -24,6 +24,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include <allegro.h>
 #include "wind.h"
+#include "colors.h"
 
 class Minimap : public VisualObject
 {
@@ -72,15 +73,20 @@ class MinimapArea : public VisualObject
 			y + m_minimap->get_height(),
 			x + m_width - 1,
 			y + m_minimap->get_height() + text_height(font),
-			xcom1_color(15));
+			COLOR_BLACK1);
 
 		if (time_left > 0) {
+			// This display of time remaining is only visible 
+			// when the minimap is on the screen
 			text_mode(-1);
 			textprintf_centre(bmp, font, 
 				x + m_width - m_minimap->get_width() / 2,
 				y + m_minimap->get_height(), 
-				xcom1_color(1),
+				COLOR_WHITE,
 				"Time left: %d", time_left); // $$$
+			//if ((time_left == 10) 	// Warning-sound: time running out
+			//||  (time_left <=  5))
+			//	soundSystem::getInstance()->play(SS_BUTTON_PUSH_1); 
 		}
 
 		m_last_time_left = time_left;

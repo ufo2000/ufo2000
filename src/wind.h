@@ -30,10 +30,11 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "dirty.h"
 #include "keys.h"
 #include "font.h"
+#include "colors.h"
 
 /**
- * Base class for objects that are displayed on screen with dirty rectangles
- * support
+ * Base class for objects that are displayed on screen
+ * with dirty rectangles support
  */
 class VisualObject
 {
@@ -82,7 +83,7 @@ class ConsoleStatusLine : public VisualObject
 	bool backspace();
 
 public:
-	ConsoleStatusLine(int width, FONT *font = g_small_font, int color = xcom1_color(1));
+	ConsoleStatusLine(int width, FONT *font = g_small_font, int color = COLOR_WHITE);
 	virtual ~ConsoleStatusLine();
 
 	virtual void redraw_full(BITMAP *bmp, int x, int y);
@@ -95,9 +96,9 @@ public:
 };
 
 /**
- * Visual object for rectangular area with chat console. It provides
- * log window for previous text messages and also incorporates status
- * line for editing new text.
+ * Visual object for rectangular area with chat console. 
+ * It provides log window for previous text messages and 
+ * also incorporates status line for editing new text.
  */
 class ConsoleWindow : public VisualObject
 {
@@ -113,7 +114,7 @@ public:
 	virtual void redraw_full(BITMAP *bmp, int x, int y);
 	virtual void redraw_fast(BITMAP *bmp, int x, int y);
 
-	void print(const char *text, int color = xcom1_color(48));
+	void print(const char *text, int color = COLOR_GREEN00);
 /*
 gcc undocumented feature: 'this' pointer is counted in the
 __attribute__ __format__ for non-static member functions.

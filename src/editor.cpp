@@ -24,6 +24,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <string.h>
 #include "video.h"
 #include "editor.h"
+#include "colors.h"
 
 char last_unit_name[1000];
 char last_map_name[1000];
@@ -91,7 +92,7 @@ Editor::Editor()
 
 	lua_safe_dostring(L, "SetEquipment('Standard')");
 	
-	if (local_platoon_size > 10) local_platoon_size = 10;      //!!!!!!!!!!!
+	if (local_platoon_size > 10) local_platoon_size = 10;      //!!!!!!!!!!! Todo: allow more soldiers in a platoon
 	ASSERT(local_platoon_size > 0);
 	m_plt = new Platoon(2001, local_platoon_size);
 	m_plt->load_MANDATA("$(home)/soldier.dat");
@@ -109,6 +110,9 @@ Editor::~Editor()
 	delete m_armoury;
 }
 
+/**
+ * Load team of soldiers from file
+ */
 void Editor::load()
 {
 	set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
@@ -124,6 +128,9 @@ void Editor::load()
 }
 
 
+/**
+ * Save team of soldiers to file
+ */
 void Editor::save()
 {
 	set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
@@ -148,29 +155,35 @@ int Editor::set_man(char *name)
 }
 
 /**
- * Handle left mouse click in soldier equipment screen
+ * Handle left mouse click in soldier equipment screen,
+ * e.g. move items around, click buttons.
  * @returns  true if the user decided to exit from equipment screen
  */
 bool Editor::handle_mouse_leftclick()
 {
 	int i;
 
-	// Mouse click in unit stats area - edit unit stats	
+	// Mouse click in unit stats area - edit unit stats.
 	if (mouse_inside(320, 0, 639, 200)) {
 		// unibord
 		edit_soldier();
 		return false;
 	}
+	if (mouse_inside( 50, 50, 110, 142)) {  // Picture of soldier (Powerarmor)
+	    // Todo: Dialog for selecting armor&appearance only
+		edit_soldier();
+		return false;
+	} 
 	
 	// Mouse click in item info panel (right bottom part of the screen) - 
-	// change equipment dialog
+	// change equipment dialog (Standard=all weapons/No explosives/No alien weapons/...)
 	if (mouse_inside(320, 200, 639, 400)) {
 		change_equipment();
 		return false;
 	}
 	
 	if ((sel_item == NULL) || (dup_item != NULL)) {
-		if (mouse_inside(237, 1, 271, 22)) {  //ok
+		if (mouse_inside(237, 1, 271, 22)) {  // ok-button
 			return true;
 		} else
 			if (mouse_inside(273, 1, 295, 22)) {  // <
@@ -192,13 +205,14 @@ bool Editor::handle_mouse_leftclick()
 		}
 	} else
 		if (mouse_inside(288, 137, 319, 151)) {  // -->
+							// Todo: repack items on ground
 			man->place(P_MAP)->scroll_right();
 		} else
 			if (mouse_inside(255, 137, 286, 151)) {  // <--
 				man->place(P_MAP)->scroll_left();
 			}
 
-	if (sel_item == NULL) {
+	if (sel_item == NULL) {  // Pick up item from soldier
 		for (i = 0; i < NUMBER_OF_PLACES; i++) {
 			sel_item = man->place(i)->mselect();
 			if (sel_item != NULL) {
@@ -206,11 +220,11 @@ bool Editor::handle_mouse_leftclick()
 				break;
 			}
 		}
-		if (sel_item == NULL) {
+		if (sel_item == NULL) {  // Pick up item from armory
 			sel_item = m_armoury->mselect();
 			if (sel_item != NULL) {
 				if (is_weapon_allowed(sel_item->m_type)) {
-					sel_item_place = 9;
+					sel_item_place = P_ARMOURY;
 					dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
 				} else {
 					m_armoury->put(sel_item, sel_item->m_x, sel_item->m_y);
@@ -259,7 +273,10 @@ bool Editor::handle_mouse_leftclick()
 
 /**
  * Activate unit stats and inventory edit screen
+ * Draw soldier's inventory when in mission-planner
  */
+// See also: Inventory::draw(), Soldier::draw_inventory()
+// Called by: Connect::do_planner() via Units::execute_main()  
 void Editor::show()
 {
 	reset_video();
@@ -270,11 +287,12 @@ void Editor::show()
     // Prepare background picture for editor screen to improve 
     // performance a bit (static image that is never changed)
     BITMAP *editor_bg = create_bitmap(640, 400);
-    clear_to_color(editor_bg, xcom_color(15));
-    tac01->show(editor_bg, 0, 0);
-    draw_sprite_h_flip(editor_bg, b5, 255, 137);
+    clear_to_color(editor_bg, COLOR_BLACK1);
+    tac01->show(editor_bg, 0, 0); // draw buttons: OK, Next-Man, Prev-Man, Unload-clip, Scroll-right
+    draw_sprite_h_flip(editor_bg, b5, 255, 137); // Button: Scroll-left
     text_mode(-1);
-    textout(editor_bg, large, "F2 Save   F3 Load", 8, 380, xcom_color(130));
+    textout(editor_bg, g_small_font, "Click-and-drop weapons from the armory to the soldier, right-click to remove", 8, 364, COLOR_WHITE); 
+    textout(editor_bg, large, "F2 Save Team   F3 Load Team   F4 Edit Attributes", 8, 380, COLOR_LT_BLUE);
 
 	position_mouse(320, 200);
 	set_mouse_range(0, 0, 639, 399);
@@ -282,6 +300,7 @@ void Editor::show()
 	int DONE = 0;
 	int mouse_leftr = 1, mouse_rightr = 1;
 	int i;
+    int color = COLOR_LT_OLIVE;
 
 	while (!DONE) {
 
@@ -289,43 +308,46 @@ void Editor::show()
 	
 		if (CHANGE) {
             blit(editor_bg, screen2, 0, 0, 0, 0, editor_bg->w, editor_bg->h);
-            man->showspk();
+            man->showspk(); // Show "bigpicture" of soldier in choosen armor
 
+			color = COLOR_DK_GRAY;
+			if (man->x != 0)   // ??? This soldier already selected for the mission ?
+			    color = COLOR_LT_OLIVE;
             text_mode(-1);
-			textout(screen2, large, man->md.Name, 0, 0, xcom1_color(66));
+			textout(screen2, large, man->md.Name, 0, 0, color);
 			
 			for (i = 0; i < NUMBER_OF_PLACES; i++) //man->drawgrid();
 				man->place(i)->drawgrid(i);
 			m_armoury->drawgrid(P_ARMOURY);
 
-			man->draw_unibord(320, 0);
+			man->draw_unibord(320, 0);	// Attribute-Barchart
 			if (sel_item != NULL) {
 				if (dup_item != NULL)
-					sel_item->od_info(330, 220, xcom1_color(1));
+					sel_item->od_info(330, 220, COLOR_WHITE);
 				else
-					sel_item->od_info(330, 220, xcom1_color(69));
+					sel_item->od_info(330, 220, COLOR_OLIVE);
 
 				//textprintf(screen2, font, 129, 141, color, "%s", sel_item->data()->name);
 				if (dup_item == NULL)
-					textprintf(screen2, g_small_font, 128, 140, xcom1_color(50), "%s", sel_item->name().c_str());
+					textprintf(screen2, g_small_font, 128, 140, COLOR_GREEN,     "%s", sel_item->name().c_str());
 				else
-					textprintf(screen2, g_small_font, 128, 208, xcom1_color(3), "%s", sel_item->name().c_str());
+					textprintf(screen2, g_small_font, 128, 208, COLOR_GRAY03, "%s", sel_item->name().c_str());
 
 				if (sel_item->haveclip()) {
 					//textprintf(screen2, font, 272, 80, color, "%d", sel_item->roundsremain());
-					textout(screen2, g_small_font, "AMMO:", 272, 64, xcom1_color(66));
-					textout(screen2, g_small_font, "ROUNDS", 272, 72, xcom1_color(66));
-					textout(screen2, g_small_font, "LEFT=", 272, 80, xcom1_color(66));
-					textprintf(screen2, g_small_font, 299, 80, xcom1_color(18), "%d", sel_item->roundsremain());
-					rect(screen2, 272, 88, 303, 135, xcom1_color(8));      //clip
+					textout(screen2, g_small_font, "AMMO:",  272, 64, COLOR_LT_OLIVE);
+					textout(screen2, g_small_font, "ROUNDS", 272, 72, COLOR_LT_OLIVE);
+					textout(screen2, g_small_font, "LEFT=",  272, 80, COLOR_LT_OLIVE);
+					textprintf(screen2, g_small_font, 299, 80, COLOR_ORANGE, "%d", sel_item->roundsremain());
+					rect(screen2, 272, 88, 303, 135, COLOR_DK_GRAY);      //clip
 					PCK::showpck(sel_item->clip()->obdata_pInv(), 272, 88 + 8);
 				} else if (sel_item->obdata_isAmmo()) {
 					//textprintf(screen2, font, 272, 80, color, "%d", sel_item->rounds);
-					textout(screen2, g_small_font, "AMMO:", 272, 64, xcom1_color(66));
-					textout(screen2, g_small_font, "ROUNDS", 272, 72, xcom1_color(66));
-					textout(screen2, g_small_font, "LEFT=", 272, 80, xcom1_color(66));
-					textprintf(screen2, g_small_font, 299, 80, xcom1_color(18), "%d", sel_item->m_rounds);
-					rect(screen2, 272, 88, 303, 135, xcom1_color(8));      //clip
+					textout(screen2, g_small_font, "AMMO:", 272, 64, COLOR_LT_OLIVE);
+					textout(screen2, g_small_font, "ROUNDS", 272, 72, COLOR_LT_OLIVE);
+					textout(screen2, g_small_font, "LEFT=", 272, 80, COLOR_LT_OLIVE);
+					textprintf(screen2, g_small_font, 299, 80, COLOR_ORANGE, "%d", sel_item->m_rounds);
+					rect(screen2, 272, 88, 303, 135, COLOR_DK_GRAY);      //clip
 					PCK::showpck(sel_item->obdata_pInv(), 272, 88 + 8);
 				}
 				PCK::showpck(sel_item->obdata_pInv(),
@@ -335,24 +357,24 @@ void Editor::show()
 				Item *it = m_armoury->item_under_mouse();
 				if (it != NULL) {
 					if (is_weapon_allowed(it->m_type))
-						it->od_info(330, 220, xcom1_color(5));
+						it->od_info(330, 220, COLOR_GRAY05);
 					else
-						it->od_info(330, 220, xcom1_color(10));
+						it->od_info(330, 220, COLOR_GRAY10);
 				}
 			}
 			
 			int wht = man->count_weight();
 			int max_wht = man->md.Strength;
-			int color = max_wht < wht ? xcom1_color(35) : xcom1_color(2);
+			color       = max_wht < wht ? COLOR_RED03 : COLOR_GRAY02;
 			textprintf(screen2, g_small_font, 0, 20, color, "Equipment weight: %d/%d", wht, max_wht);
-			textprintf(screen2, g_small_font, 120, 20, xcom1_color(2), "Equipment cost: %d", man->calc_full_ammunition_cost());
+			textprintf(screen2, g_small_font, 120, 20, COLOR_GRAY02, "Equipment cost: %d", man->calc_full_ammunition_cost());
 
 			draw_sprite(screen2, mouser, mouse_x, mouse_y);
 			blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
 			CHANGE = 0;
 		}
 
-		if ((mouse_b & 1) && (mouse_leftr)) { //left
+		if ((mouse_b & 1) && (mouse_leftr)) { //left mouseclick
 			mouse_leftr = 0;
 			CHANGE = 1;
 
@@ -360,7 +382,7 @@ void Editor::show()
 				DONE = 1;
 		}
 
-		if ((mouse_b & 2) && (mouse_rightr)) { //right
+		if ((mouse_b & 2) && (mouse_rightr)) { //right mouseclick: get & put items
 			mouse_rightr = 0;
 			CHANGE = 1;
 			if (sel_item != NULL) {
@@ -414,6 +436,9 @@ void Editor::show()
 					load();
 					//}
 					break;
+				case KEY_F4:
+					edit_soldier();   // Edit Attributes+Armor
+					break;
 				case KEY_F10:
 					change_screen_mode();
 					break;
@@ -435,13 +460,15 @@ void Editor::show()
 	clear(screen);
 }
 
-
+/**
+ * Load clip into weapon
+ */
 int Editor::load_clip()
 {
 	Item * it;
 	int i;
 
-	if (dup_item != NULL) {
+	if (dup_item != NULL) {		// items from armory are duplicated
 		for (i = 0; i < NUMBER_OF_PLACES; i++) {
 			it = man->place(i)->item_under_mouse();
 			if ((it != NULL) && it->loadclip(dup_item)) {
@@ -449,7 +476,7 @@ int Editor::load_clip()
 				return 1;
 			}
 		}
-	} else {
+	} else {			// other items are moved
 		for (i = 0; i < NUMBER_OF_PLACES; i++) {
 			it = man->place(i)->item_under_mouse();
 			if ((it != NULL) && it->loadclip(sel_item)) {
@@ -584,6 +611,9 @@ static int appearance_change_button_proc(int msg, DIALOG *d, int c)
 	return common_change_button_proc("Select unit appearance", appearance_names, msg, d, c);
 }
 
+/**
+ * Definition of dialog for soldiers attributes and skin/armor
+ */
 static DIALOG sol_dialog[] = {
 	//(dialog proc)      (x)           (y)                   (w)      (h)  (fg) (bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
 	{ d_agup_shadow_box_proc, DX,           DY,                   D_WIDTH,     D_HEIGHT, FG,  BG, 0, 0, 0, 0, NULL, NULL, NULL},
@@ -887,3 +917,4 @@ int Editor::do_mapselect()
 	//destroy_bitmap(terrain_bmp);
 	return -1;
 }
+

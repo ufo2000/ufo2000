@@ -24,7 +24,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <allegro.h>
+
 #include "video.h"
+#include "colors.h"
 #include "sound.h"
 #include "pck.h"
 #include "map.h"
@@ -216,6 +218,9 @@ void Map::loadmaps(unsigned char *_map)
 				
 				lua_pushnumber(L, _map[i]);
 				lua_gettable(L, -2);
+				// Todo: fix ufo200 crashing
+				// when loading invalid map-number
+				// ?? maybe just replace map with "00" ??
 				ASSERT(lua_isstring(L, -1));
 				loadmap(lua_tostring(L, -1), col * 10, row * 10);
 				lua_pop(L, 1);
@@ -298,6 +303,9 @@ void Map::draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type,
 
 extern volatile unsigned int ANIMATION;
 
+/**
+ * Draw "3D" Battlescape-Map
+ */
 void Map::draw()
 {
 	m_animation_cycle = (ANIMATION / 3) % 8;
@@ -453,6 +461,9 @@ void Map::smoker()
 #define Cx 1
 #define Cy -8
 
+/**
+ * Set position of selection-'cage' on map
+ */
 void Map::set_sel(int mx, int my)
 {
 	my += sel_lev * CELL_SCR_Z;      //!!
@@ -464,7 +475,7 @@ void Map::set_sel(int mx, int my)
 	if (sel_row < 0) sel_row = 0;
 	if (sel_col >= 10 * width) sel_col = 10 * width - 1;
 	if (sel_row >= 10 * height) sel_row = 10 * height - 1;
-//	text_mode(0); textprintf(screen, font, SCREEN2W + 8, 0, xcom1_color(1), "x=%02d, y=%02d", sel_col, sel_row);
+//	text_mode(0); textprintf(screen, font, SCREEN2W + 8, 0, COLOR_WHITE, "x=%02d, y=%02d", sel_col, sel_row);
 }
 
 
@@ -489,11 +500,17 @@ void Map::move(int ofs_x, int ofs_y)
 
 #define S 2
 
+/**
+ * Redraw minimap
+ */
 void Map::svga2d()
 {
 	m_minimap_area->redraw(screen, SCREEN2W, 0);
 }
 
+/**
+ * Minimap in "xcom-mapviewer"-look
+ */
 void Map::draw2d()
 {
 	int cx = SCREEN2W / 2;
@@ -526,18 +543,18 @@ void Map::draw2d()
 				if (platoon_local->belong(man(lev, col, row)))
 					rectfill(screen2, cx + ( -sel_col + col) * 4 + 1, cy + ( -sel_row + row) * 4 + 1,
 					         cx + ( -sel_col + col) * 4 + SCANGSIZE - 1, cy + ( -sel_row + row) * 4 + SCANGSIZE - 1,
-					         xcom1_color(144));      //yellow
+					         COLOR_YELLOW);
 				else
 					if (visible(lev, col, row))
 						rectfill(screen2, cx + ( -sel_col + col) * 4 + 1, cy + ( -sel_row + row) * 4 + 1,
 						         cx + ( -sel_col + col) * 4 + SCANGSIZE - 1, cy + ( -sel_row + row) * 4 + SCANGSIZE - 1,
-						         xcom1_color(32));      //red
+						         COLOR_RED00);
 			}
 
 	destroy_bitmap(tmp);
 	scanbord->show(screen2, cx - 160 + 4, cy - 100 + 12);
 	text_mode(-1);
-	textprintf(screen2, large, cx - 160 + 281 + 4, cy - 100 + 74 + 12, xcom1_color(66), "%d", sel_lev);
+	textprintf(screen2, large, cx - 160 + 281 + 4, cy - 100 + 74 + 12, COLOR_LT_OLIVE, "%d", sel_lev);
 }
 
 
@@ -545,7 +562,7 @@ BITMAP *Map::create_bitmap_of_map(int max_lev)
 {
 	int scang4x4[16];
 	BITMAP *bmp = create_bitmap(width * 10 * 4, height * 10 * 4);
-	clear_to_color(bmp, xcom_color(15));
+	clear_to_color(bmp, COLOR_BLACK1);
 
 	for (int lev = 0; lev <= max_lev; lev++) {
 		for (int row = 0; row < height*10; row++) {
@@ -1036,7 +1053,7 @@ BITMAP *Map::create_lof_bitmap(int lev, int col, int row)
 	build_lof_cell(lev, col, row, lof_cell);
 
 	BITMAP *bmp = create_bitmap(20 * 4, 20 * 3);
-	clear_to_color(bmp, xcom1_color(15));
+	clear_to_color(bmp, COLOR_BLACK1);
 
 	int dir = -1, s = 0;     //, tl = 0;
 	if (visible(lev, col, row))
@@ -1068,18 +1085,18 @@ BITMAP *Map::create_lof_bitmap(int lev, int col, int row)
 
 				if (dir != -1) {
 					if (Soldier::m_bof[s][dir][j][i][15 - k])
-						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, xcom_color(52));
+						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, COLOR_GREEN04);
 					else if (l & 0x8000)
-						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, xcom_color(1));
+						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, COLOR_WHITE);
 					else
-						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, xcom_color(12));
+						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, COLOR_GRAY12);
 				} else {
 					if (l & 0x8000)
 						//putpixel(screen, SCREEN2W+k  +(j/3)*20, SCREEN2H+i  +(2 - j%3 )*20, 1);
-						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, xcom_color(1));
+						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, COLOR_WHITE);
 					else
 						//putpixel(screen, SCREEN2W+k  +(j/3)*20, SCREEN2H+i  +(2 - j%3 )*20, 12);
-						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, xcom_color(12));
+						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, COLOR_GRAY12);
 				}
 				l <<= 1;
 			}
@@ -1099,7 +1116,7 @@ void Map::show_lof_cell()
 	bmp = create_bitmap(30, 90); clear_to_color(bmp, xcom1_color(0));
 	for (int k = 0; k < 3; k++) {
 		for (int i = 0; i < 3; i++) {
-			textprintf(bmp, font, 0, 80 - (k * 30 + i * 8), xcom1_color(1),
+			textprintf(bmp, font, 0, 80 - (k * 30 + i * 8), COLOR_WHITE,
 			           "%d%d%d",
 			           m_cell[sel_lev][sel_col][sel_row]->visi[k][i][0],
 			           m_cell[sel_lev][sel_col][sel_row]->visi[k][i][1],
@@ -1223,7 +1240,7 @@ void Map::drawline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 	//yg2 = y - (xd+1.0)/2.0 + yd/2.0 - zd*23.5/12.0;
 	yg2 = (int)(y - (xd + 1) / 2.0 + yd / 2.0 - zd * 2.0 - 2);
 
-	line(screen2, xg, yg, xg2, yg2, xcom1_color(144));
+	line(screen2, xg, yg, xg2, yg2, COLOR_YELLOW);
 }
 
 
@@ -1459,7 +1476,9 @@ void Map::explocell(int sniper, int lev, int col, int row, int damage, int type,
 		man(lev, col, row)->explo_hit(sniper, damage, Item::obdata_damageType(type), hitdir, range);
 }
 
-
+/**
+ * End-of-turn - Save
+ */ 
 int Map::eot_save(char *buf, int & buf_size)
 {
 	buf_size += sprintf(buf + buf_size, "\r\nmap level=%d, width=%d, height=%d\r\n", level, width, height);
@@ -1937,7 +1956,8 @@ int TerrainSet::get_random_terrain_id()
 /**
  * Displays dialog asking the user to select terrain type from the list of 
  * available terrains, additional requirement for network games is
- * that remote user should have these maps installed too
+ * that remote user should have these maps installed too.
+ *
  * @param default_choice  terrain name that is active by default
  * @returns               terrain name, selected by user
  */

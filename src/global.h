@@ -229,37 +229,38 @@ struct MANDATA
 	int16         Base;         //!< Base  == -1 --> Transfer in progress
 	int16         Craft;        //!< Craft == -1 --> Not on any craft
 	int16         OldCraft;
-	uint16        Missions;
-	uint16        Kills;
+	uint16        Missions;     //!< Number of missions soldier was on
+	uint16        Kills;        //!< Number of kills soldier scored in his life
 	uint16        Recovery;     //!< The number of days before their injuries are gone.
 	uint16        DeathCost;    //!< The number of points you lose when they die.
+#define MAN_NAME_LEN 22
 	char          Name[26];     //!< There are actually 26 bytes allocated for this, but only the first 23 are used.  The names can be up to 22 bytes.
-	unsigned char TimeUnits;
-	unsigned char Health;
-	unsigned char Stamina;
-	unsigned char Reactions;
-	unsigned char Strength;
-	unsigned char Firing;
-	unsigned char Throwing;
-	unsigned char Close;        //!< Close combat accuracy
-	unsigned char PsiStrength;
-	unsigned char PsiSkill;
+	unsigned char TimeUnits;    //!< TU each turn for actions
+	unsigned char Health;       //!< Hitpoints: when down to 0, soldier dies
+	unsigned char Stamina;      //!< Actions like walking consume TU as well as energy
+	unsigned char Reactions;    //!< Gives chances for reaction-fire
+	unsigned char Strength;     //!< How much the soldier can carry without strain
+	unsigned char Firing;       //!< Accuracy at firing weapons
+	unsigned char Throwing;     //!< Accuracy at throwing (Grenades etc.)
+	unsigned char Close;        //!< Close-combat accuracy
+	unsigned char PsiStrength;  //!< (Psi-combat not yet implemented)
+	unsigned char PsiSkill;     //!< (Psi-combat not yet implemented)
 	unsigned char Bravery;      //!< Bravery = ( 11 - x ) * 10
-	unsigned char TimeUnitsImp;
-	unsigned char HealthImp;
-	unsigned char StaminaImp;
-	unsigned char ReactionsImp;
-	unsigned char StrengthImp;
-	unsigned char FiringImp;
-	unsigned char ThrowingImp;
-	unsigned char CloseImp;
+	unsigned char TimeUnitsImp; //!< Improvement in TU after a battle
+	unsigned char HealthImp;    //!< Improvement in Health after a battle
+	unsigned char StaminaImp;   //!< Improvement in Stamina after a battle
+	unsigned char ReactionsImp; //!< Improvement in Reactions after a battle
+	unsigned char StrengthImp;  //!< Improvement in Strength after a battle
+	unsigned char FiringImp;    //!< Improvement in FiringAcc after a battle
+	unsigned char ThrowingImp;  //!< Improvement in ThrowingAcc after a battle
+	unsigned char CloseImp;     //!< Improvement in CloseCombat after a battle
 	unsigned char BraveryImp;   //!< * 10
 	unsigned char SkinType;     //!< 0=none
 	unsigned char PsiImprove;   //!< The psionic improvement over the course of the last month
 	unsigned char fPsiTraining; //!< 0=not in training  1=in psi training
 	unsigned char Promoted;     //!< After a combat, this is set to 1 if they were promoted, 0 if not.
-	unsigned char fFemale;
-	unsigned char Appearance;
+	unsigned char fFemale;      //
+	unsigned char Appearance;   //
 };
 
 struct UNITDATA
@@ -277,31 +278,31 @@ struct UNITDATA
 	unsigned char Facing;       //!< The direction the unit is facing:  00=North, 01=North East, and so on up to 7.
 	unsigned char u12;
 	unsigned char CurTU;        //!< The number of TUs the unit has currently
-	unsigned char CurHealth;
+	unsigned char CurHealth;    //!< Current Health
 	unsigned char CurStun;      //!< The stun level: if this is higher than CurHealth, they're stunned.
-	unsigned char CurEnergy;
-	unsigned char CurReactions;
-	unsigned char CurStrength;
-	unsigned char CurFront;
-	unsigned char CurLeft;
-	unsigned char CurRight;
-	unsigned char CurRear;
-	unsigned char CurUnder;
-	unsigned char CurFAccuracy; //!< Firing Accuracy
-	unsigned char CurTAccuracy; //!< Throwing Accuracy
-	unsigned char MaxTU;
-	unsigned char MaxHealth;
-	unsigned char MaxEnergy;
-	unsigned char MaxStrength;
-	unsigned char MaxFront;
-	unsigned char MaxLeft;
-	unsigned char MaxRight;
-	unsigned char MaxRear;
-	unsigned char MaxUnder;
+	unsigned char CurEnergy;    //!< Current Energy
+	unsigned char CurReactions; //!< Current Reaction
+	unsigned char CurStrength;  //!< Current Strength
+	unsigned char CurFront;     //!< Current armor on the front
+	unsigned char CurLeft;      //!< Current armor at the left side
+	unsigned char CurRight;     //!< Current armor at the right side
+	unsigned char CurRear;      //!< Current armor on the rear
+	unsigned char CurUnder;     //!< Current armor at the bottom
+	unsigned char CurFAccuracy; //!< current Firing Accuracy (might go down when wounded)
+	unsigned char CurTAccuracy; //!< current Throwing Accuracy
+	unsigned char MaxTU;        //!< The maximum number of TUs the unit has
+	unsigned char MaxHealth;    //!< Maximum Health
+	unsigned char MaxEnergy;    //!< Maximum Energy
+	unsigned char MaxStrength;  //!< Maximum Strength
+	unsigned char MaxFront;     //!< Maximum armor on the front
+	unsigned char MaxLeft;      //!< Maximum armor at the left side
+	unsigned char MaxRight;     //!< Maximum armor at the right side
+	unsigned char MaxRear;      //!< Maximum armor on the rear
+	unsigned char MaxUnder;     //!< Maximum armor at the bottom
 	unsigned char MaxFA;        // ?
 	unsigned char MaxTA;        // ?
 	unsigned char u37;
-	unsigned char PsiSkill;
+	unsigned char PsiSkill;     //!< 
 	unsigned char ItemDie;      //!< The item type which is created when the unit dies
 	unsigned char u40;
 	unsigned char SoldierNo;    //!< The entry # in soldier.dat which this unit equals.  FF means they were created for this fight (they're alien, tank, or civilian).
@@ -397,7 +398,17 @@ class PCK;
 class Soldier;
 class Scenario;
 
+//! Display-Modes
 enum Mode { MAP2D, MAP3D, MAN, WATCH, UNIT_INFO, PLANNER };
+
+//! possible Stati for reserve-time - buttons
+// extern int ReserveTimeMode;
+// #define RESERVE_FREE 0
+// #define RESERVE_AIM  1
+// #define RESERVE_SNAP 2
+// #define RESERVE_AUTO 3
+extern enum ReserveTime_Mode { RESERVE_FREE, RESERVE_AIM, RESERVE_SNAP, RESERVE_AUTO } ReserveTimeMode;
+// TODO: ReserveTime should be platoon- or soldier-specific
 
 extern volatile int CHANGE;
 extern Map *map;

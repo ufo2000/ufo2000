@@ -24,12 +24,14 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <string.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
 #include "pck.h"
 #include "item.h"
 #include "video.h"
 #include "map.h"
 #include "multiplay.h"
 #include "sound.h"
+#include "colors.h"
 
 IMPLEMENT_PERSISTENCE(Item, "Item");
 
@@ -272,9 +274,9 @@ Item::Item(int _type)
 
 	m_health = health_max();
 
-	m_pInv = obdata_get_bitmap(m_type, "pInv");
+	m_pInv = obdata_get_bitmap(m_type, "pInv");	// Picture for inventory
 	ASSERT(m_pInv);
-	m_pMap = obdata_get_bitmap(m_type, "pMap");
+	m_pMap = obdata_get_bitmap(m_type, "pMap");	// Picture for battlemap
 	ASSERT(m_pMap);
 
 	std::string sound = obdata_get_string(m_type, "sound");
@@ -387,11 +389,11 @@ int Item::health()
 
 void Item::draw_health(int GRAPH, int gx, int gy)
 {
-	int color = xcom1_color(50);      //gr
+	int color = COLOR_GREEN;		//gr
 	if (m_health < health_max() * 2 / 3)
-		color = xcom1_color(145);      //yel
+		color = COLOR_YELLOW01;		//yel
 	if (m_health < health_max() / 3)
-		color = xcom1_color(33);      //red
+		color = COLOR_RED01;		//red
 	if (GRAPH) {
 		int len;     //=m_health;
 		len = 14 * m_health / health_max();

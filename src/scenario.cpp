@@ -29,6 +29,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "place.h"
 #include "units.h"
 #include "item.h"
+#include "colors.h"
 
 IMPLEMENT_PERSISTENCE(Scenario, "Scenario");
 
@@ -657,7 +658,7 @@ bool Scenario::minimap_sabotage (int lev, int col, int row)
 
 void Scenario::minimap_control (BITMAP *bmp, int x, int y)
 {
-	rect(bmp, x + x1 * 4, y + y1 * 4, x + x2 * 4, y + y2 * 4, xcom1_color(1));
+	rect(bmp, x + x1 * 4, y + y1 * 4, x + x2 * 4, y + y2 * 4, COLOR_WHITE);
 }
 
 bool Scenario::minimap_assassin (int lev, int col, int row, Map *m_map)
@@ -736,7 +737,7 @@ bool Scenario::platoon_common (long points, Platoon *platoon, PanPos pos, char b
 			    for (int k = 0; k < 6; k++) {
 			        if (buf[i] == explosives[j][k]) {
 			            if (type != SC_SABOTAGE || explosives[j][k] != HIGH_EXPLOSIVE || pos != POS_LEFT) {
-							g_console->printf(xcom1_color(36), "%s isn't allowed.", Item::obdata_name(explosives[j][k]).c_str());
+							g_console->printf(COLOR_RED04, "%s isn't allowed.", Item::obdata_name(explosives[j][k]).c_str());
 			            	return false;
 						}
 					}
@@ -746,7 +747,7 @@ bool Scenario::platoon_common (long points, Platoon *platoon, PanPos pos, char b
 	}
 	
 	if (points > rules[1] * 1000) {
-	    g_console->printf(xcom1_color(36), "%d points limit exceeded!", rules[1] * 1000);
+	    g_console->printf(COLOR_RED04, "%d points limit exceeded!", rules[1] * 1000);
 	    return false;
 	}
 	
@@ -759,7 +760,7 @@ bool Scenario::platoon_common (long points, Platoon *platoon, PanPos pos, char b
 			platoon->findnum(i)->place(P_MAP)->build_items_stats(tmp, len2);
 			
 		if (len2 > 0) {
-			g_console->printf(xcom1_color(36), "Items on the ground aren't allowed (you have: %d, including unselected soldiers).", len2);
+			g_console->printf(COLOR_RED04, "Items on the ground aren't allowed (you have: %d, including unselected soldiers).", len2);
 			return false;
 		}
 	}
@@ -783,7 +784,7 @@ bool Scenario::platoon_escape (Platoon *platoon, PanPos pos, char *first_soldier
 					num++;
 			}
 			if ((Item::obdata_twoHanded(weapon[w]) > 0) && (num > 0)) {
-				g_console->printf(xcom1_color(36), "Soldier #1 can't have two-handed weapons!");
+				g_console->printf(COLOR_RED04, "Soldier #1 can't have two-handed weapons!");
 				return false;
 			}
 		}
@@ -803,7 +804,7 @@ bool Scenario::platoon_sabotage (PanPos pos, char buf[10000], int len)
 		}
 
 		if (he_num < 2) {
-		    g_console->printf(xcom1_color(36), "You must have at least 2 high explosives.");
+		    g_console->printf(COLOR_RED04, "You must have at least 2 high explosives.");
 			return false;
 		}
 	}
@@ -827,7 +828,7 @@ bool Scenario::platoon_assassin (Platoon *platoon, PanPos pos, char *first_soldi
 					num++;
 			}
 			if ((Item::obdata_twoHanded(weapon[w]) > 0) && (num > 0)) {
-				g_console->printf(xcom1_color(36), "Soldier #1 can't have two-handed weapons!");
+				g_console->printf(COLOR_RED04, "Soldier #1 can't have two-handed weapons!");
 				return false;
 			}
 		}
@@ -871,7 +872,7 @@ bool Scenario::platoon_capture (Platoon *platoon, char *first_soldier, PanPos po
 		}
 
 		if (!stun_rod && (!stun_gun || !stun_bomb)) {
-		    g_console->printf(xcom1_color(36), "You must have at least one stun rod or one loaded stun launcher.");
+		    g_console->printf(COLOR_RED04, "You must have at least one stun rod or one loaded stun launcher.");
 			return false;
 		}
 	} else {
@@ -889,7 +890,7 @@ bool Scenario::platoon_capture (Platoon *platoon, char *first_soldier, PanPos po
 						num++;
 				}
 				if ((Item::obdata_twoHanded(weapon[w]) > 0) && (num > 0)) {
-					g_console->printf(xcom1_color(36), "Soldier #1 can't have two-handed weapons!");
+					g_console->printf(COLOR_RED04, "Soldier #1 can't have two-handed weapons!");
 					return false;
 				}
 			}
@@ -1033,7 +1034,7 @@ bool Scenario::use_escape (Soldier *sld, Item *it)
 	if (!options[SC_ESCAPE][0]->value) {
 		if (sld->get_NID() == 1000) {
 			if (it->obdata_twoHanded()) {
-				g_console->printf(xcom1_color(36), "Leader can't use two-handed weapons.");
+				g_console->printf(COLOR_RED04, "Leader can't use two-handed weapons.");
 				return false;
 			}
 		}
@@ -1047,7 +1048,7 @@ bool Scenario::use_assassin (Soldier *sld, Item *it)
 	if (!options[SC_ASSASSIN][0]->value) {
 		if (sld->get_NID() == 2000) {
 			if (it->obdata_twoHanded()) {
-				g_console->printf(xcom1_color(36), "Leader can't use two-handed weapons.");
+				g_console->printf(COLOR_RED04, "Leader can't use two-handed weapons.");
 				return false;
 			}
 		}

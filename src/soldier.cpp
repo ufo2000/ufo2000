@@ -24,6 +24,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+
 #include "video.h"
 #include "soldier.h"
 #include "sound.h"
@@ -33,6 +34,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "explo.h"
 #include "config.h"
 #include "icon.h"
+#include "colors.h"
 
 SKIN_INFO g_skins[] =
 {
@@ -122,7 +124,7 @@ void Soldier::initpck()
 	m_spk[5][0][0] = new SPK("$(ufo2000)/newunits/muton.spk");
 
 	SPK *unibord = new SPK("$(xcom)/ufograph/unibord.pck");
-	m_unibord = create_bitmap(320, 200); clear_to_color(m_unibord, xcom1_color(15));
+	m_unibord = create_bitmap(320, 200); clear_to_color(m_unibord, COLOR_BLACK1);
 	unibord->show_pck(m_unibord, 0, 0);
 	delete unibord;
 
@@ -160,6 +162,9 @@ char body_txt[] = \
 	"5|                 5\n"
 	"  01234567 01234567\n";
 
+/**
+ * Body-Frames ?
+ */
 void Soldier::initbof()
 {
 	int s, d, i, j, k;
@@ -238,6 +243,9 @@ void Soldier::initbof()
 	delete [] dat;
 }
 
+/**
+ * Cleanup: destroy PCK-graphics of soldiers
+ */
 void Soldier::freepck()
 {
 	for (int n = 0; n < SKIN_NUMBER; n++)
@@ -359,7 +367,7 @@ Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *md
 Soldier::~Soldier()
 {
 	delete m_bullet;
-	for (int i = 0; i < 8; i++) delete m_place[i];
+	for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++) delete m_place[i];
 	if (m_p_map_allocated) delete m_place[P_MAP];
 
 	//closegame() and kill
@@ -505,6 +513,9 @@ void Soldier::destroy_all_items()
 	}
 }
 
+/**
+ * Calculate point-cost of soldiers attributes and armor
+ */ 
 int Soldier::calc_mandata_cost(MANDATA _md)
 {
 	// TUs with stamina as they determine how far you go in a turn.
@@ -604,8 +615,8 @@ void Soldier::restore()
 				if (found)
 					break;
 			}
-			// Body found on map (not in someone's backback) and also
-			// nobody is standing at this place.
+			// Body found on map (not in someone's backback) 
+			// and also nobody is standing at this place.
 			if (found && map->man(z0, x0, y0) == NULL) {
 				z = z0;
 				x = x0;
@@ -788,23 +799,64 @@ void Soldier::draw()
 		draw_sprite(screen2, image, gx + phase * 2 * ox, gy - phase * oy);
 }
 
-
+/**
+ * Draw soldiers inventory
+ */
+// See also: Inventory::draw(), Editor::show()
 void Soldier::draw_inventory()
 {
 	showspk();
 
 	text_mode(-1);
-	textout(screen2, large, md.Name, 0, 0, xcom1_color(66));
-	textout(screen2, g_small_font, "TUS>", 250, 24, xcom1_color(66));
-	textprintf(screen2, g_small_font, 271, 24, xcom1_color(18), "%d", ud.CurTU);
+	textout(screen2, large, md.Name,  0,  0, COLOR_LT_OLIVE);
 
-	for (int i = 0; i < 8; i++)
+// New: display weight and health:
+	int wht     = count_weight();
+	int max_wht = md.Strength;
+	int color   = max_wht < wht ? COLOR_RED03 : COLOR_GRAY02; 
+	textprintf(screen2, g_small_font, 0, 20, color, "Equipment weight: %d/%d", wht, max_wht);
+
+	color = COLOR_ORANGE;
+	if (ud.CurTU < 20)              // $$$ Todo: use required(25) and havetime()
+		color = COLOR_WHITE1; 	// no time left for snapshot or grenade-throw
+	if (ud.CurEnergy < 7)
+		color = COLOR_LT_BLUE; 	// low energy - only 3 steps remain
+	if (ud.CurEnergy < 2)
+		color = COLOR_BLUE; 	// not enough energy for a single step
+	textout(screen2,    g_small_font, "TUs>", 245, 25, COLOR_LT_OLIVE);
+	textprintf(screen2, g_small_font,         276, 25, color, "%d", ud.CurTU);
+
+	color = COLOR_ORANGE;
+	if ((ud.CurFront < ud.MaxFront) ||  // Armor damaged
+	    (ud.CurLeft  < ud.MaxLeft)  ||
+	    (ud.CurRight < ud.MaxRight) ||
+	    (ud.CurRear  < ud.MaxRear)  ||
+	    (ud.CurUnder < ud.MaxUnder)) 
+		color = COLOR_GRAY03; 
+	if ((ud.CurFront == 0) ||           // one side of armor is gone
+	    (ud.CurLeft  == 0) ||
+	    (ud.CurRight == 0) ||
+	    (ud.CurRear  == 0) ||
+	    (ud.CurUnder == 0))
+		color = COLOR_WHITE; 
+	if (ud.CurHealth < ud.MaxHealth)    // Soldier wounded
+		color = COLOR_RED03; 
+	int fw = ud.HeadWound + ud.TorsoWound + ud.RArmWound +
+	         ud.LArmWound + ud.RLegWound  + ud.LLegWound;	
+	if (fw > 0) 
+		color = COLOR_RED07; 	    // Fatal Wounds
+	textout(screen2,    g_small_font, "Health>", 245, 34, COLOR_LT_OLIVE);
+	textprintf(screen2, g_small_font,            276, 34, color, "%d", ud.CurHealth); 
+//
+	for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
 		m_place[i]->drawgrid(i);
 
 	map->place(z, x, y)->drawgrid(P_MAP);
 }
 
-
+/**
+ * Display soldiers attributes, with numbers and barcharts 
+ */
 void Soldier::draw_unibord(int gx, int gy)
 {
 	//m_unibord->show_pck(screen2, 0, 0);
@@ -816,10 +868,10 @@ void Soldier::draw_unibord(int gx, int gy)
 	//draw_sprite(ui, m_unibord, 0, 0);
 
 	//textout_centre(screen2, font, md.Name, gx+160, gy+7, 66);
-	textout_centre(screen2, large, md.Name, gx + 160, gy + 4, xcom1_color(66));
+	textout_centre(screen2, large, md.Name, gx + 160, gy + 4, COLOR_LT_OLIVE);
 
 	int fw = ud.HeadWound + ud.TorsoWound + ud.RArmWound +
-	         ud.LArmWound + ud.RLegWound  + ud.LLegWound;
+	         ud.LArmWound + ud.RLegWound  + ud.LLegWound;	// Fatal Wounds
 
 	struct {
 		char *str;
@@ -850,10 +902,10 @@ void Soldier::draw_unibord(int gx, int gy)
 	for (int i = 0; i < 17; i++) {
 		if (param[i].str != NULL) {
 			//textout(screen2, font, param[i].str, gx+8, gy+31+i*10, 50);
-			textout(screen2, g_small_font, param[i].str, gx + 8, gy + 31 + i * 10, xcom1_color(50));
+			textout(screen2, g_small_font, param[i].str, gx + 8, gy + 31 + i * 10, COLOR_GREEN);
 			//textprintf(ui, font, 150, 31+i*10, 146, "%d", param[i].val);
 			//printsmall(gx+154, gy+32+i*10, 146, param[i].cur);
-			textprintf(screen2, g_small_font, gx + 151, gy + 31 + i * 10, xcom1_color(146), "%d", param[i].cur);
+			textprintf(screen2, g_small_font, gx + 151, gy + 31 + i * 10, COLOR_YELLOW02, "%d", param[i].cur);
 
 			rect(screen2, gx + 170, gy + 32 + i * 10, gx + 170 + param[i].max, gy + 36 + i * 10, xcom1_color(param[i].col));
 			if (param[i].cur)
@@ -864,9 +916,9 @@ void Soldier::draw_unibord(int gx, int gy)
 				if (ud.CurStun > 0)
 				{
 					if (ud.CurStun < ud.CurHealth)
-						rectfill(screen2, gx + 170, gy + 33 + i * 10, gx + 170 + ud.CurStun - 1, gy + 35 + i * 10, xcom1_color(80));
+						rectfill(screen2, gx + 170, gy + 33 + i * 10, gx + 170 + ud.CurStun - 1,   gy + 35 + i * 10, COLOR_WHITE1);
 					else
-						rectfill(screen2, gx + 170, gy + 33 + i * 10, gx + 170 + ud.CurHealth - 1, gy + 35 + i * 10, xcom1_color(80));
+						rectfill(screen2, gx + 170, gy + 33 + i * 10, gx + 170 + ud.CurHealth - 1, gy + 35 + i * 10, COLOR_WHITE1);
 				}
 		}
 	}
@@ -876,8 +928,11 @@ void Soldier::draw_unibord(int gx, int gy)
 	//readkey();
 }
 
-
+/**
+ * Draw yellow arrow above selected friendly soldier
+ */
 void Soldier::draw_selector(int select_y)
+	// Todo: different selector-shapes/colors for standing/sitting & items on ground
 {
 	if (!ismoving()) {
 		int sx = map->x + CELL_SCR_X * x + CELL_SCR_X * y + 12;
@@ -886,6 +941,10 @@ void Soldier::draw_selector(int select_y)
 	}
 }
 
+/**
+ * Draw blue triangle above seen enemy soldier
+ */
+// See also: Platoon::draw_blue_selectors()
 void Soldier::draw_blue_selector()
 {
 	if ((FLAGS & F_SELECTENEMY) && map->visible(z, x, y)) {
@@ -895,15 +954,20 @@ void Soldier::draw_blue_selector()
 		//	Draw blue triangle with its point at sx, sy and height 5
 		sx += 3; sy += 10; int j;
 		for (j = 0; j < 5; j++) {
-			line(screen2, sx - j, sy - j, sx + j, sy - j, xcom1_color(256 - 48 + 3));
-			putpixel(screen2, sx - j, sy - j, xcom1_color(15));
-			putpixel(screen2, sx + j, sy - j, xcom1_color(15));
+			line(screen2,     sx - j, sy - j, sx + j, sy - j, xcom1_color(256 - 48 + 3));  // =211 --> COLOR_??
+			putpixel(screen2, sx - j, sy - j, COLOR_BLACK1);
+			putpixel(screen2, sx + j, sy - j, COLOR_BLACK1);
 		}
-		line(screen2, sx - j, sy - j, sx + j, sy - j, xcom1_color(15));
+		line(screen2, sx - j, sy - j, sx + j, sy - j, COLOR_BLACK1);
 	}
 }
 
 #define ES_SIDE 15
+/**
+ * Draw red buttons on the screen for each seen enemy soldier,
+ * and numbers above seen enemies on the map
+ */
+// !! At minimal screen-width, these buttons disappear under the control-panel
 void Soldier::draw_enemy_seen(int select_y)
 {
 	text_mode( -1);
@@ -916,12 +980,12 @@ void Soldier::draw_enemy_seen(int select_y)
 
 		x2 = x1 + ES_SIDE;
 		y2 = y1 + ES_SIDE - 1;
-		int color = 39;
+		int color = 39;		// COLOR_RED07
 		rectfill(screen2, x1, y1, x2, y2, xcom1_color(color));
 
 		// Start at 1 instead of 0.
 		num[0] = ((i + 1) % 10) + '0';
-		textout(screen2, font, num, x1 + 5, y1 + 4, xcom1_color(16));
+		textout(screen2, font, num, x1 + 5, y1 + 4, COLOR_GOLD);
 
 		//	Draw numbers above seen enemies
 		if ((FLAGS & F_SELECTENEMY) && map->man(enemy_z[i], enemy_x[i], enemy_y[i])) {
@@ -929,7 +993,7 @@ void Soldier::draw_enemy_seen(int select_y)
 			int sy = map->y - (enemy_x[i] + 1) * CELL_SCR_Y + CELL_SCR_Y * enemy_y[i] - 29 - CELL_SCR_Z * enemy_z[i];
 
 			//	Draw a number over enemy head
-			if (i < 10)	textout(screen2, font, num, sx, sy - 2, xcom1_color(1));
+			if (i < 10)	textout(screen2, font, num, sx, sy - 2, COLOR_WHITE);
 		}
 	}
 }
@@ -1207,6 +1271,7 @@ void Soldier::wayto(int dest_lev, int dest_col, int dest_row)
 }
 
 bool Soldier::use_elevator(int dz)
+// Todo: Flying armor
 {
 	// Check map borders and available time units
 	if (z + dz >= map->level || z + dz < 0 || !havetime(10))
@@ -1313,6 +1378,9 @@ static double randval(double min, double max)
 #define DAMAGEDIR_FRONTRIGHT 7
 #define DAMAGEDIR_UNDER      8
 
+/**
+ * Check if a shot goes thru the armor
+ */
 // I can't believe that pierce is passed by reference here.
 // But, how else am I going to do this?
 int Soldier::do_armour_check(int &pierce, int damdir)
@@ -1748,7 +1816,7 @@ void Soldier::die()
 	map->set_man(z, x, y, NULL);
 
 	z = map->find_ground(z, x, y);
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
 		m_place[i]->dropall(z, x, y);
 
 	/////////type of corpse
@@ -1768,7 +1836,7 @@ void Soldier::die()
 	
 	m_platoon->change_morale(-10, false);
 
-	g_console->printf(xcom1_color(132), "%s killed.", md.Name);
+	g_console->printf(COLOR_BLUE, "%s killed.", md.Name);
 }
 
 
@@ -1778,7 +1846,7 @@ void Soldier::stun()
 	map->set_man(z, x, y, NULL);
 
 	z = map->find_ground(z, x, y);
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
 		m_place[i]->dropall(z, x, y);
 
 	/////////type of body
@@ -1808,10 +1876,13 @@ void Soldier::stun()
 	MOVED = 0;
 	m_reaction_chances = 0;
 
-	g_console->printf(xcom1_color(132), "%s stunned.", md.Name);
+	g_console->printf(COLOR_BLUE, "%s stunned.", md.Name);
 }
 
 
+/**
+ * Remove a soldier from the prev/next - chain
+ */
 void Soldier::unlink()
 {
 	if (m_prev != NULL) m_prev->m_next = m_next;
@@ -1819,16 +1890,19 @@ void Soldier::unlink()
 	m_prev = NULL; m_next = NULL;
 }
 
+/**
+ * Show TUs needed to move item in hand to a place like belt, backpack etc.
+ */ 
 void Soldier::draw_deselect_times(int sel_item_place)
 {
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++) 
 		m_place[i]->draw_deselect_time(i, calctime(sel_item_place, i));
 	map->place(z, x, y)->draw_deselect_time(P_MAP, calctime(sel_item_place, P_MAP));
 }
 
 void Soldier::damage_items(int damage)
 {
-	int place_def[8] = { 20, 20, 10, 10, 30, 30, 50, 40 };
+	int place_def[8] = { 20, 20, 10, 10, 30, 30, 50, 40 }; // ?? 8: NUMBER_OF_CARRIED_PLACES
 
 	for (int i = 0; i < 8; i++) {
 		int def = damage * place_def[i] / 100;
@@ -1836,6 +1910,10 @@ void Soldier::damage_items(int damage)
 	}
 }
 
+/**
+ * When soldier panics: he gets no TU, and drops items in hand.
+ * (no wild shooting yet)
+ */
 void Soldier::panic()
 {
 	ud.CurTU = 0;
@@ -1844,9 +1922,12 @@ void Soldier::panic()
 		
 	net->send_panic(NID);
 		
-	g_console->printf(xcom1_color(180), "%s has panicked.", md.Name);
+	g_console->printf(COLOR_ROSE, "%s has panicked.", md.Name);
 }
 
+/**
+ * Change value of morale, with bounds-check
+ */
 void Soldier::change_morale(int delta)
 {
 	int new_morale = ud.Morale + delta;
@@ -1864,6 +1945,10 @@ void Soldier::change_morale(int delta)
 //arm_right 2   //belt      7
 //arm_left  3   //map       8
 //leg_right 4
+/**
+ * Calculate time for moving items between hand, belt, etc.
+ */
+// !! Relict from XCOM: loading ammo always uses fixed amount of time
 int Soldier::calctime(int src, int dst)
 {
 	if (src == dst)
@@ -1940,7 +2025,7 @@ Item *Soldier::item_under_mouse(int ipl)
 
 int Soldier::haveitem(Item *it)
 {
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
 		if (m_place[i]->isthere(it))
 			return 1;
 	return 0;
@@ -1948,7 +2033,7 @@ int Soldier::haveitem(Item *it)
 
 Place *Soldier::find_item(Item *it, int &lev, int &col, int &row)
 {
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
 		if (m_place[i]->isthere(it)) {
 			lev = z; col = x; row = y;
 			return m_place[i];
@@ -1979,6 +2064,9 @@ int Soldier::open_door()
 	return 0;
 }
 
+/**
+ * Change between standing and sittung
+ */
 int Soldier::change_pose()
 {
 	ASSERT((m_state == SIT) || (m_state == STAND));
@@ -1995,7 +2083,6 @@ int Soldier::change_pose()
 	m_reaction_chances++;
 	net->send_change_pose(NID);
 	return 1;
-
 }
 
 int Soldier::standup()
@@ -2067,7 +2154,7 @@ int Soldier::load_ammo(int iplace, Item * it)
 /**
  * Function that decrements soldier time units and energy for some action.
  * The soldier must have enough time units and energy before calling 
- * this function,
+ * this function.
  * 
  * @param tm          time required to perform an action
  * @param use_energy  flag which shows whether the action requires energy 
@@ -2108,8 +2195,8 @@ int Soldier::havetime(int ntime, int use_energy)
  * Function that returns the time needed to move from current location to 
  * specified direction.
  *
- * @param _dir  walk direction (-1 in the case when the time to get to the current 
- *              map location is needed)
+ * @param _dir  walk direction (-1 in the case when the time to get to 
+ *              the current map location is needed)
  */
 int Soldier::walktime(int _dir)
 {
@@ -2128,6 +2215,11 @@ int Soldier::walktime(int _dir)
 }
 
 
+/**
+ * Calculate how many TUs are required for an action 
+ * that needs a percentage of the MaxTU.
+ * (e.g. Autoshot needs 30% of max. TU)
+ */
 // ud.MaxTU  100%
 //   x         ntime
 int Soldier::required(int pertime)
@@ -2135,7 +2227,12 @@ int Soldier::required(int pertime)
 	return (ud.MaxTU * pertime) / 100;
 }
 
-
+/**
+ * Calculate firing accuracy.
+ * Accuracy gets better for sitting, 
+ * and for using a two-handed weapon with an empty free hand.
+ */
+// ?? Health has no influence
 int Soldier::FAccuracy(int peraccur, int TWOHAND)
 {
 	int ac = ud.CurFAccuracy;
@@ -2154,6 +2251,9 @@ int Soldier::FAccuracy(int peraccur, int TWOHAND)
 	return static_cast<int>(sqrt(2. / (weapon_delta + soldier_delta)));
 }
 
+/**
+ * Calculate throwing accuracy
+ */
 int Soldier::TAccuracy(int peraccur)
 {
 	int ac = (ud.CurTAccuracy * peraccur) / 100;
@@ -2570,6 +2670,10 @@ void Soldier::showspk()
 	}
 }
 
+/**
+ * Draw soldier-infos into the control-panel on the battlescape:
+ * items in hand, current stats with barcharts 
+ */
 void Soldier::drawinfo(int x, int y)
 {
 	if (rhand_item() != NULL) {
@@ -2698,13 +2802,16 @@ int Soldier::do_reaction_fire(Soldier *the_target, int place, int shot_type)
 	return 0;
 }
 
+/**
+ * End-of-turn save
+ */
 int Soldier::eot_save(char *txt)
 {
 	int len = 0;
 	len += sprintf(txt + len,
 		"\r\n%s:\r\nNID=%d z=%d x=%d y=%d dir=%d state=%d ud.MaxTU=%d ud.MaxHealth=%d ud.MaxEnergy=%d ud.CurFAccuracy=%d ud.CurTAccuracy=%d ud.CurTU=%d ud.CurHealth=%d ud.CurEnergy=%d ud.Morale=%d\r\n",
 		md.Name, NID, z, x, y, dir, (int)m_state, ud.MaxTU, ud.MaxHealth, ud.MaxEnergy, ud.CurFAccuracy, ud.CurTAccuracy, ud.CurTU, ud.CurHealth, ud.CurEnergy, ud.Morale);
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++) {
 		len += m_place[i]->eot_save(i, txt + len);
 	}
 	return len;

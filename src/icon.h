@@ -40,7 +40,13 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define B_DONE			12
 #define B_EXIT			13
 #define B_MAN_STATS		14
-#define BUTTON_NUMBER	15
+// Icons for reserving time:
+#define B_TIME_FREE		15
+#define B_TIME_AIM 		16
+#define B_TIME_SNAP		17
+#define B_TIME_AUTO		18
+#define B_BARCHART 		19
+#define BUTTON_NUMBER		20
 
 #define A_TIME_UNITS	0
 #define A_ENERGY		1

@@ -33,6 +33,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "version.h"
 #include "music.h"
 #include "scenario.h"
+#include "colors.h"
 
 /**
  * Routines for Network-play (LAN, Internet)
@@ -59,9 +60,9 @@ int Connect::do_chat()
 	stretch_blit(scr, screen,  0, 0, 320, 200, 0, 0, 640, 400);
 	stretch_blit(scr, backscr, 0, 0, 320, 200, 0, 0, 640, 400);
 
-	local_win = new Wind(backscr, 15, 197, 619, 383, xcom1_color(16));
-	remote_win = new Wind(backscr, 15, 12, 408, 179, xcom1_color(33));
-	info_win = new Wind(backscr, 434, 17, 619, 171, xcom1_color(192));
+	local_win  = new Wind(backscr,  15, 197, 619, 383, COLOR_GOLD);
+	remote_win = new Wind(backscr,  15,  12, 408, 179, COLOR_RED01);
+	info_win   = new Wind(backscr, 434,  17, 619, 171, COLOR_VIOLET00);
 
 	int DONE = 0;
 	std::string buf;
@@ -100,7 +101,7 @@ int Connect::do_chat()
 						char tmp[128];
 						sprintf(tmp, "\nYou need UFO2000 %s (revision %d)\nor newer", 
 							UFO_VERSION_STRING, remote_revision);
-						remote_win->printstr("\nUnfortunately you have older UFO2000\n");
+						remote_win->printstr("\nUnfortunately you have an older UFO2000\n");
 						remote_win->printstr("version than your opponent has.\n");
 						remote_win->printstr("\nPlease visit http://ufo2000.sourceforge.net\n");
 						remote_win->printstr("and upgrade your UFO2000 version\n");
@@ -174,6 +175,7 @@ int Connect::do_chat()
 Units local;
 Units remote;
 
+// uds ??
 void Connect::reset_uds()
 {
 	local.reset();
@@ -190,6 +192,10 @@ void Connect::swap_uds()
 
 int FINISH_PLANNER = 0;
 
+/**
+ * Mission-Planner: select map, rules+scenario, set up team of soldiers.
+ * In network-game, also chat with opponent.
+ */
 int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 {
 	MODE = PLANNER;
@@ -206,6 +212,9 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 
 	g_console->set_full_redraw();
 	g_console->redraw(screen, 0, SCREEN2H);
+
+	//g_console->printf( COLOR_ORANGE, "%s", "! Welcome to the mission-planner !");
+	g_console->printf( COLOR_SYS_HEADER, "%s", "Welcome to the mission-planner !");
 
 	Map *map = new Map(mapdata);
 	BITMAP *map2d = map->create_bitmap_of_map(0);
@@ -278,6 +287,14 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 				net->send_options(i, j, scenario->options[i][j]->value);
 	}
 
+	if (map_change_allowed)
+		g_console->printf( COLOR_SYS_OK,   "You can select a map and change the match-settings.");
+	else
+		g_console->printf( COLOR_SYS_FAIL, "The map is already set for this game, and cannot be changed.");
+	g_console->printf( COLOR_SYS_INFO1,  "To edit a soldier, CTRL-click on his name.");
+	g_console->printf( COLOR_SYS_INFO1,  "Left-click to place a soldier on the map, right-click to remove him.");
+	g_console->printf( COLOR_SYS_PROMPT, "When finished, click SEND, then START.  Press ESC to quit."); 
+
 	while (!DONE) {
 
         rest(1); // Don't eat all CPU resources
@@ -315,8 +332,8 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 			//map->show2d(0, 0);
 			blit(map2d, screen2, 0, 0, map2d_x, 0, map2d->w, map2d->h);
 
-            remote.print_simple(xcom1_color(1));
-			local.print(xcom1_color(1));
+			remote.print_simple(COLOR_WHITE);
+			local.print(COLOR_WHITE);
 			//remote.print(1);
 
 			//if (local.SEND)
@@ -404,6 +421,10 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 
 	delete map;
 
+	g_console->printf(COLOR_SYS_INFO2, "%s\n\n\n\n\n\n\n\n\n\n\n\n\n", "ok."); 
+	//g_console->printf(COLOR_WHITE, "\n\n\n\n\n\n\n\n\n\n\n\n"); // clear message-area (scroll up)
+
+	g_console->redraw(screen, 0, SCREEN2H);
 	destroy_bitmap(screen2);
 	screen2 = create_bitmap(SCREEN2W, SCREEN2H); clear(screen2);
 	fade_out(10);
@@ -411,13 +432,15 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 	return net->SEND;
 }
 
-
-
+/**
+ * Show sum of points for all selected men
+ */
+// ?? does not account for stamina, strength, armor ??
 void Connect::draw_pd_info(void *_pd, int gx, int gy)
 {
 	PLAYERDATA *pd = (PLAYERDATA *)_pd;
 
-	textout(screen2, g_small_font, "INFO", gx, gy, xcom1_color(1));
+	textout(screen2, g_small_font, "INFO", gx, gy, COLOR_WHITE);
 	int i;
 	int points = 0;
 	for (i = 0; i < pd->size; i++) {
@@ -426,5 +449,5 @@ void Connect::draw_pd_info(void *_pd, int gx, int gy)
 		          pd->md[i].Firing +
 		          pd->md[i].Throwing;
 	}
-	textprintf(screen2, g_small_font, gx, gy + 10, xcom1_color(1), "total men points=%d", points);
+	textprintf(screen2, g_small_font, gx, gy + 10, COLOR_WHITE, "total men points=%d", points);
 }

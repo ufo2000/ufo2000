@@ -26,6 +26,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "video.h"
 #include "place.h"
 #include "map.h"
+#include "colors.h"
 
 IMPLEMENT_PERSISTENCE(Place, "Place");
 
@@ -52,11 +53,18 @@ void Place::set(int x, int y, int w, int h)
 	width = w; height = h;
 }
 
+/**
+ * Scroll items on the ground-grid left
+ */
+// Todo: repack items
 void Place::scroll_left()
 {
 	if (viscol > 0) viscol--;
 }
 
+/**
+ * Scroll items on the ground-grid right
+ */
 void Place::scroll_right()
 {
 	if (viscol < width - 1) viscol++;
@@ -114,6 +122,9 @@ int Place::ishand()
 	return 0;
 }
 
+/**
+ * Test if item fits into a place like hand, belt, backpack etc.
+ */
 int Place::isfit(Item * it, int xx, int yy)
 {
 	if (ishand() && (m_item != NULL))
@@ -125,6 +136,9 @@ int Place::isfit(Item * it, int xx, int yy)
 	return 1;
 }
 
+/**
+ * Put item in place like hand, belt, backpack etc.
+ */
 int Place::put(Item * it, int xx, int yy)
 {
 	if (isfree(xx, yy) && isfit(it, xx, yy)) {
@@ -179,7 +193,9 @@ int Place::destroy(Item *it)
 	return 0;
 }
 
-
+/**
+ * Select item with mouse
+ */ 
 Item *Place::mselect()
 {
 	if ((mouse_x > gx) && (mouse_x < gx + width * 16))
@@ -188,6 +204,9 @@ Item *Place::mselect()
 	return NULL;
 }
 
+/**
+ * De-select item with mouse
+ */ 
 int Place::mdeselect(Item *it)
 {
 	if ((mouse_x > gx) && (mouse_x < gx + width * 16))
@@ -213,6 +232,10 @@ int Place::outside_belt(int x, int y)
 	return 0;
 }
 
+/**
+ * Draw item at a place on the battlemap.
+ * If there are several items, draw the one with the highest importance.
+ */
 void Place::draw(int gx, int gy)
 {
 	if (m_item == NULL)
@@ -229,6 +252,8 @@ void Place::draw(int gx, int gy)
 
 	map->drawitem(gt->obdata_pMap(), gx, gy);
 }
+
+// see soldier.h :
 /*
 #define P_SHL_RIGHT 0
 #define P_SHL_LEFT  1
@@ -253,18 +278,21 @@ static char *place_name[10] = {
 	"ARMOURY"
 };
 
+/**
+ * Draw inventory-grid for belt, backpack, armory etc.
+ */
 void Place::drawgrid(int PLACE_NUM)
 {
-	ASSERT((PLACE_NUM >= 0) && (PLACE_NUM < 10));
+	ASSERT((PLACE_NUM >= 0) && (PLACE_NUM <= NUMBER_OF_PLACES));
 
-	textout(screen2, g_small_font, place_name[PLACE_NUM], gx, gy - 8, xcom1_color(66));
+	textout(screen2, g_small_font, place_name[PLACE_NUM], gx, gy - 8, COLOR_LT_OLIVE);
 
 	if (!ishand()) {
 		int dx = 0, dy = 0;
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				if (!outside_belt(j, i))
-					rect(screen2, gx + dx, gy + dy, gx + dx + 16, gy + dy + 15, xcom1_color(8));      //square
+					rect(screen2, gx + dx, gy + dy, gx + dx + 16, gy + dy + 15, COLOR_GRAY08);      //square
 				dx += 16;
 				if (j == 19) break;      // for map cell!!!!!!!!!!!!!!!!!!!
 			}
@@ -272,9 +300,10 @@ void Place::drawgrid(int PLACE_NUM)
 			dy += 15;
 		}
 	} else {
-		rect(screen2, gx, gy, gx + width * 16, gy + height * 15, xcom1_color(8));
+		rect(screen2, gx, gy, gx + width * 16, gy + height * 15, COLOR_GRAY08);
 	}
 
+	// Draw items in grid:
 	Item *t = m_item;
 	while (t != NULL) {
 		if ((t->m_x >= viscol - 1) && (t->m_x < viscol + 20)) {
@@ -288,7 +317,23 @@ void Place::drawgrid(int PLACE_NUM)
 				y = gy + (height - it_height) * 15 / 2 + 5;
 			}
 
-			PCK::showpck(t->obdata_pInv(), x, y);
+			PCK::showpck(t->obdata_pInv(), x, y);  // Picture of item 
+
+			if (ishand()) {	// Inventory-view: display ammo-rounds & grenade-delay 
+				if (t->clip() != NULL) {   // see also: Soldier::drawinfo()
+				    printsmall(gx + 23, gy + 39, COLOR_WHITE, t->roundsremain() );
+				} 
+				if (t->obdata_isAmmo() ) {   // Test
+				    printsmall(gx + 23, gy + 39, COLOR_WHITE, t->m_rounds );
+				} 
+				if (t->is_grenade() ) {  // see also: icon.h : DrawPrimed 
+				    if (t->delay_time() > 0)
+					textprintf(screen2, g_small_font, gx+23, gy+36, COLOR_RED, "%d", t->delay_time() - 1);
+				    else if (t->itemtype() == PROXIMITY_GRENADE && t->delay_time() < 0)
+					textout(screen2, g_small_font, "*", gx + 23, gy + 36, COLOR_RED); 
+				}
+			}
+
 			if (key[KEY_LCONTROL]) {
 				t->draw_health(1, x + 1, y - 4);
 			}
@@ -416,6 +461,9 @@ int Place::save_items(char *fs, int _z, int _x, int _y, char *txt)
 	return len;
 }
 
+/**
+ * End-of-turn - Save
+ */ 
 int Place::eot_save(int ip, char *txt)
 {
 	int len = 0;
@@ -502,12 +550,18 @@ bool Place::check_mine()
 	return false;
 }
 
+/**
+ * Show TUs needed to move an item to a place like hand, belt, backpack etc.
+ */
 void Place::draw_deselect_time(int PLACE_NUM, int time)
 {
+	int color = COLOR_WHITE;
 	if (time) {
 		//place_name[PLACE_NUM]
 		//textout(screen2, small, time, gx, gy-8, 66);
-		printsmall(gx + 1 + text_length(g_small_font, place_name[PLACE_NUM]), gy - 6, xcom1_color(1), time);
+
+		//if (!havetime(time)) { color = COLOR_GRAY; }  // ??
+		printsmall(gx + 1 + text_length(g_small_font, place_name[PLACE_NUM]), gy - 6, color, time);
 	}
 }
 

@@ -30,6 +30,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "sound.h"
 #include "music.h"
 #include "multiplay.h"
+#include "colors.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -40,6 +41,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #define BORDER_COLOR xcom1_color(4)
 #define TITLE_COLOR  xcom1_color(2)
+//  COLOR_GRAY04
+//  COLOR_GRAY02
 
 static void draw_border(BITMAP *bmp, int x, int y, int w, int h, int color)
 {
@@ -68,7 +71,7 @@ public:
 	virtual void redraw_full(BITMAP *bmp, int x, int y)
 	{
 		BITMAP *temp_bmp = create_bitmap(m_width, m_height);
-		clear_to_color(temp_bmp, xcom1_color(15));
+		clear_to_color(temp_bmp, COLOR_BLACK1);
 		draw_border(temp_bmp, 0, 0, m_width - 1, m_height - 1, BORDER_COLOR);
 		if (m_title != "") {
 			textout_centre(temp_bmp, m_fnt, m_title.c_str(), 1 + (m_width - 5) / 2, 1, TITLE_COLOR);
@@ -130,11 +133,13 @@ struct UserInfo
 	UserInfo(std::string name, USER_STATUS status) : name(name), status(status) { }
 };
 
-#define COLOR_YELLOW   makecol(255, 255, 0)
-#define COLOR_GREEN    xcom_color(50)
-#define COLOR_GRAY     xcom_color(3)
-#define COLOR_DARKGRAY xcom_color(6)
-#define COLOR_RED      xcom_color(32)
+// HaJo: replaced with colors.h
+// #define COLOR_YELLOW    makecol(255, 255, 0)
+// #define COLOR_GREEN     xcom_color(50)
+// #define COLOR_GRAY03    xcom_color(3)
+// #define COLOR_DARKGRAY  xcom_color(6)
+// #define COLOR_RED00     xcom_color(32)
+#define COLOR_DARKGRAY COLOR_GRAY06
 
 class UsersList: public VisualObject
 {
@@ -179,16 +184,16 @@ public:
 		m_x = x; m_y = y; // Hack - only has sence when bmp is screen
 		if (m_height == 0 || m_width == 0) return;
 		BITMAP *temp_bmp = create_bitmap(m_width, m_height);
-		clear_to_color(temp_bmp, xcom1_color(15));
+		clear_to_color(temp_bmp, COLOR_BLACK1);
 
 		for (unsigned int i = 0; i < m_users.size(); i++) {
 			text_mode(-1);
 			int color;
 			switch (m_users[i].status) {
-				case USER_STATUS_BUSY: color = COLOR_RED; break;
+				case USER_STATUS_BUSY         : color = COLOR_RED00; break;
 				case USER_STATUS_CHALLENGE_IN: color = COLOR_GREEN; break;
 				case USER_STATUS_CHALLENGE_OUT: color = COLOR_YELLOW; break;
-				case USER_STATUS_SELF: color = xcom1_color(1); break;
+				case USER_STATUS_SELF         : color = COLOR_WHITE;   break;
 				default: color = COLOR_GRAY; break;
 			}
 
@@ -248,8 +253,8 @@ void lobby_init_mouse()
 	set_mouse_speed(1, 1);
 	set_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
 	show_mouse(screen);
-	gui_fg_color = xcom1_color(15);
-	gui_bg_color = xcom1_color(1);
+	gui_fg_color = COLOR_BLACK1;
+	gui_bg_color = COLOR_WHITE;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -276,6 +281,10 @@ static initHawkNL HawkNL;
 
 //////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Calculate a color to use for chat-messages,
+ * use login-name as key
+ */
 static int chat_msg_color(const std::string &msg)
 {
 	int sum = 0;
@@ -284,10 +293,13 @@ static int chat_msg_color(const std::string &msg)
 		sum += ch;
 		if (ch == ':') break;
 	}
-	int colors[] = { 1, 2, 3, 4, 6, 7, 8, 9, 12 };
+	int colors[] = { 1, 2, 3, 4, 6, 7, 8, 9, 12 };  // COLOR_GRAY01 .. COLOR_GRAY12
 	return xcom1_color(colors[sum % (sizeof(colors) / sizeof(colors[0]))] * 16);
 }
 
+/**
+ * Login-Dialog
+ */
 static bool asklogin()
 {
 	static char login_buffer[1024];
@@ -314,7 +326,7 @@ static bool asklogin()
 	strcpy(password_buffer, g_server_password.c_str());
 
 	centre_dialog(login_dialog);
-	set_dialog_color(login_dialog, xcom1_color(15), xcom1_color(1));
+	set_dialog_color(login_dialog, COLOR_BLACK1, COLOR_WHITE);
 
 	if (popup_dialog(login_dialog, 2) == 7) {
 		g_server_host = host_buffer;
@@ -325,6 +337,9 @@ static bool asklogin()
 	return false;
 }
 
+/**
+ * Return a string with the type of operating-system (Window, Linux, etc.)
+ */
 const char *get_os_type_string()
 {
 	switch (os_type) {
@@ -353,6 +368,9 @@ const char *get_os_type_string()
 	return "unknown";
 }
 
+/**
+ * Ask for login-info and try to connect to a UFO2000-server on LAN or Internet
+ */
 int connect_internet_server()
 {
 	if ((rand() % 2) == 1)
@@ -364,6 +382,9 @@ int connect_internet_server()
 	if (!g_server_autologin || g_server_login == "anonymous")
 		if (!asklogin())
 			return -1;
+
+	text_mode(-1); 
+	textprintf(screen, font, 1, 1, COLOR_SYS_INFO1, "%s", "Connecting...");
 
     std::auto_ptr<ClientServerUfo> server(new ClientServerUfo());
     std::string error_message;
@@ -391,17 +412,17 @@ int connect_internet_server()
 	users_border->set_full_redraw();
 
 	// Write greetings and the short help to the chat console
-	chat->printf("You have just connected to ufo2000 internet server\n");
-	chat->printf("There are two windows here: chat console in the left window\n");
-	chat->printf("and the list of online players in the right\n");
+	chat->printf(COLOR_SYS_HEADER, "You have just connected to ufo2000 internet server\n");
+	chat->printf(COLOR_SYS_HEADER, "There are two windows here: chat console in the left window\n");
+	chat->printf(COLOR_SYS_HEADER, "and the list of online players in the right\n");
 	chat->printf("\n");
-	chat->printf(xcom1_color(1), "white player name - that's your own name\n");
+	chat->printf(COLOR_WHITE,      "white player name - that's your own name\n");
 	chat->printf(COLOR_GRAY, "gray player name - available for chat\n");
 	chat->printf(COLOR_YELLOW, "yellow player name - you have sent a challenge to this player\n");
 	chat->printf(COLOR_GREEN, "green player name - you can accept a challenge from this player\n");
-	chat->printf(COLOR_RED, "red player name - the player is busy playing with someone else\n");
+	chat->printf(COLOR_RED00,      "red player name - the player is busy playing with someone else\n");
 	chat->printf("\n");
-	chat->printf("You can left click on player names to select them as your opponents\n");
+	chat->printf(COLOR_SYS_PROMPT, "You can left click on player names to select them as your opponents\n");
 	chat->printf("\n");
 
 	chat_border->resize(SCREEN_W - users_border->get_width(), SCREEN_H);

@@ -36,6 +36,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "global.h"
 #include "map.h"
 #include "config.h"
+#include "colors.h"
 
 unsigned long FLAGS = 0;
 
@@ -261,8 +262,8 @@ void reset_video()
 	set_mouse_range(0, 0, SCREEN2W - 1, SCREEN2H - 1);
 	set_mouse_sprite(mouser);
 	set_mouse_speed(1, 1);
-	gui_fg_color = xcom1_color(15);
-	gui_bg_color = xcom1_color(1);
+	gui_fg_color = COLOR_BLACK1;
+	gui_bg_color = COLOR_WHITE;
 	g_switch_in_counter++;
 }
 
@@ -280,7 +281,9 @@ void savescreen()
 		sprintf(filename, "snapshot_%d.pcx", num);
 		if (!exists(filename)) {
 			save_pcx(filename, scr, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
+			// Todo: test if save was successful
 			destroy_bitmap(scr);
+			g_console->printf(COLOR_SYS_OK, "Screenshot saved as %s", filename);
 			return;
 		}
 		num++;

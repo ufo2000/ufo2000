@@ -18,11 +18,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 #include "global.h"
 #include <string.h>
 #include <stdio.h>
+
 #include "video.h"
 #include "map.h"
+#include "colors.h"
 
 #define FIRST_CELL   0
 #define GOOD_CELL   -1
@@ -126,7 +129,7 @@ exitloop:
 
 	if (FLAGS & F_SHOWROUTE) {
 		text_mode(0);
-		textprintf(screen, font, 0, SCREEN2H + 20, xcom1_color(1), 
+		textprintf(screen, font, 0, SCREEN2H + 20, COLOR_WHITE, 
 			"(%d,%d,%d)-(%d,%d,%d) %d  ", sz, sx, sy, dz, dx, dy, cur_iter);
 
 		BITMAP *path2d = create_bitmap(width * 10 * PATH2DSIZE, height * 10 * PATH2DSIZE);
@@ -171,7 +174,7 @@ exitloop:
 
 	if (FLAGS & F_SHOWROUTE) {
 		for (j = 0; j < cur_iter + 2; j++) {
-			textprintf(screen, font, SCREEN2W + j * 8, SCREEN2H - 9, xcom1_color(1), "%d ", way[j]);
+			textprintf(screen, font, SCREEN2W + j * 8, SCREEN2H - 9, COLOR_WHITE, "%d ", way[j]);
 		}
 	}
 
@@ -187,14 +190,14 @@ void Map::draw_path_from(Soldier * s)
 	TU = s->ud.CurTU;
 	if (s->state() == SIT) TU -= 8;		//time to stand up
 	TU_max = s->ud.MaxTU;
-	TU_color = 1;
+	TU_color = 1;			// COLOR_WHITE
 	path_show(s->z, s->x, s->y, way, waylen);
 }
 
 void Map::path_show(int _z, int _x, int _y, char *way, int waylen)
 {
 	//text_mode(0);
-	//textprintf(screen, font, 0, SCREEN2H, xcom1_color(1), "waylen=%d ", waylen);
+	//textprintf(screen, font, 0, SCREEN2H, COLOR_WHITE, "waylen=%d ", waylen);
 
 	for (int i = 1; i < waylen; i++) {
 		int dir = way[i];
@@ -220,16 +223,20 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen)
 				time_of_dst = time_of_dst * 3 / 2; // diagonal moves use 1.5 TUs
 			//printsmall(sx, sy, 1, time_of_dst);
 			TU -= time_of_dst;
-			// Keep showing consecutive turns.
+
+			// Todo: use other color for moves in reserved-time
+			
+			// Keep showing consecutive turns:
 			if (TU < 0) {
 				TU = TU_max - time_of_dst;
-				TU_color += 4;
+				TU_color += 4;		// COLOR_GRAY04
 			}
 			if (TU <0) break;
 			printsmall_center(sx, sy, xcom1_color(TU_color), TU);
 		}
 
-		//textprintf(screen, font, 0+i*80, SCREEN2H+20, xcom1_color(1), "way[%d]=%d ", i, way[i]);
-		//textprintf(screen, font, 0+i*8, SCREEN2H+10, xcom1_color(1), "%d            ", way[i]);
+		//textprintf(screen, font, 0+i*80, SCREEN2H+20, COLOR_WHITE, "way[%d]=%d ", i, way[i]);
+		//textprintf(screen, font, 0+i* 8, SCREEN2H+10, COLOR_WHITE, "%d            ", way[i]);
 	}
 }
+

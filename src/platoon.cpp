@@ -206,6 +206,7 @@ Soldier *Platoon::findman(int NID)
 }
 
 
+// See also: Soldier::draw_blue_selector()
 void Platoon::draw_blue_selectors()
 {
 	Soldier *ss = man;
@@ -241,7 +242,7 @@ Soldier *Platoon::findnum(int N)
 
 /**
  * Returns pointer to the next soldier who is not still marked as moved.
- * When reaching end of soldiers listm the search is wrapped around to the 
+ * When reaching end of soldiers list, the search is wrapped around to the 
  * first soldier
  */
 Soldier *Platoon::next_not_moved_man(Soldier *sel_man)
@@ -586,7 +587,9 @@ void Platoon::send_Units(Units &u)
 	net->send_unit_data_size(num);
 }
 
-
+/**
+ * End-of-turn - Save
+ */
 int Platoon::eot_save(char *buf, int &buf_size)
 {
 	buf_size += sprintf(buf + buf_size, "\r\nplatoon:\r\nID=%ld size=%d\r\n", ID, realsize());
