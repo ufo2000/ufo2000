@@ -183,14 +183,6 @@ void loadini()
 	SCREEN2W = get_config_int(gen, "width", 430);
 	SCREEN2H = get_config_int(gen, "height", 280);
 
-//	check screen dimensions as set in .ini for too low or too high settings
-
-	if (SCREEN2W > 640) SCREEN2W = 640;
-	if (SCREEN2H > 380) SCREEN2H = 380;
-
-	if (SCREEN2W < 430) SCREEN2W = 430;
-	if (SCREEN2H < 280) SCREEN2H = 280;
-
 	MAP_WIDTH = get_config_int(gen, "map_width", 4);
 	MAP_HEIGHT = get_config_int(gen, "map_height", 4);
 	speed_unit = get_config_int(gen, "speed_unit", 30);

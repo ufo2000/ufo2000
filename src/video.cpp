@@ -241,12 +241,23 @@ static void ufo2k_set_gfx_mode(int gfx_driver, int min_color_depth)
 	}
 }
 
+static void normalize_screen2_size()
+{
+	if (SCREEN2W > SCREEN_W) SCREEN2W = SCREEN_W;
+	if (SCREEN2H > SCREEN_H - 20) SCREEN2H = SCREEN_H - 20;
+
+	if (SCREEN2W < 320) SCREEN2W = 320;
+	if (SCREEN2H < 330) SCREEN2H = 330;
+}
+
 void set_video_mode()
 {
 	if (FLAGS & F_FULLSCREEN)
 		ufo2k_set_gfx_mode(GFX_AUTODETECT_FULLSCREEN, cfg_get_min_color_depth());
 	else
 		ufo2k_set_gfx_mode(GFX_AUTODETECT_WINDOWED, cfg_get_min_color_depth());
+
+	normalize_screen2_size();
 
 	if (set_display_switch_mode(SWITCH_BACKGROUND) == -1) set_display_switch_mode(SWITCH_BACKAMNESIA);
 	set_display_switch_callback(SWITCH_IN, switch_in_callback);
@@ -325,10 +336,8 @@ uint16 crc16(const char *data_p)
 void resize_screen2(int vw, int vh)
 {
 	SCREEN2W += vw; SCREEN2H += vh;
-	if (SCREEN2W > SCREEN_W) SCREEN2W = SCREEN_W;
-	if (SCREEN2W < 320) SCREEN2W = 320;
-	if (SCREEN2H > SCREEN_H - 40) SCREEN2H = SCREEN_H - 40;
-	if (SCREEN2H < 200) SCREEN2H = 200;
+
+	normalize_screen2_size();
 
 	destroy_bitmap(screen2);
 	screen2 = create_bitmap(SCREEN2W, SCREEN2H);
