@@ -1061,8 +1061,8 @@ void Units::execute_rules_1(Map *map, int map_change_allowed)
 	    //">"
 	    scenario->rules[1]++;
 
-	    if (scenario->rules[1] > 25) {
-			scenario->rules[1] = 25;
+	    if (scenario->rules[1] > 50) {
+			scenario->rules[1] = 50;
 			return;
 		}
 
