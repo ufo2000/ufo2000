@@ -2180,6 +2180,7 @@ void faststart()
     elist = new Explosive();
     p1 = new Platoon(1111, &pd1, scenario->deploy_type[0]);
     p2 = new Platoon(2222, &pd2, scenario->deploy_type[1]);
+    cur_random = new Random;
 
     //map->place(0, 0, 0)->put(new Item(KASTET));
     //map->place(0, 0, 0)->put(new Item(KNIFE));
