@@ -48,6 +48,10 @@ inline long filelength(int handle) { struct stat s; fstat(handle, &s); return s.
 #include "jpgalleg/jpgalleg.h"
 
 extern "C" {
+#include "agup/agup.h"
+}
+
+extern "C" {
 #include "lua.h"
 #include "lualib.h"
 #include "lauxlib.h"

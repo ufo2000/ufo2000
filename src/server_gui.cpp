@@ -295,15 +295,15 @@ static bool asklogin()
 
 	static DIALOG login_dialog[] = {
 		//(dialog proc)		 (x)  (y) (w) (h) (fg) (bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
-		{ d_shadow_box_proc, 0,   0,  280, 80, 0,  1, 0, 0, 0, 0, NULL, NULL, NULL },
-		{ d_rtext_proc,      10,  10, 70,  10, 0,  1, 0, 0, 0, 0, (void *)"Server:", NULL, NULL },
-		{ d_edit_proc,       80,  10, 192, 10, 0,  1, 0, 0, 22, 0, (void *)host_buffer, NULL, NULL },
-		{ d_rtext_proc,      10,  25, 70,  10, 0,  1, 0, 0, 0, 0, (void *)"Login:", NULL, NULL },
-		{ d_edit_proc,       80,  25, 192, 10, 0,  1, 0, 0, 22, 0, (void *)login_buffer, NULL, NULL },
-		{ d_rtext_proc,      10,  40, 70,  10, 0,  1, 0, 0, 0, 0, (void *)"Password:", NULL, NULL },
-		{ d_edit_proc,       80,  40, 192, 10, 0,  1, 0, 0, 22, 0, (void *)password_buffer, NULL, NULL },
-		{ d_button_proc,     140, 55, 60,  18, 0,  1, 13, D_EXIT, 0, 0, (void *)"OK", NULL, NULL },
-		{ d_button_proc,     210, 55, 60,  18, 0,  1, 27, D_EXIT, 0, 0, (void *)"Cancel", NULL, NULL },
+		{ d_agup_shadow_box_proc, 0,   0,  280, 80, 0,  1, 0, 0, 0, 0, NULL, NULL, NULL },
+		{ d_agup_rtext_proc,      10,  10, 70,  10, 0,  1, 0, 0, 0, 0, (void *)"Server:", NULL, NULL },
+		{ d_agup_edit_proc,       80,  10, 192, 10, 0,  1, 0, 0, 22, 0, (void *)host_buffer, NULL, NULL },
+		{ d_agup_rtext_proc,      10,  25, 70,  10, 0,  1, 0, 0, 0, 0, (void *)"Login:", NULL, NULL },
+		{ d_agup_edit_proc,       80,  25, 192, 10, 0,  1, 0, 0, 22, 0, (void *)login_buffer, NULL, NULL },
+		{ d_agup_rtext_proc,      10,  40, 70,  10, 0,  1, 0, 0, 0, 0, (void *)"Password:", NULL, NULL },
+		{ d_agup_edit_proc,       80,  40, 192, 10, 0,  1, 0, 0, 22, 0, (void *)password_buffer, NULL, NULL },
+		{ d_agup_button_proc,     140, 55, 60,  18, 0,  1, 13, D_EXIT, 0, 0, (void *)"OK", NULL, NULL },
+		{ d_agup_button_proc,     210, 55, 60,  18, 0,  1, 27, D_EXIT, 0, 0, (void *)"Cancel", NULL, NULL },
 		{ NULL }
 	};
 

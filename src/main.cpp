@@ -481,6 +481,7 @@ void initmain(int argc, char *argv[])
     if (get_config_int("Flags", "F_SOUNDCHECK", 0)) FLAGS |= F_SOUNDCHECK;    // perform soundtest.
     if (get_config_int("Flags", "F_LOGTOSTDOUT", 0)) FLAGS |= F_LOGTOSTDOUT;  // Copy all init console output to stdout.
     if (get_config_int("Flags", "F_DEBUGDUMPS", 0)) FLAGS |= F_DEBUGDUMPS;    // Produce a lot of files with the information which can help in debugging
+	const AGUP_THEME *gui_theme = agup_theme_by_name(get_config_string("General", "gui_theme", "Allegro"));
 
 	if (argc > 1) {
 		g_server_login = argv[1];
@@ -518,6 +519,10 @@ void initmain(int argc, char *argv[])
     std::ostream console(&consbuf);
 
 	console<<"allegro_init"<<std::endl;
+
+	console<<"agup_init"<<std::endl;
+	if (gui_theme == NULL) gui_theme = aalg_theme;
+	agup_init(gui_theme);
 
 	lua_dofile(L, DATA_DIR "/init-scripts/standard-items.lua");
 	lua_dofile(L, DATA_DIR "/init-scripts/standard-equipment.lua");
@@ -631,6 +636,7 @@ void closemain()
 	soundSystem::getInstance()->shutdown();
 	closevideo();
 
+	agup_shutdown();
 	allegro_exit();
 	
 	lua_close(L);

@@ -67,7 +67,7 @@ ifdef xmingw
     win32 = 1
 endif
 
-VPATH = src src/jpgalleg src/dumbogg src/exchndl
+VPATH = src src/jpgalleg src/dumbogg src/exchndl src/agup
 
 SRCS = bullet.cpp cell.cpp config.cpp connect.cpp dirty.cpp           \
        editor.cpp explo.cpp font.cpp icon.cpp inventory.cpp item.cpp  \
@@ -77,7 +77,9 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp dirty.cpp           \
        units.cpp video.cpp wind.cpp crc32.cpp persist.cpp             \
        jpgalleg.c decode.c encode.c io.c minimap.cpp about.cpp        \
        stats.cpp server_protocol.cpp server_transport.cpp             \
-       server_gui.cpp server_config.cpp music.cpp scenario.cpp
+       server_gui.cpp server_config.cpp music.cpp scenario.cpp        \
+       aalg.c aase.c abeos.c abitmap.c agtk.c agup.c ans.c            \
+       aphoton.c awin95.c
 
 SRCS_SERVER = server_main.cpp server_protocol.cpp \
        server_transport.cpp server_config.cpp
