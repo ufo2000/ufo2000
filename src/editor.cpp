@@ -100,7 +100,7 @@ Editor::Editor()
 
 	lua_safe_dostring(L, "SetEquipment('Standard')");
 	
-	if (local_platoon_size > 10) local_platoon_size = 10;      //!!!!!!!!!!! Todo: allow more soldiers in a platoon
+	if (local_platoon_size > 15) local_platoon_size = 15;      //Maybe we should allow more
 	ASSERT(local_platoon_size > 0);
 	m_plt = new Platoon(2001, local_platoon_size);
 	m_plt->load_MANDATA("$(home)/soldier.dat");

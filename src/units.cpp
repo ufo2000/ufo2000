@@ -243,9 +243,9 @@ void Units::print(int gcol)
 	/*if (pos == POS_LEFT)
 		draw_items_stats(0, 160+10, buf, len);
 	else*/
-	damage_points = draw_items_stats(gx, 160 + 10, buf, len);
+	damage_points = draw_items_stats(gx, 240 + 10, buf, len);
 
-	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, COLOR_GREEN,
+	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 240, COLOR_GREEN,
 			"Total points=%d (of %d)", points + damage_points, total_points());
 
 	scenario->draw_deploy_zone(pos, gmx, 0, xcom1_color(LOCAL_COLOR));
