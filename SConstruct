@@ -5,53 +5,71 @@ SetOption('max_drift', 1)
 
 env = Environment()
 
-game_sources = Split("""
-	bullet.cpp cell.cpp config.cpp connect.cpp dirty.cpp
-	editor.cpp explo.cpp font.cpp icon.cpp inventory.cpp item.cpp
-	keys.cpp main.cpp mainmenu.cpp map.cpp map_pathfind.cpp
-	multiplay.cpp packet.cpp pck.cpp place.cpp
-	platoon.cpp soldier.cpp sound.cpp spk.cpp terrapck.cpp
-	units.cpp video.cpp wind.cpp crc32.cpp persist.cpp
-	minimap.cpp about.cpp stats.cpp server_protocol.cpp 
-	server_transport.cpp server_gui.cpp server_config.cpp music.cpp 
-	scenario.cpp
+HAVE_DUMBOGG=False
 
-	jpgalleg/jpgalleg.c jpgalleg/decode.c jpgalleg/encode.c jpgalleg/io.c
-""")
+def getsources():
+    import os
+    import os.path
+
+    allsource = []
+    prefix = ''
+    for root, dirs, files in os.walk('src'):
+        for name in files:
+            if name[-4:] == ".cpp" or name[-2:] == ".c":
+                if name != 'server_main.cpp':
+                    allsource.append(os.path.join('obj', root, name))
+        if 'dumbogg' in dirs and not HAVE_DUMBOGG:
+            dirs.remove('dumbogg')
+        if 'exchndl' in dirs:
+            dirs.remove('exchndl')
+        if '.svn' in dirs:
+            dirs.remove('.svn')
+
+    return allsource
+
+game_sources = getsources()
 
 env.Append(LIBS = ["expat", "lua", "lualib"])
 
 if env["CC"] == "gcc":
-	env.Append(CPPFLAGS = ["-O2", "-funsigned-char", "-Wall", "-Wno-deprecated-declarations"])
+    env.Append(CCFLAGS = ["-funsigned-char", "-Wall", "-Wno-deprecated-declarations"])
 
 if env["CC"] == "cl":
-	env.Append(CPPFLAGS = ["-O2", "-J", "-GX", "-MD"])
-	env.Append(CPPPATH=["#msvc-libs/include"])
-	env.Append(LIBPATH=["#msvc-libs/lib"])
+    env.Append(CPPFLAGS = ["-O2", "-J", "-GX", "-MD"])
+    env.Append(CPPPATH=["#msvc-libs/include"])
+    env.Append(LIBPATH=["#msvc-libs/lib"])
 
-if str(Platform()) == "win32": 
-	env.Append(CPPDEFINES = ["WIN32", "ALLEGRO_STATICLINK", "DEBUGMODE"])
-	env.Append(LIBS = ["NL_s", "alleg_s", "ws2_32", 
-		"kernel32", "user32", "gdi32", "comdlg32", "ole32", "dinput", "ddraw", 
-		"dxguid", "winmm", "dsound"])
-	if env["CC"] == "gcc":
-		game_sources.append("exchndl/exchndl.c")
-		env.Append(LIBS = ["bfd", "iberty"])
-		env.Append(CPPPATH=["#mingw-libs/include"])
-		env.Append(LIBPATH=["#mingw-libs/lib"])
+if str(Platform()) == "win32":
+    env.Append(CPPDEFINES = ["WIN32", "ALLEGRO_STATICLINK", "DEBUGMODE"])
+    env.Append(LIBS = ["NL_s", "alleg_s", "ws2_32",
+        "kernel32", "user32", "gdi32", "comdlg32", "ole32", "dinput", "ddraw",
+        "dxguid", "winmm", "dsound"])
+    if env["CC"] == "gcc":
+        game_sources.append("exchndl/exchndl.c")
+        env.Append(LIBS = ["bfd", "iberty"])
+        env.Append(CPPPATH=["#mingw-libs/include"])
+        env.Append(LIBPATH=["#mingw-libs/lib"])
 else:
-	env.Append(CPPDEFINES = ["LINUX", "DEBUGMODE"])
-	env.Append(LIBS = ["NL"]) 
-	env.ParseConfig("allegro-config --cflags --libs") 
+    env.Append(CPPDEFINES = ["LINUX", "DEBUGMODE"])
+    if HAVE_DUMBOGG:
+        env.Append(CPPDEFINES = ["HAVE_DUMBOGG"])
+    env.Append(LIBS = ["NL"])
+    if False:
+        dict = env.Dictionary()
+        for key in dict:
+            print "key = %s, value = %s" % (key, dict[key])
+    env.Append(LIBPATH=["/usr/local/lib"])
+    env.Append(LINKFLAGS=["-pthread"])
+    env.Append(CPPPATH=["/usr/local/include"])
+    env.ParseConfig("allegro-config --cflags --libs")
 
-tmp = []
-for x in game_sources: tmp.append("obj/src/" + x)
-game_sources = tmp
+# debug stuff for *n*x
+debug_env = env.Copy(CCFLAGS = "-g")
 
-if str(Platform()) == "win32": 
-	if env["CC"] == "gcc":
-		game_sources.append("obj/Seccast.o")
-	else:
-		game_sources.append("obj/ufo2000.res")
+if str(Platform()) == "win32":
+    if env["CC"] == "gcc":
+        game_sources.append("obj/Seccast.o")
+    else:
+        game_sources.append("obj/ufo2000.res")
 
 env.Program("#ufo2000", game_sources)
