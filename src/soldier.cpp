@@ -1047,35 +1047,34 @@ int Soldier::move(int ISLOCAL)
 	}
 
 	if (m_state == MARCH) {
-		if ((phase == 3 || phase == 7) && map->visible(z, x, y))
-		{
-		    switch(md.SkinType)
-		    {
-		      case S_SECTOID:
-		        soundSystem::getInstance()->play(SS_STEP_SECTOID, 128);
-	            break;
-		      case S_MUTON:
-		        soundSystem::getInstance()->play(SS_STEP_MUTON, 128);
-	            break;
-		      default:
-		        soundSystem::getInstance()->play(SS_STEP_HUMAN, 128);
-	            break;
+		
+		if ((phase == 3 || phase == 7) && map->visible(z, x, y)) {
+			// Make some step sounds (twice per movement from one cell to another)
+			switch (md.SkinType) {
+				case S_SECTOID:
+					soundSystem::getInstance()->play(SS_STEP_SECTOID, 128);
+					break;
+				case S_MUTON:
+					soundSystem::getInstance()->play(SS_STEP_MUTON, 128);
+					break;
+				default:
+					soundSystem::getInstance()->play(SS_STEP_HUMAN, 128);
+					break;
 			}
 		}
 		phase++;
 
-		//1) time = time_of_src/2 + time_of_dest/2;
-		//2) time = time_of_dest;
-
 		if (phase == 4) {
+			// We are axactly in the middle between map cells
 			map->set_man(z, x, y, NULL);
 
 			x += DIR_DELTA_X(dir);
 			y += DIR_DELTA_Y(dir);
 
-			// If we're moving along a diagonal, use 1.5 times the cost, as in the original game itself.
-			// Please note that walktime( -1 ) returns the time of a horizontal move, whereas
-			// walktime( dir ) factors in the diagonal move multiplier.
+			// If we're moving along a diagonal, use 1.5 times the cost, as 
+			// in the original game itself. Please note that walktime(-1) 
+			// returns the time of a horizontal move, whereas walktime(dir)
+			// factors in the diagonal move multiplier.
 			if (DIR_DIAGONAL(dir))
 				spend_time((walktime(-1) * 3 / 2), 1);
 			else
@@ -1088,39 +1087,35 @@ int Soldier::move(int ISLOCAL)
 		}
 
 		if (phase >= 8) {
+			// We have just come to another map cell
 			phase = 0;
 
-			curway++;
-			if (curway >= waylen) {
+			// Check for proximity grenades
+			if (map->check_mine(z, x, y)) {
 				finish_march(ISLOCAL);
-			} else {
-				if (!havetime(walktime(way[curway]), 1))
-					finish_march(ISLOCAL);
-				else
-					dir = way[curway];
+				if (m_state == DIE) return 0;
 			}
 
 			// Check for reaction fire.
-			if (ISLOCAL)
-			{
-				int i = platoon_remote->check_reaction_fire(this);
-				if (i) { // In other words, if more than 0 shots were fired.
+			if (ISLOCAL) {
+				if (platoon_remote->check_reaction_fire(this)) {
+					// In other words, if more than 0 shots were fired.
 					finish_march(ISLOCAL);
 				}
 			}
-			// If we enable this bit, then two reaction shots can be fired!
-/*			else
-			{
-				int i = platoon_local->check_reaction_fire(this);
-				if (i) {
-					finish_march(ISLOCAL);
-				}
-			} */
 
-			if (map->check_mine(z, x, y))
-			{
-				finish_march(ISLOCAL);
-				if (m_state == DIE) return 0;
+			if (m_state == MARCH) {
+				// We haven't stopped because of proximity mines and reaction 
+				// fire, so continue marching until we reach final destination
+				curway++;
+				if (curway >= waylen) {
+					finish_march(ISLOCAL);
+				} else {
+					if (!havetime(walktime(way[curway]), 1))
+						finish_march(ISLOCAL);
+					else
+						dir = way[curway];
+				}
 			}
 		}
 	}
