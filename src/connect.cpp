@@ -222,11 +222,15 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 	int map2d_x = (640 - map2d->w) / 2;
 
 	if (HOST) {
+        local.Position = 1;
+        remote.Position = 2;
         local.set_pos(POS_LEFT,   map2d_x - (MAN_NAME_LEN * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
 		remote.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
 		pd_local = &pd1;
 		pd_remote = &pd2;
 	} else {
+        local.Position = 2;
+        remote.Position = 1;
         remote.set_pos(POS_LEFT, map2d_x - (MAN_NAME_LEN * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
 		local.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
 		pd_remote = &pd1;
@@ -335,9 +339,13 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 			remote.reset_selections();
 
 			if (HOST) {
+                local.Position = 1;
+                remote.Position = 2;
                 local.set_pos(POS_LEFT,   map2d_x - (MAN_NAME_LEN * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
 				remote.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
 			} else {
+                local.Position = 2;
+                remote.Position = 1;
                 remote.set_pos(POS_LEFT,  map2d_x - (MAN_NAME_LEN * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
 				local.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
 			}

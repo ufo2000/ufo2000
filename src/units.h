@@ -68,6 +68,7 @@ private:
 public:
 	int SEND;
 	int START;
+    int Position; //!< 1 - the player goes first, 2 - second
 
     Units();
     ~Units();

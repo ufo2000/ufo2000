@@ -60,6 +60,7 @@ int damage_points = 0; //!< Point-value from items only (weapons and equipment)
 
 Units::Units()
 {
+    Position = 1; // has to be deleted later
 	reset();
     temp_mouse_range = NULL;
 }

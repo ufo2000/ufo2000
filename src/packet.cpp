@@ -23,6 +23,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "global.h"
 #include "packet.h"
+#include "units.h"
 
 char *Packet::strCommand[COMMAND_NUM] = {
     "NOTE", "QUIT", "TURN", "DOOR", "POSE", "PRIM", "UNLO", "LOAD",
@@ -51,10 +52,13 @@ void Packet::create(char *header)
 	size += len;
 }
 
+extern Units local;
+
 void Packet::create(Command cmd)
 {
 	reset();
-	int len = sprintf(data + size, "_Xcom_%s_", strCommand[(int)cmd]);
+	assert (local.Position >= 1 && local.Position <= 2);
+	int len = sprintf(data + size, "_Xcom_%d_%s_", local.Position, strCommand[(int)cmd]);
 	size += len;
 }
 
@@ -76,7 +80,8 @@ Command Packet::command(char *buf, int buf_size)
 		for (int i = 0; i < COMMAND_NUM; i++) {
 			char *xcom = strstr(buf, "_Xcom_");
 			char *pkt = NULL;
-			if (!memcmp(xcom + strlen("_Xcom_"), strCommand[i], strlen(strCommand[i])))
+			Position = xcom [strlen("_Xcom_")] - '0';
+			if (!memcmp(xcom + strlen("_Xcom_") + 2, strCommand[i], strlen(strCommand[i])))
 				pkt = strstr(buf, strCommand[i]);
 
 			if (pkt != NULL) {
