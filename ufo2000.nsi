@@ -419,6 +419,7 @@ Section "${GAME_NAME} (required)" MainSec
 	File "arts\empty.spk"
 	File "arts\menu.jpg"
 	File "arts\text_back.jpg"
+	File "arts\geoscape_texture.jpg"
   
 	SetOutPath $INSTDIR\init-scripts
 	

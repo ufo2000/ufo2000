@@ -591,6 +591,7 @@ void initmain(int argc, char *argv[])
     LUA_REGISTER_CLASS_METHOD(L, Place, destroy_all_items);
 	
     LUA_REGISTER_FUNCTION(L, pck_image);
+    LUA_REGISTER_FUNCTION(L, pck_image_ex);
     LUA_REGISTER_FUNCTION(L, png_image);
     
 #ifdef LINUX
@@ -2615,13 +2616,9 @@ int main(int argc, char *argv[])
                     set_palette((RGB *)datafile[DAT_MENUPAL_BMP].dat);  // yellow mouse-cursor
                     showtip();
                     break;
-                case MAINMENU_EDITOR:
+                case MAINMENU_GEOSCAPE:
                     FS_MusicPlay(F(cfg_get_editor_music_file_name()));
-//                  editor->do_mapedit();
-                    set_palette((RGB *)datafile[DAT_GAMEPAL_BMP].dat);
-                    gui_fg_color = COLOR_BLACK1;
-                    gui_bg_color = COLOR_WHITE; 
-                    alert(" ", "Map editor is currently disabled", " ", "    OK    ", NULL, 1, 0);
+                    geoscape();
                     FS_MusicPlay(NULL);
                     continue;
                 case MAINMENU_HOTSEAT:

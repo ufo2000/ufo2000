@@ -346,6 +346,8 @@ int initgame();
 void gameloop();
 void closegame();
 
+void geoscape();
+
 extern lua_State *L;
 
 const char *F(const char *fileid);
