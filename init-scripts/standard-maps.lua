@@ -102,7 +102,9 @@ AddXcomTerrain {
 		"$(xcom)/maps/urban15.map",
 		"$(xcom)/maps/urban16.map",
 		"$(xcom)/maps/urban17.map",
-		"$(xcom)/maps/urban18.map"
+		"$(xcom)/maps/urban18.map",
+		"$(ufo2000)/newmaps/urban19.map",
+		"$(ufo2000)/newmaps/urban20.map"
 	}
 }
 
