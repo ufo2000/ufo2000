@@ -1134,9 +1134,9 @@ void build_screen(int & select_y)
         sel_man->draw_enemy_seen(select_y);
     }
 
-	if (net->gametype != GAME_TYPE_REPLAY)
-        icon->draw();
-    else {
+    icon->draw();
+	
+    if (net->gametype != GAME_TYPE_REPLAY) {
         char buf[10];
         if (replaydelay != -1)
             sprintf(buf, "< %d >", 9 - replaydelay);
@@ -1155,7 +1155,7 @@ void build_screen(int & select_y)
     if (MODE == WATCH)
         textprintf(screen2, font, 0, 0, COLOR_WHITE, _("WATCH") );
 
-    if (FLAGS & F_TOOLTIPS && net->gametype != GAME_TYPE_REPLAY) {
+    if (FLAGS & F_TOOLTIPS) {
         // Tooltips for the buttons of the control-panel:
         if (icon->inside(mouse_x, mouse_y)) {
             icon_nr = icon->identify(mouse_x, mouse_y);
@@ -1903,13 +1903,13 @@ void gameloop()
                 case UNIT_INFO:
                     MODE = MAP3D;
                     break;
-                case WATCH:
-                	if (net->gametype != GAME_TYPE_REPLAY) {
-                    	if (icon->inside(mouse_x, mouse_y)) {
-                        	icon->execute(mouse_x, mouse_y);
-                        	break;
-                    	}
-                    } else {
+                case WATCH:	
+                    if (icon->inside(mouse_x, mouse_y)) {
+                       	icon->execute(mouse_x, mouse_y);
+                       	break;
+                   	}
+                   	
+                    if (net->gametype != GAME_TYPE_REPLAY) {
                     	if (mouse_inside(2, 12, 10, 20)) {
                     			if (replaydelay != -1)
                     				replaydelay++;
