@@ -46,6 +46,8 @@ static std::string editor_midi_file_name;
 static std::string combat_midi_file_name;
 static std::string win_midi_file_name;
 static std::string lose_midi_file_name;
+static std::string net1_midi_file_name;
+static std::string net2_midi_file_name;
 
 static std::string server_host;
 
@@ -59,6 +61,8 @@ MIDI                  *g_editor_midi_music;
 MIDI                  *g_combat_midi_music;
 MIDI                  *g_win_midi_music;
 MIDI                  *g_lose_midi_music;
+MIDI                  *g_net1_midi_music;
+MIDI                  *g_net2_midi_music;
 
 int cfg_get_base_accuracy()
 {
@@ -115,6 +119,16 @@ const char *cfg_get_lose_music_file_name()
 	return lose_midi_file_name.c_str();
 }
 
+const char *cfg_get_net1_music_file_name()
+{
+	return net1_midi_file_name.c_str();
+}
+
+const char *cfg_get_net2_music_file_name()
+{
+	return net2_midi_file_name.c_str();
+}
+
 void loadini()
 {
 	set_config_file("ufo2000.ini");
@@ -154,6 +168,8 @@ void loadini()
 	combat_midi_file_name = get_config_string(gen, "combat_music", "sound/gmtactic.mid");
 	win_midi_file_name = get_config_string(gen, "win_music", "sound/gmwin.mid");
 	lose_midi_file_name = get_config_string(gen, "lose_music", "sound/gmlose.mid");
+	net1_midi_file_name = get_config_string(gen, "net_music1", "sound/gmgeo1.mid");
+	net2_midi_file_name = get_config_string(gen, "net_music2", "sound/gmgeo2.mid");
 
 	server_host = get_config_string("Server", "host", "127.0.0.1");
 
@@ -163,6 +179,8 @@ void loadini()
 	g_combat_midi_music = load_midi(cfg_get_combat_music_file_name());
 	g_win_midi_music = load_midi(cfg_get_win_music_file_name());
 	g_lose_midi_music = load_midi(cfg_get_lose_music_file_name());
+	g_net1_midi_music = load_midi(cfg_get_net1_music_file_name());
+	g_net2_midi_music = load_midi(cfg_get_net2_music_file_name());
 }
 
 void saveini()

@@ -264,6 +264,10 @@ static initHawkNL HawkNL;
 
 int connect_internet_server()
 {
+	if ((rand() % 2) == 1)
+		play_midi(g_net2_midi_music, 1);
+	else
+		play_midi(g_net1_midi_music, 1);
 	lobby_init_mouse();
 
     std::auto_ptr<ClientServerUfo> server(new ClientServerUfo());
@@ -324,6 +328,7 @@ int connect_internet_server()
 				case SRV_MESSAGE: chat->printf(COLOR_GRAY, "%s", packet.c_str()); break;
 				case SRV_GAME_START_HOST:
 					alert(" ", "  Game should start as host now ", " ", "    OK    ", NULL, 1, 0);
+					play_midi(NULL, 0);
 		            HOST = 1;
 		            net->gametype = GAME_TYPE_INTERNET_SERVER;
 		            net->m_internet_server = server.get();
@@ -334,10 +339,15 @@ int connect_internet_server()
 		            }
 
 					server->send_packet(SRV_ENDGAME, "");
+					if ((rand() % 2) == 1)
+						play_midi(g_net2_midi_music, 1);
+					else
+						play_midi(g_net1_midi_music, 1);
 					lobby_init_mouse();
 					break;
 				case SRV_GAME_START_JOIN:
 					alert(" ", "  Game should start as client now ", " ", "    OK    ", NULL, 1, 0);
+					play_midi(NULL, 0);
 		            HOST = 0;
 		            net->gametype = GAME_TYPE_INTERNET_SERVER;
 		            net->m_internet_server = server.get();
@@ -348,6 +358,10 @@ int connect_internet_server()
 		            }
 
 					server->send_packet(SRV_ENDGAME, "");
+					if ((rand() % 2) == 1)
+						play_midi(g_net2_midi_music, 1);
+					else
+						play_midi(g_net1_midi_music, 1);
 					lobby_init_mouse();
 					break;
 			}
@@ -426,5 +440,6 @@ int connect_internet_server()
 		}
 	}
 
+	play_midi(NULL, 0);
 	return -1;
 }
