@@ -350,7 +350,8 @@ void Units::draw_map_window()
 // Todo: table of coordinates for all the controls, texts, buttons etc., 
 // to make resizing easier, e.g. for adapting to longer translated strings etc.
   //int x0 =  80, x1 = 40;
-    int x0 = 112, x1 = 64;
+  //int x0 = 112, x1 = 64;
+    int x0 = 120, x1 = 76;
 
     rect(    screen2, gmx + gmw / 2 - x0,     SCREEN2H - 79,     gmx + gmw / 2 + x0,     SCREEN2H - 37,     COLOR_WHITE);
     rectfill(screen2, gmx + gmw / 2 - x0 + 1, SCREEN2H - 79 + 1, gmx + gmw / 2 + x0 - 1, SCREEN2H - 37 - 1, COLOR_GRAY14);
@@ -921,13 +922,16 @@ void Units::execute_map(Map *map, int map_change_allowed)
     // Todo: adjust button-coordinates for translated strings
     // see also: draw_map_window
     int x0 = gmx + gmw / 2;
-  //int x1a = 59, x1b =  20;
+  //int x1a = 59, x1b =  20;  // old
   //int x2a = 19, x2b =  20;
   //int x3a = 21, x3b =  60;
   //g_console->printf(COLOR_SYS_DEBUG, "x0=%d mouse_x=%d diff=%d", x0, mouse_x, mouse_x-x0 );
-    int x1a = 84, x1b =  25;
-    int x2a = 20, x2b =  20;
-    int x3a = 25, x3b =  84;
+  //int x1a = 84, x1b =  25;  // wide enough for german translation
+  //int x2a = 20, x2b =  20;
+  //int x3a = 25, x3b =  84;
+    int x1a = 85, x1b =  36;  // for translation: ru
+    int x2a = 37, x2b =  37;
+    int x3a = 38, x3b =  85;
 	if (mouse_inside(gmx + gmw / 2 - x1a, SCREEN2H - 63, gmx + gmw / 2 + x1b, SCREEN2H - 50)) {
 		//"4*4"
   		std::string terrain_name = terrain_set->get_terrain_name(mapdata.terrain);

@@ -541,8 +541,8 @@ int Editor::load_clip()
 #define D_STRENGTH     D_TIME+14
 
 static int d_agup_slider_pro2(int msg, DIALOG *d, int c);
-static char slider_text[8][20];
-static char label_text[ 4][20];
+static char slider_text[8][32];
+static char label_text[ 4][32];
 
 static int points;
 static char points_str[100];

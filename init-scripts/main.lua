@@ -306,7 +306,7 @@ local function load_translated_messages(tbl, filename)
 --   msgstr "ABBRUCH"
 	for l in io.lines(filename) do
 		if string.find(l, "^%s*msgid") then
-          --Message("load_translated_messages: '%s'", l )
+                --Message("load_translated_messages: '%s'", l )
 			assert(mode == nil or mode == "msgstr")
 			if mode == "msgstr" and key ~= "" and str ~= "" then 
 				tbl[key] = str 
@@ -382,8 +382,9 @@ function SetLanguage(lng)
     if FileExists(fn) then
         load_tips(TipsOfTheDay, fn)
     else
-        TipsOfTheDay[1] = "Have Fun!"
-        TipsOfTheDay[0] = 1
+        TipsOfTheDay[1] = "Visit http://ufo2000.sourceforge.net !"
+        TipsOfTheDay[2] = "Have Fun !"
+        TipsOfTheDay[0] = 2
     end
     Message("Tips-of-the-day: %s %d", lng, TipsOfTheDay[0] )
 end

@@ -38,6 +38,7 @@ ae: ä oe: ö ue: ü
 
 
 !! Diverses
+* Besuchen Sie http://ufo2000.sourceforge.net !
 * Viel Spass !
 
 [=...=]

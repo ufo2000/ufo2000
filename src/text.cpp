@@ -163,9 +163,9 @@ void showtip()
     sprintf(rndtip, "%s", _("RANDOM TIP")  ); // without hotkey
     sprintf(next,   "%s", _("NEXT TIP")    );
 
-    int tw =     8, th =     8;  // Textwidth, heigh
-    int xM =  2*tw, yM =    th;  // Margin
-    int x0 =    75, y0 =   150,    w0 =   450,   h0 = 12*th;  // Whole box
+    int tw =     8, th =     8;  // Textwidth, height
+    int xM =  1*tw, yM =    th;  // Margin
+    int x0 =    75, y0 =   150,    w0 =   512,   h0 = 12*th;  // Whole box
     int x1 = x0+xM, y1 = y0+yM,    w1 = w0-2*xM, h1 =    th;  // Title
     int x2 = x0+xM, y2 = y1+2*th,  w2 = w1,      h2 =  4*th;  // Textbox
     int x3 = x0+xM, y3 = y2+h2+th, w3 = w1/3-xM, h3 =  2*th;  // Button1

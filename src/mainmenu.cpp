@@ -62,7 +62,7 @@ struct buttonState {
     FONT *font;
 };
 
-buttonState BS_DISABLED = { 5, { 183, 190, 197, 204, 211 }, 195, 85, NULL };
+buttonState BS_DISABLED = { 5, { 183, 190, 197, 204, 211 }, 195,  85, NULL };
 buttonState BS_IDLE     = { 5, { 183, 190, 197, 204, 211 }, 187, 220, NULL };
 buttonState BS_GOTFOCUS = { 5, { 183, 190, 197, 204, 211 }, 190, 220, NULL };
 buttonState BS_SELECTED = { 5, { 183, 190, 197, 204, 211 }, 195, 220, NULL };
@@ -89,6 +89,10 @@ static void d_draw_baton(BITMAP *bmp, int x, int y, int w, int h, buttonState *s
     text_mode(tmode);
 }
 
+/**
+ * Draw background-image for mainmenu,
+ * plus current version-number of ufo2000
+ */
 static int d_mainmenu_background_proc(int msg, DIALOG *d, int c) 
 {
 	if (msg == MSG_DRAW) {
@@ -129,6 +133,9 @@ static int d_mainmenu_button_proc(int msg, DIALOG *d, int c)
             d->d2 = 1;
             return D_REDRAWME;
         
+        case MSG_KEY:     // for processing ESC
+            return D_CLOSE;
+
         case MSG_LRELEASE: 
         case MSG_MRELEASE: 
         case MSG_RRELEASE:
@@ -155,6 +162,7 @@ static int d_mainmenu_button_proc(int msg, DIALOG *d, int c)
 #define MENU_BTN_STEP       8
 #define MENU_BTN_W          237
 #define MENU_BTN_H          32
+
 
 extern MIDI *g_menu_midi_music;
 
@@ -192,7 +200,7 @@ int do_mainmenu()
         the_dialog[i].dp3 = NULL;
     }
     
-    the_dialog[MAINMENU_QUIT].key   = 27;
+    the_dialog[MAINMENU_QUIT].key   = 27;  // ESC
     the_dialog[MAINMENU_YIELD].proc = d_yield_proc;
     the_dialog[MAINMENU_COUNT].proc = NULL;
     
@@ -223,8 +231,8 @@ int do_mainmenu()
 	
 	if (old_mouse_x != -1)
 		position_mouse(old_mouse_x, old_mouse_y);
-	else
-		position_mouse(550, 180);
+    else  // initial mouse-position on button #2 "Hotseat/Mission-planner":
+        position_mouse(550, MENU_TOP + 2 * MENU_BTN_H - 10);
 
 	soundSystem::getInstance()->play(SS_WINDOW_OPEN_1);
 	// Todo: wait with start of music until sound is finished ?
@@ -246,3 +254,4 @@ int do_mainmenu()
 	
 	return v;
 }
+

@@ -6,7 +6,6 @@
 * The Tab-key can be used to jump to the next soldier.
 * To open doors: right-click to turn the soldier towards the door, then right-click behind the door.
 * Arrow keys change size of battlescape view, chat window and SHOW/HIDE minimap. 
-
 ## Advanced usage of Ufo2000:
 * When moving, if you place the cursor on the map and hit Ctrl you will know how much TU's it costs to move the unit there.
 * When aiming, hold Ctrl to know if there's a valid line of sight between the soldier and the target.
@@ -63,6 +62,8 @@
 * Look everywhere.
 
 ## Misc. (Tips that don't fit into above categories) :
+* Visit http://ufo2000.sourceforge.net !
+* Have Fun !
 * Try to balance the battle.
 
 #.
