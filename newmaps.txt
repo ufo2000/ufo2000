@@ -16,6 +16,7 @@ Contents
 	Randomization vs. preset maps
 	Saving and loading maps 
 	Specific generation rules
+	Terrain troubleshooting FAQ
 
 
 -----------------
@@ -56,7 +57,8 @@ which must be assigned.
 There is also a maximum of 255 .PCK entries for each .mcd file used.
 
 7) There are also files with routing information for maps, like Desert00.rmp
-These were used by the AI of XCOM for moving the aliens.
+These were used by the AI of XCOM for moving the aliens but they are not 
+required at the moment for UFO2000. 
 
 
 ----------------------------
@@ -70,7 +72,7 @@ Right click on the groups, then choose to create a new subgroup (e.g. Sewer).
 Afterwards you can add new maps to the subgroup and assign tilesets into it 
 (e.g. urban or barn). 
 Is is possible for each mapset to be composed of up to 100 individual maps 
-of different sizes (e.g. sewer00-99). 
+of different sizes (e.g. sewer00-99).
 
 Map requirements
 ----------------
@@ -86,6 +88,9 @@ on the necessary sides of the maps, otherwise these maps can become isolated.
 
 4) The maps belonging to a terrain must all be assigned the same tilesets. 
 The order by which they are listed must be always maintained. 
+
+5) All map and terrain files names should be all lower case, e.g. sewer00, not 
+Sewer00.
 
 Map design tips/info
 --------------------
@@ -106,9 +111,10 @@ walls on City.
 - If a door is placed at a corner, when it is opened it can occupy the place 
 of the wall. If the door is closed again, the wall will disappear. 
 
-- The color palettes of UFO and TFTD are different. If you assign tilesets 
-from both games to a map, the colors will become messed up. 
-You should use tilesets from only one of the game for each terrain.
+- Each mapset must have a color palette assigned to it (either UFO or TFTD) on Map
+View. Although the palettes of UFO and TFTD are different you can assign tilesets 
+from both games to the same map. The colors will look weird on Map View, but they 
+will appear correctly on UFO2000. 
 
 - You can make buildings having its parts across several maps but you 
 will have to use a loadable preset map (more below on those) for them 
@@ -138,7 +144,8 @@ in order to replace the images on the .pck files and Koralt's MCD Editor
 You will also need a graphic editor to modify the images (MS Paint will do 
 if you are a masochist :). 
 
-There are 3 types of modifications possible, listed in order of difficulty: 
+There are 3 types of modifications possible, listed in order of difficulty:
+
 1) Only change the image of a specific tile, maintaining its .mcd settings 
  (easiest to do, only requires PCK View)
 2) Only change the settings of the tile on the .mcd file, modifying its 
@@ -317,3 +324,23 @@ Some of the terrains, like City or Port, use .lua generation rules
 in order to properly align roads or place the seaside on the battlefield. 
 These rules can also be used on other maps. 
 
+Terrain troubleshooting FAQ
+---------------------------
+
+1) Both players having the same terrain installed but it doesn't appear as
+available on the mission planner.
+
+- The players have different versions of the terrain installed (the .map, .lua 
+and terrain files). Make sure both got the terrain from the same download file. 
+It also seems that there might be a file incompatibility problem if the players 
+use different versions of the original games, preventing them from playing some 
+of the original terrains. 
+
+2) A new mapset downloaded isn't available even in Hot Seat mode. 
+
+- Nearly all of the new terrains require original files from either UFO or TFTD 
+or both. Unless they are installed in UFO2000 it is impossible to play them. 
+
+3) To where should I copy the terrain I just downloaded?
+
+- All terrain and map files should go to the /newmaps directory on UFO2000.
