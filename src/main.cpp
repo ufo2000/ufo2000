@@ -1625,8 +1625,8 @@ void gameloop()
 					MODE = MAP3D;
 					break;
 				case MAP3D:
-					// Todo: catch right-click on icons of the control-panel
-					// (to avoid turning the soldiers around)
+					if (icon->inside(mouse_x, mouse_y))
+						break;
 
 					if (TARGET)
 						TARGET = 0;
@@ -1712,25 +1712,25 @@ void gameloop()
 					g_console->printf(COLOR_SYS_OK, "Music Volume: %d", vol );
 					break;
 				case KEY_LEFT:
-					if (key[KEY_LSHIFT])
+					if (!key[KEY_LSHIFT])
 						map->move(mapscroll, 0);
 					else
 						resize_screen2(-10, 0);
 					break;
 				case KEY_UP:
-					if (key[KEY_LSHIFT])
+					if (!key[KEY_LSHIFT])
 						map->move(0, mapscroll);
 					else
 						resize_screen2(0, -10);
 					break;
 				case KEY_RIGHT:
-					if (key[KEY_LSHIFT])
+					if (!key[KEY_LSHIFT])
 						map->move(-mapscroll, 0);
 					else
 						resize_screen2(10, 0);
 					break;
 				case KEY_DOWN:
-					if (key[KEY_LSHIFT])
+					if (!key[KEY_LSHIFT])
 						map->move(0, -mapscroll);
 					else
 						resize_screen2(0, 10);
