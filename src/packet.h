@@ -59,7 +59,6 @@ public:
 //	void str2pkt(char *str);
 	void create(char *header);
 	void create(Command cmd);
-	Command command(char *str);
 	Command command(char *buf, int buf_size);
 
 	inline char *str() { return data; }

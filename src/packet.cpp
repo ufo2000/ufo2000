@@ -64,26 +64,6 @@ void Packet::create(Command cmd)
 	size += len;
 }
 
-Command Packet::command(char *str)
-{
-	cur = 0;
-	if (strstr(str, "_Xmes_") != NULL) {
-		strcpy(data, strstr(str, "_Xmes_") + 6);
-		return CMD_MESSAGE;
-	}
-
-	if (strstr(str, "_Xcom_") != NULL)
-		for (int i = 0; i < COMMAND_NUM; i++) {
-			char *pkt = strstr(str, strCommand[i]);
-
-			if (pkt != NULL) {
-				strcpy(data, pkt + strlen(strCommand[i]) + 1);
-				return (Command)i;
-			}
-		}
-	return CMD_NONE;
-}
-
 //01234567890123
 //23_Xcom_TURN_
 //		  8	2
@@ -106,8 +86,9 @@ Command Packet::command(char *buf, int buf_size)
 				pkt = strstr(buf, strCommand[i]);
 
 			if (pkt != NULL) {
-				memcpy(data, pkt + strlen(strCommand[i]) + 1, buf_size);
-				size = buf_size;
+				int data_start = pkt + strlen(strCommand[i]) + 1 - buf;
+				memcpy(data, buf + data_start, buf_size - data_start);
+				size = buf_size - data_start;
 				return (Command)i;
 			}
 		}
