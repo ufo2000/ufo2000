@@ -128,7 +128,7 @@ void Icon::firemenu(int iplace)
 		the_dialog[i].proc = firemenu_dialog_proc;
 		i++;
 
-		waccur[i] = sel_man->TAccuracy(it->data()->throw_accuracy);
+		waccur[i] = sel_man->TAccuracy(100); // !!! no such parameter in obdata.dat
 		wtime[i] = sel_man->required(25);
 		if (sel_man->havetime(wtime[i])) {
 			sprintf(dstr[i], "THROW       ACC>%02d%% TUS>%02d", waccur[i], wtime[i]);
@@ -138,11 +138,7 @@ void Icon::firemenu(int iplace)
 		}
 
 		if (it->is_cold_weapon()) {
-			// Stun rod hack.
-			if (it->is_stun_rod())
-				waccur[i] = 100;
-			else
-				waccur[i] = sel_man->TAccuracy(it->data()->accuracy[APUNCH]);
+			waccur[i] = 100;
 			wtime[i] = sel_man->required(25);
 			if (sel_man->havetime(wtime[i])) {
 				// More stun rod hack.
@@ -155,7 +151,7 @@ void Icon::firemenu(int iplace)
 				i++;
 			}
 			if (it->is_knife()) {
-				waccur[i] = sel_man->TAccuracy(it->data()->accuracy[ATHROW]);
+				waccur[i] = sel_man->TAccuracy(it->obdata_accuracy(ATHROW));
 				wtime[i] = sel_man->required(50);
 				if (sel_man->havetime(wtime[i])) {
 					sprintf(dstr[i], "AIMED THROW ACC>%02d%% TUS>%02d", waccur[i], wtime[i]);
@@ -185,10 +181,10 @@ void Icon::firemenu(int iplace)
 					}
 				}
 			} else {
-				if ((it->data()->isGun && it->haveclip()) || it->is_laser()) {
-					if (it->data()->accuracy[AUTO]) {
-						waccur[i] = sel_man->FAccuracy(it->data()->accuracy[AUTO], it->data()->twoHanded);
-						wtime[i] = sel_man->required(it->data()->time[AUTO]);
+				if ((it->obdata_isGun() && it->haveclip()) || it->is_laser()) {
+					if (it->obdata_accuracy(AUTO)) {
+						waccur[i] = sel_man->FAccuracy(it->obdata_accuracy(AUTO), it->obdata_twoHanded());
+						wtime[i] = sel_man->required(it->obdata_time(AUTO));
 						if (sel_man->havetime(wtime[i])) {
 							sprintf(dstr[i], "AUTO SHOT   ACC>%02d%% TUS>%02d", waccur[i], (wtime[i] + 2) / 3 * 3);
 							the_dialog[i].proc = firemenu_dialog_proc;
@@ -197,9 +193,9 @@ void Icon::firemenu(int iplace)
 							i++;
 						}
 					}
-					if (it->data()->accuracy[SNAP]) {
-						waccur[i] = sel_man->FAccuracy(it->data()->accuracy[SNAP], it->data()->twoHanded);
-						wtime[i] = sel_man->required(it->data()->time[SNAP]);
+					if (it->obdata_accuracy(SNAP)) {
+						waccur[i] = sel_man->FAccuracy(it->obdata_accuracy(SNAP), it->obdata_twoHanded());
+						wtime[i] = sel_man->required(it->obdata_time(SNAP));
 						if (sel_man->havetime(wtime[i])) {
 							sprintf(dstr[i], "SNAP SHOT   ACC>%02d%% TUS>%02d", waccur[i], wtime[i]);
 							the_dialog[i].proc = firemenu_dialog_proc;
@@ -207,9 +203,9 @@ void Icon::firemenu(int iplace)
 							i++;
 						}
 					}
-					if (it->data()->accuracy[AIMED]) {
-						waccur[i] = sel_man->FAccuracy(it->data()->accuracy[AIMED], it->data()->twoHanded);
-						wtime[i] = sel_man->required(it->data()->time[AIMED]);
+					if (it->obdata_accuracy(AIMED)) {
+						waccur[i] = sel_man->FAccuracy(it->obdata_accuracy(AIMED), it->obdata_twoHanded());
+						wtime[i] = sel_man->required(it->obdata_time(AIMED));
 						if (sel_man->havetime(wtime[i])) {
 							sprintf(dstr[i], "AIMED SHOT  ACC>%02d%% TUS>%02d", waccur[i], wtime[i]);
 							the_dialog[i].proc = firemenu_dialog_proc;

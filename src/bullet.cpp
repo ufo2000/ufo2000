@@ -186,7 +186,7 @@ void Bullet::aimedthrow(int _z0, int _x0, int _y0, REAL _fi, REAL _te, Item *_it
 	z0 = _z0; x0 = _x0; y0 = _y0;
 	/*ro = _ro;*/ fi =      _fi;      te =      _te;
 	item = _item;
-	type = item->m_type;
+	type = item->itemtype();
 
 	i = 3;
 	move();
@@ -453,7 +453,7 @@ void Bullet::draw()
 			yg = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
 
 			if ((xg > -32) && (xg < SCREEN2W) && (yg >= -34) && (yg < SCREEN2H)) {
-				map->drawitem(item->data()->pMap, xg - 16, yg - 26);
+				map->drawitem(item->obdata_pMap(), xg - 16, yg - 26);
 				//circle(screen2, xg, yg, 1, 32);
 			}
 
@@ -707,7 +707,7 @@ int Bullet::incendiary() {
 void Bullet::detonate()
 {
 	int range = Item::explo_range(type);
-	int damage = Item::obdata[type].damage;
+	int damage = Item::obdata_damage(type);
 
 	map->explode(owner, lev, col, row, type, range, damage);
 }

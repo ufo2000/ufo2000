@@ -108,7 +108,7 @@ void Explosive::step(int crc)
 			delaytime[i]--;
 			item[i]->set_delay_time(delaytime[i]);
 
-			if ((delaytime[i] <= 0) && (item[i]->m_type != PROXIMITY_GRENADE)) {
+			if ((delaytime[i] <= 0) && (item[i]->itemtype() != PROXIMITY_GRENADE)) {
 				detonate(owner[i], item[i]);
 			}
 		}
@@ -119,7 +119,7 @@ void Explosive::check_for_detonation(int isprox, Item *it)
 {
 	for (int i = 0; i < EXPLOITEMS; i++)
 		if (item[i] == it) {
-			if (((delaytime[i] == 1) && (item[i]->m_type != PROXIMITY_GRENADE)) || (isprox))
+			if (((delaytime[i] == 1) && (item[i]->itemtype() != PROXIMITY_GRENADE)) || (isprox))
 				detonate(owner[i], it);
 			return;
 		}
@@ -141,8 +141,8 @@ int Explosive::detonate(int SID, Item *it)
 	iplace = map->find_place_num(ip, lev, col, row);
 	ASSERT(iplace != -1);
 
-	type = it->m_type;
-	damage = it->data()->damage;
+	type = it->itemtype();
+	damage = it->obdata_damage();
 	range = it->explo_range();
 
 	remove(it);

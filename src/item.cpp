@@ -75,7 +75,7 @@ void Item::initbigobs()
 void Item::freebigobs()
 {
 	delete bigobs;
-	delete [] obdata; // $$$
+	delete [] obdata;
 }
 
 int Item::explo_range(int type)
@@ -118,90 +118,62 @@ int Item::explo_range(int type)
 void Item::od_info(int type, int gx, int gy, int gcol)
 {
 	text_mode(-1);
-	OBDATA *od = &obdata[type];
 
-#if 1
-	textprintf(screen2, font, gx, gy, gcol, "%s", od->name);
+	textprintf(screen2, font, gx, gy, gcol, "%s", obdata_name(type));
 	gy += 15;
 
-	if (od->wayPoints || od->isGun) {
+	if (obdata_wayPoints(type) || obdata_isGun(type)) {
 		textprintf(screen2, font, gx + 5, gy, gcol, "Type   Accuracy  TUs cost");
 		gy += 10;
-		if (od->accuracy[0]) {
+		if (obdata_accuracy(type, 0)) {
 			textprintf(screen2, font, gx, gy, gcol, "Auto     %3d%%      %3d%%",
-			           od->accuracy[0], od->time[0]);
+			           obdata_accuracy(type, 0), obdata_time(type, 0));
 			gy += 10;
 		}
-		if (od->accuracy[1]) {
+		if (obdata_accuracy(type, 1)) {
 			textprintf(screen2, font, gx, gy, gcol, "Snap     %3d%%      %3d%%",
-			           od->accuracy[1], od->time[1]);
+			           obdata_accuracy(type, 1), obdata_time(type, 1));
 			gy += 10;
 		}
-		if (od->accuracy[2]) {
+		if (obdata_accuracy(type, 2)) {
 			textprintf(screen2, font, gx, gy, gcol, "Aimed    %3d%%      %3d%%",
-			           od->accuracy[2], od->time[2]);
+			           obdata_accuracy(type, 2), obdata_time(type, 2));
 			gy += 10;
 		}
 		gy += 5;
 	}
 
-	if (od->twoHanded) {
+	if (obdata_twoHanded(type)) {
 		textprintf(screen2, font, gx, gy, gcol, "Two-handed weapon");
 		gy += 15;
 	}
 
-	if (od->damage > 0) {
-		textprintf(screen2, font, gx, gy, gcol, "Damage: %d  Type: %d", od->damage,
-		(od->hitType > 0 ? od->hitType : od->damageType));
+	if (obdata_damage(type) > 0) {
+		textprintf(screen2, font, gx, gy, gcol, "Damage: %d  Type: %d", obdata_damage(type),
+		(obdata_hitType(type) > 0 ? obdata_hitType(type) : obdata_damageType(type)));
 		gy += 10;
 	}
 
-	if (od->isAmmo) {
-		textprintf(screen2, font, gx, gy, gcol, "Rounds: %d", od->rounds);
+	if (obdata_isAmmo(type)) {
+		textprintf(screen2, font, gx, gy, gcol, "Rounds: %d", obdata_rounds(type));
 		gy += 10;
 	}
 
-	if (od->ammo[0] != 255) {
-		textprintf(screen2, font, gx, gy, gcol, "Ammo1: %s", obdata[od->ammo[0]].name);
+	if (obdata_ammo(type, 0) != 255) {
+		textprintf(screen2, font, gx, gy, gcol, "Ammo1: %s", obdata_name(obdata_ammo(type, 0)));
 		gy += 10;
 	}
-	if (od->ammo[1] != 255) {
-		textprintf(screen2, font, gx, gy, gcol, "Ammo2: %s", obdata[od->ammo[1]].name);
+	if (obdata_ammo(type, 1) != 255) {
+		textprintf(screen2, font, gx, gy, gcol, "Ammo2: %s", obdata_name(obdata_ammo(type, 1)));
 		gy += 10;
 	}
-	if (od->ammo[2] != 255) {
-		textprintf(screen2, font, gx, gy, gcol, "Ammo3: %s", obdata[od->ammo[2]].name);
+	if (obdata_ammo(type, 2) != 255) {
+		textprintf(screen2, font, gx, gy, gcol, "Ammo3: %s", obdata_name(obdata_ammo(type, 2)));
 		gy += 10;
 	}
 
-	textprintf(screen2, font, gx, gy, gcol, "Weight: %d", od->weight);
+	textprintf(screen2, font, gx, gy, gcol, "Weight: %d", obdata_weight(type));
 	gy += 10;
-
-#else
-	textprintf(screen2, font, gx, gy, gcol, "%d name=%s ", type, od->name);
-	textprintf(screen2, font, gx, gy + 10, gcol,
-	           "weight=%d width=%d height=%d twoHand=%d",
-	           od->weight, od->width, od->height, od->twoHanded);
-	textprintf(screen2, font, gx, gy + 20, gcol,
-	           "rounds=%d dam=%d damType=%d hitType=%d",
-	           od->rounds, od->damage, od->damageType, od->hitType);
-	textprintf(screen2, font, gx, gy + 30, gcol,
-	           "ammo[0]=%d ammo[1]=%d ammo[2]=%d",
-	           od->ammo[0], od->ammo[1], od->ammo[2]);
-	textprintf(screen2, font, gx, gy + 40, gcol,
-	           "accur[0]=%d accur[1]=%d accur[2]=%d",
-	           od->accuracy[0], od->accuracy[1], od->accuracy[2]);
-	textprintf(screen2, font, gx, gy + 50, gcol,
-	           "time[0]=%d time[1]=%d time[2]=%d",
-	           od->time[0], od->time[1], od->time[2]);
-	textprintf(screen2, font, gx, gy + 60, gcol,
-	           "Shotable=%d Weap=%d Gun=%d Ammo=%d",
-	           od->isShootable, od->isWeapon, od->isGun, od->isAmmo);
-	textprintf(screen2, font, gx, gy + 70, gcol,
-	           "imp=%d pInv=%d pMap=%d pHeld=%d",
-	           od->importance, od->pInv, od->pMap, od->pHeld);
-#endif
-
 }
 
 
@@ -222,7 +194,7 @@ Item::Item(int _type)
 	m_type = _type;
 	m_x = 0; m_y = 0;
 	m_next = NULL; m_prev = NULL; m_place = NULL;
-	m_rounds = data()->rounds;
+	m_rounds = obdata_rounds(_type);
 	m_delay_time = 0;
 	m_ammo = NULL;
 
@@ -249,15 +221,11 @@ void Item::unlink()
 int Item::loadclip(Item *clip)
 {
 	ASSERT(clip != NULL);
-	//if (data()->isGun && clip->data()->isAmmo) {
-	if ((m_ammo == NULL) &&
-	        (memchr(data()->ammo, clip->m_type, 3) != NULL)) {
+	if ((m_ammo == NULL) && can_use_ammo_type(clip->m_type)) {
 		clip->unlink();
 		m_ammo = clip;
-		//textprintf(screen, font, 1, 150, 1, "ammo=%s", ammo); readkey();
 		return 1;
 	}
-	//}
 	return 0;
 }
 
@@ -327,18 +295,9 @@ int Item::is_knife()
 	return 0;
 }
 
-int Item::armourpierce()
-{
-	if (!data()->isGun)
-		return data()->damage;
-	if (m_ammo != NULL)
-		return m_ammo->data()->damage;
-	return 0;
-}
-
 int Item::inside(int _x, int _y)
 {
-	if ((m_x <= _x) && (_x < m_x + data()->width) && (m_y <= _y) && (_y < m_y + data()->height))
+	if ((m_x <= _x) && (_x < m_x + obdata_width()) && (m_y <= _y) && (_y < m_y + obdata_height()))
 		return 1;
 	return 0;
 }

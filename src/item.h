@@ -73,15 +73,15 @@ struct OBDATA
 enum Action { NONE, THROW, PRIME, SNAPSHOT, AIMEDSHOT, AUTOSHOT, PUNCH, AIMEDTHROW };
 
 class Place;
+class Editor;
 
 class Item: public persist::BaseObject
 {
 	DECLARE_PERSISTENCE(Item);
-public:
+private:
 	static int obdata_num;
 	static OBDATA *obdata;
 
-private:
 	int  m_type;
 	int  m_x, m_y;
 	Item *m_next, *m_prev;
@@ -97,6 +97,20 @@ public:
 	static void freebigobs();
 	static int explo_range(int type);
 	static void od_info(int type, int gx, int gy, int gcol);
+
+	static int obdata_damage(int index) { return obdata[index].damage; }
+	static int obdata_isAmmo(int index) { return obdata[index].isAmmo; }
+	static char *obdata_name(int index) { return obdata[index].name; }
+	static int obdata_damageType(int index) { return obdata[index].damageType; }
+	static int obdata_wayPoints(int index) { return obdata[index].wayPoints; }
+	static int obdata_accuracy(int index, int n) { return obdata[index].accuracy[n]; }
+	static int obdata_time(int index, int n) { return obdata[index].time[n]; }
+	static int obdata_weight(int index) { return obdata[index].weight; }
+	static int obdata_twoHanded(int index) { return obdata[index].twoHanded; }
+	static int obdata_hitType(int index) { return obdata[index].hitType; }
+	static int obdata_rounds(int index) { return obdata[index].rounds; }
+	static int obdata_ammo(int index, int n) { return obdata[index].ammo[n]; }
+	static int obdata_isGun(int index) { return obdata[index].isGun; }
 
 	Item();
 	Item(int _type);
@@ -116,15 +130,33 @@ public:
 
 	Item *unload();
 	void shot();
-	int armourpierce();
 	void unlink();
 
 	int inside(int _x, int _y);
 
-	OBDATA *data() { return &obdata[m_type]; }
+	char *name() { return obdata[m_type].name; }
+	int obdata_pMap() { return obdata[m_type].pMap; }
+	int obdata_pInv() { return obdata[m_type].pInv; }
+	int obdata_pHeld() { return obdata[m_type].pHeld; }
+	int obdata_width() { return obdata[m_type].width; }
+	int obdata_height() { return obdata[m_type].height; }
+	int obdata_isAmmo() { return obdata[m_type].isAmmo; }
+	int obdata_isGun() { return obdata[m_type].isGun; }
+	int obdata_twoHanded() { return obdata[m_type].twoHanded; }
+	int obdata_damage() { return obdata[m_type].damage; }
+	int obdata_accuracy(int n) { return obdata[m_type].accuracy[n]; }
+	int obdata_time(int n) { return obdata[m_type].time[n]; }
+	int obdata_importance() { return obdata[m_type].importance; }
+	int obdata_weight() { return obdata[m_type].weight; }
+
+	bool can_use_ammo_type(char type) {
+		return (memchr(obdata[m_type].ammo, type, 3) != NULL);
+	}
+	
 	Item *clip() { return m_ammo; }
-	int cliptype() { return m_ammo->m_type; }
-	int roundsremain() { return m_ammo->m_rounds; }
+	int cliptype() { ASSERT(m_ammo); return m_ammo->m_type; }
+	int itemtype() { return m_type; }
+	int roundsremain() { return m_ammo ? m_ammo->m_rounds : 0; }
 	void setpos(int _x, int _y) { m_x = _x; m_y = _y; }
 	int explo_range() { return explo_range(m_type); }
 	void set_delay_time(int dt) { m_delay_time = dt; }
@@ -138,9 +170,6 @@ public:
 	}
 
 	friend class Place;
-	friend class Explosive;
-	friend class Bullet;
-	friend class Soldier;
 	friend class Icon;
 	friend class Inventory;
 	friend class Map;

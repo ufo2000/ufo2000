@@ -654,9 +654,9 @@ void Soldier::draw()
 	}
 	if ((dir < 1) || (dir > 5)) {
 		if (rhand_item() != NULL)
-			m_pck[S_HANDOB]->drawpck(dir + 8 * rhand_item()->data()->pHeld, image, handob_y);
+			m_pck[S_HANDOB]->drawpck(dir + 8 * rhand_item()->obdata_pHeld(), image, handob_y);
 		else if (lhand_item() != NULL)
-			m_pck[S_HANDOB]->drawpck(dir + 8 * lhand_item()->data()->pHeld, image, handob_y);
+			m_pck[S_HANDOB]->drawpck(dir + 8 * lhand_item()->obdata_pHeld(), image, handob_y);
 	}
 
 	switch (state) {
@@ -706,9 +706,9 @@ void Soldier::draw()
 
 	if ((dir > 0) && (dir < 6)) {
 		if (rhand_item() != NULL)
-			m_pck[S_HANDOB]->drawpck(dir + 8 * rhand_item()->data()->pHeld, image, handob_y);
+			m_pck[S_HANDOB]->drawpck(dir + 8 * rhand_item()->obdata_pHeld(), image, handob_y);
 		else if (lhand_item() != NULL)
-			m_pck[S_HANDOB]->drawpck(dir + 8 * lhand_item()->data()->pHeld, image, handob_y);
+			m_pck[S_HANDOB]->drawpck(dir + 8 * lhand_item()->obdata_pHeld(), image, handob_y);
 	}
 
 	int ox, oy;
@@ -2132,7 +2132,7 @@ int Soldier::check_for_hit(int _z, int _x, int _y)
 void Soldier::apply_hit(int sniper, int _z, int _x, int _y, int _wtype, int _hitdir)
 {
 	if (check_for_hit(_z, _x, _y)) {
-		hit(sniper, Item::obdata[_wtype].damage, Item::obdata[_wtype].damageType, _hitdir);
+		hit(sniper, Item::obdata_damage(_wtype), Item::obdata_damageType(_wtype), _hitdir);
 	}
 }
 
@@ -2235,7 +2235,7 @@ void Soldier::try_shoot()
 	}
 
 	if (!target.item->is_laser() && !target.item->is_cold_weapon() &&
-	        ((target.item->m_ammo == NULL) || (target.item->m_ammo->m_rounds < FIRE_num + 1))) {
+	        (target.item->roundsremain() < FIRE_num + 1)) {
 		TARGET = 0;
 	}
 
@@ -2284,7 +2284,7 @@ void Soldier::try_reaction_shot(Soldier *the_target)
 	}
 
 	if (!target.item->is_laser() && !target.item->is_cold_weapon() &&
-	        ((target.item->m_ammo == NULL) || (target.item->m_ammo->m_rounds < FIRE_num))) {
+	        (target.item->roundsremain() < FIRE_num)) {
 		FIRE_num = 0;
 		return;
 	}
@@ -2324,7 +2324,7 @@ void Soldier::shoot(int zd, int xd, int yd, int ISLOCAL)
 		REAL fi = acos((REAL)(zd - z0) / ro);
 		REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
 		REAL zA = sqrt(ro);
-		apply_throwing_accuracy(fi, te, target.item->data()->weight);
+		apply_throwing_accuracy(fi, te, target.item->obdata_weight());
 
 		thru(z0, x0, y0, ro, fi, te, zA, target.place, target.time);
 	} else if (target.action == AIMEDTHROW) {
@@ -2371,7 +2371,7 @@ int Soldier::punch(int z0, int x0, int y0, REAL fi, REAL te, int iplace, int req
 	if (it == NULL)
 		return 0;
 
-	m_bullet->punch(z0, x0, y0, fi, te, it->m_type);
+	m_bullet->punch(z0, x0, y0, fi, te, it->itemtype());
 	net->send_punch(NID, z0, x0, y0, fi, te, iplace, req_time);
 	return 1;
 }
@@ -2421,7 +2421,7 @@ int Soldier::beam(int z0, int x0, int y0, REAL fi, REAL te, int iplace, int req_
 	if (it == NULL)
 		return 0;
 
-	m_bullet->beam(z0, x0, y0, fi, te, it->m_type);
+	m_bullet->beam(z0, x0, y0, fi, te, it->itemtype());
 	net->send_beam(NID, z0, x0, y0, fi, te, iplace, req_time);
 	return 1;
 }
@@ -2474,7 +2474,7 @@ void Soldier::showspk()
 			m_spk[5][0][0]->show(screen2, 0, 0);
 			break;
 		default:
-			bigobs->showpck(Item::obdata[md.SkinType].pInv, 67, 70);
+			ASSERT(false);
 	}
 }
 
@@ -2490,34 +2490,34 @@ void Soldier::drawbar(int col1, int col2, int x2, int y2, int val, int valmax)
 void Soldier::drawinfo(int x, int y)
 {
 	if (rhand_item() != NULL) {
-		int it_width = rhand_item()->data()->width;
-		int it_height = rhand_item()->data()->height;
+		int it_width = rhand_item()->obdata_width();
+		int it_height = rhand_item()->obdata_height();
 		int dx = (2 - it_width) * 16 / 2;
 		int dy = (3 - it_height) * 15 / 2;
 
-		bigobs->showpck(rhand_item()->data()->pInv, x + 280 + dx, y + 10 + dy);
+		bigobs->showpck(rhand_item()->obdata_pInv(), x + 280 + dx, y + 10 + dy);
 		if (rhand_item()->clip() != NULL)
 			printsmall(x + 304, y + 47, xcom1_color(1), rhand_item()->roundsremain());
 		if (rhand_item()->is_grenade()) {
 			if (rhand_item()->delay_time() > 0)
 				printsmall(x + 304, y + 47, xcom1_color(36), rhand_item()->delay_time() - 1);
-			if ((rhand_item()->m_type == PROXIMITY_GRENADE) && (rhand_item()->delay_time() < 0))
+			if ((rhand_item()->itemtype() == PROXIMITY_GRENADE) && (rhand_item()->delay_time() < 0))
 				textout(screen2, g_small_font, "*", x + 304, y + 43, xcom1_color(36));
 		}
 	}
 	if (lhand_item() != NULL) {
-		int it_width = lhand_item()->data()->width;
-		int it_height = lhand_item()->data()->height;
+		int it_width = lhand_item()->obdata_width();
+		int it_height = lhand_item()->obdata_height();
 		int dx = (2 - it_width) * 16 / 2;
 		int dy = (3 - it_height) * 15 / 2;
 
-		bigobs->showpck(lhand_item()->data()->pInv, x + 8 + dx, y + 10 + dy);
+		bigobs->showpck(lhand_item()->obdata_pInv(), x + 8 + dx, y + 10 + dy);
 		if (lhand_item()->clip() != NULL)
 			printsmall(x + 33, y + 47, xcom1_color(1), lhand_item()->roundsremain());
 		if (lhand_item()->is_grenade()) {
 			if (lhand_item()->delay_time() > 0)
 				printsmall(x + 33, y + 47, xcom1_color(36), lhand_item()->delay_time() - 1);
-			if ((lhand_item()->m_type == PROXIMITY_GRENADE) && (lhand_item()->delay_time() < 0))
+			if ((lhand_item()->itemtype() == PROXIMITY_GRENADE) && (lhand_item()->delay_time() < 0))
 				textout(screen2, g_small_font, "*", x + 32, y + 43, xcom1_color(36));
 		}
 	}
@@ -2601,21 +2601,21 @@ int Soldier::do_reaction_fire(Soldier *the_target, int place, int shot_type)
 {
 	Item *it = item(place);
 	if (it == NULL) return 0; // no item in hand
-	if (!it->data()->isGun && !it->is_laser()) return 0; // item is not a gun or laser
+	if (!it->obdata_isGun() && !it->is_laser()) return 0; // item is not a gun or laser
 	if (!it->is_laser() && !it->haveclip()) return 0; // gun with no clip
 
 	int tus;
 
 	// Can this item make this type of shot?
-	if (!it->data()->accuracy[shot_type]) return 0;
+	if (!it->obdata_accuracy(shot_type)) return 0;
 
 	// How many TUs do we use?
-	tus = required(it->data()->time[shot_type]);
+	tus = required(it->obdata_time(shot_type));
 	if (shot_type == AUTO) tus = (tus + 2) / 3 * 3; // this was taken from firemenu
 
 	if (tus <= ud.CurTU) {
 		// We have enough time to make the shot. Set up target.
-		target.accur = FAccuracy(it->data()->accuracy[shot_type], it->data()->twoHanded);
+		target.accur = FAccuracy(it->obdata_accuracy(shot_type), it->obdata_twoHanded());
 		target.time = tus;
 		switch (shot_type) {
 			case AIMED:

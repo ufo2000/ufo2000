@@ -206,7 +206,6 @@ void Units::build_items_stats(ITEMDATA *id, char *buf, int &len)
 	}
 }
 
-//extern char weapon_in_use[16];
 extern int weapon[];
 
 int Units::draw_items_stats(int gx, int gy, char *buf, int len)
@@ -220,11 +219,12 @@ int Units::draw_items_stats(int gx, int gy, char *buf, int len)
 				num++;
 		}
 		// Count damage for platoon costs.
-		if ((Item::obdata[weapon[w]].damage > 0) && (num > 0)) damage_points += (Item::obdata[weapon[w]].damage * num);
-		if (Item::obdata[weapon[w]].isAmmo) continue;
+		if ((Item::obdata_damage(weapon[w]) > 0) && (num > 0))
+			damage_points += (Item::obdata_damage(weapon[w]) * num);
+		if (Item::obdata_isAmmo(weapon[w])) continue;
 		if (num != 0) {
 			textprintf(screen2, g_small_font, gx + (aa / 72) * 90, gy + (aa % 72),
-			           xcom1_color(1), "%s=%d", Item::obdata[weapon[w]].name, num);
+			           xcom1_color(1), "%s=%d", Item::obdata_name(weapon[w]), num);
 			aa += 9;
 			
 		}

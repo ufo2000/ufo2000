@@ -616,11 +616,6 @@ void initmain(int argc, char *argv[])
 void closemain()
 {
 	saveini();
-	/*	for(int i=0;i<obdata_num;i++) {
-			delete []obdata[i];
-		}
-		delete []obdata;*/
-	//closenet();
 
 	delete terrain_set;
 	delete net;

@@ -1189,7 +1189,7 @@ void Map::destroy_cell_part(int lev, int col, int row, int _part)
 
 void Map::damage_cell_part(int lev, int col, int row, int _part, int _wtype)
 {
-	int dam = Item::obdata[_wtype].damage;
+	int dam = Item::obdata_damage(_wtype);
 	if (mcd(lev, col, row, _part)->Armour < dam) {
 		destroy_cell_part(lev, col, row, _part);
 	}
@@ -1456,12 +1456,11 @@ void Map::explocell(int sniper, int lev, int col, int row, int damage, int type,
  			destroy_cell_part(lev, col, row, i);
  		}
  	}
-	//place(_z, _x, _y)->damage_items(Item::obdata[_wtype].damage);
 	place(lev, col, row)->damage_items(damage);
 
 	// Range gets passed along here so we can see if we need to hit underarmor.
 	if (man(lev, col, row) != NULL)
-		man(lev, col, row)->explo_hit(sniper, damage, Item::obdata[type].damageType, hitdir, range);
+		man(lev, col, row)->explo_hit(sniper, damage, Item::obdata_damageType(type), hitdir, range);
 }
 
 

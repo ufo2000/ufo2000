@@ -24,6 +24,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "global.h"
 #include "item.h"
 
+class Soldier;
+
 #define EXPLOITEMS 100
 class Explosive: public persist::BaseObject
 {

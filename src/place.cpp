@@ -29,15 +29,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 IMPLEMENT_PERSISTENCE(Place, "Place");
 
-/*
-Place::Place()
-{
-	viscol = 0;
-	m_item = NULL;
-	set(0, 0, 16, 16);
-}
-*/
-
 Place::Place(int x, int y, int w, int h)
 {
 	viscol = 0;
@@ -128,8 +119,8 @@ int Place::isfit(Item * it, int xx, int yy)
 	if (ishand() && (m_item != NULL))
 		return 0;
 
-	for (int i = xx; i < xx + it->data()->width; i++)
-		for (int j = yy; j < yy + it->data()->height; j++)
+	for (int i = xx; i < xx + it->obdata_width(); i++)
+		for (int j = yy; j < yy + it->obdata_height(); j++)
 			if (!isfree(i, j)) return 0;
 	return 1;
 }
@@ -201,8 +192,8 @@ int Place::mdeselect(Item *it)
 {
 	if ((mouse_x > gx) && (mouse_x < gx + width * 16))
 		if ((mouse_y > gy) && (mouse_y < gy + height * 15)) {
-			int x2 = (mouse_x - gx - (it->data()->width - 1) * 8) / 16 + viscol;
-			int y2 = (mouse_y - gy - (it->data()->height - 1) * 8) / 15;
+			int x2 = (mouse_x - gx - (it->obdata_width() - 1) * 8) / 16 + viscol;
+			int y2 = (mouse_y - gy - (it->obdata_height() - 1) * 8) / 15;
 			//text_mode(0);
 			//textprintf(screen, font, 1, 150, 1, "x=%d y=%d", x2, y2);
 
@@ -230,13 +221,13 @@ void Place::draw(int gx, int gy)
 	Item *t = m_item, *gt = m_item;
 
 	while (t != NULL) {
-		if (t->data()->importance > gt->data()->importance) {
+		if (t->obdata_importance() > gt->obdata_importance()) {
 			gt = t;
 		}
 		t = t->m_next;
 	}
 
-	map->drawitem(gt->data()->pMap, gx, gy);
+	map->drawitem(gt->obdata_pMap(), gx, gy);
 }
 /*
 #define P_SHL_RIGHT 0
@@ -291,13 +282,13 @@ void Place::drawgrid(int PLACE_NUM)
 			int y = gy + t->m_y * 15 + 5;
 
 			if (ishand()) {
-				int it_width = t->data()->width;
-				int it_height = t->data()->height;
+				int it_width = t->obdata_width();
+				int it_height = t->obdata_height();
 				x = gx + (width - it_width) * 16 / 2;
 				y = gy + (height - it_height) * 15 / 2 + 5;
 			}
 
-			bigobs->showpck(t->data()->pInv, x, y);
+			bigobs->showpck(t->obdata_pInv(), x, y);
 			if (key[KEY_LCONTROL]) {
 				t->draw_health(1, x + 1, y - 4);
 			}
@@ -456,7 +447,7 @@ int Place::count_weight()
 
 	while (t != NULL)
 	{
-		weight += t->data()->weight;
+		weight += t->obdata_weight();
 		t = t->m_next;
 	}
 	return weight;
