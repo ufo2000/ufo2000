@@ -23,7 +23,8 @@ SERVER_NAME = ufo2000-srv
 
 VPATH = src src/jpgalleg
 
-SRCS_SERVER = server_main.cpp server_protocol.cpp server_transport.cpp
+SRCS_SERVER = server_main.cpp server_protocol.cpp \
+       server_transport.cpp server_config.cpp
 
 ifdef debug
 	CFLAGS += -g

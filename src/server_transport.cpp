@@ -34,6 +34,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <map>
 
 #include "server.h"
+#include "server_config.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -157,7 +158,7 @@ void ServerDispatch::HandleNewConnections()
 	while (it != m_clients_by_socket.end()) {
 		ServerClient *client = it->second; it++;
 		if (!client->m_name.empty()) continue;
-		if (get_time_diff(client->m_connection_time, now) > LOGIN_TIME_TIMIT)
+		if (get_time_diff(client->m_connection_time, now) > LOGIN_TIME_LIMIT)
 			delete client;
 	}
 
@@ -174,13 +175,19 @@ void ServerDispatch::HandleNewConnections()
 
     NLaddress addr;
     nlGetRemoteAddr(newsock, &addr);
-    nlGroupAddSocket(m_group, newsock);
 
     NLbyte string[NL_MAX_STRING_LENGTH];
     
     printf("SERVER: Client %d connected from %s on socket %d\n", 
     	m_clients_by_socket.size(), nlAddrToString(&addr, string), (int)newsock);
 
+	if (!validate_ip(nlAddrToString(&addr, string))) {
+		printf("SERVER: Connection closed. Client IP found in blacklist\n");
+		nlClose(newsock);
+		return;
+    }
+
+    nlGroupAddSocket(m_group, newsock);
     ServerClient *client = CreateServerClient(newsock);
     assert(client != NULL);
 }
@@ -201,8 +208,8 @@ void ServerDispatch::Run(NLsocket sock)
     	HandleNewConnections();
         
     //	Check for incoming messages
-        NLsocket s[MAX_CLIENTS];
-        NLint count = nlPollGroup(m_group, NL_READ_STATUS, s, MAX_CLIENTS, 0);
+        NLsocket s[CONNECTIONS_COUNT_LIMIT];
+        NLint count = nlPollGroup(m_group, NL_READ_STATUS, s, CONNECTIONS_COUNT_LIMIT, 0);
         assert(count != NL_INVALID);
 
 	//	Loop through the clients and read the packets

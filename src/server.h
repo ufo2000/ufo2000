@@ -11,10 +11,10 @@
 // Maximum number of authenticated users allowed on server
 #define PLAYERS_COUNT_LIMIT 16
 // Maximum number of connections
-#define CONNECTIONS_COUNT_LIMIT 64
+#define CONNECTIONS_COUNT_LIMIT 32
 // Number of miliseconds for users to login (after this time the socket 
 // will be closed)
-#define LOGIN_TIME_TIMIT 10000
+#define LOGIN_TIME_LIMIT 10000
 // The maximum length of user name
 #define USERNAME_SIZE_LIMIT 16
 // Maximum size of data packet
@@ -72,7 +72,6 @@ public:
 	virtual bool recv_packet(NLulong id, const std::string &packet) = 0;
 };
 
-#define MAX_CLIENTS 32
 /**
  * Dispather of the packets
  */

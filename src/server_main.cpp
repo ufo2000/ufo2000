@@ -25,6 +25,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <stdio.h>
 #include <nl.h>
 #include "server.h"
+#include "server_config.h"
 
 void printErrorExit(void)
 {
@@ -61,9 +62,11 @@ int main()
         printErrorExit();
     }
 
-    ServerDispatch *server = new ServerDispatch();
-    server->Run(serversock);
-    delete server;
+	load_config();
+
+	ServerDispatch *server = new ServerDispatch();
+	server->Run(serversock);
+	delete server;
 
     nlShutdown();
     return 0;

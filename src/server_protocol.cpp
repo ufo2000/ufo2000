@@ -21,8 +21,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include <stdio.h>
 #include "server_protocol.h"
-
-#define MAX_USERNAME_SIZE 16
+#include "server_config.h"
 
 static std::string time_to_string(long t)
 {
@@ -147,6 +146,12 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 				m_error = true;
 				break;
 			}
+
+		    if (!validate_user(login, password)) {
+				send_packet_back(SRV_FAIL, "Authentication failed");
+				m_error = true;
+				break;
+		    }
 
 			if (m_server->m_clients_by_name.find(login) != m_server->m_clients_by_name.end()) {
 				send_packet_back(SRV_FAIL, "User with this name is already online");
