@@ -71,7 +71,7 @@ LINK32=link.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /J /FD /GZ /c
 # SUBTRACT BASE CPP /Fr
-# ADD CPP /nologo /MTd /W3 /Gm /Gi /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /J /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /Gm /Gi /GR /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /J /FD /GZ /c
 # SUBTRACT CPP /Fr
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
@@ -206,6 +206,10 @@ SOURCE=.\src\place.cpp
 # Begin Source File
 
 SOURCE=.\src\platoon.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\server_config.cpp
 # End Source File
 # Begin Source File
 
@@ -374,6 +378,10 @@ SOURCE=.\src\platoon.h
 # Begin Source File
 
 SOURCE=.\src\server.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\server_config.h
 # End Source File
 # Begin Source File
 

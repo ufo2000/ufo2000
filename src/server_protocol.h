@@ -22,8 +22,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef __SERVER_PROTOCOL_H__
 #define __SERVER_PROTOCOL_H__
 
-#include <set>
 #include "server.h"
+#include <set>
 
 // server replies
 #define SRV_FAIL               0

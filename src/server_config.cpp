@@ -23,7 +23,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <stdio.h>
 #include <string>
 #include <vector>
-#include <set>
+#include <map>
 #include <time.h>
 #include <stdarg.h>
 #include <assert.h>
@@ -39,7 +39,7 @@ struct ip_info
 
 static std::vector<ip_info>  accept_ip;
 static std::vector<ip_info>  reject_ip;
-static std::set<std::string> accept_user;
+static std::map<std::string, std::string> accept_user;
 
 /**
  * Decode string into IP-address and mask
@@ -126,8 +126,13 @@ void load_config()
 		if (!get_variable(buffer, var, val, '#', comment)) continue;
 
 		if (var == "accept_user") {
-			server_log("config accept_user = '%s'\n", val.c_str());
-			accept_user.insert(val);
+			std::string login, password;
+			if (!split_loginpass(val, login, password)) {
+				server_log("invalid user login format in config: %s\n", val.c_str());
+			} else {
+				server_log("config accept_user = '%s'\n", val.c_str());
+				accept_user.insert(std::pair<std::string, std::string>(login, password));
+			}
 		} else if (var == "reject_ip") {
 			NLulong ip, mask;
 			if (!decode_ip(val.c_str(), ip, mask)) {
@@ -151,9 +156,15 @@ void load_config()
 	fclose(f);
 }
 
-bool validate_user(const std::string &username, const std::string &password)
+/**
+ * @return  0 - not registered\n
+ *          1 - password valid\n
+ *         -1 - password invalid
+ */
+int validate_user(const std::string &username, const std::string &password)
 {
-	return accept_user.find(username + ":" + password) != accept_user.end();
+	if (accept_user.find(username) == accept_user.end()) return 0;
+	return accept_user[username] == password ? 1 : -1;
 }
 
 bool validate_ip(const std::string &ip_string)
@@ -194,6 +205,32 @@ void server_log(const char *fmt, ...)
 	fclose(flog);
 
 	va_end(arglist);
+}
+
+bool split_loginpass(const std::string &str, std::string &login, std::string &password)
+{
+	bool colon_found = false;
+	for (unsigned int i = 0; i < str.size(); i++) {
+		if (!colon_found && str[i] == ':') {
+			colon_found = true;
+		} else if (!colon_found) {
+			login.append(str.substr(i, 1));
+		} else {
+			password.append(str.substr(i, 1));
+		}
+	}
+	return colon_found;
+}
+
+bool add_user(const std::string &login, const std::string &password)
+{
+	if (!accept_user.insert(std::pair<std::string, std::string>(login, password)).second)
+		return false;
+
+	FILE *f = fopen("ufo2000-srv.conf", "at");
+	fprintf(f, "\naccept_user = %s:%s", login.c_str(), password.c_str());
+	fclose(f);
+	return true;
 }
 
 int g_server_reload_config_flag = 0;

@@ -130,16 +130,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 	switch (id) {
 		case SRV_LOGIN: {
 			std::string login, password;
-			bool colon_found = false;
-			for (unsigned int i = 0; i < packet.size(); i++) {
-				if (!colon_found && packet[i] == ':') {
-					colon_found = true;
-				} else if (!colon_found) {
-					login.append(packet.substr(i, 1));
-				} else {
-					password.append(packet.substr(i, 1));
-				}
-			}
+			split_loginpass(packet, login, password);
 
 			server_log("user login (name = '%s', pwd = '%s' ip = %s)\n", 
 				login.c_str(), password.c_str(), m_ip.c_str());
@@ -151,11 +142,21 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 				break;
 			}
 
-		    if (!validate_user(login, password)) {
-		    	server_log("login failed: invalid name or password\n");
-				send_packet_back(SRV_FAIL, "Authentication failed (you are not registered)");
+			int validate_user_result = validate_user(login, password);
+		    if (validate_user_result < 0) {
+		    	server_log("login failed: invalid password\n");
+				send_packet_back(SRV_FAIL, "Login failed (invalid password)");
 				m_error = true;
 				break;
+			} else if (validate_user_result == 0) {
+				if (password.size() >= 6 && add_user(login, password)) {
+					server_log("successful registration: %s:%s\n", login.c_str(), password.c_str());
+		    	} else {
+					server_log("login failed: password is too short\n");
+					send_packet_back(SRV_FAIL, "Registration failed (password is too short)");
+					m_error = true;
+					break;
+				}
 		    }
 
 			if (m_server->m_clients_by_name.find(login) != m_server->m_clients_by_name.end()) {

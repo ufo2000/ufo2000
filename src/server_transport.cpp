@@ -22,6 +22,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include "server.h"
+#include "server_config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -32,9 +35,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <string>
 #include <vector>
 #include <map>
-
-#include "server.h"
-#include "server_config.h"
 
 #ifdef WIN32
 #include <windows.h>

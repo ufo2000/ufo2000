@@ -28,8 +28,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 extern int g_server_reload_config_flag;
 
 void load_config();
+bool split_loginpass(const std::string &str, std::string &login, std::string &pass);
 bool validate_ip(const std::string &ip);
-bool validate_user(const std::string &username, const std::string &password);
+int validate_user(const std::string &username, const std::string &password);
+bool add_user(const std::string &username, const std::string &password);
 void server_log(const char *fmt, ...);
 
 #endif
