@@ -220,5 +220,9 @@ source-bz2:
 	tar -cjf $(DISTNAME)-src.tar.bz2 $(DISTNAME)
 	svn delete --force $(DISTNAME)
 
+docs:
+	sed 's,%REVISION%,$(UFO_VERSION).$(UFO_SVNVERSION),g' < doxygen/doxy-en.conf > doxy-en.conf
+	doxygen doxy-en.conf
+
 -include $(DEPS)
 -include $(DEPS_SERVER)
