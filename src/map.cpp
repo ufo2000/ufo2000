@@ -144,49 +144,6 @@ void Map::freepck()
 	delete [] m_loftemp;
 }
 
-Map::Map(GEODATA &mapdata)
-{
-	sel_row = 0; sel_col = 0; sel_lev = 0;
-
-	memcpy(&gd, &mapdata, sizeof(gd));
-	//cprintf("gd.x_size=%d gd.y_size=%d ", gd.x_size, gd.y_size);
-	create(gd.z_size, gd.x_size, gd.y_size);
-
-	//cprintf("gd.terrain=%d ", gd.terrain);
-	load_terrain_pck(gd.terrain, m_terrain);
-	m_terrain_set = gd.terrain;
-	loadmaps(gd.mapdata);
-
-	//terrain = cultivat;
-	//textout(screen, font, "Map::Map press key", 0,0, 1); readkey();
-	build_visi();
-
-	m_minimap_area = new MinimapArea(this, SCREEN_W - SCREEN2W, SCREEN2H);
-}
-
-Map::Map(int l, int c, int r, int _ter, unsigned char *_map)
-{
-	sel_row = 0; sel_col = 0; sel_lev = 0;
-	//memcpy(&gd, &mapdata, sizeof(gd));
-	memset(&gd, 0, sizeof(gd));
-	gd.z_size = l; gd.x_size = c; gd.y_size = r;
-	gd.terrain = _ter;
-	memcpy(&gd.mapdata, _map, sizeof(gd.mapdata));
-
-	create(gd.z_size, gd.x_size, gd.y_size);
-
-	load_terrain_pck(gd.terrain, m_terrain);
-	m_terrain_set = gd.terrain;
-	loadmaps(gd.mapdata);
-
-	m_minimap_area = new MinimapArea(this, SCREEN_W - SCREEN2W, SCREEN2H);
-}
-
-Map::~Map()
-{
-	destroy();
-}
-
 void Map::create(int l, int w, int h)
 {
 	int i, j, k;
@@ -204,7 +161,22 @@ void Map::create(int l, int w, int h)
 	}
 }
 
-void Map::destroy()
+Map::Map(GEODATA &mapdata)
+{
+	sel_row = 0; sel_col = 0; sel_lev = 0;
+
+	create(mapdata.z_size, mapdata.x_size, mapdata.y_size);
+
+	m_terrain_set = mapdata.terrain;
+	load_terrain_pck(m_terrain_set, m_terrain);
+	loadmaps(mapdata.mapdata);
+
+	build_visi();
+
+	m_minimap_area = new MinimapArea(this, SCREEN_W - SCREEN2W, SCREEN2H);
+}
+
+Map::~Map()
 {
 	int i, j, k;
 	for (i = 0; i < level; i++) {
@@ -1536,7 +1508,7 @@ int Map::walk_time(int _z, int _x, int _y)
 {
 	return mcd(_z, _x , _y, 0)->TU_Walk + mcd(_z, _x , _y, 3)->TU_Walk;
 }
-
+/*
 void Map::set_map_data(int c, int r, char ter)
 {
 	//int i = 35 - (c * height + (height - r));
@@ -1563,7 +1535,7 @@ void Map::load(char *fname)
 
 	loadmaps(gd.mapdata);
 }
-
+*/
 bool Map::Write(persist::Engine &archive) const
 {
 	PersistWriteBinary(archive, *this);

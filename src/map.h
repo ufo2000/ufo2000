@@ -75,8 +75,7 @@ private:
 	static uint16 *m_loftemp;
 	static int m_loftemp_num;
 
-	GEODATA gd;
-	int m_terrain_set;
+	int m_terrain_set; //!< Terrain type index
 
 	static int dir2ofs[8];
 	static char ofs2dir[3][3];
@@ -85,6 +84,11 @@ private:
 	TerraPCK *m_terrain;
 
 	static int m_animation_cycle;
+
+	void create(int l, int w, int h);
+
+	void loadmaps(unsigned char *_map);
+	int loadmap(const char *fname, int _x, int _y);
 
 public:
 	MinimapArea *m_minimap_area;
@@ -99,16 +103,8 @@ public:
 	int sel_lev, sel_row, sel_col;
 	int x, y;
 
-	Map() { }
 	Map(GEODATA &mapdata);
 	virtual ~Map();
-	void create(int l, int w, int h);
-	void destroy();
-
-	//void loadgeodata(char *fname);
-	void loadterrain(int tid);
-	void loadmaps(unsigned char *_map);
-	int loadmap(const char *fname, int _x, int _y);
 
 	void drawitem(int itype, int gx, int gy);
 	void draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type, int _seen);
@@ -120,8 +116,6 @@ public:
 	void set();
 	void move(int ofs_x, int ofs_y);
 	void set_sel(int mx, int my);
-
-	int ofs;
 
 	void center(int lev, int col, int row);
 	int center2d(int xx, int yy);
@@ -179,8 +173,6 @@ public:
 	int cell_inside(int z, int x, int y);
 	int find_ground(int lev, int col, int row);
 
-	//int savestate(char *txt);
-	//void load(char *mapfname, TerraPCK *pck2);
 	int eot_save(char *buf, int &buf_size);
 	int saveitems(char *txt);
 
@@ -195,8 +187,6 @@ public:
 		if (m->Tile_Type != type)
 			return & m_terrain->empty;
 		return m;
-
-//		return &m_terrain->m_mcd[m_cell[lev][col][row]->type[type]];
 	}
 
 	Cell *cell(int lev, int col, int row)
@@ -339,11 +329,6 @@ public:
 		center(s->z, s->x, s->y);
 	}
 	void unhide();
-	Map(int l, int c, int r, int _ter, unsigned char *_map);
-	void set_map_data(int c, int r, char ter);
-
-	void save(char *fname);
-	void load(char *fname);
 
 	virtual bool Write(persist::Engine &archive) const;
 	virtual bool Read(persist::Engine &archive);

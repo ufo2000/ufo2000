@@ -651,6 +651,7 @@ void Editor::edit_soldier()
 	man->process_MANDATA();
 }
 
+#if 0
 BITMAP *create_terrain_bitmap(int terrain)
 {
 	unsigned char map[36] = {
@@ -669,8 +670,7 @@ BITMAP *create_terrain_bitmap(int terrain)
 	delete m;
 	return bmp;
 }
-
-
+#endif
 
 int Editor::do_mapselect()
 {
@@ -736,7 +736,7 @@ int Editor::do_mapselect()
 	return -1;
 }
 
-
+#if 0
 void Editor::do_mapedit()
 {
 	platoon_local = m_plt;
@@ -852,17 +852,18 @@ void Editor::do_mapedit()
 	fade_out(10);
 	clear(screen);
 }
+#endif
 
-//extern GEODATA mapdata;
-
+/**
+ * Load map (used in planner screen)
+ */
 void Editor::load_map()
 {
 	char path[1000];
-	//strcpy(path, "geodata2.dat");
 	strcpy(path, last_map_name);
 	if (file_select("LOAD MAP", path, "DAT")) {
-		//m_map->load(path);
-		int fh = open(path, O_RDONLY | O_BINARY); // got  path from fileselector - don't do pfxopen.
+		// got path from fileselector - don't do pfxopen.
+		int fh = open(path, O_RDONLY | O_BINARY); 
 		ASSERT(fh != -1);
 		read(fh, &mapdata, sizeof(mapdata));
 		close(fh);
@@ -876,23 +877,6 @@ void Editor::load_map()
 	}
 }
 /*
-void Editor::create_map()
-{
-	int w = 5, h = 4;
-
-	memset(&mapdata, 0, sizeof(mapdata));
-	mapdata.x_size = w;
-	mapdata.y_size = h;
-	mapdata.z_size = 4;
-	mapdata.terrain = TERRAIN_INDEX;
-
-	delete m_map;
-	m_map = new Map(mapdata);
-	m_map->center(0, m_map->width * 5, m_map->height * 5);
-	m_map->unhide();
-}
-*/
-
 void Editor::save_map()
 {
 	char path[1000];
@@ -903,3 +887,4 @@ void Editor::save_map()
 		strcpy(last_map_name, path);
 	}
 }
+*/
