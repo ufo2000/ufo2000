@@ -214,6 +214,7 @@ function process_log(filename, history)
 
 		previous_line = l
 	end
+	for k, v in users do user_offline(k, previous_line) end
 end
 
 ------------------------------------------------------------------------------
@@ -242,7 +243,7 @@ out:write("<html><head></head><body>")
 
 -- tournament table
 out:write("<br>")
-out:write("<b>UFO2000 players rating table</b><br>")
+out:write(string.format("<b>UFO2000 players rating table (%s)</b><br>", os.date()))
 out:write("<table border=1>")
 out:write("<tr><td>rank<td>name<td>games played<td>games won<td>time online<td>battle time<td>score\n")
 local tmp = {}
@@ -306,7 +307,7 @@ end
 terrain_table = tmp
 table.sort(terrain_table, function (a, b) return a[2] > b[2] end)
 out:write("<table border=1>")
-out:write("<tr><td>terrain type<td>number of times used<td>frequency\n") 
+out:write("<tr><td>terrain type<td>number of times used<td>percent share\n") 
 for k, v in ipairs(terrain_table) do
 	out:write(string.format("<tr><td>%s<td>%d<td>%.1f%%", v[1], v[2], v[2] / count * 100))
 end
@@ -330,9 +331,9 @@ end
 terrain_table = tmp
 table.sort(terrain_table, function (a, b) return a[3] > b[3] end)
 out:write("<table border=1>")
-out:write("<tr><td>operating system<td>frequency\n") 
+out:write("<tr><td>operating system<td>number of people using it<td>percent share\n") 
 for k, v in ipairs(terrain_table) do
-	out:write(string.format("<tr><td>%s<td>%.1f%%", v[1], v[3] / count * 100))
+	out:write(string.format("<tr><td>%s<td>%d<td>%.1f%%", v[1], v[3], v[3] / count * 100))
 end
 out:write("</table>")
 
@@ -354,16 +355,14 @@ for k, game_info in ipairs(games_history) do
 			if string.find(k, "_error$") then 
 				vinfo[k] = (vinfo[k] or 0) + 1 
 				fail_flag = 1
-				if not game_info.connection_error then
-					bad_fail_flag = 1
-				end
+				if k ~= "connection_error" then bad_fail_flag = 1 end
 			end
 		end
 		if fail_flag then
 			vinfo.fail = vinfo.fail + 1 
 			if bad_fail_flag then vinfo.bad_fail = vinfo.bad_fail + 1 end
 			vinfo.total = vinfo.total + 1
-		elseif game_info.winner or os.difftime(game_info.end_time, game_info.start_time) > 5 * 60 then
+		elseif game_info.winner or os.difftime(game_info.end_time, game_info.start_time) > 3 * 60 then
 			vinfo.total = vinfo.total + 1
 		end
 	end
@@ -387,5 +386,6 @@ for k, v in ipairs(versions) do
 		v.bad_fail))
 end
 out:write("</table>")
-out:write("<br>server log processing time: ", os.clock(), "s")
+out:write(string.format("<br>report generated on %s<br>server log parsing performed for %.2f seconds", os.date(), os.clock()))
 out:write("</body></html>")
+out:close()
