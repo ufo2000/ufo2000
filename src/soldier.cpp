@@ -1357,7 +1357,8 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir, int dam_dev)
 
     // Currently just randomizing the damage to be from 0.5 to 1.5 of
     // the table value, NOT 0.0 to 2.0 as it was in X-Com.
-    pierce = (int) cur_random->getUniform(pierce * (1.0 - (dam_dev / 100.0)), pierce * (1.0 + (dam_dev / 100.0)));
+    if (dam_dev > 0)
+    	pierce = (int) cur_random->getUniform(pierce * (1.0 - (dam_dev / 100.0)), pierce * (1.0 + (dam_dev / 100.0)));
 
     // Give credit to the sniper for inflicting damage if it's not stun damage.
     if (sniper && (type != DT_STUN))

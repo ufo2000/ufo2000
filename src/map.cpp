@@ -1451,7 +1451,8 @@ int Map::explode(int sniper, int z, int x, int y, int type)
     int smoke_time = Item::obdata_smokeTime(type);
     double range = explo_range < smoke_range ? smoke_range : explo_range;
     
-    max_damage = (int) cur_random->getUniform(max_damage * (1.0 - (dam_dev / 100.0)), max_damage * (1.0 + (dam_dev / 100.0)));
+    if (dam_dev > 0)
+    	max_damage = (int) cur_random->getUniform(max_damage * (1.0 - (dam_dev / 100.0)), max_damage * (1.0 + (dam_dev / 100.0)));
     
     // move to rules.h
     double EXPL_BORDER_DAMAGE = 0.5; // how much damage does explosion on its border
