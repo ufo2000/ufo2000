@@ -34,6 +34,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "music.h"
 #include "scenario.h"
 
+/**
+ * Routines for Network-play (LAN, Internet)
+ */
+
 int Connect::do_chat()
 {
 	Wind *local_win = NULL, *remote_win = NULL, *info_win = NULL;
@@ -52,7 +56,7 @@ int Connect::do_chat()
 	install_int_ex(drawit_timer, BPS_TO_TIMER(10));      //ticks each second
 
 	back09->show(scr, 0, 0);
-	stretch_blit(scr, screen, 0, 0, 320, 200, 0, 0, 640, 400);
+	stretch_blit(scr, screen,  0, 0, 320, 200, 0, 0, 640, 400);
 	stretch_blit(scr, backscr, 0, 0, 320, 200, 0, 0, 640, 400);
 
 	local_win = new Wind(backscr, 15, 197, 619, 383, xcom1_color(16));
@@ -152,9 +156,9 @@ int Connect::do_chat()
 
 	remove_int(drawit_timer);
 	delete back09;
-	delete local_win; local_win = NULL;
+	delete local_win;  local_win  = NULL;
 	delete remote_win; remote_win = NULL;
-	delete info_win; info_win = NULL;
+	delete info_win;   info_win   = NULL;
 	destroy_bitmap(scr);
 	destroy_bitmap(backscr);
 
@@ -179,9 +183,9 @@ void Connect::reset_uds()
 void Connect::swap_uds()
 {
 	Units u;
-	memcpy(&u, &local, sizeof(Units));
-	memcpy(&local, &remote, sizeof(Units));
-	memcpy(&remote, &u, sizeof(Units));
+	memcpy(&u,      &local,  sizeof(Units));
+	memcpy(&local,  &remote, sizeof(Units));
+	memcpy(&remote, &u,      sizeof(Units));
 }
 
 int FINISH_PLANNER = 0;

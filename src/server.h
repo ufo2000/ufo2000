@@ -10,7 +10,7 @@
 #include <nl.h>
 
 // Limit for average incoming traffic (average is calculated by HawkNL 
-// for for past 8 seconds)
+// for the past 8 seconds)
 #define AVE_TRAFFIC_LIMIT g_srv_ave_traffic_limit
 // Maximum number of authenticated users allowed on server
 #define PLAYERS_COUNT_LIMIT g_srv_players_count_limit
@@ -77,17 +77,17 @@ public:
 	virtual ~ServerClient();
 //	This function sends a data packet to the specified recipient
 	bool send_packet_back(NLulong id, const std::string &packet);
-//	This function sends packet to all users
+//	This function sends a packet to all users
 	bool send_packet_all(NLulong id, const std::string &packet);
 //	This function sends a packet to the opponent of this user
 	bool send_packet_opponent(NLulong id, const std::string &packet);
 
-//	Function that handles received from this client packets
+//	Function that handles packets received from this client 
 	virtual bool recv_packet(NLulong id, const std::string &packet) = 0;
 };
 
 /**
- * Dispather of the packets
+ * Dispatcher of the packets
  */
 class ServerDispatch
 {

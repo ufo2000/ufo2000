@@ -19,6 +19,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+/**
+ * Main program:  Ufo2000-client
+ */
+
 #include "global.h"
 
 #include <string>
@@ -123,10 +127,10 @@ void timer_handler4()
 }
 END_OF_FUNCTION(timer_handler4);
 
-int speed_unit = 15;
-int speed_bullet = 30;
+int speed_unit      = 15;
+int speed_bullet    = 30;
 int speed_mapscroll = 30;
-int mapscroll = 10;
+int mapscroll       = 10;
 
 void install_timers(int _speed_unit, int _speed_bullet, int _speed_mapscroll)
 {
@@ -163,16 +167,19 @@ int local_platoon_size;
 int win;
 int loss;
 
+/**
+ * Initialize game state
+ */ 
 //simple all of new - rem about rand in sol's constructors
 //can diff on remote comps
 void restartgame()
 {
-	win = 0;
+	win  = 0;
 	loss = 0;
 
 	map = new Map(mapdata);
-	p1 = new Platoon(1000, &pd1);
-	p2 = new Platoon(2000, &pd2);
+	p1  = new Platoon(1000, &pd1);
+	p2  = new Platoon(2000, &pd2);
 
 	bool map_saved = Map::save_GEODATA("$(home)/cur_map.lua", &mapdata);
 	ASSERT(map_saved);
@@ -190,11 +197,11 @@ void restartgame()
 	elist = new Explosive();
 	elist->reset();
 	if (HOST) {
-		platoon_local = p1;
+		platoon_local  = p1;
 		platoon_remote = p2;
 		MODE = MAP3D;
 	} else {
-		platoon_local = p2;
+		platoon_local  = p2;
 		platoon_remote = p1;
 		MODE = WATCH;
 	}
@@ -209,6 +216,9 @@ void restartgame()
 	DONE = 0; TARGET = 0; turn = 0;
 }
 
+/**
+ * Initialize video, timers etc. before game
+ */ 
 int initgame()
 {
 	FS_MusicPlay(F(cfg_get_setup_music_file_name()));
@@ -233,6 +243,9 @@ int initgame()
 	return 1;
 }
 
+/**
+ * Cleanup after game
+ */ 
 void closegame()
 {
 	delete p1;
@@ -352,7 +365,7 @@ const char *F(const char *fileid)
 void find_lua_files_callback(const char *filename, int attrib, int param)
 {
 	lua_safe_dofile(L, filename);
-	// $$$ Fixme: lua_dofile sets errno variable in some mysterious way,
+    // $$$ Fixme: lua_dofile sets errno variable in some mysterious way,
     // so allegro for_each_file function stops searching files if we do not 
     // reset this back to 0
 	*allegro_errno = 0; 
@@ -715,8 +728,8 @@ int build_crc()
 }
 
 /**
- * Check that no moves are performed on the map, so that it is save to end turn or
- * do something similar
+ * Check that no moves are performed on the map, 
+ * so that it is save to end turn or do something similar
  */
 bool nomoves()
 {
@@ -840,8 +853,9 @@ void recv_turn(int crc)
 
 int GAMELOOP = 0;
 
-/** Redraw field of view and minimap on the screen
-*/
+/**
+ * Redraw field of view and minimap on the screen
+ */
 void build_screen(int & select_y)
 {
 	clear_to_color(screen2, BACKCOLOR);
@@ -984,6 +998,9 @@ bool loadgame_stream(std::iostream &stream)
 	return true;
 }
 
+/**
+ * Display combat-statistics after a game
+ */
 void endgame_stats()
 {
 	net->send_debug_message("result:%s", (win == loss) ? ("draw") : (win ? "victory" : "defeat"));
@@ -1054,7 +1071,7 @@ void endgame_stats()
 
 	DONE = 0;
 
-	BITMAP *back_win = load_back_image(cfg_get_win_image_file_name());
+	BITMAP *back_win  = load_back_image(cfg_get_win_image_file_name());
 	BITMAP *back_lose = load_back_image(cfg_get_lose_image_file_name());
 
 	if (net->gametype == GAME_TYPE_HOTSEAT)
@@ -1271,7 +1288,7 @@ void gameloop()
 		}
 
 		if (CHANGE) {
-			FLYIT = 0;
+			FLYIT  = 0;
 			MOVEIT = 0;
 		}
 
@@ -1333,7 +1350,7 @@ void gameloop()
                     // reaction fire bullets)
 					if (!platoon_remote->nomoves()) break;
 
-                    // Handle buttons the control panel
+                    // Handle buttons of the control panel
 					if (icon->inside(mouse_x, mouse_y)) {
 						icon->execute(mouse_x, mouse_y);
 						break;
@@ -1586,11 +1603,11 @@ void faststart()
 
 	elist->reset();
 	if (HOST) {
-		platoon_local = p1;
+		platoon_local  = p1;
 		platoon_remote = p2;
 		MODE = MAP3D;
 	} else {
-		platoon_local = p2;
+		platoon_local  = p2;
 		platoon_remote = p1;
 		MODE = WATCH;
 	}
@@ -1669,6 +1686,7 @@ int main(int argc, char *argv[])
             h = -1;
             switch (mm) {
                 case MAINMENU_ABOUT:
+		// $$$ TODO: new about-box 
                     continue;
                 case MAINMENU_EDITOR:
 					FS_MusicPlay(F(cfg_get_editor_music_file_name()));

@@ -37,8 +37,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 
 /* 
- * ATTENTION! This code uses internal data structures of Allegro 4.0.2 and is guaranteed
- * to break on attempt to compile with Allegro WIP or later releases. 
+ * ATTENTION! This code uses internal data structures of Allegro 4.0.2 and  
+ * is guaranteed to break on attempt to compile with Allegro WIP or later releases. 
  *
 **/
 
@@ -224,7 +224,7 @@ storing in
 font_height and space_width are stored separately
 404char is U005E (^). 
 
-Supported Unicode sections are hardcoded. Each section consists of
+Supported Unicode sections are hardcoded. Each section consists of:
 1. Rect-pointers: tables of uaf_glyph_rect structures. 
 2. Bitmap cache for different drawing parameters.
 
@@ -232,10 +232,10 @@ Actual bitmaps get created on a cache miss. The bitmaps are vertical stripes.
 The rect-pointer tables get created on load of glyph data. 
 
 Non-existing glyphs have negative width (in rect-pointer) (-1 in this implementation).
-Because Allegro allows user to specify his own char to substitute for non-existent
-glyphs, we perform search of a glyph for a character twice (second time for allegro_404_char),  
-and draw nothing if they both fail.
-
+Because Allegro allows user to specify his own char to substitute 
+for non-existent glyphs, we perform the search of a glyph 
+for a character twice (second time for allegro_404_char),  
+and draw nothing if they both fail.  
 */
 
 /** Holds 2d pointers to a glyph on a bitmap. Glyph height is the same 
@@ -281,7 +281,8 @@ static void dump_font_info(AL_CONST FONT *f) {
     }    
 }
 */
-/** Creates fontcache entry for given textmode and fgcolor. Gets invoked on a cache miss.
+/** Creates fontcache entry for given textmode and fgcolor. 
+ * Gets invoked on a cache miss.
  * Assumes that bitmaps are/should be/will be in system memory and are of 8 bit depth. 
  * @param f The 'this' pointer.
  * @param tmode The textmode.
@@ -310,9 +311,9 @@ static uaf_fontcache * uaf_make_cacheentry(AL_CONST FONT *f, int tmode, int fgco
 	
 	int x,y,origval;
 	
-	/* construct the bitmaps to put into the cache. Note
-	   that all the dimensions are retained, and the same rect-pointers 
-	   are used for all cache entries. 
+	/* Construct the bitmaps to put into the cache. 
+	   Note that all the dimensions are retained, 
+	   and the same rect-pointers are used for all cache entries. 
 	*/
 	newcache->U00 = create_bitmap(idat->max_w, idat->max_h * 128);
 	newcache->U04 = create_bitmap(idat->max_w, idat->max_h * 128);
@@ -616,7 +617,7 @@ static FONT *create_font(unsigned char *data00, unsigned char *data04, int w, in
 		if (U == 0x10000) { // unused glyph. skip.
 			continue;
 		}
-		/* calculate glyph width. All but one empty columns at the right 
+		/* Calculate glyph width. All but one empty columns at the right 
 		   side are stripped. Calculate maximum width of the glyph, and 
 		   set actual width to be one more than the value we've got, 
 		   but w at most.
@@ -728,12 +729,16 @@ void create_large_font() {
 	delete []dat_lat;
 }
 
-/** Destroys a 'small' font. Uses allegro function to reach destructor in the vtable. */
+/** Destroys a 'small' font.
+ *  Uses allegro function to reach destructor in the vtable. 
+ */
 void free_small_font() {
 	destroy_font(g_small_font);
 }
 
-/** Destroys a 'large' font. Uses allegro function to reach destructor in the vtable. */
+/** Destroys a 'large' font. 
+ * Uses allegro function to reach destructor in the vtable.
+ */
 void free_large_font(){
 	destroy_font(large);
 }

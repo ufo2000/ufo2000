@@ -217,15 +217,15 @@ static void ufo2k_set_gfx_mode(int gfx_driver, int min_color_depth)
 	}
 
 	if (color_depth == 8) {
-		xcom1_color = xcom1_color_8bpp;
-		xcom1_menu_color = xcom1_menu_color_8bpp;
+		xcom1_color        = xcom1_color_8bpp;
+		xcom1_menu_color   = xcom1_menu_color_8bpp;
 		xcom1_darken_color = xcom1_darken_color_8bpp;
 	} else {
 	//	Create tables for translation from xcom1 palette colors to colors
 	//	for currently selected video mode
-		xcom1_color_table[0] = makecol(255, 0, 255);
+		xcom1_color_table[0]      = makecol(255, 0, 255);
 		xcom1_menu_color_table[0] = makecol(255, 0, 255);
-		tftd_color_table[0] = makecol(255, 0, 255);
+		tftd_color_table[0]       = makecol(255, 0, 255);
 
 		for (int c = 1; c < 256; c++)
 		{
@@ -237,8 +237,8 @@ static void ufo2k_set_gfx_mode(int gfx_driver, int min_color_depth)
 			tftd_color_table[c] = makecol(tftd_rgb.r << 2, tftd_rgb.g << 2, tftd_rgb.b << 2);
 		}
 
-		xcom1_color = xcom1_color_high_bpp;
-		xcom1_menu_color = xcom1_menu_color_high_bpp;
+		xcom1_color        = xcom1_color_high_bpp;
+		xcom1_menu_color   = xcom1_menu_color_high_bpp;
 		xcom1_darken_color = xcom1_darken_color_high_bpp;
 	}
 }
@@ -266,6 +266,9 @@ void reset_video()
 	g_switch_in_counter++;
 }
 
+/**
+ * Save screenshot to file
+ */
 void savescreen()
 {
 	BITMAP *scr = create_bitmap(SCREEN_W, SCREEN_H);
@@ -349,8 +352,8 @@ int askmenu(const char *mess)
 }
 
 /**
- * Function for background image loading. Can load JPG, 
- * BMP, LBM, SPK, SCR formats
+ * Function for background image loading. 
+ * Can load JPG, BMP, LBM, SPK, SCR formats
  *
  * @param filename  name of the file with the image to be loaded
  */

@@ -26,6 +26,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "multiplay.h"
 #include "soldier.h"
 
+/**
+ * Manage soldiers inventory
+ */
 Inventory::Inventory()
 {
 	BITMAP *image = create_bitmap(320, 200); clear(image);
@@ -99,7 +102,7 @@ void Inventory::draw()
 			sel_item->od_info(mouse_x, mouse_y, xcom1_color(1));
 		} else {
 			PCK::showpck(sel_item->obdata_pInv(),
-			                mouse_x - sel_item->obdata_width() * 16 / 2,
+			                mouse_x - sel_item->obdata_width()  * 16 / 2,
 			                mouse_y - sel_item->obdata_height() * 16 / 2 + 8);
 		}
 

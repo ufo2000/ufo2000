@@ -819,7 +819,7 @@ void Soldier::draw_unibord(int gx, int gy)
 	textout_centre(screen2, large, md.Name, gx + 160, gy + 4, xcom1_color(66));
 
 	int fw = ud.HeadWound + ud.TorsoWound + ud.RArmWound +
-	         ud.LArmWound + ud.RLegWound + ud.LLegWound;
+	         ud.LArmWound + ud.RLegWound  + ud.LLegWound;
 
 	struct {
 		char *str;
@@ -828,23 +828,23 @@ void Soldier::draw_unibord(int gx, int gy)
 		int col;
 	}
 	param[17] = {
-	                {"TIME UNITS", ud.CurTU, ud.MaxTU, 68},
-	                {"ENERGY", ud.CurEnergy, ud.MaxEnergy, 148},
-	                {"HEALTH", ud.CurHealth, ud.MaxHealth, 36},
-	                {"FATAL WOUNDS", fw, fw, 36},
-	                {"BRAVERY", md.Bravery, md.Bravery, 196},
-	                {"MORALE", ud.Morale, 100, 197},
-	                {"REACTIONS", ud.CurReactions, md.Reactions, 20},
-	                {"FIRING ACCURACY", ud.CurFAccuracy, ud.MaxFA, 132},
-	                {"THROWING ACCURACY", ud.CurTAccuracy, ud.MaxTA, 100},
-	                {"STRENGTH", ud.MaxStrength, md.Strength, 52},
+	                {"TIME UNITS",        ud.CurTU,        ud.MaxTU,      68},
+	                {"ENERGY",            ud.CurEnergy,    ud.MaxEnergy, 148},
+	                {"HEALTH",            ud.CurHealth,    ud.MaxHealth,  36},
+	                {"FATAL WOUNDS",      fw,              fw,            36},
+	                {"BRAVERY",           md.Bravery,      md.Bravery,   196},
+	                {"MORALE",            ud.Morale,       100,          197},
+	                {"REACTIONS",         ud.CurReactions, md.Reactions,  20},
+	                {"FIRING ACCURACY",   ud.CurFAccuracy, ud.MaxFA,     132},
+	                {"THROWING ACCURACY", ud.CurTAccuracy, ud.MaxTA,     100},
+	                {"STRENGTH",          ud.MaxStrength,  md.Strength,   52},
 	                {NULL, 0, 0, 0},
 	                {NULL, 0, 0, 0},
-	                {"FRONT ARMOUR", ud.CurFront, ud.MaxFront, 84},
-	                {"LEFT ARMOUR", ud.CurLeft, ud.MaxLeft, 84},
-	                {"RIGHT ARMOUR", ud.CurRight, ud.MaxRight, 84},
-	                {"REAR ARMOUR", ud.CurRear, ud.MaxRear, 84},
-	                {"UNDER ARMOUR", ud.CurUnder, ud.MaxUnder, 84}
+	                {"FRONT ARMOUR",      ud.CurFront,     ud.MaxFront,   84},
+	                {"LEFT ARMOUR",       ud.CurLeft,      ud.MaxLeft,    84},
+	                {"RIGHT ARMOUR",      ud.CurRight,     ud.MaxRight,   84},
+	                {"REAR ARMOUR",       ud.CurRear,      ud.MaxRear,    84},
+	                {"UNDER ARMOUR",      ud.CurUnder,     ud.MaxUnder,   84}
 	            };
 
 	for (int i = 0; i < 17; i++) {
@@ -1089,7 +1089,7 @@ int Soldier::move(int ISLOCAL)
 		phase++;
 
 		if (phase == 4) {
-			// We are axactly in the middle between map cells
+			// We are exactly in the middle between map cells
 			map->set_man(z, x, y, NULL);
 
 			x += DIR_DELTA_X(dir);
@@ -1145,7 +1145,7 @@ int Soldier::move(int ISLOCAL)
 	}
 
 	if ((m_state == STAND) || (m_state == SIT)) {
-		// If we performed some action befores, let give enemy a chance for reaction fire
+		// If we performed some action before, lets give enemy a chance for reaction fire
 		int reaction_chances = m_reaction_chances;
 		m_reaction_chances = 0;
 		if (!ISLOCAL) reaction_chances = 0;
@@ -1802,7 +1802,7 @@ void Soldier::stun()
 	z = -1;
 
 	curway = -1; waylen = 0;
-	FIRE_num = 0;
+	FIRE_num  = 0;
 	enemy_num = 0;
 	seen_enemy_num = 0;
 	MOVED = 0;
@@ -1860,8 +1860,8 @@ void Soldier::change_morale(int delta)
 }
 
 //shl_right 0   //leg_left  5
-//shl_left  1   //back     6
-//arm_right 2   //belt     7
+//shl_left  1   //back      6
+//arm_right 2   //belt      7
 //arm_left  3   //map       8
 //leg_right 4
 int Soldier::calctime(int src, int dst)
@@ -2079,18 +2079,18 @@ void Soldier::spend_time(int tm, int use_energy)
 	ud.CurTU -= tm;
 	if (use_energy) {
 		ASSERT(ud.CurEnergy >= (tm / 2));
-		ud.CurEnergy -= (tm / 2);
+		ud.CurEnergy        -= (tm / 2);
 	}
 
 	if (FLAGS & F_ENDLESS_TU) {
-		if (ud.CurTU < 32) ud.CurTU = ud.MaxTU;
+		if (ud.CurTU     < 32) ud.CurTU = ud.MaxTU;
 		if (ud.CurEnergy < 16) ud.CurEnergy = ud.MaxEnergy;
 	}
 }
 
 /**
  * Function that checks if the soldier has time units and energy required
- * to do something. For actions that require energy, 
+ * to do something. For actions that require energy. 
  *
  * @param ntime       time required to perform an action
  * @param use_energy  flag which shows whether the action requires energy 
@@ -2148,7 +2148,7 @@ int Soldier::FAccuracy(int peraccur, int TWOHAND)
 
 	if (m_state == SIT) ac += ac / 20;
 
-	double weapon_delta = 1. / (double)(peraccur * peraccur);
+	double weapon_delta  = 1. / (double)(peraccur * peraccur);
 	double soldier_delta = 1. / (double)(ac * ac);
 
 	return static_cast<int>(sqrt(2. / (weapon_delta + soldier_delta)));
@@ -2163,7 +2163,7 @@ int Soldier::TAccuracy(int peraccur)
 
 void Soldier::apply_accuracy(REAL & fi, REAL & te)
 {
-	REAL TE_STEP = (PI / 8. / (double)(cfg_get_base_accuracy()));
+	REAL TE_STEP = (PI /  8. / (double)(cfg_get_base_accuracy()));
 	REAL FI_STEP = (PI / 32. / (double)(cfg_get_base_accuracy()));
 
 	double acc = 100. * 100. / (double)(target.accur * target.accur);
@@ -2179,7 +2179,7 @@ void Soldier::apply_accuracy(REAL & fi, REAL & te)
 
 void Soldier::apply_throwing_accuracy(REAL &fi, REAL &te, int weight)
 {
-	REAL TE_STEP = (PI / 8 / 30.0);
+	REAL TE_STEP = (PI /  8 / 30.0);
 	REAL FI_STEP = (PI / 32 / 30.0);
 
 	int randmax = 100 - target.accur;
@@ -2231,20 +2231,20 @@ void Soldier::precise_aiming()
 	BITMAP *bmp = map->create_lof_bitmap(map->sel_lev, map->sel_col, map->sel_row);
 	BITMAP *bmp_back = create_bitmap(bmp->w, bmp->h);
 	int mx = mouse_x, my = mouse_y;
-	blit(screen, bmp_back, mx, my, 0, 0, bmp->w, bmp->h);
-	blit(bmp, screen, 0, 0, mx, my, bmp->w, bmp->h);
+	blit(screen, bmp_back, mx, my, 0, 0,  bmp->w, bmp->h);
+	blit(bmp,    screen,    0, 0, mx, my, bmp->w, bmp->h);
 	int z = 8, x = 8, y = 8;
 
 	int mouse_leftr = 0, mouse_rightr = 0;
-	if (!(mouse_b & 1)) mouse_leftr = 1;
-	if (!(mouse_b & 2)) mouse_rightr = 1;
+	if (!(mouse_b & 1)) mouse_leftr   = 1;
+	if (!(mouse_b & 2)) mouse_rightr  = 1;
 
 	set_mouse_range(mx + 1, my + 1, mx + bmp->w - 1, my + bmp->h - 1);
 	show_mouse(screen);
 	text_mode(0);
 	while (!keypressed()) {
 		if (CHANGE) {
-			int sx = (mouse_x - mx) / 20;
+			int sx =     (mouse_x - mx) / 20;
 			int sy = 2 - (mouse_y - my) / 20;
 			z = sx * 3 + sy;
 
@@ -2270,7 +2270,7 @@ void Soldier::precise_aiming()
 			break;
 		}
 
-		if (!(mouse_b & 1)) mouse_leftr = 1;
+		if (!(mouse_b & 1)) mouse_leftr  = 1;
 		if (!(mouse_b & 2)) mouse_rightr = 1;
 	}
 
@@ -2595,15 +2595,15 @@ void Soldier::drawinfo(int x, int y)
 
 	icon->draw_text(T_MAN_NAME, md.Name);
 
-	icon->draw_attribute(A_TIME_UNITS, ud.CurTU, ud.MaxTU);
-	icon->draw_attribute(A_ENERGY, ud.CurEnergy, ud.MaxEnergy);
-	icon->draw_attribute(A_HEALTH, ud.CurHealth, ud.MaxHealth);
-	icon->draw_attribute(A_MORALE, ud.Morale, 100);
+	icon->draw_attribute(A_TIME_UNITS, ud.CurTU,     ud.MaxTU);
+	icon->draw_attribute(A_ENERGY,     ud.CurEnergy, ud.MaxEnergy);
+	icon->draw_attribute(A_HEALTH,     ud.CurHealth, ud.MaxHealth);
+	icon->draw_attribute(A_MORALE,     ud.Morale, 100);
 
 	if (ud.CurStun > 0) // draw stun bar
 	{
 		if (ud.CurStun < ud.CurHealth)
-			icon->draw_stun_bar(x, y, ud.CurStun, ud.MaxHealth);
+			icon->draw_stun_bar(x, y, ud.CurStun,   ud.MaxHealth);
 		else
 			icon->draw_stun_bar(x, y, ud.CurHealth, ud.MaxHealth);
 	}
@@ -2648,7 +2648,7 @@ int Soldier::check_reaction_fire(Soldier *the_target)
 			if (do_reaction_fire(the_target, P_ARM_LEFT, AIMED)) return 1;
 			if (do_reaction_fire(the_target, P_ARM_LEFT, SNAP)) return 1;
 
-			// No luck whatsoever. Fuhgeddabouddit.
+			// No weapon was ready to be fired.
 			return 0;
 		}
 		else return 0; // Can't react fast enough. No go.
@@ -2661,7 +2661,7 @@ int Soldier::do_reaction_fire(Soldier *the_target, int place, int shot_type)
 	Item *it = item(place);
 	if (it == NULL) return 0; // no item in hand
 	if (!it->obdata_isGun() && !it->is_laser()) return 0; // item is not a gun or laser
-	if (!it->is_laser() && !it->haveclip()) return 0; // gun with no clip
+	if (!it->is_laser()     && !it->haveclip()) return 0; // gun with no clip
 
 	int tus;
 
