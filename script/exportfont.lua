@@ -1,3 +1,5 @@
+#!/usr/bin/lua
+
 -- script for X-COM font data files loading and conversion
 
 local xlat = {[0] = ".", [1] = "#", [2] = "$", [3] = "%", [4] = "*", [5] = "+"}

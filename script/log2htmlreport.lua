@@ -1,3 +1,5 @@
+#!/usr/bin/lua
+
 ------------------------------------------------------------------------------
 -- A script for ufo2000 server log parsing
 -- It displays some statistics in html form that can be used to hold
@@ -5,7 +7,7 @@
 ------------------------------------------------------------------------------
 
 if arg[1] == nil then
-	print("you need to specify ufo2000 server log file in a command line")
+	print("Usage: log2htmlreport.lua [ufo2000 server log]")
 	os.exit()
 end
 

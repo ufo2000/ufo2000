@@ -1,3 +1,5 @@
+#!/usr/bin/lua
+
 -- a small script that reads x-com .map files and converts it into a script
 -- with human readable map representation which can be edited and executed
 -- to get modified map back into x-com format
@@ -5,6 +7,11 @@
 -- function that assigns ASCII character to cell info
 -- it is better to call this function for widely used cells first, so these 
 -- cells will be assigned the most suitable characters
+
+if arg[1] == nil then
+	print("Usage: convertmap.lua [x-com .map file]")
+	os.exit()
+end
 
 -- preferable images for different cell types
 local floor  = ".,:;*+-=%/^|<>'`~^_()"
