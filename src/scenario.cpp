@@ -73,8 +73,7 @@ Scenario::Scenario (int sc_type)
 
 void Scenario::init_deathmatch ()
 {
-    // ?? gettext
-    name[SC_DEATHMATCH] = _("Deathmatch");
+    name[SC_DEATHMATCH] = ("Deathmatch");
 
     briefing_left[SC_DEATHMATCH][0] = briefing_right[SC_DEATHMATCH][0] = _("Kill 'em all!");
 
@@ -85,7 +84,7 @@ void Scenario::init_deathmatch ()
 
 void Scenario::init_escape ()
 {
-    name[SC_ESCAPE] = _("Escape");
+    name[SC_ESCAPE] = ("Escape");
 
     briefing_left[SC_ESCAPE][0]  = _("You must get your leader (first selected soldier)");
     briefing_left[SC_ESCAPE][1]  = _("to the opposite edge of the map to win.          ");
@@ -96,15 +95,14 @@ void Scenario::init_escape ()
     briefing_right[SC_ESCAPE][1] = _("soldier) before he gets to your edge of the map. ");
     briefing_right[SC_ESCAPE][2] = _("Leader is always visible on your minimap.        ");
 
-    // ?? gettext
-    options[SC_ESCAPE][0] = new Option(OPT_SWITCH, 0, ("Leader can use two-handed weapons"), ("Leader can't use two-handed weapons"), false);
+    options[SC_ESCAPE][0] = new Option(OPT_SWITCH, 0, _("Leader can use two-handed weapons"), _("Leader can't use two-handed weapons"), false);
 	options[SC_ESCAPE][1] = new Option(OPT_NONE);
 	options[SC_ESCAPE][2] = new Option(OPT_NONE);
 }
 
 void Scenario::init_sabotage ()
 {
-    name[SC_SABOTAGE] = _("Diversion");
+    name[SC_SABOTAGE] = ("Diversion");
 
     briefing_left[SC_SABOTAGE][0]  = _("You must place high explosives at places which   ");
     briefing_left[SC_SABOTAGE][1]  = _("are indicated on your minimap. You can have high ");
@@ -122,7 +120,7 @@ void Scenario::init_sabotage ()
 
 void Scenario::init_control ()
 {
-    name[SC_CONTROL] = _("Control");
+    name[SC_CONTROL] = ("Control");
 
     briefing_left[SC_CONTROL][0] = briefing_right[SC_CONTROL][0] = _("You must control the 10x10 area in the centre of ");
     briefing_left[SC_CONTROL][1] = briefing_right[SC_CONTROL][1] = _("the map for number of successive half-turns set  ");
@@ -130,15 +128,14 @@ void Scenario::init_control ()
     briefing_left[SC_CONTROL][3] = briefing_right[SC_CONTROL][3] = _("To control an area you have to have in it more   ");
     briefing_left[SC_CONTROL][4] = briefing_right[SC_CONTROL][4] = _("soldiers than your opponent.                     ");
 
-    // ?? gettext
-    options[SC_CONTROL][0] = new Option(OPT_NUMBER, 3, 1, 2, 20, 0, ("Half-turns to control the area"), false);
+    options[SC_CONTROL][0] = new Option(OPT_NUMBER, 3, 1, 2, 20, 0, _("Half-turns to control the area"), false);
 	options[SC_CONTROL][1] = new Option(OPT_NONE);
 	options[SC_CONTROL][2] = new Option(OPT_NONE);
 }
 
 void Scenario::init_assassin ()
 {
-    name[SC_ASSASSIN] = _("Assassination");
+    name[SC_ASSASSIN] = ("Assassination");
 
     briefing_left[SC_ASSASSIN][0]  = _("You must kill enemy leader (first selected       ");
     briefing_left[SC_ASSASSIN][1]  = _("soldier). Enemy leader is always visible on your ");
@@ -148,15 +145,14 @@ void Scenario::init_assassin ()
     briefing_right[SC_ASSASSIN][1] = _("soldier). He is always visible for your opponent ");
     briefing_right[SC_ASSASSIN][2] = _("on the minimap.                                  ");
 
-    // ?? gettext
-    options[SC_ASSASSIN][0] = new Option(OPT_SWITCH, 0, ("Leader can use two-handed weapons"), ("Leader can't use two-handed weapons"), false);
+    options[SC_ASSASSIN][0] = new Option(OPT_SWITCH, 0, _("Leader can use two-handed weapons"), _("Leader can't use two-handed weapons"), false);
 	options[SC_ASSASSIN][1] = new Option(OPT_NONE);
 	options[SC_ASSASSIN][2] = new Option(OPT_NONE);
 }
 
 void Scenario::init_hold ()
 {
-    name[SC_HOLD] = _("Hold");
+    name[SC_HOLD] = ("Hold");
 
     briefing_left[SC_HOLD][0]  = _("You must save at least half of your squad        ");
     briefing_left[SC_HOLD][1]  = _("(rounded down) until the end of the match (number");
@@ -166,15 +162,14 @@ void Scenario::init_hold ()
     briefing_right[SC_HOLD][1] = _("(rounded down) until the end of the match (number");
     briefing_right[SC_HOLD][2] = _("of turns is set in the \"Options\" section).       ");
 
-    // ?? gettext
-    options[SC_HOLD][0] = new Option(OPT_NUMBER, 5, 1, 1, 20, 0, ("Half-turns to hold (match length)"), false);
-    options[SC_HOLD][1] = new Option(OPT_SWITCH, 1, ("\"Surrounded\" deployment"), ("Standard deployment"), true);
+    options[SC_HOLD][0] = new Option(OPT_NUMBER, 5, 1, 1, 20, 0, _("Half-turns to hold (match length)"), false);
+    options[SC_HOLD][1] = new Option(OPT_SWITCH, 1, _("\"Surrounded\" deployment"), _("Standard deployment"), true);
 	options[SC_HOLD][2] = new Option(OPT_HIDDEN, 0);
 }
 
 void Scenario::init_break ()
 {
-    name[SC_BREAK] = _("Breakthrough");
+    name[SC_BREAK] = ("Breakthrough");
 
     briefing_left[SC_BREAK][0]  = _("You must bring at least half of your squad       ");
     briefing_left[SC_BREAK][1]  = _("(rounded up) to the opposite edge of the map if  ");
@@ -186,15 +181,14 @@ void Scenario::init_break ()
     briefing_right[SC_BREAK][2] = _("map if standard deployment is selected or to any ");
     briefing_right[SC_BREAK][3] = _("edge if \"surrounded\" deployment is selected.     ");
 
-    // ?? gettext
-    options[SC_BREAK][0] = new Option(OPT_SWITCH, 0, ("\"Surrounded\" deployment"), ("Standard deployment"), true);
+    options[SC_BREAK][0] = new Option(OPT_SWITCH, 0, _("\"Surrounded\" deployment"), _("Standard deployment"), true);
 	options[SC_BREAK][1] = new Option(OPT_HIDDEN, 0);
 	options[SC_BREAK][2] = new Option(OPT_NONE);
 }
 
 void Scenario::init_capture ()
 {
-    name[SC_CAPTURE] = _("Capture");
+    name[SC_CAPTURE] = ("Capture");
 
     briefing_left[SC_CAPTURE][0]  = _("You must capture enemy leader (first selected    ");
     briefing_left[SC_CAPTURE][1]  = _("soldier). To do this you must stun him and bring ");
@@ -205,8 +199,7 @@ void Scenario::init_capture ()
     briefing_right[SC_CAPTURE][1] = _("from capturing by enemy. He is always visible on ");
     briefing_right[SC_CAPTURE][2] = _("your opponent's minimap.                         ");
 
-    // ?? gettext
-    options[SC_CAPTURE][0] = new Option(OPT_SWITCH, 0, ("Leader can have two-handed weapons"), ("Leader can't have two-handed weapons"), false);
+    options[SC_CAPTURE][0] = new Option(OPT_SWITCH, 0, _("Leader can have two-handed weapons"), _("Leader can't have two-handed weapons"), false);
 	options[SC_CAPTURE][1] = new Option(OPT_NONE);
 	options[SC_CAPTURE][2] = new Option(OPT_NONE);
 }

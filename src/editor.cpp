@@ -1398,7 +1398,7 @@ void Editor::change_equipment()
 	lua_safe_dostring(L, "for name, data in EquipmentTable do if data.enabled then change_equipment_callback(name) end end");
 
 	int result = gui_select_from_list(
-		300, 200, "Select equipment set", 
+		300, 200, _("Select equipment set"), 
 		eqsets, 0);
 
 	lua_pushstring(L, "SetEquipment");

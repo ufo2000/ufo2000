@@ -180,27 +180,24 @@ clean:
 lng-de: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
 	msgmerge --update translations/ufo2000-de.po translations/ufo2000.pot
-	msgfmt -c translations/ufo2000-de.po
 
 lng-es: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
 	msgmerge --update translations/ufo2000-es.po translations/ufo2000.pot
-	msgfmt -c translations/ufo2000-es.po
 
 lng-fr: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
 	msgmerge --update translations/ufo2000-fr.po translations/ufo2000.pot
-	msgfmt -c translations/ufo2000-fr.po
 
 lng-ru: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
 	msgmerge --update translations/ufo2000-ru.po translations/ufo2000.pot
-	msgfmt -c translations/ufo2000-ru.po
 
-lng-by: $(SRCS)
+lng-be: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
-	msgmerge --update translations/ufo2000-by.po translations/ufo2000.pot
-	msgfmt -c translations/ufo2000-by.po
+	msgmerge --update translations/ufo2000-be.po translations/ufo2000.pot
+	
+lng-all: lng-de lng-es lng-fr lng-ru lng-be
 
 binary-gz: all server
 # create linux binary distributive

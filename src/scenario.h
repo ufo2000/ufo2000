@@ -49,7 +49,7 @@ public:
 		reset_deploy = false;
 	};
 
-	Option (OptionType new_type, int new_value, int new_step, int new_min, int new_max, int new_value_no, char *new_caption, bool new_reset_deploy)
+	Option (OptionType new_type, int new_value, int new_step, int new_min, int new_max, int new_value_no, const char *new_caption, bool new_reset_deploy)
 	{
 		if (new_type == OPT_NUMBER) {
 			type = new_type;
@@ -67,7 +67,7 @@ public:
 		}
 	}
 		
-	Option (OptionType new_type, int new_value, char *new_caption_on, char *new_caption_off, bool new_reset_deploy)
+	Option (OptionType new_type, int new_value, const char *new_caption_on, const char *new_caption_off, bool new_reset_deploy)
 	{
 		if (new_type == OPT_SWITCH) {
 			type = OPT_SWITCH;
@@ -104,11 +104,11 @@ public:
 	int min;
 	int max;
 	int value_no;
-	char *caption;
+	const char *caption;
 	
 	//switch
-	char *caption_on;
-	char *caption_off;
+	const char *caption_on;
+	const char *caption_off;
 };
 
 class Scenario: public persist::BaseObject

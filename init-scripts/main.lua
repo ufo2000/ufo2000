@@ -378,6 +378,8 @@ local function load_translated_messages(tbl, filename)
 
 			key = string.gsub(key, "\\n", "\n")
 			str = string.gsub(str, "\\n", "\n")
+			key = string.gsub(key, "\\\"", "\"")
+			str = string.gsub(str, "\\\"", "\"")
 
 			tbl[key] = str 
 		end
@@ -396,7 +398,7 @@ local function load_translated_messages(tbl, filename)
 			str = ""
 		end
 	
-		local _, _, string_data = string.find(l, "^[^#]*\"(.*)\"$")
+		local _, _, string_data = string.find(l, "^[^#\"]*\"(.*)\"")
 		if string_data then str = str .. string_data end
 	end
 
