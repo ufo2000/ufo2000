@@ -288,8 +288,8 @@ function MapGenerator(name, size_x, size_y)
 end
 
 ------------------------------------------------------------------------------
--- Loads translated messages from po-file info a table in the form
--- "English message" -> "Translated message"
+-- Loads translated messages from po-file into a table 
+-- of the form "English message" -> "Translated message"
 ------------------------------------------------------------------------------
 
 -- global table which stores messages translated to current language
@@ -300,6 +300,10 @@ local function load_translated_messages(tbl, filename)
 	local key
 	local str
 
+-- Each translation in the po-file consists of two entries on separate lines,
+-- msgid with the original text, and msgstr with the translated text.  E.g.:
+--   msgid "CANCEL"
+--   msgstr "ABBRUCH"
 	for l in io.lines(filename) do
 		if string.find(l, "^%s*msgid") then
 			assert(mode == nil or mode == "msgstr")
@@ -325,24 +329,69 @@ local function load_translated_messages(tbl, filename)
 end
 
 ------------------------------------------------------------------------------
--- Try to set language for game messages
+-- Loads textfile with tips (one per line) into a table.
+-- The text for the tips is taken directly from the wiki-page at 
+-- http://ufo2000.lxnt.info/pmwiki/index.php/Main/TipOfTheDay,
+-- formatted as an unnumbered list, e.g.: "* Text of Tip"
 ------------------------------------------------------------------------------
-function SetLanguage(lng)
-	if lng and lng ~= "en" and string.find(lng, "^[a-z][a-z]$") then
-		load_translated_messages(TranslatedMessages, 
-			ufo2000_dir .. "/translations/ufo2000-" .. lng .. ".po")
-		Message("Language set to %s\n", lng)
-	end
+
+-- global table for tips:
+TipsOfTheDay = {}
+
+local function load_tips(tbl, filename)
+    local str
+    local n = 0
+
+    for l in io.lines(filename) do
+        if string.find(l, "^%*") then  -- ignore lines without "*"
+            n = n + 1
+            local _, _, str = string.find(l, "^[%*%s]+(.*)")
+            tbl[n] = str 
+          --Message("Tip %3d: '%s'", n, str)
+        end
+    end
+    tbl[0] = n 
+
+    return tbl
 end
 
-Message("#\n# UFO2000 started: %s\n#", os.date())
+------------------------------------------------------------------------------
+-- Test if file exists and can be read:
+------------------------------------------------------------------------------
+function FileExists(filename)
+    local fh = io.open(filename, "rb")
+    if fh then
+        fh:close() return true 
+    end
+    Message("!! File not found: %s", filename)
+    return nil 
+end
 
--- perform data files integrity check before applying security
--- restrictions
+------------------------------------------------------------------------------
+-- Try to set language-file for game messages and tips-of-the-day:
+------------------------------------------------------------------------------
+function SetLanguage(lng)
+    local fn = ufo2000_dir .. "/translations/ufo2000-" .. lng .. ".po";
+    if lng and lng ~= "en" and string.find(lng, "^[a-z][a-z]$") and FileExists(fn) then
+        load_translated_messages(TranslatedMessages, fn)
+        Message("Language set to: %s", lng)
+    end
+
+    fn = ufo2000_dir .. "/translations/tips-" .. lng .. ".txt";
+    if FileExists(fn) then
+        load_tips(TipsOfTheDay, fn)
+        Message("Tips-of-the-day: %s %d", lng, TipsOfTheDay[0] )
+    end
+end
+
+Message("#\n# UFO2000 started: %s\n#", os.date("%Y-%m-%d %H:%M:%S"))
+
+-- Perform data files integrity check 
+-- before applying security restrictions
 dofile(ufo2000_dir .. "/init-scripts/filecheck.lua")
 
--- for security reasons we do not want lua scripts to have write
--- access to filesystem, the code below enforces this restriction
+-- For security reasons, we do not want lua scripts to have write access 
+-- to the filesystem. The code below enforces this restriction:
 io.open = function(fname, mode)
 	if mode and (string.find(mode, "r%+") or string.find(mode, "[aw]")) then
 		Error("Sandbox violation: attempt to open '%s' for write", fname)
@@ -351,6 +400,8 @@ io.open = function(fname, mode)
 	return io_open_unrestricted(fname, mode)
 end
 
-io.popen = nil
-io.input = nil
+io.popen  = nil
+io.input  = nil
 io.output = nil
+
+--EOF.

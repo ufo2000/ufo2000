@@ -56,6 +56,9 @@ const char *gettext(const char *str);
 //! Tooltips for the control-panel
 const char *icontext( const int icon_nr );
 
+//! Show tip-of-the-day
+void showtip();
+
 //! Simple help, using alert3().
 void help( const int helppage );
 

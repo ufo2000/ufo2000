@@ -223,6 +223,11 @@ win32-beta-installer: all server
 	cp $(DISTNAME)/$(DISTNAME)-beta.exe $(DISTNAME)-beta.exe
 	svn delete --force $(DISTNAME)
 
+install: all server
+# Copy to game-directory for testing.
+# Note: copy changed ufo2000.dat, lua-scripts, translations etc. by hand !
+	cp ufo2000.exe ufo2000-srv.exe /ufo2000
+
 source-bz2: 
 # create tar.bz2 archive with ufo2000 sources (on *nix systems)
 	-$(RM) $(DISTNAME)-src.tar.bz2

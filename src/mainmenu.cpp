@@ -131,8 +131,10 @@ static int d_mainmenu_button_proc(int msg, DIALOG *d, int c)
 	return D_O_K;
 }
 
-#define MENU_LEFT           (SCREEN_W - 640 + 341)
-#define MENU_TOP            115
+//#define MENU_LEFT           (SCREEN_W - 640 + 341)
+//#define MENU_TOP            115
+#define MENU_LEFT           (SCREEN_W - 640 + 358)
+#define MENU_TOP            55 
 #define MENU_BTN_STEP       8
 #define MENU_BTN_W          237
 #define MENU_BTN_H          32
@@ -183,7 +185,8 @@ int do_mainmenu()
     the_dialog[MAINMENU_EDITOR].dp      = (void *) _("editor");
     the_dialog[MAINMENU_LOADGAME].dp    = (void *) _("load saved game");
     the_dialog[MAINMENU_ABOUT].dp       = (void *) _("about");
-  //the_dialog[MAINMENU_TIP_OF_DAY].dp  = (void *) _("tip of the day");
+    the_dialog[MAINMENU_TIP_OF_DAY].dp  = (void *) _("tip of the day");
+  //the_dialog[MAINMENU_DEMO].dp        = (void *) _("demo");
     the_dialog[MAINMENU_QUIT].dp        = (void *) _("quit");
     
     BS_DISABLED.font    = large;

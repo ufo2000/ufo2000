@@ -944,6 +944,7 @@ void build_screen(int & select_y)
 			platoon_remote->draw_blue_selectors();
 
 			if (sel_man != NULL) {
+                // Todo: adjust select_y for elevation of current tile (e.g. stairs)
 				sel_man->draw_selector(select_y);
 				sel_man->draw_enemy_seen(select_y);
 			}
@@ -1076,6 +1077,7 @@ bool loadgame_stream(std::iostream &stream)
  * e.g. in endgame-stats.
  */
 int name_color( int player, int nr, int dead )
+// Note: colors are choosen to be readable with and without the background-image
 {
     static int alive = 0;
     int c1;
@@ -1117,8 +1119,8 @@ int kills_color( int kills )
  */
 int damage_color( int damage )
 {
-    //int c1 = 192;  // COLOR_VIOLET00
-    //int c1 = 224;  // COLOR_GRAYBLUE00
+  //int c1 = 192;  // COLOR_VIOLET00
+  //int c1 = 224;  // COLOR_GRAYBLUE00
     int c1 = 208;  // COLOR_SKYBLUE00
 
     if (damage == 0)
@@ -1139,6 +1141,11 @@ int damage_color( int damage )
  * Display combat-statistics after a game
  */
 void endgame_stats()
+// Note: These stats have several quirks, e.g.
+// kills and damage to own men contribute to your 'success',
+// damage from explosions might be accounted several times,
+// stun-damage is not accounted at all, 
+// a scout who gets no kills himself is hardly a coward, etc.
 {
     lua_message( "Enter: endgame_stats" );
 	net->send_debug_message("result:%s", (win == loss) ? ("draw") : (win ? "victory" : "defeat"));
@@ -1161,13 +1168,13 @@ void endgame_stats()
 		platoon_local = ptemp;
 	}
 
-	int local_kills      = platoon_local->get_stats()->total_kills();
+	int local_kills      = platoon_local ->get_stats()->total_kills();
 	int remote_kills     = platoon_remote->get_stats()->total_kills();
-	int local_dead       = platoon_local->get_stats()->total_dead();
+	int local_dead       = platoon_local ->get_stats()->total_dead();
 	int remote_dead      = platoon_remote->get_stats()->total_dead();
-	int local_inflicted  = platoon_local->get_stats()->total_damage_inflicted();
+	int local_inflicted  = platoon_local ->get_stats()->total_damage_inflicted();
 	int remote_inflicted = platoon_remote->get_stats()->total_damage_inflicted();
-	int local_taken      = platoon_local->get_stats()->total_damage_taken();
+	int local_taken      = platoon_local ->get_stats()->total_damage_taken();
 	int remote_taken     = platoon_remote->get_stats()->total_damage_taken();
 
 	int mvp_remote = 0, devastating_remote = 0, coward_remote = 0;
@@ -1396,7 +1403,7 @@ void endgame_stats()
                 case KEY_ASTERISK:   // ?? ToDo: Sound+Music on/off
                     //soundSystem::getInstance()->play(SS_WINDOW_OPEN_2);
                     FS_MusicPlay(NULL);
-                    g_console->printf(COLOR_SYS_OK, _("Music OFF") );
+                    g_console->printf(COLOR_SYS_FAIL, _("Music OFF") );
                     break;
 				case KEY_PLUS_PAD:
 					vol = FS_IncMusicVolume();
@@ -1722,7 +1729,7 @@ void gameloop()
                 case KEY_ASTERISK:   // ?? ToDo: Sound+Music on/off
                     //soundSystem::getInstance()->play(SS_WINDOW_OPEN_2);
                     FS_MusicPlay(NULL);
-                    g_console->printf(COLOR_SYS_OK, _("Music OFF") );
+                    g_console->printf(COLOR_SYS_FAIL, _("Music OFF") );
                     break;
 				case KEY_PLUS_PAD:
 					vol = FS_IncMusicVolume();
@@ -1830,8 +1837,11 @@ void gameloop()
                     } else {
                         b1 = alert3( "", _("ABORT MISSION ?"), "",
                                      _("YES=RESIGN"), _("OFFER DRAW"), _("NO=CONTINUE"), 0,0,1 );
-                        if (b1 == 1) {  // Todo: process draw-button
+                        if (b1 == 1) {
                             DONE = 1;
+                        }
+                        if (b1 == 2) {
+                            // Todo: process draw-button
                         }
                     }
 					break;
@@ -2083,6 +2093,10 @@ int main(int argc, char *argv[])
                           _(" &MORE "), _(" OK "), 109, 0);    // 109: 'm'
                     if ( b1 == 1 ) 
                         help( HELP_INTRO );
+                    break;
+                case MAINMENU_TIP_OF_DAY:
+                    set_palette((RGB *)datafile[DAT_MENUPAL_BMP].dat);	// yellow mouse-cursor
+                    showtip();
                     break;
                 case MAINMENU_EDITOR:
 					FS_MusicPlay(F(cfg_get_editor_music_file_name()));

@@ -1,0 +1,68 @@
+# http://ufo2000.lxnt.info/pmwiki/index.php/Main/TipOfTheDay?action=edit
+# 2004-10-27 20:40
+
+## Basic usage of Ufo2000 (user-interface etc.) :
+* The keys Page-Up and Page-Down can also be used to switch between levels.
+* The Tab-key can be used to jump to the next soldier.
+* To open doors: right-click to turn the soldier towards the door, then right-click behind the door.
+* Arrow keys change size of battlescape view, chat window and SHOW/HIDE minimap. 
+
+## Advanced usage of Ufo2000:
+* When moving, if you place the cursor on the map and hit Ctrl you will know how much TU's it costs to move the unit there.
+* When aiming, hold Ctrl to know if there's a valid line of sight between the soldier and the target.
+* When throwing an object (such as a grenade), hold Ctrl to see how it will be thrown.
+* To stop immediately a unit's movement click the Right mouse button.
+* To use precise aiming hold Shift when firing a weapon.
+* Crouching gives more accuracy.
+* Keeping time units allows a soldier to get a reaction fire on the first enemies he might "see".
+
+## Weapons / Equipment / Units:
+* A soldier's skin also effects its armour.
+* Aliens don't wear armor.
+* Don't forget ammo for your weapon.
+* When editing soldiers' starting equipment, remember to load any weapons you add.
+* For heavy weapons, like cannon and rocket-launcher, give extra ammo to another soldier.
+* Throwing grenades requires airspace, otherwise they might hit the ceiling.
+* The timer of grenades does not count down when you hold it in you hand.
+* The timer on high explosives cannot be stopped after it is primed. 
+* Prox mines explode when a unit steps into any of the tiles surrounding the mine's own. 
+* Smoke can last up to three turns.
+* Notice that heavy plasma doesn't have auto-fire as it had it X-Com.
+* When stun-damage goes above health, the soldier goes to sleep.
+* Powerarmor and flying-armor is not affected from stun-bombs.
+
+## Terrain:
+* Units tend to survive more if placed behind cover.
+* Trying to fire a HE weapon through a window will most likely result in the shot exploding on the window.
+* Grenades bounce downwards when attempting to throw them inside buildings with roofs.
+* Use the minimap to have an idea of what your soldiers can see and cannot see. Check for dead angles and concealed areas.
+* When looking downward from a higher level, the soldier's sight is limited.
+
+## General Strategy & Tactic:
+* Human players are smarter than the original game's AI.
+* If it's stupid but it works, it isn't stupid.
+* The enemy attacks on two ocasions: when he's ready and when you are not.
+* When your attack is going really well, it's an ambush.
+* The enemy diversion you're ignoring is their main attack.
+* A retreating enemy is probably just falling back and regrouping.
+* The only thing more accurate than incoming enemy fire is incoming friendly fire.
+* Incoming fire has the right of way.
+* You can't outrun plasma fire.
+* If your ambush is properly set the enemy won't walk into it. 
+* If the enemy is within range, so are you.
+* Whenever you lose contact with the enemy, look behind you.
+* Check your six o'clock!
+* Don't look or act conspicuously; it draws fire.
+* Don't get shot.
+* No battle plan ever survives contact with the enemy.
+* The enemy never watches until you make a mistake. 
+* If your flank march is going well, the enemy expects you to outflank him.
+* All warfare is based upon deception.
+* Always pair up your soldiers. 
+* Smoke blocks visibility both ways: your's and the enemy's.
+* Look everywhere.
+
+## Misc. (Tips that don't fit into above categories) :
+* Try to balance the battle.
+
+#.

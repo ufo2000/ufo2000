@@ -35,13 +35,14 @@ enum MAINMENU_ITEMS
     MAINMENU_YIELD,
     MAINMENU_QUIT,
     MAINMENU_ABOUT,  // simple about-box, as alert()
+    MAINMENU_TIP_OF_DAY,
     MAINMENU_LOADGAME,
     MAINMENU_HOTSEAT,
     MAINMENU_INTERNET,
     MAINMENU_COUNT,
     // Currently disabled menu items come next
-    MAINMENU_TIP_OF_DAY,
     MAINMENU_EDITOR, // does not support all terrains
+    MAINMENU_DEMO,
     MAINMENU_TOTAL_COUNT
 };
 
