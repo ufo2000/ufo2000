@@ -57,19 +57,43 @@ void lua_message( const std::string &str1 )
 };
 
 /**
- * Dummy-gettext:
+ * gettext-prototype:
  * 
  * For translating text to foreign languages.
- * Instead of the full gnu-gettext-package, a simple LUA-script will be used.
- * Todo: Interface to LUA
+ * Instead of the full gnu-gettext-package, a simple LUA-script is used.
+ * Todo: investigate performance, cache translated messages ...
  */
-char *gettext( char *str1 )
+const char *gettext( char *str1 )
+// !! Note: lua-scripts can be called only after initmain() with lua_open() !!
 { 
-  //lua_message( std::string("gettext:") + str1 );
-    if (str1 != "")
-        return str1;
+    static std::string str2;
+  //strcpy(str2, "" );
+    str2 = "";
+
+  //lua_message( std::string("gettext: '") + str1 + std::string("'") );
+/*
+    FILE *f1 = fopen( "gettext.log", "at");
+    fprintf(f1, "#: '%s'\n", str1);
+    fclose(f1);
+*/
+    int stack_top = lua_gettop(L);
+    lua_pushstring(L, "gettext");
+    lua_gettable(L, LUA_GLOBALSINDEX);
+    if (!lua_isfunction(L, -1))
+        display_error_message( "Fatal: no 'gettext' function registered" );
+    lua_pushstring(L, str1);
+    lua_safe_call(L, 1, 1);
+    str2 = lua_tostring(L, -1);
+    lua_settop(L, stack_top);
+/*
+    FILE *f2 = fopen( "gettext.log", "at");
+    fprintf(f2, "#= '%s'\n", str2.c_str() );
+    fclose(f2);
+*/
+    if (str2 == "")    // if lua-script did not return a translation
+        return str1;   // give back original string
     else
-        return "!! gettext !!";
+        return str2.c_str();
 };
 
 /**

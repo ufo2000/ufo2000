@@ -32,6 +32,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "platoon.h"
 #include "crc32.h"
 #include "scenario.h"
+#include "text.h"
 
 #define SCANGSIZE 4
 
@@ -1918,10 +1919,11 @@ TerrainSet::TerrainSet()
 
 	lua_settop(L, stack_top);
 
+    // ?? gettext:
 	if (terrain.empty()) {
 		display_error_message(
-			"Terrain data initialization failed."
-			"At least one valid terrain required.");
+            "Terrain data initialization failed." 
+            "At least one valid terrain required." );
 	}
 }
 
@@ -1996,9 +1998,10 @@ std::string TerrainSet::select_terrain_gui_dialog(
 	
 	int result = gui_select_from_list(
 		300, 200,
-		"Select terrain type", 
+        _("Select terrain type"), 
 		gui_list,
 		default_index);
 	
 	return gui_list[result];
 }
+

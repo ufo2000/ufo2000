@@ -118,7 +118,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 // 96-111 : RED_BROWN: Goldenrod, Peru .. Chocolate .. SaddleBrown .. Maroon
 #define COLOR_RED_BROWN00     xcom1_color( 96)
+#define COLOR_RED_BROWN01     xcom1_color( 97)
+#define COLOR_RED_BROWN02     xcom1_color( 98)
 #define COLOR_RED_BROWN03     xcom1_color( 99)
+#define COLOR_RED_BROWN04     xcom1_color(100)
 #define COLOR_RED_BROWN05     xcom1_color(101)
 #define COLOR_RED_BROWN10     xcom1_color(106)
 

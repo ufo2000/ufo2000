@@ -127,9 +127,10 @@ void Editor::load()
 	
 	char path[1000];
 	strcpy(path, last_unit_name);
-	if (file_select("LOAD UNITS DATA", path, "UNITS")) {
+    if (file_select( _("LOAD UNITS DATA"), path, "UNITS")) {
 		m_plt->load_FULLDATA(path);
 		strcpy(last_unit_name, path);
+        lua_message( std::string("Team loaded:") + path );
 	}
 	
 	set_mouse_range(0, 0, 639, 399);
@@ -145,9 +146,10 @@ void Editor::save()
 
 	char path[1000];
 	strcpy(path, last_unit_name);
-	if (file_select("SAVE UNITS DATA", path, "UNITS")) {
+    if (file_select( _("SAVE UNITS DATA"), path, "UNITS")) {
 		m_plt->save_FULLDATA(path);
 		strcpy(last_unit_name, path);
+        lua_message( std::string("Team saved:") + path );
 	}
 	
 	set_mouse_range(0, 0, 639, 399);
@@ -546,6 +548,7 @@ static int get_list_size(const char **list)
 
 static void fixup_unit_info();
 
+// Todo: gettext ??
 static const char *race_names[] = { 
 	"human",
 	"sectoid",

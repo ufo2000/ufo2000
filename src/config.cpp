@@ -27,6 +27,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "config.h"
 #include "multiplay.h"
 #include "colors.h"
+#include "text.h"
 
 extern void install_timers(int _speed_unit, int _speed_bullet, int _speed_mapscroll);
 extern void uninstall_timers();
@@ -171,10 +172,10 @@ const char *cfg_get_net2_music_file_name()
 }
 
 const char *cfg_get_loading_image_file_name() { return loading_image_file_name.c_str(); }
-const char *cfg_get_menu_image_file_name() { return menu_image_file_name.c_str(); }
+const char *cfg_get_menu_image_file_name()    { return menu_image_file_name.c_str(); }
 const char *cfg_get_endturn_image_file_name() { return endturn_image_file_name.c_str(); }
-const char *cfg_get_win_image_file_name() { return win_image_file_name.c_str(); }
-const char *cfg_get_lose_image_file_name() { return lose_image_file_name.c_str(); }
+const char *cfg_get_win_image_file_name()     { return win_image_file_name.c_str(); }
+const char *cfg_get_lose_image_file_name()    { return lose_image_file_name.c_str(); }
 
 void loadini()
 {
@@ -279,19 +280,20 @@ static int d_slider_pro2(int msg, DIALOG *d, int c)
 	return v;
 }
 
+// ?? gettext
 static DIALOG config_dlg[] = {
 	{ d_shadow_box_proc, 0, 0, 320, 200, FG, BG, 0, 0, 0, 0, NULL, NULL, NULL },
-	{ d_text_proc, 72, 8, 144, 16, FG, BG, 0, 0, 0, 0, (void *)"Configuration", NULL, NULL },
-	{ d_slider_pro2, 24, 40, 136, 16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
-	{ d_slider_pro2, 24, 64, 136, 16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
-	{ d_slider_pro2, 24, 88, 136, 16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
-	{ d_slider_pro2, 24, 112, 136, 16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
-	{ d_button_proc, 160, 168, 64, 16, FG, BG, 0, D_EXIT, 0, 0, (void *)"OK", NULL, NULL },
-	{ d_button_proc, 232, 168, 64, 16, FG, BG, 0, D_EXIT | D_GOTFOCUS, 0, 0, (void *)"Cancel", NULL, NULL },
-	{ d_text_proc, 176, 44, 88, 16, FG, BG, 0, 0, 0, 0, (void *)"movement speed", NULL, NULL },
-	{ d_text_proc, 176, 68, 104, 16, FG, BG, 0, 0, 0, 0, (void *)"fire speed", NULL, NULL },
-	{ d_text_proc, 176, 92, 128, 16, FG, BG, 0, 0, 0, 0, (void *)"scroll speed", NULL, NULL },
-	{ d_text_proc, 176, 116, 128, 16, FG, BG, 0, 0, 0, 0, (void *)"mapscroll points", NULL, NULL },
+    { d_text_proc,      72,   8, 144,  16, FG, BG, 0, 0, 0, 0, (void *) ("Configuration"), NULL, NULL },
+    { d_slider_pro2,    24,  40, 136,  16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
+    { d_slider_pro2,    24,  64, 136,  16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
+    { d_slider_pro2,    24,  88, 136,  16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
+    { d_slider_pro2,    24, 112, 136,  16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
+    { d_button_proc,   160, 168,  64,  16, FG, BG, 0, D_EXIT, 0, 0, (void *) ("OK"), NULL, NULL },
+    { d_button_proc,   232, 168,  64,  16, FG, BG, 0, D_EXIT | D_GOTFOCUS, 0, 0, (void *) ("Cancel"), NULL, NULL },
+    { d_text_proc,     176,  44,  88,  16, FG, BG, 0, 0, 0, 0, (void *) ("movement speed"), NULL, NULL },
+    { d_text_proc,     176,  68, 104,  16, FG, BG, 0, 0, 0, 0, (void *) ("fire speed"), NULL, NULL },
+    { d_text_proc,     176,  92, 128,  16, FG, BG, 0, 0, 0, 0, (void *) ("scroll speed"), NULL, NULL },
+    { d_text_proc,     176, 116, 128,  16, FG, BG, 0, 0, 0, 0, (void *) ("mapscroll points"), NULL, NULL },
 	{ d_yield_proc,           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
 	{ NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL }
 };

@@ -29,6 +29,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "map.h"
 #include "config.h"
 #include "colors.h"
+#include "text.h"
 
 unsigned long FLAGS = 0;
 
@@ -291,7 +292,7 @@ void savescreen()
 			save_pcx(filename, scr, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
 			// Todo: test if save was successful
 			destroy_bitmap(scr);
-			g_console->printf(COLOR_SYS_OK, "Screenshot saved as %s", filename);
+            g_console->printf(COLOR_SYS_OK, _("Screenshot saved as %s"), filename);
 			return;
 		}
 		num++;
@@ -356,7 +357,7 @@ void resize_screen2(int vw, int vh)
 int askmenu(const char *mess)
 {
 	set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
-	int sel = alert(mess, "", "", "OK", "Cancel", 0, 0);
+    int sel = alert(mess, "", "", _("OK"), _("Cancel"), 0, 0);
 	return (sel == 1);
 }
 

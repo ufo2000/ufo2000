@@ -339,11 +339,11 @@ void display_error_message(const std::string &error_text)
 {
 #ifdef WIN32
 	// show errormessage in windows-messagebox:
-	MessageBox(NULL, error_text.c_str(), "UFO2000 Error!", MB_OK);
+    MessageBox(NULL, error_text.c_str(), "UFO2000 Error!", MB_OK);  // don't translate !
 #else
 	fprintf(stderr, "\n%s\n", error_text.c_str());
 #endif
-    lua_message( std::string("Error: ") + error_text.c_str() );
+    lua_message( std::string("!! Error: ") + error_text.c_str() );
 	exit(1);
 }
 
@@ -382,7 +382,7 @@ const char *F(const char *fileid)
 	lua_pushstring(L, "GetDataFileName");
 	lua_gettable(L, LUA_GLOBALSINDEX);
 	if (!lua_isfunction(L, -1))
-        display_error_message( _("Fatal: no 'GetDataFileName' function registered") );
+        display_error_message( "Fatal: no 'GetDataFileName' function registered"); // don't translate !
 	lua_pushstring(L, fileid);
 	lua_safe_call(L, 1, 1);
 	if (!lua_isstring(L, -1))
@@ -578,7 +578,7 @@ void initmain(int argc, char *argv[])
 		datafile = load_datafile(F("$(ufo2000)/ufo2000.dat"));
 		if (datafile == NULL) {
 			allegro_exit();
-            fprintf(stderr, _("Error loading datafile!\n\n") );
+            fprintf(stderr, "Error loading datafile!\n\n");
 			exit(1);
 		}
 	}
@@ -787,7 +787,7 @@ void check_crc(int crc)
 }
 
 /**
- * Function that is called to make all the necessery changes to the gamestate
+ * Function that is called to make all the necessary changes to the gamestate
  * when changing active player (passing turn)
  */
 void switch_turn()
@@ -1198,7 +1198,6 @@ void endgame_stats()
 		platoon_local = ptemp;
 	}
 
-
 	fade_out(10);
 	clear(screen);
 
@@ -1330,7 +1329,7 @@ void endgame_stats()
         else
             temp = platoon_remote->get_stats()->getfirst();
 
-        for (int nr = 1; nr <= 14 ; nr++) { // screen-space for 14 soldiers per side
+        for (int nr = 1; nr <= 15 ; nr++) { // screen-space for 15 soldiers per side
             x = x1   + pl * x2;
             y = y1+4 + nr * h;
             if (temp != NULL) {
@@ -1386,7 +1385,7 @@ void endgame_stats()
                 case KEY_ASTERISK:   // ?? ToDo: Sound+Music on/off
                     //soundSystem::getInstance()->play(SS_WINDOW_OPEN_2);
                     FS_MusicPlay(NULL);
-                    g_console->printf(COLOR_SYS_OK, _("Music off") );
+                    g_console->printf(COLOR_SYS_OK, _("Music OFF") );
                     break;
 				case KEY_PLUS_PAD:
 					vol = FS_IncMusicVolume();
@@ -1711,15 +1710,15 @@ void gameloop()
                 case KEY_ASTERISK:   // ?? ToDo: Sound+Music on/off
                     //soundSystem::getInstance()->play(SS_WINDOW_OPEN_2);
                     FS_MusicPlay(NULL);
-                    g_console->printf(COLOR_SYS_OK, "Music off" );
+                    g_console->printf(COLOR_SYS_OK, _("Music OFF") );
                     break;
 				case KEY_PLUS_PAD:
 					vol = FS_IncMusicVolume();
-					g_console->printf(COLOR_SYS_OK, "Music Volume: %d", vol );
+                    g_console->printf(COLOR_SYS_OK, _("Music Volume: %d"), vol );
 					break;
 				case KEY_MINUS_PAD:
 					vol = FS_DecMusicVolume();
-					g_console->printf(COLOR_SYS_OK, "Music Volume: %d", vol );
+                    g_console->printf(COLOR_SYS_OK, _("Music Volume: %d"), vol );
 					break;
 				case KEY_LEFT:
 					if (!key[KEY_LSHIFT])

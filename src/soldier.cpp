@@ -888,24 +888,25 @@ void Soldier::draw_unibord(int gx, int gy)
 		int max;
 		int col;
 	}
+    // ?? gettext 
 	param[17] = {
-                    {_("TIME UNITS"),        ud.CurTU,        ud.MaxTU,      68},
-                    {_("ENERGY"),            ud.CurEnergy,    ud.MaxEnergy, 148},
-                    {_("HEALTH"),            ud.CurHealth,    ud.MaxHealth,  36},
-                    {_("FATAL WOUNDS"),      fw,              fw,            36},
-                    {_("BRAVERY"),           md.Bravery,      md.Bravery,   196},
-                    {_("MORALE"),            ud.Morale,       100,          197},
-                    {_("REACTIONS"),         ud.CurReactions, md.Reactions,  20},
-                    {_("FIRING ACCURACY"),   ac,              ud.MaxFA,     132},
-                    {_("THROWING ACCURACY"), TAccuracy(100),  ud.MaxTA,     100},
-                    {_("STRENGTH"),          ud.MaxStrength,  md.Strength,   52},
+                    { ("TIME UNITS"),        ud.CurTU,        ud.MaxTU,      68},
+                    { ("ENERGY"),            ud.CurEnergy,    ud.MaxEnergy, 148},
+                    { ("HEALTH"),            ud.CurHealth,    ud.MaxHealth,  36},
+                    { ("FATAL WOUNDS"),      fw,              fw,            36},
+                    { ("BRAVERY"),           md.Bravery,      md.Bravery,   196},
+                    { ("MORALE"),            ud.Morale,       100,          197},
+                    { ("REACTIONS"),         ud.CurReactions, md.Reactions,  20},
+                    { ("FIRING ACCURACY"),   ac,              ud.MaxFA,     132},
+                    { ("THROWING ACCURACY"), TAccuracy(100),  ud.MaxTA,     100},
+                    { ("STRENGTH"),          ud.MaxStrength,  md.Strength,   52},
                     {NULL, 0, 0, 0},
                     {NULL, 0, 0, 0},
-                    {_("FRONT ARMOUR"),      ud.CurFront,     ud.MaxFront,   84},
-                    {_("LEFT ARMOUR"),       ud.CurLeft,      ud.MaxLeft,    84},
-                    {_("RIGHT ARMOUR"),      ud.CurRight,     ud.MaxRight,   84},
-                    {_("REAR ARMOUR"),       ud.CurRear,      ud.MaxRear,    84},
-                    {_("UNDER ARMOUR"),      ud.CurUnder,     ud.MaxUnder,   84}
+                    { ("FRONT ARMOUR"),      ud.CurFront,     ud.MaxFront,   84},
+                    { ("LEFT ARMOUR"),       ud.CurLeft,      ud.MaxLeft,    84},
+                    { ("RIGHT ARMOUR"),      ud.CurRight,     ud.MaxRight,   84},
+                    { ("REAR ARMOUR"),       ud.CurRear,      ud.MaxRear,    84},
+                    { ("UNDER ARMOUR"),      ud.CurUnder,     ud.MaxUnder,   84}
 	            };
 
 	for (int i = 0; i < 17; i++) {

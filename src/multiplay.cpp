@@ -35,6 +35,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "units.h"
 #include "scenario.h"
 #include "colors.h"
+#include "text.h"
 
 static std::list<std::string> g_hotseat_cmd_queue;
 
@@ -127,7 +128,7 @@ int Net::init()
 		clear(screen);
 		reset_video();
 		set_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
-		alert(" ", "  NEXT PLAYER  ", " ", "    OK    ", NULL, 1, 0);
+        alert(" ", _("  NEXT PLAYER  "), " ", _("    OK    "), NULL, 1, 0);
 		HOST = 0;
 		connect->swap_uds();
 		if (!connect->do_planner(1, 0))
@@ -136,7 +137,7 @@ int Net::init()
 		clear(screen);
 		reset_video();
 		set_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
-		alert(" ", "  GAME START  ", " ", "    OK    ", NULL, 1, 0);
+        alert(" ", _("  GAME START  "), " ", _("    OK    "), NULL, 1, 0);
 		inithotseatgame();
 	} else {
 		if (!connect->do_chat() || !connect->do_planner(0)) {
@@ -185,7 +186,8 @@ void Net::send()
 
 void Net::send(const std::string &pkt)
 {
-	if (FLAGS & F_RAWMESSAGES) g_console->printf("send:[%s]", pkt.c_str());
+    if (FLAGS & F_RAWMESSAGES) 
+        g_console->printf( _("send:[%s]"), pkt.c_str());
 
 	log("send:[%s]\n", pkt.c_str());
 
@@ -242,7 +244,7 @@ void Net::check()
 	if (!packet.empty()) {
 		queue->put((char *)packet.data(), packet.size());
 		if (FLAGS & F_RAWMESSAGES) {
-			g_console->printf("put:[%d]", packet.size());
+            g_console->printf( _("put:[%d]"), packet.size());
 			g_console->printf("%s", packet.c_str());
 		}
 	}
@@ -253,7 +255,7 @@ void Net::check()
 	if (!queue->get(packet)) return;
 
 	if (FLAGS & F_RAWMESSAGES) {
-		g_console->printf("get:[%d]", packet.size());
+        g_console->printf( _("get:[%d]"), packet.size());
 		g_console->printf("%s", packet.c_str());
 	}
 

@@ -31,6 +31,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "wind.h"
 #include "scenario.h"
 #include "colors.h"
+#include "text.h"
 
 #define CAPTION          8
 #define COMMENT          3
@@ -154,7 +155,7 @@ int Units::add(int num, char *nm, int ct)
  */
 void Units::print(int gcol)
 {
-	text_mode( -1);
+    text_mode( -1);
 	int x1, y1, x2, y2, color = COLOR_GREEN12;
 	int i;
 	for (i = 0; i < size; i++) {
@@ -181,7 +182,7 @@ void Units::print(int gcol)
 				color = COLOR_GREEN12;   // background for unselected man
 			}
 
-		x1 = gx - 2;          x2 = gx + MAN_NAME_LEN * 8 + 2;	
+		x1 = gx - 2;          x2 = gx + MAN_NAME_LEN * 8 + 2;
 		y1 = gy + i * 15 - 2; y2 = y1 + 8 + 3;
 
         // Highlight the soldiers who are equipped with forbidden items in in red color
@@ -204,13 +205,13 @@ void Units::print(int gcol)
 	draw_text();
 	
 	rect(screen2, gmx, SCREEN2H - 71, gmx + gmw, SCREEN2H - 5, COLOR_WHITE);
-	textout_centre(screen2, font, "MATCH SETTINGS", gmx + gmw / 2, SCREEN2H - 65, xcom1_color(CAPTION));
+    textout_centre(screen2, font, _("MATCH SETTINGS"), gmx + gmw / 2, SCREEN2H - 65, xcom1_color(CAPTION));
 	textout_centre(screen2, font, scenario->name[scenario->type], gmx + gmw / 2, SCREEN2H - 53, xcom1_color(BUTTON));
 	textout_centre(screen2, font, terrain_set->get_terrain_name(mapdata.terrain).c_str(), gmx + gmw / 2, SCREEN2H - 41, xcom1_color(BUTTON));
 	
 	int tmp;
 	g_time_limit == -1 ? tmp = 0 : tmp = g_time_limit;
-	textout_centre(screen2, font, "Game rules:", gmx + gmw / 2, SCREEN2H - 28, xcom1_color(BUTTON));
+    textout_centre(screen2, font, _("Game rules:"), gmx + gmw / 2, SCREEN2H - 28, xcom1_color(BUTTON));
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 16, xcom1_color(BUTTON), "%d; %dk; %d; %d; %d; %d", scenario->rules[0], scenario->rules[1], scenario->rules[2], tmp, scenario->rules[3], scenario->rules[4]);
 	
 	for (i = 0; i < len; i++) buf[i] = 0;
@@ -245,8 +246,8 @@ void Units::print(int gcol)
 	else*/
 	damage_points = draw_items_stats(gx, 240 + 10, buf, len);
 
-	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 240, COLOR_GREEN,
-			"Total points=%d (of %d)", points + damage_points, total_points());
+    textprintf_centre(screen2, g_small_font, gx + 10 * 8, 240, COLOR_GREEN,
+            _("Total points=%d (of %d)"), points + damage_points, total_points());
 
 	scenario->draw_deploy_zone(pos, gmx, 0, xcom1_color(LOCAL_COLOR));
 	
@@ -304,20 +305,20 @@ void Units::draw_scenario_window()
     textout_centre(screen2, font, "<", gmx + gmw / 2 - 150 + 50, SCREEN2H - 310, xcom1_color(BUTTON));
     textout_centre(screen2, font, ">", gmx + gmw / 2 + 150 - 50, SCREEN2H - 310, xcom1_color(BUTTON));
 
-    textout_centre(screen2, font, "Player 1", gmx + gmw / 2, SCREEN2H - 285, xcom1_color(CAPTION));
+    textout_centre(screen2, font, _("Player 1"), gmx + gmw / 2, SCREEN2H - 285, xcom1_color(CAPTION));
 	for (i = 0; i < 8; i++)
     	textprintf(screen2, font, gmx + gmw / 2 - 200 + 5, SCREEN2H - 270 + i * 9, xcom1_color(COMMENT), scenario->briefing_left[scenario->type][i]);
 	if (pos == POS_LEFT)
 		rect(screen2, gmx + gmw / 2 - 200 + 3, SCREEN2H - 272, gmx + gmw / 2 + 200 - 3, SCREEN2H - 198, xcom1_color(LOCAL_COLOR));    	
     	
-    textout_centre(screen2, font, "Player 2", gmx + gmw / 2, SCREEN2H - 185, xcom1_color(CAPTION));
+    textout_centre(screen2, font, _("Player 2"), gmx + gmw / 2, SCREEN2H - 185, xcom1_color(CAPTION));
 	for (i = 0; i < 8; i++)
     	textprintf(screen2, font, gmx + gmw / 2 - 200 + 5, SCREEN2H - 170 + i * 9, xcom1_color(COMMENT), scenario->briefing_right[scenario->type][i]);
    	if (pos == POS_RIGHT)
-		rect(screen2, gmx + gmw / 2 - 200 + 3, SCREEN2H - 172, gmx + gmw / 2 + 200 - 3, SCREEN2H - 98, xcom1_color(LOCAL_COLOR));    	
+		rect(screen2, gmx + gmw / 2 - 200 + 3, SCREEN2H - 172, gmx + gmw / 2 + 200 - 3, SCREEN2H - 98, xcom1_color(LOCAL_COLOR));
 
-    	
-	textout_centre(screen2, font, "Options", gmx + gmw / 2, SCREEN2H - 85, xcom1_color(CAPTION));
+
+    textout_centre(screen2, font, _("Options"), gmx + gmw / 2, SCREEN2H - 85, xcom1_color(CAPTION));
 	for (i = 0; i < 3; i++) {
 		switch(scenario->options[scenario->type][i]->type) {
 			case OPT_NONE:
@@ -349,22 +350,22 @@ void Units::draw_map_window()
 	textout_centre(screen2, font, "5*5", gmx + gmw / 2, SCREEN2H - 61, xcom1_color(mapdata.x_size == 5 ? SWITCH_ON : SWITCH_OFF));
 	textout_centre(screen2, font, "6*6", gmx + gmw / 2 + 40, SCREEN2H - 61, xcom1_color(mapdata.x_size == 6 ? SWITCH_ON : SWITCH_OFF));
 	
-	textout_centre(screen2, font, "NEW", gmx + gmw / 2 - 40, SCREEN2H - 49, xcom1_color(BUTTON));
-	textout_centre(screen2, font, "LOAD", gmx + gmw / 2, SCREEN2H - 49, xcom1_color(BUTTON));
-	textout_centre(screen2, font, "SAVE", gmx + gmw / 2 + 40, SCREEN2H - 49, xcom1_color(BUTTON));
+    textout_centre(screen2, font, _("NEW"),  gmx + gmw / 2 - 40, SCREEN2H - 49, xcom1_color(BUTTON));
+    textout_centre(screen2, font, _("LOAD"), gmx + gmw / 2, SCREEN2H - 49, xcom1_color(BUTTON));
+    textout_centre(screen2, font, _("SAVE"), gmx + gmw / 2 + 40, SCREEN2H - 49, xcom1_color(BUTTON));
 }
 
 void Units::draw_rules_window()
 {
 	rect(    screen2, gmx + gmw / 2 - 85,     SCREEN2H - 103,     gmx + gmw / 2 + 85,     SCREEN2H - 25,     COLOR_WHITE);
 	rectfill(screen2, gmx + gmw / 2 - 85 + 1, SCREEN2H - 103 + 1, gmx + gmw / 2 + 85 - 1, SCREEN2H - 25 - 1, COLOR_GRAY14);
-	
-	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 97, xcom1_color(BUTTON), "Explosives level: %d", scenario->rules[0]);
-	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 85, xcom1_color(BUTTON), "Points limit: %d000", scenario->rules[1]);
-	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 73, xcom1_color(BUTTON), scenario->rules[2] == 0 ? "No turns limit" : "Turns limit: %d", scenario->rules[2]);
-	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 61, xcom1_color(BUTTON), g_time_limit == -1 ? "No time limit" : "Time limit: %d sec", g_time_limit);
-	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 49, xcom1_color(BUTTON), "Exploration level: %d", scenario->rules[3]);
-	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 37, xcom1_color(BUTTON), scenario->rules[4] ? "Editor: ground on" : "Editor: ground off");
+
+    textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 97, xcom1_color(BUTTON), _("Explosives level: %d"), scenario->rules[0]);
+    textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 85, xcom1_color(BUTTON), _("Points limit: %d000"), scenario->rules[1]);
+    textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 73, xcom1_color(BUTTON), scenario->rules[2] == 0 ? _("No turns limit") : _("Turns limit: %d"), scenario->rules[2]);
+    textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 61, xcom1_color(BUTTON), g_time_limit == -1 ? _("No time limit") : _("Time limit: %d sec"), g_time_limit);
+    textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 49, xcom1_color(BUTTON), _("Exploration level: %d"), scenario->rules[3]);
+    textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 37, xcom1_color(BUTTON), scenario->rules[4] ? _("Editor: ground on") : _("Editor: ground off") );
 }
 
 /**
@@ -378,24 +379,24 @@ void Units::draw_rules_0_window()
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 133, xcom1_color(SELECTED), "%d", scenario->rules[0]);
 	textout_centre(screen2, font, "<", gmx + gmw / 2 - 20, SCREEN2H - 133, xcom1_color(BUTTON));
 	textout_centre(screen2, font, ">", gmx + gmw / 2 + 20, SCREEN2H - 133, xcom1_color(BUTTON));
-	
+
 	switch(scenario->rules[0]) {
 	    case 0:
-	    textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 121, xcom1_color(COMMENT), "All explosives are prohibited.");
-	    break;
+        textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 121, xcom1_color(COMMENT), _("All explosives are prohibited.") );
+        break;
 
      	case 1:
-	    textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 121, xcom1_color(COMMENT), "High explosives, all rockets and");
-	    textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 109, xcom1_color(COMMENT), "alien grenades are prohibited.");
+        textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 121, xcom1_color(COMMENT), _("High explosives, all rockets and") );
+        textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 109, xcom1_color(COMMENT), _("alien grenades are prohibited.") );
 	    break;
 
 	    case 2:
-	    textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 121, xcom1_color(COMMENT), "Large rockets and alien grenades");
-	    textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 109, xcom1_color(COMMENT), "are prohibited.");
+        textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 121, xcom1_color(COMMENT), _("Large rockets and alien grenades") );
+        textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 109, xcom1_color(COMMENT), _("are prohibited.") );
 	    break;
 
 		case 3:
-	    textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 121, xcom1_color(COMMENT), "All explosives are allowed.");
+        textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 121, xcom1_color(COMMENT), _("All explosives are allowed.") );
 	    break;
 	}
 }
@@ -407,7 +408,7 @@ void Units::draw_rules_1_window()
 {
 	rect(    screen2, gmx + gmw / 2 - 40,     SCREEN2H - 99,     gmx + gmw / 2 + 40,     SCREEN2H - 85,     COLOR_WHITE);
 	rectfill(screen2, gmx + gmw / 2 - 40 + 1, SCREEN2H - 99 + 1, gmx + gmw / 2 + 40 - 1, SCREEN2H - 85 - 1, COLOR_GRAY13);
-	
+
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 95, xcom1_color(SELECTED), "%d000", scenario->rules[1]);
 	textout_centre(screen2, font, "<", gmx + gmw / 2 - 30, SCREEN2H - 95, xcom1_color(BUTTON));
 	textout_centre(screen2, font, ">", gmx + gmw / 2 + 30, SCREEN2H - 95, xcom1_color(BUTTON));
@@ -421,7 +422,7 @@ void Units::draw_rules_2_window()
 	rect(    screen2, gmx + gmw / 2 - 30,     SCREEN2H - 87,     gmx + gmw / 2 + 30,     SCREEN2H - 73,     COLOR_WHITE);
 	rectfill(screen2, gmx + gmw / 2 - 30 + 1, SCREEN2H - 87 + 1, gmx + gmw / 2 + 30 - 1, SCREEN2H - 73 - 1, COLOR_GRAY13);
 
-	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 83, xcom1_color(SELECTED), scenario->rules[2] == 0 ? "no" : "%d", scenario->rules[2]);
+    textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 83, xcom1_color(SELECTED), scenario->rules[2] == 0 ? _("no") : "%d", scenario->rules[2]);
 	textout_centre(screen2, font, "<", gmx + gmw / 2 - 20, SCREEN2H - 83, xcom1_color(BUTTON));
 	textout_centre(screen2, font, ">", gmx + gmw / 2 + 20, SCREEN2H - 83, xcom1_color(BUTTON));
 }
@@ -433,8 +434,8 @@ void Units::draw_rules_3_window()
 {
 	rect(    screen2, gmx + gmw / 2 - 30,     SCREEN2H - 75,     gmx + gmw / 2 + 30,     SCREEN2H - 61,     COLOR_WHITE);
 	rectfill(screen2, gmx + gmw / 2 - 30 + 1, SCREEN2H - 75 + 1, gmx + gmw / 2 + 30 - 1, SCREEN2H - 61 - 1, COLOR_GRAY13);
-	
-	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 71, xcom1_color(SELECTED), g_time_limit == -1 ? "no" : "%d", g_time_limit);
+
+    textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 71, xcom1_color(SELECTED), g_time_limit == -1 ? _("no") : "%d", g_time_limit);
 	textout_centre(screen2, font, "<", gmx + gmw / 2 - 20, SCREEN2H - 71, xcom1_color(BUTTON));
 	textout_centre(screen2, font, ">", gmx + gmw / 2 + 20, SCREEN2H - 71, xcom1_color(BUTTON));
 }
@@ -446,22 +447,22 @@ void Units::draw_rules_4_window()
 {
 	rect(    screen2, gmx + gmw / 2 - 115,     SCREEN2H - 63,     gmx + gmw / 2 + 110,     SCREEN2H - 35,     COLOR_WHITE);
 	rectfill(screen2, gmx + gmw / 2 - 115 + 1, SCREEN2H - 63 + 1, gmx + gmw / 2 + 110 - 1, SCREEN2H - 35 - 1, COLOR_GRAY13);
-	
+
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 59, xcom1_color(SELECTED), "%d", scenario->rules[3]);
 	textout_centre(screen2, font, "<", gmx + gmw / 2 - 20, SCREEN2H - 59, xcom1_color(BUTTON));
 	textout_centre(screen2, font, ">", gmx + gmw / 2 + 20, SCREEN2H - 59, xcom1_color(BUTTON));
-	
+
 	switch(scenario->rules[3]) {
 		case 0:
-		textprintf(screen2, font, gmx + gmw / 2 - 115 + 3, SCREEN2H - 47, xcom1_color(COMMENT), "Map isn't explored at all.");
+        textprintf(screen2, font, gmx + gmw / 2 - 115 + 3, SCREEN2H - 47, xcom1_color(COMMENT), _("Map isn't explored at all.") );
 		break;
 
 		case 1:
-		textprintf(screen2, font, gmx + gmw / 2 - 115 + 3, SCREEN2H - 47, xcom1_color(COMMENT), "Deployment area is explored.");
+        textprintf(screen2, font, gmx + gmw / 2 - 115 + 3, SCREEN2H - 47, xcom1_color(COMMENT), _("Deployment area is explored.") );
 		break;
 
 		case 2:
-		textprintf(screen2, font, gmx + gmw / 2 - 115 + 3, SCREEN2H - 47, xcom1_color(COMMENT), "The entire map is explored.");
+        textprintf(screen2, font, gmx + gmw / 2 - 115 + 3, SCREEN2H - 47, xcom1_color(COMMENT), _("The entire map is explored.") );
 		break;
 	}
 }
@@ -527,7 +528,7 @@ int Units::draw_items_stats(int gx, int gy, char *buf, int len)
  */
 void Units::print_simple(int gcol)
 {
-	text_mode( -1);	
+	text_mode( -1);
 	int i, x1, y1, x2, y2, color = COLOR_GREEN12;
 	for (i = 0; i < size; i++) {
 		if (x[i] != 0) {    // unit is selected for mission
@@ -543,7 +544,7 @@ void Units::print_simple(int gcol)
 			color = COLOR_GREEN12;
 		}
 
-		x1 = gx - 2;          x2 = gx + MAN_NAME_LEN * 8 + 2;	
+		x1 = gx - 2;          x2 = gx + MAN_NAME_LEN * 8 + 2;
 		y1 = gy + i * 15 - 2; y2 = y1 + 8 + 3;
 		rectfill(screen2, x1, y1, x2, y2, color);  // Background for name-field
 
@@ -577,7 +578,7 @@ void Units::print_simple(int gcol)
 	else*/
 	points += draw_items_stats(gx, 160 + 10, buf, len);
 
-	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, COLOR_GREEN, "Total points=%d", points);
+    textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, COLOR_GREEN, _("Total points=%d"), points);
 }
 
 /**
@@ -593,24 +594,24 @@ void Units::draw_text()
 
 	if (pos == POS_LEFT) {
 		//textprintf(screen2, font, gx+56, SCREEN2H-29, 8, "%s", "SERVER");
-		textout_centre(screen2, font, "SERVER", gx + 10 * 8, SCREEN2H - 29, xcom1_color(CAPTION));
+        textout_centre(screen2, font, _("SERVER"), gx + 10 * 8, SCREEN2H - 29, xcom1_color(CAPTION));
 	} else {
 		//textprintf(screen2, font, gx+56, SCREEN2H-29, 8, "%s", "CLIENT");
-		textout_centre(screen2, font, "CLIENT", gx + 10 * 8, SCREEN2H - 29, xcom1_color(CAPTION));
+        textout_centre(screen2, font, _("CLIENT"), gx + 10 * 8, SCREEN2H - 29, xcom1_color(CAPTION));
 	}
 
 	int color = SWITCH_OFF;      //red
 	if (SEND)
 		color = SWITCH_ON;      //green
 
-	textout_centre(screen2, font, "SEND", gx + 15 * 8, SCREEN2H - 16, xcom1_color(color));
+    textout_centre(screen2, font, _("SEND"), gx + 15 * 8, SCREEN2H - 16, xcom1_color(color));
 
 	if (START)
 		color = SWITCH_ON;      //green
 	else
 		color = SWITCH_OFF;     //red
 
-	textout_centre(screen2, font, "START", gx + 5 * 8, SCREEN2H - 16, xcom1_color(color));
+    textout_centre(screen2, font, _("START"), gx + 5 * 8, SCREEN2H - 16, xcom1_color(color));
 }
 
 /**
@@ -695,7 +696,7 @@ void Units::execute_main(Map *map, int map_change_allowed)
 	}
 
 	int x1, y1, x2, y2;
-	x1 = gx - 2; x2 = gx + MAN_NAME_LEN * 8 + 2;	
+	x1 = gx - 2; x2 = gx + MAN_NAME_LEN * 8 + 2;
 
 	for (i = 0; i < size; i++) {
 		y1 = gy + i * 15 - 2; y2 = y1 + 8 + 3;
@@ -859,7 +860,7 @@ void Units::execute_scenario(Map *map, int map_change_allowed)
 					scenario->options[scenario->type][i]->value = 1;
 				break;
 			}
-		
+
 			net->send_options(scenario->type, i, scenario->options[scenario->type][i]->value);
 			if (scenario->options[scenario->type][i]->reset_deploy)
 			{
@@ -890,7 +891,7 @@ void Units::execute_map(Map *map, int map_change_allowed)
 
 		std::string current_terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
 		std::string terrain_name = terrain_set->select_terrain_gui_dialog(current_terrain_name);
-		
+
 		::set_mouse_range(0, 0, 639, SCREEN2H);
 
 		if (current_terrain_name != terrain_name) {
@@ -946,11 +947,11 @@ void Units::execute_map(Map *map, int map_change_allowed)
 		
 		::set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
 		
-		if (file_select("load GEODATA.lua file", path, "lua")) {
+        if (file_select( _("load GEODATA.lua file"), path, "lua")) {
 			GEODATA gd;
 
 			if (!Map::load_GEODATA(path, &gd) || !Map::valid_GEODATA(&gd)) {
-				g_console->printf(xcom1_color(34), "invalid map file.");
+                g_console->printf(COLOR_RED02, _("Invalid map file.") );
 			} else {
 				memcpy(&mapdata, &gd, sizeof(mapdata));
 				net->send_map_data(&mapdata);
@@ -958,21 +959,21 @@ void Units::execute_map(Map *map, int map_change_allowed)
 				net->send_scenario();
 			}
 		}
-		
+
 		::set_mouse_range(0, 0, 639, SCREEN2H);
 	}
-	
+
 	if (mouse_inside(gmx + gmw / 2 + 20, SCREEN2H - 49, gmx + gmw / 2 + 60, SCREEN2H - 36)) {
 		//"SAVE"
 		char path[1000]; *path = 0;
-		
-		::set_mouse_range(0, 0, SCREEN_W, SCREEN_H);	
-		
-		if (file_select("save GEODATA.lua file", path, "lua")) {
+
+		::set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
+
+		if (file_select( _("Save GEODATA.lua file"), path, "lua")) {
 			if(!Map::save_GEODATA(path, &mapdata))
-				g_console->printf(xcom1_color(34), "can't save geodata.");
+                g_console->printf(COLOR_RED02, _("Can't save geodata.") );
 		}
-		
+
 		::set_mouse_range(0, 0, 639, SCREEN2H);
 	}
 }
@@ -996,7 +997,7 @@ void Units::execute_rules(Map *map, int map_change_allowed)
 
 	if (mouse_inside(gmx + gmw / 2 - 80, SCREEN2H - 49, gmx + gmw / 2 + 80, SCREEN2H - 37))
 		state = PS_RULES_4;
-	
+
 	if (mouse_inside(gmx + gmw / 2 - 80, SCREEN2H - 36, gmx + gmw / 2 + 80, SCREEN2H - 25)) {
 		if (scenario->rules[4] == 0)
 			scenario->rules[4] = 1;
@@ -1182,7 +1183,7 @@ void Units::execute_right()
 		deselect();
 	} else {
 		int x1, y1, x2, y2;
-		x1 = gx - 2; x2 = gx + MAN_NAME_LEN * 8 + 2;	
+		x1 = gx - 2; x2 = gx + MAN_NAME_LEN * 8 + 2;
 
 		for (int i = 0; i < size; i++) {
 			y1 = gy + i * 15 - 2; y2 = y1 + 8 + 3;

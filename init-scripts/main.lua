@@ -287,6 +287,16 @@ function MapGenerator(name, size_x, size_y)
 	return TerrainTable[name].MapGenerator(CreateMapTemplate(size_x, size_y))
 end
 
+-- %% Test - Prototype 1:
+function gettext( t1 )
+    if ( t1 == "quit")       then return( "QUIT" ) end
+    if ( t1 == "WATCH")      then return( "watch" ) end
+    if ( t1 == "START")      then return( "start" ) end
+--  if ( t1 == "Deathmatch") then return( "DeathMatch" ) end
+--  if ( t1 == "Hold")       then return( "HOLD" ) end
+    return( "" )
+end
+
 Message("#\n# UFO2000 started: %s\n#", os.date())
 
 -- perform data files integrity check before applying security

@@ -26,6 +26,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "place.h"
 #include "map.h"
 #include "colors.h"
+#include "text.h"
 
 IMPLEMENT_PERSISTENCE(Place, "Place");
 
@@ -264,17 +265,18 @@ void Place::draw(int gx, int gy)
 #define P_BELT		7
 #define P_MAP		 8
 */
+// ?? gettext
 static char *place_name[10] = {
-	"RIGHT SHOULDER",
-	"LEFT SHOULDER",
-	"RIGHT HAND",
-	"LEFT HAND",
-	"RIGHT LEG",
-	"LEFT LEG",
-	"BACK PACK",
-	"BELT",
-	"GROUND",
-	"ARMOURY"
+    ("RIGHT SHOULDER"),
+    ("LEFT SHOULDER"),
+    ("RIGHT HAND"),
+    ("LEFT HAND"),
+    ("RIGHT LEG"),
+    ("LEFT LEG"),
+    ("BACK PACK"),
+    ("BELT"),
+    ("GROUND"),
+    ("ARMOURY")
 };
 
 /**

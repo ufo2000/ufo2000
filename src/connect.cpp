@@ -77,8 +77,8 @@ int Connect::do_chat()
 	g_net_allowed_terrains.clear();
 
 	remote_win->printstr("\n");
-	remote_win->printstr("Comparing local and remote UFO2000 versions...\n");
-	remote_win->printstr("Press ESC to cancel\n");
+    remote_win->printstr( _("Comparing local and remote UFO2000 versions...\n") );
+    remote_win->printstr( _("Press ESC to cancel\n") );
 
 	char version_check_packet[128];
 	sprintf(version_check_packet, "UFO2000 REVISION OF YOUR OPPONENT: %d", UFO_REVISION_NUMBER);
@@ -93,6 +93,7 @@ int Connect::do_chat()
 					version_check_passed = true;
 				} else {
 					if (remote_revision < UFO_REVISION_NUMBER) {
+                        // Todo: Reformat following texts for gettext()
 						remote_win->printstr("\nUnfortunately your opponent has an\n");
 						remote_win->printstr("outdated UFO2000 version and you will be\n");
 						remote_win->printstr("unable to play until he upgrades\n");
@@ -129,7 +130,7 @@ int Connect::do_chat()
 		}
 
 		if (!net->SEND) {
-			info_win->printstr("\nconnection closed");
+            info_win->printstr( _("\nconnection closed") );
 			readkey();
 			DONE = 1;
 		}
@@ -213,7 +214,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 	g_console->set_full_redraw();
 	g_console->redraw(screen, 0, SCREEN2H);
 
-	g_console->printf( COLOR_SYS_HEADER, "%s", "Welcome to the mission-planner !");
+    g_console->printf( COLOR_SYS_HEADER, "%s", _("Welcome to the mission-planner !") );
 
 	Map *map = new Map(mapdata);
 	BITMAP *map2d = map->create_bitmap_of_map(0);
@@ -292,12 +293,12 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 	}
 
 	if (map_change_allowed)
-		g_console->printf( COLOR_SYS_OK,   "You can select a map and change the match-settings.");
-	else
-		g_console->printf( COLOR_SYS_FAIL, "The map is already set for this game, and cannot be changed.");
-	g_console->printf( COLOR_SYS_INFO1,  "To edit a soldier, CTRL-click on his name.");
-	g_console->printf( COLOR_SYS_INFO1,  "Left-click to place a soldier on the map, right-click to remove him.");
-	g_console->printf( COLOR_SYS_PROMPT, "When finished, click SEND, then START.  Press ESC to quit, F1 for help."); 
+        g_console->printf( COLOR_SYS_OK,   _("You can select a map and change the match-settings.") );
+    else
+        g_console->printf( COLOR_SYS_FAIL, _("The map is already set for this game, and cannot be changed.") );
+    g_console->printf( COLOR_SYS_INFO1,    _("To edit a soldier, CTRL-click on his name.") );
+    g_console->printf( COLOR_SYS_INFO1,    _("Left-click to place a soldier on the map, right-click to remove him.") );
+    g_console->printf( COLOR_SYS_PROMPT,   _("When finished, click SEND, then START.  Press ESC to quit, F1 for help.") ); 
 
 	while (!DONE) {
 
@@ -432,8 +433,8 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 
 	delete map;
 
-	g_console->printf(COLOR_SYS_INFO2, "%s\n\n\n\n\n\n\n\n\n\n\n\n\n", "ok."); 
-	//g_console->printf(COLOR_WHITE, "\n\n\n\n\n\n\n\n\n\n\n\n"); // clear message-area (scroll up)
+    g_console->printf(COLOR_SYS_INFO2, "%s\n\n\n\n\n\n\n\n\n\n\n\n\n", _("ok.") ); 
+    // clear message-area (scroll up)
 
 	g_console->redraw(screen, 0, SCREEN2H);
 	destroy_bitmap(screen2);
