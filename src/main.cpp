@@ -680,6 +680,7 @@ void check_crc(int crc)
 	if (crc != bcrc) {
 		g_console->printf("%s", "wrong wholeCRC");
 		g_console->printf("crc=%d, bcrc=%d", crc, bcrc);
+		net->send_error_report("crc error");
 	}
 }
 

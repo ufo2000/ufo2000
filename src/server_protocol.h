@@ -46,6 +46,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define SRV_GAME_PACKET        12
 #define SRV_ENDGAME            13
 
+#define SRV_DEBUG_MESSAGE      14
+
 class ServerClientUfo: public ServerClient
 {
 	std::set<std::string>  m_challenged_opponents;

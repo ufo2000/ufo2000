@@ -22,7 +22,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define VERSION_H
 
 #define UFO_VERSION_STRING "0.4.0-beta"
-#define UFO_REVISION_NUMBER 268
+#define UFO_REVISION_NUMBER 272
 
 #ifndef UFO_SVNVERSION
 #define UFO_SVNVERSION "unknown"

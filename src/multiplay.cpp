@@ -1310,3 +1310,9 @@ int Net::recv_terrain_crc32()
 	
 	return 1;
 }
+
+void Net::send_error_report(char *report)
+{
+	if (gametype == GAME_TYPE_INTERNET_SERVER)
+		m_internet_server->send_packet(SRV_DEBUG_MESSAGE, report);
+}
