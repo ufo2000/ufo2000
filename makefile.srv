@@ -17,7 +17,7 @@
 CC = g++
 LD = g++
 CFLAGS = -funsigned-char -Wall
-CFLAGS += -pipe -DUFO_SVNVERSION=\"$(UFO_SVNVERSION)\"
+CFLAGS += -pipe -DUFO_SVNVERSION=\"$(UFO_SVNVERSION)\" -I/usr/local/include
 OBJDIR = obj
 SERVER_NAME = ufo2000-srv
 
@@ -43,7 +43,7 @@ ifdef win32
 else
 	CFLAGS += -DLINUX
 	CFLAGS += $(INCLUDES)
-	LIBS += -lNL -pthread
+	LIBS += -lNL -pthread -L/usr/local/lib
 endif
 
 OBJS_SERVER = $(addprefix $(OBJDIR)/,$(SRCS_SERVER:.cpp=.o))

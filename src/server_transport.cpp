@@ -210,7 +210,7 @@ void ServerDispatch::Run(NLsocket sock)
         
     //	Check for incoming messages
         NLsocket s[CONNECTIONS_COUNT_LIMIT];
-        NLint count = nlPollGroup(m_group, NL_READ_STATUS, s, CONNECTIONS_COUNT_LIMIT, 0);
+        NLint count = nlPollGroup(m_group, NL_READ_STATUS, s, CONNECTIONS_COUNT_LIMIT, -1);
         assert(count != NL_INVALID);
 
 	//	Loop through the clients and read the packets
@@ -242,7 +242,7 @@ void ServerDispatch::Run(NLsocket sock)
             HandleSocket(s[i]);
         }
 
-        usleep(1);
+        usleep(50000);
     }
 }
 
