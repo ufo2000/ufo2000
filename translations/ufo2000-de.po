@@ -13,8 +13,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: UFO2000\n"
-"POT-Creation-Date: 2004-11-08 02:38+0100\n"
-"PO-Revision-Date: 2004-11-07 16:16+0100\n"
+"POT-Creation-Date: 2004-11-08 17:33+0100\n"
+"PO-Revision-Date: 2004-11-08 17:44+0100\n"
 "Last-Translator: HaJo Gurt <gurt@gmx.de>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: German\n"
 "X-Poedit-Country: GERMANY\n"
-"X-Poedit-Basepath: C:\\Devel\\ufo2000.528\\\n"
+"X-Poedit-Basepath: C:\\Devel\\ufo2000.532\\\n"
 
 #: src/config.cpp:285
 msgid "Configuration"
@@ -285,6 +285,59 @@ msgstr "VERZöG."
 msgid "TIME:"
 msgstr "ZEIT:"
 
+# msgstr "Typ"
+#: src/item.cpp:216
+msgid "Firing-Type"
+msgstr "Feuermodus"
+
+#: src/item.cpp:216
+msgid "Accuracy"
+msgstr "Genauigkeit"
+
+#: src/item.cpp:216
+msgid "TU cost"
+msgstr "Zeitbedarf"
+
+#: src/item.cpp:220
+msgid "Auto"
+msgstr "Feuerstoss"
+
+#: src/item.cpp:226
+msgid "Snap"
+msgstr "Schnellschuss"
+
+#: src/item.cpp:232
+msgid "Aimed"
+msgstr "Zielschuss"
+
+#: src/item.cpp:240
+msgid "Two-handed weapon"
+msgstr "Zweihändige Waffe"
+
+#: src/item.cpp:247
+msgid "Ammo-Type"
+msgstr "Munitions-Typ"
+
+#: src/item.cpp:246 src/main.cpp:1340 src/main.cpp:1342
+msgid "Damage"
+msgstr "Schaden"
+
+#: src/item.cpp:253
+msgid "Rounds"
+msgstr "Kapazität"
+
+#: src/item.cpp:262
+msgid "Ammo#"
+msgstr "Munition#"
+
+#: src/item.cpp:267
+msgid "Weight"
+msgstr "Gewicht"
+
+#: src/item.cpp:270
+msgid "Cost"
+msgstr "Kosten"
+
 #: src/main.cpp:82
 #, c-format
 msgid "Time left: %d"
@@ -408,10 +461,6 @@ msgstr ""
 #: src/main.cpp:1340 src/main.cpp:1342
 msgid "Kills"
 msgstr "Abschüsse"
-
-#: src/main.cpp:1340 src/main.cpp:1342
-msgid "Damage"
-msgstr "Schaden"
 
 #: src/main.cpp:1373
 msgid "You can chat here.  Press ESC when finished."

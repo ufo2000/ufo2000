@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: UFO2000\n"
-"POT-Creation-Date: 2004-11-08 02:38+0100\n"
+"POT-Creation-Date: 2004-11-08 17:43+0100\n"
 "PO-Revision-Date: unknown\n"
 "Last-Translator: Serge Semashko\n"
 "Language-Team: Belarusian\n"
@@ -14,33 +14,33 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/config.cpp:285
+#: src/config.cpp:286
 msgid "Configuration"
 msgstr ""
 
-#: src/config.cpp:290 src/connect.cpp:260 src/editor.cpp:644 src/main.cpp:1791
+#: src/config.cpp:291 src/connect.cpp:260 src/editor.cpp:644 src/main.cpp:1791
 #: src/main.cpp:1936 src/video.cpp:360 src/server_gui.cpp:310
 msgid "OK"
 msgstr ""
 
-#: src/config.cpp:291 src/icon.cpp:647 src/video.cpp:360
+#: src/config.cpp:292 src/icon.cpp:647 src/video.cpp:360
 #: src/server_gui.cpp:311
 msgid "Cancel"
 msgstr ""
 
-#: src/config.cpp:292
+#: src/config.cpp:293
 msgid "movement speed"
 msgstr ""
 
-#: src/config.cpp:293
+#: src/config.cpp:294
 msgid "fire speed"
 msgstr ""
 
-#: src/config.cpp:294
+#: src/config.cpp:295
 msgid "scroll speed"
 msgstr ""
 
-#: src/config.cpp:295
+#: src/config.cpp:296
 msgid "mapscroll points"
 msgstr ""
 
@@ -139,7 +139,7 @@ msgstr ""
 msgid "LEFT="
 msgstr ""
 
-#: src/editor.cpp:379 src/soldier.cpp:823
+#: src/editor.cpp:379 src/soldier.cpp:854
 #, c-format
 msgid "Equipment weight: %d/%2d"
 msgstr ""
@@ -270,6 +270,58 @@ msgstr ""
 msgid "TIME:"
 msgstr ""
 
+#: src/item.cpp:217
+msgid "Firing-Type"
+msgstr ""
+
+#: src/item.cpp:217
+msgid "Accuracy"
+msgstr ""
+
+#: src/item.cpp:217
+msgid "TU cost"
+msgstr ""
+
+#: src/item.cpp:221
+msgid "Auto"
+msgstr ""
+
+#: src/item.cpp:227
+msgid "Snap"
+msgstr ""
+
+#: src/item.cpp:233
+msgid "Aimed"
+msgstr ""
+
+#: src/item.cpp:241
+msgid "Two-handed weapon"
+msgstr ""
+
+#: src/item.cpp:247 src/main.cpp:1340 src/main.cpp:1342
+msgid "Damage"
+msgstr ""
+
+#: src/item.cpp:248
+msgid "Ammo-Type"
+msgstr ""
+
+#: src/item.cpp:254
+msgid "Rounds"
+msgstr ""
+
+#: src/item.cpp:263
+msgid "Ammo#"
+msgstr ""
+
+#: src/item.cpp:268
+msgid "Weight"
+msgstr ""
+
+#: src/item.cpp:271
+msgid "Cost"
+msgstr ""
+
 #: src/main.cpp:82
 #, c-format
 msgid "Time left: %d"
@@ -391,10 +443,6 @@ msgstr ""
 
 #: src/main.cpp:1340 src/main.cpp:1342
 msgid "Kills"
-msgstr ""
-
-#: src/main.cpp:1340 src/main.cpp:1342
-msgid "Damage"
 msgstr ""
 
 #: src/main.cpp:1373
@@ -1334,27 +1382,27 @@ msgstr ""
 msgid "(to be continued)"
 msgstr ""
 
-#: src/soldier.cpp:832
+#: src/soldier.cpp:863
 msgid "TUs>"
 msgstr ""
 
-#: src/soldier.cpp:854
+#: src/soldier.cpp:885
 msgid "Health>"
 msgstr ""
 
-#: src/soldier.cpp:1298
+#: src/soldier.cpp:1329
 msgid "Time units are reserved for snap shot."
 msgstr ""
 
-#: src/soldier.cpp:1305
+#: src/soldier.cpp:1336
 msgid "Time units are reserved for aimed shot."
 msgstr ""
 
-#: src/soldier.cpp:1312
+#: src/soldier.cpp:1343
 msgid "Time units are reserved for auto shot."
 msgstr ""
 
-#: src/soldier.cpp:1319
+#: src/soldier.cpp:1350
 msgid "Time units are reserved for grenade throw."
 msgstr ""
 
@@ -1794,49 +1842,49 @@ msgstr ""
 msgid "your opponent's minimap.                         "
 msgstr ""
 
-#: src/scenario.cpp:495
+#: src/scenario.cpp:488
 #, c-format
 msgid "Player 1 is controlling the target area for %d turn(s)."
 msgstr ""
 
-#: src/scenario.cpp:503
+#: src/scenario.cpp:496
 #, c-format
 msgid "Player 2 is controlling the target area for %d turn(s)."
 msgstr ""
 
-#: src/scenario.cpp:508
+#: src/scenario.cpp:501
 msgid "Nobody is controlling the target area."
 msgstr ""
 
-#: src/scenario.cpp:787
+#: src/scenario.cpp:780
 #, c-format
 msgid "%s isn't allowed."
 msgstr ""
 
-#: src/scenario.cpp:797
+#: src/scenario.cpp:790
 #, c-format
 msgid "%d points limit exceeded!"
 msgstr ""
 
-#: src/scenario.cpp:810
+#: src/scenario.cpp:803
 #, c-format
 msgid ""
 "Items on the ground aren't allowed (you have: %d, including unselected "
 "soldiers)."
 msgstr ""
 
-#: src/scenario.cpp:834 src/scenario.cpp:878 src/scenario.cpp:940
+#: src/scenario.cpp:827 src/scenario.cpp:871 src/scenario.cpp:933
 msgid "Soldier #1 can't have two-handed weapons!"
 msgstr ""
 
-#: src/scenario.cpp:854
+#: src/scenario.cpp:847
 msgid "You must have at least 2 high explosives."
 msgstr ""
 
-#: src/scenario.cpp:922
+#: src/scenario.cpp:915
 msgid "You must have at least one stun rod or one loaded stun launcher."
 msgstr ""
 
-#: src/scenario.cpp:1089 src/scenario.cpp:1103
+#: src/scenario.cpp:1082 src/scenario.cpp:1096
 msgid "Leader can't use two-handed weapons."
 msgstr ""

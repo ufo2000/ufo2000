@@ -30,6 +30,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "multiplay.h"
 #include "sound.h"
 #include "colors.h"
+#include "text.h"
 
 IMPLEMENT_PERSISTENCE(Item, "Item");
 
@@ -211,39 +212,46 @@ void Item::od_info(int type, int gx, int gy, int gcol)
 	gy += 15;
 
 	if (obdata_wayPoints(type) || obdata_isGun(type)) {
-		textprintf(screen2, font, gx + 5, gy, gcol, "Type   Accuracy  TUs cost");
+      //textprintf(screen2, font, gx + 5, gy, gcol, "%13s %-8s %s",
+        textprintf(screen2, font, gx + 0, gy, gcol, "%13s %-8s %10s",
+                       _("Firing-Type"), _("Accuracy"), _("TU cost") );
 		gy += 10;
 		if (obdata_accuracy(type, 0)) {
-			textprintf(screen2, font, gx, gy, gcol, "Auto     %3d%%      %3d%%",
-			           obdata_accuracy(type, 0), obdata_time(type, 0));
+            textprintf(screen2, font, gx, gy, gcol, "%13s     %3d%%    %5d%%",
+                       _("Auto"),
+                       obdata_accuracy(type, 0), obdata_time(type, 0));
 			gy += 10;
 		}
 		if (obdata_accuracy(type, 1)) {
-			textprintf(screen2, font, gx, gy, gcol, "Snap     %3d%%      %3d%%",
-			           obdata_accuracy(type, 1), obdata_time(type, 1));
+            textprintf(screen2, font, gx, gy, gcol, "%13s     %3d%%    %5d%%",
+                       _("Snap"),
+                       obdata_accuracy(type, 1), obdata_time(type, 1));
 			gy += 10;
 		}
 		if (obdata_accuracy(type, 2)) {
-			textprintf(screen2, font, gx, gy, gcol, "Aimed    %3d%%      %3d%%",
-			           obdata_accuracy(type, 2), obdata_time(type, 2));
+            textprintf(screen2, font, gx, gy, gcol, "%13s     %3d%%    %5d%%",
+                       _("Aimed"),
+                       obdata_accuracy(type, 2), obdata_time(type, 2));
 			gy += 10;
 		}
 		gy += 5;
 	}
 
 	if (obdata_twoHanded(type)) {
-		textprintf(screen2, font, gx, gy, gcol, "Two-handed weapon");
+        textprintf(screen2, font, gx, gy, gcol, _("Two-handed weapon") );
 		gy += 15;
 	}
 
 	if (obdata_damage(type) > 0) {
-		textprintf(screen2, font, gx, gy, gcol, "Damage: %d  Type: %d", obdata_damage(type),
-			obdata_damageType(type));
+        textprintf(screen2, font, gx, gy, gcol, "%13s: %3d %8s: %d", 
+                   _("Damage"),     obdata_damage(type), 
+                   _("Ammo-Type"),   obdata_damageType(type));
 		gy += 10;
 	}
 
 	if (obdata_isAmmo(type)) {
-		textprintf(screen2, font, gx, gy, gcol, "Rounds: %d", obdata_rounds(type));
+        textprintf(screen2, font, gx, gy, gcol, "%13s: %3d", 
+                   _("Rounds"), obdata_rounds(type));
 		gy += 10;
 	}
 
@@ -251,13 +259,16 @@ void Item::od_info(int type, int gx, int gy, int gcol)
 	get_ammo_list(obdata_name(type), ammo);
 
 	for (int i = 0; i < (int)ammo.size(); i++) {
-		textprintf(screen2, font, gx, gy, gcol, " Ammo%d: %s", i + 1, ammo[i].c_str());
+        textprintf(screen2, font, gx, gy, gcol, "%12s%d: %s", 
+                   _("Ammo#"), i + 1, ammo[i].c_str());
 		gy += 10;
 	}
 
-	textprintf(screen2, font, gx, gy, gcol, "Weight: %d", obdata_weight(type));
+    textprintf(screen2, font, gx, gy, gcol, "%13s: %3d", 
+               _("Weight"), obdata_weight(type));
 	gy += 10;
-	textprintf(screen2, font, gx, gy, gcol, "  Cost: %d", obdata_cost(type));
+    textprintf(screen2, font, gx, gy, gcol, "%13s: %3d", 
+               _("Cost"), obdata_cost(type));
 	gy += 10;
 }
 
@@ -476,3 +487,4 @@ bool Item::Read(persist::Engine &archive)
 
 	return true;
 }
+
