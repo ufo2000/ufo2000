@@ -483,7 +483,7 @@ Section "${GAME_NAME} (required)" MainSec
 		fr: CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - French.lnk" "$INSTDIR\readme_fr.txt"
 		fr1: !insertmacro MUI_INSTALLOPTIONS_READ $0 "readme_select.ini" "Field 2" "State"
 		StrCmp $0 "1" ru ru1
-		ru: CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Russian Manual.lnk" "$INSTDIR\readme_rus.html"
+		ru: CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Russian Manual.lnk" "$INSTDIR\readme_ru.html"
 		ru1: !insertmacro MUI_INSTALLOPTIONS_READ $0 "readme_select.ini" "Field 4" "State"
 		StrCmp $0 "1" fi fi1
 		fi: CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - Finnish.lnk" "$INSTDIR\readme_fi.txt"
