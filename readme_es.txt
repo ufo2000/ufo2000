@@ -1,13 +1,13 @@
 
               **************************************************
-              **                UFO2000 0.3.XX                **
+              **                UFO2000 0.4.0                 **
               **             aka X-COM: Gladiators            **
               **        http://ufo2000.sourceforge.net/       **
               **              Manual en Castellano            **
               **************************************************
 
              Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-             Copyright (C) 2002-2003  ufo2000 development team
+             Copyright (C) 2002-2004  ufo2000 development team
 
 El desarrollo de UFO2000 continua tras cerca de un año de inactividad. 
 Ahora UFO2000 ha regresado y con la ayuda de nuevos desarrolladores, 
@@ -28,7 +28,6 @@ sus ideas, fallos y parches.
 
 Vea el fichero ChangeLog para ver la lista completa de cambio.
 
-Este fichero fue revisado por Jeremy Walker, aka Kuroshi X.
 
 ===============
 Acerca de
@@ -37,49 +36,72 @@ Acerca de
 UFO2000 es un remake multijugador de la parte táctica del juego de Microprose,
  X-COM: UFO Defense (UFO: Enemy Unknown).
 
-Requiere los ficheros del juego X-COMIt de los directorioss:
-   GEODATA GEOGRAPH MAPS SOUND TERRAIN UFOGRAPH UFOINTRO UNITS
+Necesitarás tener instalados el X-COM original para jugar a UFO2000. Podrá funcionar
+con la versión demo de X-COM, pero tan solo podrás jugar en los escenarios tipo
+ciudad, y utilizar una cantidad limitada de unidades. Se recomienda en cualquier caso
+tener la versión completa de X-COM.
 
-La versión de Windows puede ser compilada tanto con Microsoft Visual C++ 6.0 como con 
-el compilador gratuito Mingw GCCr.
-
-El juego también compila y funciona en Linux el sistema operativo FreeBSD.
+El juego compila y funciona en Windows, Linux el sistema operativo FreeBSD.
 Probablemente el juego funcionará en otros sistemas como UNIX. Si es capaz 
 de compilar y ejecutar UFO2000 en uno de ellos, por favor, haganoslo saber.
 
 Más detalles referentes a la compilación de UFO2000 puede encontrarse en el fichero
 INSTALL en el directorio de UFO2000.
 
-===============
-Editor de Mapa
-===============
+==============
+MENU DE INICIO
+==============
 
-Use el botón derecho del ratón para seleccionar el suelo que desee cambiar, y 
-aparecerá un menú de selección. Entonces elija el suelo de 10x10 que desee.
+Tras iniciar el juego, aparecerán varias opciones:
 
-F2          Graba
-F3          Carga
-ESC         Termina
+  Conectarse a un servidor de internet
 
+	El juego puede conectarse a un servidor de internet o a una red de área local
+	(para iniciar tu propio servidor, ejecuta ufo2000-srv incluído en la instalación)
+	Tras elegir esta opción, aparecerá conectarse al servidor ("connect to server").
+	Hay que introducir la dirección; lnxt.info se utiliza por defecto, es actualmente
+	el servidor oficial de ufo2000 en internet. Si quieres jugar en una red local, tendrías
+	que iniciar el servidor en un ordenador y su dirección ip con lo conectes desde otro
+	ordenador.
+	Los otros dos campos son nombre de usuario (login) y contraseña (password). Se utilizan
+	para identificar al usuario para las estadísticas (http://ufo2000.lxnt.info/results.php,
+	en la actualidad.) El nombre de usuario debe tener una longitud mínima de 6 caracteres.
+	Tras conectarse correctamente, aparecerá la ventana de chat.
+
+  Iniciar juego Hotseat
+
+	Inicia una parta en un solo ordenador. (no requiere una red) El jugador debe alternar el juego
+	cada turno. Tras hacer click en esta opción, aparecerá directamente el planificador de misiones.
+
+  Cargar partida grabada
+	Carga una partida grabada. Tan sólo funciona en partidas hotseat.
+
+  Quit
+
+	Sin comentarios ;)
 
 ===============
 Chat
 ===============
 
-Tras iniciar el servidor, pero antes de mover al planificador de misiones, 
-existe esta ventana. Un jugador debe iniciar como Servidor, 
-y el otro como Cliente, antes de poder empezar.
+Tras conectarse al servidor de ufo2000, verás una consola de chat y una lista de jugadores
+conectados al servidor. El estado de cada jugador está determinado por el color de su nombre:
 
-F4          volver a pintar la pantalla
-F10         Iniciar partida
-ESC         Cancelar
+Blanco - ese es tu propio nombre
+Gris - disponible para hablar
+Amarillo - has retado a éste jugador
+Verde - puedes aceptar un reto de éste jugador
+Rojo - está ocupado jugando con alguie.
+
+Para retar a un jugador, tan solo haz click en su nombre (se volverá amarillo.) Si alguien
+tiene el nombre en verde, significa que te ha retado. Tras hacer click en su nombnre, el juego
+se iniciará y la pantalla de chat será reemplazada por el planificador de misiones.
 
 
 ===============
 Planificador de Misiones
 ===============
 
-La siguiente pantalla tras la del Chat, es la del Planificador de Misiones.
 Aquí podrá elegir sus soldados, determinar las ubicaciones de inicio, y editar 
 sus estadísticas y armamento pulsando la tecla de CTRL izquierda 
 y haciendo click a la vez en el soldado elegido. (vea más abajo la sección Editor de Unidades)
@@ -93,6 +115,17 @@ Información sobre las unidades del jugador:
    1) "total men points=..." La suma totales de parámetros (TU, Vida,.. )
       de las unidades elegidas.
    2) Numero de armas de cada tipo por las unidades seleccionadas.
+
+
+Opciones de Partida (Match settings):
+
+ 1) Nombre del escenario elegido:
+	Click para elegir el escenario y usar las opciones del escenario
+ 2) Nombre del mapa elegido:
+	Click para elegir el terreno y el tamaño del mapa o para generar/cargar
+	un nuevo mapa.
+ 3) Reglas ("Game Rules"):
+	Click para especificar las reglas, como límite de turnos, tiempo, etc.
 
 Para generar un mapa nuevo, haga click en "NEW", para cargar pulse en "LOAD". Si tiene 
 adjustado el tamaño del mapa en el fichero de ufo2000.ini file, pero aún tiene su antiguo mapa 
@@ -121,37 +154,40 @@ en el juego. Si, tras ordenar su equipamiento, desea editar las estadísticas de 
 haga click en la parte derecha.
 
 Cada parámetro está restringido a ser >= 50 y <=80. La suma 
-de estos cuatro valores debe ser <= 240 para cada unidad. No hay restricciones 
-por el tipo y numero de armas para sus unidades, por tanto, durante el 
-Planificador de Misiones es recomendable que observe la selección de las
-armas del enemigo.
+de estos valores tiene un cierto límite en cada unidad, así que no puedes maximizar
+todos los parámetros. Puedes grabar y cargar varias configuraciones de unidades
+con las siguientes teclas:
 
 F2          Grabar
 F3          Cargar
-
-CTRL Izquierdo   Muestra el daño de las armas (en el editor -- valor máximo), esto
-ALT Izquierdo    también funciona en la pantalla de inventario durante el juego.
-
 
 ===============
 Controles de Juego
 ===============
 
-Todas las acciones, como en UFO1, se realizan mediante el ratón. Es posible
+Todas las acciones, como en X-COM, se realizan mediante el ratón. Es posible
 enviar y recibir mensajes del otro jugador durante el juego,
 tan solo escriba su mensaje con el teclado, y pulse intro.
 
 Estas son las teclas utilizadas en el juego:
 
-F1          Activar/Desactivar  Muestra paquetes Raw
-F4          Redibuja la pantalla
-F5          Reiniciar
 F10         Pantalla Completa/Modo Ventana
+
 ESC         Salir al Menu principal
-ALT-X       Escape rápido al SO
 
 Cursores &   cambiar el tamaño del mapa de la pantalla
 Teclado Numérico +/-  
+
+F1          Activar/Desactivar  Muestra paquetes Raw
+F4          Redibuja la pantalla
+F5          Reiniciar
+
+
+ALT-X       Escape rápido al SO
+
+
+CTRL Derecho Cambio entre dos mapas de teclado elegidos como teclado primario (primay_keyboard)
+F9	     y secundario en el archivo ufo2000.ini
 
 CTRL Derecho + 'b', 'd', 'e', 'p' or 'r' Cambia el mapa de teclas: Bielorruso, Alemán,
         Inglés, Polaco y Ruso (otros lenguajes pueden ser elegidos
@@ -160,10 +196,12 @@ CTRL Derecho + 'b', 'd', 'e', 'p' or 'r' Cambia el mapa de teclas: Bielorruso, A
 CTRL Izquierdo   Muestra la ruta de la unidad elegida hacia donde se encuentra el curso mostrando
                  el coste de TU.En modo punto de mira, mostrará la trayectoria de sus disparos
   y objetos arrojables. En la pantalla de inventario, mostrará el valor de daño.
-  (ALT alternativo)
+  (ALT GR)
 
 SHIFT Izquierdo  Permite puntería precisa si se mantiene hasta pulsar el botón de disparo
   con el botón derecho del ratón.
+
+SHIFT Izquierdo  + teclas cursor Mueve la pantalla del mapa
 
 INTRO       Enviar mensaje
 BORRAR      elimina el ultimo caracter en el mensaje
