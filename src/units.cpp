@@ -934,7 +934,7 @@ void Units::execute_map(Map *map, int map_change_allowed)
     int x1a = 85, x1b =  36;  // for translation: ru
     int x2a = 37, x2b =  37;
     int x3a = 38, x3b =  85;
-	if (mouse_inside(gmx + gmw / 2 - x1a, SCREEN2H - 63, gmx + gmw / 2 + x1b, SCREEN2H - 50)) {
+    if (mouse_inside(x0 - x1a, SCREEN2H - 63, x0 + x1b, SCREEN2H - 50)) {
 		//"4*4"
   		std::string terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
 		MAP_WIDTH = MAP_HEIGHT = 4;
@@ -944,7 +944,7 @@ void Units::execute_map(Map *map, int map_change_allowed)
 		scenario->new_coords();
 	}
 
-	if (mouse_inside(gmx + gmw / 2 - x2a, SCREEN2H - 63, gmx + gmw / 2 + x2b, SCREEN2H - 50)) {
+    if (mouse_inside(x0 - x2a, SCREEN2H - 63, x0 + x2b, SCREEN2H - 50)) {
 		//"5*5"
   		std::string terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
 		MAP_WIDTH = MAP_HEIGHT = 5;
@@ -954,7 +954,7 @@ void Units::execute_map(Map *map, int map_change_allowed)
 		scenario->new_coords();
 	}
 
-	if (mouse_inside(gmx + gmw / 2 + x3a, SCREEN2H - 63, gmx + gmw / 2 + x3b, SCREEN2H - 50)) {
+    if (mouse_inside(x0 + x3a, SCREEN2H - 63, x0 + x3b, SCREEN2H - 50)) {
 		//"6*6"
   		std::string terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
 		MAP_WIDTH = MAP_HEIGHT = 6;
@@ -964,7 +964,7 @@ void Units::execute_map(Map *map, int map_change_allowed)
 		scenario->new_coords();
 	}
 
-	if (mouse_inside(gmx + gmw / 2 - x1a, SCREEN2H - 49, gmx + gmw / 2 - x1b, SCREEN2H - 36)) {
+    if (mouse_inside(x0 - x1a, SCREEN2H - 49, x0 - x1b, SCREEN2H - 36)) {
 		//"NEW"
   		std::string terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
 		Map::new_GEODATA(&mapdata, terrain_name);
@@ -973,7 +973,7 @@ void Units::execute_map(Map *map, int map_change_allowed)
 		scenario->new_coords();
 	}
 
-	if (mouse_inside(gmx + gmw / 2 - x2a, SCREEN2H - 49, gmx + gmw / 2 + x2b, SCREEN2H - 36)) {
+    if (mouse_inside(x0 - x2a, SCREEN2H - 49, x0 + x2b, SCREEN2H - 36)) {
 		//"LOAD"
 		char path[1000]; *path = 0;
 		
@@ -995,7 +995,7 @@ void Units::execute_map(Map *map, int map_change_allowed)
 		::set_mouse_range(0, 0, 639, SCREEN2H);
 	}
 
-	if (mouse_inside(gmx + gmw / 2 + x3a, SCREEN2H - 49, gmx + gmw / 2 + x3b, SCREEN2H - 36)) {
+    if (mouse_inside(x0 + x3a, SCREEN2H - 49, x0 + x3b, SCREEN2H - 36)) {
 		//"SAVE"
 		char path[1000]; *path = 0;
 

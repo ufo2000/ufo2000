@@ -431,9 +431,6 @@ int connect_internet_server()
 
     lua_message( std::string("Server: ") + cfg_get_server_host() );
     lua_message( std::string("Login: ")  + g_server_login );
-
-  //FILE *f_br = fopen( "battlereport.txt", "at");
-  //fprintf(f_br, "# %s\n", _("Connected to server") );
     battle_report( "\n# %s: %s\n", _("Connected to server"), cfg_get_server_host().c_str() );
     battle_report( "# %s: %s\n", _("as user"), g_server_login.c_str() );
 

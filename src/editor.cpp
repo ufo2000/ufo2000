@@ -22,6 +22,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "stdafx.h"
 
 #include "global.h"
+#include "config.h"
 #include "video.h"
 #include "editor.h"
 #include "colors.h"
@@ -99,7 +100,7 @@ Editor::Editor()
 	lua_settable(L, LUA_GLOBALSINDEX);
 
 	lua_safe_dostring(L, "SetEquipment('Standard')");
-	
+
 	if (local_platoon_size > 15) local_platoon_size = 15;      //Maybe we should allow more
 	ASSERT(local_platoon_size > 0);
 	m_plt = new Platoon(2001, local_platoon_size);
@@ -124,7 +125,7 @@ Editor::~Editor()
 void Editor::load()
 {
 	set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
-	
+
 	char path[1000];
 	strcpy(path, last_unit_name);
     if (file_select( _("LOAD UNITS DATA"), path, "UNITS")) {
@@ -132,7 +133,7 @@ void Editor::load()
 		strcpy(last_unit_name, path);
         lua_message( std::string("Team loaded: ") + path );
 	}
-	
+
 	set_mouse_range(0, 0, 639, 399);
 }
 
@@ -151,7 +152,7 @@ void Editor::save()
 		strcpy(last_unit_name, path);
         lua_message( std::string("Team saved: ") + path );
 	}
-	
+
 	set_mouse_range(0, 0, 639, 399);
 }
 
@@ -183,19 +184,19 @@ bool Editor::handle_mouse_leftclick()
 		edit_soldier();
 		return false;
 	} 
-	
+
 	// Mouse click in item info panel (right bottom part of the screen) - 
 	// change equipment dialog (Standard=all weapons/No explosives/No alien weapons/...)
     if (mouse_inside(320, 200, 639, 400)) {  // ?? disable this
 		change_equipment();
 		return false;
 	}
-	// Mouse click on text "ARMORY": change equipment dialog 
-	if (mouse_inside(0, 200, 100, 220)) {
-		change_equipment();
-		return false;
-	}
-	
+    // Mouse click on text "ARMORY": change equipment dialog 
+    if (mouse_inside(0, 200, 105, 220)) {
+        change_equipment();
+        return false;
+    }
+
 	if ((sel_item == NULL) || (dup_item != NULL)) {
 		if (mouse_inside(237, 1, 271, 22)) {  // ok-button
 			return true;
@@ -286,9 +287,10 @@ bool Editor::handle_mouse_leftclick()
 };
 
 /**
- * Change attributes of current soldier to a set of predefined values
+ * Quick-Setup: on keypress (F5..F8),
+ * change attributes of current soldier to a set of predefined values
  */ 
-// Todo: read values from config-file or lua-script
+// Todo: use values from lua-script standard-soldiersetup.lua
 void prep_soldier( int NID, int s_type )
 {
     int nr = 0;
@@ -527,7 +529,7 @@ static char *names_B[] = {
 };
 
 /**
- * Test for selectbox
+ * Test for selectbox / Soldier-names
  */
 int select_name()
 {
@@ -543,6 +545,39 @@ int select_name()
             300, 200, "Select Name", 
             gui_list, 0);
     return result;
+};
+
+static std::vector<std::string> quicksetup;
+
+void change_quicksetup_callback(const char *desc)
+{
+    quicksetup.push_back(desc);
+}
+
+/**
+ * Test for selectbox / Config for F5..F8
+ */
+const char *select_setup(const char *prompt)
+{
+    // Get list of available quicksetup-configurations:
+    quicksetup.clear();
+    LUA_REGISTER_FUNCTION(L, change_quicksetup_callback);
+    lua_safe_dostring(L, "for desc in SoldierSetupTable do change_quicksetup_callback(desc) end");
+    std::sort(quicksetup.begin(), quicksetup.end());
+
+    int result = gui_select_from_list(
+        300, 200, prompt, 
+        quicksetup, 0);
+    const char *sel = quicksetup[result].c_str();
+    return sel;
+/*
+    // Todo: use selected quicksetup-config in prep_soldier()
+
+    lua_pushstring(L, "SetEquipment");
+    lua_gettable(L, LUA_GLOBALSINDEX);
+    lua_pushstring(L, setup_sets[result].c_str());
+    lua_safe_call(L, 1, 0);
+*/
 };
 
 /**
@@ -588,7 +623,7 @@ void Editor::show()
 	while (!DONE) {
 
         rest(1); // Don't eat all CPU resources
-	
+
 		if (CHANGE) {
             blit(editor_bg, screen2, 0, 0, 0, 0, editor_bg->w, editor_bg->h);
             man->showspk(); // Show "bigpicture" of soldier in choosen armor
@@ -598,7 +633,7 @@ void Editor::show()
 			    color = COLOR_LT_OLIVE;
             text_mode(-1);
 			textout(screen2, large, man->md.Name, 0, 0, color);
-			
+
 			for (i = 0; i < NUMBER_OF_PLACES; i++) //man->drawgrid();
 				man->place(i)->drawgrid(i);
 			m_armoury->drawgrid(P_ARMOURY);
@@ -646,10 +681,11 @@ void Editor::show()
                 } else {
                     textprintf(screen2, large, 330, 220, COLOR_LT_BLUE, "%s:", "Quick-Setup");
                     textprintf(screen2, font,  330, 240, COLOR_BLUE, "%s", _("Use keys with shift to configure them:") );
-                    textprintf(screen2, font,  330, 250, COLOR_BLUE, "%-3s: %s #%d", "F5", _("Soldier-Type"), 1 );
-                    textprintf(screen2, font,  330, 260, COLOR_BLUE, "%-3s: %s #%d", "F6", _("Soldier-Type"), 2 );
-                    textprintf(screen2, font,  330, 270, COLOR_BLUE, "%-3s: %s #%d", "F7", _("Soldier-Type"), 3 );
-                    textprintf(screen2, font,  330, 280, COLOR_BLUE, "%-3s: %s #%d", "F8", _("Soldier-Type"), 4 );
+                  //textprintf(screen2, font,  330, 250, COLOR_BLUE, "%-3s: %s #%d", "F5", _("Soldier-Type"), 1 );
+                    textprintf(screen2, font,  330, 250, COLOR_BLUE, "%-3s: %s", "F5", g_setup_f5.c_str() );
+                    textprintf(screen2, font,  330, 260, COLOR_BLUE, "%-3s: %s", "F6", g_setup_f6.c_str() );
+                    textprintf(screen2, font,  330, 270, COLOR_BLUE, "%-3s: %s", "F7", g_setup_f7.c_str() );
+                    textprintf(screen2, font,  330, 280, COLOR_BLUE, "%-3s: %s", "F8", g_setup_f8.c_str() );
 
                     textprintf(screen2, font,  330, 295, COLOR_BLUE, "%-3s: %s", "F9", _("Name-generator") );
                     // F10: Window/Fullscreen
@@ -660,7 +696,7 @@ void Editor::show()
                     textprintf(screen2, font,  330, 345, COLOR_LT_BLUE, "%-3s: %s", "TAB", _("Next soldier") );
 				}
 			}
-			
+
             int wht = man->count_weight();
 			int max_wht = man->md.Strength;
 			color       = max_wht < wht ? COLOR_RED03 : COLOR_GRAY02;
@@ -744,12 +780,12 @@ void Editor::show()
 					edit_soldier();   // Edit Attributes+Armor
 					break;
 //
-				case KEY_F5:  // Soldier-Type #1: Rifleman / Sharpshooter
+                case KEY_F5:  // Soldier-Type #1: Rifleman / Sharpshooter
                     if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) { // Shift-F5:
                       //soundSystem::getInstance()->play( SS_CLIP_LOAD );
-                        // Todo: read config from file, Selectbox 
-                        b1 = alert3( "Select Setup for F5:", "", "",
-                                     "Rifleman", "Scout",  "HeavyWeapons",  0, 0, 0 );
+                        g_setup_f5   = select_setup( _("Select setup for F5") );
+                      //b1 = alert3( "Select Setup for F5:", "", "",
+                      //             "Rifleman", "Scout",  "HeavyWeapons",  0, 0, 0 );
                       // Todo: further processing
                     } else { // F5:
                         NID = man->get_NID();  // index of current man: 1001..1015, 2001..2015
@@ -757,26 +793,29 @@ void Editor::show()
                       //make_soldier( man->get_NID(), 1 );
                     }
                     break;
-				case KEY_F6:  // Soldier-Type #2: Scout
+                case KEY_F6:  // Soldier-Type #2: Scout
                     if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) { // Shift-F6:
-                        b1 = alert3( "Select Setup for F6:", "", "",
-                                     "Rifleman", "Scout",  "HeavyWeapons",  0, 0, 0 );
+                        g_setup_f6 = select_setup( _("Select setup for F6") );
+                      //b1 = alert3( "Select Setup for F6:", "", "",
+                      //             "Rifleman", "Scout",  "HeavyWeapons",  0, 0, 0 );
                     } else { // F6:
                         prep_soldier( man->get_NID(), 2 );
                     }
                     break;
-				case KEY_F7:  // Soldier-Type #3: HeavyWeapons
+                case KEY_F7:  // Soldier-Type #3: HeavyWeapons
                     if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) { // Shift-F7:
-                        b1 = alert3( "Select Setup for F7:", "", "",
-                                     "Rifleman", "Scout",  "HeavyWeapons",  0, 0, 0 );
+                        g_setup_f7 = select_setup( _("Select setup for F7") );
+                      //b1 = alert3( "Select Setup for F7:", "", "",
+                      //             "Rifleman", "Scout",  "HeavyWeapons",  0, 0, 0 );
                     } else { // F7:
                         prep_soldier( man->get_NID(), 3 );
                     }
                     break;
-				case KEY_F8:  // Soldier-Type #4: Special
+                case KEY_F8:  // Soldier-Type #4: Special
                     if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) { // Shift-F8:
-                        b1 = alert3( "Select Setup for F8:", "", "",
-                                     "Special-1", "Special-2",  "Special-3",  0, 0, 0 );
+                        g_setup_f8   = select_setup( _("Select setup for F8") );
+                      //b1 = alert3( "Select Setup for F8:", "", "",
+                      //             "Special-1", "Special-2",  "Special-3",  0, 0, 0 );
                     } else { // F8:
                         prep_soldier( man->get_NID(), 4 );
                     }
@@ -818,7 +857,7 @@ void Editor::show()
               //    }
               //    break;
 
-				case KEY_F11:  // cycle thru apperances:
+                case KEY_F11:  // cycle thru apperances:
                     A1 = man->md.Appearance;
                     A2 = man->md.fFemale;
                     if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) { // Shift-F11: 
@@ -834,7 +873,7 @@ void Editor::show()
                     }
                     man->process_MANDATA();
                     break;
-				case KEY_F12:  // cycle thru armor-types:
+                case KEY_F12:  // cycle thru armor-types:
                     A1 = man->md.SkinType;
                     if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) { // Shift-F12: Aliens
                         man->md.fFemale    = 0;  // only 'standard' aliens available
@@ -858,19 +897,22 @@ void Editor::show()
                     break;
 //
                 case KEY_INSERT:  // Todo: Copy items from last DEL to current man
-		              // Test:
-		              //change_equipment();
-		                nr = select_name();
-		              //nr = select_name( names_A );
+                      // Test:
+                      //change_equipment();
+                      //setup_f5 = select_setup( _("Select setup for F5") );
+
+                        nr = select_name();
+                      //nr = select_name( names_A );
                         sprintf( test1, "%d", nr );
                         sprintf( test2, "%s", "" );
                         if ( nr >= 0 )
                            sprintf( test2,  "%s", names_A[nr] );
                         b1 = alert( "Selected:", test1, test2, "OK", NULL, 0, 0 );
+
                     break;
                 case KEY_DEL:  // Todo: store the deleted items (where?) for KEY_INSERT
                     if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) { // Shift-DEL:
-                      // Drop all carried items:
+                      // Drop all carried items:   // Todo: drop to common pool
                         Item * it;
                         for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++) {
                             it = man->item(i);
@@ -909,7 +951,7 @@ void Editor::show()
 			}
 		}
 	}
-	
+
 	m_plt->save_MANDATA(F("$(home)/soldier.dat"));
 	m_plt->save_ITEMDATA(F("$(home)/items.dat"));
 
@@ -1051,7 +1093,7 @@ static int common_change_button_proc(
 {
 	int result = d_button_proc(msg, d, c);
 	if (result == D_CLOSE) {
-		
+
 		std::vector<std::string> gui_list;
 		for (int i = 0; names[i] != NULL; i++)
 			gui_list.push_back(names[i]);
@@ -1158,7 +1200,7 @@ static void fixup_unit_info()
 		sol_dialog[D_ARMOUR].d1 = 0;
 	if (sol_dialog[D_APPEARANCE].d1 >= get_list_size(appearance_names))
 		sol_dialog[D_APPEARANCE].d1 = 0;
-	
+
 	DIALOG *d;
 	d = &sol_dialog[D_RACE];
 	d->w = text_length(font, race_names[d->d1]) + 6;
@@ -1235,7 +1277,7 @@ void Editor::edit_soldier()
 			 sol_dialog[D_STAMINA].d2 + (sol_dialog[D_STRENGTH].d2 * 2) +
 			 sol_dialog[D_REACTION].d2;
 	sprintf(points_str, _("Points remain: %2d "), MAXPOINTS - points);
-	
+
 	sol_dialog[D_POINTS].fg = gui_fg_color;
 	sol_dialog[D_POINTS].bg = gui_bg_color;
 
@@ -1259,15 +1301,15 @@ void Editor::edit_soldier()
 		man->md.Appearance = 0;
 	}
 
-	switch (man->md.SkinType) {
-		case S_XCOM_0: sol_dialog[D_ARMOUR].d1 = 0; break;
-		case S_XCOM_1: sol_dialog[D_ARMOUR].d1 = 1; break;
-		case S_XCOM_2: sol_dialog[D_ARMOUR].d1 = 2; break;
-		case S_XCOM_3: sol_dialog[D_ARMOUR].d1 = 3; break;
-		case S_SECTOID: sol_dialog[D_ARMOUR].d1 = 0; break;
-		default: sol_dialog[D_ARMOUR].d1 = 0; break;
+    switch (man->md.SkinType) {
+        case S_XCOM_0 : sol_dialog[D_ARMOUR].d1 = 0; break;
+        case S_XCOM_1 : sol_dialog[D_ARMOUR].d1 = 1; break;
+        case S_XCOM_2 : sol_dialog[D_ARMOUR].d1 = 2; break;
+        case S_XCOM_3 : sol_dialog[D_ARMOUR].d1 = 3; break;
+        case S_SECTOID: sol_dialog[D_ARMOUR].d1 = 0; break;
+        default:        sol_dialog[D_ARMOUR].d1 = 0; break;
 	}
-	
+
 	sol_dialog[D_APPEARANCE].d1 = man->md.Appearance + (man->md.fFemale ? 4 : 0);
 
 	fixup_unit_info();
@@ -1294,7 +1336,7 @@ void Editor::edit_soldier()
 	man->md.Bravery    = sol_dialog[D_BRAVERY].d2;
 
 	man->process_MANDATA();
-	
+
 	set_mouse_range(0, 0, 639, 399);
 
 	::sol_dialog = NULL;
@@ -1320,7 +1362,7 @@ void Editor::change_equipment()
 	eqsets.clear();
 	LUA_REGISTER_FUNCTION(L, change_equipment_callback);
 	lua_safe_dostring(L, "for name in EquipmentTable do change_equipment_callback(name) end");
-	
+
 	int result = gui_select_from_list(
 		300, 200, "Select equipment set", 
 		eqsets, 0);

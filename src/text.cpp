@@ -35,23 +35,36 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "soldier.h"
 
 /**
+ * Return string with current date+time,
+ * formatted as YYYY-MM-DD HH:MM:SS.
+ * On unix-systems, the process-id is appended.
+ */
+// see also (using other time-format):
+// Net::log()   in multiplay.cpp
+// server_log() in server_config.cpp
+const char *datetime()
+{
+    time_t now = time(NULL);
+    struct tm * t = localtime(&now);
+    static char timebuf[128];
+    strftime(timebuf, 128, "%Y-%m-%d %H:%M:%S", t);
+#ifndef WIN32
+    snprintf(timebuf + strlen(timebuf), sizeof(timebuf), " [%d]", getpid());
+#endif
+
+    return timebuf;
+}
+
+/**
  * Call Message() from main.lua to write a message 
  * into the logfile init-scripts.log
  * This logfile is mostly for debugging.
  */
 void lua_message( const std::string &str1 )
 {
-    // Todo: general time-class, to avoid calling this several times per second
-    time_t now = time(NULL);
-    struct tm * t = localtime(&now);
-    char timebuf[128];
-    strftime(timebuf, 128, "%Y-%m-%d %H:%M:%S", t);
-#ifndef WIN32
-    snprintf(timebuf + strlen(timebuf), sizeof(timebuf), " [%d]", getpid());
-#endif
-
     char txt1[32], txt2[32];
-    sprintf(txt1, "# %s : ", timebuf );
+
+    sprintf(txt1, "# %s : ", datetime() );
     sprintf(txt2, "." );
 
     lua_safe_dostring(L, (std::string("Message([[%s]], [[") + 

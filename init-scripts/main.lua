@@ -262,6 +262,19 @@ function random(a)
 	return a[math.random(1, table.getn(a))]
 end
 
+------------------------------------------------------------------------------
+-- Read data for quick-setup of soldiers, to be used for the configuration 
+-- of the keys F5..F8 in the Mission-planner/Equipment-screen.
+-- See also: standard-soldiersetup.lua
+------------------------------------------------------------------------------
+-- global table with the information for quick-setup:
+SoldierSetupTable = {}
+
+function AddSoldierSetup(x)
+    SoldierSetupTable[x.Desc] = x
+    Message("AddSoldierSetup: '%s'", x.Desc )
+end
+
 -- global map generator function
 function MapGenerator(name, size_x, size_y)
 	-- check if this particular map has custom map generator function

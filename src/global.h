@@ -18,9 +18,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 #ifndef GLOBAL_H
 #define GLOBAL_H
-
 
 #define d_box_proc d_agup_box_proc
 #define d_shadow_box_proc d_agup_shadow_box_proc
@@ -442,6 +442,11 @@ extern std::string g_server_host;
 extern std::string g_server_login;
 extern std::string g_server_password;
 extern int         g_server_autologin;
+
+extern std::string g_setup_f5;
+extern std::string g_setup_f6;
+extern std::string g_setup_f7;
+extern std::string g_setup_f8;
 
 int initgame();
 void gameloop();

@@ -622,7 +622,7 @@ void initmain(int argc, char *argv[])
 
 	lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-items.lua");
 	lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-equipment.lua");
-  //lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-soldiersetup.lua");
+    lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-soldiersetup.lua");
 
 	console<<"install_timer"<<std::endl;
 	install_timer();
@@ -798,9 +798,6 @@ void check_crc(int crc)
         g_console->printf(COLOR_SYS_FAIL, _("wrong wholeCRC") );
         g_console->printf(COLOR_SYS_INFO, "crc=%d, bcrc=%d", crc, bcrc);
         net->send_debug_message("crc error");
-      //FILE *f_br = fopen( "battlereport.txt", "at");
-      //fprintf(f_br, "# %s: crc=%d, bcrc=%d\n", _("wrong wholeCRC"), crc, bcrc );
-      //fclose(f_br);  // Battlereport
         battle_report( "# %s: crc=%d, bcrc=%d\n", _("wrong wholeCRC"), crc, bcrc );
     }
 }
@@ -843,9 +840,6 @@ void send_turn()
 	int crc = build_crc();
 	net->send_endturn(crc);
 
-  //FILE *f_br = fopen( "battlereport.txt", "at");
-  //fprintf(f_br, "# %s: %d\n", _("Turn end"), turn );
-  //fclose(f_br);  // Battlereport
     battle_report("# %s: %d\n", _("Turn end"), turn );
     g_console->printf(COLOR_VIOLET00, "%s", _("Turn end") );
 	if(FLAGS & F_ENDTURNSND)
@@ -917,9 +911,6 @@ void recv_turn(int crc)
 	if(FLAGS & F_ENDTURNSND)
 		soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
 
-  //FILE *f_br = fopen( "battlereport.txt", "at");
-  //fprintf(f_br, "# %s: %d\n", _("Next turn"), turn );
-  //fclose(f_br);  // Battlereport
     battle_report("# %s: %d\n", _("Next turn"), turn );
 }
 
@@ -1372,13 +1363,14 @@ void endgame_stats()
     int x  =   0, y  =   0;
     int dead = 0, kills = 0, damage = 0;
 
+    // "18s 9s 6s" vs. "22s 5d 6d" to give some room for translations:
     textprintf(newscr, font, x1,    y1, COLOR_WHITE, 
                "%-18s %9s %6s", _("Name"), _("Kills"), _("Damage") );
     textprintf(newscr, font, x1+x2, y1, COLOR_WHITE, 
                "%-18s %9s %6s", _("Name"), _("Kills"), _("Damage") );
 
     fprintf(f_br, "\n# %s:\n", _("Details") );
-    fprintf(f_br, "\n%-20s: %-18s %9s %6s\n", _("Player"),
+    fprintf(f_br, "\n%-20s:  %-18s %9s %6s\n", _("Player"),
             _("Name"), _("Kills"), _("Damage") );
 
     for (int pl = 0; pl < 2; pl++) {
@@ -1524,32 +1516,22 @@ static LONG WINAPI TopLevelExceptionFilter(PEXCEPTION_POINTERS pExceptionInfo)
 void gameloop()
 {
 	int mouse_leftr = 1, mouse_rightr = 1, select_y = 0;
-	int color1;
+    int color1;
     int b1 = 0;
-	
+
     lua_message( "Start: gameloop" );
 	if ((rand() % 2) == 1)
 		FS_MusicPlay(F(cfg_get_combat2_music_file_name()));
 	else
 		FS_MusicPlay(F(cfg_get_combat1_music_file_name()));
-	
+
 	clear_keybuf();
 	GAMELOOP = 1;
 
     g_console->printf( COLOR_SYS_HEADER, _("Welcome to the battlescape of UFO2000 !") );
     g_console->printf( COLOR_SYS_INFO1,  _("Press F1 for help.") );  // see KEY_F1
-	color1 = 0;
-
-  //FILE *f_br = fopen( "battlereport.txt", "at");
-	// Todo: general time-function
-    time_t now = time(NULL);
-    struct tm * t = localtime(&now);
-    char timebuf[128];
-    strftime(timebuf, 128, "%Y-%m-%d %H:%M:%S", t);
-
-  //fprintf(f_br, "*\n* %s: %s\n*\n\n", _("Battlereport"), timebuf );
-  //fclose(f_br);  // Battlereport
-    battle_report( "*\n* %s: %s\n*\n\n", _("Battlereport"), timebuf );
+    color1 = 0;
+    battle_report( "*\n* %s: %s\n*\n\n", _("Battlereport"), datetime() );
 
 	platoon_local->set_visibility_changed();
 	platoon_remote->set_visibility_changed();
@@ -1565,7 +1547,7 @@ void gameloop()
 		savegame(F("$(home)/ufo2000.tmp"));
 
 	while (!DONE) {
-	
+
         rest(1); // Don't eat all CPU resources
 
 		if (MODE != WATCH && g_time_left == 0) {
@@ -1845,27 +1827,20 @@ void gameloop()
 				case KEY_F2:
                     if (askmenu( _("SAVE GAME") )) {
 						savegame(F("$(home)/ufo2000.sav"));
-						// Todo: test if save was successful
+                        // Todo: test if save was successful
                         g_console->printf(COLOR_SYS_OK, _("Game saved") );
 
-                      //FILE *f_br = fopen( "battlereport.txt", "at");
-                      //fprintf(f_br, "# %s\n", _("Game saved") );
-                      //fclose(f_br);  // Battlereport
                         battle_report( "# %s\n", _("Game saved") );
 					}
 					break;
 				case KEY_F3:
                     if (askmenu( _("LOAD GAME") )) {
-                      //FILE *f_br = fopen( "battlereport.txt", "at");
 						if (!loadgame(F("$(home)/ufo2000.sav"))) {
-                          //fprintf(f_br, "# %s: %s\n", _("LOAD GAME"), _("failed") );
                             battle_report( "# %s: %s\n", _("LOAD GAME"), _("failed") );
                             alert( _("Saved game not found"), "", "", _("OK"), NULL, 0, 0);
                         } else {
-                          //fprintf(f_br, "# %s: %s\n", _("LOAD GAME"), _("success") );
                             battle_report( "# %s: %s\n", _("LOAD GAME"), _("success") );
                         }
-                      //fclose(f_br);  // Battlereport
 						inithotseatgame();
 						if (net->gametype == GAME_TYPE_HOTSEAT)
 							savegame(F("$(home)/ufo2000.tmp"));
@@ -1917,9 +1892,6 @@ void gameloop()
                                      _("YES=RESIGN"), _("NO=CONTINUE"), 0,1 );
                         if (b1 == 1) {
                             DONE = 1;
-                          //FILE *f_br = fopen( "battlereport.txt", "at");
-                          //fprintf(f_br, "# %s\n", _("Game aborted") );
-                          //fclose(f_br);  // Battlereport
                             battle_report( "# %s\n", _("Game aborted") );
                         }
                         if (b1 == 2) {
@@ -2018,9 +1990,6 @@ void start_loadgame()
         alert( "", _("Saved game not available"), "", _("OK"), NULL, 0, 0);
    		return;
    	}
-  //FILE *f_br = fopen( "battlereport.txt", "at");
-  //fprintf(f_br, "# %s: %d\n", _("LOAD GAME"), turn );
-  //fclose(f_br);  // Battlereport
     battle_report( "# %s: %d\n", _("LOAD GAME"), turn );
 
 	inithotseatgame();

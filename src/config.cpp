@@ -38,6 +38,7 @@ extern int mapscroll;
 
 static char *gen = "General";
 static char *edit = "Editor";
+static char *serv = "Server";
 
 static int base_accuracy = 20;
 static int preferred_screen_xres = 640;
@@ -58,6 +59,11 @@ static std::string menu_image_file_name;
 static std::string endturn_image_file_name;
 static std::string win_image_file_name;
 static std::string lose_image_file_name;
+
+std::string g_setup_f5;
+std::string g_setup_f6;
+std::string g_setup_f7;
+std::string g_setup_f8;
 
 std::string g_server_host;
 std::string g_server_login;
@@ -81,95 +87,26 @@ FONT *cfg_get_console_font()
 	return fnt;
 }
 
-int cfg_get_music_volume()
-{
-	return music_volume;
-}
+int cfg_get_music_volume()                    { return music_volume; } 
+int cfg_get_base_accuracy()                   { return base_accuracy; } 
+int cfg_get_screen_x_res()                    { return preferred_screen_xres; } 
+int cfg_get_screen_y_res()                    { return preferred_screen_yres; } 
+int cfg_get_min_color_depth()                 { return min_color_depth; } 
 
-int cfg_get_base_accuracy()
-{
-	return base_accuracy;
-}
+const std::string &cfg_get_server_host()      { return g_server_host; } 
+const std::string &cfg_get_server_login()     { return g_server_login; } 
+const std::string &cfg_get_server_password()  { return g_server_password; } 
+const std::string &cfg_get_server_proxy()     { return g_server_proxy; }
 
-int cfg_get_screen_x_res()
-{
-	return preferred_screen_xres;
-}
-
-int cfg_get_screen_y_res()
-{
-	return preferred_screen_yres;
-}
-
-int cfg_get_min_color_depth()
-{
-	return min_color_depth;
-}
-
-const std::string &cfg_get_server_host()
-{
-	return g_server_host;
-}
-
-const std::string &cfg_get_server_login()
-{
-	return g_server_login;
-}
-
-const std::string &cfg_get_server_password()
-{
-	return g_server_password;
-}
-
-const std::string &cfg_get_server_proxy()
-{
-	return g_server_proxy;
-}
-
-const char *cfg_get_menu_music_file_name()
-{
-	return menu_midi_file_name.c_str();
-}
- 
-const char *cfg_get_setup_music_file_name()
-{
-	return setup_midi_file_name.c_str();
-}
-
-const char *cfg_get_editor_music_file_name()
-{
-	return editor_midi_file_name.c_str();
-}
-
-const char *cfg_get_combat1_music_file_name()
-{
-	return combat1_midi_file_name.c_str();
-}
-
-const char *cfg_get_combat2_music_file_name()
-{
-	return combat2_midi_file_name.c_str();
-}
-
-const char *cfg_get_win_music_file_name()
-{
-	return win_midi_file_name.c_str();
-}
-
-const char *cfg_get_lose_music_file_name()
-{
-	return lose_midi_file_name.c_str();
-}
-
-const char *cfg_get_net1_music_file_name()
-{
-	return net1_midi_file_name.c_str();
-}
-
-const char *cfg_get_net2_music_file_name()
-{
-	return net2_midi_file_name.c_str();
-}
+const char *cfg_get_menu_music_file_name()    { return menu_midi_file_name.c_str(); } 
+const char *cfg_get_setup_music_file_name()   { return setup_midi_file_name.c_str(); } 
+const char *cfg_get_editor_music_file_name()  { return editor_midi_file_name.c_str(); } 
+const char *cfg_get_combat1_music_file_name() { return combat1_midi_file_name.c_str(); } 
+const char *cfg_get_combat2_music_file_name() { return combat2_midi_file_name.c_str(); } 
+const char *cfg_get_win_music_file_name()     { return win_midi_file_name.c_str(); } 
+const char *cfg_get_lose_music_file_name()    { return lose_midi_file_name.c_str(); } 
+const char *cfg_get_net1_music_file_name()    { return net1_midi_file_name.c_str(); } 
+const char *cfg_get_net2_music_file_name()    { return net2_midi_file_name.c_str(); } 
 
 const char *cfg_get_loading_image_file_name() { return loading_image_file_name.c_str(); }
 const char *cfg_get_menu_image_file_name()    { return menu_image_file_name.c_str(); }
@@ -177,74 +114,89 @@ const char *cfg_get_endturn_image_file_name() { return endturn_image_file_name.c
 const char *cfg_get_win_image_file_name()     { return win_image_file_name.c_str(); }
 const char *cfg_get_lose_image_file_name()    { return lose_image_file_name.c_str(); }
 
+const std::string &cfg_get_setup_f5()         { return g_setup_f5; }
+const std::string &cfg_get_setup_f6()         { return g_setup_f6; }
+const std::string &cfg_get_setup_f7()         { return g_setup_f7; }
+const std::string &cfg_get_setup_f8()         { return g_setup_f8; }
+
 void loadini()
 {
 	set_config_file(F("$(home)/ufo2000.ini"));
 
-    SCREEN2W             = get_config_int(gen, "width", 430);
-    SCREEN2H             = get_config_int(gen, "height", 280);
+    SCREEN2W             = get_config_int(gen,       "width",          430);
+    SCREEN2H             = get_config_int(gen,       "height",         280);
 
-    MAP_WIDTH            = get_config_int(gen, "map_width", 4);
-    MAP_HEIGHT           = get_config_int(gen, "map_height", 4);
-    speed_unit           = get_config_int(gen, "speed_unit", 30);
-    speed_bullet         = get_config_int(gen, "speed_bullet", 30);
-    speed_mapscroll      = get_config_int(gen, "speed_mapscroll", 30);
-    mapscroll            = get_config_int(gen, "mapscroll", 10);
+    MAP_WIDTH            = get_config_int(gen,       "map_width",        4);
+    MAP_HEIGHT           = get_config_int(gen,       "map_height",       4);
+    speed_unit           = get_config_int(gen,       "speed_unit",      30);
+    speed_bullet         = get_config_int(gen,       "speed_bullet",    30);
+    speed_mapscroll      = get_config_int(gen,       "speed_mapscroll", 30);
+    mapscroll            = get_config_int(gen,       "mapscroll",       10);
 
-    local_platoon_size   = get_config_int(edit, "platoon_size", 1);
-    strcpy(last_map_name,  get_config_string(edit, "last_map_name", ""));
-    strcpy(last_unit_name, get_config_string(edit, "last_unit_name", ""));
+    local_platoon_size   = get_config_int(edit,      "platoon_size",     1);
+    strcpy(last_map_name,  get_config_string(edit,   "last_map_name",   ""));
+    strcpy(last_unit_name, get_config_string(edit,   "last_unit_name",  ""));
 
-    g_time_limit = get_config_int(gen, "time_limit", -1);
+    g_setup_f5           = get_config_string(edit,   "quick_setup_f5", "Rifleman");
+    g_setup_f6           = get_config_string(edit,   "quick_setup_f6", "Scout");
+    g_setup_f7           = get_config_string(edit,   "quick_setup_f7", "HeavyWeapons");
+    g_setup_f8           = get_config_string(edit,   "quick_setup_f8", "Marksman");
 
-// base_accuracy = get_config_int(gen, "accuracy", 75);
-    preferred_screen_xres  = get_config_int(gen, "screen_x_res", 640);
-    preferred_screen_yres  = get_config_int(gen, "screen_y_res", 400);
-    min_color_depth        = get_config_int(gen, "color_depth", 8);
-    menu_midi_file_name    = get_config_string(gen, "menu_music", "$(xcom)/sound/gmstory.mid");
-    setup_midi_file_name   = get_config_string(gen, "setup_music", "$(xcom)/sound/gmenbase.mid");
-    editor_midi_file_name  = get_config_string(gen, "editor_music", "$(xcom)/sound/gmdefend.mid");
-    combat1_midi_file_name = get_config_string(gen, "combat_music1", "$(xcom)/sound/gmtactic.mid");
-    combat2_midi_file_name = get_config_string(gen, "combat_music2", "$(xcom)/sound/gmtactic.mid");
-    win_midi_file_name     = get_config_string(gen, "win_music", "$(xcom)/sound/gmwin.mid");
-    lose_midi_file_name    = get_config_string(gen, "lose_music", "$(xcom)/sound/gmlose.mid");
-    net1_midi_file_name    = get_config_string(gen, "net_music1", "$(xcom)/sound/gmgeo1.mid");
-    net2_midi_file_name    = get_config_string(gen, "net_music2", "$(xcom)/sound/gmgeo2.mid");
+    g_time_limit         = get_config_int(gen,       "time_limit", -1);
+
+// base_accuracy         = get_config_int(gen,       "accuracy",        75);
+    preferred_screen_xres  = get_config_int(gen,     "screen_x_res",   640);
+    preferred_screen_yres  = get_config_int(gen,     "screen_y_res",   400);
+    min_color_depth        = get_config_int(gen,     "color_depth",      8);
+    menu_midi_file_name    = get_config_string(gen,  "menu_music",    "$(xcom)/sound/gmstory.mid");
+    setup_midi_file_name   = get_config_string(gen,  "setup_music",   "$(xcom)/sound/gmenbase.mid");
+    editor_midi_file_name  = get_config_string(gen,  "editor_music",  "$(xcom)/sound/gmdefend.mid");
+    combat1_midi_file_name = get_config_string(gen,  "combat_music1", "$(xcom)/sound/gmtactic.mid");
+    combat2_midi_file_name = get_config_string(gen,  "combat_music2", "$(xcom)/sound/gmtactic.mid");
+    win_midi_file_name     = get_config_string(gen,  "win_music",     "$(xcom)/sound/gmwin.mid");
+    lose_midi_file_name    = get_config_string(gen,  "lose_music",    "$(xcom)/sound/gmlose.mid");
+    net1_midi_file_name    = get_config_string(gen,  "net_music1",    "$(xcom)/sound/gmgeo1.mid");
+    net2_midi_file_name    = get_config_string(gen,  "net_music2",    "$(xcom)/sound/gmgeo2.mid");
 
     loading_image_file_name = get_config_string(gen, "loading_image", "$(ufo2000)/arts/text_back.jpg");
-    menu_image_file_name    = get_config_string(gen, "menu_image", "$(xcom)/ufointro/pict2.lbm");
+    menu_image_file_name    = get_config_string(gen, "menu_image",    "$(xcom)/ufointro/pict2.lbm");
     endturn_image_file_name = get_config_string(gen, "endturn_image", "$(xcom)/ufograph/tac00.scr");
-    win_image_file_name     = get_config_string(gen, "win_image", "$(xcom)/geograph/back01.scr");
-    lose_image_file_name    = get_config_string(gen, "lose_image", "$(xcom)/geograph/back02.scr");
+    win_image_file_name     = get_config_string(gen, "win_image",     "$(xcom)/geograph/back01.scr");
+    lose_image_file_name    = get_config_string(gen, "lose_image",    "$(xcom)/geograph/back02.scr");
 
-    consolefont        = get_config_string(gen, "consolefont", "xcom_small");
-    music_volume       = get_config_int(gen, "music_volume", 255);
+    consolefont             = get_config_string(gen,  "consolefont", "xcom_small");
+    music_volume            = get_config_int(gen,     "music_volume", 255);
 
-    g_server_host      = get_config_string("Server", "host", "127.0.0.1");
-    g_server_proxy     = get_config_string("Server", "http_proxy", "auto");
-    g_server_autologin = get_config_int("Server", "autologin", 0);
+    g_server_host           = get_config_string(serv, "host", "127.0.0.1");
+    g_server_proxy          = get_config_string(serv, "http_proxy", "auto");
+    g_server_autologin      = get_config_int(serv,    "autologin", 0);
 }
 
 void saveini()
 {
-	set_config_file(F("$(home)/ufo2000.ini"));
+    set_config_file(F("$(home)/ufo2000.ini"));
 
-	set_config_int(gen, "width", SCREEN2W);
-	set_config_int(gen, "height", SCREEN2H);
+    set_config_int(gen,     "width",           SCREEN2W);
+    set_config_int(gen,     "height",          SCREEN2H);
 
-	set_config_int(gen, "speed_unit", speed_unit);
-	set_config_int(gen, "speed_bullet", speed_bullet);
-	set_config_int(gen, "speed_mapscroll", speed_mapscroll);
-	set_config_int(gen, "mapscroll", mapscroll);
+    set_config_int(gen,     "speed_unit",      speed_unit);
+    set_config_int(gen,     "speed_bullet",    speed_bullet);
+    set_config_int(gen,     "speed_mapscroll", speed_mapscroll);
+    set_config_int(gen,     "mapscroll",       mapscroll);
 
-	set_config_int(edit, "platoon_size", local_platoon_size);
-	set_config_string(edit, "last_map_name", last_map_name);
-	set_config_string(edit, "last_unit_name", last_unit_name);
+    set_config_int(edit,    "platoon_size",    local_platoon_size);
+    set_config_string(edit, "last_map_name",   last_map_name);
+    set_config_string(edit, "last_unit_name",  last_unit_name);
 
-	set_config_string("Server", "host", g_server_host.c_str());
-	set_config_string("Server", "login", g_server_login.c_str());
-	set_config_string("Server", "password", g_server_password.c_str());
-	set_config_int("Server", "autologin", g_server_autologin);
+    set_config_string(edit, "quick_setup_f5",  g_setup_f5.c_str() );
+    set_config_string(edit, "quick_setup_f6",  g_setup_f6.c_str() );
+    set_config_string(edit, "quick_setup_f7",  g_setup_f7.c_str() );
+    set_config_string(edit, "quick_setup_f8",  g_setup_f8.c_str() );
+
+    set_config_string(serv, "host",            g_server_host.c_str());
+    set_config_string(serv, "login",           g_server_login.c_str());
+    set_config_string(serv, "password",        g_server_password.c_str());
+    set_config_int(serv,    "autologin",       g_server_autologin);
 }
 
 int sethotseatplay()

@@ -47,6 +47,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define HELP_PLANNER    170
 #define HELP_SCENARIO   HELP_PLANNER + 11
 
+//! Return string with current date+time
+const char *datetime();
+
 //! Write message into init-scripts.log
 void lua_message( const std::string &str1 );
 
