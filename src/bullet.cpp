@@ -376,6 +376,40 @@ void Bullet::move()
 	}
 }
 
+#define NORMAL_PROJECTILE 26
+#define LASER_PROJECTILE  35
+#define PLASMA_PROJECTILE 46
+
+void draw_bullet_trace(int x0, int y0, int z0, int x, int y, int z, int length, int color)
+{
+	double dx = x - x0;
+	double dy = y - y0;
+	double dz = z - z0;
+
+	double total_trace_length = sqrt(dx * dx + dy * dy + dz * dz);
+
+	if (total_trace_length > length) {
+		x0 = (int)(x - dx * length / total_trace_length);
+		y0 = (int)(y - dy * length / total_trace_length);
+		z0 = (int)(z - dz * length / total_trace_length);
+	}
+
+	int xg1 = map->x + x0 + y0;
+	int yg1 = (int)(map->y - (x0 + 1) / 2.0 + y0 / 2.0 - z0 * 2.0 - 2);
+
+	int xg2 = map->x + x + y;
+	int yg2 = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
+
+	for (int i = 0; i < length; i++) {
+		double k = (double)i / (double)length;
+		k = k * k;
+		int x = (int)(xg2 + (xg1 - xg2) * k);
+		int y = (int)(yg2 + (yg1 - yg2) * k);
+
+		putpixel(screen2, x, y, color);
+	}
+}
+
 void Bullet::draw()
 {
 	int xg, yg;
@@ -386,19 +420,28 @@ void Bullet::draw()
 		case READY:
 			break;
 
-		case FLY:
+		case FLY: {
 			xg = map->x + x + y;
 			yg = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
-			circle(screen2, xg, yg, 1, 1);
-			//showroute();
-			break;
 
+			int len = 15, c = 16;
+
+			switch (type) {
+				case Plasma_Pistol_Clip: len = 15; c = 50; break;
+				case Plasma_Rifle_Clip: len = 20; c = 51; break;
+				case Heavy_Plasma_Clip: len = 30; c = 52; break;
+			}
+
+			draw_bullet_trace(x0, y0, z0, x, y, z, len, xcom1_color(c + 5));
+			putpixel(screen2, xg, yg, xcom1_color(c));
+			circle(screen2, xg, yg, 1, xcom1_color(c + 2));
+
+			break;
+		}
 		case BEAM:
 			xg = map->x + x0 + y0;
 			yg = (int)(map->y - (x0 + 1) / 2.0 + y0 / 2.0 - z0 * 2.0 - 2);
 
-			//xg2 = map->x + xd + yd;
-			//yg2 = map->y - (xd+1)/2 + yd/2 - zd*23.5/12.0;
 			xg2 = map->x + x + y;
 			yg2 = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
 
@@ -457,12 +500,17 @@ void Bullet::draw()
 			yg = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
 
 			if ((xg > -32) && (xg < SCREEN2W) && (yg >= -34) && (yg < SCREEN2H)) {
-				if (Item::is_laser(type)) { // laser
-					Map::smoke->showpck(36 + phase / PHASE, xg - 16, yg - 10);
-				} else {
-					Map::smoke->showpck(26 + phase / PHASE, xg - 16, yg - 10);
+				switch (type) {
+					case LASER_PISTOL: case LASER_GUN: case HEAVY_LASER:
+						Map::smoke->showpck(LASER_PROJECTILE + phase / PHASE, xg - 16, yg - 10);
+						break;
+					case Plasma_Pistol_Clip: case Plasma_Rifle_Clip: case Heavy_Plasma_Clip:
+						Map::smoke->showpck(PLASMA_PROJECTILE + phase / PHASE, xg - 16, yg - 10);
+						break;
+					default:
+						Map::smoke->showpck(NORMAL_PROJECTILE + phase / PHASE, xg - 16, yg - 10);
+						break;
 				}
-				//circle(screen2, xg, yg, 1, 32);
 			}
 			break;
 	}
