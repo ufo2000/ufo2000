@@ -295,36 +295,6 @@ Soldier::Soldier(Platoon *platoon, int _NID)
 	memset(&ud, 0, sizeof(ud));
 }
 
-
-Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y)
-{
-	NID = _NID; z = _z; x = _x; y = _y;
-	dir = 0;      //!!face to center of map
-	phase = 0; m_state = STAND;
-	m_next = NULL; m_prev = NULL;
-	m_body = NULL;
-	m_platoon = platoon;
-
-	m_bullet = new Bullet(this);
-	m_place[P_SHL_RIGHT] = new Place(16, 40, 2, 1);
-	m_place[P_SHL_LEFT] = new Place(112, 40, 2, 1);
-	m_place[P_ARM_RIGHT] = new Place(0, 64, 2, 3);
-	m_place[P_ARM_LEFT] = new Place(128, 64, 2, 3);
-	m_place[P_LEG_RIGHT] = new Place(0, 120, 2, 1);
-	m_place[P_LEG_LEFT] = new Place(128, 120, 2, 1);
-	m_place[P_BACK] = new Place(192, 40, 3, 3);
-	m_place[P_BELT] = new Place(192, 104, 4, 2);
-	m_place[P_MAP] = map->place(z, x, y);      //!!
-	m_p_map_allocated = false;
-
-	curway = -1; waylen = 0;
-	FIRE_num = 0;
-	enemy_num = 0;
-	seen_enemy_num = 0;
-	MOVED = 0;
-}
-
-
 Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *mdat, ITEMDATA *idat)
 {
 	NID = _NID; z = _z; x = _x; y = _y;
@@ -360,6 +330,8 @@ Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *md
 	m_place[P_BELT] = new Place(192, 104, 4, 2);
 	m_place[P_MAP] = map->place(z, x, y);      //!!
 	m_p_map_allocated = false;
+
+	map->set_man(z, x, y, this);
 
 	curway = -1; waylen = 0;
 	FIRE_num = 0;

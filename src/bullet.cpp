@@ -306,8 +306,7 @@ void Bullet::move()
 					hitcell();      //lev = 0; //!!!!
 					lev = map->find_ground(lev, col, row);
 					map->place(lev, col, row)->put(item);
-					if (platoon_local->belong(this))
-						elist->check_for_detonation(0, item);
+					elist->check_for_detonation(0, item);
 					item = NULL;
 					state = READY;
 					break;

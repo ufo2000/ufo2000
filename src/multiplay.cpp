@@ -119,6 +119,7 @@ int Net::init()
 			return 0;
 		clear(screen);
 		reset_video();
+		set_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
 		alert(" ", "  NEXT PLAYER  ", " ", "    OK    ", NULL, 1, 0);
 		HOST = 0;
 		connect->swap_uds();
@@ -127,6 +128,7 @@ int Net::init()
 		HOST = 1;
 		clear(screen);
 		reset_video();
+		set_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
 		alert(" ", "  GAME START  ", " ", "    OK    ", NULL, 1, 0);
 		inithotseatgame();
 	} else {
