@@ -17,37 +17,27 @@ tftddemo_dir = tftddemo_dir or (ufo2000_dir .. "/TFTDDEMO")
 tftd_dir     = tftd_dir or (ufo2000_dir .. "/TFTD")
 home_dir     = home_dir or "."
 
--- clear init-scripts.log
-local fh = io.open(home_dir .. "/init-scripts.log", "wt") fh:close()
-
-function Error(...)
-	local msg = string.format(unpack(arg))
-	local fh = io.open(home_dir .. "/init-scripts.log", "at")
-	if fh then
-		fh:write(msg, "\n")
-		fh:close()
-	end
-	error(msg)
-end
-
-function Warning(...)
-	local msg = string.format(unpack(arg))
-	local fh = io.open(home_dir .. "/init-scripts.log", "at")
-	if fh then
-		fh:write(msg, "\n")
-		fh:close()
-	end
-	print(msg)
-end
+-- Functions for writing debug information to init-scripts.log 
+local io_open_unrestricted = io.open
+local fh = io_open_unrestricted(home_dir .. "/init-scripts.log", "wt") fh:close()
 
 function Message(...)
 	local msg = string.format(unpack(arg))
-	local fh = io.open(home_dir .. "/init-scripts.log", "at")
+	local fh = io_open_unrestricted(home_dir .. "/init-scripts.log", "at")
 	if fh then
 		fh:write(msg, "\n")
 		fh:close()
 	end
-	print(msg)
+end
+
+function Error(...)
+	Message(unpack(arg))
+	error(string.format(unpack(arg)))
+end
+
+function Warning(...)
+	Message(unpack(arg))
+	print(string.format(unpack(arg)))
 end
 
 -- reads the whole file content into a string
@@ -91,7 +81,7 @@ function LocateFile(filename)
 		if fname then return fname end
 		local fname = SearchFile(string.gsub(filename, "^%$%(tftd%)", tftd_dir))
 		if fname then return fname end
-		return string.gsub(filename, "^%$%(xcom%)", tftddemo_dir)
+		return string.gsub(filename, "^%$%(tftd%)", tftddemo_dir)
 	end
 
 	filename = string.gsub(filename, "^%$%(ufo2000%)", ufo2000_dir)
@@ -167,7 +157,7 @@ function AddXcomTerrain(terrain)
 				tmp.Palettes[k] = xcom_palette
 			end
 		else
-			Warning("AddXcomTerrain: '%s' terrain - FAILED (can't locate '%s', '%s' or '%s')",
+			Message("AddXcomTerrain: '%s' terrain - FAILED (can't locate '%s', '%s' or '%s')",
 				terrain.Name, pck_fname, mcd_fname, tab_fname) 
 			return nil
 		end
@@ -190,8 +180,26 @@ function AddXcomTerrain(terrain)
 		Message("AddXcomTerrain: '%s' terrain - OK, %d maps, crc32 = %08X",
 			tmp.Name, number_of_maps, tmp.Crc32) 
 	else
-		Warning("AddXcomTerrain: '%s' terrain - FAILED (%s)", tmp.Name, errmsg) 
+		Message("AddXcomTerrain: '%s' terrain - FAILED (%s)", tmp.Name, errmsg) 
 	end
 
 	return 1
 end
+
+-- perform data files integrity check before applying security
+-- restrictions
+dofile(ufo2000_dir .. "/init-scripts/filecheck.lua")
+
+-- for security reasons we do not want lua scripts to have write
+-- access to filesystem, the code below enforces this restriction
+io.open = function(fname, mode)
+	if mode and (string.find(mode, "r%+") or string.find(mode, "[aw]")) then
+		Error("Security problem: attempt to open '%s' for write", fname)
+		return nil
+	end
+	return io_open_unrestricted(fname, mode)
+end
+
+io.popen = nil
+io.input = nil
+io.output = nil

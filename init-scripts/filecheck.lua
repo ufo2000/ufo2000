@@ -236,7 +236,7 @@ function GetDataFileName(x)
 	if fh then
 		fh:close()
 		if string.find(x, "^%$") then
-			Warning("GetDataFileName: '%s' resolved as '%s' and cached for future use", x, fname)
+			Message("GetDataFileName: '%s' resolved as '%s' and cached for future use", x, fname)
 			FilesTable[x] = { FileName = fname }
 		end
 	else
