@@ -199,14 +199,17 @@ Packet &Packet::operator>>(int &i)
 
 Packet &Packet::operator<<(uint32 i)
 {
-	int len = sprintf(data + size, "%08X_", i);
+    unsigned long x = i;
+	int len = sprintf(data + size, "%08lX_", x);
 	size += len;
 	return *this;
 }
 
 Packet &Packet::operator>>(uint32 &i)
 {
-	sscanf(data + cur, "%X_", &i);
+    unsigned long x;
+	sscanf(data + cur, "%lX_", &x);
+    i = (uint32)x;
 
 	int len = 0;
 	while (data[cur + len] != '_')
