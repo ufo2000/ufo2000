@@ -1933,11 +1933,13 @@ int TerrainSet::get_random_terrain_id()
  * Displays dialog asking the user to select terrain type from the list of 
  * available terrains, additional requirement for network games is
  * that remote user should have these maps installed too
+ * @param default_choice  terrain name that is active by default
+ * @returns               terrain name, selected by user
  */
 std::string TerrainSet::select_terrain_gui_dialog(
 	const std::string &default_choice)
 {
-	int default_index = 0, counter = 0;
+	int default_index = 0;
 	std::vector<std::string> gui_list;
 	std::map<int, Terrain *>::iterator it;
 	for (it = terrain.begin(); it != terrain.end(); ++it) {
@@ -1946,10 +1948,14 @@ std::string TerrainSet::select_terrain_gui_dialog(
 			if (g_net_allowed_terrains.find(it->second->get_name()) == g_net_allowed_terrains.end())
 				continue;
 		}
-		if (it->second->get_name() == default_choice) default_index = counter;
 		gui_list.push_back(it->second->get_name());
-		counter++;
 	}
+	std::sort(gui_list.begin(), gui_list.end());
+	for (int i = 0; i < (int)gui_list.size(); i++)
+		if (gui_list[i] == default_choice) {
+			default_index = i;
+			break;
+		}
 	
 	int result = gui_select_from_list(
 		300, 200,
