@@ -140,6 +140,7 @@ function AddXcomTerrain(terrain)
 
 	local tmp    = {}
 	tmp.Name     = terrain.Name
+	tmp.MapGenerator = terrain.MapGenerator
 	tmp.Tiles    = {}
 	tmp.Palettes = {}
 	tmp.Maps     = {}

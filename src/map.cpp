@@ -1475,16 +1475,6 @@ int MAP_WIDTH, MAP_HEIGHT;
 
 void Map::new_GEODATA(GEODATA *md)
 {
-	// Check map size settings
-	if (MAP_WIDTH < 2) MAP_WIDTH = 2;
-	if (MAP_HEIGHT < 2) MAP_HEIGHT = 2;
-
-	if (MAP_WIDTH > 6) MAP_WIDTH = 6;
-	if (MAP_HEIGHT > 6) MAP_HEIGHT = 6;
-
-    // $$$ Hack - the game currently crashes when using nonsquare map
-	if (MAP_WIDTH != MAP_HEIGHT) MAP_HEIGHT = MAP_WIDTH;
-
 	std::string terrain_name = terrain_set->get_random_terrain_name();
 
 	if (net->is_network_game()) {
@@ -1494,7 +1484,7 @@ void Map::new_GEODATA(GEODATA *md)
 		}
 	}
 
-	terrain_set->create_geodata(terrain_name, MAP_WIDTH, MAP_HEIGHT, *md);
+	new_GEODATA(md, terrain_name);
 }
 
 void Map::new_GEODATA(GEODATA *md, const std::string &terrain_name)
@@ -1509,9 +1499,34 @@ void Map::new_GEODATA(GEODATA *md, const std::string &terrain_name)
     // $$$ Hack - the game currently crashes when using nonsquare map
 	if (MAP_WIDTH != MAP_HEIGHT) MAP_HEIGHT = MAP_WIDTH;
 
-	terrain_set->create_geodata(terrain_name, MAP_WIDTH, MAP_HEIGHT, *md);
+	// Try to use map generator function defined in terrain description
+	int stack_top = lua_gettop(L);
+    // Enter 'TerrainTable' table
+	lua_pushstring(L, "TerrainTable");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	ASSERT(lua_istable(L, -1)); 
+    // Enter [terrain_name] table
+	lua_pushstring(L, terrain_name.c_str());
+	lua_gettable(L, -2);
+	ASSERT(lua_istable(L, -1));
+	lua_pushstring(L, "MapGenerator");
+	lua_gettable(L, -2);
+	if (!lua_isfunction(L, -1)) {
+		lua_settop(L, stack_top);
+		// Fallback to default random shuffle map generation algorithm
+		terrain_set->create_geodata(terrain_name, MAP_WIDTH, MAP_HEIGHT, *md);
+		return;
+	}
+	lua_pushnumber(L, MAP_WIDTH);
+	lua_call(L, 1, 1);
+	// We should have map description returned at the top of stack here
+	load_map_from_top_of_lua_stack(md);
+	lua_settop(L, stack_top);
 }
 
+/**
+ * Checks if GEODATA structure contains correct and usable map
+ */
 int Map::valid_GEODATA(GEODATA *md)
 {
 	std::string terrain_name = terrain_set->get_terrain_name(md->terrain);
@@ -1528,19 +1543,18 @@ int Map::valid_GEODATA(GEODATA *md)
 }
 
 /**
- * Loads GEODATA structure from lua-file
+ * Supplementary function that interprets a value at the top of lua stack as
+ * a map description and tries to load it
  */
-bool Map::load_GEODATA(const char *filename, GEODATA *mapdata)
+bool Map::load_map_from_top_of_lua_stack(GEODATA *mapdata)
 {
 	memset(mapdata, 0, sizeof(GEODATA));
 	mapdata->z_size = 4; // !!! Hack
 	
-	int mission;
-
 	int stack_top = lua_gettop(L);
-	lua_dofile(L, F(filename));
+
     // we have a table with map data returned at the top of the stack
-	if (!lua_istable(L, -1) || stack_top + 1 != lua_gettop(L)) {
+	if (!lua_istable(L, -1)) {
 		lua_settop(L, stack_top);
 		return false;
 	}
@@ -1567,7 +1581,7 @@ bool Map::load_GEODATA(const char *filename, GEODATA *mapdata)
 	
 	lua_pushstring(L, "Scenario");
 	lua_gettable(L, -2);
-	mission = lua_isstring(L, -1);
+	int mission = lua_isstring(L, -1);
 	lua_pop(L, 1);
 	
 	if (mission) {
@@ -1627,6 +1641,18 @@ bool Map::load_GEODATA(const char *filename, GEODATA *mapdata)
 
 	lua_settop(L, stack_top);
 	return true;
+}
+
+/**
+ * Loads GEODATA structure from lua-file
+ */
+bool Map::load_GEODATA(const char *filename, GEODATA *mapdata)
+{
+	int stack_top = lua_gettop(L);
+	lua_dofile(L, F(filename));
+	bool result = load_map_from_top_of_lua_stack(mapdata);
+	lua_settop(L, stack_top);
+	return result;
 }
 
 /**
@@ -1882,70 +1908,7 @@ bool TerrainSet::create_geodata(const std::string &terrain_name, int x_size, int
 	gd.y_size    = y_size;
 	gd.z_size    = 4;
 	
-	std::string mapfile = "$(ufo2000)/init-scripts/maps/" + terrain_name + ".lua";
-	
-	if (exists(F(mapfile.c_str()))) {
-		int stack_top = lua_gettop(L);
-		lua_dofile(L, F(mapfile.c_str()));
-		lua_pushstring(L, "map");
-		lua_gettable(L, LUA_GLOBALSINDEX);
-		ASSERT(lua_isfunction(L, -1));
-		lua_pushnumber(L, x_size);
-		lua_call(L, 1, 1);
-
-    	// we have a table with map data returned at the top of the stack
-		if (!lua_istable(L, -1) || stack_top + 1 != lua_gettop(L)) {
-			lua_settop(L, stack_top);
-			return false;
-		}
-
-		lua_pushstring(L, "Name");
-		lua_gettable(L, -2);
-		if (!lua_isstring(L, -1)) { lua_settop(L, stack_top); return false; }
-		int tid = terrain_set->get_terrain_id(lua_tostring(L, -1));
-		if (tid < 0) { lua_settop(L, stack_top); return false; }
-		gd.terrain = (uint16)tid;
-		lua_pop(L, 1);
-
-		lua_pushstring(L, "Width");
-		lua_gettable(L, -2);
-		if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false;	}
-		gd.x_size = (uint16)lua_tonumber(L, -1);
-		lua_pop(L, 1);
-
-		lua_pushstring(L, "Height");
-		lua_gettable(L, -2);
-		if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false;	}
-		gd.y_size = (uint16)lua_tonumber(L, -1);
-		lua_pop(L, 1);
-	
-		lua_pushstring(L, "Mapdata");
-		lua_gettable(L, -2);
-		if (!lua_istable(L, -1)) { lua_settop(L, stack_top); return false; }
-	
-		int x = 0;
-
-		for (int row = 1; row <= gd.y_size; row++) {
-			lua_pushnumber(L, row);
-			lua_gettable(L, -2);
-			if (!lua_istable(L, -1)) { lua_settop(L, stack_top); return false; }
-
-			for (int col = 1; col <= gd.x_size; col++) {
-				lua_pushnumber(L, col);
-				lua_gettable(L, -2);
-				if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false; }
-
-				gd.mapdata[x++] = lua_tonumber(L, -1) == -1 ? 0xFE : (uint8)lua_tonumber(L, -1);
-				lua_pop(L, 1);
-			}
-
-			lua_pop(L, 1);
-		}
-
-		lua_settop(L, stack_top);
-		return true;
-	} else
-		return terrain[terrain_index]->create_geodata(gd);
+	return terrain[terrain_index]->create_geodata(gd);
 }
 
 int TerrainSet::get_random_terrain_id()
@@ -1967,4 +1930,3 @@ int TerrainSet::get_random_terrain_id()
 }
 
 #define map ufo2000_map
-

@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002-2003  ufo2000 development team
+Copyright (C) 2002-2004  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -90,6 +90,8 @@ private:
 	void loadmaps(unsigned char *_map);
 	int loadmap(const char *fname, int _x, int _y);
 
+	static bool load_map_from_top_of_lua_stack(GEODATA *mapdata);
+	
 public:
 	MinimapArea *m_minimap_area;
 
