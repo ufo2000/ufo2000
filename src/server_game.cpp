@@ -104,7 +104,9 @@ void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, c
     catch(std::exception &ex) {
         server_log("Exception Occured: %s",ex.what());
     }
-
+    // Testing mode: only first 30 games are saved
+    if(game.game_id<=30)
+    {
     try {
 //        db_conn.executenonquery("begin transaction;");
         db_conn.executenonquery("update ufo2000_games set last_received_packed=last_received_packed+1 where id=%d;",game_id);
@@ -124,5 +126,6 @@ void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, c
     }
     catch(std::exception &ex) {
         server_log("Exception Occured: %s",ex.what());
+    }
     }
 }
