@@ -181,6 +181,9 @@ public:
     void damage_cell_part(int lev, int col, int row, int _part, int _type);
     void apply_hit(int _z, int _x, int _y, int _type);
 
+    //!Is a step in direction "dir" possible, where does it guide to, and what is the TU cost?
+    int step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2, int& y2, int& tu_cost);
+
     int findneibo(int &dz, int &dx, int &dy, int value);
     int setneibos(int oz, int ox, int oy, int value);
     int pathfind(int sz, int sx, int sy, int dz, int dx, int dy, char *way, PF_MODE pf_mode = PF_TRUE);
