@@ -401,6 +401,22 @@ void initmain(int argc, char *argv[])
 	luaopen_string(L);
 	luaopen_io(L);
 
+#ifdef WIN32
+	// Win32-version has all data files in a single directory where it was installed
+	char ufo2000_dir[MAX_PATH];
+	GetModuleFileName(NULL, ufo2000_dir, sizeof(ufo2000_dir));
+	if (strrchr(ufo2000_dir, '\\')) *strrchr(ufo2000_dir, '\\') = '\0';
+	char *p = ufo2000_dir;
+	while (*p != '\0') { if (*p == '\\') *p = '/'; p++; }
+	SetCurrentDirectory(ufo2000_dir);
+	lua_pushstring(L, "ufo2000_dir");
+	lua_pushstring(L, ufo2000_dir);
+	lua_settable(L, LUA_GLOBALSINDEX);
+	lua_pushstring(L, "home_dir");
+	lua_pushstring(L, ufo2000_dir);
+	lua_settable(L, LUA_GLOBALSINDEX);
+#endif
+
 #ifdef DATA_DIR
 	// A directory for ufo2000 data files was specified at compile time
 	lua_pushstring(L, "ufo2000_dir");
@@ -450,12 +466,6 @@ void initmain(int argc, char *argv[])
     if (get_config_int("Flags", "F_SOUNDCHECK", 0)) FLAGS |= F_SOUNDCHECK;    // perform soundtest.
     if (get_config_int("Flags", "F_LOGTOSTDOUT", 0)) FLAGS |= F_LOGTOSTDOUT;  // Copy all init console output to stdout.
     if (get_config_int("Flags", "F_DEBUGDUMPS", 0)) FLAGS |= F_DEBUGDUMPS;    // Produce a lot of files with the information which can help in debugging
-/*
-	origfiles_prefix = get_config_string("Paths",  "origfiles", NULL); // original ufo files here
-	ownfiles_prefix  = get_config_string("Paths",  "ownfiles",  NULL); // own data files here (ufo2000.dat & bitmaps)
-	gametemp_prefix  = get_config_string("Paths",  "gametemp",  NULL); // game temporary files here (may span launches)
-	runtemp_prefix	 = get_config_string("Paths",  "runtemp",   NULL); // runtime temporary files here (get deleted by the time of exit)
-*/
 	std::string consolefont = get_config_string("General", "consolefont", "xcom_small");
 
 	if (argc > 1) {
@@ -467,20 +477,6 @@ void initmain(int argc, char *argv[])
 	}
 
 	loadini();
-/*
-	if (origfiles_prefix != NULL) {
-		origfiles_prefix = ustrdup(origfiles_prefix);
-	}
-	if (ownfiles_prefix != NULL)  {
-		ownfiles_prefix = ustrdup(ownfiles_prefix);
-	}
-	if (gametemp_prefix != NULL) {
-		gametemp_prefix = ustrdup(gametemp_prefix);
-	}
-	if (runtemp_prefix != NULL) {
-		runtemp_prefix = ustrdup(runtemp_prefix);
-	}
-*/
 	pop_config_state();
 
 	datafile = load_datafile("#");
@@ -501,7 +497,7 @@ void initmain(int argc, char *argv[])
 
 	BITMAP *text_back = load_back_image(cfg_get_loading_image_file_name());
 	stretch_blit(text_back, screen, 0, 0, text_back->w, text_back->h, 0, 0, SCREEN_W, SCREEN_H);
-	print_win = new Wind(text_back, 15, 300, 625, 390, 255);
+	print_win = new Wind(text_back, 15, 300, 625, 390, xcom1_color(255));
 
     /* to use the init console as an ostream -very handy. */
     consoleBuf consbuf(FLAGS & F_LOGTOSTDOUT);
@@ -633,6 +629,9 @@ void closemain()
 	closevideo();
 
 	allegro_exit();
+	
+	lua_close(L);
+
 	std::cout<<"\nUFO2000 "
              <<UFO_VERSION_STRING
              <<" (revision "
@@ -771,6 +770,7 @@ void recv_turn(int crc)
 	check_crc(crc);
 
 	platoon_local->restore();
+	platoon_local->set_visibility_changed();
 
 	if (net->gametype == HOTSEAT) {
 		savegame(F("$(home)/ufo2000.tmp"));
@@ -1570,15 +1570,6 @@ void start_loadgame()
 
 int main(int argc, char *argv[])
 {
-#ifdef WIN32
-	// to simplify debugging from Microsoft Visual Studio change
-	// current directory to the place where the program executable is
-	char szPath[MAX_PATH];
-	GetModuleFileName(NULL, szPath, sizeof(szPath));
-	if (strrchr(szPath, '\\')) *strrchr(szPath, '\\') = '\0';
-	SetCurrentDirectory(szPath);
-#endif
-
 	initmain(argc, argv);
 
 	if (FLAGS & F_FASTSTART) {

@@ -1,6 +1,8 @@
                              Installing ufo2000.
 
-1. General information.
+------------------------------------------------------------------------------
+-- 1. General information.
+------------------------------------------------------------------------------
 
 Current ufo2000 version compiles and works well in UNIX and WIN32 environments.
 Previous version could also be compiled for DOS using DJGPP and a set of
@@ -14,7 +16,9 @@ In order to successfully run ufo2000, you need a set of data files from
 demo-version of this game, but you will only have a limited set of features 
 available in this case.
 
-2. Platform-specific instructions
+------------------------------------------------------------------------------
+-- 2. Platform-specific instructions
+------------------------------------------------------------------------------
 
 --- Win32 ---
 
@@ -43,13 +47,20 @@ available in this case.
    and just type 'make win32=1' from the command line.
    To compile game server, run 'make win32=1 server'
 
+   Note: there is Microsoft Visual C++ 6.0 project file in the source
+   distribution, but it has not been updated for a long time (I do not
+   have MSVC 6.0 installed any longer --serge). The fact that it is not 
+   up to date is a known problem. Please do not report it and do not 
+   ask to fix it. But if you can make it work, please send an updated 
+   copy to us.
+
 2) Unpack archive with ufo2000 binary into any directory of your choice
    ('c:\games\ufo2000' for example). If you compiled the game yourself,
    you can just use the same directory that you used for compilation.
 
-3) If you own a full version of X-COM, you can just copy all the files
-   from the installed X-COM directory into 'XCOM' subdirectory of ufo2000
-   (it is initially empty)
+3) If you own a full version of X-COM, you can copy all the files from 
+   the directory where you have X-COM: UFO Defense installed into 
+   'XCOM' subdirectory of ufo2000 (it is initially empty).
 
 4) If you do not have a full version of X-COM, you can download a freely 
    available demo from ftp://ftp.microprose.com:
@@ -57,9 +68,14 @@ available in this case.
      ftp://ftp.microprose.com/pub/mps-online/x-com/xcomdemo.zip
 
    After decompression of this file, you will get XCOM.EXE file which
-   is dos zip seflextracting archive. There are all the needed files for 
-   ufo2000 to work inside of it. Copy them into 'XCOMDEMO' subdirectory 
-   of ufo2000.
+   is zip self extracting archive. Run it with -d option and specify
+   ufo2000 directory in a command line: 'XCOM.EXE -d c:\games\ufo2000'.
+
+   Note: this SFX archive is a DOS executable and it can not handle
+   long file names ('C:\Program Files\ufo2000' for example), in this case
+   you will have to extract all the needed files using any other external
+   utility and place extracted files to ufo2000 directory manually (into
+   'XCOMDEMO' subdirectory, which is initially empty).
 
 --- Linux/Unix ---
 
@@ -72,7 +88,7 @@ available in this case.
      can be found at http://expat.sourceforge.net/
    HawkNL network library 1.66
      can be found at http://www.hawksoft.com/hawknl/
-   Lua scripting language interpreter and library version 5.0
+   Lua scripting language and library version 5.0
      can be found at http://www.lua.org/
 
    If gcc complains about expat.h :
@@ -84,7 +100,7 @@ available in this case.
    line 657.
 
 2) Download the latest sources of ufo2000, extract them into a separate 
-   directory and run make (or gmake) from it
+   directory and run make (or gmake) from it:
 
    # make
 
@@ -98,11 +114,22 @@ available in this case.
      ftp://ftp.microprose.com/pub/mps-online/x-com/xcomdemo.zip
 
    After decompression of this file, you will get XCOM.EXE file which
-   is dos zip seflextracting archive. There are all the needed files for 
-   ufo2000 to work inside of it. Copy them into 'XCOMDEMO' subdirectory 
-   of ufo2000.
+   is zip self extracting archive. There are all the needed files for 
+   ufo2000 to work inside of it. Extract them and copy into 'XCOMDEMO' 
+   subdirectory of ufo2000.
 
-3. Getting the latest unstable sources snapshot (for developers only)
+--- Gentoo Linux ---
+
+There is ufo2000 ebuild available which makes installation of the game 
+extremely simple. It automatically downloads XCOM and TFTD demos, compiles
+the game and installs it into system. The game is immediately ready to run
+after install. You may optionally copy data files from a full version of
+X-COM: UFO Defense into '/usr/share/games/ufo2000/XCOM'. This will allow 
+you to play on maps with various terrain types and use more different units.
+
+------------------------------------------------------------------------------
+-- 3. Getting the latest unstable sources snapshot (for developers only)
+------------------------------------------------------------------------------
 
 You can get the latest source snapshot from the source repository 
   http://lxnt.info:8888/repos/ufo2k/trunk/

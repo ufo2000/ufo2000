@@ -207,8 +207,8 @@ local function CheckDataFiles()
 				"This problem may be caused by incorrect installation " ..
 				"of the game (you probably forgot to copy original X-COM data files to the " ..
 				"place where the game can locate them)." ..
-				"\n" ..
-				"Please check that you followed the instructions from 'INSTALL'" ..
+				"\n\n" ..
+				"Please make sure that you followed the instructions from 'INSTALL' " ..
 				"file before reporting bugs.") 
 		end
 

@@ -73,9 +73,9 @@ int Connect::do_chat()
 	stretch_blit(scr, screen, 0, 0, 320, 200, 0, 0, 640, 400);
 	stretch_blit(scr, backscr, 0, 0, 320, 200, 0, 0, 640, 400);
 
-	local_win = new Wind(backscr, 15, 197, 619, 383, 16);
-	remote_win = new Wind(backscr, 15, 12, 408, 179, 33);
-	info_win = new Wind(backscr, 434, 17, 619, 171, 192);
+	local_win = new Wind(backscr, 15, 197, 619, 383, xcom1_color(16));
+	remote_win = new Wind(backscr, 15, 12, 408, 179, xcom1_color(33));
+	info_win = new Wind(backscr, 434, 17, 619, 171, xcom1_color(192));
 
 	int DONE = 0;
 	std::string buf;
@@ -278,13 +278,28 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 			net->check();
 			yield_timeslice();
 		}
+
+		if (g_net_allowed_terrains.size() == 1) {
+			// No allowed terrains received, only end marker
+
+			alert("remote player does not have any of your maps", "", "", "OK", NULL, 0, 0);
+
+			delete map;
+
+			destroy_bitmap(screen2);
+			screen2 = create_bitmap(SCREEN2W, SCREEN2H); clear(screen2);
+			fade_out(10);
+			clear(screen);
+			return 0;
+		}
 	}
 
     // Make sure that we have a valid map
 	if (!Map::valid_GEODATA(&mapdata)) {
 		Map::new_GEODATA(&mapdata);
-		mapdata.load_game = 77;
 	}
+
+	mapdata.load_game = 77;
 
 	if (HOST) {
 		net->send_map_data(&mapdata);
@@ -297,7 +312,8 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 
 		net->check();
 		if (mapdata.load_game == 77) { //new	mapdata
-//			g_console->printf("%s", "mapdata generated");
+			g_console->printf("suggested map: %s\n", 
+				terrain_set->get_terrain_name(mapdata.terrain).c_str());
 			mapdata.load_game = 0;
 			delete map;
 			destroy_bitmap(map2d);

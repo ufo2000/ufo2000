@@ -79,6 +79,7 @@ Net::Net()
 	flog = fopen(F("$(home)/ufo2000.log"), "wt");
 	assert(flog != NULL);
 	log("%s\n", "_____________Net()");
+	gametype = HOTSEAT;
 }
 
 Net::~Net()
@@ -1305,23 +1306,39 @@ int Net::recv_terrain_crc32()
 
 	if (index == -1) {
 		// special end of terrain list marker received
-
-		g_console->printf("The following terrain types are available to play (total %d):\n",
+		g_console->printf("\n");
+		g_console->printf("Remote player has the following %d maps that can be used for network game:\n",
 			g_net_allowed_terrains.size());
 
 		std::string tlist = "";
-			
+		
 		std::set<int>::iterator it = g_net_allowed_terrains.begin();
 		while (it != g_net_allowed_terrains.end()) {
-			tlist.append(tlist.empty() ? "   " : ", ");
+			tlist.append(tlist.empty() ? "" : ", ");
 			tlist.append(terrain_set->get_terrain_name(*it));
 			it++;
 		}
 
-		g_console->printf("%s\n", tlist.c_str());
+		g_console->printf(makecol(255, 255, 0), "%s\n", tlist.c_str());
+
+#undef map
+		if (g_net_allowed_terrains.size() != terrain_set->terrain.size()) {
+			tlist = "";
+			std::map<int, Terrain *>::iterator it = terrain_set->terrain.begin();
+			while (it != terrain_set->terrain.end()) {
+				if (g_net_allowed_terrains.find(it->first) == g_net_allowed_terrains.end()) {
+					tlist.append(tlist.empty() ? "" : ", ");
+					tlist.append(it->second->get_name());
+				}
+				it++;
+			}
+			g_console->printf("The following maps can not be used, they are modified or just not installed by remote player:\n");
+			g_console->printf(xcom1_color(32), "%s\n", tlist.c_str());
+		}
+#define map ufo2000_map
+		g_console->printf("\n");
 
 		g_net_allowed_terrains.insert(-1);
-
 		return 1;
 	}
 

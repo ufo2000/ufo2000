@@ -339,6 +339,7 @@ Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *md
 	enemy_num = 0;
 	seen_enemy_num = 0;
 	MOVED = 0;
+	m_reaction_chances = 0;
 
 	memcpy(&md, mdat, sizeof(md));
 	memcpy(&id, idat, sizeof(id));
@@ -867,7 +868,7 @@ void Soldier::draw_enemy_seen(int select_y)
 		textout(screen2, font, num, x1 + 5, y1 + 4, xcom1_color(16));
 
 		//	Draw numbers above seen enemies
-		if (FLAGS & F_SELECTENEMY) {
+		if ((FLAGS & F_SELECTENEMY) && map->man(enemy_z[i], enemy_x[i], enemy_y[i])) {
 			int sx = map->x + CELL_SCR_X * enemy_x[i] + CELL_SCR_X * enemy_y[i] + 12;
 			int sy = map->y - (enemy_x[i] + 1) * CELL_SCR_Y + CELL_SCR_Y * enemy_y[i] - 29 - CELL_SCR_Z * enemy_z[i];
 
@@ -923,8 +924,8 @@ int Soldier::ismoving()
 		return true;
 
 	if ((z != -1) && ((FIRE_num > 0) || (m_reaction_chances > 0) || (curway != -1) || (waylen != 0)))
-		return true;
-
+			return true;
+		
 	return false;
 }
 
