@@ -109,7 +109,7 @@ int Connect::do_chat()
 	remote_win->printstr("Press ESC to cancel\n");
 
 	char version_check_packet[128];
-	sprintf(version_check_packet, "UFO2000 REVISION OF YOUR OPPONENT: %d\r\n", UFO_REVISION_NUMBER);
+	sprintf(version_check_packet, "UFO2000 REVISION OF YOUR OPPONENT: %d", UFO_REVISION_NUMBER);
 	net->send(version_check_packet);
 
 	while (!DONE) {
@@ -121,20 +121,18 @@ int Connect::do_chat()
 					version_check_passed = true;
 				} else {
 					if (remote_revision < UFO_REVISION_NUMBER) {
-						net->send("UFO2000 VERSION CHECK FAILED!\r\n");
-						net->send("YOU UFO2000 VERSION IS OUTDATED\r\n");
-						net->send("\r\n");
-						net->send("PLEASE VISIT http://ufo2000.sourceforge.net\r\n");
-						net->send("AND UPGRADE YOUR UFO2000 VERSION\r\n");
-						net->send("\r\n");
 						remote_win->printstr("\nUnfortunately your opponent has an\n");
 						remote_win->printstr("outdated UFO2000 version and you will be\n");
 						remote_win->printstr("unable to play until he upgrades\n");
 				    } else {
+						char tmp[128];
+						sprintf(tmp, "\nYou need UFO2000 %s (revision %d)\nor newer", 
+							UFO_VERSION_STRING, remote_revision);
 						remote_win->printstr("\nUnfortunately you have older UFO2000\n");
 						remote_win->printstr("version than your opponent has.\n");
-						remote_win->printstr("Please visit http://ufo2000.sourceforge.net\n");
+						remote_win->printstr("\nPlease visit http://ufo2000.sourceforge.net\n");
 						remote_win->printstr("and upgrade your UFO2000 version\n");
+						remote_win->printstr(tmp);
 				    }
 					net->send("QUIT\r\n");
 					net->SEND = 0;
@@ -148,12 +146,6 @@ int Connect::do_chat()
 			}
 			if (strstr(buf.c_str(), "START") != NULL) {
 				if (!version_check_passed) {
-					net->send("UFO2000 VERSION CHECK FAILED!\r\n");
-					net->send("YOU UFO2000 VERSION IS OUTDATED\r\n");
-					net->send("\r\n");
-					net->send("PLEASE VISIT http://ufo2000.sourceforge.net\r\n");
-					net->send("AND UPGRADE YOUR UFO2000 VERSION\r\n");
-					net->send("\r\n");
 					remote_win->printstr("\nUnfortunately your opponent has an\n");
 					remote_win->printstr("outdated UFO2000 version and you will be\n");
 					remote_win->printstr("unable to play until he upgrades\n");

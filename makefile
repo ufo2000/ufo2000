@@ -15,16 +15,18 @@
 # client installed                                                           #
 ##############################################################################
 
+UFO_SVNVERSION := ${shell svnversion .}
+
 ifdef VERSION
 	DISTNAME := ufo2000-$(VERSION)
 else
-	DISTNAME := ufo2000-r${shell svnversion .}
+	DISTNAME := ufo2000-r$(UFO_SVNVERSION)
 endif
 
 CC = g++
 LD = g++
 CFLAGS = -funsigned-char -Wall
-CFLAGS += -pipe -DDEBUGMODE
+CFLAGS += -pipe -DDEBUGMODE -DUFO_SVNVERSION=\"$(UFO_SVNVERSION)\"
 OBJDIR = obj
 NAME = ufo2000
 SERVER_NAME = ufo2000-srv
