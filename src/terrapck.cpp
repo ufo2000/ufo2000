@@ -92,8 +92,10 @@ void TerraPCK::loadmcd(int pck_base, int size)
 	for (int i = 0; i < newcount; i++) {
 		read(fh, &m_mcd[oldcount + i], 62);
 		ASSERT(offsetof(MCD, pck_base) == 62);
-		m_mcd[oldcount + i].Alt_MCD += oldcount;
-		m_mcd[oldcount + i].Die_MCD += oldcount;
+		if (m_mcd[oldcount + i].Alt_MCD)
+			m_mcd[oldcount + i].Alt_MCD += oldcount;
+		if (m_mcd[oldcount + i].Die_MCD)
+			m_mcd[oldcount + i].Die_MCD += oldcount;
 		m_mcd[oldcount + i].pck_base = pck_base;
 	}
 	close(fh);
