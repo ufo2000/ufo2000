@@ -1315,7 +1315,7 @@ void gameloop()
 					if (sel_man != NULL) {
 						Soldier *ssman = map->sel_man();
 						if (ssman == NULL) {
-							if (!sel_man->ismoving()) {
+							if (!sel_man->ismoving() && sel_man->standup()) {
 								sel_man->wayto(map->sel_lev, map->sel_col, map->sel_row);
 							}
 						} else {

@@ -1968,6 +1968,16 @@ int Soldier::change_pose()
 
 }
 
+int Soldier::standup()
+{
+	if (m_state == STAND)
+		return 1;
+	else if (m_state == SIT)
+		return change_pose();
+	else
+		return 0;
+}
+
 int Soldier::prime_grenade(int iplace, int delay_time, int req_time)
 {
 	ASSERT((iplace == P_ARM_RIGHT) || (iplace == P_ARM_LEFT));
