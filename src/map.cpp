@@ -1493,7 +1493,7 @@ int Map::saveitems(char *txt)
 	return len;
 }
 
-extern int MAP_WIDTH, MAP_HEIGHT;
+int MAP_WIDTH, MAP_HEIGHT;
 
 void Map::new_GEODATA(GEODATA *md)
 {

@@ -436,7 +436,6 @@ int connect_internet_server()
 				case SRV_MESSAGE: chat->printf(chat_msg_color(packet), "%s", packet.c_str()); break;
 				case SRV_GAME_START_HOST:
 					show_mouse(NULL);
-					alert(" ", "  Game should start as host now ", " ", "    OK    ", NULL, 1, 0);
 					FS_MusicPlay(NULL);
 		            HOST = 1;
 
@@ -457,7 +456,6 @@ int connect_internet_server()
 					break;
 				case SRV_GAME_START_JOIN:
 					show_mouse(NULL);
-					alert(" ", "  Game should start as client now ", " ", "    OK    ", NULL, 1, 0);
 					FS_MusicPlay(NULL);
 		            HOST = 0;
 

@@ -26,7 +26,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "keys.h"
 #include "spk.h"
 #include "wind.h"
-#include "netsock.h"
 #include "multiplay.h"
 #include "connect.h"
 #include "platoon.h"
@@ -34,29 +33,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "version.h"
 #include "music.h"
 
-int MAP_WIDTH = 5, MAP_HEIGHT = 5;
-
-Wind *local_win = NULL, *remote_win = NULL, *info_win = NULL;
-
-#define DX  200
-#define DY  150
-#define DW  240
-#define OKBUT  3
-#define CANBUT 4
-DIALOG Connect::hostaddr_dialog[] = {
-	//(dialog proc)		(x)		 (y)	(w)	(h)  (fg)  (bg)  (key)		 (flags)	(d1)  (d2)							(dp)  (dp2)	(dp3)
-	{ d_shadow_box_proc, DX + 0, DY + 0, DW, 80, 0, 1, 0, 0, 0, 0, NULL, NULL, NULL },
-	{ d_ctext_proc, DX + DW / 2, DY + 10, DW, 10, 0, 1, 0, 0, 0, 0, (void *)"Enter IP addres", NULL, NULL },
-	{ d_edit_proc, DX + 10, DY + 30, 128, 10, 0, 1, 0, 0, 15, 0, (void *)HOSTNAME, NULL, NULL },
-	{ d_button_proc, DX + 100, DY + 55, 60, 18, 0, 1,       /* 13*/0, D_EXIT, 0, 0, (void *)"OK", NULL, NULL },
-	{ d_button_proc, DX + 170, DY + 55, 60, 18, 0, 1,       /* 27*/0, D_EXIT, 0, 0, (void *)"Cancel", NULL, NULL },
-	{ NULL }
-	//{ d_edit_proc,		DX,	 DY,	128,	9,	1,	 0,	  0,		0,	  15,	 0,	 (void *)HOSTNAME, NULL,	NULL},
-	//{ NULL,				  0,	  0,	  0,	0,	0,	 0,	  0,		0,		0,	 0,	 NULL,				 NULL,	NULL}
-};
-
 int Connect::do_chat()
 {
+	Wind *local_win = NULL, *remote_win = NULL, *info_win = NULL;
+
 	bool version_check_passed = false;
 
 	reset_video();
@@ -82,20 +62,6 @@ int Connect::do_chat()
 	std::string buf;
 
 	switch (net->gametype) {
-		case SOCK:
-			if (!HOST) {
-				do {
-					if (popup_dialog(hostaddr_dialog, 2) != OKBUT) {
-						net->SEND = 0;
-						goto g_return;
-					}
-				} while (!initsocketgame());
-			} else
-				if (!initsocketgame()) {
-					net->SEND = 0;
-					goto g_return;
-				}
-			break;
 		case GAME_TYPE_INTERNET_SERVER:
 			break;
 		default:
@@ -182,7 +148,7 @@ int Connect::do_chat()
 			}
 		}
 	}
-g_return:
+
 	remove_int(drawit_timer);
 	delete back09;
 	delete local_win; local_win = NULL;

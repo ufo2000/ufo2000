@@ -737,7 +737,7 @@ void send_turn()
 
 	platoon_remote->restore();
 
-	if (net->gametype == HOTSEAT) {
+	if (net->gametype == GAME_TYPE_HOTSEAT) {
 		if (win || loss) {
 		//	!!! Hack - to prevent unnecessery replay while in endgame screen
 			closehotseatgame();			
@@ -781,7 +781,7 @@ void recv_turn(int crc)
 	platoon_local->restore();
 	platoon_local->set_visibility_changed();
 
-	if (net->gametype == HOTSEAT) {
+	if (net->gametype == GAME_TYPE_HOTSEAT) {
 		savegame(F("$(home)/ufo2000.tmp"));
 		map->m_minimap_area->set_full_redraw();
 	}
@@ -956,7 +956,7 @@ void endgame_stats()
 	StatEntry *temp;
 	Platoon *ptemp;
 
-	if ((net->gametype == HOTSEAT) && (turn % 2 != 0))
+	if ((net->gametype == GAME_TYPE_HOTSEAT) && (turn % 2 != 0))
 	{
 		ptemp = platoon_remote;
 		platoon_remote = platoon_local; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -997,7 +997,7 @@ void endgame_stats()
 		coward = temp;
 	}
 
-	if ((net->gametype == HOTSEAT) && (turn % 2 != 0))
+	if ((net->gametype == GAME_TYPE_HOTSEAT) && (turn % 2 != 0))
 	{
 		ptemp = platoon_remote;
 		platoon_remote = platoon_local; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1015,7 +1015,7 @@ void endgame_stats()
 	BITMAP *back_win = load_back_image(cfg_get_win_image_file_name());
 	BITMAP *back_lose = load_back_image(cfg_get_lose_image_file_name());
 
-	if (net->gametype == HOTSEAT)
+	if (net->gametype == GAME_TYPE_HOTSEAT)
  	{
 		if (win == loss)
  		{
@@ -1061,7 +1061,7 @@ void endgame_stats()
 
 	textprintf_centre(newscr, large, 320, 24, xcom1_color(1), "%s", winner);
 
-	if (net->gametype == HOTSEAT)
+	if (net->gametype == GAME_TYPE_HOTSEAT)
 	{
 		textprintf(newscr, g_small_font,   8, 60, xcom1_color(1), "Player 1");
 		textprintf(newscr, g_small_font, 328, 60, xcom1_color(1), "Player 2");
@@ -1083,19 +1083,19 @@ void endgame_stats()
 	textprintf_centre(newscr, large, 320, 108, xcom1_color(1), "Most Valuable Soldier:");
 	textprintf_centre(newscr, g_small_font, 320, 124, xcom1_color(1), "%s (%s, %d kills)",
 		mvp->get_name(), 
-		(mvp_remote) ? ((net->gametype == HOTSEAT) ? "Player 2" : "Remote") : ((net->gametype == HOTSEAT) ? "Player 1" : "Local"),
+		(mvp_remote) ? ((net->gametype == GAME_TYPE_HOTSEAT) ? "Player 2" : "Remote") : ((net->gametype == GAME_TYPE_HOTSEAT) ? "Player 1" : "Local"),
 		mvp->get_kills());
 
 	textprintf_centre(newscr, large, 320, 140, xcom1_color(1), "Most Devastating Soldier:");
 	textprintf_centre(newscr, g_small_font, 320, 156, xcom1_color(1), "%s (%s, %d damage inflicted)",
 		devastating->get_name(), 
-		(devastating_remote) ? ((net->gametype == HOTSEAT) ? "Player 2" : "Remote") : ((net->gametype == HOTSEAT) ? "Player 1" : "Local"),
+		(devastating_remote) ? ((net->gametype == GAME_TYPE_HOTSEAT) ? "Player 2" : "Remote") : ((net->gametype == GAME_TYPE_HOTSEAT) ? "Player 1" : "Local"),
 		devastating->get_inflicted());
 
 	textprintf_centre(newscr, large, 320, 172, xcom1_color(1), "Most Cowardly Soldier:");
 	textprintf_centre(newscr, g_small_font, 320, 188, xcom1_color(1), "%s (%s, %d damage inflicted)",
 		coward->get_name(), 
-		(coward_remote) ? ((net->gametype == HOTSEAT) ? "Player 2" : "Remote") : ((net->gametype == HOTSEAT) ? "Player 1" : "Local"),
+		(coward_remote) ? ((net->gametype == GAME_TYPE_HOTSEAT) ? "Player 2" : "Remote") : ((net->gametype == GAME_TYPE_HOTSEAT) ? "Player 1" : "Local"),
 		coward->get_inflicted());
 
 	g_console->set_full_redraw();
@@ -1187,7 +1187,7 @@ void gameloop()
 		g_time_left = 0;
 	}
 
-	if (net->gametype == HOTSEAT)
+	if (net->gametype == GAME_TYPE_HOTSEAT)
 		savegame(F("$(home)/ufo2000.tmp"));
 
 	while (!DONE) {
@@ -1384,14 +1384,12 @@ void gameloop()
 				case KEY_PGUP:
 					if (map->sel_lev < map->level - 1) {
 						map->sel_lev++;
-						//mouse_y -= 24;
 						position_mouse(mouse_x, mouse_y - 24);
 					}
 					break;
 				case KEY_PGDN:
 					if (map->sel_lev > 0) {
 						map->sel_lev--;
-						//mouse_y += 24;
 						position_mouse(mouse_x, mouse_y + 24);
 					}
 					break;
@@ -1403,26 +1401,15 @@ void gameloop()
 					break;
 				case KEY_LEFT:
 					resize_screen2(-10, 0);
-					//map->move(MSCROLL*2,0);
 					break;
 				case KEY_UP:
 					resize_screen2(0, -10);
-					//map->move(0,MSCROLL*2);
 					break;
 				case KEY_RIGHT:
 					resize_screen2(10, 0);
-					//map->move(-MSCROLL*2,0);
 					break;
 				case KEY_DOWN:
 					resize_screen2(0, 10);
-					//map->move(0,-MSCROLL*2);
-					break;
-				case KEY_F1:
-					if (FLAGS & F_RAWMESSAGES) {
-						FLAGS &= ~F_RAWMESSAGES;
-					} else {
-						FLAGS |= F_RAWMESSAGES;
-					}
 					break;
 				case KEY_F2:
 					if (askmenu("SAVE GAME"))
@@ -1434,15 +1421,8 @@ void gameloop()
 							alert("saved game not found", "", "", "OK", NULL, 0, 0);
 						}
 						inithotseatgame();
-						if (net->gametype == HOTSEAT)
+						if (net->gametype == GAME_TYPE_HOTSEAT)
 							savegame(F("$(home)/ufo2000.tmp"));
-					}
-					break;
-				case KEY_F5:
-					if (askmenu("RESTART GAME")) {
-						//restartgame();
-						net->send_restart();
-						//position_mouse(160, 100);
 					}
 					break;
 				case KEY_F9:

@@ -30,7 +30,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "server_protocol.h"
 #define map ufo2000_map
 
-enum GameType {HOTSEAT, SOCK, GAME_TYPE_INTERNET_SERVER};
+enum GameType {GAME_TYPE_HOTSEAT, GAME_TYPE_INTERNET_SERVER};
 
 void inithotseatgame();
 void closehotseatgame();
@@ -96,7 +96,7 @@ public:
 	ClientServerUfo *m_internet_server;
 	GameType gametype;
 
-	int is_network_game() { return gametype == GAME_TYPE_INTERNET_SERVER || gametype == SOCK; }
+	int is_network_game() { return gametype == GAME_TYPE_INTERNET_SERVER; }
 
 	Net();
 	~Net();

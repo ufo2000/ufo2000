@@ -21,8 +21,8 @@ Alexander Ivanov, n'est pas impliqué en ce moment dans le processus de
 développement, mais il a déjà fourni un énorme travail, donc merci
 à lui! Sans son excellent travail ce jeu n'aurait jamais existé.
 
-Ce jeu est un logiciel gratuit (GPL). Pour plus d'informations sur
-la licence, lisez le fichier COPYING, situé dans le répertoire
+Ce jeu est un logiciel en distribution libre (GPL). Pour plus d'informations 
+sur la licence, lisez le fichier COPYING, situé dans le répertoire
 UFO2000.
 
 N'importe qui peut prendre part dans le développement de UFO2000.

@@ -32,7 +32,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "multiplay.h"
 #include "map.h"
 #include "sound.h"
-#include "netsock.h"
 #include "packet.h"
 #include "units.h"
 
@@ -79,7 +78,7 @@ Net::Net()
 	flog = fopen(F("$(home)/ufo2000.log"), "wt");
 	ASSERT(flog != NULL);
 	log("%s\n", "_____________Net()");
-	gametype = HOTSEAT;
+	gametype = GAME_TYPE_HOTSEAT;
 }
 
 Net::~Net()
@@ -113,7 +112,7 @@ int Net::init()
 	SEND = 1;
 
 	connect->reset_uds();
-	if (gametype == HOTSEAT) {
+	if (gametype == GAME_TYPE_HOTSEAT) {
 		HOST = 1;
 		if (!connect->do_planner(1))
 			return 0;
@@ -146,10 +145,7 @@ void Net::close()
 {
 	log("%s\n", "close()");
 	switch (gametype) {
-		case SOCK:
-			closesocketgame();
-			break;
-		case HOTSEAT:
+		case GAME_TYPE_HOTSEAT:
 			closehotseatgame();
 			break;
 		default:
@@ -183,10 +179,7 @@ void Net::send(const std::string &pkt)
 	log("send:[%s]\n", pkt.c_str());
 
 	switch (gametype) {
-		case SOCK:
-			packet_send_socket((char *)pkt.data(), pkt.size()); // $$$
-			break;
-		case HOTSEAT:
+		case GAME_TYPE_HOTSEAT:
 			if (MODE != PLANNER)
 				packet_send_hotseat(pkt);
 			break;
@@ -202,13 +195,7 @@ int Net::recv(std::string &pkt)
 {
 	pkt = "";
 	switch (gametype) {
-		case SOCK: { // $$$
-			char temp[1000];
-			int size = packet_recv_socket(temp);
-			pkt = std::string(temp, size);
-			return size;
-		}
-		case HOTSEAT:
+		case GAME_TYPE_HOTSEAT:
 			if (MODE != WATCH) return 0;
 			packet_recv_hotseat(pkt);
 			return pkt.size();
