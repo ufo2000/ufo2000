@@ -653,7 +653,7 @@ BITMAP *create_terrain_bitmap(int terrain)
 
 	Map *m = new Map(4, 5, 5, terrain, map);
 
-	BITMAP *bmp = m->create_bitmap_of_map();
+	BITMAP *bmp = m->create_bitmap_of_map(0);
 	delete m;
 	return bmp;
 }

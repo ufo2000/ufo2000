@@ -128,16 +128,17 @@ function process_log(filename, history)
 
 		if packet_id == "12" then
 
-			if packet_data == "UFO2000 VERSION CHECK FAILED!" then
-				-- handle version check error
-				games[p].version_error = true
-			elseif packet_data == "_Xcom_QUIT_" or packet_data == "QUIT" then
+			if packet_data == "_Xcom_QUIT_" or packet_data == "QUIT" then
 				-- handle normal game exit
 				endgame(p, l)
 			else
 				-- handle version number
 				local _, _, version_number = string.find(packet_data, "^UFO2000 REVISION OF YOUR OPPONENT: (%d+)")
 				if version_number then
+					if games[p].version and games[p].version ~= version_number then
+						-- handle version check error
+						games[p].version_error = true
+					end
 					games[p].version = version_number 
 				end
 			end

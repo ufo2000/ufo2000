@@ -115,7 +115,7 @@ public:
 	void draw();
 	void draw2d();
 	void svga2d();
-	BITMAP *create_bitmap_of_map();
+	BITMAP *create_bitmap_of_map(int max_lev);
 
 	void set();
 	void move(int ofs_x, int ofs_y);
@@ -190,11 +190,8 @@ public:
 		       (col >= 0) && (col < width * 10) &&
 		       (row >= 0) && (row < height * 10) &&
 		       (type >= 0) && (type < 4));
-		MCD *m = &m_terrain->m_mcd[m_cell[lev][col][row]->type[type]];
-		if (m->Tile_Type != type)
-			return & m_terrain->empty;
-		return m;
-		//return &m_terrain->m_mcd[  m_cell[lev][col][row].type[type]	];
+
+		return &m_terrain->m_mcd[m_cell[lev][col][row]->type[type]];
 	}
 
 	Cell *cell(int lev, int col, int row)

@@ -40,9 +40,10 @@ class Minimap : public VisualObject
 	MINIMAP_STATE **m_minimap_state;
 
 	Map *m_map;
-	BITMAP *m_minimap_visible;
-	BITMAP *m_minimap_seen;
+	BITMAP **m_minimap_visible;
+	BITMAP **m_minimap_seen;
 	BITMAP *m_minimap_unknown;
+	int m_old_sel_lev;
 
 	void redraw_minimap(BITMAP *bmp, int x, int y, int full_redraw_mode);
 

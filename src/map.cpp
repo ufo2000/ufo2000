@@ -513,16 +513,12 @@ void Map::svga2d()
 
 void Map::draw2d()
 {
-	char scang4x4[16];
-
 	int cx = SCREEN2W / 2;
 	int cy = SCREEN2H / 2;
 
-	int tftd_flag = m_terrain->is_tftd();
-	char *scang = tftd_flag ? m_scang_tftd : m_scang_xcom;
-	ASSERT(scang);
-
 	set_sel(cx, cy);
+
+	BITMAP *tmp = create_bitmap_of_map(sel_lev);
 
 	int r1 = sel_row - 18; if (r1 < 0) r1 = 0;
 	int r2 = sel_row + 18; if (r2 >= height * 10) r2 = height * 10 - 1;
@@ -533,74 +529,72 @@ void Map::draw2d()
 	for (int lev = 0; lev <= sel_lev; lev++)
 		for (int row = r1; row <= r2; row++)
 			for (int col = c1; col <= c2; col++) {
-				if (seen(lev, col, row)) {
-					memset(scang4x4, 0, 16);
-					for (int j = 0; j < 4; j++) {
-						int ct = m_cell[lev][col][row]->type[j];
-						int mt = m_terrain->m_mcd[ct].ScanG;
-						if (mt > 0) {
-							mt += 35;
+				if (!seen(lev, col, row)) continue;
 
-							for (int i = 0; i < 16; i++)
-								if (scang[mt * 16 + i])
-									scang4x4[i] = scang[mt * 16 + i];
-						}
-					}
+				blit(tmp, screen2, 
+					col * 4 + 3, 
+					row * 4,
+					cx + ( -sel_col + col) * 4 + 3,
+					cy + ( -sel_row + row) * 4,
+					4, 4);
 
-					for (int i = 0; i < 16; i++)
-						if (scang4x4[i])
-							putpixel(screen2,
-							         cx + ( -sel_col + col) * 4 + (3 - i / 4),
-							         cy + ( -sel_row + row) * 4 + i % 4, 
-							         tftd_flag ? tftd_color(scang4x4[i]) : xcom_color(scang4x4[i]));
-
-					if (man(lev, col, row) != NULL) {
-						if (platoon_local->belong(man(lev, col, row)))
-							rectfill(screen2, cx + ( -sel_col + col) * 4 + 1, cy + ( -sel_row + row) * 4 + 1,
-							         cx + ( -sel_col + col) * 4 + SCANGSIZE - 1, cy + ( -sel_row + row) * 4 + SCANGSIZE - 1,
-							         xcom1_color(144));      //yellow
-						else
-							if (visible(lev, col, row))
-								rectfill(screen2, cx + ( -sel_col + col) * 4 + 1, cy + ( -sel_row + row) * 4 + 1,
-								         cx + ( -sel_col + col) * 4 + SCANGSIZE - 1, cy + ( -sel_row + row) * 4 + SCANGSIZE - 1,
-								         xcom1_color(32));      //red
-					}
-				}
+				if (man(lev, col, row) == NULL) continue;
+				
+				if (platoon_local->belong(man(lev, col, row)))
+					rectfill(screen2, cx + ( -sel_col + col) * 4 + 1, cy + ( -sel_row + row) * 4 + 1,
+					         cx + ( -sel_col + col) * 4 + SCANGSIZE - 1, cy + ( -sel_row + row) * 4 + SCANGSIZE - 1,
+					         xcom1_color(144));      //yellow
+				else
+					if (visible(lev, col, row))
+						rectfill(screen2, cx + ( -sel_col + col) * 4 + 1, cy + ( -sel_row + row) * 4 + 1,
+						         cx + ( -sel_col + col) * 4 + SCANGSIZE - 1, cy + ( -sel_row + row) * 4 + SCANGSIZE - 1,
+						         xcom1_color(32));      //red
 			}
 
+	destroy_bitmap(tmp);
 	scanbord->show(screen2, cx - 160 + 4, cy - 100 + 12);
 	text_mode(-1);
 	textprintf(screen2, large, cx - 160 + 281 + 4, cy - 100 + 74 + 12, xcom1_color(66), "%d", sel_lev);
 }
 
 
-BITMAP *Map::create_bitmap_of_map()
+BITMAP *Map::create_bitmap_of_map(int max_lev)
 {
-	char scang4x4[16];
+	int scang4x4[16];
 	BITMAP *bmp = create_bitmap(width * 10 * 4, height * 10 * 4);
+	clear_to_color(bmp, xcom_color(15));
 
-	int tftd_flag = m_terrain->is_tftd();
-	char *scang = tftd_flag ? m_scang_tftd : m_scang_xcom;
-	ASSERT(scang);
-
-	for (int lev = 0; lev <= sel_lev; lev++) {
+	for (int lev = 0; lev <= max_lev; lev++) {
 		for (int row = 0; row < height*10; row++) {
 			for (int col = 0; col < width*10; col++) {
-				memset(scang4x4, 0, 16);
+				int i;
+
+				for (i = 0; i < 16; i++) scang4x4[i] = xcom_color(0);
+
 				for (int j = 0; j < 4; j++) {
-					int mt = mcd(lev, col, row, j)->ScanG;
-					if (mt > 0) {
+					int mcd_index = m_cell[lev][col][row]->type[j];
+					if (mcd_index == 0) continue;
+					MCD *m = &m_terrain->m_mcd[mcd_index];
+
+					int mt = m->ScanG;
+					int tftd_flag = m->tftd_flag;
+					char *scang = tftd_flag ? m_scang_tftd : m_scang_xcom;
+
+					ASSERT(scang != NULL);
+					/* if (mt > 0) */ {
 						mt += 35;
-						for (int i = 0; i < 16; i++)
+						for (int i = 0; i < 16; i++) {
 							if (scang[mt * 16 + i])
-								scang4x4[i] = scang[mt * 16 + i];
+								scang4x4[i] = tftd_flag ? 
+									tftd_color(scang[mt * 16 + i]) :
+									xcom_color(scang[mt * 16 + i]);
+						}
 					}
 				}
 
-				for (int i = 0; i < 16; i++)
-					if (scang4x4[i])
-						putpixel(bmp, col * 4 + (3 - i / 4), row * 4 + i % 4, 
-							m_terrain->is_tftd() ? tftd_color(scang4x4[i]) : xcom_color(scang4x4[i]));
+				for (i = 0; i < 16; i++)
+					if (scang4x4[i] != xcom_color(0))
+						putpixel(bmp, col * 4 + (3 - i / 4), row * 4 + i % 4, scang4x4[i]);
 			}
 		}
 	}
@@ -664,10 +658,8 @@ void Map::center(int lev, int col, int row)
 
 int Map::stopLOS_level(int dx, int dy, int lev, int col, int row)
 {
-	if ((col + dx < 0) || (col + dx >= width * 10) ||
-	        (row + dy < 0) || (row + dx >= height * 10)
-	   )
-		return 1;
+	if ((col + dx < 0) || (col + dx >= width * 10) || (row + dy < 0) || (row + dx >= height * 10))
+		return 0;
 	int ld = ofs2dir[dy + 1][dx + 1];
 	if (viewable(lev, col, row, ld))
 		return 0;
@@ -1308,7 +1300,7 @@ int Map::calc_visible_cells(Soldier *watcher, int z, int x, int y, int dir, char
 	int en = 0;
 	int ang = dir * 32;
 
-	for (int fi = 32; fi <= 128 - 32; fi += 4) {
+	for (int fi = 24; fi <= 128 - 24; fi += 4) {
 		fixed cos_fi = fcos(itofix(fi));
 		fixed sin_fi = fsin(itofix(fi));
 

@@ -236,7 +236,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 	g_console->redraw(screen, 0, SCREEN2H);
 
 	Map *map = new Map(mapdata);
-	BITMAP *map2d = map->create_bitmap_of_map();
+	BITMAP *map2d = map->create_bitmap_of_map(0);
 	int map2d_x = (640 - map2d->w) / 2;
 
 	if (HOST) {
@@ -310,7 +310,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 			delete map;
 			destroy_bitmap(map2d);
 			map = new Map(mapdata);
-			map2d = map->create_bitmap_of_map();
+			map2d = map->create_bitmap_of_map(0);
 			map2d_x = (640 - map2d->w) / 2;
 
 			local.reset_selections();

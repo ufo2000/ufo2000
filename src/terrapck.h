@@ -107,9 +107,10 @@ struct MCD
 	unsigned char u61;
 	unsigned char u62;
 
-//	End of X-COM data, ufo2000 specific data comes next
-
+//!	End of X-COM data, ufo2000 specific data comes next
+	unsigned char ufo2000_data_start_marker;
 	int pck_base;
+	int tftd_flag;
 };
 
 #pragma pack()
@@ -129,7 +130,7 @@ public:
 	std::vector<MCD> m_mcd;
 	MCD empty;
 
-	int is_tftd() { return m_tftd_flag; }
+	int is_tftd(int index) { return index < (int)m_mcd.size() ? m_mcd[index].tftd_flag : 0; }
 
 	TerraPCK(const char *pckfname, int tftd_flag);
 	~TerraPCK();

@@ -51,6 +51,7 @@ TerraPCK::~TerraPCK()
 
 void TerraPCK::add(const char *pckfname, int tftd_flag)
 {
+	m_tftd_flag = tftd_flag;
 	strcpy(m_fname, pckfname);
 
 	int fh = open(F(m_fname), O_RDONLY | O_BINARY);
@@ -90,13 +91,14 @@ void TerraPCK::loadmcd(int pck_base, int size)
 	long newcount = fsize / 62;
 	m_mcd.resize(oldcount + newcount);
 	for (int i = 0; i < newcount; i++) {
+		ASSERT(offsetof(MCD, ufo2000_data_start_marker) == 62);
 		read(fh, &m_mcd[oldcount + i], 62);
-		ASSERT(offsetof(MCD, pck_base) == 62);
 		if (m_mcd[oldcount + i].Alt_MCD)
 			m_mcd[oldcount + i].Alt_MCD += oldcount;
 		if (m_mcd[oldcount + i].Die_MCD)
 			m_mcd[oldcount + i].Die_MCD += oldcount;
 		m_mcd[oldcount + i].pck_base = pck_base;
+		m_mcd[oldcount + i].tftd_flag = m_tftd_flag;
 	}
 	close(fh);
 }
