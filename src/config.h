@@ -63,5 +63,6 @@ extern MIDI                  *g_net2_midi_music;
 const std::string &cfg_get_server_host();
 const std::string &cfg_get_server_login();
 const std::string &cfg_get_server_password();
+const std::string &cfg_get_server_proxy();
 
 #endif

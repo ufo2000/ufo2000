@@ -39,7 +39,10 @@ class ClientServer
     NLsocket    m_socket;
 public:
 	virtual ~ClientServer();
-	bool connect(const std::string &host, int port);
+	bool ClientServer::connect(
+		const std::string &host,
+		const std::string &proxy,
+		std::string &error_message);
 	bool send_packet(NLulong id, const std::string &packet);
 	bool send_delayed_packet();
 	int recv_packet(NLulong &id, std::string &packet);

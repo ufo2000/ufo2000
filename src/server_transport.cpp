@@ -308,20 +308,82 @@ bool ServerClient::send_packet_all(NLulong id, const std::string &packet)
 
 /****************************************************************************/
 
-bool ClientServer::connect(const std::string &host, int port)
+bool ClientServer::connect(
+	const std::string &ufo2000_server,
+	const std::string &http_proxy,
+	std::string &error_message)
 {
 	m_socket = NL_INVALID;
+	NLaddress addr;
 
-    NLaddress addr;
-    if (nlGetAddrFromName(host.c_str(), &addr) != NL_TRUE)
-    	return false;
-    if (nlSetAddrPort(&addr, port) != NL_TRUE)
-    	return false;
+	std::string host = ufo2000_server;
+	if (host.find(':') == std::string::npos) host.append(":2000");
+
+	std::string proxy = http_proxy;
+	if (proxy == "disabled") proxy = "";
+	if (proxy == "auto") proxy = getenv("http_proxy") ? getenv("http_proxy") : "";
+
+	if (!proxy.empty()) {
+		error_message = "Failed to connect HTTP proxy";
+	    if (nlGetAddrFromName(proxy.c_str(), &addr) != NL_TRUE)
+	    	return false;
+	} else {
+		error_message = "Failed to connect UFO2000 server";
+	    if (nlGetAddrFromName(host.c_str(), &addr) != NL_TRUE)
+	    	return false;
+	}
 
     m_socket = nlOpen(0, NL_RELIABLE);
     if (m_socket == NL_INVALID) return false;
 
     if (nlConnect(m_socket, &addr) == NL_FALSE) return false;
+
+    if (!proxy.empty()) {
+		int retry;
+    	char tmp[512];
+		sprintf(tmp, "CONNECT %s HTTP/1.1\r\n\r\n", host.c_str());
+		std::string request = tmp;
+		std::string reply;
+
+		bool fail_flag = true;
+		for (retry = 0; retry < 50; retry++) {
+			if (!stream_to_socket(m_socket, request)) return false;
+			if (request.empty()) { fail_flag = false; break; }
+			usleep(50000);
+		}
+
+		if (fail_flag) return false;
+
+		fail_flag = true;
+		for (retry = 0; retry < 50; retry++) {
+			int readlen = nlRead(m_socket, tmp, sizeof(tmp));
+			if (readlen > 0) {
+				reply += std::string(tmp, tmp + readlen);
+				std::string::size_type end_of_hdr = reply.find("\r\n\r\n");
+				if (end_of_hdr != std::string::npos) {
+					std::string::size_type end_of_first_line = reply.find("\r\n");
+					reply.resize(end_of_first_line);
+					fail_flag = false;
+					break;
+				}
+			}
+			usleep(50000);
+		}
+
+		if (fail_flag) return false;
+
+		int http_code = 0;
+		if (sscanf(reply.c_str(), "%s %d", tmp, &http_code) != 2) {
+			error_message = "Invalid or no reply from HTTP proxy";
+			return false;
+		}
+
+		if (http_code != 200) {
+			sprintf(tmp, "HTTP proxy returned error %d", http_code);
+			error_message = tmp;
+			return false;
+		}
+    }
 
     return true;
 }

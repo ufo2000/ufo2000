@@ -58,6 +58,7 @@ static std::string lose_image_file_name;
 std::string g_server_host;
 std::string g_server_login;
 std::string g_server_password;
+std::string g_server_proxy;
 int         g_server_autologin;
 
 // Music.
@@ -103,6 +104,11 @@ const std::string &cfg_get_server_login()
 const std::string &cfg_get_server_password()
 {
 	return g_server_password;
+}
+
+const std::string &cfg_get_server_proxy()
+{
+	return g_server_proxy;
 }
 
 const char *cfg_get_menu_music_file_name()
@@ -202,6 +208,7 @@ void loadini()
 	lose_image_file_name = get_config_string(gen, "lose_image", "$(xcom)/geograph/back02.scr");
 
 	g_server_host = get_config_string("Server", "host", "127.0.0.1");
+	g_server_proxy = get_config_string("Server", "http_proxy", "auto");
 	g_server_autologin = get_config_int("Server", "autologin", 0);
 
 	g_menu_midi_music = load_midi(F(cfg_get_menu_music_file_name()));
