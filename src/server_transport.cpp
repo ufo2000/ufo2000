@@ -208,7 +208,16 @@ void ServerDispatch::Run(NLsocket sock)
 
     m_group = nlGroupCreate();
 
+    time_t last_log_strip_time = time(NULL);
+	strip_server_log(g_srv_keep_log_time * 24 * 3600);
+
     while (1) {
+
+    //	Strip server log every 8 hours
+    	if (difftime(time(NULL), last_log_strip_time) > 8 * 3600) {
+    		last_log_strip_time = time(NULL);
+			strip_server_log(g_srv_keep_log_time * 24 * 3600);
+    	}
 
     	if (g_server_reload_config_flag) {
     		load_config();

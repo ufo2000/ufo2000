@@ -93,7 +93,7 @@ static int d_mainmenu_background_proc(int msg, DIALOG *d, int c)
 	if (msg == MSG_DRAW) {
 		stretch_blit(menuback, screen, 0, 0, menuback->w, menuback->h, 0, 0, SCREEN_W, SCREEN_H);
 		text_mode(-1);
-		if (strcmp(UFO_SVNVERSION, "unknown") == 0 || strcmp(UFO_SVNVERSION, "exported") == 0) {
+		if (strcmp(UFO_SVNVERSION, "unknown") == 0 || strcmp(UFO_SVNVERSION, "exported") == 0 || strcmp(UFO_SVNVERSION, "") == 0) {
 			textprintf(screen, g_small_font, 0, 0, xcom1_menu_color(220), 
 				"UFO2000 %s (revision >=%d)", UFO_VERSION_STRING, UFO_REVISION_NUMBER);
 		} else {

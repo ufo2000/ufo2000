@@ -44,14 +44,8 @@ function process_log(filename, history)
 		return os.time(t)
 	end
 
-	local function strip_name(name)
-		local _, _, stripped_name = string.find(name, "(.*) P%d+$")
-		if stripped_name then return stripped_name end
-		return name
-	end
-
 	local function user_online(name, l)
-		name = strip_name(name)
+		if not name or users[name] then return end
 		users[name] = {login_time = gettime(l)}
 		if not tournament_table[name] then 
 			tournament_table[name] = {
@@ -64,7 +58,6 @@ function process_log(filename, history)
 	end
 
 	local function user_offline(name, l)
-		name = strip_name(name)
 		if name and users[name] then 
 			local time_bonus = gettime(l) - users[name].login_time
 			tournament_table[name].time_online = tournament_table[name].time_online + time_bonus
@@ -86,6 +79,8 @@ function process_log(filename, history)
 	end
 
 	local function startgame(p1, p2, l)
+		user_online(p1, l)
+		user_online(p2, l)
 		local game_info = {["p1"] = p1, ["p2"] = p2, ["exited"] = {}}
 		game_info.start_time = gettime(l)
 		games[p1] = game_info
@@ -93,8 +88,8 @@ function process_log(filename, history)
 	end
 
 	local function endgame(p, l)
+		user_online(p, l)
 		local game_info = games[p]
-		assert(game_info)
 		if not game_info then return end
 		games[p] = nil
 		if not game_info.end_time then game_info.end_time = gettime(l) end
@@ -104,12 +99,7 @@ function process_log(filename, history)
 			if game_info.terrain then
 				terrain_table[game_info.terrain] = (terrain_table[game_info.terrain] or 0) + 1 
 			end
-			if game_info.winner or (game_info.terrain == nil and 
-					game_info.version_error == nil and 
-					game_info.connection_error == nil and 
-					game_info.crc_error == nil and
-					os.difftime(game_info.end_time, game_info.start_time) > 3 * 60) then
-
+			if game_info.winner then
 				user_endgame(game_info.p1, game_info.end_time - game_info.start_time)
 				user_endgame(game_info.p2, game_info.end_time - game_info.start_time)
 				user_win(game_info.winner)
@@ -189,7 +179,7 @@ function process_log(filename, history)
 				end
 			end
 
-			if string.find(msg, "^Parent: forked child") then
+			if string.find(msg, "^server started") then
 			-- handle server restart
 				games = {}
 				previous_line = previous_line or l
@@ -245,13 +235,26 @@ out:write("<html><head></head><body>")
 out:write("<br>")
 out:write(string.format("<b>UFO2000 players rating table (%s)</b><br>", os.date()))
 out:write("<table border=1>")
-out:write("<tr><td>rank<td>name<td>games played<td>games won<td>time online<td>battle time<td>score\n")
+out:write("<tr><td>rank<td>name<td>games played<td>games won<td>server chat time<td>battle time<td>score\n")
 local tmp = {}
+
+-- process pager suffixes
+for name, data in tournament_table do
+	if data.games_count == 0 then 
+		local _, _, stripped_name = string.find(name, "(.*) P%d+$")
+		if stripped_name and stripped_name ~= name and tournament_table[stripped_name] then
+			tournament_table[stripped_name].time_online = 
+				tournament_table[stripped_name].time_online + data.time_online
+			data = nil
+		end
+	end
+end
+
 for name, data in tournament_table do
 	-- calculate score
 	data.score = data.win_count * 10 + (data.games_count - data.win_count) * 3 + 
 		(data.time_online - data.battle_time) / (30 * 60)
-	table.insert(tmp, {name, data})
+	if data.games_count > 0 then table.insert(tmp, {name, data}) end
 end
 table.sort(tmp, function(a, b) return a[2].score > b[2].score end)
 tournament_table = tmp
@@ -264,7 +267,7 @@ for index, data in tournament_table do
 		data[1], 
 		data[2].games_count,
 		data[2].win_count,
-		timestring(data[2].time_online),
+		timestring(data[2].time_online - data[2].battle_time),
 		timestring(data[2].battle_time),
 		math.floor(data[2].score)))
 end

@@ -250,7 +250,7 @@ void set_video_mode()
 	else
 		ufo2k_set_gfx_mode(GFX_AUTODETECT_WINDOWED, cfg_get_min_color_depth());
 
-	set_display_switch_mode(SWITCH_BACKAMNESIA);
+	if (set_display_switch_mode(SWITCH_BACKGROUND) == -1) set_display_switch_mode(SWITCH_BACKAMNESIA);
 	set_display_switch_callback(SWITCH_IN, switch_in_callback);
 }
 

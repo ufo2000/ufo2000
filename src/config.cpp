@@ -218,7 +218,7 @@ void saveini()
 {
 	set_config_file(F("$(home)/ufo2000.ini"));
 
-	set_config_string(gen, "server", HOSTNAME);
+//	set_config_string(gen, "server", HOSTNAME);
 	set_config_int(gen, "width", SCREEN2W);
 	set_config_int(gen, "height", SCREEN2H);
 

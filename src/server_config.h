@@ -34,6 +34,7 @@ extern unsigned long g_srv_connections_count_limit;
 extern unsigned long g_srv_login_time_limit;
 extern unsigned long g_srv_username_size_limit;
 extern unsigned long g_srv_packet_size_limit;
+extern unsigned long g_srv_keep_log_time;
 
 void load_config();
 bool split_loginpass(const std::string &str, std::string &login, std::string &pass);
@@ -41,5 +42,6 @@ bool validate_ip(const std::string &ip);
 int validate_user(const std::string &username, const std::string &password);
 bool add_user(const std::string &username, const std::string &password);
 void server_log(const char *fmt, ...);
+void strip_server_log(double delta_time);
 
 #endif

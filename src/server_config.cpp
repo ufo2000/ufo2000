@@ -60,6 +60,8 @@ SERVER_CONFIG_VARIABLE(login_time_limit,        10000);
 SERVER_CONFIG_VARIABLE(username_size_limit,     16);
 // Maximum size of data packet
 SERVER_CONFIG_VARIABLE(packet_size_limit,       16384);
+// Time to keep log messages (in days)
+SERVER_CONFIG_VARIABLE(keep_log_time,           7);
 
 struct ip_info
 {
@@ -243,6 +245,42 @@ void server_log(const char *fmt, ...)
 	}
 
 	va_end(arglist);
+}
+
+/**
+ * Strip outdated messages from server log file
+ * (only the messages that are not older than delta_time seconds
+ * will remain)
+ */
+void strip_server_log(double delta_time)
+{
+	time_t now = time(NULL);
+
+	char buffer[1000];
+	FILE *flog = fopen("ufo2000-srv.log", "rt");
+	if (flog == NULL) return;
+	FILE *flog_tmp = fopen("ufo2000-srv.log.tmp", "wt");
+	if (flog_tmp == NULL) {
+		fclose(flog);
+		return;
+	}
+
+	int flag = 0;
+	while (fgets(buffer, 999, flog)) {
+		tm t; t.tm_isdst = 0;
+		if (!flag && sscanf(buffer, "%d/%d/%d %d:%d:%d", &t.tm_mday, &t.tm_mon, &t.tm_year, 
+							&t.tm_hour, &t.tm_min, &t.tm_sec) == 6) {
+			t.tm_mon--;	t.tm_year -= 1900;
+			if (difftime(now,  mktime(&t)) < delta_time) flag = 1;
+		}
+		if (flag) fprintf(flog_tmp, "%s", buffer);
+	}
+
+	fclose(flog);
+	fclose(flog_tmp);
+
+	remove("ufo2000-srv.log");
+	rename("ufo2000-srv.log.tmp", "ufo2000-srv.log");
 }
 
 bool split_loginpass(const std::string &str, std::string &login, std::string &password)
