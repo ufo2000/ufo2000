@@ -1597,12 +1597,18 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir)
 
 	if (ud.CurHealth <= pierce) // ud.CurHealth is unsigned
 	{
-		// Credit the sniper for getting a kill
 		if (sniper)
 		{
+			// Credit the sniper for getting a kill
 			StatEntry *stat = platoon_local->get_stats()->get_stat_for_SID(sniper);
 			if (!stat) stat = platoon_remote->get_stats()->get_stat_for_SID(sniper);
 			if (stat) stat->inc_kills();
+			
+			// Change the morale of enemy squad
+			if (platoon_local->belong(this))
+				platoon_remote->change_morale(10, false);
+			else if (platoon_remote->belong(this))
+				platoon_local->change_morale(10, false);
 		}
 		// Record that we died
 		this->get_platoon()->get_stats()->get_stat_for_SID(NID)->set_dead(1);
@@ -2210,7 +2216,7 @@ int Soldier::check_for_hit(int _z, int _x, int _y)
 
 void Soldier::apply_hit(int sniper, int _z, int _x, int _y, int _wtype, int _hitdir)
 {
-	if (check_for_hit(_z, _x, _y)) {
+	if (check_for_hit(_z, _x, _y)) {    
 		hit(sniper, Item::obdata_damage(_wtype), Item::obdata_damageType(_wtype), _hitdir);
 	}
 }
