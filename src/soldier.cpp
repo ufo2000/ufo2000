@@ -2407,12 +2407,13 @@ int Soldier::fire(int z0, int x0, int y0, REAL fi, REAL te, int iplace, int req_
 {
 	if (!havetime(req_time))
 		return 0;
-	spend_time(req_time);
 
 	Item *it = item(iplace);
 	if ((it == NULL) || (!it->haveclip()) || (it->roundsremain() < 1))
 		return 0;
 
+	spend_time(req_time);
+	
 	m_bullet->fire(z0, x0, y0, fi, te, it->cliptype());
 	it->shot();
 
@@ -2556,24 +2557,15 @@ int Soldier::check_reaction_fire(Soldier *the_target)
 		if (randval(0, 1) < total_reactions)
 		{
 			// We can make a reaction shot.
-			// Check to see if right hand holds a weapon and if it's loaded.
-			Item *it = item(P_ARM_RIGHT);
-			if ((it != NULL) && ((it->data()->isGun && it->haveclip()) || it->is_laser()))
-			{
-				// We found a weapon, so what kind of shot can we make?
-				if (do_reaction_fire(the_target, it, AIMED)) return 1;
-				if (do_reaction_fire(the_target, it, SNAP)) return 1;
-				if (do_reaction_fire(the_target, it, AUTO)) return 1;
-			}
+			// Try the weapon in right hand first
+			if (do_reaction_fire(the_target, P_ARM_RIGHT, AIMED)) return 1;
+			if (do_reaction_fire(the_target, P_ARM_RIGHT, SNAP)) return 1;
+			if (do_reaction_fire(the_target, P_ARM_RIGHT, AUTO)) return 1;
 
 			// No luck with right arm, go to left arm.
-			it = item(P_ARM_LEFT);
-			if ((it != NULL) && ((it->data()->isGun && it->haveclip()) || it->is_laser()))
-			{
-				if (do_reaction_fire(the_target, it, AIMED)) return 1;
-				if (do_reaction_fire(the_target, it, SNAP)) return 1;
-				if (do_reaction_fire(the_target, it, AUTO)) return 1;
-			}
+			if (do_reaction_fire(the_target, P_ARM_LEFT, AIMED)) return 1;
+			if (do_reaction_fire(the_target, P_ARM_LEFT, SNAP)) return 1;
+			if (do_reaction_fire(the_target, P_ARM_LEFT, AUTO)) return 1;
 
 			// No luck whatsoever. Fuhgeddabouddit.
 			return 0;
@@ -2583,23 +2575,27 @@ int Soldier::check_reaction_fire(Soldier *the_target)
 	return 0; // Can't see cell. Abort.
 }
 
-int Soldier::do_reaction_fire(Soldier *the_target, Item *it, int shot_type)
+int Soldier::do_reaction_fire(Soldier *the_target, int place, int shot_type)
 {
+	Item *it = item(place);
+	if (it == NULL) return 0; // no item in hand
+	if (!it->data()->isGun && !it->is_laser()) return 0; // item is not a gun or laser
+	if (it->data()->isGun && !it->haveclip()) return 0; // gun with no clip
+
 	int tus;
 
 	// Can this item make this type of shot?
-	if(it->data()->accuracy[shot_type])
-	{
-		// How many TUs do we use?
-		tus = required(it->data()->time[shot_type]);
-		if (shot_type == AUTO) tus = (tus + 2) / 3 * 3; // this was taken from firemenu
-		if (tus <= ud.CurTU)
-		{
-			// We have enough time to make the shot. Set up target.
-			target.accur = FAccuracy(it->data()->accuracy[shot_type], it->data()->twoHanded);
-			target.time = tus;
-			switch(shot_type)
-			{
+	if (!it->data()->accuracy[shot_type]) return 0;
+
+	// How many TUs do we use?
+	tus = required(it->data()->time[shot_type]);
+	if (shot_type == AUTO) tus = (tus + 2) / 3 * 3; // this was taken from firemenu
+
+	if (tus <= ud.CurTU) {
+		// We have enough time to make the shot. Set up target.
+		target.accur = FAccuracy(it->data()->accuracy[shot_type], it->data()->twoHanded);
+		target.time = tus;
+		switch (shot_type) {
 			case AIMED:
 				target.action = AIMEDSHOT;
 				break;
@@ -2609,13 +2605,12 @@ int Soldier::do_reaction_fire(Soldier *the_target, Item *it, int shot_type)
 			case SNAP:
 				target.action = SNAPSHOT;
 				break;
-			}
-			target.item = it;
-			target.place = P_ARM_RIGHT;
-			try_reaction_shot(the_target);
-			if (FIRE_num > 0) // If FIRE_num is set, we're firing shots, so...
-				return 1;
 		}
+		target.item = it;
+		target.place = place;
+		try_reaction_shot(the_target);
+		if (FIRE_num > 0) // If FIRE_num is set, we're firing shots, so...
+			return 1;
 	}
 
 	// Nope.

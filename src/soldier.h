@@ -262,17 +262,8 @@ public:
 	}
 
 	int check_reaction_fire(Soldier *the_target);
-	int do_reaction_fire(Soldier *the_target, Item *it, int shot_type);
-/*
-	inline void create_map_place()
-	{
-		m_place[P_MAP] = new Place(0, 152, 20 * 10, 3);
-	} //as map
-	inline void destroy_map_place()
-	{
-		delete m_place[P_MAP];
-	}
-*/
+	int do_reaction_fire(Soldier *the_target, int place, int shot_type);
+
 	int eot_save(char *txt);
 
 	int count_weight();
