@@ -571,12 +571,12 @@ int Units::draw_items_stats(int gx, int gy, char *buf, int len)
 
 
 /**
- * Print table of soldier-names, with lines from the names
- * to their positions on the map.
+ * Print table of remote player soldier-names in the planner screen, 
+ * and short statistics about the equipment selected.
  */
 void Units::print_simple(int gcol)
 {
-	text_mode( -1);
+	text_mode(-1);
 	int i, x1, y1, x2, y2, color = COLOR_GREEN12;
     for (i = 0; i < size; i++) {
         if (is_selected(i)) {
@@ -595,12 +595,7 @@ void Units::print_simple(int gcol)
 		y1 = gy + i * 15 - 2; y2 = y1 + 8 + 3;
 		rectfill(screen2, x1, y1, x2, y2, color);  // Background for name-field
 
-		//textprintf(screen2, font, gx, gy+i*15, gcol, "%d", cost[i]);
 		textprintf(screen2, font, gx, gy + i * 15, gcol, "%s", name[i]);
-
-		/*if (mouse_inside(x1, y1, x2, y2)) {
-			textprintf(screen2, font, gx, gy+200, gcol, "%d", cost[i]);
-		}*/
     }
 	draw_text();
 	
@@ -608,7 +603,7 @@ void Units::print_simple(int gcol)
 
 	if (!SEND)
 		return ;
-
+/*
 	int points = 0;
 	for (i = 0; i < pd_remote->size; i++)
 		points += Soldier::calc_mandata_cost(pd_remote->md[i]);
@@ -622,8 +617,11 @@ void Units::print_simple(int gcol)
 
 	int yy = gy + size * 15 - 3;
 	points += draw_items_stats(gx, yy + 10, buf, len);
-
     textprintf_centre(screen2, g_small_font, gx + 10 * 8, yy, COLOR_GREEN, _("Total points=%d"), points);
+*/
+    // Todo: show statistics about equipment points used by the opponent
+	int yy = gy + size * 15 - 3;
+    textprintf_centre(screen2, g_small_font, gx + 10 * 8, yy, COLOR_GREEN, _("Ready to play!"));
 }
 
 /**
