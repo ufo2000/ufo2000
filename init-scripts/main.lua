@@ -11,6 +11,8 @@ TerrainTable = {}
 -- global table with the information about all items and weapons
 -- used from ufo2000 executable
 ItemsTable = {}
+-- global table with the information about all available weaponsets
+EquipmentTable = {}
 
 -- directories for data files from the original x-com and ufo2000
 ufo2000_dir  = ufo2000_dir or "."
@@ -195,6 +197,21 @@ end
 function AddXcomItem(item)
 	ItemsTable[item.index] = item
 	ItemsTable[item.name] = item
+end
+
+-- adds new equipment set
+function AddEquipment(x)
+	EquipmentTable[x.Name] = x
+end
+
+-- fill armoury with the specified equipment set
+function SetEquipment(name)
+	if EquipmentTable[name] then
+		Armoury:destroy_all_items()
+		for k, v in EquipmentTable[name].Layout do
+			Armoury:add_item(v[1], v[2], v[3])
+		end
+	end
 end
 
 -- perform data files integrity check before applying security

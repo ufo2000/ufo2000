@@ -46,7 +46,6 @@ int weapon[] = {
 	MIND_PROBE , PSI_AMP
 };
 
-
 static char weapon_in_use[] = {
 	PISTOL , PISTOL_CLIP ,
 	RIFLE , RIFLE_CLIP ,
@@ -60,6 +59,16 @@ static char weapon_in_use[] = {
 	GRENADE , ALIEN_GRENADE , HIGH_EXPLOSIVE , PROXIMITY_GRENADE , SMOKE_GRENADE ,
 	STUN_ROD , SMALL_LAUNCHER , STUN_MISSILE
 };
+
+/**
+ * Returns true is the weapon can be used. The weapon will be colored darkgray
+ * and not allowed to select if this function returns false (this function
+ * may be useful when points limit is exceeded for example)
+ */
+static bool is_weapon_allowed(int type)
+{
+	return memchr(weapon_in_use, type, sizeof(weapon_in_use)) != NULL;
+}
 
 Editor::Editor()
 {
@@ -80,7 +89,7 @@ Editor::Editor()
 	LUA_PUSH_OBJECT_POINTER(L, Place, m_armoury);
 	lua_settable(L, LUA_GLOBALSINDEX);
 
-	lua_dofile(L, F("$(home)/armoury.lua"));
+	lua_dostring(L, "SetEquipment('Standard')");
 	
 	if (local_platoon_size > 10) local_platoon_size = 10;      //!!!!!!!!!!!
 	ASSERT(local_platoon_size > 0);
@@ -197,7 +206,7 @@ void Editor::show(int NEXTPREV)
 			} else {
 				Item *it = m_armoury->item_under_mouse();
 				if (it != NULL) {
-					if (memchr(weapon_in_use, it->m_type, sizeof(weapon_in_use)) != NULL)
+					if (is_weapon_allowed(it->m_type))
 						it->od_info(330, 220, xcom1_color(5));
 					else
 						it->od_info(330, 220, xcom1_color(10));
@@ -261,7 +270,7 @@ void Editor::show(int NEXTPREV)
 				if (sel_item == NULL) {
 					sel_item = m_armoury->mselect();
 					if (sel_item != NULL) {
-						if (memchr(weapon_in_use, sel_item->m_type, sizeof(weapon_in_use)) != NULL) {
+						if (is_weapon_allowed(sel_item->m_type)) {
 							sel_item_place = 9;
 							dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
 						} else {

@@ -36,6 +36,12 @@ FilesTable = {
 	["$(home)/cur_p1.dat"]            = { },
 	["$(home)/cur_p2.dat"]            = { },
 
+	["$(ufo2000)/init-scripts/main.lua"] = { Crc32 = X("0x00000000") },
+	["$(ufo2000)/init-scripts/standard-maps.lua"] = { Crc32 = X("0x00000000") },
+	["$(ufo2000)/init-scripts/standard-items.lua"] = { Crc32 = X("0x00000000") },
+	["$(ufo2000)/init-scripts/standard-equipment.lua"] = { Crc32 = X("0x00000000") },
+	["$(ufo2000)/init-scripts/standart-icons.lua"] = { Crc32 = X("0x00000000") },
+	
 	["$(xcom)/geodata/biglets.dat"]   = { Crc32 = X("0x00000000") },
 	["$(xcom)/geodata/smallset.dat"]  = { Crc32 = X("0x00000000") },
 

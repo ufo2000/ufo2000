@@ -395,6 +395,7 @@ void initmain(int argc, char *argv[])
 	luaopen_math(L);
 	LUA_REGISTER_CLASS(L, Place);
 	LUA_REGISTER_CLASS_METHOD(L, Place, add_item);
+	LUA_REGISTER_CLASS_METHOD(L, Place, destroy_all_items);
 	LUA_REGISTER_FUNCTION(L, pck_image);
 	
 #ifdef LINUX
@@ -519,6 +520,7 @@ void initmain(int argc, char *argv[])
 	console<<"allegro_init"<<std::endl;
 
 	lua_dofile(L, DATA_DIR "/init-scripts/standard-items.lua");
+	lua_dofile(L, DATA_DIR "/init-scripts/standard-equipment.lua");
 
 	console<<"install_timer"<<std::endl;
 	install_timer();
