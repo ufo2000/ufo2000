@@ -176,7 +176,7 @@ struct MANDATA
 	unsigned char ThrowingImp;
 	unsigned char CloseImp;
 	unsigned char BraveryImp;   //!< * 10
-	unsigned char ArmorType;    //!< 0=none
+	unsigned char SkinType;     //!< 0=none
 	unsigned char PsiImprove;   //!< The psionic improvement over the course of the last month
 	unsigned char fPsiTraining; //!< 0=not in training  1=in psi training
 	unsigned char Promoted;     //!< After a combat, this is set to 1 if they were promoted, 0 if not.

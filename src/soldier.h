@@ -44,8 +44,19 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define S_XCOM_2          3
 #define S_XCOM_3          4
 #define S_SECTOID         5
-#define SKIN_NUMBER       6
+#define S_MUTON           6
+#define SKIN_NUMBER       7
 
+struct SKIN_INFO { 
+	const char *Name; 
+	int         SkinType; 
+	int         fFemale; 
+};
+
+extern SKIN_INFO g_skins[];
+extern int g_skins_count;
+
+int get_skin_index(int skin_type, int female_flag);
 
 enum State { SIT = 0, STAND, MARCH, DIE };
 
@@ -85,7 +96,6 @@ private:
 	int dir, phase;
 	State state;
 	int z, x, y;
-	int skin_type;
 
 	// This flag is set after soldier has moved. Needed for correct work of
 	// switch to next soldier button

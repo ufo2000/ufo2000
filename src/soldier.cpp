@@ -32,6 +32,31 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "wind.h"
 #include "explo.h"
 
+SKIN_INFO g_skins[] = 
+{
+	{ "male",    S_XCOM_0,  0 },
+	{ "female",  S_XCOM_0,  1 },
+	{ "sectoid", S_SECTOID, 0 },
+	{ "muton",   S_MUTON,   0 }
+};
+
+int g_skins_count = sizeof(g_skins) / sizeof(g_skins[0]);
+
+/**
+ * Function that gets index into g_skins array for given unit characteristics
+ *
+ * @todo move skins handling to a separate class, responsible for displaying
+ *       unit image
+ */
+int get_skin_index(int SkinType, int fFemale)
+{
+	for (int i = 0; i < g_skins_count; i++) {
+		if (g_skins[i].SkinType == SkinType && g_skins[i].fFemale == fFemale)
+			return i;
+	}
+	return fFemale ? 1 : 0;
+}
+
 char *****Soldier::m_bof = NULL;
 PCK **Soldier::m_pck = NULL;
 SPK *Soldier::m_spk[4][2][4] = {{{NULL, NULL, NULL, NULL}, {NULL, NULL, NULL, NULL}},
@@ -54,7 +79,7 @@ void Soldier::initpck()
 {
 	static char *skin_fname[] = {
         "handob.pck", "xcom_0.pck", "xcom_1.pck", "xcom_2.pck", "xcom_2.pck",
-        "sectoid.pck", "snakeman.pck", "ethereal.pck", "muton.pck", "floater.pck",
+        "sectoid.pck", "muton.pck", "snakeman.pck", "ethereal.pck", "floater.pck",
         "celatid.pck", "silacoid.pck", "chrys.pck", "civm.pck", "civf.pck",
         "zombie.pck"
     };
@@ -248,7 +273,6 @@ Soldier::Soldier(int _NID)
 	enemy_num = 0;
 	seen_enemy_num = 0;
 	MOVED = 0;
-	skin_type = S_XCOM_0;      //!!!!!!!!!!!!!!!
 
 	memset(&md, 0, sizeof(md));
 	memset(&id, 0, sizeof(id));
@@ -280,7 +304,6 @@ Soldier::Soldier(int _NID, int _z, int _x, int _y)
 	enemy_num = 0;
 	seen_enemy_num = 0;
 	MOVED = 0;
-	skin_type = S_XCOM_0;      //!!!!!!!!!!!!!!!
 }
 
 
@@ -323,7 +346,6 @@ Soldier::Soldier(int _NID, int _z, int _x, int _y, MANDATA *mdat, ITEMDATA *idat
 	enemy_num = 0;
 	seen_enemy_num = 0;
 	MOVED = 0;
-	skin_type = S_XCOM_0;      //!!!!!!!!!!!!!!!
 
 	memcpy(&md, mdat, sizeof(md));
 	memcpy(&id, idat, sizeof(id));
@@ -373,6 +395,12 @@ void Soldier::process_MANDATA()
 	ud.MaxHealth = md.Health;
 	ud.MaxStrength = md.Strength;
 	ud.MaxEnergy = 100;
+
+//	Verify that md.SkinType and md.fFemale have valid values
+	int skin_index = get_skin_index(md.SkinType, md.fFemale);
+	md.SkinType = g_skins[skin_index].SkinType;
+	md.fFemale  = g_skins[skin_index].fFemale;
+
 	/*ud.MaxFront = md.;
 	ud.MaxLeft = md.;
 	ud.MaxRight = md.;
@@ -502,7 +530,7 @@ void Soldier::draw()
 
 
 	if (state == DIE) {
-		m_pck[skin_type]->showpck(264 + phase / 3, gx, gy);
+		m_pck[md.SkinType]->showpck(264 + phase / 3, gx, gy);
 		return ;
 	}
 
@@ -538,16 +566,16 @@ void Soldier::draw()
 	switch (state) {
 		case DIE: break;      //neverhap
 		case SIT:
-			m_pck[skin_type]->drawpck(dir + 8 * arm1, image, Y_SIT);
-			m_pck[skin_type]->drawpck(dir + head_frame, image, Y_SIT + 1);      //head
-			m_pck[skin_type]->drawpck(dir + 8 * 3, image, 2);
-			m_pck[skin_type]->drawpck(dir + 8 * arm2, image, Y_SIT);
+			m_pck[md.SkinType]->drawpck(dir + 8 * arm1, image, Y_SIT);
+			m_pck[md.SkinType]->drawpck(dir + head_frame, image, Y_SIT + 1);      //head
+			m_pck[md.SkinType]->drawpck(dir + 8 * 3, image, 2);
+			m_pck[md.SkinType]->drawpck(dir + 8 * arm2, image, Y_SIT);
 			break;
 		case STAND:
-			m_pck[skin_type]->drawpck(dir + 8 * arm1, image, 0);
-			m_pck[skin_type]->drawpck(dir + head_frame, image, 0);      //head
-			m_pck[skin_type]->drawpck(dir + 8 * 2, image, 0);
-			m_pck[skin_type]->drawpck(dir + 8 * arm2, image, 0);
+			m_pck[md.SkinType]->drawpck(dir + 8 * arm1, image, 0);
+			m_pck[md.SkinType]->drawpck(dir + head_frame, image, 0);      //head
+			m_pck[md.SkinType]->drawpck(dir + 8 * 2, image, 0);
+			m_pck[md.SkinType]->drawpck(dir + 8 * arm2, image, 0);
 			break;
 		case MARCH:
 			if (phase % 4 == 0)
@@ -561,21 +589,21 @@ void Soldier::draw()
 			if ((lhand_item() != NULL) || (rhand_item() != NULL)) {
 				arm1 += 30;
 				arm2 += 30;
-				m_pck[skin_type]->drawpck(dir + 8 * arm1, image, 0);
+				m_pck[md.SkinType]->drawpck(dir + 8 * arm1, image, 0);
 			} else {
-				m_pck[skin_type]->drawpck(phase + (dir * 3 + 7 - 1 - arm2) * 8, image, yofs);
+				m_pck[md.SkinType]->drawpck(phase + (dir * 3 + 7 - 1 - arm2) * 8, image, yofs);
 			}
 
-			m_pck[skin_type]->drawpck(dir + head_frame, image, 0);      //head
+			m_pck[md.SkinType]->drawpck(dir + head_frame, image, 0);      //head
 			int yo = 0;
 			if (phase % 4 == 0) yo = -1;
 
-			m_pck[skin_type]->drawpck(phase + (dir * 3 + 7) * 8, image, yo);     //yofs);
+			m_pck[md.SkinType]->drawpck(phase + (dir * 3 + 7) * 8, image, yo);     //yofs);
 
 			if ((lhand_item() != NULL) || (rhand_item() != NULL)) {
-				m_pck[skin_type]->drawpck(dir + 8 * arm2, image, 0);
+				m_pck[md.SkinType]->drawpck(dir + 8 * arm2, image, 0);
 			} else {
-				m_pck[skin_type]->drawpck(phase + (dir * 3 + 7 - 1 - arm1) * 8, image, yofs);
+				m_pck[md.SkinType]->drawpck(phase + (dir * 3 + 7 - 1 - arm1) * 8, image, yofs);
 			}
 			break;
 	}
@@ -1079,11 +1107,11 @@ void Soldier::die()
 
 	/////////type of corpse
 	int ctype;
-	if (skin_type == S_XCOM_0)
+	if (md.SkinType == S_XCOM_0)
 		ctype = CORPSE;
-	else if (skin_type == S_XCOM_1)
+	else if (md.SkinType == S_XCOM_1)
 		ctype = CORPSE_ARMOUR;
-	else if ((skin_type == S_XCOM_2) || (skin_type == S_XCOM_3))
+	else if ((md.SkinType == S_XCOM_2) || (md.SkinType == S_XCOM_3))
 		ctype = CORPSE_POWER_SUIT;
 	else
 		ctype = Sectoid_Corpse;     //skin_type; //////////aliens!!!!!!!!!!!!!!
@@ -1698,17 +1726,17 @@ void Soldier::draw_bullet_way()
 
 void Soldier::showspk()
 {
-	switch (skin_type) {
+	switch (md.SkinType) {
 		case S_XCOM_0:
 		case S_XCOM_1:
-			m_spk[(skin_type - 1) % 3][md.fFemale][md.Appearance]->show(screen2, 0, 0);
+			m_spk[(md.SkinType - 1) % 3][md.fFemale][md.Appearance]->show(screen2, 0, 0);
 			break;
 		case S_XCOM_2:
 		case S_XCOM_3:
-			m_spk[(skin_type - 1) % 3][0][0]->show(screen2, 0, 0);
+			m_spk[(md.SkinType - 1) % 3][0][0]->show(screen2, 0, 0);
 			break;
 		default:
-			bigobs->showpck(Item::obdata[skin_type].pInv, 67, 70);
+			bigobs->showpck(Item::obdata[md.SkinType].pInv, 67, 70);
 	}
 }
 
