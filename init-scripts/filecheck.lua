@@ -1,27 +1,29 @@
 local function X(a) return tonumber(a, 16) end
 
 ------------------------------------------------------------------------------
--- Table which contains the list of the files needed by the game (that means 
--- they must at least exist and at most should pass crc check)
+-- Table which contains the list of the files needed by the game 
+-- (that means they must at least exist and at most should pass crc check)
 --
 -- The fields of this table look like this:
 -- [a prefixed name of the] = { additional information about the file }
 --
 -- Additional information:
---    Crc32    - the file is changed by the game (Note: zero value - a special 
---               case, only file existence is checked but not crc32)
---    Origin   - The file can be modified by the game and is initially initialized 
+--    Crc32    - the file is checked by the game (Note: zero value - a special 
+--               case, only the file existence is checked but not crc32)
+--    Origin   - The file can be modified by the game and is initialized 
 --               from the file specified by 'Origin' value
---    Fallback - A special field that can specify replacement file that is 
---               used if the original file is bad or missing
+--    Fallback - A special field that can specify a replacement file 
+--               that is used if the original file is bad or missing
 --
 -- Note: when file information does not contain Crc32 field, it is considered 
 --       modifiable and write permission availability is checked for it
 ------------------------------------------------------------------------------
 
 FilesTable = {
-	["$(ufo2000)/ufo2000.dat"]        = { Crc32 = X("0x8536FF43") },
-	["$(ufo2000)/keyboard.dat"]       = { Crc32 = X("0xC796755E") },
+--	["$(ufo2000)/ufo2000.dat"]    = { Crc32 = X("0x8536FF43") }, -- Rev.463
+--	["$(ufo2000)/ufo2000.dat"]    = { Crc32 = X("0X7B4A8C53") }, -- Rev.464
+   	["$(ufo2000)/ufo2000.dat"]    = { Crc32 = X("0xE8F15FD0") }, -- Rev.466
+	["$(ufo2000)/keyboard.dat"]   = { Crc32 = X("0xC796755E") },
 
 	["$(home)/soldier.dat"]           = { Origin = "$(ufo2000)/soldier.default.dat" },
 	["$(home)/items.dat"]             = { Origin = "$(ufo2000)/items.default.dat" },
@@ -34,11 +36,11 @@ FilesTable = {
 	["$(home)/cur_p1.dat"]            = { },
 	["$(home)/cur_p2.dat"]            = { },
 
-	["$(ufo2000)/init-scripts/main.lua"] = { Crc32 = X("0x00000000") },
-	["$(ufo2000)/init-scripts/standard-maps.lua"] = { Crc32 = X("0x00000000") },
-	["$(ufo2000)/init-scripts/standard-items.lua"] = { Crc32 = X("0x00000000") },
+	["$(ufo2000)/init-scripts/main.lua"]               = { Crc32 = X("0x00000000") },
+	["$(ufo2000)/init-scripts/standard-maps.lua"]      = { Crc32 = X("0x00000000") },
+	["$(ufo2000)/init-scripts/standard-items.lua"]     = { Crc32 = X("0x00000000") },
 	["$(ufo2000)/init-scripts/standard-equipment.lua"] = { Crc32 = X("0x00000000") },
-	["$(ufo2000)/init-scripts/standart-icons.lua"] = { Crc32 = X("0x00000000") },
+	["$(ufo2000)/init-scripts/standard-icons.lua"]     = { Crc32 = X("0x00000000") },
 	
 	["$(xcom)/geodata/biglets.dat"]   = { Crc32 = X("0x00000000") },
 	["$(xcom)/geodata/smallset.dat"]  = { Crc32 = X("0x00000000") },
@@ -159,7 +161,7 @@ local function CheckSingleDataFile(name, info)
 		end
 		local Crc32 = UpdateCrc32(0, data)
 		if info.Crc32 ~= Crc32 and info.Crc32 ~= 0 then
-			return string.format("CheckDataFiles: crc32 error for file '%s'", name)
+			return string.format("CheckDataFiles: crc32 error for file '%s' (0x%x / 0x%x)", name, info.Crc32, Crc32)
 		end
 	else
 	-- read/write data file

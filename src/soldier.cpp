@@ -930,15 +930,27 @@ void Soldier::draw_unibord(int gx, int gy)
 
 /**
  * Draw yellow arrow above selected friendly soldier
+ *
+ * @select_y : vertical offset, to make the arrow move up & down
  */
 void Soldier::draw_selector(int select_y)
-	// Todo: different selector-shapes/colors for standing/sitting & items on ground
 {
-	if (!ismoving()) {
-		int sx = map->x + CELL_SCR_X * x + CELL_SCR_X * y + 12;
-		int sy = map->y - (x + 1) * CELL_SCR_Y + CELL_SCR_Y * y - 29 - CELL_SCR_Z * z;
-		draw_sprite(screen2, selector, sx, sy - select_y);
-	}
+     if (!ismoving()) {
+        int sx = map->x + CELL_SCR_X * x + CELL_SCR_X * y + 12;
+        int sy = map->y - (x + 1) * CELL_SCR_Y + CELL_SCR_Y * y - 29 - CELL_SCR_Z * z;
+
+        // Show different selectors for standing/kneeling & items on ground : 
+        if (!map->place(z, x, y)->item())          // no item on ground:
+            if (m_state == STAND) 
+                draw_sprite(screen2, selector,  sx, sy - select_y); // yellow
+            else
+                draw_sprite(screen2, selector2, sx, sy - select_y); // green
+        else                                       // items on ground:
+            if (m_state == STAND) 
+                draw_sprite(screen2, selector3, sx, sy - select_y); // yellow + dot
+            else
+                draw_sprite(screen2, selector4, sx, sy - select_y); // green + dot
+    }
 }
 
 /**
