@@ -941,7 +941,7 @@ void Units::execute_scenario(Map *map, int map_change_allowed)
 void Units::execute_map(Map *map, int map_change_allowed)
 {
 
-        if (!mouse_inside(gmx + gmw / 2 - 80, SCREEN2H - 79, gmx + gmw / 2 + 80, SCREEN2H - 37))
+    if (!mouse_inside(gmx + gmw / 2 - 120, SCREEN2H - 79, gmx + gmw / 2 + 120, SCREEN2H - 37))
 		state = PS_MAIN;
 
     if (!map_change_allowed) return;
@@ -1044,7 +1044,7 @@ void Units::execute_map(Map *map, int map_change_allowed)
 
 void Units::execute_rules(Map *map, int map_change_allowed)
 {
-    if (!mouse_inside(gmx + gmw / 2 - 85, SCREEN2H - 103, gmx + gmw / 2 + 85, SCREEN2H - 25))
+    if (!mouse_inside(gmx + gmw / 2 - 145, SCREEN2H - 103, gmx + gmw / 2 + 145, SCREEN2H - 25))
 		state = PS_MAIN;
 
     if (mouse_inside(gmx + gmw / 2 - 80, SCREEN2H - 101, gmx + gmw / 2 + 80, SCREEN2H - 89))
@@ -1073,7 +1073,7 @@ void Units::execute_rules(Map *map, int map_change_allowed)
 
 void Units::execute_rules_0(Map *map, int map_change_allowed)
 {
-	if (!mouse_inside(gmx + gmw / 2 - 110, SCREEN2H - 139, gmx + gmw / 2 + 90, SCREEN2H - 97))
+	if (!mouse_inside(gmx + gmw / 2 - 144, SCREEN2H - 139, gmx + gmw / 2 + 144, SCREEN2H - 97))
 	    state = PS_RULES;
 
     if (!map_change_allowed) return;
@@ -1207,7 +1207,7 @@ void Units::execute_rules_3(Map *map, int map_change_allowed)
 
 void Units::execute_rules_4(Map *map, int map_change_allowed)
 {
-	if (!mouse_inside(gmx + gmw / 2 - 115, SCREEN2H - 63, gmx + gmw / 2 + 115, SCREEN2H - 35))
+	if (!mouse_inside(gmx + gmw / 2 - 128, SCREEN2H - 63, gmx + gmw / 2 + 128, SCREEN2H - 35))
 	    state = PS_RULES;
 
     if (!map_change_allowed) return;
