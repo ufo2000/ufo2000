@@ -366,13 +366,13 @@ FunctionEnd
 ;--------------------------------
 ;Version Information
 
-	VIProductVersion "${GAME_VERSION}"
+	VIProductVersion "0.${GAME_VERSION}"
 	VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "${GAME_NAME}"
 	VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "Massive multiplayer game based on XCOM saga"
 	VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "UFO2000 Development Team"
 	VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "Alexander Ivanov aka Sanami"
 	VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "${GAME_NAME}"
-	VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "${GAME_VERSION}"
+	VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "0.${GAME_VERSION}"
 	
 ;--------------------------------
 ;Installer Sections
