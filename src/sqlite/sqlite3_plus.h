@@ -68,14 +68,15 @@ namespace sqlite3 {
 
 		int index;
 		datatype type;
-		union {
+// It's a hack which I hope allows to deal with some outdated compilers.
+//		union {
 			struct {
-				union {
+//				union {
 					const void *data_blob;
 					const char *data_text;
-				};
+//				};
 				int data_length;
-			};
+//			};
 			double data_double;
 			int data_int32;
 			__int64 data_int64;
