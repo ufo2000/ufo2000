@@ -234,7 +234,7 @@ static short buf_igetw(const std::string& inbuf, unsigned *curp) {
         return EOF;
 
 /* TODO: fixup endianness. */
-    inbuf.copy((char *)&rval, *curp, 2);
+    inbuf.copy((char *)&rval, 2, *curp);
     *curp += 2;
 
     return rval;
@@ -246,7 +246,7 @@ static int buf_igetl(const std::string& inbuf, unsigned *curp) {
         return EOF;
 
 /* TODO: fixup endianness. */
-    inbuf.copy((char *)&rval, *curp, 4);
+    inbuf.copy((char *)&rval, 4, *curp);
     *curp += 4;
 
     return rval;
@@ -267,7 +267,7 @@ static int buf_fread(void *buf, unsigned len, const std::string& inbuf, unsigned
 {
     if (*curp + len > inbuf.size())
         return EOF;
-    inbuf.copy((char *)buf, *curp, len);
+    inbuf.copy((char *)buf, len, *curp);
     *curp += len;
     return len;
 }
@@ -287,7 +287,13 @@ static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log, bool verb
 
     unsigned curp = 0;
 
-    buf_fread(buffer, 12, inbuf, &curp);          /* check RIFF header */
+    buf_fread(buffer, 12, inbuf, &curp);           /* check RIFF header */
+
+    log<<std::hex;
+    for (i=0; i<12; i++)
+        log<<" 0x"<<static_cast<int>(buffer[i]);
+    log<<std::endl;
+
     if (memcmp(buffer, "RIFF", 4) || memcmp(buffer+8, "WAVE", 4)) {
         if (verbose)
             log<<"Not RIFF WAVE.\n";
@@ -297,14 +303,14 @@ static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log, bool verb
     while (inbuf.size() > curp ) {
         if (buf_fread(buffer, 4, inbuf, &curp) != 4) {
             if (verbose)
-                log<<"Can't read chunk ID at offset "<<curp<<std::endl;
+                log<<"Can't read chunk ID at offset 0x"<<std::hex<<curp<<std::endl;
             break;
         }
 
         length = buf_igetl(inbuf, &curp);          /* read chunk length */
 
         if (memcmp(buffer, "fmt ", 4) == 0) {
-            i = buf_igetw(inbuf, &curp);            /* should be 1 for PCM data */
+            i = buf_igetw(inbuf, &curp);           /* should be 1 for PCM data */
             length -= 2;
             if (i != 1) {
                 if (verbose)
@@ -317,7 +323,7 @@ static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log, bool verb
             length -= 2;
             if ((channels != 1) && (channels != 2)) {
                 if (verbose)
-                    log<<"Bogus num of channels: "<<channels<<"\n";
+                    log<<"Bogus num of channels: "<<std::dec<<channels<<"\n";
                 break;
             }
 
@@ -332,12 +338,12 @@ static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log, bool verb
             length -= 2;
             if ((bits != 8) && (bits != 16)) {
                 if (verbose)
-                    log<<"\nBogus sample size: "<<bits<<"\n";
+                    log<<"\nBogus sample size: "<<std::dec<<bits<<"\n";
                 break;
             }
             if (verbose)
-                log<<"Format: "<<channels<<" channel(s), "
-                   <<" bits, "<<bits<<" Hz"<<freq<<"\n";
+                log<<"Format: "<<std::dec<<channels<<" channel(s), "
+                   <<bits<<" bits, "<<freq<<" Hz\n";
         }
         else if (memcmp(buffer, "data", 4) == 0) {
             /* printf("Data: %d bytes\n", length); */
@@ -346,19 +352,20 @@ static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log, bool verb
             if (bits == 16)
             len /= 2;
 
-            spl = create_sample(bits, ((channels == 2) ? TRUE : FALSE), freq, len);
+            spl = create_sample(bits,
+                                ((channels == 2) ? TRUE : FALSE), freq, len);
 
             if (spl) {
                 *allegro_errno = 0;
                 if (bits == 8) {
                     if (buf_fread(spl->data, length, inbuf, &curp) != length) {
                         if (verbose)
-                            log<<"Can't read "<<length<<" bytes of data ("
-                               <<(inbuf.size() - curp)<<" left)\n",
+                            log<<"Can't read "<<std::dec<<length
+                               <<" bytes of data ("<<(inbuf.size() - curp)
+                               <<" left)\n",
                         *allegro_errno = 1;
                     }
-                }
-                else {
+                } else {
                    for (i=0; i<len*channels; i++) {
                         s = buf_igetw(inbuf, &curp);
                         ((signed short *)(spl->data))[i] = s^0x8000;
@@ -415,23 +422,61 @@ soundFile::soundFile() { }
 soundFile::~soundFile() { }
 
 int soundFile::loadFile(const char *fname, std::ostream& log, bool verbose) {
-    std::ifstream ifs(fname);
+    std::ifstream ifs(fname, std::ios::in | std::ios::binary);
 
     if (!ifs)
         return -1;
 
     std::stringstream sbuf;
+
+#if defined(__GNUC__)
+#define GCC_VERSION (__GNUC__ * 10000 \
+                   + __GNUC_MINOR__ * 100 \
+                   + __GNUC_PATCHLEVEL__)
+#endif
+
+#if !defined(__GNUC__) || (GCC_VERSION > 30200)
+    /* libstdc++ from pre-3.2.1 GCC has this operator horribly broken. */
     sbuf<<ifs.rdbuf();
 
     switch(getFileType(sbuf.str())) {
         case CT_ORIGINAL:
             loadOrigCat(sbuf.str(), log, verbose);
+            break;
         case CT_CE:
             loadCeCat(sbuf.str(), log, verbose);
+            break;
         default:
             log<<"Unknown file type\n";
             return -1;
     }
+
+#else
+    /* so here's a dumb workaround
+     * (but we should really consider deprecating pre-3.2.1 GCCs) */
+    ifs.seekg(0, std::ios::end);
+    int t_buf_len = ifs.tellg();
+    char *t_buf = new char[t_buf_len];
+    ifs.seekg(0, std::ios::beg);
+    ifs.read(t_buf, t_buf_len);
+    std::string t_str(t_buf, t_buf_len);
+    delete t_buf;
+    log<<"String has "<<t_str.size()<<" bytes."<<std::endl;
+
+    switch(getFileType(t_str)) {
+        case CT_ORIGINAL:
+            log<<"Parsing original .cat"<<std::endl;
+            loadOrigCat(t_str, log, verbose);
+            break;
+        case CT_CE:
+            log<<"Parsing CE .cat"<<std::endl;
+            loadCeCat(t_str, log, verbose);
+            break;
+        default:
+            log<<"Unknown file type\n";
+            return -1;
+    }
+#endif
 
     return 0;
 
@@ -451,8 +496,18 @@ cat_file_type_e_t soundFile::getFileType(const std::string& buf) {
     const int head_len = 10;
     char sbuf[head_len];
 
-    buf.copy((char *)&offs, 4, 0); /* TODO: will break on big-endian arch. */
+    buf.copy(reinterpret_cast<char *>(&offs), 4, 0); /* TODO: will break on big-endian arch. */
     buf.copy(sbuf, head_len, offs);
+
+{
+    std::cerr<<"getFileType(): offset "<<offs<<std::endl;
+
+    std::cerr<<std::hex;
+    for (i=0; i<head_len; i++)
+        std::cerr<<" 0x"<<static_cast<int>(sbuf[i]);
+    std::cerr<<std::dec<<std::endl;
+}
+
 
 /*
  * Assuming this is CE file, scan first head_len bytes for RIFF sequence.
@@ -460,8 +515,8 @@ cat_file_type_e_t soundFile::getFileType(const std::string& buf) {
  *
  */
 
-    for (i=0; i<head_len - 4; i++)
-        if ( 0 == strcmp(sbuf+i, "RIFF"))
+    for (i = 0; i<head_len - 4; i++)
+        if ( 0 == memcmp(sbuf+i, "RIFF", 4))
             return CT_CE; /* gotcha, this is CE file */
 
     return CT_ORIGINAL;
@@ -521,8 +576,10 @@ void soundFile::loadCeCat(const std::string& buf, std::ostream& log, bool verbos
                        "next offset should be 0x"
                    <<(lengths[i] + offsets[i] + datbytes)
                    <<", is 0x"<<offsets[i+1]<<std::endl;
+            log<<"Giving 0x"<<lengths[i]<<" bytes at offset 0x"
+               <<(offsets[i] + datbytes)<<" to wav2sample()"<<std::endl;
+            std::string chunk = buf.substr(offsets[i] + datbytes, lengths[i]);
 
-            std::string chunk = buf.substr(offsets[i] + datbytes,lengths[i]);
             smpl = wav2sample(chunk, log, verbose);
 
             if (verbose && (smpl == NULL))
@@ -665,7 +722,7 @@ static void h_StartEl(void *userData,
 {
     xmlp_baton_t *b = static_cast <xmlp_baton_t *>(userData);
 
-    if (b->errorOccured) // skip the rest if error detected.
+    if (b->errorOccured)
         return;
 
     if ( 0 == strcmp(name, "soundmap") ) {
@@ -676,7 +733,7 @@ static void h_StartEl(void *userData,
     if ( 0 == strcmp(name, "file") ) {
         XML_Char *fname;
         if (b->current != NULL)
-            delete b->current;
+            delete (b->current);
         b->current = new soundFile();
         if (NULL == (fname = h_getAttr(atts, "name"))) {
             b->errorOccured = true;
@@ -752,7 +809,7 @@ static void h_StartEl(void *userData,
 
 
     b->errorOccured = true;
-    *b->log<<"Unknown element '"<<name<<"'"<<std::endl;
+    *b->log<<"Unknown element '"<<name<<"'\n";
     h_recordXMLStreamPos(*b->log, b->parser);
 }
 
@@ -760,6 +817,9 @@ static void h_StartEl(void *userData,
 static void h_EndEl(void *userData, const XML_Char *name)
 {
     xmlp_baton_t *b = static_cast <xmlp_baton_t *>(userData);
+
+    if (b->errorOccured)
+        return;
 
     if ( 0 == strcmp(name, "soundmap") ) {
         b->inSoundMap = false;
@@ -784,7 +844,7 @@ static void h_EndEl(void *userData, const XML_Char *name)
     }
 
     if ( 0 == strcmp(name, "alias") ) {
-        /* do Nothing */
+        /* do the Nothing */
         return;
     }
 }
@@ -823,6 +883,7 @@ int soundSystem::initialize(const std::string& xml, std::ostream *log, bool verb
     baton.current = NULL;
     baton.inSoundMap = false;
     baton.inFile = false;
+    baton.inSample = false;
     baton.errorOccured = false;
     baton.skipThisFile = false;
     baton.log = log;
