@@ -451,6 +451,7 @@ void initmain(int argc, char *argv[])
 
 	lua_dofile(L, DATA_DIR "/init-scripts/main.lua");
 	lua_dofile(L, DATA_DIR "/init-scripts/standard-maps.lua");
+	lua_dofile(L, DATA_DIR "/init-scripts/standard-items.lua");
 
 	for_each_file(DATA_DIR "/newmaps/*.lua", FA_RDONLY | FA_ARCH, find_lua_files_callback, 0);
 

@@ -543,8 +543,8 @@ int Soldier::calc_full_ammunition_cost()
 			if (weapon[w] == buf[i])
 				num++;
 		}
-		if ((Item::obdata_damage(weapon[w]) > 0) && (num > 0))
-			p += (Item::obdata_damage(weapon[w]) * num);
+		if ((Item::obdata_cost(weapon[w]) > 0) && (num > 0))
+			p += (Item::obdata_cost(weapon[w]) * num);
 	}
 
 	return p;

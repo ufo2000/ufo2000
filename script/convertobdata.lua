@@ -76,17 +76,18 @@ function read_obdata(fh)
 end
 
 fh = io.open(arg[1], "rb")
-io.write("ObjectsTable = {\n")
 local index = 0
 while 1 do
 	local tbl = read_obdata(fh)
 	if not tbl then break end
 
-	io.write("\t[", index, "] = {\n")
+	io.write("AddXcomItem {\n")
+	io.write("\tindex = ", index, ",\n")
+	io.write("\tcost = ", tbl["damage"], ",\n")
 	for i, k in ipairs(obdata_prop_names) do
 		local v = tbl[k]
 	
-		io.write("\t\t", k, " = ")
+		io.write("\t", k, " = ")
 		if type(v) == "table" then
 			io.write("{")
 			for i = 1, table.getn(v) do
@@ -100,8 +101,7 @@ while 1 do
 			io.write(v, ",\n")
 		end
 	end
-	io.write("\t},\n")
+	io.write("}\n\n")
 	
 	index = index + 1
 end
-io.write("}\n")

@@ -66,7 +66,7 @@ void Inventory::draw()
 		sel_man->draw_deselect_times(sel_item_place);
 
 		//textprintf(screen2, font, 129, 141, color, "%s", sel_item->data()->name);
-		textprintf(screen2, g_small_font, 128, 140, xcom1_color(50), "%s", sel_item->name());
+		textprintf(screen2, g_small_font, 128, 140, xcom1_color(50), "%s", sel_item->name().c_str());
 		if (sel_item->is_grenade()) {
 			if (sel_item->delay_time()) {
 				textout(screen2, g_small_font, "DELAY", 272, 64, xcom1_color(66));

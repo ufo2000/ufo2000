@@ -373,7 +373,7 @@ int Units::draw_items_stats(int gx, int gy, char *buf, int len)
 		if (Item::obdata_isAmmo(weapon[w])) continue;
 		if (num != 0) {
 			textprintf(screen2, g_small_font, gx + (aa / 72) * 90, gy + (aa % 72),
-			           xcom1_color(1), "%s=%d", Item::obdata_name(weapon[w]), num);
+			           xcom1_color(1), "%s=%d", Item::obdata_name(weapon[w]).c_str(), num);
 			aa += 9;
 			
 		}

@@ -217,9 +217,9 @@ void Editor::show(int NEXTPREV)
 
 				//textprintf(screen2, font, 129, 141, color, "%s", sel_item->data()->name);
 				if (dup_item == NULL)
-					textprintf(screen2, g_small_font, 128, 140, xcom1_color(50), "%s", sel_item->name());
+					textprintf(screen2, g_small_font, 128, 140, xcom1_color(50), "%s", sel_item->name().c_str());
 				else
-					textprintf(screen2, g_small_font, 128, 208, xcom1_color(3), "%s", sel_item->name());
+					textprintf(screen2, g_small_font, 128, 208, xcom1_color(3), "%s", sel_item->name().c_str());
 
 				if (sel_item->haveclip()) {
 					//textprintf(screen2, font, 272, 80, color, "%d", sel_item->roundsremain());

@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002       ufo2000 development team
+Copyright (C) 2002-2004  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -98,9 +98,13 @@ public:
 	static int explo_range(int type);
 	static void od_info(int type, int gx, int gy, int gcol);
 
-	static int obdata_damage(int index) { return obdata[index].damage; }
+	static int obdata_get_int(int item_index, const char *property_name);
+	static std::string obdata_get_string(int item_index, const char *property_name);
+
+	static int obdata_damage(int index) { return obdata_get_int(index, "damage"); }
+	static int obdata_cost(int index) { return obdata_get_int(index, "cost"); }
 	static int obdata_isAmmo(int index) { return obdata[index].isAmmo; }
-	static char *obdata_name(int index) { return obdata[index].name; }
+	static std::string obdata_name(int index) { return obdata_get_string(index, "name"); }
 	static int obdata_damageType(int index) { return obdata[index].damageType; }
 	static int obdata_wayPoints(int index) { return obdata[index].wayPoints; }
 	static int obdata_accuracy(int index, int n) { return obdata[index].accuracy[n]; }
@@ -134,7 +138,7 @@ public:
 
 	int inside(int _x, int _y);
 
-	char *name() { return obdata[m_type].name; }
+	std::string name() { return obdata_name(m_type); }
 	int obdata_pMap() { return obdata[m_type].pMap; }
 	int obdata_pInv() { return obdata[m_type].pInv; }
 	int obdata_pHeld() { return obdata[m_type].pHeld; }

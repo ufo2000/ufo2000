@@ -337,7 +337,7 @@ void Place::save_to_file(const char *fn, const char *prefix)
 
 	Item *it = m_item;
 	while (it != NULL) {
-		fprintf(fh, "%s:add_item(%d, %d, \"%s\")\n", prefix, it->m_x, it->m_y, it->name());
+		fprintf(fh, "%s:add_item(%d, %d, \"%s\")\n", prefix, it->m_x, it->m_y, it->name().c_str());
 		it = it->m_next;
 	}
 	fclose(fh);
@@ -346,7 +346,7 @@ void Place::save_to_file(const char *fn, const char *prefix)
 void Place::add_item(int x, int y, const char *item_name)
 {
 	for (int i = 0; i < Item::obdata_num; i++)
-		if (strcmp(Item::obdata_name(i), item_name) == 0) {
+		if (strcmp(Item::obdata_name(i).c_str(), item_name) == 0) {
 			put(new Item(i), x, y);
 			return;
 		}

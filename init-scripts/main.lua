@@ -8,6 +8,9 @@
 -- global table with the information about all the available terrain types
 -- used from ufo2000 executable
 TerrainTable = {}
+-- global table with the information about all items and weapons
+-- used from ufo2000 executable
+ItemsTable = {}
 
 -- directories for data files from the original x-com and ufo2000
 ufo2000_dir  = ufo2000_dir or "."
@@ -186,6 +189,11 @@ function AddXcomTerrain(terrain)
 	end
 
 	return 1
+end
+
+-- adds new item
+function AddXcomItem(item)
+	ItemsTable[item.index] = item
 end
 
 -- perform data files integrity check before applying security

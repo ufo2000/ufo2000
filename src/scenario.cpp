@@ -623,7 +623,7 @@ bool Scenario::platoon_common (long points, char buf[10000], int len)
 			    for (int k = 0; k < 8; k++) {
 			        if (buf[i] == explosives[j][k]) {
 			            if (type != SC_SABOTAGE || explosives[j][k] != HIGH_EXPLOSIVE) {
-							g_console->printf("%s isn't allowed.", Item::obdata_name(explosives[j][k]));
+							g_console->printf("%s isn't allowed.", Item::obdata_name(explosives[j][k]).c_str());
 			            	return false;
 						}
 					}
