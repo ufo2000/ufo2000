@@ -104,9 +104,7 @@ void initvideo()
 	LOCK_VARIABLE(DRAWIT);
 	LOCK_FUNCTION(drawit_timer);
 
-	//selector = load_bmp("selector.bmp", gamepal);
 	selector = (BITMAP*)datafile[DAT_SELECT].dat;
-	//mouser = load_bmp("mouse.bmp", gamepal);
 	mouser = (BITMAP*)datafile[DAT_MOUSE].dat;
 
 	screen2 = create_bitmap(SCREEN2W, SCREEN2H);
@@ -116,8 +114,6 @@ void initvideo()
 
 	initpal("geodata/palettes.dat");
 
-	//font->height = 8;
-	//font->dat.dat_8x8 = (FONT_8x8 *)(font8x8cyr+32*8);
 	font = (FONT*)datafile[DAT_FONT_CYR].dat;
 	create_small_font();
 	create_large_font();
@@ -204,7 +200,11 @@ void set_video_mode()
 
 #ifdef GFX_XWINDOWS
 	if (got_display_env) {
-		set_gfx_mode(GFX_XWINDOWS, 640, 400, 0, 0);
+        if (FLAGS & F_FULLSCREEN) {
+            set_gfx_mode(GFX_XWINDOWS_FULLSCREEN, 640, 400, 0, 0);
+        } else {
+            set_gfx_mode(GFX_XWINDOWS, 640, 400, 0, 0);
+        }
 		return ;
 	} else
 #endif

@@ -196,7 +196,7 @@ int do_mainmenu2()
 
     
 #if defined(HAVE_DPLAY)
-    the_dialog[MAINMENU_DPLAY].dp = "DirectPlay";
+    the_dialog[MAINMENU_DPLAY].dp = (void *) "DirectPlay";
 #endif
     
 	the_dialog[MAINMENU_LOADGAME].proc = NULL;
@@ -227,7 +227,7 @@ int do_mainmenu2()
 
 	text_mode(-1);
 
-    textprintf(screen, small, 0, 0, 4, "UFO2000 %s", UFO_VERSION_STRING);
+    textprintf(screen, small, 0, 0, 220, "UFO2000 %s", UFO_VERSION_STRING);
 
 	int v = do_dialog(the_dialog, -1);
 	
