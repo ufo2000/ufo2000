@@ -412,6 +412,7 @@ Section "${GAME_NAME} (required)" MainSec
 	File "ufo2000-srv.exe"
 	File "ufo2000.default.ini"
 	File "ufo2000-srv.conf"
+	File "ufo2000.db"
 	
 	SetOutPath $INSTDIR\arts
 	

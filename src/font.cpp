@@ -23,7 +23,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #ifdef HAVE_FREETYPE
 extern "C" {
-#include "jinete/ji_font.h"
 #include "glyphkeeper/glyph.h"
 }
 #endif

@@ -82,7 +82,7 @@ ifdef valgrind
 endif
 
 VPATH = src src/jpgalleg src/dumbogg src/exchndl src/agup src/lua \
-        src/jinete src/glyphkeeper src/loadpng src/sqlite
+        src/glyphkeeper src/loadpng src/sqlite
 
 SRCS_LUA = lapi.c lauxlib.c lbaselib.c lcode.c ldblib.c ldebug.c      \
            ldo.c ldump.c lfunc.c lgc.c liolib.c llex.c lmathlib.c     \
@@ -138,7 +138,7 @@ else
 	LIBS += ${shell freetype-config --libs}
 endif
 	CFLAGS += -DHAVE_FREETYPE -DGLYPH_TARGET=GLYPH_TARGET_ALLEGRO -DGK_NO_LEGACY
-	SRCS += glyph.c ji_font.c
+	SRCS += glyph.c
 endif
 
 ifndef no_dumbogg
@@ -168,10 +168,10 @@ else
 	CFLAGS += $(INCLUDES)
 ifdef static	
 	LIBS := -static $(LIBS) -lNL ${shell allegro-config --libs}
-	SERVER_LIBS = -static -lNL -pthread
+	SERVER_LIBS += -static -lNL -pthread
 else
 	LIBS += -lNL -pthread ${shell allegro-config --libs}
-	SERVER_LIBS = -lNL -pthread
+	SERVER_LIBS += -lNL -pthread
 endif
 endif
 
