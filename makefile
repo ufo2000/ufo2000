@@ -172,6 +172,14 @@ clean:
 	$(RM) $(OBJDIR)/*.d
 	$(RM) $(NAME)
 
+# update the tranlations of game messages to different languages using gettext tools
+lng: translations/ufo2000-de.po
+
+translations/ufo2000-de.po: $(SRCS)
+	xgettext -o translations/ufo2000.pot --keyword=_ $^
+	msgmerge.exe --update translations/ufo2000-de.po translations/ufo2000.pot
+	msgfmt -c translations/ufo2000-de.po
+
 binary-gz: all server
 # create linux binary distributive
 	svn delete --force $(DISTNAME)
