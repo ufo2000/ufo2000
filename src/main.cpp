@@ -1686,8 +1686,16 @@ int main(int argc, char *argv[])
             h = -1;
             switch (mm) {
                 case MAINMENU_ABOUT:
-		// $$$ TODO: new about-box 
-                    continue;
+                    // $$$ TODO: show the about-box with the title-picture as background, 
+                    // not on black screen
+                    set_palette((RGB *)datafile[DAT_MENUPAL_BMP].dat);	// yellow mouse-cursor
+                    char about1[128];
+                    sprintf(about1, "UFO2000 v%s.%s - a free and opensource multiplayer game", UFO_VERSION_STRING, UFO_SVNVERSION);
+                    alert(about1,
+                          "inspired by 'X-COM: UFO Defense', see http://ufo2000.sf.net.", 
+                          "(c) 2000-2001 A.Ivanov, (c) 2002-2004 ufo2000 development team",
+                          " OK ", NULL, 1, 0);
+                    break;
                 case MAINMENU_EDITOR:
 					FS_MusicPlay(F(cfg_get_editor_music_file_name()));
 //	                editor->do_mapedit();

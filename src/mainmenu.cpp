@@ -171,12 +171,12 @@ int do_mainmenu()
     }
     
     the_dialog[MAINMENU_QUIT].key = 27;
+    the_dialog[MAINMENU_YIELD].proc = d_yield_proc;
     the_dialog[MAINMENU_COUNT].proc = NULL;
     
     the_dialog[MAINMENU_BACKGROUND].proc = d_mainmenu_background_proc;
 
     the_dialog[MAINMENU_INTERNET].dp    = (void *) "connect to internet server";
-    the_dialog[MAINMENU_TCPIP].dp       = (void *) "tcp/ip";
     the_dialog[MAINMENU_HOTSEAT].dp     = (void *) "start hotseat game";
     the_dialog[MAINMENU_EDITOR].dp      = (void *) "editor";
     the_dialog[MAINMENU_LOADGAME].dp    = (void *) "load saved game";
