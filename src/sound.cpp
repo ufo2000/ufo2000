@@ -848,7 +848,11 @@ int soundSystem::initialize(const std::string& xml, std::ostream *log,
 
     reserve_voices(4, -1);
 
-	if (install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) != 0) {
+    /* On some Linux systems (Mandrake 9.1 for example) MIDI can not be initialized,
+     * so we try to call install_sound() again without MIDI support if the first call 
+     * failed. That is done to have sound effects at least.
+     */
+	if (install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) != 0 && install_sound(DIGI_AUTODETECT, MIDI_NONE, NULL) != 0) {
 		*log<<"Error initialising sound system: "<<allegro_error<<std::endl;
         soundInstalled = false;
     } else {
