@@ -435,9 +435,15 @@ int soundFile::loadFile(const char *fname, std::ostream& log, bool verbose) {
     std::stringstream sbuf;
 
 #if defined(__GNUC__)
+#if !defined __GNUC_PATCHLEVEL__
+#define __GNUC_PATCHLEVEL__ 0
+#endif
 #define GCC_VERSION (__GNUC__ * 10000 \
                    + __GNUC_MINOR__ * 100 \
                    + __GNUC_PATCHLEVEL__)
+#else
+/* non-GNU safety */
+#define GCC_VERSION 0
 #endif
 
 #if !defined(__GNUC__) || (GCC_VERSION > 30200)
@@ -465,7 +471,7 @@ int soundFile::loadFile(const char *fname, std::ostream& log, bool verbose) {
     ifs.seekg(0, std::ios::beg);
     ifs.read(t_buf, t_buf_len);
     std::string t_str(t_buf, t_buf_len);
-    delete t_buf;
+    delete [] t_buf;
     log<<"String has "<<t_str.size()<<" bytes."<<std::endl;
 
     switch(getFileType(t_str)) {
