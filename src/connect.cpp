@@ -34,6 +34,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "scenario.h"
 #include "colors.h"
 #include "text.h"
+#include "mouse.h"
 
 /**
  * Routines for Network-play (LAN, Internet)
@@ -46,8 +47,8 @@ int Connect::do_chat()
 
 	reset_video();
 
-	set_mouse_range(0, 0, 640, 400);
 	position_mouse(320, 200);
+    MouseRange temp_mouse_range(0, 0, 639, 399);
 
 	BITMAP *scr = create_bitmap(320, 200); clear(scr);
 	BITMAP *backscr = create_bitmap(640, 400);
@@ -210,7 +211,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 	reset_video();
 	destroy_bitmap(screen2);
 	screen2 = create_bitmap(640, SCREEN2H - 1); clear(screen2);
-	set_mouse_range(0, 0, 639, SCREEN2H - 1);
+    MouseRange temp_mouse_range(0, 0, 639, SCREEN2H - 1);
 
 	g_console->set_full_redraw();
 	g_console->redraw(screen, 0, SCREEN2H);
@@ -233,7 +234,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 		pd_local = &pd2;
 	}
 
-	local.set_mouse_range(639, SCREEN2H - 1, map2d_x, 0, map2d_x + map2d->w - 1, map2d->h - 1);
+    local.store_mouse_range(map2d_x, 0, map2d_x + map2d->w - 1, map2d->h - 1);
 	editor->build_Units(local);
 
 	if (net->is_network_game()) {
@@ -342,7 +343,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
                 remote.set_pos(POS_LEFT,  map2d_x - (MAN_NAME_LEN * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
 				local.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
 			}
-			local.set_mouse_range(639, SCREEN2H - 1, map2d_x, 0, map2d_x + map2d->w - 1, map2d->h - 1);
+            local.store_mouse_range(map2d_x, 0, map2d_x + map2d->w - 1, map2d->h - 1);
 			local.deselect();
 
 			CHANGE = 1;
@@ -462,6 +463,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 			break;
 	}
 
+    local.restore_mouse_range();
 	delete map;
 
     g_console->printf(COLOR_SYS_INFO2, "%s\n\n\n\n\n\n\n\n\n\n\n\n\n", _("ok.") ); 

@@ -32,6 +32,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "scenario.h"
 #include "colors.h"
 #include "text.h"
+#include "mouse.h"
 
 #define CAPTION          8
 #define COMMENT          3
@@ -60,6 +61,12 @@ int damage_points = 0; //!< Point-value from items only (weapons and equipment)
 Units::Units()
 {
 	reset();
+    temp_mouse_range = NULL;
+}
+
+Units::~Units()
+{
+    restore_mouse_range();
 }
 
 /**
@@ -764,7 +771,6 @@ void Units::execute_main(Map *map, int map_change_allowed)
 
 					destroy_bitmap(screen2);
 					screen2 = create_bitmap(640, SCREEN2H - 1); clear(screen2);
-					::set_mouse_range(0, 0, 639, SCREEN2H - 1);
 					/*if (x[i]) {
 						x[i] = 0; y[i] = 0;
 						net->send_deselect_unit(i);
@@ -944,12 +950,8 @@ void Units::execute_map(Map *map, int map_change_allowed)
 	if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 77, gmx + gmw / 2 + 75, SCREEN2H - 64)) {
 		//MAP TYPE
 
-		::set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
-
 		std::string current_terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
 		std::string terrain_name = terrain_set->select_terrain_gui_dialog(current_terrain_name);
-
-		::set_mouse_range(0, 0, 639, SCREEN2H);
 
 		if (current_terrain_name != terrain_name) {
 			Map::new_GEODATA(&mapdata, terrain_name);
@@ -1015,9 +1017,7 @@ void Units::execute_map(Map *map, int map_change_allowed)
 		//"LOAD"
 		char path[1000]; *path = 0;
 		
-		::set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
-		
-        if (file_select( _("load GEODATA.lua file"), path, "lua")) {
+        if (file_select_mr( _("Load GEODATA.lua file"), path, "lua")) {
 			GEODATA gd;
 
 			if (!Map::load_GEODATA(path, &gd) || !Map::valid_GEODATA(&gd)) {
@@ -1029,22 +1029,16 @@ void Units::execute_map(Map *map, int map_change_allowed)
 				net->send_scenario();
 			}
 		}
-
-		::set_mouse_range(0, 0, 639, SCREEN2H);
 	}
 
     if (mouse_inside(x0 + x3a, SCREEN2H - 49, x0 + x3b, SCREEN2H - 36)) {
 		//"SAVE"
 		char path[1000]; *path = 0;
 
-		::set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
-
-		if (file_select( _("Save GEODATA.lua file"), path, "lua")) {
+        if (file_select_mr( _("Save GEODATA.lua file"), path, "lua")) {
 			if(!Map::save_GEODATA(path, &mapdata))
                 g_console->printf(COLOR_RED02, _("Can't save geodata.") );
 		}
-
-		::set_mouse_range(0, 0, 639, SCREEN2H);
 	}
 }
 
@@ -1275,19 +1269,18 @@ void Units::deselect()
 	restore_mouse_range();
 }
 
-void Units::set_mouse_range(int mx, int my, int mx1, int my1, int mx2, int my2)
+void Units::store_mouse_range(int mx1n, int my1n, int mx2n, int my2n)
 {
-	this->mx = mx;
-	this->my = my;
-	this->mx1 = mx1;
-	this->my1 = my1;
-	this->mx2 = mx2;
-	this->my2 = my2;
+    mx1 = mx1n;
+    my1 = my1n;
+    mx2 = mx2n;
+    my2 = my2n;
 }
 
 void Units::limit_mouse_range()
 {
-	::set_mouse_range(mx1, my1, mx2, my2);
+    ASSERT (temp_mouse_range == NULL);
+    temp_mouse_range = new MouseRange(mx1, my1, mx2, my2);
 	if (x[selected] != 0)
 		position_mouse(x[selected], y[selected]);
 	else {
@@ -1300,7 +1293,11 @@ void Units::limit_mouse_range()
 
 void Units::restore_mouse_range()
 {
-	::set_mouse_range(0, 0, mx, my);
+    if (temp_mouse_range != NULL)
+    {
+        delete temp_mouse_range;
+        temp_mouse_range = NULL;
+    }
 }
 
 /**

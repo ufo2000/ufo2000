@@ -243,7 +243,6 @@ void lobby_init_mouse()
 	set_mouse_sprite(mouser);
 	set_palette((RGB *)datafile[DAT_GAMEPAL_BMP].dat);
 	set_mouse_speed(1, 1);
-	set_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
 	show_mouse(screen);
 	gui_fg_color = COLOR_BLACK1;
 	gui_bg_color = COLOR_WHITE;
@@ -371,6 +370,7 @@ int connect_internet_server()
 	else
 		FS_MusicPlay(F(cfg_get_net1_music_file_name()));
 	lobby_init_mouse();
+    MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
 
 	if (!g_server_autologin || g_server_login == "anonymous")
 		if (!asklogin())

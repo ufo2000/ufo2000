@@ -27,6 +27,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "editor.h"
 #include "colors.h"
 #include "text.h"
+#include "mouse.h"
 
 char last_unit_name[1000];
 char last_map_name[1000];
@@ -128,17 +129,13 @@ Editor::~Editor()
  */
 void Editor::load()
 {
-	set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
-
 	char path[1000];
 	strcpy(path, last_unit_name);
-    if (file_select( _("LOAD UNITS DATA"), path, "UNITS")) {
+    if (file_select_mr( _("LOAD UNITS DATA"), path, "UNITS")) {
 		m_plt->load_FULLDATA(path);
 		strcpy(last_unit_name, path);
         lua_message( std::string("Team loaded: ") + path );
 	}
-
-	set_mouse_range(0, 0, 639, 399);
 }
 
 
@@ -147,17 +144,13 @@ void Editor::load()
  */
 void Editor::save()
 {
-	set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
-
 	char path[1000];
 	strcpy(path, last_unit_name);
-    if (file_select( _("SAVE UNITS DATA"), path, "UNITS")) {
+    if (file_select_mr( _("SAVE UNITS DATA"), path, "UNITS")) {
 		m_plt->save_FULLDATA(path);
 		strcpy(last_unit_name, path);
         lua_message( std::string("Team saved: ") + path );
 	}
-
-	set_mouse_range(0, 0, 639, 399);
 }
 
 int Editor::set_man(char *name)
@@ -608,7 +601,7 @@ void Editor::show()
     textout(editor_bg, large, _("F1 Help   F2 Save Team   F3 Load Team   F4 Edit Attributes"), 8, 380, COLOR_LT_BLUE);
 
 	position_mouse(320, 200);
-	set_mouse_range(0, 0, 639, 399);
+    MouseRange temp_mouse_range(0, 0, 639, 399);
 
 	int DONE = 0;
 	int mouse_leftr = 1, mouse_rightr = 1;
@@ -1232,6 +1225,7 @@ static void fixup_unit_info()
  */
 void Editor::edit_soldier()
 {
+    MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
     DIALOG sol_dialog[] = {
         //(dialog proc)      (x)           (y)                   (w)      (h)  (fg) (bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
         { d_agup_shadow_box_proc, DX,           DY,                   D_WIDTH,     D_HEIGHT, FG,  BG, 0, 0, 0, 0, NULL, NULL, NULL},
@@ -1270,8 +1264,6 @@ void Editor::edit_soldier()
     };
 
     ::sol_dialog = sol_dialog;
-
-	set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
 
 	sol_dialog[D_BRAVERY].flags  |= D_DISABLED;
 
@@ -1349,8 +1341,6 @@ void Editor::edit_soldier()
 	man->md.Bravery    = sol_dialog[D_BRAVERY].d2;
 
 	man->process_MANDATA();
-
-	set_mouse_range(0, 0, 639, 399);
 
 	::sol_dialog = NULL;
 }

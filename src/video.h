@@ -46,11 +46,6 @@ int tftd_color(int c);
 
 #define xcom_color(c) xcom1_color(c)
 
-inline int mouse_inside(int x1, int y1, int x2, int y2)
-{
-	return ((mouse_x >= x1) && (mouse_x <= x2) && (mouse_y >= y1) && (mouse_y <= y2));
-}
-
 BITMAP *load_back_image(const char *filename);
 
 void savescreen();
@@ -87,7 +82,7 @@ extern unsigned long FLAGS;
 #define F_DEBUGDUMPS        0x00040000
 #define F_ENDTURNSND        0x00080000
 #define F_TOOLTIPS          0x00100000
-#define F_SECONDSIT	    0x00200000
-#define F_REACTINFO	    0x00400000
+#define F_SECONDSIT         0x00200000
+#define F_REACTINFO         0x00400000
 #endif
 

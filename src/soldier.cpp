@@ -34,6 +34,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "icon.h"
 #include "colors.h"
 #include "text.h"
+#include "mouse.h"
 
 //uncomment to view some formulas results (reaction fire)
 #define SHOW_DEBUG_INFO
@@ -2459,7 +2460,7 @@ void Soldier::precise_aiming(int za, int xa, int ya)
 	if (!(mouse_b & 1)) mouse_leftr   = 1;
 	if (!(mouse_b & 2)) mouse_rightr  = 1;
 
-	set_mouse_range(mx + 1, my + 1, mx + bmp->w - 1, my + bmp->h - 1);
+    MouseRange temp_mouse_range(mx + 1, my + 1, mx + bmp->w -1, my + bmp->h - 1);
 	show_mouse(screen);
 	text_mode(0);
 	while (!keypressed()) {
@@ -2499,7 +2500,6 @@ void Soldier::precise_aiming(int za, int xa, int ya)
     FIRE_y = ya * 16 + y;
 
 	show_mouse(NULL);
-	set_mouse_range(0, 0, SCREEN2W - 1, SCREEN2H - 1);
 	blit(bmp_back, screen, 0, 0, mx, my, bmp->w, bmp->h);
 	destroy_bitmap(bmp_back);
 	destroy_bitmap(bmp);

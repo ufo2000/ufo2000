@@ -30,6 +30,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "config.h"
 #include "colors.h"
 #include "text.h"
+#include "mouse.h"
 
 unsigned long FLAGS = 0;
 
@@ -268,9 +269,9 @@ void reset_video()
 {
 	set_palette((RGB *)datafile[DAT_GAMEPAL_BMP].dat);
 	position_mouse(160, 100);
-	set_mouse_range(0, 0, SCREEN2W - 1, SCREEN2H - 1);
 	set_mouse_sprite(mouser);
 	set_mouse_speed(1, 1);
+    reset_mouse_range();
 	gui_fg_color = COLOR_BLACK1;
 	gui_bg_color = COLOR_WHITE;
 	g_switch_in_counter++;
@@ -348,8 +349,8 @@ void resize_screen2(int vw, int vh)
 	map->m_minimap_area->resize(SCREEN_W - SCREEN2W, SCREEN2H);
 	g_console->resize(SCREEN_W, SCREEN_H - SCREEN2H);
 	icon->setxy();
-	set_mouse_range(0, 0, SCREEN2W - 1, SCREEN2H - 1);
 	position_mouse(SCREEN2W / 2, SCREEN2H / 2);
+    reset_mouse_range(0, 0, SCREEN2W - 1, SCREEN2H - 1);
 }
 
 /**
@@ -358,7 +359,7 @@ void resize_screen2(int vw, int vh)
  */
 int askmenu(const char *mess)
 {
-	set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
+    MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
     int sel = alert(mess, "", "", _("OK"), _("Cancel"), 0, 0);
 	return (sel == 1);
 }

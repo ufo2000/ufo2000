@@ -29,6 +29,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "soldier.h"
 #include "colors.h"
 #include "text.h"
+#include "mouse.h"
 
 /**
  * Manage soldiers inventory

@@ -1971,6 +1971,7 @@ int TerrainSet::get_random_terrain_id()
 std::string TerrainSet::select_terrain_gui_dialog(
 	const std::string &default_choice)
 {
+    MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
 	int default_index = 0;
 	std::vector<std::string> gui_list;
 	std::map<int, Terrain *>::iterator it;

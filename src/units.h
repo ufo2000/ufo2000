@@ -20,6 +20,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #ifndef UNITS_H
 #define UNITS_H
+#include "mouse.h"
 
 enum PanPos {POS_LEFT, POS_RIGHT};
 enum PlanState {PS_MAIN, PS_SCEN, PS_MAP, PS_RULES, PS_RULES_0, PS_RULES_1, PS_RULES_2, PS_RULES_3, PS_RULES_4};
@@ -34,8 +35,9 @@ private:
 	int x[20], y[20];
 	int lev[20], col[20], row[20];
 	int selected;                   //!< number of the soldier currently selected for editing
-	int mx, my, mx1, my1, mx2, my2;
+    int mx1, my1, mx2, my2;
 	int gx, gy, gmx, gmw, gmy, gmh;
+    MouseRange *temp_mouse_range;
 	PanPos pos;
 	PlanState state;
 	void draw_scenario_window();
@@ -59,15 +61,16 @@ public:
 	int SEND;
 	int START;
 
-	Units();
+    Units();
+    ~Units();
 	void reset();
 	void set_pos(PanPos pos, int gx, int gy, int gmx, int gmw, int gmy, int gmh);
 	void reset_selections();
 
 	int add(int num, char *nm, int ct);
-	void set_mouse_range(int mx, int my, int mx1, int my1, int mx2, int my2);
-	void limit_mouse_range();
-	void restore_mouse_range();
+    void store_mouse_range(int mx1, int my1, int mx2, int my2);
+    void limit_mouse_range();
+    void restore_mouse_range();
 
 	void print(int gcol);
 	void print_simple(int gcol);

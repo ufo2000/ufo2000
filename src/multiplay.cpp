@@ -120,6 +120,7 @@ int Net::init()
 	queue = new BQ(1000);
 
 	connect->reset_uds();
+    MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
 
 	if (gametype == GAME_TYPE_HOTSEAT) {
 		HOST = 1;
@@ -127,7 +128,6 @@ int Net::init()
 			return 0;
 		clear(screen);
 		reset_video();
-		set_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
         alert(" ", _("  NEXT PLAYER  "), " ", _("    OK    "), NULL, 1, 0);
 		HOST = 0;
 		connect->swap_uds();
@@ -136,7 +136,6 @@ int Net::init()
 		HOST = 1;
 		clear(screen);
 		reset_video();
-		set_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
         alert(" ", _("  GAME START  "), " ", _("    OK    "), NULL, 1, 0);
 		inithotseatgame();
 	} else {

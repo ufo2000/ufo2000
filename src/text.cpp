@@ -33,6 +33,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "icon.h"
 
 #include "soldier.h"
+#include "mouse.h"
 
 /**
  * Return string with current date+time,
@@ -408,7 +409,7 @@ int select_help()
 
   //ret = do_dialog(the_dialog, -1);
 	centre_dialog(the_dialog);
-	set_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
+
 	set_dialog_color(the_dialog, COLOR_BLACK1, COLOR_WHITE);
 	ret = popup_dialog(the_dialog, -1);
 
@@ -481,6 +482,7 @@ void help( const int helppage )
     fprintf(f1, "#: '%s'\n", prev);
     fclose(f1);
  */
+    MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
     rest(1); // Don't eat all CPU resources
 
     switch (helppage) {

@@ -262,7 +262,6 @@ int initgame()
 
 	reset_video();
 	restartgame();
-	resize_screen2(0, 0);
 	//clear_to_color(screen, 58); //!!!!!
 	
 	// Set/Clear some scenario specific variables and effects:
@@ -345,6 +344,12 @@ void display_error_message(const std::string &error_text)
 #endif
     lua_message( std::string("!! Error: ") + error_text.c_str() );
 	exit(1);
+}
+
+int file_select_mr(const char *message, char *path, const char *ext)
+{
+    MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
+    return file_select(message, path, ext);
 }
 
 static int assert_handler(const char *msg)
@@ -895,7 +900,7 @@ void send_turn()
 		platoon_local->set_visibility_changed();
 		platoon_local->recalc_visibility();
 
-		set_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
+        MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
         alert(" ", _("  NEXT TURN  "), " ", 
                    _("    OK    "), NULL, 1, 0);
 	}
@@ -1545,6 +1550,9 @@ void gameloop()
     int color1;
     int b1 = 0;
 
+    MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
+	resize_screen2(0, 0);
+    MouseRange *temp_mouse_range_ptr;
     lua_message( "Start: gameloop" );
 	if ((rand() % 2) == 1)
 		FS_MusicPlay(F(cfg_get_combat2_music_file_name()));
@@ -1865,7 +1873,9 @@ void gameloop()
                     if (askmenu( _("LOAD GAME") )) {
 						if (!loadgame(F("$(home)/ufo2000.sav"))) {
                             battle_report( "# %s: %s\n", _("LOAD GAME"), _("failed") );
+                            temp_mouse_range_ptr = new MouseRange(0, 0, SCREEN_W - 1, SCREEN_H - 1);
                             alert( _("Saved game not found"), "", "", _("OK"), NULL, 0, 0);
+                            delete temp_mouse_range_ptr;
                         } else {
                             battle_report( "# %s: %s\n", _("LOAD GAME"), _("success") );
                         }
@@ -1914,10 +1924,12 @@ void gameloop()
 					} else if (MODE == UNIT_INFO || MODE == MAP2D) {
 						MODE = MAP3D;
                     } else {
+                        temp_mouse_range_ptr = new MouseRange(0, 0, SCREEN_W - 1, SCREEN_H - 1);
                       //b1 = alert3( "", _("ABORT MISSION ?"), "",
                       //             _("YES=RESIGN"), _("OFFER DRAW"), _("NO=CONTINUE"), 0,0,1 );
                         b1 = alert( "", _("ABORT MISSION ?"), "",
                                      _("YES=RESIGN"), _("NO=CONTINUE"), 0,1 );
+                        delete temp_mouse_range_ptr;
                         if (b1 == 1) {
                             DONE = 1;
                             battle_report( "# %s\n", _("Game aborted") );
@@ -1998,7 +2010,6 @@ void faststart()
 	if (sel_man != NULL) map->center(sel_man);
 	DONE = 0; TARGET = 0; turn = 0;
 
-	resize_screen2(0, 0);
 	clear_to_color(screen, 58);      //!!!!!
 	gameloop();
 	closegame();
@@ -2025,7 +2036,6 @@ void start_loadgame()
 	map->center(sel_man);
 	DONE = 0;
 
-	resize_screen2(0, 0);
 	clear_to_color(screen, COLOR_GREEN10);
 	gameloop();
 	closegame();
@@ -2136,6 +2146,7 @@ int main(int argc, char *argv[])
 	g_version_id = version_id;
 
 	initmain(argc, argv);
+    MouseRange *temp_mouse_range_ptr = new MouseRange(0, 0, SCREEN_W - 1, SCREEN_H - 1);
 
 #ifdef WIN32
 	prevExceptionFilter = SetUnhandledExceptionFilter(TopLevelExceptionFilter);
@@ -2213,6 +2224,8 @@ int main(int argc, char *argv[])
             }
         }
     }
+
+    delete temp_mouse_range_ptr;
 
 #ifdef WIN32
 	SetUnhandledExceptionFilter(prevExceptionFilter);

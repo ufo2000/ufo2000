@@ -27,10 +27,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "mainmenu.h"
 #include "version.h"
 #include "config.h"
-
 #include "sound.h"
 #include "music.h"
 #include "text.h"
+#include "mouse.h"
 
 static int old_mouse_x = -1, old_mouse_y = -1;
 
@@ -227,7 +227,6 @@ int do_mainmenu()
 	set_mouse_sprite(mouser2);
 	set_palette((RGB *)datafile[DAT_MENUPAL_BMP].dat);
 	set_mouse_speed(1, 1);
-	set_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
 
 	menuback = load_back_image(cfg_get_menu_image_file_name());
 	

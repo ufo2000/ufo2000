@@ -76,20 +76,20 @@ endif
 
 VPATH = src src/jpgalleg src/dumbogg src/exchndl src/agup
 
-SRCS = bullet.cpp cell.cpp config.cpp connect.cpp dirty.cpp           \
+SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
        editor.cpp explo.cpp font.cpp icon.cpp inventory.cpp item.cpp  \
        keys.cpp main.cpp mainmenu.cpp map.cpp map_pathfind.cpp        \
-       multiplay.cpp text.cpp packet.cpp pck.cpp place.cpp            \
-       platoon.cpp soldier.cpp sound.cpp spk.cpp terrapck.cpp         \
-       units.cpp video.cpp wind.cpp crc32.cpp persist.cpp             \
-       jpgalleg.c decode.c encode.c io.c minimap.cpp                  \
-       stats.cpp server_protocol.cpp server_transport.cpp             \
-       server_gui.cpp server_config.cpp music.cpp scenario.cpp        \
+       minimap.cpp mouse.cpp multiplay.cpp music.cpp packet.cpp       \
+       pck.cpp persist.cpp place.cpp platoon.cpp scenario.cpp         \
+       server_config.cpp server_gui.cpp server_protocol.cpp           \
+       server_transport.cpp soldier.cpp sound.cpp spk.cpp stats.cpp   \
+       terrapck.cpp text.cpp units.cpp video.cpp wind.cpp             \
+                                                                      \
        aalg.c aase.c abeos.c abitmap.c agtk.c agup.c ans.c            \
-       aphoton.c awin95.c
+       aphoton.c awin95.c decode.c encode.c io.c jpgalleg.c
 
-SRCS_SERVER = server_main.cpp server_protocol.cpp \
-       server_transport.cpp server_config.cpp
+SRCS_SERVER = server_config.cpp server_main.cpp server_protocol.cpp   \
+              server_transport.cpp
 
 ifdef debug
 	CFLAGS += -g

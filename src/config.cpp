@@ -240,6 +240,7 @@ static int d_slider_pro2(int msg, DIALOG *d, int c)
  */
 void configure()
 {
+    MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
     DIALOG config_dlg[] = {
         //                   x    y   w    h   fg  bg key flags d1 d2  dp   dp2   dp3
         { d_shadow_box_proc, 0,   0, 388, 200, FG, BG, 0, 0,    0, 0, NULL, NULL, NULL },
@@ -265,7 +266,6 @@ void configure()
     config_dlg[MAPSCROLL].d2       = mapscroll;
 
 	centre_dialog(config_dlg);
-	set_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
 	set_dialog_color(config_dlg, COLOR_BLACK1, COLOR_WHITE);
 
 	if (popup_dialog(config_dlg, -1) == OK_BUTTON) {
