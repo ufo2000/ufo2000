@@ -1,7 +1,7 @@
 ##############################################################################
 # makefile for ufo2000                                                       #
 #                                                                            #
-# Compiling ufo2000: make {debug=1} {xmingw=1} {dumbogg=1}                   #
+# Compiling ufo2000: make {debug=1} {xmingw=1} {no_ttf=1} {no_dumbogg=1}     #
 #                                                                            #
 # Define xmingw=1 when compiling win32 binary with Mingw gcc crosscompiler   #
 # Define debug=1 when you want to build debug version of ufo2000             #
@@ -11,21 +11,24 @@
 #                                                                            #
 # Type 'make server' to build ufo2000 server                                 #
 #                                                                            #
-# The game depends on Allegro (4.0.x), Expat, HawkNL and Lua libraries,      #
-# so you need to install them before running make                            #
+# The game depends on Allegro (4.0.x), Expat and HawkNL libraries, so you    #
+# need to install them before running make                                   #
 #                                                                            #
 # DUMB and Ogg Vorbis are optional (they allow to play music in XM, S3M,     #
-# MOD, IT and OGG formats). Use dumbogg=1 in make command line to build      #
-# ufo2000 with these libraries.                                              #
+# MOD, IT and OGG formats). Use no_dumbogg=1 in make command line to build   #
+# ufo2000 without these libraries.                                           #
+#                                                                            #
+# FreeType2 library is optional too, its support can be disabled with        #
+# no_ttf=1 make command line option.                                         #
 #                                                                            #
 # When compiling the game with Mingw (either native or a crosscompiler), it  #
-# is possible to use a set of precompiled libraries. Just download zip from  #
+# is possible to use a set of precompiled libraries. Just download archive   #
 # http://ufo2000.lxnt.info/files/mingw-libs.zip and extract it into ufo2000  #
 # sources directory.                                                         #
 #                                                                            #
 # Also it is highly recommended but not necessery to have subversion         #
-# client installed (it is required if you want to make 'source-zip' and      #
-# 'source-bz2' targets)                                                      #
+# command line client installed (it is required if you want to make          #
+# 'win32-installer', 'source-zip' and 'source-bz2' targets)                  #
 ##############################################################################
 
 UFO_SVNVERSION := ${shell svnversion .}
@@ -118,7 +121,7 @@ endif
 
 LIBS = -lexpat
 
-ifdef ttf
+ifndef no_ttf
 ifdef win32
 	LIBS += -lfreetype
 else
@@ -129,7 +132,7 @@ endif
 	SRCS += ji_font.c
 endif
 
-ifdef dumbogg
+ifndef no_dumbogg
 	LIBS += -lvorbisfile -lvorbis -logg -laldmb -ldumb
 	SRCS += dumbogg.c
 	CFLAGS += -DHAVE_DUMBOGG
