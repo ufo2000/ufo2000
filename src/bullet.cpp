@@ -483,8 +483,8 @@ void Bullet::showline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 	int xg, yg;
 	int xg2, yg2;
 
-	x0 = x_s * 16 + 8; y0 = y_s * 16 + 8; z0 = z_s * 12 + 8;
-	xd = x_d * 16 + 8; yd = y_d * 16 + 8; zd = z_d * 12 + 8;
+	sel_man->calc_bullet_start(x_s, y_s, z_s, &x0, &y0, &z0); //start point as made in soldier::shoot
+	xd = x_d * 16 + 8; yd = y_d * 16 + 8; zd = z_d * 12 + 8;  //target in the center
 
 	REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
 	REAL fi = acos((REAL)(zd - z0) / ro);

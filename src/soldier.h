@@ -232,6 +232,8 @@ public:
 	void set_prev(Soldier *s) { m_prev = s; }
 	Bullet *bullet() { return m_bullet; }
 
+	void calc_bullet_start(int xs, int ys, int zs, int* xr, int* yr, int *zr); //calculates starting position for a bullet
+
 	bool is_active()
 	{
 		return !is_dead() && !is_stunned() && z != -1;

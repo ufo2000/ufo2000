@@ -2563,14 +2563,20 @@ void Soldier::try_reaction_shot(Soldier *the_target)
 	return;
 }
 
+void Soldier::calc_bullet_start(int xs, int ys, int zs, int* xr, int* yr, int *zr)
+{
+	*zr = zs * 12 + 8; if (m_state == SIT) *zr -= 3;
+	*xr = xs * 16 + 8 + DIR_DELTA_X(dir) * 4;
+	*yr = ys * 16 + 8 + DIR_DELTA_Y(dir) * 4;
+}
+
 void Soldier::shoot(int zd, int xd, int yd, int ISLOCAL)
 {
 	ASSERT(target.action != NONE);
 	ASSERT(target.item != NULL);
 
-	int z0 = z * 12 + 8; if (m_state == SIT) z0 -= 3;
-	int x0 = x * 16 + 8 + DIR_DELTA_X(dir) * 4;
-	int y0 = y * 16 + 8 + DIR_DELTA_Y(dir) * 4;
+	int x0, y0, z0;
+	calc_bullet_start (x, y, z, &x0, &y0, &z0);
 
 	m_reaction_chances += (target.time / 4); // How many chances at a reaction shot do we get? TUs / 4.
 
