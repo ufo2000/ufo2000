@@ -229,7 +229,7 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen, Soldier *sld)
 			//printsmall(sx, sy, 1, time_of_dst);
 			TU -= time_of_dst;
 
-            if (TU < sld->tus_reserved(NULL)) {          // NULL - don't show any error messages
+            if (TU < sld->tus_reserved()) {
                 TU_color = 32;      // COLOR_RED00
             }
 			

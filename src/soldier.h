@@ -129,7 +129,7 @@ private:
 	int seen_enemy_num;
 	int seen_enemy_z[100], seen_enemy_x[100], seen_enemy_y[100];
 	
-	bool time_reserve(int walk_time, int ISLOCAL, int use_energy = 1);
+	int time_reserve(int walk_time, int ISLOCAL, int use_energy = 1);
 	void berserk_fire();
     int calc_z();
     void standard_aiming(int za, int xa, int ya);
@@ -221,7 +221,7 @@ public:
 	int havetime(int ntime, int use_energy = 0);
 	void spend_time(int tm, int use_energy = 0);
 	int walktime(int _dir);
-	int tus_reserved(std::string *error);
+	int tus_reserved(std::string *error = NULL);
     int get_dir() { return dir; }
 	State state() { return m_state; }
 

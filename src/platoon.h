@@ -42,6 +42,7 @@ private:
 
 	char m_visible[4][10 * 6][10 * 6];
 	char m_seen[4][10 * 6][10 * 6];
+	Place *m_seen_place[4][10 * 6][10 * 6];
 
 	Statistics *m_stats;
 
@@ -109,6 +110,7 @@ public:
 	void set_seen(int lev, int col, int row, int value) { m_seen[lev][col][row] = value; }
 	int is_visible(int lev, int col, int row) { return m_visible[lev][col][row]; }
 	void set_visible(int lev, int col, int row, int value) { m_visible[lev][col][row] = value; }
+	Place *get_seen_place(int lev, int col, int row) { return m_seen_place[lev][col][row]; }
 
 	void sit_on_start();
 

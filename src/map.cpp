@@ -368,7 +368,8 @@ void Map::draw()
 					if (seen(lev, col, row)) {
 						int gy = sy + mcd(lev, col, row, 0)->T_Level;
 						gy += mcd(lev, col, row, 3)->T_Level;
-						m_cell[lev][col][row]->get_place()->draw(sx, gy);
+						//m_cell[lev][col][row]->get_place()->draw(sx, gy);
+						platoon_local->get_seen_place(lev, col, row)->draw(sx, gy);
 					}
 
 					if (visible(lev, col, row)) {

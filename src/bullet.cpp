@@ -259,6 +259,7 @@ void Bullet::move()
 					elist->check_for_detonation(0, item);
 					item = NULL;
 					state = READY;
+					platoon_local->set_visibility_changed();
 					break;
 				}
 			}
@@ -401,6 +402,8 @@ void Bullet::draw()
 			break;
 
 		case THROWN:
+            if (!map->visible(z / 12, x / 16, y / 16)) return;
+
 			xg = map->x + x + y;
 			yg = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
 

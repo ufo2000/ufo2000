@@ -883,7 +883,7 @@ int Soldier::move(int ISLOCAL)
                 if (curway >= waylen) {
                     finish_march(ISLOCAL);
                 } else {
-                    if (!time_reserve(walktime(way[curway]), ISLOCAL))
+                    if (time_reserve(walktime(way[curway]), ISLOCAL) != OK)
                         finish_march(ISLOCAL);
                     else
                         dir = way[curway];
@@ -977,10 +977,10 @@ int Soldier::tus_reserved(std::string *error)
  * Test if soldier has reserved time for shooting.
  * Returns true if he has enough time for the next action.
  */
-bool Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
+int Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
 {
     if(!ISLOCAL)            // during enemy turn: don't check for reserved time
-        return (havetime(walk_time, use_energy) == OK);
+        return havetime(walk_time, use_energy);
 
     std::string error = "";
     int time = tus_reserved(&error);
@@ -988,9 +988,9 @@ bool Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
     if((havetime(walk_time + time, 0) != OK) && (havetime(time, 0) == OK)) {
         if(error != "")
             g_console->printf(COLOR_SYS_INFO1, error.c_str());
-        return false;
+        return havetime(walk_time + time, 0);
     } else {
-        return (havetime(walk_time, use_energy) == OK);
+        return havetime(walk_time, use_energy);
     }
 }
 
@@ -1010,7 +1010,7 @@ void Soldier::wayto(int dest_lev, int dest_col, int dest_row)
         }
 
         int ISLOCAL = platoon_local->belong(this);
-        if ((waylen < 2) || (!time_reserve(walktime(way[1]), ISLOCAL))) {
+        if ((waylen < 2) || (time_reserve(walktime(way[1]), ISLOCAL) != OK)) {
             curway = -1;
             waylen = 0;
         } else {
@@ -1101,7 +1101,7 @@ bool Soldier::faceto(int dest_col, int dest_row)
     if (nturns > 4)
         nturns = 8 - nturns;
     int ISLOCAL = platoon_local->belong(this);
-    if (time_reserve(nturns, ISLOCAL, 0)) {
+    if (time_reserve(nturns, ISLOCAL, 0) == OK) {
         spend_time(nturns);
         net->send_face(NID, dest_col, dest_row);
         way[0] = ang >> 5; curway = 0; waylen = 0;
@@ -1650,7 +1650,8 @@ int Soldier::deselect_item(Item *&it, int it_place, int &req_time)
 {
     for (int i = 0; i < NUMBER_OF_PLACES; i++) {
         req_time = calctime(it_place, i);
-        if (havetime(req_time) == OK) {
+        int ISLOCAL = platoon_local->belong(this);
+        if (time_reserve(req_time, ISLOCAL, 0) == OK) {
             if (m_place[i]->mdeselect(it)) {
                 spend_time(req_time);
                 return i;
@@ -1746,11 +1747,11 @@ int Soldier::change_pose()
 
     int ISLOCAL = platoon_local->belong(this);
     if (m_state == SIT) {
-        if (!time_reserve(8, ISLOCAL, 0)) return 0;
+        if (time_reserve(8, ISLOCAL, 0) != OK) return 0;
         m_state = STAND;
         spend_time(8);
     } else {
-        if (!time_reserve(4, ISLOCAL, 0)) return 0;
+        if (time_reserve(4, ISLOCAL, 0) != OK) return 0;
         m_state = SIT;
         spend_time(4);
     }
@@ -1804,7 +1805,8 @@ int Soldier::unload_ammo(Item * it)
     if ((rhand_item() != NULL) || (lhand_item() != NULL))
         return 0;
 
-    if (havetime(8) == OK) {
+    int ISLOCAL = platoon_local->belong(this);
+    if (time_reserve(8, ISLOCAL, false) == OK) {
         putitem(it, P_ARM_RIGHT);
         putitem(it->unload(), P_ARM_LEFT);
 
@@ -1825,7 +1827,8 @@ int Soldier::load_ammo(int iplace, Item * it)
     if (it == NULL)
         return 0;
 
-    if (havetime(15) != OK) return 0;
+    int ISLOCAL = platoon_local->belong(this);
+    if (time_reserve(15, ISLOCAL, false) != OK) return 0;
 
     Item *gun = item(iplace);
     if (gun == NULL)
@@ -1926,8 +1929,9 @@ int Soldier::required(int pertime)
 int Soldier::eff_FAccuracy()
 {
     int ac = ud.CurFAccuracy;
-    ac -= (ac * (ud.MaxHealth - ud.CurHealth)) / ud.MaxHealth / 2;
-    return ac;
+    int penalty_health = (ac * (ud.MaxHealth - ud.CurHealth)) / ud.MaxHealth / 2;
+    int penalty_morale = (ac * (100 - ud.Morale)) / 100 / 2;
+    return ac - penalty_health - penalty_morale;
 };
 
 /**
