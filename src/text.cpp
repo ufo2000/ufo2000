@@ -23,8 +23,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * Ufo2000: Text for messages and help-system
  */
 
-// Todo: collect all text used in Ufo2000
-
 #include "stdafx.h"
 
 #include "global.h"
@@ -102,46 +100,53 @@ const char *gettext( char *str1 )
  * The texts must be short, otherwise they will be cut off
  * at the right edge of the battlescape-window.
  */
-char *icontext( const int icon_nr )
+const char *icontext( const int icon_nr )
 {
+    static std::string txt;
+
     switch (icon_nr) {
-        //                           ....+....1....+....2....+....3
-        case B_MAN_UP      : return "Move up one level";
-		case B_MAN_DOWN    : return "Move down one level";
+        //                            ....+....1....+....2....+....3
+        case B_MAN_UP      : txt = _("Move up one level");   break;
+        case B_MAN_DOWN    : txt = _("Move down one level"); break;
 
-        case B_VIEW_UP     : return "View up one level";
-        case B_VIEW_DOWN   : return "View down one level";
+        case B_VIEW_UP     : txt = _("View up one level");   break;
+        case B_VIEW_DOWN   : txt = _("View down one level"); break;
 
-		case B_MAP         : return "Show Map";
-		case B_CROUCH      : return "Stand up / Crouch";
+        case B_MAP         : txt = _("Show Map");            break;
+        case B_CROUCH      : txt = _("Stand up / Crouch");   break;
 
-		case B_INVENTORY   : return "Inventory";
-		case B_CENTER_VIEW : return "CenterView";
+        case B_INVENTORY   : txt = _("Inventory");           break;
+        case B_CENTER_VIEW : txt = _("CenterView");          break;
 
-		case B_NEXT_MAN    : return "Jump to Next Man";
-		case B_NEXT_MAN_2  : return "Done with this man";
+        case B_NEXT_MAN    : txt = _("Jump to Next Man");    break;
+        case B_NEXT_MAN_2  : txt = _("Done with this man");  break;
 
-		case B_TOGGLE_ROOF : return "Toggle Roof";
-		case B_OPTIONS     : return "Options";
+        case B_TOGGLE_ROOF : txt = _("Toggle Roof");         break;
+        case B_OPTIONS     : txt = _("Options");             break;
 
         // when screen-width is set to minimum, "Exit Game" barely fits
-		case B_DONE        : return "Done with turn";
-		case B_EXIT        : return "Exit Game";
+        case B_DONE        : txt = _("Done with turn");      break;
+        case B_EXIT        : txt = _("Exit Game");           break;
 
-        case B_MAN_STATS   : return "Show Stats of man";
-        case B_BARCHART    : return "Switch Barchart";
+        case B_MAN_STATS   : txt = _("Show Stats of man");   break;
+        case B_BARCHART    : txt = _("Switch Barchart");     break;
 
         case R_TIME_FREE + BUTTON_NUMBER : 
-                             return "Reserve Time: None";
+                             txt = _("Reserve Time: None");
+                             break;
         case R_TIME_AIM  + BUTTON_NUMBER : 
-                             return "Reserve Time: Aimed shot";
+                             txt = _("Reserve Time: Aimed shot");
+                             break;
         case R_TIME_SNAP + BUTTON_NUMBER : 
-                             return "Reserve Time: Snapshot";
+                             txt = _("Reserve Time: Snapshot");
+                             break;
         case R_TIME_AUTO + BUTTON_NUMBER : 
-                             return "Reserve Time: Autoshot";
+                             txt = _("Reserve Time: Autoshot");
+                             break;
 
-		default            : return "icon ??";
+        default            : txt = "icon ??"; 
     }
+    return txt.c_str();
 }
 
 /**
@@ -187,7 +192,7 @@ void help( const int helppage )
     sprintf(next,  "%s", _("&NEXT PAGE") );
     sprintf(ok,    "%s", _("  CLOSE  ")  );
 
-    sprintf(exit, "%s", _("To leave, press ESC.") );
+    sprintf(exit,  "%s", _("To leave, press ESC.") );
 
     rest(1); // Don't eat all CPU resources
 

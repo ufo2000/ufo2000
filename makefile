@@ -172,7 +172,9 @@ clean:
 	$(RM) $(OBJDIR)/*.d
 	$(RM) $(NAME)
 
-# update the tranlations of game messages to different languages using gettext tools
+# update the translations of game messages to different languages 
+# using gettext tools - see manual at
+# http://www.gnu.org/software/gettext/manual/gettext.html
 lng: translations/ufo2000-de.po
 
 translations/ufo2000-de.po: $(SRCS)

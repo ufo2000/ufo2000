@@ -54,7 +54,7 @@ void lua_message( const std::string &str1 );
 const char *gettext( char *str1 );
 
 //! Tooltips for the control-panel
-char *icontext( const int icon_nr );
+const char *icontext( const int icon_nr );
 
 //! Simple help, using alert3().
 void help( const int helppage );
