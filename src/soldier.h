@@ -188,7 +188,7 @@ public:
 	void finish_march(int ISLOCAL);
 	bool use_elevator(int dz);
 	void break_march();
-	void faceto(int dest_col, int dest_row);
+	bool faceto(int dest_col, int dest_row);
 	int dirto(int src_col, int src_row, int dest_col, int dest_row);
 	int open_door();
 	int change_pose();

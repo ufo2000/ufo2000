@@ -1452,11 +1452,11 @@ int Soldier::dirto(int src_col, int src_row, int dest_col, int dest_row)
 }
 
 
-void Soldier::faceto(int dest_col, int dest_row)
+bool Soldier::faceto(int dest_col, int dest_row)
 {
 	fixed ox = itofix(dest_col - x);
 	fixed oy = itofix(dest_row - y);
-	if ((!ox) && (!oy)) return ;
+	if ((!ox) && (!oy)) return false;
 	int ang = fixtoi(fatan2(oy, ox));
 	if (ang < 0) ang = 256 + ang;
 	ang = (ang + 16) % 256;
@@ -1464,7 +1464,7 @@ void Soldier::faceto(int dest_col, int dest_row)
 
 	int nturns = (ang >> 5) - dir;
 	if (nturns == 0)
-		return ;
+		return true;
 
 	if (nturns < 0) nturns = -nturns;
 	if (nturns > 4)
@@ -1475,7 +1475,9 @@ void Soldier::faceto(int dest_col, int dest_row)
 		net->send_face(NID, dest_col, dest_row);
 		way[0] = ang >> 5; curway = 0; waylen = 0;
 		calc_visible_cells();
-	}
+		return true;
+	} else
+		return false;
 }
 
 /**
@@ -1902,17 +1904,17 @@ void Soldier::panic(int action)
 		m_place[P_ARM_LEFT]->dropall(z, x, y);
 		m_place[P_ARM_RIGHT]->dropall(z, x, y);
 		/*run for you life! - not implemented yet*/
+		ud.CurTU = 0;
 		g_console->printf(COLOR_ROSE, "%s has panicked.", md.Name);
 		break;
 		
 		case 1:
 		if(platoon_local->belong(this))		//shots will be sent to the remote player - so don't double them
-			berserk_fire();
+			berserk_fire();              
 		g_console->printf(COLOR_ROSE, "%s has gone berserk.", md.Name);
 		break;
 	}
-	
-	ud.CurTU = 0;
+
 	change_morale(20);
                                          
     battle_report( "%s: %s\n", _("Panicked"), md.Name);
@@ -2510,7 +2512,9 @@ void Soldier::try_shoot()
 	}
 
 	// Face to target
-	faceto(map->sel_col, map->sel_row);
+	if(!faceto(map->sel_col, map->sel_row)) {
+		FIRE_num = 0;
+	}
 }
 
 // Note the absence of map->sel_*, since the aim is to hit the target's position.
