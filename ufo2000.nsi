@@ -401,9 +401,7 @@ Section "${GAME_NAME} (required)" MainSec
 	File "readme_de.txt"
 	File "readme_en.txt"
 	File "readme_es.txt"
-	File "readme_fi.txt"
 	File "readme_fr.txt"
-	File "readme_pl.txt"
 	File "readme_pt.txt"
 	File "readme_ru.html"
 	File "soundmap.xml"
@@ -475,18 +473,12 @@ Section "${GAME_NAME} (required)" MainSec
 		StrCmp $0 "1" sp sp1		
 		sp: CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - Spanish.lnk" "$INSTDIR\readme_es.txt"
 		sp1: !insertmacro MUI_INSTALLOPTIONS_READ $0 "readme_select.ini" "Field 7" "State"
-		StrCmp $0 "1" pl pl1		
-		pl: CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - Polish.lnk" "$INSTDIR\readme_pl.txt"
-		pl1: !insertmacro MUI_INSTALLOPTIONS_READ $0 "readme_select.ini" "Field 5" "State"
 		StrCmp $0 "1" fr fr1
 		fr: CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - French.lnk" "$INSTDIR\readme_fr.txt"
 		fr1: !insertmacro MUI_INSTALLOPTIONS_READ $0 "readme_select.ini" "Field 2" "State"
 		StrCmp $0 "1" ru ru1
 		ru: CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Russian Manual.lnk" "$INSTDIR\readme_ru.html"
 		ru1: !insertmacro MUI_INSTALLOPTIONS_READ $0 "readme_select.ini" "Field 4" "State"
-		StrCmp $0 "1" fi fi1
-		fi: CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - Finnish.lnk" "$INSTDIR\readme_fi.txt"
-		fi1: !insertmacro MUI_INSTALLOPTIONS_READ $0 "readme_select.ini" "Field 8" "State"
 		StrCmp $0 "1" pt pt1
 		pt: CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - Portuguese.lnk" "$INSTDIR\readme_pt.txt"
 		pt1: !insertmacro MUI_INSTALLOPTIONS_READ $0 "readme_select.ini" "Field 6" "State"
