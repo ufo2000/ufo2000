@@ -88,9 +88,9 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
        minimap.cpp mouse.cpp multiplay.cpp music.cpp packet.cpp       \
        pck.cpp persist.cpp place.cpp platoon.cpp random.cpp           \
        scenario.cpp server_config.cpp server_gui.cpp                  \
-       server_protocol.cpp server_transport.cpp soldier.cpp sound.cpp \
-       spk.cpp stats.cpp terrapck.cpp text.cpp units.cpp video.cpp    \
-       wind.cpp                                                       \
+       server_protocol.cpp server_transport.cpp skin.cpp soldier.cpp  \
+       sound.cpp spk.cpp stats.cpp terrapck.cpp text.cpp units.cpp    \
+       video.cpp wind.cpp                                             \
                                                                       \
        $(SRCS_LUA)                                                    \
                                                                       \

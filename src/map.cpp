@@ -1098,7 +1098,7 @@ BITMAP *Map::create_lof_bitmap(int lev, int col, int row)
 				}*/
 
 				if (dir != -1) {
-					if (Soldier::m_bof[s][dir][j][i][15 - k])
+					if (Skin::m_bof[s][dir][j][i][15 - k])
 						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, COLOR_GREEN04);
 					else if (l & 0x8000)
 						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, COLOR_WHITE);

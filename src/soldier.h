@@ -26,6 +26,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "bullet.h"
 #include "item.h"
 #include "place.h"
+#include "skin.h"
 
 #define P_SHL_RIGHT       0
 #define P_SHL_LEFT        1
@@ -42,32 +43,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 // Like ground, but accessible to all soldiers in mission-planner:
 #define P_COMMON_POOL    10
 
-#define S_HANDOB          0
-#define S_XCOM_0          1
-#define S_XCOM_1          2
-#define S_XCOM_2          3
-#define S_XCOM_3          4
-#define S_SECTOID         5
-#define S_MUTON           6
-#define SKIN_NUMBER       7
-// not yet implemented:
-#define S_SNAKEMAN        7
-#define S_CHRYSSALID      8
-
 //! maximum number of points a soldier can have
 #define MAXPOINTS (7*60)
-
-struct SKIN_INFO { 
-	const char *Name; 
-	int         SkinType; 
-	int         fFemale;
-	int         armour_values[5];
-};
-
-extern SKIN_INFO g_skins[];
-extern int g_skins_count;
-
-int get_skin_index(int skin_type, int female_flag);
 
 enum State { SIT = 0, STAND, MARCH, FALL, LIE };
 
@@ -84,6 +61,7 @@ private:
 	friend class Inventory;
 	friend class Icon;
 	friend class Editor;
+	friend class Skin;
 public:
 	MANDATA md;
 	ITEMDATA id;
@@ -91,12 +69,7 @@ public:
 private:
 	UNITDATA ud;
 
-	static char *****m_bof;
-	static PCK **m_pck;
-	static PCK *m_add1;
-	static SPK *m_spk[6][2][4];
 	static BITMAP *m_unibord;
-	static BITMAP *m_image;
 	static int dir2ofs[8];
 	static char ofs2dir[3][3];
 
@@ -104,6 +77,7 @@ private:
 	Bullet *m_bullet;
 	Place  *m_place[NUMBER_OF_PLACES]; //8 - for internal editor use
 	Platoon *m_platoon;
+	Skin *m_skin;
 	bool m_p_map_allocated;
 	unsigned char m_ReserveTimeMode;
 
@@ -138,8 +112,6 @@ private:
 	int enemy_z[100], enemy_x[100], enemy_y[100];
 	int seen_enemy_num;
 	int seen_enemy_z[100], seen_enemy_x[100], seen_enemy_y[100];
-
-	static void initbof();
 	
 	bool time_reserve(int walk_time, int ISLOCAL, int use_energy = 1);
 	void berserk_fire();
@@ -149,8 +121,8 @@ private:
 
 public:
 
-	static void initpck();
-	static void freepck();
+    static void initpck();
+	static void freepck() { Skin::freepck(); }
 
 	Soldier(Platoon *platoon, int _NID);
 	Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *sdat, ITEMDATA *idat, DeployType dep_type);
@@ -175,8 +147,7 @@ public:
 	int move(int ISLOCAL);
 	void calc_visible_cells();
 
-	void draw_head(int head_frame, int dir, BITMAP *image, int delta);
-	void draw();
+	void draw() { m_skin->draw(); }
 	void draw_inventory();
 	void draw_unibord(int gx, int gy);
 	void draw_selector(int select_y);
@@ -243,6 +214,7 @@ public:
 	void set_next(Soldier *s) { m_next = s; }
 	void set_prev(Soldier *s) { m_prev = s; }
 	Bullet *bullet() { return m_bullet; }
+	Skin *skin() { return m_skin; }
 
 	void calc_bullet_start(int xs, int ys, int zs, int* xr, int* yr, int *zr); //calculates starting position for a bullet
 	void calc_shot_stat(int zd, int xd, int yd);

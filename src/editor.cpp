@@ -873,24 +873,10 @@ void Editor::show()
                     break;
                 case KEY_F12:  // cycle thru armor-types:
                     A1 = man->md.SkinType;
-                    if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) { // Shift-F12: Aliens
-                        man->md.fFemale    = 0;  // only 'standard' aliens available
-                        man->md.Appearance = 0;
-                        switch (man->md.SkinType) {
-                            case S_SECTOID: man->md.SkinType = S_MUTON;   break;
-                            case S_MUTON  : man->md.SkinType = S_SECTOID; break;
-                            // Todo: more aliens: Snakeman...
-                            default:        man->md.SkinType = S_SECTOID; break;
-                        }
-                    } else { // F12: Human Armor
-                        switch (man->md.SkinType) {
-                            case S_XCOM_0 : man->md.SkinType = S_XCOM_1;  break;
-                            case S_XCOM_1 : man->md.SkinType = S_XCOM_2;  break;
-                            case S_XCOM_2 : man->md.SkinType = S_XCOM_3;  break;
-                            case S_XCOM_3 : man->md.SkinType = S_XCOM_0;  break;
-                            default:        man->md.SkinType = S_XCOM_0;  break;
-                        }
-                    }
+                    if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) // Shift-F12: Aliens
+                        man->skin()->next_alien();
+                    else // F12: Human Armor
+                        man->skin()->next_human();
                     man->process_MANDATA();
                     break;
 //
