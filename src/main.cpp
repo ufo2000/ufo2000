@@ -1363,7 +1363,7 @@ void endgame_stats()
 
 	CHANGE = 1;
 
-    g_console->printf(COLOR_SYS_PROMPT, _("You can chat here.  Press ESC when finished.\n\n") );
+    g_console->printf(COLOR_SYS_PROMPT, "%s\n\n", _("You can chat here.  Press ESC when finished.") );
 	while (!DONE)
 	{
 		net->check();
@@ -1384,7 +1384,7 @@ void endgame_stats()
 
 			switch (scancode) {
 				case KEY_ESC:
-                    if (askmenu( _("EXIT GAME") ))
+                    if (askmenu( _("EXIT TO MAIN MENU") ))
 						DONE = 1;
 					break;
 				case KEY_UP:
@@ -1465,6 +1465,7 @@ void gameloop()
 {
 	int mouse_leftr = 1, mouse_rightr = 1, select_y = 0;
 	int color1;
+    int b1 = 0;
 	
     lua_message( "Start: gameloop" );
 	if ((rand() % 2) == 1)
@@ -1780,7 +1781,7 @@ void gameloop()
 				case KEY_F3:
                     if (askmenu( _("LOAD GAME") )) {
 						if (!loadgame(F("$(home)/ufo2000.sav"))) {
-                            alert( _("saved game not found"), "", "", _("OK"), NULL, 0, 0);
+                            alert( _("Saved game not found"), "", "", _("OK"), NULL, 0, 0);
 						}
 						inithotseatgame();
 						if (net->gametype == GAME_TYPE_HOTSEAT)
@@ -1826,9 +1827,13 @@ void gameloop()
 						inventory->close();
 					} else if (MODE == UNIT_INFO || MODE == MAP2D) {
 						MODE = MAP3D;
-                    } else if (askmenu( _("EXIT GAME ?") )) {  // Todo: Draw-button
-						DONE = 1;
-					}
+                    } else {
+                        b1 = alert3( "", _("ABORT MISSION ?"), "",
+                                     _("YES=RESIGN"), _("OFFER DRAW"), _("NO=CONTINUE"), 0,0,1 );
+                        if (b1 == 1) {  // Todo: process draw-button
+                            DONE = 1;
+                        }
+                    }
 					break;
 				default:
 					if (g_console->process_keyboard_input(keycode, scancode))
@@ -1918,7 +1923,7 @@ void start_loadgame()
 	// Todo: message for "version of savegame not compatible"
    	if (!loadgame(F("$(home)/ufo2000.sav")))
    	{
-        alert( "", _("saved game not available"), "", _("OK"), NULL, 0, 0);
+        alert( "", _("Saved game not available"), "", _("OK"), NULL, 0, 0);
    		return;
    	}
 	inithotseatgame();

@@ -177,8 +177,8 @@ void help( const int helppage )
     int kp_prev  = 112;		//<! Keypress for prev.page: 112:"p"
     int kp_ok    =  27;		//<! Keypress for ok=close :  13:ENTER / 27:ESC
     int kp_next  = 110;		//<! Keypress for nextpage : 110:"n"
-    char index[16], prev[16], next[16], ok[16];
-    char exit[32];
+    char index[32], prev[32], next[32], ok[32];
+    char exit[64];
 
 // Todo: Calculate keycode from "&I" in button-text
     sprintf(index, "%s", _("HELP-&INDEX") );
@@ -187,7 +187,11 @@ void help( const int helppage )
     sprintf(ok,    "%s", _("  CLOSE  ")  );
 
     sprintf(exit,  "%s", _("To leave, press ESC.") );
-
+/* 
+    FILE *f1 = fopen( "gettext.log", "at");
+    fprintf(f1, "#: '%s'\n", prev);
+    fclose(f1);
+ */ 
     rest(1); // Don't eat all CPU resources
 
     switch (helppage) {

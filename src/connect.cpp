@@ -360,7 +360,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 			//	"START"
 			if (mouse_inside(local.gx + 5 * 8 - 20, SCREEN2H - 20, local.gx + 5 * 8 + 20, SCREEN2H - 5))
 			{
-                if (F10ALLOWED && local.SEND && askmenu( _("MISSION-PREPARATIONS FINISHED") ))
+                if (F10ALLOWED && local.SEND && askmenu( _("PREPARATIONS FOR MISSION FINISHED") ))
                     DONE = 1;
 			}
 		}
@@ -416,7 +416,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 					FS_DecMusicVolume();
 					break;
 				case KEY_ESC:
-                    if (askmenu( _("EXIT GAME") )) {
+                    if (askmenu( _("EXIT MISSION-PLANNER") )) {
 						net->send_quit();
 						net->SEND = 0;
 						DONE = 1;

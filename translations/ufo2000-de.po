@@ -1,18 +1,23 @@
 # UFO2000 - Language-File: German
-# Copyright (C) 2001-2004 
+# Copyright (C) 2001-2004 ufo2000 development team
 # This file is distributed under the same license as the UFO2000 package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2004.
-#
+
+# !! Comments have to be placed before the "msgid"-line, 
+# !! and must start with "# ".
 msgid ""
 msgstr ""
 "Project-Id-Version: UFO2000\n"
 "POT-Creation-Date: 2004-11-03 21:06+0200\n"
-"PO-Revision-Date: 2004-11-03\n"
-"Last-Translator: HaJo Gurt\n"
+"PO-Revision-Date: 2004-11-04 12:56+0100\n"
+"Last-Translator: HaJo Gurt <gurt@gmx.de>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: German\n"
+"X-Poedit-Country: GERMANY\n"
+"X-Poedit-Basepath: C:\\Devel\\ufo2000.522\\\n"
 
 #: src/connect.cpp:80
 msgid "Comparing local and remote UFO2000 versions...\n"
@@ -20,7 +25,7 @@ msgstr "Versions-Vergleich der beiden UFO2000-Programme...\n"
 
 #: src/connect.cpp:81
 msgid "Press ESC to cancel\n"
-msgstr "ESC drücken für Abbruch\n"
+msgstr "ESC drÃ¼cken fÃ¼r Abbruch\n"
 
 #: src/connect.cpp:133
 msgid ""
@@ -34,11 +39,11 @@ msgstr "Willkommen im Missionsplaner !"
 
 #: src/connect.cpp:296
 msgid "You can select a map and change the match-settings."
-msgstr "Sie können eine Karte wählen und die Spiel-Einstellungen ändern."
+msgstr "Sie kÃ¶nnen eine Karte wÃ¤hlen und die Spiel-Einstellungen Ã¤ndern."
 
 #: src/connect.cpp:298
 msgid "The map is already set for this game, and cannot be changed."
-msgstr "Die Karte für dieses Spiel wurde bereits festgelegt und kann nicht mehr geändert werden."
+msgstr "Die Karte fÃ¼r dieses Spiel wurde bereits festgelegt und kann nicht mehr geÃ¤ndert werden."
 
 #: src/connect.cpp:299
 msgid "To edit a soldier, CTRL-click on his name."
@@ -50,7 +55,7 @@ msgstr "Ein Links-Klick setzt einen Soldaten auf die Karte, ein Rechts-Klick ent
 
 #: src/connect.cpp:301
 msgid "When finished, click SEND, then START.  Press ESC to quit, F1 for help."
-msgstr "Zum Abschluss SENDEN, dann START anklicken. ESC für Abbruch, F1 für Hilfe."
+msgstr "Zum Abschluss SENDEN, dann START anklicken. ESC fÃ¼r Abbruch, F1 fÃ¼r Hilfe."
 
 #: src/connect.cpp:436
 msgid "ok."
@@ -71,47 +76,50 @@ msgstr "ABBRUCH"
 #: src/icon.cpp:519
 #, c-format
 msgid "THROW       ACC>%02d%% TUs>%02d"
-msgstr "WURF        ACC>%02d%% TUs>%02d"
+msgstr "WERFEN      ACC>%02d%% TUs>%02d"
 
 #: src/icon.cpp:531
 #, c-format
 msgid "STUN        ACC>%02d%% TUs>%02d"
-msgstr "BETÄUBEN    ACC>%02d%% TUs>%02d"
+msgstr "BETÃ„UBEN    ACC>%02d%% TUs>%02d"
 
 #: src/icon.cpp:533
 #, c-format
 msgid "PUNCH       ACC>%02d%% TUs>%02d"
-msgstr ""
+msgstr "SCHLAG      ACC>%02d%% TUs>%02d"
 
 #: src/icon.cpp:542
 #, c-format
 msgid "AIMED THROW ACC>%02d%% TUs>%02d"
-msgstr ""
+msgstr "GEZIELTER WURF  ACC>%02d%% TUs>%02d"
 
 #: src/icon.cpp:554
 #, c-format
+# msgstr "S. SCHARFMACHEN     TUs>%02d"
 msgid "PRIME EXPLOSIVE     TUs>%02d"
-msgstr "S. SCHARFMACHEN     TUs>%02d"
+msgstr "SPRENGLADUNG SCHARFMACHEN  TUs>%02d"
 
 #: src/icon.cpp:561
 #, c-format
+# msgstr "G. SCHARFMACHEN     TUs>%02d"
 msgid "PRIME GRENADE       TUs>%02d"
-msgstr "G. SCHARFMACHEN     TUs>%02d"
+msgstr "GRANATE SCHARFMACHEN       TUs>%02d"
 
 #: src/icon.cpp:574
 #, c-format
 msgid "AUTO SHOT   ACC>%02d%% TUs>%02d"
-msgstr "FEUERSTOSS  ACC>%02d%% TUs>%02d"
+msgstr "FEUERSTOSS      ACC>%02d%% TUs>%02d"
 
 #: src/icon.cpp:585
 #, c-format
 msgid "SNAP SHOT   ACC>%02d%% TUs>%02d"
-msgstr "SCHNELL-S.  ACC>%02d%% TUs>%02d"
+msgstr "SCHNELLSCHUSS   ACC>%02d%% TUs>%02d"
 
 #: src/icon.cpp:595
 #, c-format
+# msgstr "GEZIELT S.  ACC>%02d%% TUs>%02d"
 msgid "AIMED SHOT  ACC>%02d%% TUs>%02d"
-msgstr "GEZIELT S.  ACC>%02d%% TUs>%02d"
+msgstr "GEZIELTER SCHUSS ACC>%02d%% TUs>%02d"
 
 #: src/icon.cpp:647 src/video.cpp:360 src/server_gui.cpp:311
 msgid "Cancel"
@@ -132,7 +140,7 @@ msgstr "Ende der Runde"
 
 #: src/main.cpp:868
 msgid "  NEXT TURN  "
-msgstr " Nächste Runde "
+msgstr " NÃ¤chste Runde "
 
 #: src/main.cpp:869 src/multiplay.cpp:131 src/multiplay.cpp:140
 #: src/server_gui.cpp:386 src/server_gui.cpp:392
@@ -142,7 +150,7 @@ msgstr ""
 #: src/main.cpp:902
 #, c-format
 msgid "Next turn. local = %d, remote = %d soldiers"
-msgstr "Nächste Runde. Anzahl eigene Soldaten: %d, andere Seite: %d "
+msgstr "NÃ¤chste Runde. Anzahl eigener Einheiten: %d, Gegner: %d "
 
 #: src/main.cpp:957
 msgid "WATCH"
@@ -188,7 +196,7 @@ msgstr "Anderer Trupp"
 
 #: src/main.cpp:1278
 msgid "Total Kills:"
-msgstr "Abschüsse:"
+msgstr "AbschÃ¼sse:"
 
 #: src/main.cpp:1284
 msgid "Death:"
@@ -209,7 +217,7 @@ msgstr "Erfolgreichster Soldat:"
 #: src/main.cpp:1305
 #, c-format
 msgid "%s (%s, %d kills)"
-msgstr "%s (%s, Abschüsse: %d)"
+msgstr "%s (%s, AbschÃ¼sse: %d)"
 
 #: src/main.cpp:1307 src/main.cpp:1315 src/main.cpp:1323
 msgid "Remote"
@@ -238,18 +246,15 @@ msgstr ""
 
 #: src/main.cpp:1333 src/main.cpp:1335
 msgid "Kills"
-msgstr "Abschüsse"
+msgstr "AbschÃ¼sse"
 
 #: src/main.cpp:1333 src/main.cpp:1335
 msgid "Damage"
 msgstr "Schaden"
 
 #: src/main.cpp:1366
-msgid ""
-"You can chat here.  Press ESC when finished.\n"
-"\n"
-msgstr ""
-"Hier können sie weiter chatten. Zum Abschluss ESC drücken.\n"
+msgid "You can chat here.  Press ESC when finished."
+msgstr "Sie kÃ¶nnen hier weiter chatten.  Zum Abschluss ESC drÃ¼cken."
 
 #: src/main.cpp:1387
 msgid "EXIT GAME"
@@ -262,7 +267,7 @@ msgstr "Musik AUS"
 #: src/main.cpp:1403 src/main.cpp:1407 src/main.cpp:1728 src/main.cpp:1732
 #, c-format
 msgid "Music Volume: %d"
-msgstr "Musik Lautstärke: %d"
+msgstr "Musik LautstÃ¤rke: %d"
 
 #: src/main.cpp:1478
 msgid "Welcome to the battlescape of UFO2000 !"
@@ -270,7 +275,7 @@ msgstr "Willkommen auf dem Schlachtfeld von UFO2000 !"
 
 #: src/main.cpp:1479
 msgid "Press F1 for help."
-msgstr "F1 drücken für Hilfe."
+msgstr "F1 drÃ¼cken fÃ¼r Hilfe."
 
 #: src/main.cpp:1774
 msgid "SAVE GAME"
@@ -318,8 +323,8 @@ msgid "EXIT GAME ?"
 msgstr "Mission abbrechen ?"
 
 #: src/main.cpp:1921
-msgid "saved game not available"
-msgstr "Spielstand ist nicht verfügbar"
+msgid "Saved game not available"
+msgstr "Spielstand ist nicht verfÃ¼gbar"
 
 #: src/main.cpp:2073
 #, c-format
@@ -356,7 +361,7 @@ msgstr "Spielstand laden"
 
 #: src/mainmenu.cpp:185
 msgid "about"
-msgstr "Über UFO2000"
+msgstr "Ãœber UFO2000"
 
 #: src/mainmenu.cpp:187
 msgid "quit"
@@ -364,11 +369,11 @@ msgstr "Ende"
 
 #: src/map.cpp:2001
 msgid "Select terrain type"
-msgstr "Gelände-Typ wählen"
+msgstr "GelÃ¤nde-Typ wÃ¤hlen"
 
 #: src/multiplay.cpp:131
 msgid "  NEXT PLAYER  "
-msgstr " Nächster Spieler "
+msgstr " NÃ¤chster Spieler "
 
 #: src/multiplay.cpp:140
 msgid "  GAME START  "
@@ -395,12 +400,12 @@ msgstr "Hilfe-&Index"
 
 #: src/text.cpp:178
 msgid "&PREV PAGE"
-msgstr "Seite &zurück"
+msgstr "Seite &zurÃ¼ck"
 
 #: src/text.cpp:179
+# msgstr "&NÃ¤chste Seite"
 msgid "&NEXT PAGE"
-#msgstr "&Nächste Seite"
-msgstr "Seite &vorwärts"
+msgstr "Seite &vorwÃ¤rts"
 
 #: src/text.cpp:180
 msgid "  CLOSE  "
@@ -408,12 +413,12 @@ msgstr " Schliessen "
 
 #: src/text.cpp:182
 msgid "To leave, press ESC."
-msgstr "ESC drücken zum Verlassen"
+msgstr "ESC drÃ¼cken zum Verlassen"
 
 #: src/soldier.cpp:823
 #, c-format
-msgid "Equipment weight: %d/%d"
-msgstr "Gewicht der Ausrüstung: %d/%d"
+msgid "Equipment weight: %d/%2d"
+msgstr "Gewicht der AusrÃ¼stung: %d/%2d"
 
 #: src/soldier.cpp:832
 msgid "TUs>"
@@ -425,19 +430,19 @@ msgstr ""
 
 #: src/soldier.cpp:1298
 msgid "Time units are reserved for snap shot."
-msgstr "Zeit ist reserviert für einen Schnellschuss."
+msgstr "Zeit ist reserviert fÃ¼r einen Schnellschuss."
 
 #: src/soldier.cpp:1305
 msgid "Time units are reserved for aimed shot."
-msgstr "Zeit ist reserviert für einen gezielten Schuss."
+msgstr "Zeit ist reserviert fÃ¼r einen gezielten Schuss."
 
 #: src/soldier.cpp:1312
 msgid "Time units are reserved for auto shot."
-msgstr "Zeit ist reserviert für einen Feuerstoss."
+msgstr "Zeit ist reserviert fÃ¼r einen Feuerstoss."
 
 #: src/soldier.cpp:1319
 msgid "Time units are reserved for grenade throw."
-msgstr "Zeit ist reserviert für einen Granatwurf."
+msgstr "Zeit ist reserviert fÃ¼r einen Granatwurf."
 
 #: src/units.cpp:208
 msgid "MATCH SETTINGS"
@@ -576,7 +581,7 @@ msgstr "Karte laden"
 
 #: src/units.cpp:954
 msgid "Invalid map file."
-msgstr "Ungültige Karten-Datei"
+msgstr "UngÃ¼ltige Karten-Datei"
 
 #: src/units.cpp:972
 msgid "Save GEODATA.lua file"
@@ -637,7 +642,7 @@ msgstr "Gelb  - Sie haben diesem Spieler eine Herausforderung gesendet.\n"
 
 #: src/server_gui.cpp:416
 msgid "green player name - you can accept a challenge from this player\n"
-msgstr "Grün  - Sie können eine Heraufforderung von diesem Spieler annehmen.\n"
+msgstr "GrÃ¼n  - Sie kÃ¶nnen eine Heraufforderung von diesem Spieler annehmen.\n"
 
 #: src/server_gui.cpp:417
 msgid "red player name - the player is busy playing with someone else\n"
@@ -645,7 +650,7 @@ msgstr "Rot   - Spielt gerade mit jemand anderem.\n"
 
 #: src/server_gui.cpp:419
 msgid "You can left click on player names to select them as your opponents\n"
-msgstr "Durch anklicken eines Namens können sie eine Herausforderung senden.\n"
+msgstr "Durch anklicken eines Namens kÃ¶nnen sie eine Herausforderung senden.\n"
 
 #: src/server_gui.cpp:438
 msgid "  Connection lost  "
@@ -654,7 +659,7 @@ msgstr " Verbindung ging verloren "
 #: src/server_gui.cpp:449
 #, c-format
 msgid "%s is back from a game\n"
-msgstr "%s ist zurück von einem Spiel\n"
+msgstr "%s ist zurÃ¼ck von einem Spiel\n"
 
 #: src/server_gui.cpp:451
 #, c-format
@@ -882,12 +887,12 @@ msgstr ""
 #: src/scenario.cpp:495
 #, c-format
 msgid "Player 1 is controlling the target area for %d turn(s)."
-msgstr "Spieler 1 hat die Kontrolle über das Zielgebiet für %d Runden."
+msgstr "Spieler 1 hat die Kontrolle Ã¼ber das Zielgebiet fÃ¼r %d Runden."
 
 #: src/scenario.cpp:503
 #, c-format
 msgid "Player 2 is controlling the target area for %d turn(s)."
-msgstr "Spieler 2 hat die Kontrolle über das Zielgebiet für %d Runden."
+msgstr "Spieler 2 hat die Kontrolle Ã¼ber das Zielgebiet fÃ¼r %d Runden."
 
 #: src/scenario.cpp:508
 msgid "Nobody is controlling the target area."
@@ -901,31 +906,31 @@ msgstr "%s ist nicht erlaubt."
 #: src/scenario.cpp:797
 #, c-format
 msgid "%d points limit exceeded!"
-msgstr "Punktelimit %d ist überschritten!"
+msgstr "Punktelimit %d ist Ã¼berschritten!"
 
 #: src/scenario.cpp:810
 #, c-format
 msgid ""
 "Items on the ground aren't allowed (you have: %d, including unselected "
 "soldiers)."
-msgstr "Gegenstände auf dem Boden sind nicht erlaubt !"
-"(Sie haben %d solche Gegenstände)"
+msgstr "GegenstÃ¤nde auf dem Boden sind nicht erlaubt !"
+"(Sie haben %d solche GegenstÃ¤nde)"
 
 #: src/scenario.cpp:834 src/scenario.cpp:878 src/scenario.cpp:940
 msgid "Soldier #1 can't have two-handed weapons!"
-msgstr "Der erste Soldat darf keine zweihändige Waffe benutzen."
+msgstr "Der erste Soldat darf keine zweihÃ¤ndige Waffe benutzen."
 
 #: src/scenario.cpp:854
 msgid "You must have at least 2 high explosives."
 msgstr "Sie brauchen mindestens 2 Sprengladungen."
 
 #: src/scenario.cpp:922
+# msgstr "Sie brauchen mindestens einen x oder einen geladenen y."
 msgid "You must have at least one stun rod or one loaded stun launcher."
 msgstr ""
-#msgstr "Sie brauchen mindestens einen x oder einen geladenen y."
 
 #: src/scenario.cpp:1089 src/scenario.cpp:1103
 msgid "Leader can't use two-handed weapons."
-msgstr "Der Anführer darf keine zweihändige Waffe benutzen."
+msgstr "Der AnfÃ¼hrer darf keine zweihÃ¤ndige Waffe benutzen."
 
 #.
