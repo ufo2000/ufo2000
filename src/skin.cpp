@@ -362,9 +362,9 @@ void Skin::draw_common()
     }
     if ((dir < 1) || (dir > 5)) {
         if (rhand_item != NULL)
-            m_pck[S_HANDOB]->drawpck(dir + 8 * rhand_item->obdata_pHeld(), image, handob_y);
+            PCK::showpck(image, rhand_item->obdata_pHeld(dir), 0, handob_y);
         else if (lhand_item != NULL)
-            m_pck[S_HANDOB]->drawpck(dir + 8 * lhand_item->obdata_pHeld(), image, handob_y);
+            PCK::showpck(image, lhand_item->obdata_pHeld(dir), 0, handob_y);
     }
 
     switch (state) {
@@ -422,9 +422,9 @@ void Skin::draw_common()
 
     if ((dir > 0) && (dir < 6)) {
         if (rhand_item != NULL)
-            m_pck[S_HANDOB]->drawpck(dir + 8 * rhand_item->obdata_pHeld(), image, handob_y);
+            PCK::showpck(image, rhand_item->obdata_pHeld(dir), 0, handob_y);
         else if (lhand_item != NULL)
-            m_pck[S_HANDOB]->drawpck(dir + 8 * lhand_item->obdata_pHeld(), image, handob_y);
+            PCK::showpck(image, lhand_item->obdata_pHeld(dir), 0, handob_y);
     }
 
     int ox, oy;

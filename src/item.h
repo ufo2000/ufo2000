@@ -66,6 +66,7 @@ private:
 
 	BITMAP *m_pMap;
 	BITMAP *m_pInv;
+	BITMAP *m_pHeld[8];
 
 	SoundSym_e_t m_sound;
 
@@ -74,7 +75,7 @@ public:
 
 	static int obdata_get_int(int item_index, const char *property_name);
 	static int obdata_get_array_int(int item_index, const char *property_name, int index);
-	static BITMAP *obdata_get_bitmap(int item_index, const char *property_name);
+	static BITMAP *obdata_get_bitmap(int item_index, const char *property_name, int bitmap_index = -1);
 	static std::string obdata_get_string(int item_index, const char *property_name);
 
 	static int obdata_maxHealth(int index) { return obdata_get_int(index, "health"); }
@@ -99,7 +100,7 @@ public:
 	static int obdata_disappear(int index) { return obdata_get_int(index, "disappear"); }
 	static int obdata_isGun(int index) { return obdata_get_int(index, "isGun"); }
 
-  char* get_damage_name();
+    char* get_damage_name();
     //! Get list of ammo types that can be used with this weapon
 	static bool get_ammo_list(const std::string itemname, std::vector<std::string> &ammo);
 
@@ -125,7 +126,7 @@ public:
 	std::string name() { return obdata_name(m_type); }
 	BITMAP *obdata_pMap() { return m_pMap; }
 	BITMAP *obdata_pInv() { return m_pInv; }
-	int obdata_pHeld() { return obdata_get_int(m_type, "pHeld"); } // FIXME
+	BITMAP *obdata_pHeld(int dir) { ASSERT(dir >= 0 && dir < 8); return m_pHeld[dir]; }
 	int obdata_width() { return obdata_get_int(m_type, "width"); }
 	int obdata_height() { return obdata_get_int(m_type, "height"); }
 	int obdata_isAmmo() { return obdata_isAmmo(m_type); }
@@ -145,7 +146,8 @@ public:
 	int obdata_weight() { return obdata_weight(m_type); }
 	int obdata_disappear() { return obdata_disappear(m_type); }
 
-	bool can_use_ammo_type(const std::string &ammo_type) {
+	bool can_use_ammo_type(const std::string &ammo_type)
+	{
 		std::vector<std::string> ammo_list;
 		get_ammo_list(obdata_name(m_type), ammo_list);
 		for (int i = 0; i < (int)ammo_list.size(); i++)

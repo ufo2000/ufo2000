@@ -342,6 +342,15 @@ function random(a)
     return a[math.random(1, table.getn(a))]
 end
 
+-- returns a table with a set of pck images
+function pck_image_set(filename, start, count)
+    local tbl = {}
+    for i = 1, count do
+        tbl[i] = pck_image(filename, start + i - 1)
+    end
+    return tbl
+end
+
 ------------------------------------------------------------------------------
 -- Read data for quick-setup of soldiers, to be used for the configuration 
 -- of the keys F5..F8 in the Mission-planner/Equipment-screen.

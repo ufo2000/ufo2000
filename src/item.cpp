@@ -56,7 +56,7 @@ int Item::obdata_get_int(int item_index, const char *property_name)
 	return result;
 }
 
-BITMAP *Item::obdata_get_bitmap(int item_index, const char *property_name)
+BITMAP *Item::obdata_get_bitmap(int item_index, const char *property_name, int bitmap_index)
 {
 	int stack_top = lua_gettop(L);
     // Enter 'ItemsTable' table
@@ -71,6 +71,10 @@ BITMAP *Item::obdata_get_bitmap(int item_index, const char *property_name)
 	lua_pushstring(L, property_name);
 	lua_gettable(L, -2);
 	BITMAP *result = NULL;
+    if (lua_istable(L, -1)) {
+        lua_pushnumber(L, bitmap_index);
+        lua_gettable(L, -2);
+    }
 	if (lua_islightuserdata(L, -1)) result = (BITMAP *)lua_topointer(L, -1);
 	lua_settop(L, stack_top);
 	return result;
@@ -252,6 +256,11 @@ Item::Item(int _type)
 	ASSERT(m_pInv);
 	m_pMap = obdata_get_bitmap(m_type, "pMap");	// Picture for battlemap
 	ASSERT(m_pMap);
+    for (int i = 0; i < 8; i++) {
+        // Pictures for items in hands
+        m_pHeld[i] = obdata_get_bitmap(m_type, "pHeld", i + 1);
+        ASSERT(m_pHeld[i]);
+    }
 
 	std::string sound = obdata_get_string(m_type, "sound");
 	m_sound = getSymCode(sound.c_str());
@@ -410,11 +419,15 @@ bool Item::Read(persist::Engine &archive)
 	PersistReadObject(archive, m_place);
 	PersistReadObject(archive, m_ammo);
 
-	m_pInv = obdata_get_bitmap(m_type, "pInv");
-	ASSERT(m_pInv);
-	m_pMap = obdata_get_bitmap(m_type, "pMap");
-	ASSERT(m_pMap);
+    m_pInv = obdata_get_bitmap(m_type, "pInv");
+    ASSERT(m_pInv);
+    m_pMap = obdata_get_bitmap(m_type, "pMap");
+    ASSERT(m_pMap);
+    for (int i = 0; i < 8; i++) {
+        m_pHeld[i] = obdata_get_bitmap(m_type, "pHeld", i + 1);
+        ASSERT(m_pHeld[i]);
+    }
 
-	return true;
+    return true;
 }
 

@@ -9,7 +9,7 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	ammo = {"PISTOL CLIP"},
-	pHeld = 12,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	accuracy = {0, 60, 0},
 	time = {0, 20, 0},
 	rounds = 8,
@@ -32,7 +32,7 @@ AddXcomItem {
 	importance = 3,
 	width = 1,
 	height = 1,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 0,
 	rounds = 7,
 	disappear = 0,
@@ -53,7 +53,7 @@ AddXcomItem {
 	width = 1,
 	height = 3,
 	ammo = {"RIFLE CLIP"},
-	pHeld = 0,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
 	accuracy = {35, 60, 110},
 	time = {12, 25, 80},
 	autoShots = 3,
@@ -78,7 +78,7 @@ AddXcomItem {
 	importance = 1,
 	width = 1,
 	height = 1,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 0,
 	rounds = 20,
 	disappear = 0,
@@ -99,7 +99,7 @@ AddXcomItem {
 	width = 2,
 	height = 3,
 	ammo = {"CANNON AP-AMMO", "CANNON HE-AMMO", "CANNON I-AMMO"},
-	pHeld = 3,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 24, 8),
 	accuracy = {0, 60, 90},
 	time = {0, 33, 80},
 	rounds = 10,
@@ -123,7 +123,7 @@ AddXcomItem {
 	importance = 4,
 	width = 2,
 	height = 1,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 0,
 	rounds = 6,
 	disappear = 0,
@@ -148,7 +148,7 @@ AddXcomItem {
 	importance = 4,
 	width = 2,
 	height = 1,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 2,
 	rounds = 6,
 	disappear = 0,
@@ -173,7 +173,7 @@ AddXcomItem {
 	importance = 4,
 	width = 2,
 	height = 1,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 1,
 	rounds = 6,
 	disappear = 0,
@@ -194,7 +194,7 @@ AddXcomItem {
 	width = 2,
 	height = 3,
 	ammo = {"AUTO-CANNON AP-AMMO", "AUTO-CANNON HE-AMMO", "AUTO-CANNON I-AMMO"},
-	pHeld = 4,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 32, 8),
 	accuracy = {32, 56, 0},
 	time = {14, 33, 0},
 	autoShots = 3,
@@ -219,7 +219,7 @@ AddXcomItem {
 	importance = 4,
 	width = 2,
 	height = 1,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 0,
 	rounds = 14,
 	disappear = 0,
@@ -244,7 +244,7 @@ AddXcomItem {
 	importance = 4,
 	width = 2,
 	height = 1,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 2,
 	rounds = 14,
 	disappear = 0,
@@ -269,7 +269,7 @@ AddXcomItem {
 	importance = 4,
 	width = 2,
 	height = 1,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 1,
 	rounds = 14,
 	disappear = 0,
@@ -290,7 +290,7 @@ AddXcomItem {
 	width = 2,
 	height = 3,
 	ammo = {"SMALL ROCKET", "LARGE ROCKET", "INCENDIARY ROCKET"},
-	pHeld = 9,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 72, 8),
 	accuracy = {0, 55, 115},
 	time = {0, 45, 75},
 	rounds = 10,
@@ -317,7 +317,7 @@ AddXcomItem {
 	importance = 5,
 	width = 1,
 	height = 3,
-	pHeld = 10,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 80, 8),
 	damageType = 2,
 	rounds = 1,
 	disappear = 1,
@@ -342,7 +342,7 @@ AddXcomItem {
 	importance = 6,
 	width = 1,
 	height = 3,
-	pHeld = 10,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 80, 8),
 	damageType = 2,
 	rounds = 1,
 	disappear = 1,
@@ -367,7 +367,7 @@ AddXcomItem {
 	importance = 7,
 	width = 1,
 	height = 3,
-	pHeld = 10,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 80, 8),
 	damageType = 1,
 	rounds = 1,
 	disappear = 1,
@@ -389,7 +389,7 @@ AddXcomItem {
 	importance = 4,
 	width = 1,
 	height = 2,
-	pHeld = 14,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 112, 8),
 	damageType = 3,
 	accuracy = {28, 40, 0},
 	time = {8, 20, 0},
@@ -414,7 +414,7 @@ AddXcomItem {
 	importance = 7,
 	width = 1,
 	height = 3,
-	pHeld = 1,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 8, 8),
 	damageType = 3,
 	accuracy = {46, 65, 100},
 	time = {11, 25, 60},
@@ -440,7 +440,7 @@ AddXcomItem {
 	importance = 12,
 	width = 2,
 	height = 3,
-	pHeld = 2,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 16, 8),
 	damageType = 3,
 	accuracy = {0, 50, 120},
 	time = {0, 33, 66},
@@ -468,7 +468,7 @@ AddXcomItem {
 	importance = 1,
 	width = 1,
 	height = 1,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 2,
 	rounds = 10,
 	weight = 2,
@@ -487,7 +487,7 @@ AddXcomItem {
 	importance = 1,
 	width = 1,
 	height = 1,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 2,
 	rounds = 10,
 	weight = 2,
@@ -508,7 +508,7 @@ AddXcomItem {
 	importance = 1,
 	width = 1,
 	height = 1,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 2,
 	rounds = 10,
 	weight = 3,
@@ -529,7 +529,7 @@ AddXcomItem {
 	importance = 4,
 	width = 2,
 	height = 1,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 2,
 	rounds = 10,
 	weight = 6,
@@ -545,7 +545,7 @@ AddXcomItem {
 	importance = 1,
 	width = 1,
 	height = 1,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	rounds = 10,
 	weight = 3,
 }
@@ -560,7 +560,7 @@ AddXcomItem {
 	importance = 4,
 	width = 1,
 	height = 2,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	rounds = 10,
 	weight = 5,
 }
@@ -575,7 +575,7 @@ AddXcomItem {
 	importance = 6,
 	width = 1,
 	height = 3,
-	pHeld = 11,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 88, 8),
 	rounds = 10,
 	weight = 8,
 }
@@ -592,7 +592,7 @@ AddXcomItem {
 	importance = 6,
 	width = 1,
 	height = 3,
-	pHeld = 10,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 80, 8),
 	damageType = 5,
 	rounds = 65,
 	weight = 3,
@@ -610,7 +610,7 @@ AddXcomItem {
 	importance = 2,
 	width = 1,
 	height = 1,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	weight = 1,
 }
 
@@ -624,7 +624,7 @@ AddXcomItem {
 	importance = 20,
 	width = 2,
 	height = 3,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	weight = 22,
 }
 
@@ -638,7 +638,7 @@ AddXcomItem {
 	importance = 22,
 	width = 2,
 	height = 3,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	weight = 24,
 }
 
@@ -652,7 +652,7 @@ AddXcomItem {
 	importance = 24,
 	width = 2,
 	height = 3,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	weight = 26,
 }
 
@@ -667,7 +667,7 @@ AddXcomItem {
 	width = 2,
 	height = 3,
 	ammo = {"Heavy Plasma Clip"},
-	pHeld = 5,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 40, 8),
 	accuracy = {0, 55, 110},
 	time = {0, 30, 55},
 	rounds = 10,
@@ -692,7 +692,7 @@ AddXcomItem {
 	importance = 1,
 	width = 1,
 	height = 1,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 4,
 	rounds = 10,
 	disappear = 0,
@@ -713,7 +713,7 @@ AddXcomItem {
 	width = 1,
 	height = 3,
 	ammo = {"Plasma Rifle Clip"},
-	pHeld = 6,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 48, 8),
 	accuracy = {55, 86, 100},
 	time = {12, 30, 60},
 	autoShots = 3,
@@ -739,7 +739,7 @@ AddXcomItem {
 	importance = 1,
 	width = 1,
 	height = 1,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 4,
 	rounds = 28,
 	disappear = 0,
@@ -760,7 +760,7 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	ammo = {"Plasma Pistol Clip"},
-	pHeld = 13,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 104, 8),
 	accuracy = {50, 65, 0},
 	time = {10, 30, 0},
 	autoShots = 3,
@@ -785,7 +785,7 @@ AddXcomItem {
 	importance = 1,
 	width = 1,
 	height = 1,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 4,
 	rounds = 26,
 	disappear = 0,
@@ -806,7 +806,7 @@ AddXcomItem {
 	width = 2,
 	height = 3,
 	ammo = {"BLASTER BOMB"},
-	pHeld = 7,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 56, 8),
 	accuracy = {0, 0, 120},
 	time = {0, 0, 80},
 	rounds = 10,
@@ -833,7 +833,7 @@ AddXcomItem {
 	importance = 3,
 	width = 1,
 	height = 2,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 2,
 	rounds = 1,
 	disappear = 1,
@@ -854,7 +854,7 @@ AddXcomItem {
 	width = 2,
 	height = 2,
 	ammo = {"STUN MISSILE"},
-	pHeld = 8,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 64, 8),
 	accuracy = {0, 65, 110},
 	time = {0, 40, 75},
 	rounds = 10,
@@ -882,7 +882,7 @@ AddXcomItem {
 	importance = 1,
 	width = 1,
 	height = 1,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 5,
 	rounds = 1,
 	disappear = 1,
@@ -907,7 +907,7 @@ AddXcomItem {
 	importance = 1,
 	width = 1,
 	height = 1,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 2,
 	rounds = 10,
 	weight = 3,
@@ -924,7 +924,7 @@ AddXcomItem {
 	importance = 1,
 	width = 1,
 	height = 1,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	rounds = 10,
 	weight = 3,
 	isAlien = 1,
@@ -940,7 +940,7 @@ AddXcomItem {
 	importance = 7,
 	width = 2,
 	height = 2,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	weight = 5,
 	isAlien = 1,
 }
@@ -955,7 +955,7 @@ AddXcomItem {
 	importance = 30,
 	width = 2,
 	height = 3,
-	pHeld = 0,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
 	weight = 30,
 }
 
@@ -969,7 +969,7 @@ AddXcomItem {
 	importance = 40,
 	width = 2,
 	height = 3,
-	pHeld = 0,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
 	weight = 40,
 }
 
@@ -983,7 +983,7 @@ AddXcomItem {
 	importance = 35,
 	width = 2,
 	height = 3,
-	pHeld = 0,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
 	weight = 25,
 }
 
@@ -997,7 +997,7 @@ AddXcomItem {
 	importance = 40,
 	width = 2,
 	height = 3,
-	pHeld = 0,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
 	weight = 40,
 }
 
@@ -1011,7 +1011,7 @@ AddXcomItem {
 	importance = 22,
 	width = 2,
 	height = 3,
-	pHeld = 0,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
 	weight = 20,
 }
 
@@ -1025,7 +1025,7 @@ AddXcomItem {
 	importance = 35,
 	width = 2,
 	height = 3,
-	pHeld = 0,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
 	weight = 35,
 }
 
@@ -1039,7 +1039,7 @@ AddXcomItem {
 	importance = 40,
 	width = 2,
 	height = 3,
-	pHeld = 0,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
 	weight = 40,
 }
 
@@ -1053,7 +1053,7 @@ AddXcomItem {
 	importance = 40,
 	width = 2,
 	height = 3,
-	pHeld = 0,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
 	weight = 40,
 }
 
@@ -1067,7 +1067,7 @@ AddXcomItem {
 	importance = 50,
 	width = 2,
 	height = 3,
-	pHeld = 0,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
 	weight = 50,
 }
 
@@ -1081,7 +1081,7 @@ AddXcomItem {
 	importance = 50,
 	width = 2,
 	height = 3,
-	pHeld = 0,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
 	weight = 50,
 }
 
@@ -1095,7 +1095,7 @@ AddXcomItem {
 	importance = 50,
 	width = 1,
 	height = 2,
-	pHeld = 12,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	weight = 50,
 }
 
@@ -1109,7 +1109,7 @@ AddXcomItem {
 	importance = 50,
 	width = 1,
 	height = 2,
-	pHeld = 12,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	weight = 50,
 }
 
@@ -1123,7 +1123,7 @@ AddXcomItem {
 	importance = 50,
 	width = 1,
 	height = 2,
-	pHeld = 12,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	weight = 50,
 }
 
@@ -1137,7 +1137,7 @@ AddXcomItem {
 	importance = 50,
 	width = 1,
 	height = 2,
-	pHeld = 12,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	weight = 50,
 }
 
@@ -1151,7 +1151,7 @@ AddXcomItem {
 	importance = 50,
 	width = 1,
 	height = 2,
-	pHeld = 12,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	weight = 50,
 }
 
@@ -1165,7 +1165,7 @@ AddXcomItem {
 	importance = 50,
 	width = 1,
 	height = 2,
-	pHeld = 12,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	weight = 50,
 }
 
@@ -1179,7 +1179,7 @@ AddXcomItem {
 	importance = 50,
 	width = 1,
 	height = 2,
-	pHeld = 12,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	weight = 50,
 }
 
@@ -1193,7 +1193,7 @@ AddXcomItem {
 	importance = 50,
 	width = 1,
 	height = 2,
-	pHeld = 12,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	weight = 50,
 }
 
@@ -1207,7 +1207,7 @@ AddXcomItem {
 	importance = 50,
 	width = 1,
 	height = 2,
-	pHeld = 12,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	weight = 50,
 }
 
@@ -1221,7 +1221,7 @@ AddXcomItem {
 	importance = 50,
 	width = 1,
 	height = 2,
-	pHeld = 12,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	weight = 50,
 }
 
@@ -1235,7 +1235,7 @@ AddXcomItem {
 	importance = 50,
 	width = 1,
 	height = 2,
-	pHeld = 12,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	weight = 50,
 }
 
@@ -1249,7 +1249,7 @@ AddXcomItem {
 	importance = 50,
 	width = 1,
 	height = 2,
-	pHeld = 12,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	weight = 50,
 }
 
@@ -1263,7 +1263,7 @@ AddXcomItem {
 	importance = 50,
 	width = 1,
 	height = 2,
-	pHeld = 12,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	weight = 50,
 }
 
@@ -1277,7 +1277,7 @@ AddXcomItem {
 	importance = 50,
 	width = 1,
 	height = 2,
-	pHeld = 12,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	weight = 50,
 }
 
@@ -1291,7 +1291,7 @@ AddXcomItem {
 	importance = 50,
 	width = 1,
 	height = 2,
-	pHeld = 12,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	weight = 50,
 }
 
@@ -1305,7 +1305,7 @@ AddXcomItem {
 	importance = 50,
 	width = 1,
 	height = 2,
-	pHeld = 12,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	weight = 50,
 }
 
@@ -1319,7 +1319,7 @@ AddXcomItem {
 	importance = 50,
 	width = 1,
 	height = 2,
-	pHeld = 12,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	weight = 50,
 }
 
@@ -1333,7 +1333,7 @@ AddXcomItem {
 	importance = 50,
 	width = 1,
 	height = 2,
-	pHeld = 12,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	weight = 50,
 }
 
@@ -1347,7 +1347,7 @@ AddXcomItem {
 	importance = 30,
 	width = 1,
 	height = 2,
-	pHeld = 12,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	weight = 30,
 }
 
@@ -1361,6 +1361,6 @@ AddXcomItem {
 	importance = 50,
 	width = 1,
 	height = 2,
-	pHeld = 15,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	weight = 50,
 }
