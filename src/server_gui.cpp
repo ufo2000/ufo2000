@@ -288,8 +288,10 @@ int connect_internet_server()
 	lobby_init_mouse();
 
     std::auto_ptr<ClientServerUfo> server(new ClientServerUfo());
-    if (!server->connect(cfg_get_server_host(), 2000))
+    if (!server->connect(cfg_get_server_host(), 2000)) {
+		alert(" ", "Failed to connect", " ", "    OK    ", NULL, 1, 0);
     	return -1;
+	}
 
     std::string error_message;
     if (!server->login(cfg_get_server_login(), cfg_get_server_password(), error_message)) {

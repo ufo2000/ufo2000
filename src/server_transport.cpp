@@ -30,8 +30,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <string.h>
 #include <nl.h>
 
-#include <assert.h>
-
 #include <string>
 #include <vector>
 #include <map>
@@ -168,9 +166,9 @@ void ServerDispatch::HandleNewConnections()
 
 //	check for a new client
     NLsocket newsock = nlAcceptConnection(m_socket);
-    if (newsock == NL_INVALID)
-    {
-    	assert(nlGetError() == NL_NO_PENDING);
+    if (newsock == NL_INVALID) {
+    	if (nlGetError() != NL_NO_PENDING)
+    		server_log("Warning (nlGetError() != NL_NO_PENDING in ServerDispatch::HandleNewConnections)");
     	return;
     }
 
@@ -190,7 +188,10 @@ void ServerDispatch::HandleNewConnections()
 
 	nlGroupAddSocket(m_group, newsock);
 	ServerClient *client = CreateServerClient(newsock);
-	assert(client != NULL);
+	if (client == NULL) {
+		server_log("Error (client == NULL in ServerDispatch::HandleNewConnections)");
+		exit(1);
+	}
 	client->m_ip = nlAddrToString(&addr, string);
 }
 
@@ -219,7 +220,10 @@ void ServerDispatch::Run(NLsocket sock)
     //	Check for incoming messages
         if (s.size() < CONNECTIONS_COUNT_LIMIT) s.resize(CONNECTIONS_COUNT_LIMIT);
         NLint count = nlPollGroup(m_group, NL_READ_STATUS, &s[0], CONNECTIONS_COUNT_LIMIT, 0);
-        assert(count != NL_INVALID);
+        if (count == NL_INVALID) {
+			server_log("Warning (count == NL_INVALID in ServerDispatch::Run)");
+        	continue;
+        }
 
 	//	Loop through the clients and read the packets
         for (NLint i = 0; i < count; i++) {
@@ -296,6 +300,8 @@ bool ServerClient::send_packet_all(NLulong id, const std::string &packet)
 
 bool ClientServer::connect(const std::string &host, int port)
 {
+	m_socket = NL_INVALID;
+
     NLaddress addr;
     if (nlGetAddrFromName(host.c_str(), &addr) != NL_TRUE)
     	return false;
@@ -312,7 +318,8 @@ bool ClientServer::connect(const std::string &host, int port)
 
 ClientServer::~ClientServer()
 {
-	nlClose(m_socket);
+	if (m_socket != NL_INVALID)
+		nlClose(m_socket);
 }
 
 bool ClientServer::send_packet(NLulong id, const std::string &packet)

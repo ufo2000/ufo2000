@@ -27,6 +27,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "map.h"
 #include "platoon.h"
 #include "explo.h"
+#include "multiplay.h"
 
 #define PHASE 2
 
@@ -706,12 +707,15 @@ int Bullet::incendiary() {
 
 void Bullet::detonate()
 {
-	if (!platoon_local->belong(this)) //explo only locals
-		return ;
 	int range = Item::explo_range(type);
 	int damage = Item::obdata[type].damage;
 
-	map->explode(owner, lev, col, row, type, range, damage);
+	if (net->SEND) {
+		net->SEND = 0;
+		map->explode(owner, lev, col, row, type, range, damage);
+		net->SEND = 1;
+	} else
+		map->explode(owner, lev, col, row, type, range, damage);
 }
 
 void Bullet::hitman()
