@@ -418,7 +418,7 @@ void Place::save_to_file(const char *fn, const char *prefix)
 	fclose(fh);
 }
 
-void Place::add_item(int x, int y, const char *item_name)
+bool Place::add_item(int x, int y, const char *item_name)
 {
 	int stack_top = lua_gettop(L);
     // Enter 'ItemsTable' table
@@ -432,9 +432,27 @@ void Place::add_item(int x, int y, const char *item_name)
 		lua_pushstring(L, "index");
 		lua_gettable(L, -2);
 		ASSERT(lua_isnumber(L, -1));
-		put(new Item((int)lua_tonumber(L, -1)), x, y);
+		Item *it = new Item((int)lua_tonumber(L, -1));
+		// Trying to put item here
+		if (put(it, x, y)) {
+			lua_settop(L, stack_top);
+			return true;
+		}
+		// Maybe it is ammo for already added weapon?
+		Item *weapon = get(x, y);
+		if (weapon) {
+			bool loaded = weapon->loadclip(it);
+			put(weapon, x, y);
+            if (loaded) {
+                lua_settop(L, stack_top);
+                return true;
+            }
+		}
+        // Nowhere to put it, giving up
+        delete it;
 	}
 	lua_settop(L, stack_top);
+	return false;
 }
 
 void Place::build_ITEMDATA(int ip, ITEMDATA * id) //don't save clip rounds
@@ -650,4 +668,3 @@ bool Place::Read(persist::Engine &archive)
 
 	return true;
 }
-

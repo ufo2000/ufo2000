@@ -201,6 +201,26 @@ function AddXcomTerrain(terrain)
     return 1
 end
 
+-- Loads squad information
+function LoadSquad(squad_data, squad_object)
+    for id, soldier_data in ipairs(squad_data) do
+    	local soldier = squad_object:findnum(id - 1)
+    	soldier:set_name(soldier_data.Name)
+    	soldier:set_skin_info(soldier_data.SkinType, soldier_data.fFemale, soldier_data.Appearance)
+    	for attribute_id, attribute_value in soldier_data.Attributes do
+		    soldier:set_attribute(attribute_id, attribute_value)
+	    end
+	    for place_id, place_data in soldier_data.Inventory do
+    		local place = soldier:find_place(place_id)
+		    place:destroy_all_items()
+		    for _, v in place_data do
+    			place:add_item(v[1], v[2], v[3])
+				if v[4] then place:add_item(v[1], v[2], v[4]) end
+		    end
+	    end
+    end
+end
+
 -- adds new item
 function AddXcomItem(item)
     ItemsTable[item.index] = item

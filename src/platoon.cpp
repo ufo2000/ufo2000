@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002-2003  ufo2000 development team
+Copyright (C) 2002-2005  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -475,19 +475,25 @@ void Platoon::check_morale()
  */
 void Platoon::save_FULLDATA(const char *fn)
 {
-	int fh = open(F(fn), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
-	if (fh == -1) {
+	std::string str;
+	save_to_string(str);
+	FILE *f = fopen(F(fn), "wt");
+	if (f == NULL) {
 		alert(" ", "Can't create specified file", " ", "    OK    ", NULL, 1, 0);
 		return;		
 	}
+	std::string x = "return {\n" + indent(str) + "}\n";
+	fprintf(f, "%s", x.c_str());
+	fclose(f);
+
+    // !!! The next code is a hack added to workaround a problem 
+    // when soldiers start the battle unarmed (because of some weird
+    // code in send/receive team data protocol implementation)
 	Soldier *ss = man;
 	while (ss != NULL) {
-		write(fh, &ss->md, sizeof(ss->md));
 		ss->build_ITEMDATA();
-		write(fh, &ss->id, sizeof(ss->id));
 		ss = ss->next();
 	}
-	close(fh);
 }
 
 void Platoon::save_to_string(std::string &str)
@@ -496,9 +502,7 @@ void Platoon::save_to_string(std::string &str)
 
 	Soldier *ss = man;
 	while (ss != NULL) {
-		char tmp[512];
-		sprintf(tmp, "[%d] = {\n", ss->get_NID());
-		str += tmp;
+		str += "{\n";
 		std::string soldier_str;
 		ss->save_to_string(soldier_str);
 		str += indent(soldier_str);
@@ -512,37 +516,28 @@ void Platoon::save_to_string(std::string &str)
  */
 void Platoon::load_FULLDATA(const char *fn)
 {
-	char *buf;
-	unsigned int buf_size;
+    lua_pushstring(L, "sandbox");
+    lua_newtable(L);
+    lua_settable(L, LUA_GLOBALSINDEX);
+	
+    lua_pushstring(L, "LoadSquad");
+    lua_gettable(L, LUA_GLOBALSINDEX);
+	
+    // load team information as a table on the top of lua stack
+    int stack_top = lua_gettop(L);
+    lua_safe_dofile(L, F(fn), "sandbox");
+    lua_settop(L, stack_top + 1);
+    LUA_PUSH_OBJECT_POINTER(L, this);
+    lua_safe_call(L, 2, 0);
 
-	int fh = open(F(fn), O_RDONLY | O_BINARY);
-	if (fh == -1) {
-		alert(" ", "Can't open specified file", " ", "    OK    ", NULL, 1, 0);
-		return;		
-	}
-
-	buf_size = filelength(fh);
-	buf = new char[buf_size];
-	buf_size = read(fh, buf, buf_size);
-	close(fh);
-
-	Soldier * ss = man;
-	unsigned int ofs = 0;
+    // !!! The next code is a hack added to workaround a problem 
+    // when soldiers start the battle unarmed (because of some weird
+    // code in send/receive team data protocol implementation)
+	Soldier *ss = man;
 	while (ss != NULL) {
-		if (ofs + sizeof(ss->md) + sizeof(ss->id) > buf_size)
-			break;
-
-		memcpy(&ss->md, buf + ofs, sizeof(ss->md));
-		ss->process_MANDATA();
-		ofs += sizeof(ss->md);
-
-		memcpy(&ss->id, buf + ofs, sizeof(ss->id));
-		ss->process_ITEMDATA();
-		ofs += sizeof(ss->id);
-
+		ss->build_ITEMDATA();
 		ss = ss->next();
 	}
-	delete [] buf;
 }
 
 

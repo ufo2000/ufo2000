@@ -344,6 +344,59 @@ static char *place_name_id[11] = {
     "COMMON POOL"
 };
 
+/**
+ * Set unit stat attribute
+ *
+ * @todo better and more flexible attributes list handling needed
+ */
+bool Soldier::set_attribute(const char *attribute_name, int value)
+{
+	if (strcmp(attribute_name, "TimeUnits") == 0) {
+		md.TimeUnits = value;
+	} else if (strcmp(attribute_name, "Health") == 0) {
+		md.Health = value;
+	} else if (strcmp(attribute_name, "Stamina") == 0) {
+		md.Stamina = value;
+	} else if (strcmp(attribute_name, "Reactions") == 0) {
+		md.Reactions = value;
+	} else if (strcmp(attribute_name, "Strength") == 0) {
+		md.Strength = value;
+	} else if (strcmp(attribute_name, "Firing") == 0) {
+		md.Firing = value;
+	} else if (strcmp(attribute_name, "Throwing") == 0) {
+		md.Throwing = value;
+	} else {
+		return false;
+	}
+	process_MANDATA();
+    return true;
+}
+
+bool Soldier::set_name(const char *newname)
+{
+	if (strlen(newname) + 1 > sizeof(ud.Name)) return false;
+	strcpy(ud.Name, newname);
+	strcpy(md.Name, newname);
+    return true;
+}
+
+bool Soldier::set_skin_info(int skin_type, int female, int appearance)
+{
+    md.SkinType = skin_type;
+    md.fFemale = female;
+    md.Appearance = appearance;
+	process_MANDATA();
+	return true;
+}
+
+Place *Soldier::find_place(const char *place_name)
+{
+	for (int i = 0; i < (int)(sizeof(place_name_id) / sizeof(place_name_id[0])); i++)
+		if (strcmp(place_name_id[i], place_name) == 0)
+			return m_place[i];
+	return NULL;
+}
+
 void Soldier::save_to_string(std::string &str)
 {
 	str.clear();
@@ -1980,7 +2033,8 @@ int Soldier::required(int pertime)
 int Soldier::eff_FAccuracy()
 {
     int ac = ud.CurFAccuracy;
-    int penalty_health = (ac * (ud.MaxHealth - ud.CurHealth)) / ud.MaxHealth / 2;
+    int penalty_health = 0;
+	if (ud.MaxHealth != 0) penalty_health = (ac * (ud.MaxHealth - ud.CurHealth)) / ud.MaxHealth / 2;
     int penalty_morale = (ac * (100 - ud.Morale)) / 100 / 2;
     return ac - penalty_health - penalty_morale;
 }
@@ -2013,7 +2067,7 @@ int Soldier::FAccuracy(int peraccur, int TWOHAND)
 int Soldier::TAccuracy(int peraccur)
 {
     int ac = (ud.CurTAccuracy * peraccur) / 100;
-    ac = (ac * ud.CurHealth) / ud.MaxHealth;
+	if (ud.MaxHealth != 0) ac = (ac * ud.CurHealth) / ud.MaxHealth;
     return ac;
 }
 
@@ -2524,7 +2578,7 @@ void Soldier::showspk()
             Skin::m_spk[5][0][0]->show(screen2, 0, 0);
             break;
         default:
-            ASSERT(false);
+			break;
     }
 }
 

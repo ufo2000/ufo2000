@@ -139,6 +139,15 @@ private:
 
 public:
 
+    // set attribute value (when initializing soldier stats)
+    bool set_attribute(const char *attribute_name, int value);
+	// set name for soldier
+	bool set_name(const char *newname);
+	// set skin information
+	bool set_skin_info(int skin_type, int female, int appearance);
+	// get pointer to body part by name
+	Place *find_place(const char *place_name);
+
     static void initpck();
 	static void freepck() { Skin::freepck(); }
 

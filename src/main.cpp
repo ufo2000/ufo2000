@@ -545,11 +545,19 @@ void initmain(int argc, char *argv[])
     luaopen_debug(L);
 	
 	// Lua API for accessing C++ objects
-	LUA_REGISTER_CLASS(L, Platoon);
+    LUA_REGISTER_CLASS(L, Platoon);
+    LUA_REGISTER_CLASS_METHOD(L, Platoon, findnum);
 	
+    LUA_REGISTER_CLASS(L, Soldier);
+    LUA_REGISTER_CLASS_METHOD(L, Soldier, set_attribute);
+    LUA_REGISTER_CLASS_METHOD(L, Soldier, set_name);
+    LUA_REGISTER_CLASS_METHOD(L, Soldier, set_skin_info);
+    LUA_REGISTER_CLASS_METHOD(L, Soldier, find_place);
+
     LUA_REGISTER_CLASS(L, Place);
     LUA_REGISTER_CLASS_METHOD(L, Place, add_item);
     LUA_REGISTER_CLASS_METHOD(L, Place, destroy_all_items);
+	
     LUA_REGISTER_FUNCTION(L, pck_image);
     
 #ifdef LINUX

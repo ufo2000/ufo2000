@@ -69,7 +69,7 @@ public:
 	Item *item_under_mouse();
 	int isthere(Item *it);
 
-	void add_item(int x, int y, const char *item_name);
+	bool add_item(int x, int y, const char *item_name);
 
 	void save_to_file(const char *filename, const char *prefix);
 	void save_to_string(std::string &str);

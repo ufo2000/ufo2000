@@ -20,12 +20,10 @@ local function X(a) return tonumber(a, 16) end
 ------------------------------------------------------------------------------
 
 FilesTable = {
---  ["$(ufo2000)/ufo2000.dat"]    = { Crc32 = X("0x8536FF43") }, -- Rev.463
---  ["$(ufo2000)/ufo2000.dat"]    = { Crc32 = X("0X7B4A8C53") }, -- Rev.464
     ["$(ufo2000)/ufo2000.dat"]    = { Crc32 = X("0xE8F15FD0") }, -- Rev.466
     ["$(ufo2000)/keyboard.dat"]   = { Crc32 = X("0xC796755E") },
 
-    ["$(home)/squad.dat"]             = { Origin = "$(ufo2000)/squad.default.dat" },
+    ["$(home)/squad.lua"]             = { Origin = "$(ufo2000)/squad.default.lua" },
     ["$(home)/ufo2000.ini"]           = { Origin = "$(ufo2000)/ufo2000.default.ini" },
     ["$(home)/init-scripts.log"]      = { },
     ["$(home)/ufo2000.log"]           = { },

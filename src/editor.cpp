@@ -86,10 +86,6 @@ Editor::Editor()
     BITMAP *image = create_bitmap(320, 200); clear(image);
     tac01 = new SPK("$(xcom)/ufograph/tac01.scr");  // Picture with buttons
     tac01->show(image, 0, 0);
-  //b123 = create_bitmap(83, 22); clear(b123);  // not used ?
-  //blit(image, b123, 45, 0, 0, 0, 83, 22);
-  //b4 = create_bitmap(32, 25); clear(b4);
-  //blit(image, b4, 224, 21, 0, 0, 32, 25);
     b5 = create_bitmap(32, 15); clear(b5);  // Button for Scroll-left
     blit(image, b5, 288, 137, 0, 0, 32, 15);
     destroy_bitmap(image);
@@ -98,13 +94,13 @@ Editor::Editor()
 
     // make armoury object available to lua code
     lua_pushstring(L, "Armoury");
-    LUA_PUSH_OBJECT_POINTER(L, Place, m_armoury);
+    LUA_PUSH_OBJECT_POINTER(L, m_armoury);
     lua_settable(L, LUA_GLOBALSINDEX);
 
     if (local_platoon_size > 15) local_platoon_size = 15;      //Maybe we should allow more
     ASSERT(local_platoon_size > 0);
     m_plt = new Platoon(2001, local_platoon_size);
-    m_plt->load_FULLDATA("$(home)/squad.dat");
+    m_plt->load_FULLDATA("$(home)/squad.lua");
     man = m_plt->captain();
 
     sel_item = NULL;
@@ -130,7 +126,7 @@ void Editor::load()
 {
     char path[1000];
     strcpy(path, last_unit_name);
-    if (file_select_mr( _("LOAD UNITS DATA"), path, "UNITS")) {
+    if (file_select_mr( _("LOAD UNITS DATA"), path, "lua")) {
         m_plt->load_FULLDATA(path);
         strcpy(last_unit_name, path);
         lua_message( std::string("Team loaded: ") + path );
@@ -947,14 +943,7 @@ void Editor::show()
         }
     }
 
-    m_plt->save_FULLDATA(F("$(home)/squad.dat"));
-	
-	std::string str;
-	m_plt->save_to_string(str);
-	FILE *f = fopen(F("$(home)/squad.lua"), "wt");
-	std::string x = "return {\n" + indent(str) + "}\n";
-	fprintf(f, "%s", x.c_str());
-	fclose(f);
+    m_plt->save_FULLDATA("$(home)/squad.lua");
 
     destroy_bitmap(editor_bg);
     destroy_bitmap(screen2);
