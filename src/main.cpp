@@ -868,7 +868,11 @@ int build_crc()
 {
     char buf[200000]; memset(buf, 0, sizeof(buf));
     int buf_size = 0;
-    buf_size += sprintf(buf + buf_size, "%s\n", g_version_id.c_str());
+	
+    // Commented out, it causes false crc error alarms when games are
+    // in fact compatible, but version_id is different
+	
+    // buf_size += sprintf(buf + buf_size, "%s\n", g_version_id.c_str());
 
     p1->eot_save(buf, buf_size);
     p2->eot_save(buf, buf_size);
