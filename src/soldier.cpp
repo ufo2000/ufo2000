@@ -309,7 +309,7 @@ Soldier::Soldier(Platoon *platoon, int _NID)
 	MOVED = 0;
 	m_reaction_chances = 0;
 
-	m_ReserveTimeMode=RESERVE_FREE;
+    m_ReserveTimeMode = RESERVE_FREE;
 
 	memset(&md, 0, sizeof(md));
 	memset(&id, 0, sizeof(id));
@@ -392,7 +392,7 @@ Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *md
 	MOVED = 0;
 	m_reaction_chances = 0;
 
-	m_ReserveTimeMode=RESERVE_FREE;
+    m_ReserveTimeMode = RESERVE_FREE;
 	memcpy(&md, mdat, sizeof(md));
 	memcpy(&id, idat, sizeof(id));
 
@@ -673,6 +673,21 @@ void Soldier::restore()
 #define MAPX 0
 #define MAPY (-18)
 
+/**
+ * Calculate actual height at which soldier resides on his (z, x, y) tile
+ */
+int Soldier::calc_z()
+{
+    int res = 0;
+    if ((z > 0) && map->mcd(z, x, y, 0)->No_Floor && map->isStairs(z - 1, x, y)) {
+        res += CELL_SCR_Z + map->mcd(z - 1, x, y, 3)->T_Level;
+    } else {
+        res += map->mcd(z, x, y, 0)->T_Level;
+        res += map->mcd(z, x, y, 3)->T_Level;
+    }
+    return res;
+}
+
 void Soldier::draw_head(int head_frame, int dir, BITMAP *image, int delta)
 {
 	int Appearance = md.Appearance;
@@ -707,13 +722,7 @@ void Soldier::draw()
 
 	int gx = map->x + CELL_SCR_X * x + CELL_SCR_X * y;
 	int gy = map->y - (x + 1) * CELL_SCR_Y + CELL_SCR_Y * y - 18 - z * CELL_SCR_Z;
-	if ((z > 0) && map->isStairs(z - 1, x, y)) {
-		gy += CELL_SCR_Z + map->mcd(z - 1, x, y, 3)->T_Level;
-	} else {
-		gy += map->mcd(z, x, y, 0)->T_Level;
-		gy += map->mcd(z, x, y, 3)->T_Level;
-	}
-
+	gy += calc_z();
 
 	if (m_state == FALL) {
 		m_pck[md.SkinType]->showpck(264 + phase / 3, gx, gy);
@@ -2403,9 +2412,32 @@ void Soldier::apply_hit(int sniper, int _z, int _x, int _y, int _wtype, int _hit
 	}
 }
 
-void Soldier::precise_aiming()
+/**
+ * Aiming in the center of the map cell or soldier, if any
+ */
+void Soldier::standard_aiming(int za, int xa, int ya)
 {
-	BITMAP *bmp = map->create_lof_bitmap(map->sel_lev, map->sel_col, map->sel_row);
+    FIRE_z = za * 12;
+    FIRE_x = xa * 16 + 8;
+    FIRE_y = ya * 16 + 8;
+    Soldier *s = map->man(za, xa, ya);
+//  Currently dependent informally on body_txt array.
+    if (s) FIRE_z += s->calc_z() + (s->m_state == SIT) ? 4 : 7;
+    else FIRE_z += 6;
+//  TODO when different races have different shapes:
+//  Aim directly in the centre of the creature (soldier):
+//  if (s) {
+//      FIRE_z += s->calc_z() + s->ud.UnitBottom + (s->ud.UnitHeight >> 1);
+//      g_console->printf(COLOR_SYS_INFO1, "%d %d %d\n", (int) FIRE_z, (int) s->ud.UnitBottom, (int) s->ud.UnitHeight);
+//  } else FIRE_z += 6;
+}
+
+/**
+ * Aiming at the precise height (Left-Shift key)
+ */
+void Soldier::precise_aiming(int za, int xa, int ya)
+{
+    BITMAP *bmp = map->create_lof_bitmap(za, xa, ya);
 	BITMAP *bmp_back = create_bitmap(bmp->w, bmp->h);
 	int mx = mouse_x, my = mouse_y;
 	blit(screen, bmp_back, mx, my, 0, 0,  bmp->w, bmp->h);
@@ -2451,9 +2483,9 @@ void Soldier::precise_aiming()
 		if (!(mouse_b & 2)) mouse_rightr = 1;
 	}
 
-	FIRE_z = map->sel_lev * 12 + z;
-	FIRE_x = map->sel_col * 16 + x;
-	FIRE_y = map->sel_row * 16 + y;
+    FIRE_z = za * 12 + z;
+    FIRE_x = xa * 16 + x;
+    FIRE_y = ya * 16 + y;
 
 	show_mouse(NULL);
 	set_mouse_range(0, 0, SCREEN2W - 1, SCREEN2H - 1);
@@ -2482,16 +2514,8 @@ void Soldier::try_shoot()
 	else
 		FIRE_num = 1;
 
-	if ((key[KEY_LSHIFT]) && (target.action != THROW)) // && (target.action != PUNCH))
-	{
-		precise_aiming();
-	} else {
-		FIRE_z = map->sel_lev * 12 + 6;
-		FIRE_x = map->sel_col * 16 + 8;
-		FIRE_y = map->sel_row * 16 + 8;
-		Soldier *s = map->man(map->sel_lev, map->sel_col, map->sel_row);
-		if (s) FIRE_z += (s->m_state == SIT) ? 1 : -2;
-	}
+    if ((key[KEY_LSHIFT]) && (target.action != THROW)) precise_aiming(map->sel_lev, map->sel_col, map->sel_row);
+    else standard_aiming(map->sel_lev, map->sel_col, map->sel_row);
 
 	// Perform some checks to determine if we can keep targeting mode after 
 	// this shot. So we need to check if TWO shots can be made (one right now 
@@ -2541,9 +2565,7 @@ void Soldier::try_reaction_shot(Soldier *the_target)
 	else
 		FIRE_num = 1;
 
-	FIRE_z = the_target->z * 12 + 7 + (the_target->m_state == SIT ? -3 : 0);
-	FIRE_x = the_target->x * 16 + 8;
-	FIRE_y = the_target->y * 16 + 8;
+    standard_aiming(the_target->z, the_target->x, the_target->y);
 
 	// Check that we can fire at least one shot using current settings
 
@@ -2583,15 +2605,15 @@ void Soldier::calc_shot_stat(int zd, int xd, int yd)
 
 	REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
 
-	int shoot_cnt=0;
+    int shoot_cnt = 0;
 
-	for(int cic=0;cic<1000;cic++)
+    for(int cic = 0; cic < 1000; cic++)
 	{
 		REAL fi = acos((REAL)(zd - z0) / ro);
 		REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
 		apply_accuracy(fi, te);
-	
-		for(int i=3;1;i++) {
+
+        for(int i = 3; 1; i++) {
 			int x = (int)(x0 + i * cos(te) * sin(fi));
 			int y = (int)(y0 + i * sin(te) * sin(fi));
 			int z = (int)(z0 + i * cos(fi));
@@ -2605,7 +2627,7 @@ void Soldier::calc_shot_stat(int zd, int xd, int yd)
 				}
 		}
 	}
-	g_console->printf(COLOR_SYS_INFO1,"ToShoot = %d%%",shoot_cnt/10);
+    g_console->printf(COLOR_SYS_INFO1, "ToShoot = %d%%", shoot_cnt / 10);
 }
 
 void Soldier::shoot(int zd, int xd, int yd, int ISLOCAL)

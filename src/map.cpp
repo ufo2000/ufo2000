@@ -376,7 +376,7 @@ void Map::draw()
 
 						if (lev < level - 1) {
 							if (m_cell[lev + 1][col][row]->soldier_here()) {
-								if (isStairs(lev, col, row)) {
+                                if (isStairs(lev, col, row) && mcd(lev + 1, col, row, 0)->No_Floor) {
 									m_cell[lev + 1][col][row]->get_soldier()->draw();
 								}
 							}

@@ -42,6 +42,9 @@ int explosives[3][6] = {{GRENADE, PROXIMITY_GRENADE, CANNON_HE_AMMO, CANNON_I_AM
 
 Scenario::Scenario (int sc_type)
 {
+    type = sc_type; // To prevent unitialized 'type' variable in new_scenario;
+    // No need of it when SC_SABOTAGE is enabled again.
+
 	//we need to clear briefing strings in case we won't use all of them
 	for (int i = 0; i < SCENARIO_NUMBER; i++) {
 	    for (int j = 0; j < 8; j++) {

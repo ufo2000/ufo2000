@@ -143,6 +143,9 @@ private:
 	
 	bool time_reserve(int walk_time, int ISLOCAL, int use_energy = 1);
 	void berserk_fire();
+    int calc_z();
+    void standard_aiming(int za, int xa, int ya);
+    void precise_aiming(int za, int xa, int ya);
 
 public:
 
@@ -206,7 +209,6 @@ public:
 	int FAccuracy(int peraccur, int TWOHAND);
 	int TAccuracy(int peraccur);
 
-	void precise_aiming();
 	void try_shoot();
 	void try_reaction_shot(Soldier *the_target);
 	void shoot(int tlev, int tcol, int trow, int ISLOCAL);

@@ -47,6 +47,10 @@ Programming:
         different pointers for standing/kneeling/items on ground ...)
       * More detailed endgame-statistics
 
+   Ivan Sergeevich Kazmenko aka Gassa
+      * A few bugfixes and minor improvements
+      * Overall testing of the game
+
 Artwork and other game related data files:
    Munkeylord
       * Muton and sectoid inventory screen pictures
