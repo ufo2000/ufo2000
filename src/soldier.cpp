@@ -2243,7 +2243,7 @@ int Soldier::FAccuracy(int peraccur, int TWOHAND)
 			ac -= ac / 3;
 	}
 
-	if (m_state == SIT) ac += ac / 20;
+	if (m_state == SIT) ac += ac / 10;
 
 	double weapon_delta  = 1. / (double)(peraccur * peraccur);
 	double soldier_delta = 1. / (double)(ac * ac);
