@@ -14,6 +14,13 @@ ItemsTable = {}
 -- global table with the information about all available weaponsets
 EquipmentTable = {}
 
+-- Workaround for a problem when running the game in valgrind.
+-- Appears that get_executable_name() function can't get correct
+-- path and returns something starting with 'valgrind' in this case.
+-- The following line forces the game to use current directory as
+-- a path to data files in this case
+if string.find(ufo2000_dir, "^valgrind") then ufo2000_dir, home_dir = nil, nil end
+
 -- directories for data files from the original x-com and ufo2000
 ufo2000_dir  = ufo2000_dir or "."
 xcomdemo_dir = xcomdemo_dir or (ufo2000_dir .. "/XCOMDEMO")
