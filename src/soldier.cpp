@@ -1083,7 +1083,7 @@ int Soldier::tus_reserved(std::string *error)
         
             case RESERVE_AUTO:
             if (it->obdata_accuracy(0)) {
-                time = (required(it->obdata_time(0)) + 2) / 3 * 3;
+                time = required(it->obdata_time(0)) * it->obdata_autoShots;
                 if (error) *error = _("Time units are reserved for auto shot.");
             }
             break;
@@ -1713,7 +1713,7 @@ void Soldier::berserk_fire()
     
     if(it->obdata_accuracy(0)) {
         target.accur = FAccuracy(it->obdata_accuracy(0), it->obdata_twoHanded()) / 2;
-        target.time = required(it->obdata_time(0));
+        target.time = required(it->obdata_time(0)) * it->obdata_autoShots();
         target.action = AUTOSHOT;
     } else if(it->obdata_accuracy(1)) {
         target.accur = FAccuracy(it->obdata_accuracy(1), it->obdata_twoHanded()) / 2;
@@ -2455,7 +2455,7 @@ int Soldier::assign_target(Action action, int iplace)
             break;
         case AUTOSHOT:
             target.accur = FAccuracy(it->obdata_accuracy(AUTO), it->obdata_twoHanded());
-            target.time = required(it->obdata_time(AUTO));
+            target.time = required(it->obdata_time(AUTO)) * it->obdata_autoShots();
             break;
         case PUNCH:
             target.accur = 100;
@@ -2778,7 +2778,7 @@ int Soldier::do_reaction_fire(Soldier *the_target, int place, int shot_type)
 
     // How many TUs do we use?
     tus = required(it->obdata_time(shot_type));
-    if (shot_type == AUTO) tus = (tus + 2) / 3;//NOT!!!  * 3;
+    if (shot_type == AUTO) tus *= it->obdata_autoShots();
 
     if (tus <= ud.CurTU) {
         // We have enough time to make the shot. Set up target.
