@@ -204,6 +204,7 @@ int do_mainmenu()
 	
 	old_mouse_x = mouse_x;
 	old_mouse_y = mouse_y;
+	show_mouse(NULL);
 
 	fade_out(10);
 	clear(screen);

@@ -279,6 +279,50 @@ static int chat_msg_color(const std::string &msg)
 	return xcom1_color(colors[sum % (sizeof(colors) / sizeof(colors[0]))] * 16);
 }
 
+#define DX  180
+#define DY  150
+#define DW  280
+#define OKBUT  3
+#define CANBUT 4
+
+static char login_buffer[1024];
+static char password_buffer[1024];
+static char host_buffer[1024];
+
+static bool asklogin()
+{
+	static DIALOG login_dialog[] = {
+		//(dialog proc)		 (x)       (y)     (w)  (h) (fg)  (bg)  (key)		 (flags)	(d1)  (d2)							(dp)  (dp2)	(dp3)
+		{ d_shadow_box_proc, DX + 0,   DY + 0,  DW,  80, 0,    1, 0, 0, 0, 0, NULL, NULL, NULL },
+		{ d_rtext_proc,      DX + 10,  DY + 10, 70,  10, 0,    1, 0, 0, 0, 0, (void *)"Server:", NULL, NULL },
+		{ d_edit_proc,       DX + 80,  DY + 10, 192, 10, 0,    1, 0, 0, 22, 0, (void *)host_buffer, NULL, NULL },
+		{ d_rtext_proc,      DX + 10,  DY + 25, 70,  10, 0,    1, 0, 0, 0, 0, (void *)"Login:", NULL, NULL },
+		{ d_edit_proc,       DX + 80,  DY + 25, 192, 10, 0,    1, 0, 0, 22, 0, (void *)login_buffer, NULL, NULL },
+		{ d_rtext_proc,      DX + 10,  DY + 40, 70,  10, 0,    1, 0, 0, 0, 0, (void *)"Password:", NULL, NULL },
+		{ d_edit_proc,       DX + 80,  DY + 40, 192, 10, 0,    1, 0, 0, 22, 0, (void *)password_buffer, NULL, NULL },
+		{ d_button_proc,     DX + 140, DY + 55, 60,  18, 0,    1, 13, D_EXIT, 0, 0, (void *)"OK", NULL, NULL },
+		{ d_button_proc,     DX + 210, DY + 55, 60,  18, 0,    1, 27, D_EXIT, 0, 0, (void *)"Cancel", NULL, NULL },
+		{ NULL }
+	};
+
+	strcpy(host_buffer, g_server_host.c_str());
+	strcpy(login_buffer, g_server_login.c_str());
+	strcpy(password_buffer, g_server_password.c_str());
+
+	for (unsigned int i = 0; i < sizeof(login_dialog) / sizeof(login_dialog[0]); i++) {
+		login_dialog[i].fg = xcom1_color(15);
+		login_dialog[i].bg = xcom1_color(1);
+	}
+
+	if (popup_dialog(login_dialog, 2) == 7) {
+		g_server_host = host_buffer;
+		g_server_login = login_buffer;
+		g_server_password = password_buffer;
+		return true;
+	}
+	return false;
+}
+
 int connect_internet_server()
 {
 	if ((rand() % 2) == 1)
@@ -287,17 +331,25 @@ int connect_internet_server()
 		play_midi(g_net1_midi_music, 1);
 	lobby_init_mouse();
 
+	if (!g_server_autologin || g_server_login == "anonymous")
+		if (!asklogin())
+			return -1;
+
     std::auto_ptr<ClientServerUfo> server(new ClientServerUfo());
     if (!server->connect(cfg_get_server_host(), 2000)) {
 		alert(" ", "Failed to connect", " ", "    OK    ", NULL, 1, 0);
+		g_server_autologin = 0;
     	return -1;
 	}
 
     std::string error_message;
     if (!server->login(cfg_get_server_login(), cfg_get_server_password(), error_message)) {
 		alert(" ", error_message.c_str(), " ", "    OK    ", NULL, 1, 0);
+		g_server_autologin = 0;
 		return -1;
-    }
+	}
+
+	g_server_autologin = 1; // Remember successful login
 
 	std::auto_ptr<ConsoleWindow> chat(new ConsoleWindow(SCREEN_W, SCREEN_H, g_small_font));
 	std::auto_ptr<WindowBorder> chat_border(new WindowBorder(chat.get(), 
@@ -308,7 +360,7 @@ int connect_internet_server()
 	std::auto_ptr<WindowBorder> users_border(new WindowBorder(users.get(), "users online", large));
 	users_border->set_full_redraw();
 
-//	Write greetings and the short help to the chat console
+	// Write greetings and the short help to the chat console
 	chat->printf("You have just connected to ufo2000 internet server\n");
 	chat->printf("There are two windows here: chat console in the left window\n");
 	chat->printf("and the list of online players in the right\n");

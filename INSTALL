@@ -1,112 +1,107 @@
                              Installing ufo2000.
 
-
 1. General information.
 
-Current ufo2000 version compiles and works well in UNIX and WIN32 enviroments.
+Current ufo2000 version compiles and works well in UNIX and WIN32 environments.
 Previous version could also be compiled for DOS using DJGPP and a set of
 additional libraries (for more details download older sources 0.3.11 and
 look for instructions there). DOS support is not a primary target now though
 it still may be not completely broken. If anyone wants to reanimate
 DOS support, you are welcome.
 
-To successfully run ufo2000 you need the following:
-  1) ufo2000 executable itself.
-     You can download precompiled binary from ufo2000 home page or compile
-     the executable using the sources wich you can get from ufo2000 homepage
-     too.Instructions how to compile are at the end of this file.
+In order to successfully run ufo2000, you need a set of data files from 
+'UFO: Enemy Unknown' by Microprose. UFO2000 can also use data files from 
+demo-version of this game, but you will only have a limited set of features 
+available in this case.
 
-  2) ufo2000 data-file package.
-     This is free and can be downloaded from ufo2000 home page.
+2. Platform-specific instructions
 
-  3) Data files from 'UFO: Enemy Unknown' by Microprose.
-     These files are proprietary and are not distributed with the game.
-     You have to get them from somewhere else. Currently ufo2000 runs well
-     with data files from 'UFO: Enemy Unknown V1.2' and 'UFO: Enemy Unknown V1.4'
-     but other versions may work as well or may not.
+--- Win32 ---
 
-After you get all the necessery files do the following:
+1) Download the latest win32-binary distributive of ufo2000 from
+   http://ufo2000.sourceforge.net or compile the game from sources 
+   yourself.
 
-  1) create a directory for ufo2000
+   If you want to compile the sources (if you don't, just skip the rest
+   of this section), it is recommended to use free MinGW compiler 
+   (Win32-port of GNU C++). You may also have to install MSYS (minimalistic 
+   set of unix tools) too. Both MinGW and MSYS can be downloaded from:
 
-  2) copy the executable there
+     http://sourceforge.net/projects/mingw
 
-  3) unpack the datapackage into that directory
+   You will also need a set of libraries. You can either compile and 
+   install them yourself, or download a set of the following files and
+   just extract them into directory with installed MinGW:
 
-  4) edit ufo2000.ini acording to your setup, be sure to enter the path to where
-     you put the original 'UFO: Enemy Unknown' data files.
-     For example if you have copied the files to the ufo2000 directory write
-     "./" for UNIX/LINUX or ".\" for WINDOWS behind "origfiles".(the "." means
-     current directory) So the whole line should look something like this:
-     origfiles = ./ # put path to the original data files here.
+     http://ufo2000.lxnt.info/files/mingw-allegro.zip
+     http://ufo2000.lxnt.info/files/mingw-expat.zip
+     http://ufo2000.lxnt.info/files/mingw-hawknl.zip
+     http://ufo2000.lxnt.info/files/mingw-lua.zip
 
-All filenames must be converted to lowercase to avoid problems in UNIX.
-You need GEODATA, GEOGRAPH, MAPS, SOUND, TERRAIN, UFOGRAPH, UFOINTRO, and UNITS
-directories from 'UFO: Enemy Unknown'. Non proprietary data files from ufo2000
-needed to play are the following: armoury.set, geodata.dat, items.dat,
-soldier.dat, ufo2000.dat and ufo2000.ini.
-Anyway if you are missing something, the program will tell you about this.
+2) Unpack ufo2000 binary and a it into a separate directory
 
+3) If you own a full version of X-COM, you can just copy all the files
+   from the installed X-COM directory into 'XCOM' subdirectory of ufo2000
+   (it is initially empty)
 
-2. Compilation.
+4) If you do not have a full version of X-COM, you can download a freely 
+   available demo from ftp://ftp.microprose.com:
 
-Prerequisites:
-gcc 2.96.3 or later for *nix
-MS Visual Studio 6.0 for Windows.
+     ftp://ftp.microprose.com/pub/mps-online/x-com/xcomdemo.zip
 
-Allegro library version 4.0.x
- can be found at http://www.talula.demon.co.uk/allegro/
+   After decompression of this file, you will get XCOM.EXE file which
+   is dos zip seflextracting archive. There are all the needed files for 
+   ufo2000 to work inside of it. Copy them into 'XCOMDEMO' subdirectory 
+   of ufo2000.
 
-jpgalleg library version 2.1
- can be found at http://www.allegro.cc/depot/project.php?_id=522
+--- Linux/Unix ---
 
-Expat library 1.95.6
- can be found at http://expat.sourceforge.net/
+1) Check if you have all the needed libraries installed and install them
+   if necessery. A list of the required libraries is listed below:
+   
+   Allegro library version 4.0.x
+     can be found at http://www.talula.demon.co.uk/allegro/
+   Expat library 1.95.6
+     can be found at http://expat.sourceforge.net/
+   HawkNL network library 1.66
+     can be found at http://www.hawksoft.com/hawknl/
+   Lua scripting language interpreter and library version 5.0
+     can be found at http://www.lua.org/
 
-UFO2000 sources. Either download latest release (recommended) from
-http://ufo2000.sourceforge.net/ or check out latest source snapshot
-from the source repository http://lxnt.info:8888/repos/ufo2k/trunk/
+   If gcc complains about expat.h :
 
-You will need Subversion 0.22+ client. Look at http://subversion.tigris.org/
+   expat.h:657: use of enum `XML_Status' without previous declaration
+   expat.h:736: multiple definition of `enum XML_Status'
+
+   cut the enum definition at about line 736 and paste it somewhere above
+   line 657.
+
+2) Download the latest sources of ufo2000, extract them into a separate 
+   directory and run make (or gmake) from it
+
+   # make
+
+3) If you own a full version of X-COM, you can just copy all the files
+   from the installed X-COM directory into 'XCOM' subdirectory of ufo2000
+   (it is initially empty)
+
+4) If you do not have a full version of X-COM, you can download a freely 
+   available demo from ftp://ftp.microprose.com:
+
+     ftp://ftp.microprose.com/pub/mps-online/x-com/xcomdemo.zip
+
+   After decompression of this file, you will get XCOM.EXE file which
+   is dos zip seflextracting archive. There are all the needed files for 
+   ufo2000 to work inside of it. Copy them into 'XCOMDEMO' subdirectory 
+   of ufo2000.
+
+3. Getting the latest unstable sources snapshot (for developers only)
+
+You can get the latest source snapshot from the source repository 
+  http://lxnt.info:8888/repos/ufo2k/trunk/
+
+You will need Subversion 0.31.0+ client. Look at
+  http://subversion.tigris.org/
 
 You can also check out any release from the tags directory at
-http://lxnt.info:8888/repos/ufo2k/tags/
-
-To compile for *NIX:
-  1) unpack the source somewhere
-  2) change into the directory wich was created
-  3) run make
-
-You need ONLY the the ufo2000 executable from that directory
-
-If gcc complains about expat.h :
-
-expat.h:657: use of enum `XML_Status' without previous declaration
-expat.h:736: multiple definition of `enum XML_Status'
-
-cut the enum definition at about line 736 and paste it somewhere above
-line 657.
-
-There are three ways to compile UFO2000 for windows.
-1. Compile natively. UFO2000 is known to compile with MS Visual Studio 6.0
-2. Cross-compile. UFO2000 compiles well using cross-tools package. Google for it.
-3. Natively compile with MinGW. UFO2000 has been compiled with MSYS 1.0.
-
-No one tried compiling it with Cygwin. It should work.
-
-To compile for WIN32:
-  1) unpack the source somewhere
-  2) open `ufo2000.dsw` from MS Visual Studio 6.0
-  3) compile
-
-
-3. Troubleshooting.
-
-If you have files from old DOS version of XCOM1/UFO:EU (not the collector's
-edition) then you won't be able to run UFO2000 unless you set F_FILECHECK to 0
-in the ufo2000.ini file.
-
-If you have some obscure or modified copy of the "UFO:Enemy unkown" files you
-can try to keep ufo2000 from checking for these by setting "F_FILECHECK = 0".
-However doing so is (not so) highly discouraged.
-
+  http://lxnt.info:8888/repos/ufo2k/tags/

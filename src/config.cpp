@@ -55,10 +55,10 @@ static std::string endturn_image_file_name;
 static std::string win_image_file_name;
 static std::string lose_image_file_name;
 
-static std::string server_host;
-
+std::string g_server_host;
 std::string g_server_login;
 std::string g_server_password;
+int         g_server_autologin;
 
 // Music.
 MIDI                  *g_menu_midi_music;
@@ -92,7 +92,7 @@ int cfg_get_min_color_depth()
 
 const std::string &cfg_get_server_host()
 {
-	return server_host;
+	return g_server_host;
 }
 
 const std::string &cfg_get_server_login()
@@ -201,7 +201,8 @@ void loadini()
 	win_image_file_name = get_config_string(gen, "win_image", "$(xcom)/geograph/back01.scr");
 	lose_image_file_name = get_config_string(gen, "lose_image", "$(xcom)/geograph/back02.scr");
 
-	server_host = get_config_string("Server", "host", "127.0.0.1");
+	g_server_host = get_config_string("Server", "host", "127.0.0.1");
+	g_server_autologin = get_config_int("Server", "autologin", 0);
 
 	g_menu_midi_music = load_midi(F(cfg_get_menu_music_file_name()));
 	g_setup_midi_music = load_midi(F(cfg_get_setup_music_file_name()));
@@ -215,6 +216,8 @@ void loadini()
 
 void saveini()
 {
+	set_config_file("ufo2000.ini");
+
 	set_config_string(gen, "server", HOSTNAME);
 	set_config_int(gen, "width", SCREEN2W);
 	set_config_int(gen, "height", SCREEN2H);
@@ -227,6 +230,11 @@ void saveini()
 	set_config_int(edit, "platoon_size", local_platoon_size);
 	set_config_string(edit, "last_map_name", last_map_name);
 	set_config_string(edit, "last_unit_name", last_unit_name);
+
+	set_config_string("Server", "host", g_server_host.c_str());
+	set_config_string("Server", "login", g_server_login.c_str());
+	set_config_string("Server", "password", g_server_password.c_str());
+	set_config_int("Server", "autologin", g_server_autologin);
 }
 /*
 static int USETRANS = 1;

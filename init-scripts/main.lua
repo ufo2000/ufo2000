@@ -94,15 +94,13 @@ function LocateFile(filename)
 		return string.gsub(filename, "^%$%(xcom%)", tftddemo_dir)
 	end
 
-	local backup_filename = filename
-
 	filename = string.gsub(filename, "^%$%(ufo2000%)", ufo2000_dir)
 	filename = string.gsub(filename, "^%$%(home%)", home_dir)
 
 	local fname = SearchFile(filename)
 	if fname then return fname end
 
-	return backup_filename
+	return filename
 end
 
 -- adds a new map file to a terrain record

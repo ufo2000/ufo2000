@@ -395,8 +395,10 @@ bool nomoves();
 int connect_internet_server();
 void display_error_message(const std::string &error_text);
 
+extern std::string g_server_host;
 extern std::string g_server_login;
 extern std::string g_server_password;
+extern int         g_server_autologin;
 
 int initgame();
 void gameloop();
