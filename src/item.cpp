@@ -121,11 +121,11 @@ void Item::od_info(int type, int gx, int gy, int gcol)
 	OBDATA *od = &obdata[type];
 
 #if 1
-	textprintf(screen2, font, gx, gy, gcol, "%s",  od->name);
+	textprintf(screen2, font, gx, gy, gcol, "%s", od->name);
 	gy += 15;
 
 	if (od->wayPoints || od->isGun) {
-		textprintf(screen2, font, gx, gy, gcol,      "Type   Accuracy  TUs cost");
+		textprintf(screen2, font, gx + 5, gy, gcol, "Type   Accuracy  TUs cost");
 		gy += 10;
 		if (od->accuracy[0]) {
 			textprintf(screen2, font, gx, gy, gcol, "Auto     %3d%%      %3d%%",
@@ -143,6 +143,11 @@ void Item::od_info(int type, int gx, int gy, int gcol)
 			gy += 10;
 		}
 		gy += 5;
+	}
+
+	if (od->twoHanded) {
+		textprintf(screen2, font, gx, gy, gcol, "Two-handed weapon");
+		gy += 15;
 	}
 
 	if (od->damage > 0) {

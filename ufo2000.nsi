@@ -7,7 +7,8 @@
 ;Include Modern UI
 
 	!include "MUI.nsh"
-
+	!addPluginDir  "../nsis-plugins"
+	!addincludedir "../nsis-plugins"
 ;--------------------------------
 ;General
 
@@ -33,7 +34,7 @@ FunctionEnd
 ;--------------------------------
 ;Interface Configuration
 
-  !define MUI_HEADERIMAGE
+	!define MUI_HEADERIMAGE
 	!define MUI_HEADERIMAGE_BITMAP arts\installer-logo.bmp
 	!define MUI_HEADERIMAGE_UNBITMAP arts\installer-logo.bmp
 	!define MUI_WELCOMEFINISHPAGE_BITMAP arts\installer-welcome.bmp
@@ -47,19 +48,19 @@ FunctionEnd
 ;--------------------------------
 ;Pages
 
-  !insertmacro MUI_PAGE_WELCOME
+	!insertmacro MUI_PAGE_WELCOME
 	!insertmacro MUI_PAGE_COMPONENTS
-  !insertmacro MUI_PAGE_DIRECTORY
+	!insertmacro MUI_PAGE_DIRECTORY
 	!define MUI_STARTMENUPAGE_REGISTRY_ROOT HKLM 
-  !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\UFO2000" 
-  !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
+	!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\UFO2000" 
+	!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
 	!insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
 	Page custom XComFolder
 	!insertmacro MUI_PAGE_INSTFILES
 	!insertmacro MUI_PAGE_FINISH
 	!insertmacro MUI_UNPAGE_WELCOME
-  !insertmacro MUI_UNPAGE_CONFIRM
-  !insertmacro MUI_UNPAGE_INSTFILES
+	!insertmacro MUI_UNPAGE_CONFIRM
+	!insertmacro MUI_UNPAGE_INSTFILES
 	!insertmacro MUI_UNPAGE_FINISH
   
 ;--------------------------------
@@ -77,8 +78,8 @@ LangString TEXT_XCOMFOLDER_TITLE ${LANG_ENGLISH} "Choose X-Com Location"
 LangString TEXT_XCOMFOLDER_SUBTITLE ${LANG_ENGLISH} "Choose the folder where you have X-Com installed in."
 
 Function XComFolder
-  !insertmacro MUI_HEADER_TEXT "$(TEXT_XCOMFOLDER_TITLE)" "$(TEXT_XCOMFOLDER_SUBTITLE)"
-  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "xcom_folder.ini"
+	!insertmacro MUI_HEADER_TEXT "$(TEXT_XCOMFOLDER_TITLE)" "$(TEXT_XCOMFOLDER_SUBTITLE)"
+	!insertmacro MUI_INSTALLOPTIONS_DISPLAY "xcom_folder.ini"
 	ReadINIStr $R0 "$PLUGINSDIR\xcom_folder.ini" "Field 3" "State"
 	ReadINIStr $R1 "$PLUGINSDIR\xcom_folder.ini" "Field 5" "State"
 	ReadINIStr $R2 "$PLUGINSDIR\xcom_folder.ini" "Field 7" "State"
@@ -89,11 +90,11 @@ FunctionEnd
 ;Version Information
 
 	VIProductVersion "%VERSION_ID%"
-  VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "UFO2000"
-  VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "Massive multiplayer game based on XCOM saga"
-  VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "UFO2000 Development Team"
+	VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "UFO2000"
+	VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "Massive multiplayer game based on XCOM saga"
+	VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "UFO2000 Development Team"
 	VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "Alexander Ivanov aka Sanami"
-  VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "UFO2000"
+	VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "UFO2000"
 	VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "%VERSION_ID%"
 	
 ;--------------------------------
@@ -101,7 +102,7 @@ FunctionEnd
 
 Section "UFO2000 (required)" MainSec
 
-  SectionIn RO
+	SectionIn RO
   
 	CreateDirectory "$INSTDIR\arts"
 	CreateDirectory "$INSTDIR\init-scripts"
@@ -177,8 +178,8 @@ Section "UFO2000 (required)" MainSec
 	tftddemo_no:
 	
 	!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-    
-    CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
+
+		CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
 		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
 		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\UFO2000.lnk" "$INSTDIR\ufo2000.exe" "" "$INSTDIR\ufo2000.exe" 0
 		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\UFO2000 server.lnk" "$INSTDIR\ufo2000-srv.exe" "" "$INSTDIR\ufo2000-srv.exe" 0
@@ -188,21 +189,21 @@ Section "UFO2000 (required)" MainSec
 		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - French.lnk" "$INSTDIR\readme_fr.txt" "" "$INSTDIR\readme_fr.txt" 0
 		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Manual - Russian.lnk" "$INSTDIR\readme_ru.html" "" "$INSTDIR\readme_ru.html" 0
   
-  !insertmacro MUI_STARTMENU_WRITE_END
+	!insertmacro MUI_STARTMENU_WRITE_END
 	
 	WriteRegStr HKLM SOFTWARE\UFO2000 "Install_Dir" "$INSTDIR"
   
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UFO2000" "DisplayName" "UFO2000"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UFO2000" "UninstallString" '"$INSTDIR\uninstall.exe"'
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UFO2000" "NoModify" 1
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UFO2000" "NoRepair" 1
-  WriteUninstaller "uninstall.exe"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UFO2000" "DisplayName" "UFO2000"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UFO2000" "UninstallString" '"$INSTDIR\uninstall.exe"'
+	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UFO2000" "NoModify" 1
+	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UFO2000" "NoRepair" 1
+	WriteUninstaller "uninstall.exe"
   
 SectionEnd
 
 Section "Desktop Shortcut" DesktopSec
 
-  CreateShortCut "$DESKTOP\UFO2000.lnk" "$INSTDIR\ufo2000.exe" "" "$INSTDIR\ufo2000.exe" 0
+	CreateShortCut "$DESKTOP\UFO2000.lnk" "$INSTDIR\ufo2000.exe" "" "$INSTDIR\ufo2000.exe" 0
   
 SectionEnd
 
@@ -211,76 +212,60 @@ Section /o "Download X-Com Demo" XComDemoSec
 	;(uses NSISdl.dll)
 	NSISdl::download "http://freelancer.ag.ru/demo/xcomdemo.zip" "$TEMP\xcomdemo.zip"
 	Pop $0
-  StrCmp $0 success success
-    SetDetailsView show
-    DetailPrint "download failed: $0"
-    Abort
-  success:
-		;(uses ZipDLL.dll)
-		!insertmacro MUI_ZIPDLL_EXTRACTFILE "$TEMP\xcomdemo.zip" "$TEMP" "XCOM.EXE"
-		Pop $0
-		StrCmp $0 success sucess
-			SetDetailsView show
-			DetailPrint "unzipping failed: $0"
-			Abort
-		sucess:
-		!insertmacro MUI_ZIPDLL_EXTRACTALL "$TEMP\XCOM.EXE" "$INSTDIR"
-		Pop $0
+	StrCmp $0 success success1
+		SetDetailsView show
+		DetailPrint "download failed: $0"
+		Abort
+	success1:
 
-    Delete "$TEMP\xcomdemo.zip"
-		Delete "$TEMP\XCOM.EXE"
+	;(uses ZipDLL.dll)
+	!insertmacro ZIPDLL_EXTRACT "$TEMP\xcomdemo.zip" "$TEMP" "XCOM.EXE"
+	Pop $0
+	StrCmp $0 success sucess2
+		SetDetailsView show
+		DetailPrint "unzipping failed: $0"
+		Abort
+	sucess2:
+	!insertmacro ZIPDLL_EXTRACT "$TEMP\XCOM.EXE" "$INSTDIR" "<ALL>"
+	Pop $0
+	StrCmp $0 success sucess3
+		SetDetailsView show
+		DetailPrint "unzipping failed: $0"
+		Abort
+	sucess3:
+
+	Delete "$TEMP\xcomdemo.zip"
+	Delete "$TEMP\XCOM.EXE"
 
 SectionEnd
 
 ;--------------------------------
 ;Descriptions
 
-  ;Language strings
-  LangString DESC_MainSec ${LANG_ENGLISH} "All of UFO2000's required files."
+	;Language strings
+	LangString DESC_MainSec ${LANG_ENGLISH} "All of UFO2000's required files."
 	LangString DESC_DesktopSec ${LANG_ENGLISH} "Creates a desktop shortcut for UFO2000."
 	LangString DESC_XComDemoSec ${LANG_ENGLISH} "Downloads and installs X-Com: Terran Defense Demo.\
 	Use this if you don't have any X-Com game installed. Download size: 1,1MB."
 
-  ;Assign language strings to sections
-  !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-  !insertmacro MUI_DESCRIPTION_TEXT ${MainSec} $(DESC_MainSec)
+	;Assign language strings to sections
+	!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+	!insertmacro MUI_DESCRIPTION_TEXT ${MainSec} $(DESC_MainSec)
 	!insertmacro MUI_DESCRIPTION_TEXT ${DesktopSec} $(DESC_DesktopSec)
 	!insertmacro MUI_DESCRIPTION_TEXT ${XComDemoSec} $(DESC_XComDemoSec)
-  !insertmacro MUI_FUNCTION_DESCRIPTION_END
+	!insertmacro MUI_FUNCTION_DESCRIPTION_END
  
 ;--------------------------------
 ; Uninstaller
 
 Section "Uninstall"
   
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UFO2000"
-  DeleteRegKey HKLM SOFTWARE\UFO2000
+	ReadRegStr $STARTMENU_FOLDER HKLM "Software\UFO2000" "Start Menu Folder"
+	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UFO2000"
+	DeleteRegKey HKLM "Software\UFO2000"
 
-	SetOutPath $INSTDIR
-  
-	Delete $INSTDIR\*
-	Delete $INSTDIR\arts\*
-	Delete $INSTDIR\init-scripts\*
-	Delete $INSTDIR\newmaps\*
-	Delete $INSTDIR\newunits\*
-	Delete $INSTDIR\script\*
-	
-	Delete $INSTDIR\uninstall.exe
-	
-  ReadRegStr $STARTMENU_FOLDER HKLM "Software\UFO2000" "Start Menu Folder"
 	Delete "$DESKTOP\UFO2000.lnk"
-
-  RMDir /r $SMPROGRAMS\$STARTMENU_FOLDER
-  RMDir "$INSTDIR\arts"
-	RMDir "$INSTDIR\init-scripts"
-	RMDir "$INSTDIR\newmaps"
-	RMDir "$INSTDIR\newmusic"
-	RMDir "$INSTDIR\newunits"
-	RMDir "$INSTDIR\script"
-	RMDir /r "$INSTDIR\TFTD"
-	RMDir /r "$INSTDIR\TFTDDEMO"
-	RMDir /r "$INSTDIR\XCOM"
-	RMDir /r "$INSTDIR\XCOMDEMO"
+	RMDir /r "$SMPROGRAMS\$STARTMENU_FOLDER"
 	RMDir /r "$INSTDIR"
 
 SectionEnd
