@@ -32,6 +32,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "wind.h"
 #include "explo.h"
 #include "config.h"
+#include "icon.h"
 
 SKIN_INFO g_skins[] =
 {
@@ -738,7 +739,7 @@ void Soldier::draw()
 			break;
 	}
 
-	if ((dir > 0) && (dir < 6)) {
+	if ((dir > 0) && (dir < 6)) {	
 		if (rhand_item() != NULL)
 			m_pck[S_HANDOB]->drawpck(dir + 8 * rhand_item()->obdata_pHeld(), image, handob_y);
 		else if (lhand_item() != NULL)
@@ -2512,76 +2513,43 @@ void Soldier::showspk()
 	}
 }
 
-
-void Soldier::drawbar(int col1, int col2, int x2, int y2, int val, int valmax)
-{
-	hline(screen2, x2, y2, x2 + valmax + 1, col1);
-	hline(screen2, x2, y2 + 1, x2 + val, col2); putpixel(screen2, x2 + valmax + 1, y2 + 1, col1);
-	hline(screen2, x2, y2 + 2, x2 + valmax + 1, col1);
-}
-
-
 void Soldier::drawinfo(int x, int y)
 {
 	if (rhand_item() != NULL) {
-		int it_width = rhand_item()->obdata_width();
-		int it_height = rhand_item()->obdata_height();
-		int dx = (2 - it_width) * 16 / 2;
-		int dy = (3 - it_height) * 15 / 2;
-
-		PCK::showpck(rhand_item()->obdata_pInv(), x + 280 + dx, y + 10 + dy);
 		if (rhand_item()->clip() != NULL)
-			printsmall(x + 304, y + 47, xcom1_color(1), rhand_item()->roundsremain());
-		if (rhand_item()->is_grenade()) {
-			if (rhand_item()->delay_time() > 0)
-				printsmall(x + 304, y + 47, xcom1_color(36), rhand_item()->delay_time() - 1);
-			if ((rhand_item()->itemtype() == PROXIMITY_GRENADE) && (rhand_item()->delay_time() < 0))
-				textout(screen2, g_small_font, "*", x + 304, y + 43, xcom1_color(36));
-		}
+			icon->draw_item(I_RIGHT, rhand_item(), rhand_item()->roundsremain(), -1, false);
+		else if (rhand_item()->is_grenade() && rhand_item()->delay_time() > 0)
+			icon->draw_item(I_RIGHT, rhand_item(), -1, rhand_item()->delay_time() - 1, false);
+		else if (rhand_item()->is_grenade() && rhand_item()->itemtype() == PROXIMITY_GRENADE && rhand_item()->delay_time() < 0)
+			icon->draw_item(I_RIGHT, rhand_item(), -1, -1, true);
+		else
+			icon->draw_item(I_RIGHT, rhand_item(), -1, -1, false);	
 	}
 	if (lhand_item() != NULL) {
-		int it_width = lhand_item()->obdata_width();
-		int it_height = lhand_item()->obdata_height();
-		int dx = (2 - it_width) * 16 / 2;
-		int dy = (3 - it_height) * 15 / 2;
-
-		PCK::showpck(lhand_item()->obdata_pInv(), x + 8 + dx, y + 10 + dy);
 		if (lhand_item()->clip() != NULL)
-			printsmall(x + 33, y + 47, xcom1_color(1), lhand_item()->roundsremain());
-		if (lhand_item()->is_grenade()) {
-			if (lhand_item()->delay_time() > 0)
-				printsmall(x + 33, y + 47, xcom1_color(36), lhand_item()->delay_time() - 1);
-			if ((lhand_item()->itemtype() == PROXIMITY_GRENADE) && (lhand_item()->delay_time() < 0))
-				textout(screen2, g_small_font, "*", x + 32, y + 43, xcom1_color(36));
-		}
+			icon->draw_item(I_LEFT, lhand_item(), lhand_item()->roundsremain(), -1, false);
+		else if (lhand_item()->is_grenade() && lhand_item()->delay_time() > 0)
+			icon->draw_item(I_LEFT, lhand_item(), -1, lhand_item()->delay_time() - 1, false);
+		else if (lhand_item()->is_grenade() && lhand_item()->itemtype() == PROXIMITY_GRENADE && lhand_item()->delay_time() < 0)
+			icon->draw_item(I_LEFT, lhand_item(), -1, -1, true);
+		else
+			icon->draw_item(I_LEFT, lhand_item(), -1, -1, false);	
 	}
-	textout(screen2, g_small_font, md.Name, x + 134, y + 32, xcom1_color(130));
 
+	icon->draw_text(T_MAN_NAME, md.Name);
 
-	drawbar(xcom1_color(71), xcom1_color(64), 170 + x, 41 + y, ud.CurTU, ud.MaxTU);
-	//textprintf(screen2, font, x+136, y+41, 64, "%d", ud.CurTU);
-	printsmall(x + 136, y + 42, xcom1_color(64), ud.CurTU);
-
-	drawbar(xcom1_color(21), xcom1_color(16), 170 + x, 45 + y, ud.CurEnergy, ud.MaxEnergy);
-	//textprintf(screen2, font, x+154, y+41, 16, "%d", ud.CurEnergy);
-	printsmall(x + 154, y + 42, xcom1_color(16), ud.CurEnergy);
-
-	drawbar(xcom1_color(37), xcom1_color(32), 170 + x, 49 + y, ud.CurHealth, ud.MaxHealth);
-	//textprintf(screen2, font, x+136, y+49, 32, "%d", ud.CurHealth);
-	printsmall(x + 136, y + 50, xcom1_color(32), ud.CurHealth);
+	icon->draw_attribute(A_TIME_UNITS, ud.CurTU, ud.MaxTU);
+	icon->draw_attribute(A_ENERGY, ud.CurEnergy, ud.MaxEnergy);
+	icon->draw_attribute(A_HEALTH, ud.CurHealth, ud.MaxHealth);
+	icon->draw_attribute(A_MORALE, ud.Morale, 100);
 
 	if (ud.CurStun > 0) // draw stun bar
 	{
 		if (ud.CurStun < ud.CurHealth)
-			hline(screen2, 170 + x, 50 + y, 170 + x + ud.CurStun, 80);
+			icon->draw_stun_bar(x, y, ud.CurStun, ud.MaxHealth);
 		else
-			hline(screen2, 170 + x, 50 + y, 170 + x + ud.CurHealth, 80);
-		putpixel(screen2, 170 + x + ud.MaxHealth + 1, 50 + y + 1, 37);
+			icon->draw_stun_bar(x, y, ud.CurHealth, ud.MaxHealth);
 	}
-
-	drawbar(xcom1_color(197), xcom1_color(192), 170 + x, 53 + y, ud.Morale, 100);
-	//textprintf(screen2, font, x+154, y+49, 192, "%d", ud.Morale);
-	printsmall(x + 154, y + 50, xcom1_color(192), ud.Morale);
 }
 
 #define AUTO   0

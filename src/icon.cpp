@@ -42,19 +42,319 @@ void cprintf(char *str)
 }
 
 
-Icon::Icon(int x2, int y2)
+Icon::Icon()
 {
-	x = x2; y = y2;
-	tac00 = new SPK("$(xcom)/ufograph/tac00.scr");
+	//names in .lua file
+	item[I_LEFT].name = "LeftItem";
+	item[I_RIGHT].name = "RightItem";
+	
+	button[B_MAN_UP].name = "ManUp";
+	button[B_MAN_DOWN].name = "ManDown";
+	button[B_VIEW_UP].name = "ViewUp";
+	button[B_VIEW_DOWN].name = "ViewDown";
+	button[B_MAP].name = "Map";
+	button[B_CROUCH].name = "Crouch";
+	button[B_INVENTORY].name = "Inventory";
+	button[B_CENTER_VIEW].name = "CenterView";
+	button[B_NEXT_MAN].name = "NextMan";
+	button[B_NEXT_MAN_2].name = "NextMan2";
+	button[B_TOGGLE_ROOF].name = "ToggleRoof";
+	button[B_OPTIONS].name = "Options";
+	button[B_DONE].name = "Done";
+	button[B_EXIT].name = "Exit";
+	button[B_MAN_STATS].name = "ManStats";
+	
+	text[T_TURN_NUMBER].name = "TurnNumber";
+	text[T_MAN_NAME].name = "ManName";
+	
+	attribute[A_TIME_UNITS].name = "TimeUnits";
+	attribute[A_ENERGY].name = "Energy";
+	attribute[A_HEALTH].name = "Health";
+	attribute[A_MORALE].name = "Morale";
 
-	SPK *spk = new SPK("$(xcom)/ufograph/icons.pck");
-	BITMAP *image = create_bitmap(320, 200); clear(image);
-	spk->show(image, 0, 0);
-	delete(spk);
+	int nc[4];
+	const char *nd;
+	bool custom_icons = false;
+	
+	int stack_top = lua_gettop(L);
+	
+	if (exists(F("$(ufo2000)/init-scripts/icons.lua"))) {
+		lua_dofile(L, F("$(ufo2000)/init-scripts/icons.lua"));
+		custom_icons = true;
+	} else 
+		lua_dofile(L, F("$(ufo2000)/init-scripts/standart-icons.lua"));	
+	
+	//image
+	if (custom_icons) {
+		lua_pushstring(L, "Image");
+		lua_gettable(L, -2);
+		ASSERT(lua_isstring(L, -1));                     
+		filename = (std::string)lua_tostring(L, -1);
+		lua_pop(L, 1);
+    }
 
-	iconsbmp = create_bitmap(320, 57);
-	blit(image, iconsbmp, 0, 144, 0, 0, iconsbmp->w, iconsbmp->h);
-	destroy_bitmap(image);
+	//items
+	for (int i = 0; i < ITEM_NUMBER; i++) {
+   		lua_pushstring(L, item[i].name);
+		lua_gettable(L, -2);
+		ASSERT(lua_istable(L, -1));
+
+		lua_pushstring(L, "Button");
+		lua_gettable(L, -2);
+		ASSERT(lua_istable(L, -1));
+	
+		for (int j = 1; j <= 4; j++) {
+			lua_pushnumber(L, j);
+			lua_gettable(L, -2);
+			ASSERT(lua_isnumber(L, -1));
+			nc[j - 1] = (int)lua_tonumber(L, -1);
+			lua_pop(L, 1);
+		}
+		
+		item[i].button.set_coords(nc[0], nc[1], nc[2], nc[3]);     
+	
+		lua_pop(L, 1);
+	    
+		lua_pushstring(L, "Image");
+		lua_gettable(L, -2);
+		ASSERT(lua_istable(L, -1));
+	
+		for (int j = 1; j <= 2; j++) {
+			lua_pushnumber(L, j);
+			lua_gettable(L, -2);
+			ASSERT(lua_isnumber(L, -1));
+			nc[j - 1] = (int)lua_tonumber(L, -1);
+			lua_pop(L, 1);
+		}
+	
+		item[i].ImageX = nc[0];
+		item[i].ImageY = nc[1];
+	
+		lua_pop(L, 1);
+	
+		lua_pushstring(L, "DigitsCoords");
+		lua_gettable(L, -2);
+		ASSERT(lua_istable(L, -1));
+	
+		for (int j = 1; j <= 2; j++) {
+			lua_pushnumber(L, j);
+			lua_gettable(L, -2);
+			ASSERT(lua_isnumber(L, -1));
+			nc[j - 1] = (int)lua_tonumber(L, -1);
+			lua_pop(L, 1);
+		}
+	
+		item[i].DigitsX = nc[0];
+		item[i].DigitsY = nc[1];
+	
+		lua_pop(L, 1);
+		
+		lua_pushstring(L, "DigitsRoundsColor");
+		lua_gettable(L, -2);
+		ASSERT(lua_isnumber(L, -1));
+		nc[0] = (int)lua_tonumber(L, -1);
+		lua_pop(L, 1);
+		
+		item[i].DigitsRoundsColor = nc[0];
+				
+		lua_pushstring(L, "DigitsPrimeColor");
+		lua_gettable(L, -2);
+		ASSERT(lua_isnumber(L, -1));
+		nc[0] = (int)lua_tonumber(L, -1);
+		lua_pop(L, 1);
+		
+		item[i].DigitsPrimeColor = nc[0];
+		
+		lua_pop(L, 1);
+	}
+	
+	//buttons
+	for (int i = 0; i < BUTTON_NUMBER; i++) {
+		lua_pushstring(L, button[i].name);
+		lua_gettable(L, -2);
+		ASSERT(lua_istable(L, -1));
+	
+		for (int j = 1; j <= 4; j++) {
+			lua_pushnumber(L, j);
+			lua_gettable(L, -2);
+			ASSERT(lua_isnumber(L, -1));
+			nc[j - 1] = (int)lua_tonumber(L, -1);
+			lua_pop(L, 1);
+		}
+	
+		button[i].set_coords(nc[0], nc[1], nc[2], nc[3]);
+	
+		lua_pop(L, 1);
+	}
+	
+	//texts
+	for (int i = 0; i < TEXT_NUMBER; i++) {
+		lua_pushstring(L, text[i].name);
+		lua_gettable(L, -2);
+		ASSERT(lua_istable(L, -1));
+	
+		lua_pushstring(L, "Coords");
+		lua_gettable(L, -2);
+		ASSERT(lua_istable(L, -1));
+	
+		for (int j = 1; j <= 2; j++) {
+			lua_pushnumber(L, j);
+			lua_gettable(L, -2);
+			ASSERT(lua_isnumber(L, -1));
+			nc[j - 1] = (int)lua_tonumber(L, -1);
+			lua_pop(L, 1);
+		}
+	
+		text[i].x = nc[0];
+		text[i].y = nc[1];
+		
+		lua_pop(L, 1);
+	
+		lua_pushstring(L, "Color");
+		lua_gettable(L, -2);
+		ASSERT(lua_isnumber(L, -1));
+		nc[0] = (int)lua_tonumber(L, -1);
+		lua_pop(L, 1);
+	
+		text[i].color = nc[0];
+		
+		lua_pushstring(L, "Font");
+		lua_gettable(L, -2);
+		ASSERT(lua_isstring(L, -1));
+		nd = lua_tostring(L, -1);
+		lua_pop(L, 1);
+	
+		if (nd == (std::string)"small")
+			text[i].font = g_small_font;
+		else if (nd == (std::string)"normal")
+			text[i].font = font;
+		else if (nd == (std::string)"large")
+			text[i].font = large;
+		else 
+			ASSERT(false);
+	
+		lua_pop(L, 1);
+	}
+	
+	//attributes	
+	for (int i = 0; i < ATTRIBUTE_NUMBER; i++) {
+		lua_pushstring(L, attribute[i].name);
+		lua_gettable(L, -2);
+		ASSERT(lua_istable(L, -1));
+		
+		lua_pushstring(L, "BarZeroCoords");
+		lua_gettable(L, -2);
+		ASSERT(lua_istable(L, -1));
+	
+		for (int j = 1; j <= 2; j++) {
+			lua_pushnumber(L, j);
+			lua_gettable(L, -2);
+			ASSERT(lua_isnumber(L, -1));
+			nc[j - 1] = (int)lua_tonumber(L, -1);
+			lua_pop(L, 1);
+		}
+	
+		attribute[i].BarX = nc[0];
+		attribute[i].BarY = nc[1];
+	
+		lua_pop(L, 1);
+	
+		lua_pushstring(L, "BarDirection");
+		lua_gettable(L, -2);
+		ASSERT(lua_isstring(L, -1));
+		nd = lua_tostring(L, -1);
+		lua_pop(L, 1);
+	
+		if (nd == (std::string)"horizontal")
+			attribute[i].BarDirection = dir_hor;
+		else if (nd == (std::string)"vertical")
+			attribute[i].BarDirection = dir_vert;
+		else 
+			ASSERT(false);
+		
+		lua_pushstring(L, "FColor");
+		lua_gettable(L, -2);
+		ASSERT(lua_isnumber(L, -1));
+		nc[0] = (int)lua_tonumber(L, -1);
+		lua_pop(L, 1);
+	
+		attribute[i].FColor = nc[0];
+	
+		lua_pushstring(L, "BColor");
+		lua_gettable(L, -2);
+		ASSERT(lua_isnumber(L, -1));
+		nc[0] = (int)lua_tonumber(L, -1);
+		lua_pop(L, 1);
+	
+		attribute[i].BColor = nc[0];
+	
+		lua_pushstring(L, "DigitsCoords");
+		lua_gettable(L, -2);
+		ASSERT(lua_istable(L, -1));
+	
+		for (int j = 1; j <= 2; j++) {
+			lua_pushnumber(L, j);
+			lua_gettable(L, -2);
+			ASSERT(lua_isnumber(L, -1));
+			nc[j - 1] = (int)lua_tonumber(L, -1);
+			lua_pop(L, 1);
+		}
+	
+		attribute[i].DigitsX = nc[0];
+		attribute[i].DigitsY = nc[1];
+	
+		lua_pop(L, 1);
+		
+		lua_pushstring(L, "DigitsColor");
+		lua_gettable(L, -2);
+		ASSERT(lua_isnumber(L, -1));
+		nc[0] = (int)lua_tonumber(L, -1);
+		lua_pop(L, 1);
+		
+		attribute[i].DigitsColor = nc[0];
+		
+		lua_pop(L, 1);
+	}
+
+	//stun bar color	
+	lua_pushstring(L, "StunColor");
+	lua_gettable(L, -2);
+	ASSERT(lua_isnumber(L, -1));
+	nc[0] = (int)lua_tonumber(L, -1);
+	lua_pop(L, 1);
+	
+	stun_color = nc[0];
+			
+	lua_settop(L, stack_top);
+
+	tac00 = new SPK("$(xcom)/ufograph/tac00.scr");                     
+	
+	if (custom_icons) {
+		BITMAP *custom_image;
+		custom_image = load_bitmap(F(filename.c_str()), NULL);
+		ASSERT(custom_image);
+		width = custom_image->w;
+		height = custom_image->h;
+		
+		iconsbmp = create_bitmap(width, height);
+		blit(custom_image, iconsbmp, 0, 0, 0, 0, iconsbmp->w, iconsbmp->h);
+		destroy_bitmap(custom_image);
+	} else {
+		SPK *spk = new SPK("$(xcom)/ufograph/icons.pck");
+		BITMAP *image = create_bitmap(320, 200); clear(image);
+		spk->show(image, 0, 0);
+		delete(spk);
+		
+		width = 320;
+		height = 57;
+
+        iconsbmp = create_bitmap(width, height);
+		blit(image, iconsbmp, 0, 144, 0, 0, iconsbmp->w, iconsbmp->h); 
+		destroy_bitmap(image);
+	}
+		
+	x = (SCREEN2W - width) / 2;
+	y = SCREEN2H - height;
 }
 
 Icon::~Icon()
@@ -65,7 +365,8 @@ Icon::~Icon()
 
 void Icon::draw()
 {
-	blit(iconsbmp, screen2, 0, 0, x, y, iconsbmp->w, iconsbmp->h);
+	//blit(iconsbmp, screen2, 0, 0, x, y, iconsbmp->w, iconsbmp->h);
+	draw_sprite(screen2, iconsbmp, x, y);
 	info();
 }
 
@@ -84,7 +385,7 @@ int firemenu_dialog_proc(int msg, DIALOG * d, int c)
 	if (mouse_b & 2) {
 		while (mouse_b & 2) yield_timeslice();
 		firemenu_dialog_proc_exit = 1;
-		return D_CLOSE;
+	return D_CLOSE;
 	}
 	return d_button_proc(msg, d, c);
 }
@@ -214,8 +515,11 @@ void Icon::firemenu(int iplace)
 						}
 					}
 				}
-			}
-		if (i > 1) {
+			} //else {
+			//	if (it->is_scanner) {
+			//		wtime[i] = sel_man->required(it->obdata_time
+			//		sprintf(dstr[i], "SCAN                   TUS>%02d", wtime[i]);
+		if (i > 1) {                  
 			the_dialog[i].proc = NULL;
 			//set_mouse_sprite(mouser);
 			firemenu_dialog_proc_exit = 0;
@@ -286,153 +590,114 @@ int Icon::doprime(Item *it)
 	return do_dialog(dPrime, -1);
 }
 
-
 void Icon::execute(int mx, int my)
 {
-	int n;
+	//int n;
 	mx -= x; my -= y;
 
-	if (mx < 48) {
-		if ((mx >= 8) && (mx <= 39) && (my >= 4) && (my <= 52)) { //cprintf("left");
-			if (MODE != WATCH)
-				firemenu(P_ARM_LEFT);
+    if (item[I_LEFT].button.is_inside(mx, my)) {
+		if (MODE != WATCH)
+			firemenu(P_ARM_LEFT);
+	} else
+	if (item[I_RIGHT].button.is_inside(mx, my)) {
+		if (MODE != WATCH)
+			firemenu(P_ARM_RIGHT);
+	} else
+	if (button[B_MAN_UP].is_inside(mx, my)) {
+		if (MODE != WATCH) {
+			if (sel_man->use_elevator(+1))
+				map->center(sel_man);
 		}
-	} else if (mx > 271) {
-		if ((mx >= 280) && (mx <= 311) && (my >= 4) && (my <= 52)) { //cprintf("right");
-			if (MODE != WATCH)
-				firemenu(P_ARM_RIGHT);
+	} else
+	if (button[B_MAN_DOWN].is_inside(mx, my)) {
+		if (MODE != WATCH) {
+			if (sel_man->use_elevator(-1))
+				map->center(sel_man);
 		}
-	} else if (my < 32) {
-		n = (mx - 52) / 31;
-		if (my < 16) {
-			switch (n) {
-				case 0:      //cprintf("0");
-					if (MODE != WATCH) {
-						if (sel_man->use_elevator(+1))
-							map->center(sel_man);
-					}
-					break;
-				case 1:      //cprintf("1");
-					if (map->sel_lev < map->level - 1)
-						map->sel_lev++;
-					break;
-				case 2:      //cprintf("2"); //map2d
-					if (MODE != WATCH)
-						MODE = MAP2D;
-					break;
-				case 3:      //cprintf("3"); //soldier manage
-					if (MODE != WATCH) {
-						TARGET = 0;
-						if ((sel_man != NULL) && (!sel_man->ismoving())) {
-							MODE = MAN;
-						}
-					}
-					break;
-				case 4:      //cprintf("4"); //next
-					TARGET = 0;
-					if (sel_man == NULL) {
-						sel_man = platoon_local->captain();
-						if (sel_man != NULL)
-							map->center(sel_man);
-					} else if (!sel_man->ismoving()) {
-						Soldier *s = sel_man;
-						sel_man = platoon_local->next_not_moved_man(sel_man);
-						if (s != sel_man)
-							map->center(sel_man);
-					}
-					break;
-				case 5:      //cprintf("5");
-					if (FLAGS & F_SHOWLEVELS) {
-						FLAGS &= ~F_SHOWLEVELS;
-					} else {
-						FLAGS |= F_SHOWLEVELS;
-					}
-					break;
-				case 6:      //cprintf("6"); //eot
-					if (MODE != WATCH) {
-						TARGET = 0;
-						if (nomoves()) {
-							send_turn();
-						}
-					}
-					break;
-			}
-		} else {
-			switch (n) {
-				case 0:      //cprintf("7");
-					if (MODE != WATCH) {
-						if (sel_man->use_elevator(-1))
-							map->center(sel_man);
-					}
-					break;
-				case 1:      //cprintf("8");
-					if (map->sel_lev > 0)
-						map->sel_lev--;
-					break;
-				case 2:      //cprintf("9");    //sit/stand
-					if (MODE != WATCH) {
-						if ((sel_man != NULL) && (!sel_man->ismoving())) {
-							sel_man->change_pose();
-						}
-					}
-					break;
-				case 3:      //cprintf("a"); //center
-					if (sel_man != NULL) {
-						map->center(sel_man);
-					}
-					break;
-				case 4:      //cprintf("b"); //next !moved
-					TARGET = 0;
-					if (sel_man == NULL) {
-						sel_man = platoon_local->captain();
-						if (sel_man != NULL)
-							map->center(sel_man);
-					} else if (!sel_man->ismoving()) {
-						sel_man->MOVED = 1;
-						Soldier *s = sel_man;
-						sel_man = platoon_local->next_not_moved_man(sel_man);
-						if (s != sel_man)
-							map->center(sel_man);
-					}
-					break;
-				case 5:    //cprintf("c");
-					if (MODE != WATCH)
-						configure();
-					break;
-				case 6:      //cprintf("d");
-					//quitmenu();
-					simulate_keypress(KEY_ESC << 8);
-					break;
-
+	} else
+	if (button[B_VIEW_UP].is_inside(mx, my)) {
+		if (map->sel_lev < map->level - 1)
+			map->sel_lev++;
+	} else
+	if (button[B_VIEW_DOWN].is_inside(mx, my)) {
+		if (map->sel_lev > 0)
+			map->sel_lev--;
+	} else
+	if (button[B_MAP].is_inside(mx, my)) {
+		if (MODE != WATCH)
+			MODE = MAP2D;
+	} else
+	if (button[B_CROUCH].is_inside(mx, my)) {
+		if (MODE != WATCH) {
+			if ((sel_man != NULL) && (!sel_man->ismoving())) {
+				sel_man->change_pose();
 			}
 		}
-	} else {
-		n = (mx - 48) / 29;
-		if (n == 2) {
-			if (sel_man != NULL) {
-				if (MODE != WATCH)
-					MODE = UNIT_INFO;
+	} else
+	if (button[B_INVENTORY].is_inside(mx, my)) {
+		if (MODE != WATCH) {
+			TARGET = 0;
+			if ((sel_man != NULL) && (!sel_man->ismoving())) {
+				MODE = MAN;
 			}
 		}
-
-		if (my < 44) {
-			if (n == 0) {
-				cprintf("_0");
-
-			} else if (n == 1) {
-				cprintf("_1");
-
-			}
-		} else {
-			if (n == 0) {
-				cprintf("_2");
-
-			} else if (n == 1) {
-				cprintf("_3");
-
-			}
+	} else
+	if (button[B_CENTER_VIEW].is_inside(mx, my)) {
+		if (sel_man != NULL) {
+			map->center(sel_man);
 		}
-	}
+	} else
+	if (button[B_NEXT_MAN].is_inside(mx, my)) {	
+		TARGET = 0;
+		if (sel_man == NULL) {
+			sel_man = platoon_local->captain();
+			if (sel_man != NULL)
+				map->center(sel_man);
+		} else if (!sel_man->ismoving()) {
+			Soldier *s = sel_man;
+			sel_man = platoon_local->next_not_moved_man(sel_man);
+			if (s != sel_man)
+				map->center(sel_man);
+		}
+	} else
+	if (button[B_NEXT_MAN_2].is_inside(mx, my)) {
+		TARGET = 0;
+		if (sel_man == NULL) {
+			sel_man = platoon_local->captain();
+			if (sel_man != NULL)
+				map->center(sel_man);
+		} else if (!sel_man->ismoving()) {
+			sel_man->MOVED = 1;
+			Soldier *s = sel_man;
+			sel_man = platoon_local->next_not_moved_man(sel_man);
+			if (s != sel_man)
+				map->center(sel_man);
+		}
+	} else
+	if (button[B_TOGGLE_ROOF].is_inside(mx, my)) {	
+		if (FLAGS & F_SHOWLEVELS)
+			FLAGS &= ~F_SHOWLEVELS;
+		else
+			FLAGS |= F_SHOWLEVELS;
+	} else
+	if (button[B_OPTIONS].is_inside(mx, my)) {
+		if (MODE != WATCH)
+			configure();
+	} else
+	if (button[B_DONE].is_inside(mx, my)) {
+		if (MODE != WATCH) {
+			TARGET = 0;
+			if (nomoves())
+				send_turn();
+		}
+	} else
+	if (button[B_EXIT].is_inside(mx, my)) {
+		simulate_keypress(KEY_ESC << 8);
+	} else
+	if (button[B_MAN_STATS].is_inside(mx, my)) {
+		if (MODE != WATCH)
+			MODE = UNIT_INFO;
+	}	
 }
 
 void Icon::info()
@@ -440,13 +705,14 @@ void Icon::info()
 	text_mode(-1);
 	if (sel_man != NULL) {
 		sel_man->drawinfo(x, y);
-	}
-	textprintf(screen2, font, x + 112, y + 41, xcom1_color(1), "%02d", (turn / 2) + 1);
+	}      
+	
+	draw_text(T_TURN_NUMBER, (turn / 2) + 1, "%02d");
 }
 
 int Icon::inside(int mx, int my)
 {
-	if ((mx >= x) && (mx <= x + 320) && (my >= y) && (my <= y + 56))
+	if ((mx >= x) && (mx <= x + width) && (my >= y) && (my <= y + height))
 		return 1;
 	else
 		return 0;
@@ -457,4 +723,41 @@ void Icon::show_eot()
 	BITMAP *eot_back = load_back_image(cfg_get_endturn_image_file_name());
 	stretch_blit(eot_back, screen, 0, 0, eot_back->w, eot_back->h, 0, 0, SCREEN_W, SCREEN_H);
 	destroy_bitmap(eot_back);
+}
+
+void Icon::draw_stun_bar(int x, int y, int val, int maxval)
+{
+	if (attribute[A_HEALTH].BarDirection == dir_hor) {
+		hline(screen2, x + attribute[A_HEALTH].BarX, y + attribute[A_HEALTH].BarY + 1, x + attribute[A_HEALTH].BarX + val, xcom1_color(stun_color)); 
+		putpixel(screen2, x + attribute[A_HEALTH].BarX + maxval + 1, y + attribute[A_HEALTH].BarY + 1, xcom1_color(attribute[A_HEALTH].BColor));
+	} else {
+		vline(screen2, x + attribute[A_HEALTH].BarX + 1, y + attribute[A_HEALTH].BarY, y + attribute[A_HEALTH].BarY - val, xcom1_color(stun_color)); 
+		putpixel(screen2, x + attribute[A_HEALTH].BarX + 1, y + attribute[A_HEALTH].BarY + maxval + 1, xcom1_color(attribute[A_HEALTH].BColor));
+	}
+}
+
+void Icon::draw_attribute(int attr, int val, int maxval)
+{
+	attribute[attr].Draw(x, y, val, maxval);
+}
+
+void Icon::draw_text(int txt, char *val)
+{
+	text[txt].Draw(x, y, val);
+}
+
+void Icon::draw_text(int txt, int val, char *format)
+{
+	text[txt].Draw(x, y, val, format);
+}
+
+void Icon::draw_item(int itm, Item *it, int rounds, int prime, bool primed)
+{
+	item[itm].Draw(x, y, it);
+	if (rounds != -1)
+		item[itm].DrawDigits(x, y, rounds, dig_round);
+	else if (prime != -1)
+		item[itm].DrawDigits(x, y, prime, dig_count);
+	else if (primed)
+		item[itm].DrawPrimed(x, y);
 }

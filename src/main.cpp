@@ -574,7 +574,7 @@ void initmain(int argc, char *argv[])
 	g_console = new ConsoleWindow(SCREEN_W, SCREEN_H - SCREEN2H, cfg_get_console_font());
 
 	console<<"new icon"<<std::endl;
-	icon = new Icon((SCREEN2W - 320) / 2, SCREEN2H - 56);
+	icon = new Icon();
 
 	console<<"new inventory"<<std::endl;
 	inventory = new Inventory();
@@ -1627,7 +1627,7 @@ int main(int argc, char *argv[])
                     continue;
                 case MAINMENU_EDITOR:
 					FS_MusicPlay(F(cfg_get_editor_music_file_name()));
-//                  editor->do_mapedit();
+//	                editor->do_mapedit();
 					set_palette((RGB *)datafile[DAT_GAMEPAL_BMP].dat);
 					gui_fg_color = xcom1_color(15);
 					gui_bg_color = xcom1_color(1);

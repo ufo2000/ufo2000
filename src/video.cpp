@@ -332,7 +332,7 @@ void resize_screen2(int vw, int vh)
 
 	map->m_minimap_area->resize(SCREEN_W - SCREEN2W, SCREEN2H);
 	g_console->resize(SCREEN_W, SCREEN_H - SCREEN2H);
-	icon->setxy((SCREEN2W - 320) / 2, SCREEN2H - 56);
+	icon->setxy();
 	set_mouse_range(0, 0, SCREEN2W - 1, SCREEN2H - 1);
 	position_mouse(SCREEN2W / 2, SCREEN2H / 2);
 }

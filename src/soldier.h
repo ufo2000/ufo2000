@@ -162,7 +162,6 @@ public:
 	void draw_selector(int select_y);
 	void draw_blue_selector();
 	void showspk();
-	void drawbar(int col1, int col2, int x2, int y2, int val, int valmax);
 	void drawinfo(int x, int y);
 	void draw_bullet_way();
 	void draw_enemy_seen(int select_y);
