@@ -392,6 +392,7 @@ void initmain(int argc, char *argv[])
 	luaopen_base(L);
 	luaopen_string(L);
 	luaopen_io(L);
+	luaopen_math(L);
 	LUA_REGISTER_CLASS(L, Place);
 	LUA_REGISTER_CLASS_METHOD(L, Place, add_item);
 	
