@@ -478,7 +478,9 @@ void Map::set_sel(int mx, int my)
 //	text_mode(0); textprintf(screen, font, SCREEN2W + 8, 0, COLOR_WHITE, "x=%02d, y=%02d", sel_col, sel_row);
 }
 
-
+/**
+ * Scroll the map by specified x and y offsets
+ */
 void Map::move(int ofs_x, int ofs_y)
 {
 	int sx = x, sy = y;
@@ -488,12 +490,20 @@ void Map::move(int ofs_x, int ofs_y)
 	int mx = SCREEN2W / 2;
 	int my = SCREEN2H / 2;
 
-	int center_col = mx - x - 2 * (my - 3) + 2 * y - 16 + 2 * Cy - Cx ;
+	int old_center_col = mx - sx - 2 * (my - 3) + 2 * sy - 16 + 2 * Cy - Cx;
+	int old_center_row = (my - 3) - sy + 8 - Cy + old_center_col / 4;
+	old_center_row >>= 3; old_center_col >>= 5;
+
+	int center_col = mx - x - 2 * (my - 3) + 2 * y - 16 + 2 * Cy - Cx;
 	int center_row = (my - 3) - y + 8 - Cy + center_col / 4;
 	center_row >>= 3; center_col >>= 5;
 
-	if ((center_col < 0) || (center_row < 0) ||
-	        (center_col >= 10 * width) || (center_row >= 10 * height)) {
+	// When the center of view is already outside of the map, it should be
+	// possible to scroll in the direction of the map.
+	if (((center_col < 0) && (center_col < old_center_col)) ||
+		((center_row < 0) && (center_row < old_center_row)) ||
+    	((center_col >= 10 * width) && (center_col > old_center_col)) ||
+    	((center_row >= 10 * height) && (center_row > old_center_row))) {
 		x = sx; y = sy;
 	}
 }
@@ -934,6 +944,9 @@ int Map::passable(int oz, int ox, int oy, int dir)
 
 extern int mapscroll;
 
+/**
+ * Scroll the map by putting mouse on the edge of its movement area
+ */
 int Map::scroll(int mx, int my)
 {
 	int r = 0;
