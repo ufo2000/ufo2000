@@ -504,6 +504,8 @@ static char *names_A[] = {
     ("Axel"),
     NULL
 };
+
+/*
 static char *names_B[] = {
     ("Barbara"),
     ("Bastian"),
@@ -524,6 +526,7 @@ static char *names_B[] = {
     ("Bruno"),
     NULL
 };
+*/
 
 /**
  * Test for selectbox / Soldier-names
@@ -610,12 +613,12 @@ void Editor::show()
     int b1 = 0;
     int nr = 0;
     int A1 = 0, A2 = 0;
-    int NID = 0;
+  //int NID = 0;
   //char test[128];
     char test1[128];
     char test2[128];
-    char name[26];
-    int NameScheme = 0;
+  //char name[26];
+  //int NameScheme = 0;
 
     while (!DONE) {
 
@@ -1453,4 +1456,3 @@ int Editor::do_mapselect()
     //destroy_bitmap(terrain_bmp);
     return -1;
 }                                                                        
-

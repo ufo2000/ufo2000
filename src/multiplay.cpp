@@ -1420,18 +1420,18 @@ void Net::send_tie(int who)
 
 int Net::recv_tie()
 {
-    if (gametype == GAME_TYPE_HOTSEAT) return 0; // XOR - Should be done only once.
     int k, who;
     char buf[STDBUFSIZE];
     pkt >> who;
     k = (1 << who);
-    g_tie ^= k;
+    if (gametype != GAME_TYPE_HOTSEAT)
+        g_tie ^= k; // XOR - Should be done only once.
     if (g_tie == 3) {
-        sprintf(buf, "%s", _("Remote: Draw offer accepted"));
+        sprintf(buf, "%s", _("Opponent: Draw offer accepted"));
     } else if (g_tie & k) {
-        sprintf(buf, "%s", _("Remote: Draw offered"));
+        sprintf(buf, "%s", _("Opponent: Draw offered"));
     } else {
-        sprintf(buf, "%s", _("Remote: Draw offer recalled"));
+        sprintf(buf, "%s", _("Opponent: Draw offer recalled"));
     }
     g_console->printf(COLOR_SYS_PROMPT, buf);
     battle_report("# %s\n", buf);

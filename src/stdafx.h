@@ -95,7 +95,8 @@ extern "C" {
  * Standard game errors are coded with these constants.
  */
 enum GameErrorCodes {OK = 0, ERR_NO_TUS = -1, ERR_NO_ENERGY = -2,
- ERR_NO_AMMO = -3, ERR_NO_ITEM = -4, ERR_DISTANCE = -5};
+    ERR_NO_AMMO = -3, ERR_NO_ITEM = -4, ERR_DISTANCE = -5, ERR_MINUS_NUM = -6};
+    // ERR_MINUS_NUM should have the most negative value.
 
 const int SQUAD_LIMIT = 20;
 

@@ -249,13 +249,13 @@ Soldier *Platoon::findman(char *sn)
 
 Soldier *Platoon::findnum(int N)
 {
-	Soldier *ss = man;
-	for (int i = 1; i <= N; i++) {
-		ss = ss->next();
-		if (ss == NULL)
-			break;
-	}
-	return ss;
+    Soldier *ss = man;
+    for (int i = 1; i <= N; i++) {
+        if (ss == NULL)
+            break;
+        ss = ss->next();
+    }
+    return ss;
 }
 
 /**

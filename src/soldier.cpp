@@ -2264,7 +2264,8 @@ void Soldier::shoot(int zd, int xd, int yd, int ISLOCAL)
         int x0, y0, z0, chk;
         calc_bullet_start(x, y, z, &x0, &y0, &z0);
         chk = do_target_action(z0, x0, y0, zd, xd, yd, target.action, target.place);
-        if (!chk) net->send_target_action(NID, z0, x0, y0, zd, xd, yd, target.action, target.place);
+        if (chk == OK) net->send_target_action(NID, z0, x0, y0, zd, xd, yd, target.action, target.place);
+        else report_game_error(chk);
     }
 }
 
@@ -2276,7 +2277,7 @@ int Soldier::assign_target(Action action, int iplace)
     {
         case THROW:
             target.accur = 100;
-            target.time = 25;
+            target.time = required(25);
             break;
         case SNAPSHOT:
             target.accur = FAccuracy(it->obdata_accuracy(SNAP), it->obdata_twoHanded());
@@ -2288,15 +2289,15 @@ int Soldier::assign_target(Action action, int iplace)
             break;
         case AUTOSHOT:
             target.accur = FAccuracy(it->obdata_accuracy(AUTO), it->obdata_twoHanded());
-            target.time = required((it->obdata_time(AUTO) + 2) / 3);
+            target.time = (required(it->obdata_time(AUTO)) + 2) / 3;
             break;
         case PUNCH:
             target.accur = 100;
-            target.time = 25;
+            target.time = required(25);
             break;
         case AIMEDTHROW:
             target.accur = TAccuracy(it->obdata_accuracy(ATHROW));
-            target.time = 50;
+            target.time = required(50);
             break;
         default: ASSERT(false);
     }

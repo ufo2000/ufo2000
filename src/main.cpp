@@ -918,7 +918,7 @@ void send_turn()
     battle_report("# %s: %d\n", _("Turn end"), turn );
     g_console->printf(COLOR_VIOLET00, "%s", _("Turn end") );
     if(FLAGS & F_ENDTURNSND)
-        soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
+        soundSystem::getInstance()->play(SS_BUTTON_PUSH_2);
 
     platoon_remote->restore();
     platoon_remote->set_visibility_changed();
@@ -1610,6 +1610,30 @@ static LONG WINAPI TopLevelExceptionFilter(PEXCEPTION_POINTERS pExceptionInfo)
 }
 #endif
 
+const char GameErrorMessage[-ERR_MINUS_NUM][STDBUFSIZE] = {
+    "Success.",
+    "Not Enough Time Units!",
+    "Not Enough Energy!",
+    "Out Of Ammo!",
+    "No Item To Use!",
+    "Out Of Range!"
+};
+
+/**
+ * @brief  Show the reason why the requested action could not be performed.
+ */
+void report_game_error(int chk)
+{
+    // TODO: The error sound should be toggled by some specific flag.
+    // TODO: Even message displaying should be toggled since it may become
+    //       too annoying, for example, when trying to throw a grenade
+    //       as far as the soldier can.
+    chk = -chk; // Error codes are negative.
+    if(FLAGS & F_ENDTURNSND)
+        soundSystem::getInstance()->play(SS_BUTTON_PUSH_2);
+    g_console->printf(COLOR_SYS_FAIL, GameErrorMessage[chk]);
+}
+
 /**
  * @brief  Shift the active map level up by 1.
  */
@@ -1727,6 +1751,8 @@ void gameloop()
             map->smoker();
             platoon_remote->move(0);
             platoon_local->move(1);      //!!sel_man may die
+            if (sel_man == NULL)  // Get cursor back to normal mode in case
+                TARGET = 0;       // the current soldier died while targetting.
 
             select_y = (select_y + 1) % 3;
             CHANGE = 1;
@@ -1843,6 +1869,10 @@ void gameloop()
                         TARGET = 0;
                     else {
                         if (sel_man != NULL) {
+                            // Wait for opponent to finish reaction fire
+                            // (avoid dodging reaction fire bullets).
+                            if (!platoon_remote->nomoves()) break;
+
                             if (!sel_man->ismoving()) {
                                 sel_man->faceto(map->sel_col, map->sel_row);
 
@@ -2035,8 +2065,9 @@ void gameloop()
                         who = (p1 == platoon_local);
                         k = (1 << who);
                         b1 = alert3("", _("ABORT MISSION ?"), "", _("YES=RESIGN"),
-                            (g_tie & k) ? _("RECALL DRAW OFFER") : _("OFFER DRAW"),
-                            _("NO=CONTINUE"), 0, 0, 1);
+                            (g_tie & k) ? _("RECALL DRAW OFFER") : 
+                            (g_tie & (k ^ 3)) ? _("ACCEPT DRAW OFFER") :
+                            _("OFFER DRAW"), _("NO=CONTINUE"), 0, 0, 1);
                       //  b1 = alert( "", _("ABORT MISSION ?"), "",
                       //      _("YES=RESIGN"), _("NO=CONTINUE"), 0,1 );
                         delete temp_mouse_range_ptr;
@@ -2047,11 +2078,11 @@ void gameloop()
                             g_tie ^= k;
                             net->send_tie(who);
                             if (g_tie == 3) {
-                                sprintf(buf, "%s", _("Local: Draw offer accepted"));
+                                sprintf(buf, "%s", _("You: Draw offer accepted"));
                             } else if (g_tie & k) {
-                                sprintf(buf, "%s", _("Local: Draw offered"));
+                                sprintf(buf, "%s", _("You: Draw offered"));
                             } else {
-                                sprintf(buf, "%s", _("Local: Draw offer recalled"));
+                                sprintf(buf, "%s", _("You: Draw offer recalled"));
                             }
                             g_console->printf(COLOR_SYS_PROMPT, buf);
                             battle_report("# %s\n", buf);

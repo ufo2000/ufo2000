@@ -421,14 +421,10 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 				  //editor->set_man(name[1]);
                   //Editor::show();
                     break;
-				case KEY_F5:
-					if (FLAGS & F_RAWMESSAGES) {
-						FLAGS &= ~F_RAWMESSAGES;
-					} else {
-						FLAGS |= F_RAWMESSAGES;
-					}
+                case KEY_F5: // Toggle F_RAWMESSAGES
+                    FLAGS ^= F_RAWMESSAGES;
                     g_console->printf( COLOR_SYS_INFO1, "%s: %lu", "RAWMESSAGES:", (FLAGS & F_RAWMESSAGES) );
-					break;
+                    break;
 				case KEY_F9:
 					keyswitch(0);
 					break;

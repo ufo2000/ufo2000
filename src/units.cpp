@@ -710,13 +710,6 @@ void Units::execute_main(Map *map, int map_change_allowed)
 		int r = (mouse_y - gmy) / 4;
 
 		if (!(FLAGS & F_PLANNERDBG)) { // allow place at any position
-			/*if (pos == POS_LEFT) {
-				if (c > 9)
-					return ;
-			} else {
-				if (c < gmw / 4 - 10)
-					return ;
-			}*/
 			if (!scenario->is_correct_place(pos, c, r))
 			    return;
 		}
@@ -789,6 +782,7 @@ void Units::execute_main(Map *map, int map_change_allowed)
 
 	if (mouse_inside(gx + 15 * 8 - 20, SCREEN2H - 20, gx + 15 * 8 + 20, SCREEN2H - 5)) {
 		//"SEND"
+		if (SEND == 1) return; // Already sent the unit data.
 		int index_of_first = -1;
 		int num_of_men_sel = 0;
 		
