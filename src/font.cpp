@@ -522,22 +522,24 @@ static void uaf_render(AL_CONST FONT *f, AL_CONST char *text, int fg, int bg, BI
     }
 }
 
+
+
 /** Frees all memory and resources used.
  * @param f The 'this' pointer.
  */
 static void uaf_destroy(FONT *f) {
-#if defined (DEBUGMODE)    
+#if defined (DEBUGMODE_F_F)    
     printf("\nDefault font is %p (small %p large %p)\n",font, small, large);
     printf("Killing %s font\n",f == small ? "small" : "large");
 #endif
 	uaf_internal_data *idat = (uaf_internal_data *) (f->data);
 	free(idat->origU00);
-#if defined (DEBUGMODE)    
+#if defined (DEBUGMODE_F)    
     printf("Freed idat->origU00\n");
 #endif
 	if (idat->origU04 != NULL) { 
         free(idat->origU04);
-#if defined (DEBUGMODE)    
+#if defined (DEBUGMODE_F)    
         printf("Freed idat->origU04\n");
     } else {
         printf("Skipped idat->origU04 (%p)\n",idat->origU04);
@@ -547,7 +549,7 @@ static void uaf_destroy(FONT *f) {
 		for(int i=0; i < idat->cachecount; i++) {
 			if (idat->cache[i].U00 != NULL) {
 				destroy_bitmap(idat->cache[i].U00);
-#if defined (DEBUGMODE)    
+#if defined (DEBUGMODE_F)    
                 printf("\nDestroyed idat->cache[%d].U00 bitmap",i);
 			} else {
                 printf("\nSkipped idat->cache[%d].U00 bitmap",i);
@@ -555,7 +557,7 @@ static void uaf_destroy(FONT *f) {
             }
 			if (idat->cache[i].U04 != NULL) {
 				destroy_bitmap(idat->cache[i].U04);
-#if defined (DEBUGMODE)    
+#if defined (DEBUGMODE_F)    
                 printf("\nDestroyed idat->cache[%d].U04 bitmap",i);
 			} else {
                 printf("\nSkipped idat->cache[%d].U04 bitmap",i);
@@ -563,20 +565,20 @@ static void uaf_destroy(FONT *f) {
             }
 		}
 		free(idat->cache);
-#if defined (DEBUGMODE)    
+#if defined (DEBUGMODE_F)    
         printf("\nFreed idat->cache");
 #endif
 	}
 	free(f->data);
-#if defined (DEBUGMODE)    
+#if defined (DEBUGMODE_F)    
     printf("\nFreed f->data");
 #endif
     free(f->vtable);
-#if defined (DEBUGMODE)    
+#if defined (DEBUGMODE_F)    
     printf("\nFreed f->vtable");
 #endif
 	free(f);
-#if defined (DEBUGMODE)    
+#if defined (DEBUGMODE_F)    
     printf("\nFreed %s font\n",f == small ? "small" : "large");
 #endif
 }

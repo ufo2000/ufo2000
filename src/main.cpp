@@ -250,7 +250,7 @@ void closegame()
 int print_y = 0;
 Wind *print_win = NULL;
 
-void print(char *str)
+void print(const char *str)
 {
 	//#ifdef WIN32
 	if (print_win != NULL) {
@@ -265,6 +265,41 @@ void print(char *str)
 	//	cprintf("%s\r\n", str);
 	//#endif
 }
+
+class consoleBuf : public std::streambuf {
+    std::string curline;
+    bool doCout;
+  
+protected:
+    virtual int overflow(int c) {
+        if (doCout)
+            if (c == 10)
+                std::cout<<std::endl;
+            else
+                std::cout<<(static_cast<char>(c));
+        if (c == 10) {
+            if (print_win != NULL) {
+                curline.append("\r\n");
+                print_win->printstr(curline.c_str());
+            } else {
+                curline.append("\n");
+                text_mode( -1);
+                textout(screen, font, curline.c_str(), 0, print_y, xcom1_color(255));
+                print_y += 10;
+            }
+            curline.assign("");
+        } else {
+            curline += static_cast<char>(c);
+        }
+        
+        return c;
+    }
+public:
+    consoleBuf(bool dco) : std::streambuf() {
+        curline.assign("");
+        doCout = dco;
+    }
+};
 
 
 #define FADE_SPEED 20
@@ -301,6 +336,7 @@ void check_data_files()
 
 void initmain(int argc, char *argv[])
 {
+    
 	srand(time(NULL));
 	set_uformat(U_UTF8);
 	allegro_init();
@@ -326,7 +362,8 @@ void initmain(int argc, char *argv[])
 	if (get_config_int("Flags", "F_FILECHECK", 1)) FLAGS |= F_FILECHECK;      // check for datafiles integrity
 	if (get_config_int("Flags", "F_LARGEFONT", 0)) FLAGS |= F_LARGEFONT;      // use big ufo font for dialogs, console and stuff.
     if (get_config_int("Flags", "F_SMALLFONT", 0)) FLAGS |= F_SMALLFONT;      // no, use small font instead.
-    if (get_config_int("Flags", "F_SOUNDCHEcK", 0)) FLAGS |= F_SOUNDCHECK;      // perform soundtest.
+    if (get_config_int("Flags", "F_SOUNDCHEcK", 0)) FLAGS |= F_SOUNDCHECK;    // perform soundtest.
+    if (get_config_int("Flags", "F_LOGTOSTDOUT", 0)) FLAGS |= F_LOGTOSTDOUT;  // Copy all init console output to stdout.
 	origfiles_prefix = get_config_string("Paths",  "origfiles", NULL); // original ufo files here
 	ownfiles_prefix  = get_config_string("Paths",  "ownfiles",  NULL); // own data files here (ufo2000.dat & bitmaps)
 	gametemp_prefix  = get_config_string("Paths",  "gametemp",  NULL); // game temporary files here (may span launches)
@@ -389,38 +426,49 @@ void initmain(int argc, char *argv[])
     fade_from(black_palette, pal, (64 - FADE_SPEED)/3 + FADE_SPEED);
 
 	print_win = new Wind(text_back, 15, 300, 625, 390, 255);
-	print("allegro_init");
+    
+    /* to use the init console as an ostream -very handy. */
+    consoleBuf consbuf(FLAGS & F_LOGTOSTDOUT);
+    std::ostream console(&consbuf);
+    
+	console<<"allegro_init"<<std::endl;
 
-	print("loadini");
+	console<<"loadini"<<std::endl;
 	loadini();
-	print("install_timer");
+	console<<"install_timer"<<std::endl;
 	install_timer();
-	print("install_mouse");
+	console<<"install_mouse"<<std::endl;
 	install_mouse();
-	print("install_keyboard");
+	console<<"install_keyboard"<<std::endl;
 	install_keyboard();
-	print("initsound");
     {
+        console<<"Initializing sound..."<<std::endl;
+        rest(1500);
         std::stringstream xml;
         soundSystem *ss = soundSystem::getInstance();
         std::ifstream smap("soundmap.xml");
         if (smap) {
             xml<<smap.rdbuf();
+            
             if (FLAGS & F_SOUNDCHECK) {
-                ss->initialize(xml.str(), &std::cout, true);
-                ss->playLoadedSamples(&std::cout);
-                exit(1);
+                if (0 == ss->initialize(xml.str(), &console, true)) {
+                    console<<"  Soundcheck in progress..."<<std::endl;
+                    ss->playLoadedSamples(&console);
+                } else {
+                    console<<"  soundSystem initialization failed."<<std::endl;
+                }
             } else {
-                ss->initialize(xml.str(), NULL, false);
+                if ( 0 > ss->initialize(xml.str(), &console, false))
+                    console<<"  Failed."<<std::endl;
             }
         } else {
-            print("  Error reading soundmap.xml");
+            console<<"  Error reading soundmap.xml"<<std::endl;
         }
     }
-	print("initvideo");
+	console<<"initvideo"<<std::endl;
 	initvideo();
-	print("initmainmenu");
-
+    
+	console<<"initmainmenu"<<std::endl;
 	initmainmenu();
 
 	LOCK_VARIABLE(CHANGE); LOCK_FUNCTION(mouser_proc);
@@ -431,16 +479,19 @@ void initmain(int argc, char *argv[])
 
 	LOCK_FUNCTION(keyboard_proc);
 
-	print("initpck units");
+	console<<"initpck units"<<std::endl;
 	Soldier::initpck();
-	print("initpck terrain");
+    
+	console<<"initpck terrain"<<std::endl;
 	Map::initpck();
-	print("init obdata");
+    
+	console<<"init obdata"<<std::endl;
 	Item::initobdata();
-	print("init bigobs");
+    
+	console<<"init bigobs"<<std::endl;
 	Item::initbigobs();
 
-	print("new console window");
+	console<<"new console window"<<std::endl;
 	std::string consolefont = get_config_string("General", "consolefont", "default");
 	FONT * fnt = font;
 	if (consolefont == "xcom_small") {
@@ -450,19 +501,24 @@ void initmain(int argc, char *argv[])
 	}
 	g_console = new ConsoleWindow(screen->w, screen->h - SCREEN2H, fnt);
 
-	print("new icon");
+	console<<"new icon"<<std::endl;
 	icon = new Icon((SCREEN2W - 320) / 2, SCREEN2H - 56);
-	print("new inventory");
+    
+	console<<"new inventory"<<std::endl;
 	inventory = new Inventory();
-	print("new about");
+    
+	console<<"new about"<<std::endl;
 	about = new About();
-	print("new editor");
+    
+	console<<"new editor"<<std::endl;
 	editor = new Editor();
-	print("new net");
+    
+	console<<"new net"<<std::endl;
 	net = new Net();
-	print("new terrain_set");
+    
+	console<<"new terrain_set"<<std::endl;
 	terrain_set = new TerrainSet();
-
+    
 	mouse_callback = mouser_proc;
 	//keyboard_callback = keyboard_proc;
 
