@@ -919,26 +919,25 @@ void Soldier::draw_unibord(int gx, int gy)
 		int max;
 		int col;
 	}
-    // ?? gettext 
 	param[17] = {
-                    { ("TIME UNITS"),        ud.CurTU,        ud.MaxTU,      68},
-                    { ("ENERGY"),            ud.CurEnergy,    ud.MaxEnergy, 148},
-                    { ("HEALTH"),            ud.CurHealth,    ud.MaxHealth,  36},
-                    { ("FATAL WOUNDS"),      fw,              fw,            36},
-                    { ("BRAVERY"),           md.Bravery,      md.Bravery,   196},
-                    { ("MORALE"),            ud.Morale,       100,          197},
-                    { ("REACTIONS"),         ud.CurReactions, md.Reactions,  20},
-                    { ("FIRING ACCURACY"),   ac,              ud.MaxFA,     132},
-                    { ("THROWING ACCURACY"), TAccuracy(100),  ud.MaxTA,     100},
-                    { ("STRENGTH"),          ud.MaxStrength,  md.Strength,   52},
-                    {NULL, 0, 0, 0},
-                    {NULL, 0, 0, 0},
-                    { ("FRONT ARMOUR"),      ud.CurFront,     ud.MaxFront,   84},
-                    { ("LEFT ARMOUR"),       ud.CurLeft,      ud.MaxLeft,    84},
-                    { ("RIGHT ARMOUR"),      ud.CurRight,     ud.MaxRight,   84},
-                    { ("REAR ARMOUR"),       ud.CurRear,      ud.MaxRear,    84},
-                    { ("UNDER ARMOUR"),      ud.CurUnder,     ud.MaxUnder,   84}
-	            };
+        { (char*)_("TIME UNITS"),        ud.CurTU,        ud.MaxTU,      68},
+        { (char*)_("ENERGY"),            ud.CurEnergy,    ud.MaxEnergy, 148},
+        { (char*)_("HEALTH"),            ud.CurHealth,    ud.MaxHealth,  36},
+        { (char*)_("FATAL WOUNDS"),      fw,              fw,            36},
+        { (char*)_("BRAVERY"),           md.Bravery,      md.Bravery,   196},
+        { (char*)_("MORALE"),            ud.Morale,       100,          197},
+        { (char*)_("REACTIONS"),         ud.CurReactions, md.Reactions,  20},
+        { (char*)_("FIRING ACCURACY"),   ac,              ud.MaxFA,     132},
+        { (char*)_("THROWING ACCURACY"), TAccuracy(100),  ud.MaxTA,     100},
+        { (char*)_("STRENGTH"),          ud.MaxStrength,  md.Strength,   52},
+        {NULL, 0, 0, 0},
+        {NULL, 0, 0, 0},
+        { (char*)_("FRONT ARMOUR"),      ud.CurFront,     ud.MaxFront,   84},
+        { (char*)_("LEFT ARMOUR"),       ud.CurLeft,      ud.MaxLeft,    84},
+        { (char*)_("RIGHT ARMOUR"),      ud.CurRight,     ud.MaxRight,   84},
+        { (char*)_("REAR ARMOUR"),       ud.CurRear,      ud.MaxRear,    84},
+        { (char*)_("UNDER ARMOUR"),      ud.CurUnder,     ud.MaxUnder,   84}
+	};
 
 	for (int i = 0; i < 17; i++) {
 		if (param[i].str != NULL) {

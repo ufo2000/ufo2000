@@ -53,6 +53,9 @@ void lua_message( const std::string &str1 );
 //! Interface to LUA-gettext()
 const char *gettext(const char *str);
 
+//! Translations for placenames
+void Init_place_names();
+
 //! Tooltips for the control-panel
 const char *icontext( const int icon_nr );
 

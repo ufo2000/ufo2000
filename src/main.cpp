@@ -694,6 +694,9 @@ void initmain(int argc, char *argv[])
 	console<<"new scenario"<<std::endl;
 	scenario = new Scenario(SC_DEATHMATCH);
 
+    console<<"init_place_names"<<std::endl;
+    Init_place_names();
+
 	mouse_callback = mouser_proc;
 	//keyboard_callback = keyboard_proc;
 

@@ -32,6 +32,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "font.h"
 #include "icon.h"
 
+#include "soldier.h"
+
 /**
  * Call Message() from main.lua to write a message 
  * into the logfile init-scripts.log
@@ -222,6 +224,29 @@ void showtip()
     set_config_int("General", "LastTip", nr);
 };
 
+// moved here from place.cpp :
+//static char place_name[11][20];
+char place_name[11][20];
+
+/**
+ * Translations for placenames used in the inventory
+ */
+void Init_place_names()
+{
+  //lua_message( "Enter: Init_place_names" );
+    sprintf(place_name[P_SHL_RIGHT  ], _("RIGHT SHOULDER") );
+    sprintf(place_name[P_SHL_LEFT   ], _("LEFT SHOULDER")  );
+    sprintf(place_name[P_ARM_RIGHT  ], _("RIGHT HAND")     );
+    sprintf(place_name[P_ARM_LEFT   ], _("LEFT HAND")      );
+    sprintf(place_name[P_LEG_RIGHT  ], _("RIGHT LEG")      );
+    sprintf(place_name[P_LEG_LEFT   ], _("LEFT LEG")       );
+    sprintf(place_name[P_BACK       ], _("BACK PACK")      );
+    sprintf(place_name[P_BELT       ], _("BELT")           );
+    sprintf(place_name[P_MAP        ], _("GROUND")         );
+    sprintf(place_name[P_ARMOURY    ], _("ARMOURY")        );
+    sprintf(place_name[P_COMMON_POOL], _("COMMON POOL")    );
+}
+
 /**
  * Text for the tooltips of the buttons on the control-panel.
  *
@@ -392,6 +417,7 @@ void help( const int helppage )
     int kp_next  = 110;    //<! Keypress for nextpage : 110:"n"
     char index[32], prev[32], next[32], ok[32];
     char esc2exit[64];
+    char test[128];
 
 // Todo: Calculate keycode from "&I" in button-text
     sprintf(index, "%s", _("HELP-&INDEX") );
@@ -399,7 +425,10 @@ void help( const int helppage )
     sprintf(next,  "%s", _("&NEXT PAGE")  );
     sprintf(ok,    "%s", _("  CLOSE  ")   );
 
-    sprintf(esc2exit, "%s", _("To leave, press ESC.") );
+    sprintf( esc2exit, "%s", _("To leave, press ESC.") );
+  //sprintf( test,  "Charset-Test: %s", 
+  //         _("DE: ae=ä  oe=ö  ue=ü  Ae=Ä  Oe=Ö  Ue=Ü  sz=ß") 
+  //);
 /*
     FILE *f1 = fopen( "gettext.log", "at");
     fprintf(f1, "#: '%s'\n", prev);
@@ -410,7 +439,6 @@ void help( const int helppage )
     switch (helppage) {
         case HELP_U2K_INDEX + 0 :
             hp = select_help();
-          //char test[64];
           //sprintf( test,  "Selected: %d", hp );
           //b1 = alert3( "", test, "",  NULL, ok, NULL,  kp_prev, kp_ok, kp_0 );
             help( hp );

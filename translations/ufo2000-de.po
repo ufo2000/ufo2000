@@ -3,18 +3,19 @@
 # This file is distributed under the same license as the UFO2000 package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2004.
 # ##
-# ae: ä oe: ö ue: ü
-# Ae: __ Oe: __ Ue: Ü
+# ae: ä oe: ö ue: ü  sz: ß
+# Ae: Ä  Oe: Ö  Ue: Ü  
 # ausw_hlen: auswählen  _ndern: ändern
 # k_nnen: können  f_r: für  
 # ##
 # !! Comments have to be placed before the "msgid"-line, 
 # !! and must start with "# ".
+
 msgid ""
 msgstr ""
 "Project-Id-Version: UFO2000\n"
 "POT-Creation-Date: 2004-11-08 17:33+0100\n"
-"PO-Revision-Date: 2004-11-09 19:19+0100\n"
+"PO-Revision-Date: 2004-11-10 12:12+0100\n"
 "Last-Translator: HaJo Gurt <gurt@gmx.de>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -22,7 +23,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: German\n"
 "X-Poedit-Country: GERMANY\n"
-"X-Poedit-Basepath: C:\\Devel\\ufo2000.532\\\n"
+"X-Poedit-Basepath: C:\\Devel\\ufo2000.542\\\n"
+
+# !! Umlaute:
+# ae: ä  oe: ö  ue: ü  sz: ß
+# Ae: Ä  Oe: Ö  Ue: Ü  
 
 #: src/config.cpp:285
 msgid "Configuration"
@@ -209,7 +214,7 @@ msgstr "Gesundheit"
 
 #: src/editor.cpp:776
 msgid "Bravery"
-msgstr "Mut"
+msgstr "Tapferkeit"
 
 #: src/editor.cpp:777
 msgid "Reactions"
@@ -314,13 +319,13 @@ msgstr "Zielschuss"
 msgid "Two-handed weapon"
 msgstr "Zweihändige Waffe"
 
-#: src/item.cpp:247
-msgid "Ammo-Type"
-msgstr "Munitions-Typ"
-
 #: src/item.cpp:246 src/main.cpp:1340 src/main.cpp:1342
 msgid "Damage"
 msgstr "Schaden"
+
+#: src/item.cpp:247
+msgid "Ammo-Type"
+msgstr "Munitions-Typ"
 
 #: src/item.cpp:253
 msgid "Rounds"
@@ -647,6 +652,40 @@ msgstr "Nächster Tip"
 #: src/text.cpp:170
 msgid "Tip"
 msgstr ""
+
+#: src/txt.cpp:237
+msgid "RIGHT SHOULDER"
+msgstr "RECHTE SCHULTER"
+
+msgid "LEFT SHOULDER"
+msgstr "LINKE SCHULTER"
+
+msgid "RIGHT HAND"
+msgstr "RECHTE HAND"
+
+msgid "LEFT HAND"
+msgstr "LINKE HAND"
+
+msgid "RIGHT LEG"
+msgstr "RECHTES BEIN"
+
+msgid "LEFT LEG"
+msgstr "LINKES BEIN"
+
+msgid "BACK PACK"
+msgstr "RUCKSACK"
+
+msgid "BELT"
+msgstr "GÜRTEL"
+
+msgid "GROUND"
+msgstr "BODEN"
+
+msgid "ARMOURY"
+msgstr "WAFFENLAGER"
+
+msgid "COMMON POOL"
+msgstr "GEMEINSAMER VORRAT"
 
 #: src/text.cpp:203
 msgid "Move up one level"
@@ -1154,7 +1193,7 @@ msgstr "den der Gesundheit erreicht, wird der Soldat bewusstlos."
 
 #: src/text.cpp:712
 msgid "Bravery: (not yet implemented - same for all man)"
-msgstr "Mut  : (wird vom Programm z.Zt. nicht verwendet)          "
+msgstr "Tapferkeit: (wird vom Programm z.Zt. nicht verwendet)     "
 
 #: src/text.cpp:713
 msgid "Morale: current morale. Goes down when own men die."
@@ -1416,6 +1455,67 @@ msgstr "Zeit>"
 #: src/soldier.cpp:854
 msgid "Health>"
 msgstr "Gesund>"
+
+#: src/soldier.cpp:924
+msgid "TIME UNITS"
+msgstr "ZEITEINHEITEN"
+
+# msgstr "AUSDAUER"
+#: src/soldier.cpp:925
+msgid "ENERGY"
+msgstr "ENERGIE"
+
+#: src/soldier.cpp:926
+msgid "HEALTH"
+msgstr "GESUNDHEIT"
+
+#: src/soldier.cpp:927
+msgid "FATAL WOUNDS"
+msgstr "KRITISCHE WUNDEN"
+
+#: src/soldier.cpp:928
+msgid "BRAVERY"
+msgstr "TAPFERKEIT"
+
+#: src/soldier.cpp:929
+msgid "MORALE"
+msgstr "MORAL"
+
+#: src/soldier.cpp:930
+msgid "REACTIONS"
+msgstr "REAKTION"
+
+#: src/soldier.cpp:931
+msgid "FIRING ACCURACY"
+msgstr "SCHUSSGENAUIGKEIT"
+
+#: src/soldier.cpp:932
+msgid "THROWING ACCURACY"
+msgstr "WURFGENAUIGKEIT"
+
+#: src/soldier.cpp:933
+msgid "STRENGTH"
+msgstr "STÄRKE"
+
+#: src/soldier.cpp:936
+msgid "FRONT ARMOUR"
+msgstr "PANZERUNG VORN"
+
+#: src/soldier.cpp:937
+msgid "LEFT ARMOUR"
+msgstr "PANZERUNG LINKS"
+
+#: src/soldier.cpp:938
+msgid "RIGHT ARMOUR"
+msgstr "PANZERUNG RECHTS"
+
+#: src/soldier.cpp:939
+msgid "REAR ARMOUR"
+msgstr "PANZERUNG HINTEN"
+
+#: src/soldier.cpp:940
+msgid "UNDER ARMOUR"
+msgstr "PANZERUNG UNTEN"
 
 #: src/soldier.cpp:1298
 msgid "Time units are reserved for snap shot."

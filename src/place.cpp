@@ -253,20 +253,9 @@ void Place::draw(int gx, int gy)
 	map->drawitem(gt->obdata_pMap(), gx, gy);
 }
 
-// see soldier.h :
+// moved to text.cpp :
 /*
-#define P_SHL_RIGHT 0
-#define P_SHL_LEFT  1
-#define P_ARM_RIGHT 2
-#define P_ARM_LEFT  3
-#define P_LEG_RIGHT 4
-#define P_LEG_LEFT  5
-#define P_BACK		6
-#define P_BELT		7
-#define P_MAP		 8
-*/
-// ?? gettext
-static char *place_name[10] = {
+static char *place_name[11] = {
     ("RIGHT SHOULDER"),
     ("LEFT SHOULDER"),
     ("RIGHT HAND"),
@@ -276,8 +265,10 @@ static char *place_name[10] = {
     ("BACK PACK"),
     ("BELT"),
     ("GROUND"),
-    ("ARMOURY")
+    ("ARMOURY"),
+    ("COMMON POOL")
 };
+*/
 
 /**
  * Draw inventory-grid for belt, backpack, armory etc.
@@ -517,8 +508,8 @@ int Place::count_weight()
 }
 
 /**
- * Check if any banned equipment (not in allowed equipment set) is stored 
- * at this place
+ * Check if any banned equipment (not in allowed equipment set) 
+ * is stored at this place
  */
 int Place::has_forbidden_equipment()
 {
@@ -618,3 +609,4 @@ bool Place::Read(persist::Engine &archive)
 
 	return true;
 }
+

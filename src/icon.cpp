@@ -57,7 +57,7 @@ Icon::Icon()
 	int i;
 	int j;
 
-	//names in .lua file
+    //names in .lua file - do not translate !
 	item[I_LEFT].name            = "LeftItem";
 	item[I_RIGHT].name           = "RightItem";
 	

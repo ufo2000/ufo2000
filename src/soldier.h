@@ -18,6 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 #ifndef SOLDIER_H
 #define SOLDIER_H
 #include "pck.h"
@@ -36,8 +37,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define P_BELT            7
 #define NUMBER_OF_CARRIED_PLACES 8
 #define P_MAP             8
-#define NUMBER_OF_PLACES  9
 #define P_ARMOURY         9
+#define NUMBER_OF_PLACES  9
+// Like ground, but accessible to all soldiers in mission-planner:
+#define P_COMMON_POOL    10
 
 #define S_HANDOB          0
 #define S_XCOM_0          1
@@ -47,6 +50,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define S_SECTOID         5
 #define S_MUTON           6
 #define SKIN_NUMBER       7
+// not yet implemented:
+#define S_SNAKEMAN        7
+#define S_CHRYSSALID      8
 
 //! maximum number of points a soldier can have
 #define MAXPOINTS (7*60)
@@ -105,15 +111,15 @@ private:
 	int dir, phase;
 	State m_state;
 
-//!	This flag is set after soldier has moved. Needed for correct work of
-//!	switch to next soldier button
+//!	This flag is set after soldier has moved. 
+//!	Needed for correct work of 'switch to next soldier'-button
 	int MOVED;
 
 //!	If we get stunned, this points to the corpse.
 	Item *m_body;
 
-//!	The number of shots to be done and aiming point. Soldier cannot be saved
-//!	before all shots have been processed
+//!	The number of shots to be done and aiming point.
+//!	Soldier cannot be saved before all shots have been processed.
 	int FIRE_num;
 	int FIRE_z, FIRE_x, FIRE_y;
 

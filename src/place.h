@@ -37,8 +37,8 @@ private:
 	Item *m_item;
 
 	void set(int x, int y, int w, int h);
-public:
 
+public:
 	Place(int x, int y, int w, int h);
 	virtual ~Place();
 
