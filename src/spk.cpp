@@ -19,7 +19,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #include "global.h"
-#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -115,21 +114,21 @@ BITMAP *SPK::spk2bmp()
 
 //	Process .spk files
 	while (true) {
-		ASSERT(i + 2 <= m_datlen);
+		if (!(i + 2 <= m_datlen)) return bmp;
 		switch (intel_uint16(*(uint16 *)(m_dat + i))) {
 			case 0xFFFF: {
-				ASSERT(i + 4 <= m_datlen);
+				if (!(i + 4 <= m_datlen)) return bmp;
 				long size = (long)intel_uint16((*(uint16 *)(m_dat + i + 2))) * 2;
 				i += 4;
-				ASSERT(j + size <= 64000);
+				if (!(j + size <= 64000)) return bmp;
 				j += size;
 				break;
 			}
 			case 0xFFFE: {
-				ASSERT(i + 4 <= m_datlen);
+				if (!(i + 4 <= m_datlen)) return bmp;
 				long size = (long)intel_uint16((*(uint16 *)(m_dat + i + 2))) * 2;
 				i += 4;
-				ASSERT(i + size <= m_datlen && j + size <= 64000);
+				if (!(i + size <= m_datlen && j + size <= 64000)) return bmp;
 				while (size--) {
 					putpixel(bmp, j % 320, j / 320, xcom1_color(m_dat[i++]));
 					j++;
@@ -139,7 +138,8 @@ BITMAP *SPK::spk2bmp()
 			case 0xFFFD:
 				return bmp;
 			default:
-				ASSERT(false);
+				// error decoding SPK file
+				return bmp;
 		}
 	}
 }

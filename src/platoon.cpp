@@ -391,15 +391,13 @@ int Platoon::check_reaction_fire(Soldier *target)
 		ss = ss->next();
 	}
 
-	std::random_shuffle(soldiers.begin(), soldiers.end());
-	
-	std::vector<Soldier *>::iterator it = soldiers.begin();
-	while (it != soldiers.end())
-	{
-		if ((*it)->check_reaction_fire(target))
+	while (!soldiers.empty()) {
+		int index = rand() % soldiers.size();
+		if (soldiers[index]->check_reaction_fire(target))
 			return 1;
-		it++;
+		soldiers.erase(soldiers.begin() + index);
 	}
+	
 	return 0;
 }
 

@@ -537,7 +537,7 @@ void Bullet::showline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 	x0 = x_s * 16 + 8; y0 = y_s * 16 + 8; z0 = z_s * 12 + 8;
 	xd = x_d * 16 + 8; yd = y_d * 16 + 8; zd = z_d * 12 + 8;
 
-	REAL ro = sqrt((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0));
+	REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
 	REAL fi = acos((REAL)(zd - z0) / ro);
 	REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
 
@@ -561,7 +561,6 @@ void Bullet::showline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 	xg2 = map->x + xd + yd;
 	yg2 = (int)(map->y - (xd + 1) / 2 + yd / 2 - zd * 2.0 - 2);
 
-	//line(screen2, xg, yg, xg2, yg2, 144);
 	do_line(screen2, xg, yg, xg2, yg2, xcom1_color(144), dotted_line_proc);
 
 
@@ -589,12 +588,10 @@ void Bullet::showthrow(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 	x0 = x_s * 16 + 8; y0 = y_s * 16 + 8; z0 = z_s * 12 + 8;
 	xd = x_d * 16 + 8; yd = y_d * 16 + 8; zd = z_d * 12 + 0;
 
-	ro = sqrt((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0));
-	//if (ro > 18.0*16)
-	//	color = 33;
+	ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
 
 	fi = acos((zd - z0) / ro);
-	te = atan2(yd - y0, xd - x0);
+	te = atan2((double)(yd - y0), (double)(xd - x0));
 
 	REAL zA = sqrt(ro);
 	REAL zK = 4 * zA / ro / ro;
@@ -602,7 +599,7 @@ void Bullet::showthrow(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 	x = x0; y = y0; z = z0;
 	i = 8;
 	int throwable = 1;
-	//while(i < ro) {
+
 	while (z > 0) {
 		if (i > 18.0 * 16)
 			color = 33;       // red
@@ -611,7 +608,6 @@ void Bullet::showthrow(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 
 		x = (int)(x0 + i * cos(te) * sin(fi));
 		y = (int)(y0 + i * sin(te) * sin(fi));
-		//z = z0 + i * cos(fi) + sqrt(ro)*sin(i*3.1415926/ro);
 		z = (int)(z0 + i * cos(fi) - zK * (i - ro / 2.0) * (i - ro / 2.0) + zA);
 
 		if (throwable) {
@@ -642,17 +638,14 @@ void Bullet::showthrow(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 int Bullet::calc_throw(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 {
 	int xd, yd, zd;
-	//int color = 50;
 
 	x0 = x_s; y0 = y_s; z0 = z_s;
 	xd = x_d; yd = y_d; zd = z_d;
 
-	ro = sqrt((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0));
-	//if (ro > 18.0*16)
-	//	color = 33;
+	ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
 
-	fi = acos((zd - z0) / ro);
-	te = atan2(yd - y0, xd - x0);
+	fi = acos((double)((zd - z0) / ro));
+	te = atan2((double)(yd - y0), (double)(xd - x0));
 
 	REAL zA = sqrt(ro);
 	REAL zK = 4 * zA / ro / ro;
@@ -660,25 +653,12 @@ int Bullet::calc_throw(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 	x = x0; y = y0; z = z0;
 	i = 8;
 
-	//while(i < ro) {
 	while (z > 0) {
 		i++;
-		//if (i > 18*16)
-		// color = 33;  // red
-		//else
-		//	color = 50;  // green
 
 		x = (int)(x0 + i * cos(te) * sin(fi));
 		y = (int)(y0 + i * sin(te) * sin(fi));
-		//z = z0 + i * cos(fi) + sqrt(ro)*sin(i*3.1415926/ro);
 		z = (int)(z0 + i * cos(fi) - zK * (i - ro / 2.0) * (i - ro / 2.0) + zA);
-
-		//int xg = map->x + x + y;
-		//int yg = map->y - (x+1)/2.0 + y/2.0 - z*2.0 - 2;
-
-		//if ( (xg>-32)&&(xg<SCREEN2W)&&(yg>=-34)&&(yg<SCREEN2H) ) {
-		//	circle(screen2, xg, yg, 1, color);
-		//}
 	}
 	return i;
 }

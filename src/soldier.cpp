@@ -2347,7 +2347,7 @@ void Soldier::shoot(int zd, int xd, int yd, int ISLOCAL)
 
 	if (target.action == THROW) {
 		zd -= 8;
-		REAL ro = sqrt((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0));
+		REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
 
 		int ro_real = m_bullet->calc_throw(z0, x0, y0, zd, xd, yd);
 		if (ro_real > 18 * 16) {
@@ -2362,14 +2362,14 @@ void Soldier::shoot(int zd, int xd, int yd, int ISLOCAL)
 
 		thru(z0, x0, y0, ro, fi, te, zA, target.place, target.time);
 	} else if (target.action == AIMEDTHROW) {
-		REAL ro = sqrt((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0));
+		REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
 		REAL fi = acos((REAL)(zd - z0) / ro);
 		REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
 		apply_accuracy(fi, te);
 
 		aimedthrow(z0, x0, y0, fi, te, target.place, target.time);
 	} else if (target.action == PUNCH) {
-		REAL ro = sqrt((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0));
+		REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
 		REAL fi = acos((REAL)(zd - z0) / ro);
 		REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
 		apply_accuracy(fi, te);
@@ -2377,14 +2377,14 @@ void Soldier::shoot(int zd, int xd, int yd, int ISLOCAL)
 		punch(z0, x0, y0, fi, te, target.place, target.time);
 	} else {
 		if (target.item->is_laser()) {
-			REAL ro = sqrt((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0));
+			REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
 			REAL fi = acos((REAL)(zd - z0) / ro);
 			REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
 			apply_accuracy(fi, te);
 
 			beam(z0, x0, y0, fi, te, target.place, target.time);
 		} else {
-			REAL ro = sqrt((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0));
+			REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
 			REAL fi = acos((REAL)(zd - z0) / ro);
 			REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
 			apply_accuracy(fi, te);

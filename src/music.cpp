@@ -30,7 +30,6 @@ extern "C" {
 #include "global.h"
 #include "music.h"
 #ifdef WIN32
-#include <windows.h>
 #define usleep(t) Sleep((t + 999) / 1000)
 #else
 #include <unistd.h>

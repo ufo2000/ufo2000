@@ -1153,7 +1153,11 @@ static LPTOP_LEVEL_EXCEPTION_FILTER prevExceptionFilter = NULL;
 
 static LONG WINAPI TopLevelExceptionFilter(PEXCEPTION_POINTERS pExceptionInfo)
 {
+#ifdef __MINGW32__
 	char *exception_report = GenerateExceptionReport(pExceptionInfo);
+#else
+	char *exception_report = "?";
+#endif
 	if (net) {
 		net->send_debug_message("crash:%s", exception_report);
 		net->flush();
