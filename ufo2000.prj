@@ -96,7 +96,6 @@ module.source.files=\
 	src/sound.cpp\
 	src/terrapck.cpp\
 	src/wind.cpp\
-	src/about.cpp\
 	src/item.cpp\
 	src/jpgalleg/io.c\
 	src/jpgalleg/encode.c\
@@ -145,7 +144,6 @@ module.source.files=\
 	src/keys.h\
 	src/server_protocol.h\
 	src/music.h\
-	src/about.h\
 	src/sysworkarounds.h\
 	src/units.h\
 	src/jpgalleg/internal.h\

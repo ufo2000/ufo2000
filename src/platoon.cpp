@@ -328,23 +328,6 @@ int Platoon::realsize()
 }
 
 
-int Platoon::freeNID()
-{
-	int i = 0;
-
-	Soldier *ss = man;
-	while (ss != NULL) {
-		if (ss->NID == i) {
-			i++;
-			ss = man;
-			continue;
-		}
-		ss = ss->next();
-	}
-	return i;
-}
-
-
 Place *Platoon::find_item(Item *it, int &lev, int &col, int &row)
 {
 	Soldier *ss = man;
@@ -582,15 +565,6 @@ void Platoon::build_Units(Units &u)
 
 void Platoon::send_Units(Units &u)
 {
-	/*int num=0;
-	for(int i=0; i<u.size; i++) {
-		Soldier *ss = findman(u.name[i]);
-		if (ss != NULL) {
-			net->send_unit_data(u.size, num, u.lev[i], u.col[i], u.row[i],
-									  &ss->ud, &ss->id);
-			num++;
-		}
-	}*/
 	net->send_unit_data_size(0);
 	int num = 0;
 	for (int i = 0; i < u.size; i++) {

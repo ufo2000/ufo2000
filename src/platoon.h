@@ -25,12 +25,18 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "stats.h"
 #include <vector>
 
+/**
+ * Class for handling the squad controlled by one of the opposing sides
+ */
 class Platoon: public persist::BaseObject
 {
 	DECLARE_PERSISTENCE(Platoon);
 private:
+	//! Pointer to current selected soldier in the squad
 	Soldier *man;
+	//! Squad identifier
 	long     ID;
+	//! Number of soldiers in the squad
 	long     size;
 
 	char m_visible[4][10 * 6][10 * 6];
@@ -70,14 +76,13 @@ public:
 	int nomoves();
 
 	int realsize();
-	int freeNID();
 
 	Soldier *captain()
 	{
 		if (man == NULL) return NULL;
 		return man->is_active() ? man : man->next_active_soldier();
 	}
-	int num_of_men() { return size; }
+	int num_of_men() { ASSERT(size == realsize()); return size; }
 
 	int check_reaction_fire(Soldier *target);
 	

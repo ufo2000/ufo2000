@@ -66,7 +66,7 @@ After starting the game, you will see a number of available menu options:
       you want to play on a local network, you need to start the ufo2000 
       server on one computer and enter its IP address when connecting
       to it from ufo2000 on another computer.
-     The other two required fields are login and password. They are 
+      The other two required fields are login and password. They are 
       used to identify the user to track some game statistics 
       (http://ufo2000.lxnt.info/results.php, currently.) Login 
       should be any name not used by other players and password should be 
@@ -170,13 +170,18 @@ F3          Load
 Game Controls
 ===============
 
-All unit actions, as in X-COM, are controlled with the mouse. You can
-send and receive messages to/from the other player during the game. 
+All unit actions, as in X-COM, are controlled with the mouse. UFO2000 uses
+the same controls as the original games with only minor differences:
+* right mouse click can be used to stop movement of a soldier
+* soldiers can't automatically open doors, so you need to use right mouse 
+  click behind the door to open it (just like in TFTD)
+
+You can send and receive messages to/from the other player during the game. 
 Just type your message out on the keyboard, then hit enter.
 
 These keys are used for game control: 
 
-F10         Fullscreen/Windowed mode
+F10         Switch Fullscreen/Windowed mode
 
 ESC         Exit to main menu
 
@@ -206,4 +211,3 @@ BKSP        remove last character in message
 F12         save the screen to "snapshot.pcx" file 
 
 --END OF FILE--
-

@@ -30,6 +30,12 @@ Programming:
       * Truecolor graphics support
       * New chat console and minimap screen
       * Replay of enemy turns in hotseat game
+	  
+   Twilight Owl
+      * Support for different scenarios
+	  * Numerous improvements in user interface (map size and type selection,
+	    ability to switch between map levels and soldiers in WATCH mode, ...)
+	  * Lots of bugfixes
 
    Александр Чернобровый aka Dream
       * Some performance improvements and fixes to UFO2000 code
@@ -53,12 +59,16 @@ Artwork and other game related data files:
    Alexey Vasiliev
       * New background pictures for main menu and win/lose screens 
       * A new nice UFO2000 logo for website
+	  
+   Nail
+      * Pictures for different hairstyle in the battlescape, legs
+	    for sitting sectoids and mutons
 
    "ppzaba" <zaba@peterlink.ru>
 
 Music and sound effects:
    dickie
-      * New music for the game
+      * New default music for the game
 	  
    ATeX from project Xenocide (http://projectxenocide.com)
       * X-COM style battlescape music soundtrack
@@ -93,6 +103,9 @@ Testing the game, bugreports and valuable suggestions:
    Jammers
    Jeremy Walker aka Kuroshi X
    J-F Pruneau
+   HaJo
+   Hobbes
+   Molox
    Olivier Ripoll
    Photek
    Roman Vil'chenko
@@ -111,12 +124,30 @@ Other:
       * Win32 installer for the game
 
    Dolny
-      * UFO2000 forum administration
-
+      * Old UFO2000 forum
+	  
    Josh Day <koralt@yahoo.com>
       * UFO data files format information
+
+   Micah and stewart
+      * New UFO2000 forum at xcomufo.com
 
    Skybuck
       * UFO2000 Pager (win32-program that notifies when other players
         log on to ufo2000 game server)
+		
+===============================================================================		
+== Many thanks to the authors of the following libraries used in UFO2000
+===============================================================================
+
+   Allegro
+   Lua
+   HawkNL
+   DUMB
+   Ogg Vorbis
+   AGUP
+   JPGAlleg
+   LuaPlus
+   CommonC++
+
 ==============================================================================
