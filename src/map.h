@@ -184,6 +184,7 @@ public:
     void drawline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d);
 
     Place *find_item(Item *it, int &lev, int &col, int &row);
+    int find_place_coords(Place *pl, int &lev, int &col, int &row);
     int find_place_num(Place *pl, int lev, int col, int row);
 
     int inside(int z, int x, int y);

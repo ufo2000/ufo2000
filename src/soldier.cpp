@@ -1634,10 +1634,18 @@ void Soldier::unlink()
 /**
  * Show TUs needed to move item in hand to a place like belt, backpack etc.
  */ 
-void Soldier::draw_deselect_times(BITMAP *dest, int sel_item_place)
+void Soldier::draw_deselect_times(BITMAP *dest, Item *sel_item, int sel_item_place)
 {
-    for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++) 
-        m_place[i]->draw_deselect_time(dest, i, calctime(sel_item_place, i));
+	int time = 0;
+
+    for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++) {
+    	time = calctime(sel_item_place, i);
+    	if (sel_item != NULL && sel_item->obdata_isAmmo() && 
+				(i == P_ARM_LEFT || i == P_ARM_RIGHT) && item(i) != NULL) {
+			time += sel_item->obdata_reloadTime();
+		}
+        m_place[i]->draw_deselect_time(dest, i, time);
+    }
     map->place(z, x, y)->draw_deselect_time(dest, P_MAP, calctime(sel_item_place, P_MAP));
 }
 
@@ -1839,6 +1847,16 @@ Place *Soldier::find_item(Item *it, int &lev, int &col, int &row)
     return NULL;
 }
 
+int Soldier::find_place_coords(Place *pl, int &lev, int &col, int &row)
+{
+	for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
+		if (m_place[i] == pl) {
+			lev = z; col = x; row = y;
+			return 1;
+		}
+	return 0;
+}
+
 
 int Soldier::place(Place *pl)
 {
@@ -1961,11 +1979,11 @@ int Soldier::unload_ammo(Item * it)
  * test if soldier has enough time, item is ammo of correct type, etc.
  * Return 1 on success, 0 on failure.
  */
-int Soldier::load_ammo(int iplace, int srcplace, Item * it)
+int Soldier::load_ammo(int iplace, int srcplace, Item *&it)
 {
     if (it == NULL)
         return 0;
-
+                                                        
 	int time = it->obdata_reloadTime() + calctime(srcplace, iplace);
     int ISLOCAL = platoon_local->belong(this);
     if (time_reserve(time, ISLOCAL, false) != OK) return 0;

@@ -606,28 +606,42 @@ void Place::destroy_all_items()
 
 void Place::damage_items(int dam)
 {
-	Item *it;
-	it = m_item;
+	Item *it = m_item;
+	                                                          
+	std::vector<int> explo_type, explo_owner;          
+	
 	while(it != NULL) {
 		if (it->damage(dam)) { //destroyed
-			Item *t2;
-			t2 = it->m_next;
-			if (m_item == it)
+			Item *t2 = it->m_next;
+			if (m_item == it)     
 				m_item = t2;
-
-            /*if (it->is_grenade())
-                elist->detonate(-1, it);
-            else*/
-                destroy(it);
-            
-            //it->unlink();
-			//elist->remove(it);
-			//delete it; // explodable
-
-			it = t2;
+                            
+            if (it->is_grenade()) {
+            	explo_type.push_back(it->m_type);
+            	explo_owner.push_back(elist->get_owner(it));    
+            }
+                            
+            elist->remove(it);
+            destroy(it);
+                                            
+			it = t2;                              
 			continue;			
 		}
 		it = it->m_next;
+	}
+	
+	if (explo_type.size() > 0) {
+		int lev, col, row;
+		
+		int pf = map->find_place_coords(this, lev, col, row);
+		if (!pf)
+			pf = platoon_local->find_place_coords(this, lev, col, row);
+		if (!pf)
+			pf = platoon_remote->find_place_coords(this, lev, col, row);
+		ASSERT(pf);
+	
+		for (int i = 0; i < (signed)explo_type.size(); i++)
+			map->explode(explo_owner[i], lev * 12, col * 16 + 8, row * 16 + 8, explo_type[i]);
 	}
 }
 
@@ -655,10 +669,8 @@ void Place::draw_deselect_time(BITMAP *dest, int PLACE_NUM, int time)
 {
 	int color = COLOR_WHITE;
 	if (time) {
-		//place_name[PLACE_NUM]
-		//textout(screen2, small, time, gx, gy-8, 66);
-
-		//if (havetime(time) != OK) { color = COLOR_GRAY; }  // ??
+		int ISLOCAL = platoon_local->belong(sel_man);
+		if (sel_man->time_reserve(time, ISLOCAL, 0) != OK) color = COLOR_RED;
 		printsmall_x(dest, gx + 1 + text_length(g_small_font, place_name[PLACE_NUM]), gy - 6, color, time);
 	}
 }

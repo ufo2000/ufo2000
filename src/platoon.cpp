@@ -398,6 +398,19 @@ Place *Platoon::find_item(Item *it, int &lev, int &col, int &row)
 	return NULL;
 }
 
+int Platoon::find_place_coords(Place *pl, int &lev, int &col, int &row)
+{
+	Soldier *ss = man;
+	
+	while (ss != NULL) {
+		int pf = ss->find_place_coords(pl, lev, col, row);
+		if (pf)
+			return 1;
+		ss = ss->next();
+	}
+	return 0;
+}
+
 
 int Platoon::check_for_hit(int z, int x, int y, Soldier* no_test)
 {

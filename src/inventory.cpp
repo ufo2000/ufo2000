@@ -74,11 +74,12 @@ void Inventory::draw(int _x, int _y)
 
 	tac01->show(temp, 0, 0);  // Buttons: OK, next & prev.man
     draw_sprite_vh_flip(temp, b5, 255, 137);  // b6 - Button: scroll left
+    rectfill(temp, 288, 32, 319, 57, COLOR_GRAY15);	//hide unused "unload" button
 
 	sel_man->draw_inventory(temp);
 
 	if (sel_item != NULL) {
-		sel_man->draw_deselect_times(temp, sel_item_place);
+		sel_man->draw_deselect_times(temp, sel_item, sel_item_place);
 
 		textprintf(temp, g_small_font, 128, 140, COLOR_GREEN, "%s", sel_item->name().c_str());
 		if (sel_item->is_grenade()) {
@@ -98,15 +99,9 @@ void Inventory::draw(int _x, int _y)
             textout(temp, g_small_font, _("LEFT="),  272, 80, COLOR_LT_OLIVE);
             textprintf(temp, g_small_font,           299, 80, COLOR_ORANGE, "%d", sel_item->roundsremain());
 
-			if (sel_item->roundsremain() > 0)
-				printsmall_x(temp, 312, 58, COLOR_WHITE, 8); // 8=Time to unload weapon
-			else
-				printsmall_x(temp, 312, 58, COLOR_WHITE, 10); // 10=Time to unload weapon and drop the empty clip
 			rect(temp, 272, 88, 303, 135, COLOR_GRAY08);      //clip
 			PCK::showpck(temp, sel_item->clip()->obdata_pInv(), 272, 88 + 8);
 		} else if (sel_item->obdata_isAmmo()) {
-			printsmall_x(temp, 34, 85, COLOR_WHITE, sel_item->obdata_reloadTime());
-
             textout(temp, g_small_font, _("AMMO:"),  272, 64, COLOR_LT_OLIVE);
             textout(temp, g_small_font, _("ROUNDS"), 272, 72, COLOR_LT_OLIVE);
             textout(temp, g_small_font, _("LEFT="),  272, 80, COLOR_LT_OLIVE);
@@ -165,41 +160,38 @@ void Inventory::execute()
 			}
 		}
 	}
-	if (mouse_inside(x + 288, y + 32, x + 319, y + 57)) {  // clip
-		if (sel_man->unload_ammo(sel_item))
-			sel_item = NULL;
+	
+	if (mouse_inside(x + 288, y + 137, x + 319, y + 151)) {  // -->
+		map->place(sel_man->z, sel_man->x, sel_man->y)->scroll_right();
 	} else
-		if (mouse_inside(x + 288, y + 137, x + 319, y + 151)) {  // -->
-			map->place(sel_man->z, sel_man->x, sel_man->y)->scroll_right();
-		} else
-			if (mouse_inside(x + 255, y + 137, x + 286, y + 151)) {  // <--
-				map->place(sel_man->z, sel_man->x, sel_man->y)->scroll_left();
+		if (mouse_inside(x + 255, y + 137, x + 286, y + 151)) {  // <--
+			map->place(sel_man->z, sel_man->x, sel_man->y)->scroll_left();
+		} else {
+			if (sel_item == NULL) {
+				sel_item = sel_man->select_item(sel_item_place, x, y);
+				if (sel_item != NULL)
+					net->send_select_item(sel_man->NID, sel_item_place, sel_item->m_x, sel_item->m_y);
 			} else {
-				if (sel_item == NULL) {
-					sel_item = sel_man->select_item(sel_item_place, x, y);
-					if (sel_item != NULL)
-						net->send_select_item(sel_man->NID, sel_item_place, sel_item->m_x, sel_item->m_y);
-				} else {
-					Item *it = sel_man->item_under_mouse(P_ARM_LEFT, x, y);
-					if ((it != NULL) && sel_man->load_ammo(P_ARM_LEFT, sel_item_place, sel_item)) {
-						sel_item = NULL;
-						return ;
-					}
+				Item *it = sel_man->item_under_mouse(P_ARM_LEFT, x, y);
+				if ((it != NULL) && sel_man->load_ammo(P_ARM_LEFT, sel_item_place, sel_item)) {
+					sel_item_place = P_MAP;
+					return ;
+				}
 
-					it = sel_man->item_under_mouse(P_ARM_RIGHT, x, y);
-					if ((it != NULL) && sel_man->load_ammo(P_ARM_RIGHT, sel_item_place, sel_item)) {
-						sel_item = NULL;
-						return ;
-					}
+				it = sel_man->item_under_mouse(P_ARM_RIGHT, x, y);
+				if ((it != NULL) && sel_man->load_ammo(P_ARM_RIGHT, sel_item_place, sel_item)) {
+					sel_item_place = P_MAP;
+					return ;
+				}
 
-					int req_time;
-					int pn = sel_man->deselect_item(sel_item, sel_item_place, req_time, x, y);
-					if (pn != -1) {
-						net->send_deselect_item(sel_man->NID, pn, sel_item->m_x, sel_item->m_y, req_time);
-						sel_item = NULL;
-					}
+				int req_time;
+				int pn = sel_man->deselect_item(sel_item, sel_item_place, req_time, x, y);
+				if (pn != -1) {
+					net->send_deselect_item(sel_man->NID, pn, sel_item->m_x, sel_item->m_y, req_time);
+					sel_item = NULL;
 				}
 			}
+		}
 
 }
 

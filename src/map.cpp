@@ -1292,6 +1292,17 @@ Place *Map::find_item(Item *it, int &lev, int &col, int &row)
 	return NULL;
 }
 
+int Map::find_place_coords(Place *pl, int &lev, int &col, int &row)
+{
+	for (lev = 0; lev < level; lev++)
+		for (col = 0; col < width * 10; col++)
+			for (row = 0; row < height * 10; row++)
+				if (m_cell[lev][col][row]->get_place() == pl)
+					return 1;
+	
+	return 0;
+}
+
 int Map::find_place_num(Place *pl, int lev, int col, int row)
 {
 	if (man(lev, col, row) != NULL)
@@ -1462,11 +1473,14 @@ int Map::explode(int sniper, int z, int x, int y, int type)
 {
     int damage, hit_dir = 0;
     int max_damage = Item::obdata_damage(type);
+    int dam_dev = Item::obdata_dDeviation(type);
     int damage_type = Item::obdata_damageType(type);
     double explo_range = Item::obdata_exploRange(type);
     double smoke_range = Item::obdata_smokeRange(type);
     int smoke_time = Item::obdata_smokeTime(type);
     double range = explo_range < smoke_range ? smoke_range : explo_range;
+    
+    max_damage = (int) cur_random->getUniform(max_damage * (1.0 - (dam_dev / 100.0)), max_damage * (1.0 + (dam_dev / 100.0)));
     
     // move to rules.h
     double EXPL_BORDER_DAMAGE = 0.5; // how much damage does explosion on its border

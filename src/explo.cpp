@@ -74,6 +74,15 @@ void Explosive::remove(Item *it)
 		}
 }
 
+int Explosive::get_owner(Item *it)
+{
+	for (int i = 0; i < EXPLOITEMS; i++)
+		if (item[i] == it)
+			return owner[i];
+			
+	return 0;
+}
+
 int Explosive::on_hand(Item *it)
 {
 	int lev, col, row;

@@ -47,6 +47,8 @@ public:
 
 	void add(Soldier *man, Item *it, int delay_time);
 	void remove(Item *it);
+	
+	int get_owner(Item *it);
 
 	void step(int crc);      // -1 if local
 	int detonate(int SID, Item *it);

@@ -168,7 +168,6 @@ private:
 	int seen_enemy_num;
 	int seen_enemy_z[100], seen_enemy_x[100], seen_enemy_y[100];
 //@}    
-	int time_reserve(int walk_time, int ISLOCAL, int use_energy = 1);
 	void berserk_fire();
     int calc_z();
     void standard_aiming(int za, int xa, int ya);
@@ -237,7 +236,7 @@ public:
 	int standup();
 	int prime_grenade(int iplace, int delay_time, int req_time);
 	int unload_ammo(Item *it);
-	int load_ammo(int iplace, int srcplace, Item *it);
+	int load_ammo(int iplace, int srcplace, Item *&it);
 	void die();
 	void stun();
 
@@ -269,6 +268,7 @@ public:
 	int ismoving();
 	int is_marching() { return (m_state == MARCH); }
 	int havetime(int ntime, int use_energy = 0);
+	int time_reserve(int walk_time, int ISLOCAL, int use_energy = 1);
 	void spend_time(int tm, int use_energy = 0);
 	int walktime(int _dir);
 	int tus_reserved(std::string *error = NULL);
@@ -342,6 +342,7 @@ public:
 	Item *select_item(int &pn, int scr_x, int scr_y);
 	int deselect_item(Item *&it, int it_place, int &req_time, int scr_x, int scr_y);
 	Place *find_item(Item *it, int &lev, int &col, int &row);
+	int find_place_coords(Place *pl, int &lev, int &col, int &row);
 	int haveitem(Item *it);
 
 	Item *lhand_item() { return m_place[P_ARM_LEFT]->item(); }
@@ -387,7 +388,7 @@ public:
 	Item *body() { return m_body; }
 
 	void destroy_all_items();
-	void draw_deselect_times(BITMAP *dest, int sel_item_place);
+	void draw_deselect_times(BITMAP *dest, Item *sel_item, int sel_item_place);
 	void damage_items(int damage);
 	
 	void panic(int action);

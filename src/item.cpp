@@ -279,12 +279,14 @@ void Item::unlink()
 	m_prev = NULL; m_next = NULL; m_place = NULL;
 }
 
-int Item::loadclip(Item *clip)
+int Item::loadclip(Item *&clip)
 {
 	ASSERT(clip != NULL);
-	if ((m_ammo == NULL) && can_use_ammo_type(obdata_name(clip->m_type))) {
+	if (can_use_ammo_type(obdata_name(clip->m_type))) {
 		clip->unlink();
+		Item *it = m_ammo;
 		m_ammo = clip;
+		clip = it;
 		return 1;
 	}
 	return 0;

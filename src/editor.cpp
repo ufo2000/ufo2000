@@ -205,23 +205,12 @@ bool Editor::handle_mouse_leftclick()
                 }
     }
 
-    if (mouse_inside(288, 32, 319, 57)) {  // clip
-        //if ((dup_item == NULL) && (man->unload_ammo(sel_item)))
-        //  sel_item = NULL;
-        if ((dup_item == NULL) && (sel_item != NULL) && (sel_item->haveclip()) &&
-                (man->rhand_item() == NULL) && (man->lhand_item() == NULL)) {
-            man->putitem(sel_item, P_ARM_RIGHT);
-            man->putitem(sel_item->unload(), P_ARM_LEFT);
-            sel_item = NULL;
-        }
+    if (mouse_inside(288, 137, 319, 151)) {  // -->
+        man->place(P_MAP)->scroll_right();
     } else
-        if (mouse_inside(288, 137, 319, 151)) {  // -->
-                            // Todo: repack items on ground
-            man->place(P_MAP)->scroll_right();
-        } else
-            if (mouse_inside(255, 137, 286, 151)) {  // <--
-                man->place(P_MAP)->scroll_left();
-            }
+        if (mouse_inside(255, 137, 286, 151)) {  // <--
+            man->place(P_MAP)->scroll_left();
+        }
 
     if (sel_item == NULL) {  // Pick up item from soldier
         for (i = 0; i < NUMBER_OF_PLACES; i++) {
@@ -598,6 +587,7 @@ void Editor::show()
     clear_to_color(editor_bg, COLOR_BLACK1);
     tac01->show(editor_bg, 0, 0); // draw buttons: OK, Next-Man, Prev-Man, Unload-clip, Scroll-right
     draw_sprite_vh_flip(editor_bg, b5, 255, 137); // Button: Scroll-left
+    rectfill(editor_bg, 288, 32, 319, 57, COLOR_GRAY15);	//hide unused "unload" button
     text_mode(-1);
     textout(editor_bg, g_small_font, _("Click-and-drop weapons from the armory to the soldier, right-click to remove"), 8, 364, COLOR_WHITE); 
     textout(editor_bg, large, _("F1 Help   F2 Save Team   F3 Load Team   F4 Edit Attributes"), 8, 380, COLOR_LT_BLUE);
@@ -977,7 +967,7 @@ int Editor::load_clip()
         for (i = 0; i < NUMBER_OF_PLACES; i++) {
             it = man->place(i)->item_under_mouse(0, 0);
             if ((it != NULL) && it->loadclip(sel_item)) {
-                sel_item = NULL;
+                //sel_item = NULL;
                 return 1;
             }
         }

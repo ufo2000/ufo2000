@@ -112,7 +112,7 @@ public:
 	int is_stun_rod();
 	int is_knife();
 
-	int loadclip(Item *clip);
+	int loadclip(Item *&clip);
 	int haveclip();
 
 	Item *unload();

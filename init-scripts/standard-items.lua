@@ -38,7 +38,7 @@ AddXcomItem {
 	disappear = 0,
 	weight = 1,
 	isAmmo = 1,
-	reloadTime = 20,
+	reloadTime = 15,
 	sound = "cv-bullet-hit",
 }
 
