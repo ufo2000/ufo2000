@@ -417,6 +417,8 @@ void Map::draw(int show_cursor)
 
 void Map::step()
 {
+	explo_spr_list.clear();
+
  	for(int k=0; k<level;k++)
  		for(int i=0; i<10*width;i++)
  			for(int j=0; j<10*height;j++)
