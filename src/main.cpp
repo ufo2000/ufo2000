@@ -1173,10 +1173,15 @@ void build_screen(int & select_y)
         if (icon->inside(mouse_x, mouse_y)) {
             icon_nr = icon->identify(mouse_x, mouse_y);
             if (icon_nr >= 0 ) {
-                int prev_tm = text_mode(0);
+                int bg_width = text_length(font, icontext(icon_nr)) + 2;
+                int bg_height = text_height(font) + 2;
+                BITMAP *bg = create_bitmap(bg_width, bg_height);
+                clear_bitmap(bg);
+                set_trans_blender(0, 0, 0, 176);
+                draw_trans_sprite(screen2, bg, mouse_x + 6, mouse_y - 3);
+                destroy_bitmap(bg);
                 textprintf(screen2, font,  mouse_x+7, mouse_y-2,
                             COLOR_WHITE, "%s", icontext(icon_nr) );
-                text_mode(prev_tm);
             }
         }
     }

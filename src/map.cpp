@@ -259,7 +259,7 @@ void Map::drawitem(BITMAP *itype, int gx, int gy)
 }
 
 
-void Map::draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type, int _seen)
+void Map::draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type, int _seen, BITMAP *_dest)
 {
 	int i = m_cell[_lev][_col][_row]->type[_type];
 	if (i == 0) return;
@@ -277,7 +277,7 @@ void Map::draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type,
 		frame = frames[7];
 
 	ASSERT(frame);
-	PCK::showpck(frame, _x, _y);
+	PCK::showpck(_dest, frame, _x, _y);
 }
 
 extern volatile unsigned int ANIMATION;
@@ -301,6 +301,8 @@ void Map::draw(int show_cursor)
 		l2 = level - 1;
 	else
 		l2 = sel_lev;
+		
+	BITMAP *cell_bmp = create_bitmap(32, 48);
 
 	for (int lev = l1; lev <= l2; lev++) {
 		for (int row = r1; row <= r2; row++) {
@@ -309,8 +311,13 @@ void Map::draw(int show_cursor)
 				sy = y - (col) * CELL_SCR_Y + CELL_SCR_Y * row - 26 - lev * CELL_SCR_Z - 1;
 
 				if ((sx > -32) && (sx < SCREEN2W) && (sy >= -34) && (sy < SCREEN2H)) {
+					clear_to_color(cell_bmp, makecol(255, 0, 255));
 
-					draw_cell_pck(sx, sy, lev, col, row, 0, seen(lev, col, row));
+					draw_cell_pck(0, 6, lev, col, row, 0, seen(lev, col, row), cell_bmp);
+					
+					//set_trans_blender(0, 0, 0, 0);
+					//draw_lit_sprite(screen2, cell_bmp, sx, sy - 6, 255 * (17 - m_cell[lev][col][row]->m_light) / 16);
+					//clear_to_color(cell_bmp, makecol(255, 0, 255));
 
 					if (m_cell[sel_lev][col][row]->MOUSE && show_cursor) {
 						if (lev == sel_lev) {
@@ -326,22 +333,25 @@ void Map::draw(int show_cursor)
 					}
 
 					if (seen(lev, col, row)) {
-						draw_cell_pck(sx, sy, lev, col, row, 1, 1);
-						draw_cell_pck(sx, sy, lev, col, row, 2, 1);
+						draw_cell_pck(0, 6, lev, col, row, 1, 1, cell_bmp);
+						draw_cell_pck(0, 6, lev, col, row, 2, 1, cell_bmp);
 					} else if ((mcd(lev, col, row, 1)->Door || mcd(lev, col, row, 1)->UFO_Door) &&
 					        (row > 0) && seen(lev, col, row - 1)) {
-						draw_cell_pck(sx, sy, lev, col, row, 1, 1);
-						draw_cell_pck(sx, sy, lev, col, row, 2, 0);
+						draw_cell_pck(0, 6, lev, col, row, 1, 1, cell_bmp);
+						draw_cell_pck(0, 6, lev, col, row, 2, 0, cell_bmp);
 					} else if ((mcd(lev, col, row, 2)->Door || mcd(lev, col, row, 2)->UFO_Door) &&
 					        (col < width * 10 - 1) && seen(lev, col + 1, row)) {
-						draw_cell_pck(sx, sy, lev, col, row, 1, 0);
-						draw_cell_pck(sx, sy, lev, col, row, 2, 1);
+						draw_cell_pck(0, 6, lev, col, row, 1, 0, cell_bmp);
+						draw_cell_pck(0, 6, lev, col, row, 2, 1, cell_bmp);
 					} else {
-						draw_cell_pck(sx, sy, lev, col, row, 1, 0);
-						draw_cell_pck(sx, sy, lev, col, row, 2, 0);
+						draw_cell_pck(0, 6, lev, col, row, 1, 0, cell_bmp);
+						draw_cell_pck(0, 6, lev, col, row, 2, 0, cell_bmp);
 					}
 
-					draw_cell_pck(sx, sy, lev, col, row, 3, seen(lev, col, row));
+					draw_cell_pck(0, 6, lev, col, row, 3, seen(lev, col, row), cell_bmp);
+					
+					set_trans_blender(0, 0, 0, 0);
+					draw_lit_sprite(screen2, cell_bmp, sx, sy - 6, 255 * (17 - m_cell[lev][col][row]->m_light) / 16);
 
 					if (seen(lev, col, row)) {
 						int gy = sy + mcd(lev, col, row, 0)->T_Level;
@@ -392,6 +402,8 @@ void Map::draw(int show_cursor)
 			}
 		}
 	}
+	
+	destroy_bitmap(cell_bmp);
 	                               
 	//explosions have to be drawn over all other sprites
 	std::vector<effect>::iterator exp;	
@@ -1376,8 +1388,9 @@ int Map::calc_visible_cells(Soldier *watcher, int z, int x, int y, int dir, char
 			int l;
 			int vz, vx, vy;
 			int smokeway = 0;
+			int lightway = 0;
 
-			for (l = 1; l < 18 - smokeway*3; l++) { /////////////from smoke
+			for (l = 1; l < 18 - smokeway*3 - lightway/3; l++) { /////////////from smoke
 
 				vx = x + fixtoi(fmul(itofix(l), fmul(cos_te, sin_fi)));
 				vy = y + fixtoi(fmul(itofix(l), fmul(sin_te, sin_fi)));
@@ -1408,6 +1421,7 @@ int Map::calc_visible_cells(Soldier *watcher, int z, int x, int y, int dir, char
 				if (!viewable_further(vz, vx, vy)) break;
 
 				if (smog_state(vz, vx, vy) != 0) if (++smokeway > 2) break;
+				lightway += 16 - m_cell[vz][vx][vy]->m_light;
 			}
 		}
 	}

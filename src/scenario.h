@@ -159,7 +159,7 @@ public:
     void            start ();
     void            new_coords ();
     
-    int             rules[5]; //0 - allowed explosives, 1 - points limit(x1000), 2 - turn limit, 3 - all map explored, 4 - weapons on ground in editor
+    int             rules[5]; //0 - light level (1-16), 1 - points limit(x1000), 2 - turn limit, 3 - all map explored, 4 - weapons on ground in editor
     Option			*options[SCENARIO_NUMBER][3];
 	
 	int				type;

@@ -23,6 +23,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "global.h"
 #include "cell.h"
+#include "scenario.h"
 
 IMPLEMENT_PERSISTENCE(Cell, "Cell");
 
@@ -38,6 +39,7 @@ Cell::Cell()
 	m_smog_time = 0;
 	m_fire_state = 0;
  	m_fire_time = 0;
+ 	m_light = scenario->rules[0];
 	memset(visi, 0, sizeof(visi));
 }
 

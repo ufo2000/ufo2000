@@ -389,7 +389,7 @@ void Units::draw_rules_window()
     rect(    screen2, x0 - x1,     SCREEN2H - 103,     x0 + x1,     SCREEN2H - 25,     COLOR_WHITE);
     rectfill(screen2, x0 - x1 + 1, SCREEN2H - 103 + 1, x0 + x1 - 1, SCREEN2H - 25 - 1, COLOR_GRAY14);
 
-    textprintf_centre(screen2, font, x0, SCREEN2H - 97, xcom1_color(BUTTON), _("Explosives level: %d"), scenario->rules[0]);
+    textprintf_centre(screen2, font, x0, SCREEN2H - 97, xcom1_color(BUTTON), _("Light level: %d"), scenario->rules[0]);
     textprintf_centre(screen2, font, x0, SCREEN2H - 85, xcom1_color(BUTTON), _("Points limit: %d000"), scenario->rules[1]);
     textprintf_centre(screen2, font, x0, SCREEN2H - 73, xcom1_color(BUTTON), scenario->rules[2] == 0 ? _("No turns limit") : _("Turns limit: %d"), scenario->rules[2]);
     textprintf_centre(screen2, font, x0, SCREEN2H - 61, xcom1_color(BUTTON), g_time_limit == -1 ? _("No time limit") : _("Time limit: %d sec"), g_time_limit);
@@ -398,7 +398,7 @@ void Units::draw_rules_window()
 }
 
 /**
- * Rules0: allowed Explosives
+ * Rules0: Light level
  */
 void Units::draw_rules_0_window()
 {
@@ -414,22 +414,23 @@ void Units::draw_rules_0_window()
     textout_centre(screen2, font, ">", x0 + 20, SCREEN2H - 133, xcom1_color(BUTTON));
 
 	switch(scenario->rules[0]) {
-	    case 0:
-        textprintf(screen2, font, x0 - x1 + 3, SCREEN2H - 121, xcom1_color(COMMENT), _("All explosives are prohibited.") );
-        break;
-
-        case 1:
-        textprintf(screen2, font, x0 - x1 + 3, SCREEN2H - 121, xcom1_color(COMMENT), _("High explosives, all rockets and") );
-        textprintf(screen2, font, x0 - x1 + 3, SCREEN2H - 109, xcom1_color(COMMENT), _("alien grenades are prohibited.") );
+	    case 1: case 2: case 3:
+	    case 4: case 5: case 6:
+	    case 7: case 8: case 9:
+        textprintf(screen2, font, x0 - x1 + 3, SCREEN2H - 121, xcom1_color(COMMENT), _("Night.") );
+        textprintf(screen2, font, x0 - x1 + 3, SCREEN2H - 109, xcom1_color(COMMENT), _("Low visibility.") );
 	    break;
 
-	    case 2:
-        textprintf(screen2, font, x0 - x1 + 3, SCREEN2H - 121, xcom1_color(COMMENT), _("Large rockets and alien grenades") );
-        textprintf(screen2, font, x0 - x1 + 3, SCREEN2H - 109, xcom1_color(COMMENT), _("are prohibited.") );
+        case 10: case 11: case 12:
+        case 13:
+        textprintf(screen2, font, x0 - x1 + 3, SCREEN2H - 121, xcom1_color(COMMENT), _("Twilight.") );
+        textprintf(screen2, font, x0 - x1 + 3, SCREEN2H - 109, xcom1_color(COMMENT), _("Medium visibility.") );
 	    break;
-
-		case 3:
-        textprintf(screen2, font, x0 - x1 + 3, SCREEN2H - 121, xcom1_color(COMMENT), _("All explosives are allowed.") );
+	    
+		case 14: case 15: case 16: 
+		default:
+        textprintf(screen2, font, x0 - x1 + 3, SCREEN2H - 121, xcom1_color(COMMENT), _("Day.") );
+        textprintf(screen2, font, x0 - x1 + 3, SCREEN2H - 109, xcom1_color(COMMENT), _("Good visibility.") );
 	    break;
 	}
 }
@@ -1061,8 +1062,8 @@ void Units::execute_rules_0(Map *map, int map_change_allowed)
 	    //"<"
 	    scenario->rules[0]--;
 
-  		if (scenario->rules[0] < 0) {
-   			scenario->rules[0] = 0;
+  		if (scenario->rules[0] < 6) {
+   			scenario->rules[0] = 6;
    			return;
 		}
 
@@ -1073,8 +1074,8 @@ void Units::execute_rules_0(Map *map, int map_change_allowed)
 	    //">"
 	    scenario->rules[0]++;
 
-  		if (scenario->rules[0] > 3) {
-   			scenario->rules[0] = 3;
+  		if (scenario->rules[0] > 16) {
+   			scenario->rules[0] = 16;
    			return;
 		}
 
