@@ -2213,12 +2213,13 @@ int Soldier::change_pose()
 {
 	ASSERT((m_state == SIT) || (m_state == STAND));
 
+    int ISLOCAL = platoon_local->belong(this);
 	if (m_state == SIT) {
-		if (!havetime(8)) return 0;
+		if (!time_reserve(8, ISLOCAL, 0)) return 0;
 		m_state = STAND;
 		spend_time(8);
 	} else {
-		if (!havetime(4)) return 0;
+		if (!time_reserve(4, ISLOCAL, 0)) return 0;
 		m_state = SIT;
 		spend_time(4);
 	}
