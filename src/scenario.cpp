@@ -156,7 +156,7 @@ void Scenario::init_hold ()
 	briefing_right[SC_HOLD][2] = "of turns is set in the \"Options\" section).       ";
 			
 	options[SC_HOLD][0] = new Option(OPT_NUMBER, 5, 1, 1, 20, 0, "Turns to hold (match length)", false);
-	options[SC_HOLD][1] = new Option(OPT_SWITCH, 1, "\"Surrounded\" deployment", "Standart deployment", true);
+	options[SC_HOLD][1] = new Option(OPT_SWITCH, 1, "\"Surrounded\" deployment", "Standard deployment", true);
 	options[SC_HOLD][2] = new Option(OPT_HIDDEN, 0);
 }
 
@@ -166,15 +166,15 @@ void Scenario::init_break ()
 	
 	briefing_left[SC_BREAK][0] = "You must bring at least half of your squad       ";
 	briefing_left[SC_BREAK][1] = "(rounded up) to the opposite edge of the map if  ";
-	briefing_left[SC_BREAK][2] = "standart deployment is selected or to any edge if";
+	briefing_left[SC_BREAK][2] = "standard deployment is selected or to any edge if";
 	briefing_left[SC_BREAK][3] = "\"surrounded\" deployment is selected.             ";
 	
 	briefing_right[SC_BREAK][0] = "You must kill more than half of enemy squad      ";
 	briefing_right[SC_BREAK][1] = "(rounded up) before they get to your edge of the ";
-	briefing_right[SC_BREAK][2] = "map if standart deployment is selected or to any ";
+	briefing_right[SC_BREAK][2] = "map if standard deployment is selected or to any ";
 	briefing_right[SC_BREAK][3] = "edge if \"surrounded\" deployment is selected.     ";
 				
-	options[SC_BREAK][0] = new Option(OPT_SWITCH, 0, "\"Surrounded\" deployment", "Standart deployment", true);
+	options[SC_BREAK][0] = new Option(OPT_SWITCH, 0, "\"Surrounded\" deployment", "Standard deployment", true);
 	options[SC_BREAK][1] = new Option(OPT_HIDDEN, 0);
 	options[SC_BREAK][2] = new Option(OPT_NONE);
 }              
@@ -436,7 +436,7 @@ int Scenario::conditions_control ()
 	if (temp1 == temp2) {
 	    turn_hold[0] = -1;
 	    turn_hold[1] = -1;
-		g_console->printf("Noone is controlling the target area.");
+		g_console->printf("Nobody is controlling the target area.");
     }
 	if (turn_hold[0] == (options[SC_CONTROL][0]->value - 1) / 2 && p1 == platoon_local)
 	    win = 2;
