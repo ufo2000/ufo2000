@@ -59,7 +59,7 @@ Scenario::Scenario (int sc_type)
 	rules[0] = 3;	//all explosives allowed
 	rules[1] = 15;	//15k points limit
 	rules[2] = 0;	//no turn limit
-	rules[3] = 0;   //all map isn't explored
+	rules[3] = 1;   //deployment area is explored
 	rules[4] = 0;	//weapons on ground in editor aren't allowed	
 	
 	new_scenario(sc_type);
@@ -156,7 +156,7 @@ void Scenario::init_hold ()
 	briefing_right[SC_HOLD][1] = "(rounded down) until the end of the match (number";
 	briefing_right[SC_HOLD][2] = "of turns is set in the \"Options\" section).       ";
 			
-	options[SC_HOLD][0] = new Option(OPT_NUMBER, 5, 1, 1, 20, 0, "Turns to hold (match length)", false);
+	options[SC_HOLD][0] = new Option(OPT_NUMBER, 5, 1, 1, 20, 0, "Half-turns to hold (match length)", false);
 	options[SC_HOLD][1] = new Option(OPT_SWITCH, 1, "\"Surrounded\" deployment", "Standard deployment", true);
 	options[SC_HOLD][2] = new Option(OPT_HIDDEN, 0);
 }
@@ -241,16 +241,34 @@ bool Scenario::new_scenario (std::string sc_name)
 
 void Scenario::start ()
 {
-	if (rules[3]) {
-	    // Set the entire map visible:
-	    for (int i = 0; i < 4; i++) {
-	        for (int j = 0; j < 10 * mapdata.x_size; j++) {
-	            for (int k = 0; k < 10 * mapdata.y_size; k++) {
-	                platoon_local->set_seen(i, j, k, 1);
-	                platoon_remote->set_seen(i, j, k, 1);
+	// Set initial visibility level
+	switch (rules[3]) {
+		case 0: // No initially visible cells
+		break;
+
+		case 1: // Deployment areas visible
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 10 * mapdata.x_size; j++) {
+				for (int k = 0; k < 10 * mapdata.y_size; k++) {
+					if (is_deploy_zone(deploy_type[0], j, k))
+						platoon_local->set_seen(i, j, k, 1);
+					if (is_deploy_zone(deploy_type[1], j, k))
+						platoon_remote->set_seen(i, j, k, 1);
 				}
 			}
 		}
+		break;
+
+		case 2: // Entire map visible
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 10 * mapdata.x_size; j++) {
+				for (int k = 0; k < 10 * mapdata.y_size; k++) {
+					platoon_local->set_seen(i, j, k, 1);
+					platoon_remote->set_seen(i, j, k, 1);
+				}
+			}
+		}
+		break;
 	}
 
 	if (type == SC_CONTROL) {
@@ -908,9 +926,9 @@ bool Scenario::platoon_capture (Platoon *platoon, char *first_soldier, PanPos po
 	return true;
 }
 
-bool Scenario::is_correct_place (PanPos pos, int x, int y)
+bool Scenario::is_deploy_zone (DeployType dep, int x, int y)
 {
-	switch (pos == POS_LEFT ? deploy_type[0] : deploy_type[1]) {
+	switch (dep) {
 		case DEP_LEFT:
 		return x < 10;
 
@@ -925,6 +943,11 @@ bool Scenario::is_correct_place (PanPos pos, int x, int y)
 	}
 
 	return false;
+}
+
+bool Scenario::is_correct_place (PanPos pos, int x, int y)
+{
+	return is_deploy_zone (pos == POS_LEFT ? deploy_type[0] : deploy_type[1], x, y);
 }
 
 void Scenario::draw_deploy_zone (PanPos pos, int x, int y, int color)

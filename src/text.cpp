@@ -404,8 +404,8 @@ void help( const int helppage )
             break;
         case HELP_PLANNER + 9 :
             b1 = alert3( "Gamerules - Map expored:",
-                         "Settings: all map expored / fog of war.",
-                         "",
+                         "Which part of the map will be explored initially.",
+                         "(0=nothing explored .. 2=everything explored)",
                          prev, ok, next, kp_prev, kp_ok, kp_next);
             break;
         case HELP_PLANNER + 10 :

@@ -277,6 +277,11 @@ void Units::print(int gcol)
 		draw_rules_3_window();
 		break;
 		
+		case PS_RULES_4:
+		draw_rules_window();
+		draw_rules_4_window();
+		break;
+		
 		case PS_MAIN:
 		break;
 	}
@@ -342,14 +347,14 @@ void Units::draw_map_window()
 
 void Units::draw_rules_window()
 {
-	rect(    screen2, gmx + gmw / 2 - 80,     SCREEN2H - 103,     gmx + gmw / 2 + 80,     SCREEN2H - 25,     COLOR_WHITE);
-	rectfill(screen2, gmx + gmw / 2 - 80 + 1, SCREEN2H - 103 + 1, gmx + gmw / 2 + 80 - 1, SCREEN2H - 25 - 1, COLOR_GRAY14);
+	rect(    screen2, gmx + gmw / 2 - 85,     SCREEN2H - 103,     gmx + gmw / 2 + 85,     SCREEN2H - 25,     COLOR_WHITE);
+	rectfill(screen2, gmx + gmw / 2 - 85 + 1, SCREEN2H - 103 + 1, gmx + gmw / 2 + 85 - 1, SCREEN2H - 25 - 1, COLOR_GRAY14);
 	
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 97, xcom1_color(BUTTON), "Explosives level: %d", scenario->rules[0]);
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 85, xcom1_color(BUTTON), "Points limit: %d000", scenario->rules[1]);
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 73, xcom1_color(BUTTON), scenario->rules[2] == 0 ? "No turns limit" : "Turns limit: %d", scenario->rules[2]);
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 61, xcom1_color(BUTTON), g_time_limit == -1 ? "No time limit" : "Time limit: %d sec", g_time_limit);
-	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 49, xcom1_color(BUTTON), scenario->rules[3] ? "All map is explored" : "Map isn't explored");
+	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 49, xcom1_color(BUTTON), "Exploration level: %d", scenario->rules[3]);
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 37, xcom1_color(BUTTON), scenario->rules[4] ? "Editor: ground on" : "Editor: ground off");
 }
 
@@ -423,6 +428,33 @@ void Units::draw_rules_3_window()
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 71, xcom1_color(SELECTED), g_time_limit == -1 ? "no" : "%d", g_time_limit);
 	textout_centre(screen2, font, "<", gmx + gmw / 2 - 20, SCREEN2H - 71, xcom1_color(BUTTON));
 	textout_centre(screen2, font, ">", gmx + gmw / 2 + 20, SCREEN2H - 71, xcom1_color(BUTTON));
+}
+
+/**
+ * Rules4: Map Exploration Level
+ */
+void Units::draw_rules_4_window()
+{
+	rect(    screen2, gmx + gmw / 2 - 115,     SCREEN2H - 63,     gmx + gmw / 2 + 110,     SCREEN2H - 35,     COLOR_WHITE);
+	rectfill(screen2, gmx + gmw / 2 - 115 + 1, SCREEN2H - 63 + 1, gmx + gmw / 2 + 110 - 1, SCREEN2H - 35 - 1, COLOR_GRAY13);
+	
+	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 59, xcom1_color(SELECTED), "%d", scenario->rules[3]);
+	textout_centre(screen2, font, "<", gmx + gmw / 2 - 20, SCREEN2H - 59, xcom1_color(BUTTON));
+	textout_centre(screen2, font, ">", gmx + gmw / 2 + 20, SCREEN2H - 59, xcom1_color(BUTTON));
+	
+	switch(scenario->rules[3]) {
+		case 0:
+		textprintf(screen2, font, gmx + gmw / 2 - 115 + 3, SCREEN2H - 47, xcom1_color(COMMENT), "Map isn't explored at all.");
+		break;
+
+		case 1:
+		textprintf(screen2, font, gmx + gmw / 2 - 115 + 3, SCREEN2H - 47, xcom1_color(COMMENT), "Deployment area is explored.");
+		break;
+
+		case 2:
+		textprintf(screen2, font, gmx + gmw / 2 - 115 + 3, SCREEN2H - 47, xcom1_color(COMMENT), "The entire map is explored.");
+		break;
+	}
 }
 
 /**
@@ -597,6 +629,9 @@ void Units::execute(Map *map, int map_change_allowed)
 		break;
 		case PS_RULES_3:
 		execute_rules_3(map, map_change_allowed);
+		break;
+		case PS_RULES_4:
+		execute_rules_4(map, map_change_allowed);
 		break;
 	}
 }
@@ -918,30 +953,25 @@ void Units::execute_map(Map *map, int map_change_allowed)
 
 void Units::execute_rules(Map *map, int map_change_allowed)
 {
-    if (!mouse_inside(gmx + gmw / 2 - 80, SCREEN2H - 103, gmx + gmw / 2 + 80, SCREEN2H - 25))
+    if (!mouse_inside(gmx + gmw / 2 - 85, SCREEN2H - 103, gmx + gmw / 2 + 85, SCREEN2H - 25))
 		state = PS_MAIN;
 
-    if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 101, gmx + gmw / 2 + 75, SCREEN2H - 89))
+    if (mouse_inside(gmx + gmw / 2 - 80, SCREEN2H - 101, gmx + gmw / 2 + 80, SCREEN2H - 89))
         state = PS_RULES_0;
 
-    if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 88, gmx + gmw / 2 + 75, SCREEN2H - 76))
+    if (mouse_inside(gmx + gmw / 2 - 80, SCREEN2H - 88, gmx + gmw / 2 + 80, SCREEN2H - 76))
         state = PS_RULES_1;
 
-    if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 75, gmx + gmw / 2 + 75, SCREEN2H - 63))
+    if (mouse_inside(gmx + gmw / 2 - 80, SCREEN2H - 75, gmx + gmw / 2 + 80, SCREEN2H - 63))
         state = PS_RULES_2;
 
-    if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 62, gmx + gmw / 2 + 75, SCREEN2H - 50))
+    if (mouse_inside(gmx + gmw / 2 - 80, SCREEN2H - 62, gmx + gmw / 2 + 80, SCREEN2H - 50))
         state = PS_RULES_3;
 
-	if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 49, gmx + gmw / 2 + 75, SCREEN2H - 37)) {
-	    if (scenario->rules[3] == 0)
-	        scenario->rules[3] = 1;
-		else
-		    scenario->rules[3] = 0;
-		net->send_rules(3, scenario->rules[3]);
-	}
+	if (mouse_inside(gmx + gmw / 2 - 80, SCREEN2H - 49, gmx + gmw / 2 + 80, SCREEN2H - 37))
+		state = PS_RULES_4;
 	
-	if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 36, gmx + gmw / 2 + 75, SCREEN2H - 25)) {
+	if (mouse_inside(gmx + gmw / 2 - 80, SCREEN2H - 36, gmx + gmw / 2 + 80, SCREEN2H - 25)) {
 		if (scenario->rules[4] == 0)
 			scenario->rules[4] = 1;
 		else
@@ -1081,6 +1111,38 @@ void Units::execute_rules_3(Map *map, int map_change_allowed)
 		}
 
 		net->send_time_limit(g_time_limit);
+	}
+}
+
+void Units::execute_rules_4(Map *map, int map_change_allowed)
+{
+	if (!mouse_inside(gmx + gmw / 2 - 115, SCREEN2H - 63, gmx + gmw / 2 + 115, SCREEN2H - 35))
+	    state = PS_RULES;
+
+    if (!map_change_allowed) return;
+
+	if (mouse_inside(gmx + gmw / 2 - 25, SCREEN2H - 63, gmx + gmw / 2 - 15, SCREEN2H - 51)) {
+	    //"<"
+	    scenario->rules[3]--;
+
+  		if (scenario->rules[3] < 0) {
+   			scenario->rules[3] = 0;
+   			return;
+		}
+
+		net->send_rules(3, scenario->rules[3]);
+	}
+
+    if (mouse_inside(gmx + gmw / 2 + 15, SCREEN2H - 63, gmx + gmw / 2 + 25, SCREEN2H - 51)) {
+	    //">"
+	    scenario->rules[3]++;
+
+  		if (scenario->rules[3] > 2) {
+   			scenario->rules[3] = 2;
+   			return;
+		}
+
+		net->send_rules(3, scenario->rules[3]);
 	}
 }
 

@@ -152,6 +152,7 @@ private:
 	bool			platoon_break (PanPos pos, int num_of_men_sel);
 	bool			platoon_capture (Platoon *platoon, char *first_soldier, PanPos pos, char buf[10000], int len);
 	
+	bool			is_deploy_zone (DeployType dep, int x, int y);
 	bool			use_escape (Soldier *sld, Item *it);
 	bool			use_assassin (Soldier *sld, Item *it);
 public:
