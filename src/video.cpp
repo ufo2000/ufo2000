@@ -290,18 +290,22 @@ void reset_video()
  */
 void savescreen()
 {
-    BITMAP *scr = create_bitmap(SCREEN_W, SCREEN_H);
+    BITMAP *scr = create_bitmap_ex(16, SCREEN_W, SCREEN_H);
     blit(screen, scr, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
 
     int num = 1;
     while (true) {
         char filename[128];
-        sprintf(filename, "snapshot_%d.pcx", num);
-        if (!exists(filename)) {
-            save_pcx(filename, scr, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
+#ifdef HAVE_PNG        
+        sprintf(filename, "$(home)/snapshot_%d.png", num);
+#else
+        sprintf(filename, "$(home)/snapshot_%d.jpg", num);
+#endif        
+        if (!exists(F(filename))) {
+            save_bitmap(F(filename), scr, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
             // Todo: test if save was successful
             destroy_bitmap(scr);
-            g_console->printf(COLOR_SYS_OK, _("Screenshot saved as %s"), filename);
+            g_console->printf(COLOR_SYS_OK, _("Screenshot saved as %s"), F(filename));
             return;
         }
         num++;
