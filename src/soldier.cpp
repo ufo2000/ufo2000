@@ -512,31 +512,22 @@ int Soldier::calc_ammunition_cost()
 	// Reactions is doubled because it means doing damage in enemy's turn!
 	// Strength is two for one points wise, so double the value that's in there.
 	// Accuracy averaged into one value.
-	// The amount of armour we have matters, too!
 	int p = (((md.TimeUnits * 2) + md.Stamina) / 2) +
 	        md.Health +
 			(md.Reactions * 2) +
 	        ((md.Firing + md.Throwing) / 2) +
-			(md.Strength * 2) +
-			g_skins[get_skin_index(md.SkinType, md.fFemale)].armour_values[0];
+			(md.Strength * 2);
+			
+	// Armor cost is calculated as double sum of all armor values.	
+	for (int i = 0; i < 5; i++)
+		p += 2 * g_skins[get_skin_index(md.SkinType, md.fFemale)].armour_values[i];
 
 	return p;
 }
 
 int Soldier::calc_full_ammunition_cost()
 {
-	// TUs with stamina as they determine how far you go in a turn.
-	// TUs twice as important because they get used up twice as fast.
-	// Reactions is doubled because it means doing damage in enemy's turn!
-	// Strength is two for one points wise, so double the value that's in there.
-	// Accuracy averaged into one value.
-	// The amount of armour we have matters, too!
-	int p = (((md.TimeUnits * 2) + md.Stamina) / 2) +
-	        md.Health +
-			(md.Reactions * 2) +
-	        ((md.Firing + md.Throwing) / 2) +
-			(md.Strength * 2) +
-			g_skins[get_skin_index(md.SkinType, md.fFemale)].armour_values[0];
+	int p = calc_ammunition_cost();
 			
 	// Equipment points
 	char buf[10000]; memset(buf, 0, sizeof(buf));

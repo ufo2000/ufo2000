@@ -442,6 +442,8 @@ int Place::count_weight()
 	while (t != NULL)
 	{
 		weight += t->obdata_weight();
+		if (t->haveclip())
+			weight += t->clip()->obdata_weight();
 		t = t->m_next;
 	}
 	return weight;

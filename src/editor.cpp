@@ -330,8 +330,11 @@ void Editor::show()
 				}
 			}
 			
-			textprintf(screen2, g_small_font, 0, 20, xcom1_color(2), "Equipment weight: %d", man->count_weight());
-			textprintf(screen2, g_small_font, 105, 20, xcom1_color(2), "Equipment cost: %d", man->calc_full_ammunition_cost());
+			int wht = man->count_weight();
+			int max_wht = man->md.Strength;
+			int color = max_wht < wht ? xcom1_color(35) : xcom1_color(2);
+			textprintf(screen2, g_small_font, 0, 20, color, "Equipment weight: %d/%d", wht, max_wht);
+			textprintf(screen2, g_small_font, 120, 20, xcom1_color(2), "Equipment cost: %d", man->calc_full_ammunition_cost());
 
 			draw_sprite(screen2, mouser, mouse_x, mouse_y);
 			blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);

@@ -56,7 +56,7 @@ Scenario::Scenario (int sc_type)
 	init_capture();
 	
 	rules[0] = 3;	//all explosives allowed
-	rules[1] = 10;	//10k points limit
+	rules[1] = 15;	//15k points limit
 	rules[2] = 0;	//no turn limit
 	rules[3] = 0;   //all map isn't explored
 	rules[4] = 0;	//weapons on ground in editor aren't allowed	
