@@ -491,18 +491,24 @@ void Bullet::showline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 	REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
 
 	int i;
-	for (i = 3; i < 100000; i++) {
-		zd = (int)(z0 + i * cos(fi));
-		xd = (int)(x0 + i * cos(te) * sin(fi));
-		yd = (int)(y0 + i * sin(te) * sin(fi));
+    for (i = 3; i < 100000; i++) {
+        zd = (int)(z0 + i * cos(fi));
+        xd = (int)(x0 + i * cos(te) * sin(fi));
+        yd = (int)(y0 + i * sin(te) * sin(fi));
 
-		if ((!map->inside(zd, xd, yd)) ||
-		        (!map->pass_lof_cell(zd, xd, yd)))
-			break;
-		if (platoon_remote->check_for_hit(zd, xd, yd) ||
-		        platoon_local->check_for_hit(zd, xd, y, sel_man)) //self hit-test? remove sel_man from hit-test list
-			break;
-	}
+        // hit obstacle or fly out of map borders
+        if ((!map->inside(zd, xd, yd)) || (!map->pass_lof_cell(zd, xd, yd)))
+            break;
+
+        // hit enemy soldier, only visible soldiers are taken into account in 
+        // order to prevent cheating
+        if (platoon_remote->check_for_hit(zd, xd, yd) && platoon_local->is_visible(zd / 12, xd / 16, yd / 16))
+            break;
+        
+        // hit local soldier (with a workaround preventing hit check for selected soldier)
+        if (platoon_local->check_for_hit(zd, xd, yd, sel_man)) 
+            break;
+    }
 
 	xg = map->x + x0 + y0;
 	yg = (int)(map->y - (x0 + 1) / 2 + y0 / 2 - z0 * 2.0 - 2);
