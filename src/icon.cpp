@@ -30,6 +30,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "soldier.h"
 #include "wind.h"
 #include "config.h"
+#include "scenario.h"
 
 //! firemenu foreground color
 #define _FG xcom1_color(1)
@@ -424,7 +425,7 @@ void Icon::firemenu(int iplace)
 	int waccur[5], wtime[5];
 	Action waction[5];
 
-	if (it != NULL) {
+	if (it != NULL && scenario->can_use(sel_man, it)) {
 		int i = 0;
 		sprintf(dstr[i], "CANCEL");
 		the_dialog[i].proc = firemenu_dialog_proc;
@@ -438,7 +439,7 @@ void Icon::firemenu(int iplace)
 			waction[i] = THROW;
 			i++;
 		}
-
+        
 		if (it->is_cold_weapon()) {
 			waccur[i] = 100;
 			wtime[i] = sel_man->required(25);
@@ -516,10 +517,8 @@ void Icon::firemenu(int iplace)
 						}
 					}
 				}
-			} //else {
-			//	if (it->is_scanner) {
-			//		wtime[i] = sel_man->required(it->obdata_time
-			//		sprintf(dstr[i], "SCAN                   TUS>%02d", wtime[i]);
+			} 
+			
 		if (i > 1) {                  
 			the_dialog[i].proc = NULL;
 			//set_mouse_sprite(mouser);

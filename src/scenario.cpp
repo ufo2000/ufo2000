@@ -88,7 +88,7 @@ void Scenario::init_escape ()
 	briefing_right[SC_ESCAPE][1] = "soldier) before he gets to your edge of the map. ";
 	briefing_right[SC_ESCAPE][2] = "Leader is always visible on your minimap.        ";
 	
-	options[SC_ESCAPE][0] = new Option(OPT_SWITCH, 0, "Leader can have two-handed weapons", "Leader can't have two-handed weapons", false);	
+	options[SC_ESCAPE][0] = new Option(OPT_SWITCH, 0, "Leader can use two-handed weapons", "Leader can't use two-handed weapons", false);	
 	options[SC_ESCAPE][1] = new Option(OPT_NONE);
 	options[SC_ESCAPE][2] = new Option(OPT_NONE);
 }
@@ -138,7 +138,7 @@ void Scenario::init_assassin ()
 	briefing_right[SC_ASSASSIN][1] = "soldier). He is always visible for your opponent ";
 	briefing_right[SC_ASSASSIN][2] = "on the minimap.                                  ";
 			
-	options[SC_ASSASSIN][0] = new Option(OPT_SWITCH, 0, "Leader can have two-handed weapons", "Leader can't have two-handed weapons", false);	
+	options[SC_ASSASSIN][0] = new Option(OPT_SWITCH, 0, "Leader can use two-handed weapons", "Leader can't use two-handed weapons", false);	
 	options[SC_ASSASSIN][1] = new Option(OPT_NONE);
 	options[SC_ASSASSIN][2] = new Option(OPT_NONE);
 }
@@ -1045,4 +1045,65 @@ void Scenario::deploy_break (PanPos pos, int x, int y, int color)
 		}  	
 	} else 
 		deploy_common(pos, x, y, color);
+}
+
+bool Scenario::can_use (Soldier *sld, Item *it)
+{
+	switch (type) {
+	    case SC_DEATHMATCH:
+	    break;
+
+	    case SC_ESCAPE:
+	    return use_escape(sld, it);
+	    break;
+
+	    case SC_SABOTAGE:
+	    break;
+
+	    case SC_CONTROL:
+	    break;
+
+	    case SC_ASSASSIN:
+	    return use_assassin(sld, it);
+	    break;
+	    
+	    case SC_HOLD:
+		break;
+		
+		case SC_BREAK:
+		break;
+		
+		case SC_CAPTURE:
+		break;
+	}
+
+    return true;
+}
+
+bool Scenario::use_escape (Soldier *sld, Item *it)
+{
+	if (!options[SC_ESCAPE][0]->value) {
+		if (sld->get_NID() == 1000) {
+			if (it->obdata_twoHanded()) {
+				g_console->printf("Leader can't use two-handed weapons.");
+				return false;
+			}
+		}
+	}
+	
+	return true;
+}
+
+bool Scenario::use_assassin (Soldier *sld, Item *it)
+{
+	if (!options[SC_ASSASSIN][0]->value) {
+		if (sld->get_NID() == 2000) {
+			if (it->obdata_twoHanded()) {
+				g_console->printf("Leader can't use two-handed weapons.");
+				return false;
+			}
+		}
+	}
+	
+	return true;
 }

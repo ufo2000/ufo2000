@@ -24,6 +24,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "global.h"
 #include "platoon.h"
 #include "units.h"
+#include "soldier.h"
+#include "item.h"
 
 #define SC_DEATHMATCH   0
 #define SC_ESCAPE       1
@@ -157,6 +159,9 @@ private:
 	void			deploy_assassin (PanPos pos, int x, int y, int color);
 	void			deploy_hold (PanPos pos, int x, int y, int color);	
 	void			deploy_break (PanPos pos, int x, int y, int color);
+	
+	bool			use_escape (Soldier *sld, Item *it);
+	bool			use_assassin (Soldier *sld, Item *it);
 public:
 					Scenario (int sc_type);
 	void            new_scenario (int sc_type);
@@ -179,4 +184,5 @@ public:
 	bool		    is_correct_platoon (long points, Platoon *platoon, char *first_soldier, PanPos pos, char buf[10000], int len, int num_of_men_sel);
 	bool            is_correct_place (PanPos pos, int x, int y);
 	void			draw_deploy_zone (PanPos pos, int x, int y, int color);
+	bool			can_use (Soldier *sld, Item *it);
 };
