@@ -192,8 +192,13 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 				send_packet_back(SRV_FAIL, "User name is too long");
 				m_error = true;
 				break;
+			} else if (login.size() == 0) {
+		    	server_log("login failed: user name is too short\n");
+				send_packet_back(SRV_FAIL, "User name is too short");
+				m_error = true;
+				break;
 			}
-
+			
 			int validate_user_result = validate_user(login, password);
 		    if (validate_user_result < 0) {
 		    	server_log("login failed: invalid password\n");
