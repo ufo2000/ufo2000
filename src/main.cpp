@@ -57,6 +57,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "../resource.h"
 #endif
 
+#include "sysworkarounds.h"
+
+
 //#define DEBUG
 #define MSCROLL 10
 #define BACKCOLOR 0
@@ -364,7 +367,7 @@ void initmain(int argc, char *argv[])
 	if (get_config_int("Flags", "F_FILECHECK", 1)) FLAGS |= F_FILECHECK;      // check for datafiles integrity
 	if (get_config_int("Flags", "F_LARGEFONT", 0)) FLAGS |= F_LARGEFONT;      // use big ufo font for dialogs, console and stuff.
     if (get_config_int("Flags", "F_SMALLFONT", 0)) FLAGS |= F_SMALLFONT;      // no, use small font instead.
-    if (get_config_int("Flags", "F_SOUNDCHEcK", 0)) FLAGS |= F_SOUNDCHECK;    // perform soundtest.
+    if (get_config_int("Flags", "F_SOUNDCHECK", 0)) FLAGS |= F_SOUNDCHECK;    // perform soundtest.
     if (get_config_int("Flags", "F_LOGTOSTDOUT", 0)) FLAGS |= F_LOGTOSTDOUT;  // Copy all init console output to stdout.
 	origfiles_prefix = get_config_string("Paths",  "origfiles", NULL); // original ufo files here
 	ownfiles_prefix  = get_config_string("Paths",  "ownfiles",  NULL); // own data files here (ufo2000.dat & bitmaps)
@@ -446,21 +449,21 @@ void initmain(int argc, char *argv[])
     {
         console<<"Initializing sound..."<<std::endl;
         rest(1500);
-        std::stringstream xml;
+        std::string xml;
         soundSystem *ss = soundSystem::getInstance();
-        std::ifstream smap("soundmap.xml");
-        if (smap) {
-            xml<<smap.rdbuf();
+        std::ifstream ifs_xml("soundmap.xml");
+        if (ifs_xml) {
+            ISTREAM_TO_STRING(ifs_xml, xml);
 
             if (FLAGS & F_SOUNDCHECK) {
-                if (0 == ss->initialize(xml.str(), &console, true)) {
+                if (0 == ss->initialize(xml, &console, true)) {
                     console<<"  Soundcheck in progress..."<<std::endl;
                     ss->playLoadedSamples(&console);
                 } else {
                     console<<"  soundSystem initialization failed."<<std::endl;
                 }
             } else {
-                if ( 0 > ss->initialize(xml.str(), &console, false))
+                if ( 0 > ss->initialize(xml, &console, false))
                     console<<"  Failed."<<std::endl;
             }
         } else {
@@ -530,14 +533,6 @@ void initmain(int argc, char *argv[])
 	delete print_win;
 }
 
-#ifdef DJGPP
-#include <lsck/copyrite.h>
-#endif
-
-#ifdef USE_JGMOD
-#include <jgmod.h>
-#endif
-
 void closemain()
 {
 	saveini();
@@ -559,32 +554,23 @@ void closemain()
 	Map::freepck();
 	Soldier::freepck();
 
-	closevideo();
 	soundSystem::getInstance()->shutdown();
+	closevideo();
 
 	allegro_exit();
-	printf("\nUFO 2000 remake version %s\nCopyright Sanami  (C) %s %s\n\n", UFO_VERSION_STRING, __TIME__, __DATE__);
-#ifdef DJGPP
-	puts("DJGPP 2.03, ");
-#endif
-	printf("Allegro %s on %s", ALLEGRO_VERSION_STR, ALLEGRO_PLATFORM_STR);
-#ifdef USE_JGMOD
-	printf(", JGMOD %s", JGMOD_VERSION_STR);
-#endif
-#ifdef DJGPP
-	puts(", COMLib 1.0");
-	puts(", Jonipx");
-	printf("\n%s", __lsck_get_version());
-#endif
+	std::cout<<"\nUFO 2000 remake version "
+             <<UFO_VERSION_STRING
+             <<" revision "
+             <<UFO_SVNVERSION
+             <<"\nCopyright Sanami (C) "
+             <<__TIME__<<" "
+             <<__DATE__
+             <<"\n\n"
+             <<"Yakutsk nightware\n\n"
+             <<"http://sourceforge.net/projects/ufo2000/\n"
+             <<"http://ufo2k-allegro.lxnt.info/\n"
+             <<"http://pages.ykt.ru/ufo2000/\n\n";
 
-	puts("\n\nYakutsk nightware");
-
-	puts("\nhttp://sourceforge.net/projects/ufo2000/");
-	puts("\nhttp://pages.ykt.ru/ufo2000/");
-    puts("\nhttp://ufo2k-allegro.lxnt.info/");
-
-    putchar('\n');
-	exit(0);
 }
 
 int build_crc()
@@ -1207,43 +1193,44 @@ int main(int argc, char *argv[])
 
 	if (FLAGS & F_FASTSTART) {
 		faststart();
-	}
-
-	int mm = 2, h = -1;
-	while ((mm = do_mainmenu()) != MAINMENU_QUIT) {
-		h = -1;
-		switch (mm) {
-			case MAINMENU_ABOUT:
-				about->show();
-				continue;
-			case MAINMENU_EDITOR:
-				editor->do_mapedit();
-				continue;
-			case MAINMENU_HOTSEAT:
-				h = sethotseatplay();
-				break;
-			case MAINMENU_TCPIP:
-				h = setsocketplay();
-				break;
+	} else {
+        int mm = 2, h = -1;
+        while ((mm = do_mainmenu()) != MAINMENU_QUIT) {
+            h = -1;
+            switch (mm) {
+                case MAINMENU_ABOUT:
+                    about->show();
+                    continue;
+                case MAINMENU_EDITOR:
+                    editor->do_mapedit();
+                    continue;
+                case MAINMENU_HOTSEAT:
+                    h = sethotseatplay();
+                    break;
+                case MAINMENU_TCPIP:
+                    h = setsocketplay();
+                    break;
 #ifdef HAVE_DPLAY
-			case MAINMENU_DPLAY:
-				h = setdplayplay();
-				break;
+                case MAINMENU_DPLAY:
+                    h = setdplayplay();
+                    break;
 #endif
-			case MAINMENU_LOADGAME:
-				start_loadgame();
-				break;
-			default:
-				continue;
-		}
-		if (h == -1) continue;
-		HOST = h;
+                case MAINMENU_LOADGAME:
+                    start_loadgame();
+                    break;
+                default:
+                    continue;
+            }
+            if (h == -1)
+                continue;
+            HOST = h;
 
-		if (initgame()) {
-			gameloop();
-			closegame();
-		}
-	}
+            if (initgame()) {
+                gameloop();
+                closegame();
+            }
+        }
+    }
 
 	closemain();
 	return 0;

@@ -3,11 +3,13 @@
 #
 # unix-like systems (tested on: RedHat 8, FreeBSD 4.6RC).
 
-CONFIG= -DLINUX -DHAVE_VSNPRINTF -DHAVE_ARPA_INET_H 
+UFO_SVNVERSION=${shell svnversion . }
+
+CONFIG= -DLINUX -DHAVE_VSNPRINTF -DHAVE_ARPA_INET_H -DUFO_SVNVERSION=\"$(UFO_SVNVERSION)\"
 
 # windoze (not yet tested on: MinGW 2.0)
 
-# CONFIG= -DWIN32 
+# CONFIG= -DWIN32 -DUFO_SVNVERSION=\"exported\"
 
 # optimization (uncomment only one)
 # release options:
@@ -30,7 +32,7 @@ CC = g++
 LD = g++
 CFLAGS = -funsigned-char -pipe $(CONFIG)
 CFLAGS += $(OPTCFLAGS) $(ALLEGINC) $(EXTRAINC)
-LIBS = $(OPTLDFLAGS) $(ALLEGLIB) $(EXTRALIB) -lexpatS -ljpgal
+LIBS = $(OPTLDFLAGS) $(ALLEGLIB) $(EXTRALIB) -lexpat -ljpgal
 
 SRCS = about.cpp bullet.cpp cell.cpp config.cpp connect.cpp dirty.cpp \
        editor.cpp explo.cpp font.cpp icon.cpp inventory.cpp item.cpp  \

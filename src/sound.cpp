@@ -14,6 +14,7 @@
 #include <expat.h>
 #include "allegro.h"
 
+#include "sysworkarounds.h"
 #include "sound.h"
 
 
@@ -432,65 +433,27 @@ int soundFile::loadFile(const char *fname, std::ostream& log, bool verbose) {
     if (!ifs)
         return -1;
 
-    std::stringstream sbuf;
+    std::string fdata;
 
-#if defined(__GNUC__)
-#if !defined __GNUC_PATCHLEVEL__
-#define __GNUC_PATCHLEVEL__ 0
-#endif
-#define GCC_VERSION (__GNUC__ * 10000 \
-                   + __GNUC_MINOR__ * 100 \
-                   + __GNUC_PATCHLEVEL__)
-#else
-/* non-GNU safety */
-#define GCC_VERSION 0
-#endif
+    ISTREAM_TO_STRING(ifs, fdata);
 
-#if !defined(__GNUC__) || (GCC_VERSION > 30200)
-    /* libstdc++ from pre-3.2.1 GCC has this operator horribly broken. */
-    sbuf<<ifs.rdbuf();
-
-    switch(getFileType(sbuf.str())) {
-        case CT_ORIGINAL:
-            loadOrigCat(sbuf.str(), log, verbose);
-            break;
-        case CT_CE:
-            loadCeCat(sbuf.str(), log, verbose);
-            break;
-        default:
-            log<<"Unknown file type\n";
-            return -1;
-    }
-
-#else
-    /* so here's a dumb workaround
-     * (but we should really consider deprecating pre-3.2.1 GCCs) */
-    ifs.seekg(0, std::ios::end);
-    int t_buf_len = ifs.tellg();
-    char *t_buf = new char[t_buf_len];
-    ifs.seekg(0, std::ios::beg);
-    ifs.read(t_buf, t_buf_len);
-    std::string t_str(t_buf, t_buf_len);
-    delete [] t_buf;
-    log<<"String has "<<t_str.size()<<" bytes."<<std::endl;
-
-    switch(getFileType(t_str)) {
+    switch(getFileType(fdata)) {
         case CT_ORIGINAL:
             log<<"Parsing original .cat"<<std::endl;
-            loadOrigCat(t_str, log, verbose);
+            //loadOrigCat(t_str, log, verbose);
+            loadOrigCat(fdata, log, false);
             break;
         case CT_CE:
             log<<"Parsing CE .cat"<<std::endl;
-            loadCeCat(t_str, log, verbose);
+            //loadCeCat(t_str, log, verbose);
+            loadCeCat(fdata, log, false);
             break;
         default:
             log<<"Unknown file type\n";
             return -1;
     }
-#endif
 
     return 0;
-
 }
 
 SAMPLE * soundFile::fetchSample(int idx) {
@@ -891,7 +854,15 @@ int soundSystem::initialize(const std::string& xml, std::ostream *log,
     } else {
         soundInstalled = true;
         set_volume_per_voice(0);
-        set_volume(255,255);
+        /* Commented out
+         *
+         * set_volume(255,255);
+         *
+         * because on unixen, particularly FreeBSD, this tinkers with
+         * system-wide mixer, which can cause unwanted effects.
+         * (i.e. your favourite Ministry track will beat the shit out
+         *  unsuspecting neighbours)
+         */
     }
 
     theSamples.assign(sizeof(KNOWN_SYMS), NULL);
