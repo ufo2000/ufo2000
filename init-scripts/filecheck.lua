@@ -231,21 +231,21 @@ CheckDataFiles()
 ------------------------------------------------------------------------------
 
 function GetDataFileName(x)
+    if FilesTable[x] then return FilesTable[x].FileName end
     local _, _, p1, p2 = string.find(x, "(.*)(%#[^%#]+)$")
     if p1 and p2 and FilesTable[p1] then return FilesTable[p1].FileName .. p2 end
-    if FilesTable[x] then return FilesTable[x].FileName end
 
     local fname = LocateFile(x)
     local fh = io.open(fname, "rb")
     if fh then
         fh:close()
-        if string.find(x, "^%$") then
+        if x ~= fname then
             Message("GetDataFileName: '%s' resolved as '%s' and cached for future use", x, fname)
-            FilesTable[x] = { FileName = fname }
         end
     else
         Warning("GetDataFileName: '%s' resolved as '%s' but not found on disk", x, fname)
     end
 
+    FilesTable[x] = { FileName = fname }
     return fname
 end
