@@ -373,6 +373,8 @@ extern ConsoleStatusLine *g_status;
 class ConsoleWindow;
 extern ConsoleWindow *g_console;
 
+extern int g_base_accuracy;
+
 #define CELL_SCR_X 16
 #define CELL_SCR_Y 8
 #define CELL_SCR_Z 24

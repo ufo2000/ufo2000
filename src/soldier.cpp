@@ -872,8 +872,10 @@ void Soldier::calc_visible_cells()
 	}
 }
 
-int Soldier::move(int ISLOCAL) {
-	map->check_mine(z,x,y);
+int Soldier::move(int ISLOCAL) 
+{
+	map->check_mine(z, x, y);
+
 	if ((z > 0) && map->mcd(z, x, y, 0)->No_Floor) {
 		if (!map->isStairs(z - 1, x, y)) {
 			map->set_man(z, x, y, NULL);
@@ -1119,9 +1121,7 @@ void Soldier::die()
 
 	map->place(z, x, y)->put(new Item(ctype));
 
-	char s[100];
-	sprintf(s, "%s killed.", md.Name);
-	g_console->print(s, xcom1_color(132));
+	g_console->printf(xcom1_color(132), "%s killed.", md.Name);
 }
 
 
@@ -1380,7 +1380,7 @@ int Soldier::required(int pertime)
 
 int Soldier::FAccuracy(int peraccur, int TWOHAND)
 {
-	int ac = (ud.CurFAccuracy * peraccur) / 100;
+	int ac = ud.CurFAccuracy;
 	ac -= (ac * (ud.MaxHealth - ud.CurHealth)) / ud.MaxHealth / 2;
 
 	if (TWOHAND) {
@@ -1390,7 +1390,10 @@ int Soldier::FAccuracy(int peraccur, int TWOHAND)
 
 	if (state == SIT) ac += ac / 20;
 
-	return ac;
+	double weapon_delta = 1. / (double)(peraccur * peraccur);
+	double soldier_delta = 1. / (double)(ac * ac);
+
+	return sqrt(2. / (weapon_delta + soldier_delta));
 }
 
 int Soldier::TAccuracy(int peraccur)
@@ -1400,21 +1403,24 @@ int Soldier::TAccuracy(int peraccur)
 	return ac;
 }
 
+static double randval(double min, double max)
+{
+	double std = (double)rand() / (double)(RAND_MAX - 1);
+	return min + std * (max - min);
+}
+
 void Soldier::apply_accuracy(REAL & fi, REAL & te)
 {
-	REAL TE_STEP = (PI / 8. / 100.0) / 2.0;
-	REAL FI_STEP = (PI / 32. / 100.0) / 2.0;
+	REAL TE_STEP = (PI / 8. / (double)(g_base_accuracy));
+	REAL FI_STEP = (PI / 32. / (double)(g_base_accuracy));
 
-	int randmax = 100 - target.accur;
-	if (randmax <= 0) randmax = 1;
+	double acc = 100. * 100. / (double)(target.accur * target.accur);
 
 //	According to central limit theorem, the sum of many small random values
 //	is normally distributed
 	for (int i = 0; i < 16; i++) {
-		REAL rand_te = (REAL)(rand() % randmax);
-		REAL rand_fi = (REAL)(rand() % randmax);
-		te += TE_STEP * rand_te - TE_STEP * (randmax - 1) / 2.0;
-		fi += FI_STEP * rand_fi - FI_STEP * (randmax - 1) / 2.0;
+		te += TE_STEP * randval(-acc, +acc);
+		fi += FI_STEP * randval(-acc, +acc);
 	}
 }
 

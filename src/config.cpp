@@ -37,6 +37,8 @@ static int USETRANS = 1;
 static char *gen = "General";
 static char *edit = "Editor";
 
+int g_base_accuracy = 100;
+
 void loadini()
 {
 	set_config_file("ufo2000.ini");
@@ -75,6 +77,8 @@ void loadini()
 	strcpy(last_unit_name, get_config_string(edit, "last_unit_name", ""));
 
 	g_time_limit = get_config_int(gen, "time_limit", -1);
+
+	g_base_accuracy = get_config_int(gen, "accuracy", 100);
 }
 
 void saveini()
