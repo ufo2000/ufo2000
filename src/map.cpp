@@ -1691,11 +1691,11 @@ bool Map::load_map_from_top_of_lua_stack(GEODATA *mapdata)
  */
 bool Map::load_GEODATA(const char *filename, GEODATA *mapdata)
 {
-	int stack_top = lua_gettop(L);
-	lua_safe_dofile(L, F(filename));
-	bool result = load_map_from_top_of_lua_stack(mapdata);
-	lua_settop(L, stack_top);
-	return result;
+    int stack_top = lua_gettop(L);
+    lua_safe_dofile(L, F(filename), "restricted_sandbox");
+    bool result = load_map_from_top_of_lua_stack(mapdata);
+    lua_settop(L, stack_top);
+    return result;
 }
 
 /**
@@ -1706,11 +1706,12 @@ bool Map::save_GEODATA(const char *filename, GEODATA *mapdata)
 	FILE *fh = fopen(F(filename), "wt");
 	if (fh == NULL) return false;
 
-	fprintf(fh, "return {\n");
-	fprintf(fh, "\tName = \"%s\",\n", terrain_set->get_terrain_name(mapdata->terrain).c_str());
-	fprintf(fh, "\tSizeX = %d, SizeY = %d,\n", mapdata->x_size, mapdata->y_size);
+    fprintf(fh, "return {\n");
+    fprintf(fh, "\tName = \"%s\",\n", 
+        lua_escape_string(terrain_set->get_terrain_name(mapdata->terrain)).c_str());
+    fprintf(fh, "\tSizeX = %d, SizeY = %d,\n", mapdata->x_size, mapdata->y_size);
 	
-	fprintf(fh, "\tMapdata = {\n");
+    fprintf(fh, "\tMapdata = {\n");
 
 	int x = 0;
 	for (int i = 0; i < mapdata->y_size; i++) {

@@ -486,17 +486,19 @@ void Place::save_to_string(std::string &str)
 	while (it != NULL && it->m_next) it = it->m_next;
 	
     // save items list in correct order (items added first are listed in the beginning of list)
-	while (it != NULL) {
-		char line[512];
-		if (!it->haveclip()) {
-			sprintf(line, "{%d, %d, \"%s\"},\n", it->m_x, it->m_y, it->name().c_str());
-		} else {
-			sprintf(line, "{%d, %d, \"%s\", \"%s\"},\n", it->m_x, it->m_y, it->name().c_str(), 
-				Item::obdata_name(it->cliptype()).c_str());
-		}
-		str += line;
-		it = it->m_prev;
-	}
+    while (it != NULL) {
+        char line[512];
+        if (!it->haveclip()) {
+            sprintf(line, "{%d, %d, \"%s\"},\n", it->m_x, it->m_y, 
+                lua_escape_string(it->name()).c_str());
+        } else {
+            sprintf(line, "{%d, %d, \"%s\", \"%s\"},\n", it->m_x, it->m_y, 
+                lua_escape_string(it->name()).c_str(), 
+                lua_escape_string(Item::obdata_name(it->cliptype())).c_str());
+        }
+        str += line;
+        it = it->m_prev;
+    }
 }
 
 void Place::build_items_stats(char *buf, int &len)

@@ -348,7 +348,7 @@ void closegame();
 extern lua_State *L;
 
 const char *F(const char *fileid);
-
+std::string lua_escape_string(const std::string &str);
 std::string indent(const std::string &);
 
 #define CELL_SCR_X 16

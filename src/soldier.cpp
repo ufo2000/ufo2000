@@ -413,20 +413,20 @@ Place *Soldier::find_place(const char *place_name)
 
 void Soldier::save_to_string(std::string &str)
 {
-	str.clear();
+    str.clear();
 	
-	std::string inv;
+    std::string inv;
 	
     for (int i = 0; i < NUMBER_OF_PLACES; i++) {
-		inv += "[\"" + std::string(place_name_id[i]) + "\"] = {\n";
-		std::string place_str;
+        inv += "[\"" + lua_escape_string(place_name_id[i]) + "\"] = {\n";
+        std::string place_str;
         m_place[i]->save_to_string(place_str);
-		inv += indent(place_str);
-		inv += "},\n";
-	}
+        inv += indent(place_str);
+        inv += "},\n";
+    }
     
     char tmp[512];
-	str += "Name = \"" + std::string(md.Name) + "\",\n";
+    str += "Name = \"" + lua_escape_string(md.Name) + "\",\n";
 
     sprintf(tmp, "SkinType = %d,\n", md.SkinType); str += tmp;
     sprintf(tmp, "fFemale = %d,\n", md.fFemale); str += tmp;

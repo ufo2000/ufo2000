@@ -309,7 +309,8 @@ end
 function QueryEquipmentInfo()
     local tmp = ""
     for name, data in EquipmentTable do
-        tmp = tmp .. "'" .. name .. "'=" .. data.Crc32 .. ";"
+        if name == "" then name = "?" end
+        tmp = tmp .. "'" .. string.gsub(name, "'", "\\'") .. "'=" .. data.Crc32 .. ";"
     end
     return tmp
 end
@@ -317,9 +318,9 @@ end
 function SyncEquipmentInfo(remote_equipment)
     -- parse information about equipment sets available on remote computer
     local tmp = {}
-    for name, crc32 in string.gfind(remote_equipment, "%'(.-)%'%=(%d+)%;") do 
+    for name, crc32 in string.gfind(remote_equipment, "%'(.-[^\\])%'%=(%d+)%;") do
         crc32 = tonumber(crc32)
-        tmp[name] = crc32
+        tmp[string.gsub(name, "\\'", "'")] = crc32
     end
     -- walk through local equipment table and mark equipment sets that are allowed
     for name, v in EquipmentTable do
@@ -539,6 +540,15 @@ plugins_sandbox = {
 
 plugins_sandbox = setmetatable({}, {
     __index = plugins_sandbox,
+    __newindex = function(table, key, value) error("Sandbox violation: attempt to modify global variable") end
+})
+
+restricted_sandbox = {
+	random = random
+}
+
+restricted_sandbox = setmetatable({}, {
+    __index = restricted_sandbox,
     __newindex = function(table, key, value) error("Sandbox violation: attempt to modify global variable") end
 })
 

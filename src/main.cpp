@@ -463,6 +463,21 @@ const char *F(const char *fileid)
     return fname.c_str();
 }
 
+std::string lua_escape_string(const std::string &str)
+{
+    std::string out = "";
+    for (int i = 0; i < (int)str.size(); i++) {
+        switch (str[i]) {
+            case '\\': out += "\\\\"; break;
+            case '\'': out += "\\\'"; break;
+            case '\"': out += "\\\""; break;
+            case '\n': out += "\\n"; break;
+            default: out.append(&str[i], 1); break;
+        }
+    }
+    return out;
+}
+
 void find_lua_files_callback(const char *filename, int attrib, int param)
 {
     lua_safe_dofile(L, filename, "plugins_sandbox");

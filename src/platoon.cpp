@@ -525,16 +525,12 @@ void Platoon::save_to_string(std::string &str)
  */
 void Platoon::load_FULLDATA(const char *fn)
 {
-    lua_pushstring(L, "sandbox");
-    lua_newtable(L);
-    lua_settable(L, LUA_GLOBALSINDEX);
-	
     lua_pushstring(L, "LoadSquad");
     lua_gettable(L, LUA_GLOBALSINDEX);
 	
     // load team information as a table on the top of lua stack
     int stack_top = lua_gettop(L);
-    lua_safe_dofile(L, F(fn), "sandbox");
+    lua_safe_dofile(L, F(fn), "restricted_sandbox");
     lua_settop(L, stack_top + 1);
     LUA_PUSH_OBJECT_POINTER(L, this);
     lua_safe_call(L, 2, 0);
