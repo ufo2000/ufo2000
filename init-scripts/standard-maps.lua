@@ -226,6 +226,64 @@ AddXcomTerrain {
 	}
 }
 
+
+AddXcomTerrain {
+	Index = 101, Name = "Pipes",
+	Tiles =	{
+		"$(tftd)/terrain/blanks.*",
+		"$(tftd)/terrain/sand.*",
+		"$(tftd)/terrain/pipes.*",
+		"$(tftd)/terrain/ufobits.*"
+	},
+	Maps = {
+		"$(tftd)/maps/pipes00.map",
+		"$(tftd)/maps/pipes01.map",
+		"$(tftd)/maps/pipes02.map",
+		"$(tftd)/maps/pipes03.map",
+		"$(tftd)/maps/pipes04.map",
+		"$(tftd)/maps/pipes05.map",
+		"$(tftd)/maps/pipes06.map",
+		"$(tftd)/maps/pipes07.map",
+		"$(tftd)/maps/pipes08.map",
+		"$(tftd)/maps/pipes09.map",
+		"$(tftd)/maps/pipes10.map",
+		"$(tftd)/maps/pipes11.map"
+	}
+}
+
+AddXcomTerrain {
+	Index = 102, Name = "Plane",
+	Tiles =	{
+		"$(tftd)/terrain/blanks.*",
+		"$(tftd)/terrain/sand.*",
+		"$(tftd)/terrain/plane.*",
+		"$(tftd)/terrain/ufobits.*"
+	},
+	Maps = {
+		"$(tftd)/maps/plane00.map",
+		"$(tftd)/maps/plane01.map",
+		"$(tftd)/maps/plane02.map",
+		"$(tftd)/maps/plane03.map",
+		"$(tftd)/maps/plane04.map",
+		"$(tftd)/maps/plane05.map",
+		"$(tftd)/maps/plane06.map",
+		"$(tftd)/maps/plane07.map",
+		"$(tftd)/maps/plane08.map",
+		"$(tftd)/maps/plane09.map",
+		"$(tftd)/maps/plane10.map",
+		"$(tftd)/maps/plane11.map",
+		"$(tftd)/maps/plane12.map",
+		"$(tftd)/maps/plane13.map",
+		"$(tftd)/maps/plane14.map",
+		"$(tftd)/maps/plane15.map",
+		"$(tftd)/maps/plane16.map",
+		"$(tftd)/maps/plane17.map",
+		"$(tftd)/maps/plane18.map",
+		"$(tftd)/maps/plane19.map",
+		"$(tftd)/maps/plane20.map"
+	}
+}
+
 AddXcomTerrain {
 	Index = 103, Name = "Atlantis",
 	Tiles =	{
@@ -250,6 +308,223 @@ AddXcomTerrain {
 		"$(tftd)/maps/atlan12.map"
 	}
 }
+
+AddXcomTerrain {
+	Index = 104, Name = "Mu",
+	Tiles =	{
+		"$(tftd)/terrain/blanks.*",
+		"$(tftd)/terrain/sand.*",
+		"$(tftd)/terrain/mu.*",
+		"$(tftd)/terrain/ufobits.*"
+	},
+	Maps = {
+		"$(tftd)/maps/mu00.map",
+		"$(tftd)/maps/mu01.map",
+		"$(tftd)/maps/mu02.map",
+		"$(tftd)/maps/mu03.map",
+		"$(tftd)/maps/mu04.map",
+		"$(tftd)/maps/mu05.map",
+		"$(tftd)/maps/mu06.map",
+		"$(tftd)/maps/mu07.map",
+		"$(tftd)/maps/mu08.map",
+		"$(tftd)/maps/mu09.map",
+		"$(tftd)/maps/mu10.map",
+		"$(tftd)/maps/mu11.map",
+		"$(tftd)/maps/mu12.map",
+		"$(tftd)/maps/mu13.map",
+		"$(tftd)/maps/mu14.map"
+	}
+}
+
+AddXcomTerrain {
+	Index = 105, Name = "Galleon",
+	Tiles =	{
+		"$(tftd)/terrain/blanks.*",
+		"$(tftd)/terrain/sand.*",
+		"$(tftd)/terrain/rocks.*",
+		"$(tftd)/terrain/asunk.*",
+		"$(tftd)/terrain/ufobits.*"
+	},
+	Maps = {
+		"$(tftd)/maps/gal00.map",
+		"$(tftd)/maps/gal01.map",
+		"$(tftd)/maps/gal02.map",
+		"$(tftd)/maps/gal03.map",
+		"$(tftd)/maps/gal04.map",
+		"$(tftd)/maps/gal05.map",
+		"$(tftd)/maps/gal06.map",
+		"$(tftd)/maps/gal07.map",
+		"$(tftd)/maps/gal08.map",
+		"$(tftd)/maps/gal09.map",
+		"$(tftd)/maps/gal10.map",
+		"$(tftd)/maps/gal11.map",
+		"$(tftd)/maps/gal12.map",
+		"$(tftd)/maps/gal13.map",
+		"$(tftd)/maps/gal14.map",
+		"$(tftd)/maps/gal15.map",
+		"$(tftd)/maps/gal16.map"
+	}
+}
+
+AddXcomTerrain {
+	Index = 106, Name = "MSunk",
+	Tiles =	{
+		"$(tftd)/terrain/blanks.*",
+		"$(tftd)/terrain/sand.*",
+		"$(tftd)/terrain/msunk1.*",
+		"$(tftd)/terrain/msunk2.*",
+		"$(tftd)/terrain/ufobits.*"
+	},
+	Maps = {
+		"$(tftd)/maps/msunk00.map",
+		"$(tftd)/maps/msunk01.map",
+		"$(tftd)/maps/msunk02.map",
+		"$(tftd)/maps/msunk03.map",
+		"$(tftd)/maps/msunk04.map",
+		"$(tftd)/maps/msunk05.map",
+		"$(tftd)/maps/msunk06.map",
+		"$(tftd)/maps/msunk07.map",
+		"$(tftd)/maps/msunk08.map",
+		"$(tftd)/maps/msunk09.map",
+		"$(tftd)/maps/msunk10.map",
+		"$(tftd)/maps/msunk11.map",
+		"$(tftd)/maps/msunk12.map",
+		"$(tftd)/maps/msunk13.map"
+	}
+}
+
+AddXcomTerrain {
+	Index = 107, Name = "Volcanic",
+	Tiles =	{
+		"$(tftd)/terrain/blanks.*",
+		"$(tftd)/terrain/sand.*",
+		"$(tftd)/terrain/volc.*",
+		"$(tftd)/terrain/ufobits.*"
+	},
+	Maps = {
+		"$(tftd)/maps/volc00.map",
+		"$(tftd)/maps/volc01.map",
+		"$(tftd)/maps/volc02.map",
+		"$(tftd)/maps/volc03.map",
+		"$(tftd)/maps/volc04.map",
+		"$(tftd)/maps/volc05.map",
+		"$(tftd)/maps/volc06.map",
+		"$(tftd)/maps/volc07.map",
+		"$(tftd)/maps/volc08.map",
+		"$(tftd)/maps/volc09.map",
+		"$(tftd)/maps/volc10.map",
+		"$(tftd)/maps/volc11.map"
+	}
+}
+
+AddXcomTerrain {
+	Index = 108, Name = "Coral",
+	Tiles =	{
+		"$(tftd)/terrain/blanks.*",
+		"$(tftd)/terrain/sand.*",
+		"$(tftd)/terrain/weeds.*",
+		"$(tftd)/terrain/coral.*",
+		"$(tftd)/terrain/rocks.*"
+	},
+	Maps = {
+		"$(tftd)/maps/coral00.map",
+		"$(tftd)/maps/coral01.map",
+		"$(tftd)/maps/coral02.map",
+		"$(tftd)/maps/coral03.map",
+		"$(tftd)/maps/coral04.map",
+		"$(tftd)/maps/coral05.map",
+		"$(tftd)/maps/coral06.map",
+		"$(tftd)/maps/coral07.map",
+		"$(tftd)/maps/coral08.map",
+		"$(tftd)/maps/coral09.map",
+		"$(tftd)/maps/coral10.map",
+		"$(tftd)/maps/coral11.map",
+		"$(tftd)/maps/coral12.map"
+	}
+}
+
+AddXcomTerrain {
+	Index = 109, Name = "Artifact",
+	Tiles =	{
+		"$(tftd)/terrain/blanks.*",
+		"$(tftd)/terrain/sand.*",
+		"$(tftd)/terrain/rocks.*",
+		"$(tftd)/terrain/weeds.*",
+		"$(tftd)/terrain/pyramid.*",
+		"$(tftd)/terrain/ufobits.*"
+	},
+	Maps = {
+		"$(tftd)/maps/alart00.map",
+		"$(tftd)/maps/alart01.map",
+		"$(tftd)/maps/alart02.map",
+		"$(tftd)/maps/alart03.map",
+		"$(tftd)/maps/alart04.map",
+		"$(tftd)/maps/alart05.map",
+		"$(tftd)/maps/alart06.map",
+		"$(tftd)/maps/alart07.map",
+		"$(tftd)/maps/alart08.map",
+		"$(tftd)/maps/alart09.map",
+		"$(tftd)/maps/alart10.map",
+		"$(tftd)/maps/alart11.map"
+	}
+}
+
+--[[  Alien Base, impossible to play, it makes the game crash anyway.
+
+AddXcomTerrain {
+	Index = 110, Name = "Grunge",
+	Tiles =	{
+		"$(tftd)/terrain/blanks.*",
+		"$(tftd)/terrain/grunge1.*",
+		"$(tftd)/terrain/grunge2.*",
+		"$(tftd)/terrain/grunge3.*",
+		"$(tftd)/terrain/grunge4.*",
+		"$(tftd)/terrain/ufobits.*"
+	},
+	Maps = {
+		"$(tftd)/maps/grunge00.map",
+		"$(tftd)/maps/grunge01.map",
+		"$(tftd)/maps/grunge02.map",
+		"$(tftd)/maps/grunge03.map",
+		"$(tftd)/maps/grunge04.map",
+		"$(tftd)/maps/grunge05.map",
+		"$(tftd)/maps/grunge06.map",
+		"$(tftd)/maps/grunge07.map",
+		"$(tftd)/maps/grunge08.map",
+		"$(tftd)/maps/grunge09.map",
+		"$(tftd)/maps/grunge10.map",
+		"$(tftd)/maps/grunge11.map",
+		"$(tftd)/maps/grunge12.map",
+		"$(tftd)/maps/grunge13.map",
+		"$(tftd)/maps/grunge14.map",
+		"$(tftd)/maps/grunge15.map",
+		"$(tftd)/maps/grunge16.map"
+	}
+}
+
+]]
+
+--[[  The cargo must be pre-prepared in order to play in them. Randomisation is impossible.
+
+AddXcomTerrain {
+	Index = 111, Name = "Cargo",
+	Tiles =	{
+		"$(tftd)/terrain/sea.*",
+		"$(tftd)/terrain/cargo1.*",
+		"$(tftd)/terrain/cargo2.*",
+		"$(tftd)/terrain/xbits.*",
+		"$(tftd)/terrain/cargo3.*"
+	},
+	Maps = {
+		"$(tftd)/maps/cargo00.map",
+		"$(tftd)/maps/cargo01.map",
+		"$(tftd)/maps/cargo02.map"
+	}
+}
+
+]]
+
+--[[ A little bit of sea in the middle of town is not TOO bad. portxx.map ]]
 
 AddXcomTerrain {
 	Index = 112, Name = "Port",
@@ -283,3 +558,13 @@ AddXcomTerrain {
 		"$(tftd)/maps/port20.map"
 	}
 }
+
+--[[  The entrance level must be a 3x3 maps, not randomised. ENTRYXX.map ]]
+--[[  Alien base has no corridors A_BASEXX.map ]]
+--[[  Alien ship has no corridors AlshipXX.map ]]
+--[[  Cruise ships cannot be randomised linertxx.map && linertbXX.map ]]
+--[[  T'leth levels must not be randomised. levelxx.map && cryptxx.map ]]
+--[[  xbasesXX.maps do not have any walls ]]
+
+
+

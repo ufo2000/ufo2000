@@ -842,7 +842,7 @@ int Map::stopWALK(int oz, int ox, int oy, int part)
 
 	if ((part == 0 || part == 3) && pfval(oz, ox, oy) != 0)	{
 		if (man(oz, ox, oy)) return 1;
-		if (isStairs(oz, ox, oy) && man(oz + 1, ox, oy)) return 1;
+		if (isStairs(oz, ox, oy) && ((oz + 1 >= level) || man(oz + 1, ox, oy))) return 1;
 		for (int z = oz; z > 0 && mcd(z, ox, oy, 0)->No_Floor; z--) {
 			if (man(z - 1, ox, oy)) return 1;
 		}
