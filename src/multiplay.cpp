@@ -363,7 +363,7 @@ void Net::check()
 			recv_finish_planner();
 			break;
 		case CMD_MESSAGE:
-			play(S_MESSAGE);
+			soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
 			g_console->print(pkt.str(), xcom1_color(32));
 			break;
 		case CMD_NONE:
@@ -1455,10 +1455,12 @@ void Net::replay()
 			//recv_finish_planner();
 			break;
 		case CMD_MESSAGE:
-			play(S_MESSAGE);
+			soundSystem::getInstance()->play(SS_BUTTON_PUSH_2);
 			g_console->print(pkt.str(), xcom1_color(32));
 			break;
 		case CMD_NONE:
+        default:
 			break;
+        
 	}
 }

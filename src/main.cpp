@@ -18,6 +18,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+
 #include "global.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -321,6 +326,7 @@ void initmain(int argc, char *argv[])
 	if (get_config_int("Flags", "F_FILECHECK", 1)) FLAGS |= F_FILECHECK;      // check for datafiles integrity
 	if (get_config_int("Flags", "F_LARGEFONT", 0)) FLAGS |= F_LARGEFONT;      // use big ufo font for dialogs, console and stuff.
     if (get_config_int("Flags", "F_SMALLFONT", 0)) FLAGS |= F_SMALLFONT;      // no, use small font instead.
+    if (get_config_int("Flags", "F_SOUNDCHEcK", 0)) FLAGS |= F_SOUNDCHECK;      // perform soundtest.
 	origfiles_prefix = get_config_string("Paths",  "origfiles", NULL); // original ufo files here
 	ownfiles_prefix  = get_config_string("Paths",  "ownfiles",  NULL); // own data files here (ufo2000.dat & bitmaps)
 	gametemp_prefix  = get_config_string("Paths",  "gametemp",  NULL); // game temporary files here (may span launches)
@@ -394,7 +400,23 @@ void initmain(int argc, char *argv[])
 	print("install_keyboard");
 	install_keyboard();
 	print("initsound");
-	initsound();
+    {
+        std::stringstream xml;
+        soundSystem *ss = soundSystem::getInstance();
+        std::ifstream smap("soundmap.xml");
+        if (smap) {
+            xml<<smap.rdbuf();
+            if (FLAGS & F_SOUNDCHECK) {
+                ss->initialize(xml.str(), &std::cout, true);
+                ss->playLoadedSamples(&std::cout);
+                exit(1);
+            } else {
+                ss->initialize(xml.str(), NULL, false);
+            }
+        } else {
+            print("  Error reading soundmap.xml");
+        }
+    }
 	print("initvideo");
 	initvideo();
 	print("initmainmenu");
@@ -480,7 +502,7 @@ void closemain()
 	Soldier::freepck();
 
 	closevideo();
-	closesound();
+	soundSystem::getInstance()->shutdown();
 
 	allegro_exit();
 	printf("\nUFO 2000 remake version %s\nCopyright Sanami  (C) %s %s\n\n", UFO_VERSION_STRING, __TIME__, __DATE__);
@@ -730,7 +752,7 @@ void gameloop()
 {
 	int mouse_leftr = 1, mouse_rightr = 1, select_y = 0;
 
-	play_midi(g_midi_music, 1);
+//	play_midi(g_midi_music, 1);
 
 	clear_keybuf();
 	GAMELOOP = 1;

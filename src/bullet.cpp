@@ -71,7 +71,8 @@ void Bullet::punch(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 
 void Bullet::fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 {
-	play(S_FIRE);
+    
+	soundSystem::getInstance()->play(SS_CV_RIFLE_SHOT);
 	state = FLY;
 
 	z0 = _z0; x0 = _x0; y0 = _y0;
@@ -84,7 +85,7 @@ void Bullet::fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 
 void Bullet::beam(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 {
-	play(S_LASER);
+	soundSystem::getInstance()->play(SS_LASER_RIFLE_SHOT);
 	state = BEAM;
 
 	z0 = _z0; x0 = _x0; y0 = _y0;
@@ -184,7 +185,7 @@ void Bullet::move()
 				   ) {
 					hitcell();
 					state = HIT;
-					play(S_HIT);
+					soundSystem::getInstance()->play(SS_CV_BULLET_BOUNCE);
 					break;
 				}
 			}

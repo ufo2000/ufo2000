@@ -927,7 +927,8 @@ int Soldier::move(int ISLOCAL)
 	}
 
 	if (m_state == MARCH) {
-		if ((phase == 3 || phase == 7) && map->visible(z, x, y)) play(S_TRAMP1, 128);
+		if ((phase == 3 || phase == 7) && map->visible(z, x, y)) 
+            soundSystem::getInstance()->play(SS_STEP_HUMAN, 128);
 		phase++;
 
 		//1) time = time_of_src/2 + time_of_dest/2;
@@ -1087,14 +1088,14 @@ void Soldier::hit(int pierce)
 		ud.CurHealth = 0;
 		if (m_state != DIE)
 		{
-			play(S_DIE);
+			soundSystem::getInstance()->play(SS_MALE_DEATH);
 			m_state = DIE;
 			phase = 0;
 		}
 	}
 	else {
 		ud.CurHealth -= pierce;
-//		play(S_WOUND);
+        soundSystem::getInstance()->play(SS_MALE_WOUND);
 	}
 }
 
@@ -1107,7 +1108,7 @@ void Soldier::explo_hit(int pierce) //silent
 		ud.CurHealth = 0;
 		if (m_state != DIE)
 		{
-			play(S_DIE);
+			soundSystem::getInstance()->play(SS_MALE_DEATH);
 			m_state = DIE;
 			phase = 0;
 		}
@@ -1282,7 +1283,7 @@ int Soldier::open_door()
 {
 	if (havetime(6)) {
 		if (map->open_door(z, x, y, dir)) {
-			play(S_DOOR);
+			soundSystem::getInstance()->play(SS_DOOR_CLICK);
 			spend_time(6);
 			net->send_open_door(NID);
 			return 1;

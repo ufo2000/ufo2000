@@ -1338,7 +1338,7 @@ int Map::calc_visible_cells(int z, int x, int y, int dir, char *visicells, int *
 
 int Map::explode(int lev, int col, int row, int type, int maxrange, int damage)
 {
-	play(S_EXPLODE);
+	soundSystem::getInstance()->play(SS_CV_GRENADE_BANG);
 
 	char *field = new char[level * width * 10 * height * 10];
 	memset(field, 0, level * width * 10 * height * 10);

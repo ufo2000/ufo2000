@@ -6,7 +6,7 @@ CFLAGS += -O -mcpu=i686 -s -fomit-frame-pointer
 #CFLAGS += -ggdb
 INCLUDES = ${shell allegro-config --cflags}
 CFLAGS += $(INCLUDES)
-LIBS = $(addprefix -l,$(LIBRARIES)) ${shell allegro-config --libs }
+LIBS = -lexpat $(addprefix -l,$(LIBRARIES)) ${shell allegro-config --libs }
 
 SRCS = about.cpp bullet.cpp cell.cpp config.cpp connect.cpp dirty.cpp \
        editor.cpp explo.cpp font.cpp icon.cpp inventory.cpp item.cpp  \

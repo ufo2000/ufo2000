@@ -76,13 +76,14 @@ void loadini()
 	speed_mapscroll = get_config_int(gen, "speed_mapscroll", 30);
 	mapscroll = get_config_int(gen, "mapscroll", 10);
 
+/*
 	SOUND = get_config_int(gen, "sound", 1);
 	MODSOUND = get_config_int(gen, "modules", 0);
 	digvoices = get_config_int(gen, "digvoices", 16);
 	modvoices = get_config_int(gen, "modvoices", 8);
 	strcpy(modname, get_config_string(gen, "modname", "templsun.xm"));
 	modvol = get_config_int(gen, "modvolume", 125);
-
+*/
 	local_platoon_size = get_config_int(edit, "platoon_size", 1);
 	strcpy(last_map_name, get_config_string(edit, "last_map_name", ""));
 	strcpy(last_unit_name, get_config_string(edit, "last_unit_name", ""));

@@ -1,0 +1,230 @@
+<!-- File syntax:
+
+    All tags are contained in <soundmap> tag. 
+    
+    For each file there is a <file> tag. 
+    Its attribute 'name' tells the engine where to
+    load it from, relative to original data files root.
+    
+    Each file contains a number of samples.
+    
+    For each sample there is a <sample> tag. Its attribute
+    'sym' tells the engine which event this sample is for.
+    
+    If a sample is used in several events, those extra events
+    are put into additional <alias> tags in the <sample> tag.
+
+    You can find all SoundSymbols (values of 'sym' attribute) 
+    known to the ufo2000 engine in the src/sound.cpp file 
+    
+    http://lxnt.info:8888/repos/ufo2000/trunk/src/sound.cpp
+        
+    You can download playcat program to play the ufo .cat files
+    at http://lxnt.info/stuff/playcat.exe
+    
+    It plays both original and collector's edition files.
+    It outputs a numerated index of the cat file so that you 
+    can easily update this file. Please do. Send updated versions
+    to the ufo2000 mailing list at ufo2000@lxnt.info.
+    
+    Source : http://lxnt.info/stuff/playcat.c
+    Requires Allegro 4.0 DLL : http://lxnt.info/stuff/alleg40.dll
+    
+    You can test edited soundmap.xml file by launching the ufo2000
+    binary with -soundtest parameter. It will output all loaded 
+    sounds and play each once.
+-->
+
+<soundmap>
+    <file name="sound/sound1.cat" >  <!-- Original UFO file, 55 samples -->
+<!-- #00 --> <sample sym="step-snake" /> 
+<!-- #01 --> <sample sym="unused"  /> 
+<!-- #02 --> <sample sym="cv-heavy-cannon-shot"> 
+                <alias sym="cv-auto-cannon-shot" />
+             </sample>
+<!-- #03 --> <sample sym="door-click" /> 
+<!-- #04 --> <sample sym="cv-rifle-shot" /> 
+<!-- #05 --> <sample sym="unknown" /> 
+<!-- #06 --> <sample sym="unknown" /> 
+<!-- #07 --> <sample sym="unknown" /> 
+<!-- #08 --> <sample sym="unknown" /> 
+<!-- #09 --> <sample sym="unknown" /> 
+<!-- #10 --> <sample sym="unknown" /> 
+<!-- #11 --> <sample sym="laser-pistol-shot" /> 
+<!-- #12 --> <sample sym="unknown" /> 
+<!-- #13 --> <sample sym="unknown" /> 
+<!-- #14 --> <sample sym="unknown" /> 
+<!-- #15 --> <sample sym="unknown" /> 
+<!-- #16 --> <sample sym="unknown" /> 
+<!-- #17 --> <sample sym="clip-load" /> 
+<!-- #18 --> <sample sym="plasma-rifle-shot" /> 
+<!-- #19 --> <sample sym="plasma-hit" /> 
+<!-- #20 --> <sample sym="alien-ext-door" /> 
+<!-- #21 --> <sample sym="alien-int-door" /> 
+<!-- #22 --> <sample sym="cv-bullet-bounce" /> 
+<!-- #23 --> <sample sym="HWP-death" /> 
+<!-- #24 --> <sample sym="unknown" /> 
+<!-- #25 --> <sample sym="unknown" /> 
+<!-- #26 --> <sample sym="unknown" /> 
+<!-- #27 --> <sample sym="unknown" /> 
+<!-- #28 --> <sample sym="unknown" /> 
+<!-- #29 --> <sample sym="unknown" /> 
+<!-- #30 --> <sample sym="unknown" /> 
+<!-- #31 --> <sample sym="unknown" /> 
+<!-- #32 --> <sample sym="unknown" /> 
+<!-- #33 --> <sample sym="unknown" /> 
+<!-- #34 --> <sample sym="unknown" /> 
+<!-- #35 --> <sample sym="unknown" /> 
+<!-- #36 --> <sample sym="unknown" /> 
+<!-- #37 --> <sample sym="unknown" /> 
+<!-- #38 --> <sample sym="unknown" /> 
+<!-- #39 --> <sample sym="unknown" /> 
+<!-- #40 --> <sample sym="unknown" /> 
+<!-- #41 --> <sample sym="unknown" /> 
+<!-- #42 --> <sample sym="unknown" /> 
+<!-- #43 --> <sample sym="unknown" /> 
+<!-- #44 --> <sample sym="unknown" /> 
+<!-- #45 --> <sample sym="unknown" /> 
+<!-- #46 --> <sample sym="unknown" /> 
+<!-- #47 --> <sample sym="unknown" /> 
+<!-- #48 --> <sample sym="unknown" /> 
+<!-- #49 --> <sample sym="unknown" /> 
+<!-- #50 --> <sample sym="unknown" /> 
+<!-- #51 --> <sample sym="unknown" /> 
+<!-- #52 --> <sample sym="rl-launch" > 
+                <alias sym="HWP-launch" />
+            </sample>
+<!-- #53 --> <sample sym="alien-blaster-launch" > 
+                <alias sym="HWP-blaster-launch" />
+                <alias sym="alien-small-launch" />
+            </sample>
+<!-- #54 --> <sample sym="unknown" /> 
+    </file>
+    
+    <file name="sound/sound2.cat" >  <!-- Original UFO file, 14 samples -->
+<!-- #00 --> <sample sym="unknown" /> 
+<!-- #01 --> <sample sym="unknown" /> 
+<!-- #02 --> <sample sym="unknown" /> 
+<!-- #03 --> <sample sym="unknown" /> 
+<!-- #04 --> <sample sym="unknown" /> 
+<!-- #05 --> <sample sym="unknown" /> 
+<!-- #06 --> <sample sym="unused"  /> 
+<!-- #07 --> <sample sym="unknown" /> 
+<!-- #08 --> <sample sym="unknown" /> 
+<!-- #09 --> <sample sym="unknown" /> 
+<!-- #10 --> <sample sym="unknown" /> 
+<!-- #11 --> <sample sym="unknown" /> 
+<!-- #12 --> <sample sym="unknown" /> 
+<!-- #13 --> <sample sym="unknown" /> 
+    </file>
+    
+    <file name="sound/sample.cat" >  <!-- Collector's Edition file, 14 samples -->
+<!-- #00 --> <sample sym="unknown" /> 
+<!-- #01 --> <sample sym="unknown" /> 
+<!-- #02 --> <sample sym="unknown" /> 
+<!-- #03 --> <sample sym="unknown" /> 
+<!-- #04 --> <sample sym="unknown" /> 
+<!-- #05 --> <sample sym="unknown" /> 
+<!-- #06 --> <sample sym="unknown" /> 
+<!-- #07 --> <sample sym="unknown" /> 
+<!-- #08 --> <sample sym="unknown" /> 
+<!-- #09 --> <sample sym="unknown" /> 
+<!-- #10 --> <sample sym="unknown" /> 
+<!-- #11 --> <sample sym="unknown" /> 
+<!-- #12 --> <sample sym="unknown" /> 
+<!-- #13 --> <sample sym="unknown" /> 
+    </file>
+    
+    <file name="sound/sample2.cat" >    <!-- Collector's Edition file, 55 samples -->
+<!-- #00 --> <sample sym="unknown" /> 
+<!-- #01 --> <sample sym="unused"  />  <!-- Error reading wave. : Not RIFF WAVE.-->
+<!-- #02 --> <sample sym="unknown" /> 
+<!-- #03 --> <sample sym="unknown" /> 
+<!-- #04 --> <sample sym="unknown" /> 
+<!-- #05 --> <sample sym="unknown" /> 
+<!-- #06 --> <sample sym="unknown" /> 
+<!-- #07 --> <sample sym="unknown" /> 
+<!-- #08 --> <sample sym="unknown" /> 
+<!-- #09 --> <sample sym="unknown" /> 
+<!-- #10 --> <sample sym="unknown" /> 
+<!-- #11 --> <sample sym="unknown" /> 
+<!-- #12 --> <sample sym="unknown" /> 
+<!-- #13 --> <sample sym="unknown" /> 
+<!-- #14 --> <sample sym="unknown" /> 
+<!-- #15 --> <sample sym="unknown" /> 
+<!-- #16 --> <sample sym="unknown" /> 
+<!-- #17 --> <sample sym="unknown" /> 
+<!-- #18 --> <sample sym="unknown" /> 
+<!-- #19 --> <sample sym="unknown" /> 
+<!-- #20 --> <sample sym="unknown" /> 
+<!-- #21 --> <sample sym="unknown" /> 
+<!-- #22 --> <sample sym="unknown" /> 
+<!-- #23 --> <sample sym="unknown" /> 
+<!-- #24 --> <sample sym="unknown" /> 
+<!-- #25 --> <sample sym="unknown" /> 
+<!-- #26 --> <sample sym="unknown" /> 
+<!-- #27 --> <sample sym="unknown" /> 
+<!-- #28 --> <sample sym="unknown" /> 
+<!-- #29 --> <sample sym="unknown" /> 
+<!-- #30 --> <sample sym="unknown" /> 
+<!-- #31 --> <sample sym="unknown" /> 
+<!-- #32 --> <sample sym="unknown" /> 
+<!-- #33 --> <sample sym="unknown" /> 
+<!-- #34 --> <sample sym="unknown" /> 
+<!-- #35 --> <sample sym="unknown" /> 
+<!-- #36 --> <sample sym="unknown" /> 
+<!-- #37 --> <sample sym="unknown" /> 
+<!-- #38 --> <sample sym="unknown" /> 
+<!-- #39 --> <sample sym="unknown" /> 
+<!-- #40 --> <sample sym="unknown" /> 
+<!-- #41 --> <sample sym="unknown" /> 
+<!-- #42 --> <sample sym="unknown" /> 
+<!-- #43 --> <sample sym="unknown" /> 
+<!-- #44 --> <sample sym="unknown" /> 
+<!-- #45 --> <sample sym="unknown" /> 
+<!-- #46 --> <sample sym="unknown" /> 
+<!-- #47 --> <sample sym="unknown" /> 
+<!-- #48 --> <sample sym="unknown" /> 
+<!-- #49 --> <sample sym="unknown" /> 
+<!-- #50 --> <sample sym="unknown" /> 
+<!-- #51 --> <sample sym="unknown" /> 
+<!-- #52 --> <sample sym="unknown" /> 
+<!-- #53 --> <sample sym="unknown" /> 
+<!-- #54 --> <sample sym="unknown" /> 
+    </file>
+
+    <file name="sound/sample3.cat" >  <!-- Collector's Edition file, 32 samples -->
+<!-- #00 --> <sample sym="unused"  /> 
+<!-- #01 --> <sample sym="unused"  /> 
+<!-- #02 --> <sample sym="unknown" /> 
+<!-- #03 --> <sample sym="unknown" /> 
+<!-- #04 --> <sample sym="unknown" /> 
+<!-- #05 --> <sample sym="unknown" /> 
+<!-- #06 --> <sample sym="unknown" /> 
+<!-- #07 --> <sample sym="unknown" /> 
+<!-- #08 --> <sample sym="unknown" /> 
+<!-- #09 --> <sample sym="unknown" /> 
+<!-- #10 --> <sample sym="unused"  /> 
+<!-- #11 --> <sample sym="unknown" /> 
+<!-- #12 --> <sample sym="unknown" /> 
+<!-- #13 --> <sample sym="unknown" /> 
+<!-- #14 --> <sample sym="unknown" /> 
+<!-- #15 --> <sample sym="unknown" /> 
+<!-- #16 --> <sample sym="unused"  /> 
+<!-- #17 --> <sample sym="unused"  /> 
+<!-- #18 --> <sample sym="unknown" /> 
+<!-- #19 --> <sample sym="unknown" /> 
+<!-- #20 --> <sample sym="unknown" /> 
+<!-- #21 --> <sample sym="unknown" /> 
+<!-- #22 --> <sample sym="unused"  /> 
+<!-- #23 --> <sample sym="unknown" /> 
+<!-- #24 --> <sample sym="unknown" /> 
+<!-- #25 --> <sample sym="unused"  /> 
+<!-- #26 --> <sample sym="unknown" /> 
+<!-- #27 --> <sample sym="unknown" /> 
+<!-- #28 --> <sample sym="unknown" /> 
+<!-- #29 --> <sample sym="unused"  /> 
+<!-- #30 --> <sample sym="unknown" /> 
+<!-- #31 --> <sample sym="unused"  /> 
+    </file>
+</soundmap>
