@@ -340,6 +340,9 @@ void Net::check()
 		case CMD_PANIC:
 			recv_panic();
 			break;
+		case CMD_MORALE:
+			recv_morale_change();
+			break;
 		case CMD_FINISH_PLANNER:
 			recv_finish_planner();
 			break;
@@ -1439,12 +1442,34 @@ int Net::recv_panic()
 	if (ss != NULL) {
 		SEND = 0;
 		ss->panic();
-		platoon_remote->change_morale(-20);
 		SEND = 1;
 		return 1;
 	} else {
 		error("NID");
 	}
+	return 0;
+}
+
+void Net::send_morale_change(int delta)
+{
+	if (!SEND) return ;
+
+	pkt.create(CMD_MORALE);
+	pkt << delta;
+	send();
+}
+
+int Net::recv_morale_change()
+{
+	int delta;
+
+	pkt >> delta;
+
+	SEND = 0;
+	platoon_remote->change_morale(delta, false);
+	SEND = 1;
+	return 1;
+	
 	return 0;
 }
 

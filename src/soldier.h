@@ -328,6 +328,7 @@ public:
 	void damage_items(int damage);
 	
 	void panic();
+	void change_morale(int delta);
 
 	virtual bool Write(persist::Engine &archive) const;
 	virtual bool Read(persist::Engine &archive);

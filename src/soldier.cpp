@@ -1562,6 +1562,9 @@ void Soldier::apply_wound(int hitloc)
 		ud.RLegWound++;
 		break;
 	}
+	
+	change_morale(-10);
+	
 	return;
 }
 
@@ -1729,7 +1732,7 @@ void Soldier::explo_hit(int sniper, int pierce, int type, int hitdir, int dist) 
 
 
 void Soldier::die()
-{
+{   
 	unlink();
 	map->set_man(z, x, y, NULL);
 
@@ -1752,7 +1755,7 @@ void Soldier::die()
 
 	map->place(z, x, y)->put(new Item(ctype));
 	
-	m_platoon->change_morale(-10);
+	m_platoon->change_morale(-10, false);
 
 	g_console->printf(xcom1_color(132), "%s killed.", md.Name);
 }
@@ -1831,6 +1834,18 @@ void Soldier::panic()
 	net->send_panic(NID);
 		
 	g_console->printf(xcom1_color(180), "%s has panicked.", md.Name);
+}
+
+void Soldier::change_morale(int delta)
+{
+	int new_morale = ud.Morale + delta;
+	
+	if (new_morale > 100)
+		new_morale = 100;
+	if (new_morale < 1)
+		new_morale = 1;
+		
+	ud.Morale = new_morale;
 }
 
 //shl_right 0   //leg_left  5

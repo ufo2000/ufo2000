@@ -81,7 +81,7 @@ public:
 
 	int check_reaction_fire(Soldier *target);
 	
-	void change_morale(int delta);
+	void change_morale(int delta, bool send_to_remote);
 	void check_morale();
 
 	void save_MANDATA(const char *fn);

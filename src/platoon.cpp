@@ -401,40 +401,34 @@ int Platoon::check_reaction_fire(Soldier *target)
 	return 0;
 }
 
-void Platoon::change_morale(int delta)
+void Platoon::change_morale(int delta, bool send_to_remote)
 {
 	Soldier *ss = man;
 
 	while (ss != NULL) {
-		int new_morale = ss->ud.Morale + delta;
-		if (new_morale > 100)
-			new_morale = 100;
-		if (new_morale < 1)
-			new_morale = 1;
-		ss->ud.Morale = new_morale;
-		
+		ss->change_morale(delta);	
 		ss = ss->next();
 	}
+	
+	if (send_to_remote && net->gametype != GAME_TYPE_HOTSEAT)
+		net->send_morale_change(delta);
 }
 
 void Platoon::check_morale()
 {
-	int panicked = 0;
+	bool panicked = false;
 	Soldier *ss = man;
 	
 	while (ss != NULL) {
 		if (rand() % 100 < 100 - ss->ud.Morale) {
 			ss->panic();
-			panicked++;			
+			panicked = true;
 		}
 		ss = ss->next();
 	}
 	
-	if (panicked == 0)
-		change_morale(5);
-	
-	for (int i = panicked; i > 0; i--)
-		change_morale(-20);
+	if (!panicked)
+		change_morale(5, true);
 }
 
 void Platoon::save_FULLDATA(char *fn)
