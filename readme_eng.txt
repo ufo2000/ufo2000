@@ -7,7 +7,9 @@
               **************************************************
 
              Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-             Copyright (C)      2002  UFO2000 Development Team
+             Copyright (C) 2002-2003  ufo2000 development team
+
+                    This file was last changed in $Rev$
 
 The development of UFO2000 is continued after about a year of
 inactivity. Now UFO2000 is back and supported by a group called the
@@ -34,7 +36,7 @@ ufo2000 development team members:
 - Alexander Ivanov aka 'sanami'
 - Serge Semashko aka 'ssvb'
 - Alexander Sabourenkov aka 'lxnt'
-- Ромка aka 'tavy'
+- Roman Vil'chenko aka 'tavy'
 
 See CHANGELOG for full change listings.
 
