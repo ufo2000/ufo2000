@@ -111,8 +111,13 @@ else
 	CFLAGS += -DLINUX
 	INCLUDES = ${shell allegro-config --cflags}
 	CFLAGS += $(INCLUDES)
+ifdef static	
+	LIBS := -static $(LIBS) -lNL ${shell allegro-config --libs}
+	SERVER_LIBS = -static -lNL -pthread
+else
 	LIBS += -lNL ${shell allegro-config --libs}
 	SERVER_LIBS = -lNL
+endif
 endif
 
 OBJS := $(SRCS:.cpp=.o)
@@ -157,41 +162,28 @@ clean:
 	$(RM) $(OBJDIR)/*.d
 	$(RM) $(NAME)
 
-source-zip: 
-# create zip archive with ufo2000 sources, requires 7-zip archiver
-	-$(RM) $(DISTNAME)-src.zip
-	svn delete --force $(DISTNAME)
-	svn export . $(DISTNAME)
-	7z a -tzip -r -mx $(DISTNAME)-src.zip "$(DISTNAME)/*"
-	svn delete --force $(DISTNAME)
-
-binary-zip: all server
-# create zip archive with ufo2000 binary distributive, requires 7-zip archiver
+binary-gz: all server
+# create linux binary distributive
 	svn delete --force $(DISTNAME)
 	svn export . $(DISTNAME)
 	rm -R $(DISTNAME)/src
 	rm -R $(DISTNAME)/datfile
 	rm -R $(DISTNAME)/doxygen
-	rm -R $(DISTNAME)/obj
-	rm $(DISTNAME)/makefile* $(DISTNAME)/Seccast* $(DISTNAME)/*.dsp
-	rm $(DISTNAME)/*.dsw $(DISTNAME)/*.rc $(DISTNAME)/*.ebuild $(DISTNAME)/*.h
-	cp ufo2000.exe ufo2000-srv.exe $(DISTNAME)
-ifdef WINDIR
-	7z a -tzip -r -mx $(DISTNAME).zip "$(DISTNAME)/*"
-else
-	zip -r -9 $(DISTNAME).zip $(DISTNAME)
-endif
+	rm $(DISTNAME)/makefile* $(DISTNAME)/Seccast*
+	rm $(DISTNAME)/*.rc $(DISTNAME)/*.h
+	cp ufo2000 ufo2000-srv $(DISTNAME)
+	tar -czf $(DISTNAME).tar.gz $(DISTNAME)
 	svn delete --force $(DISTNAME)
 
 win32-installer: all server
 # create windows installer using NSIS
 	svn delete --force $(DISTNAME)
 	svn export . $(DISTNAME)
-	rm $(DISTNAME)/makefile* $(DISTNAME)/Seccast* $(DISTNAME)/*.dsp
-	rm $(DISTNAME)/*.dsw $(DISTNAME)/*.rc $(DISTNAME)/*.ebuild $(DISTNAME)/*.h
+	rm $(DISTNAME)/makefile* $(DISTNAME)/Seccast*
+	rm $(DISTNAME)/*.rc $(DISTNAME)/*.h
 	cp ufo2000.exe ufo2000-srv.exe $(DISTNAME)
 	sed 's,%VERSION_ID%,$(UFO_VERSION).$(UFO_SVNVERSION),g' < ufo2000.nsi > $(DISTNAME)/ufo2000.nsi
-	makensis.exe $(DISTNAME)/ufo2000.nsi
+	makensis $(DISTNAME)/ufo2000.nsi
 	cp $(DISTNAME)/$(DISTNAME).exe $(DISTNAME).exe
 	svn delete --force $(DISTNAME)
 
@@ -203,7 +195,6 @@ source-bz2:
 	sed 's,unknown,$(UFO_SVNVERSION),g' < src/version.h > $(DISTNAME)/src/version.h
 	tar -cjf $(DISTNAME)-src.tar.bz2 $(DISTNAME)
 	svn delete --force $(DISTNAME)
-	cp ufo2000.ebuild $(DISTNAME).ebuild
 
 -include $(DEPS)
 -include $(DEPS_SERVER)
