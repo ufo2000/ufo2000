@@ -1114,15 +1114,10 @@ void build_screen(int & select_y)
     clear_to_color(screen2, BACKCOLOR);
 
     switch (MODE) {
-        case UNIT_INFO:
-            if (sel_man != NULL)
-                sel_man->draw_unibord(SCREEN2W / 2 - 160, SCREEN2H / 2 - 100);
-            else
-                MODE = MAP3D;
-            break;
         case MAP2D:
             map->draw2d();
             break;
+        case UNIT_INFO:
         case WATCH:
         case MAP3D:
             map->set_sel(mouse_x, mouse_y);
@@ -1178,6 +1173,13 @@ void build_screen(int & select_y)
                         text_mode(prev_tm);
                     }
                 }
+            }
+            
+            if (MODE == UNIT_INFO) {
+            	if (sel_man != NULL)
+                	sel_man->draw_unibord(SCREEN2W / 2 - 160, SCREEN2H / 2 - 100);
+            	else
+                	MODE = MAP3D;
             }
 
             break;

@@ -658,9 +658,12 @@ void Soldier::draw_inventory()
  */
 void Soldier::draw_unibord(int gx, int gy)
 {
-    draw_sprite(screen2, m_unibord, gx, gy);
+	BITMAP *temp = create_bitmap(m_unibord->w, m_unibord->h);
+	clear_bitmap(temp);
 
-    textout_centre(screen2, large, md.Name, gx + 160, gy + 11 - (text_height(large) / 2), COLOR_LT_OLIVE);
+    draw_sprite(temp, m_unibord, 0, 0);
+
+    textout_centre(temp, large, md.Name, 160, 11 - (text_height(large) / 2), COLOR_LT_OLIVE);
 
     int fw = ud.HeadWound + ud.TorsoWound + ud.RArmWound +
              ud.LArmWound + ud.RLegWound  + ud.LLegWound;   // Fatal Wounds
@@ -693,24 +696,28 @@ void Soldier::draw_unibord(int gx, int gy)
 
     for (int i = 0; i < 17; i++) {
         if (param[i].str != NULL) {
-            textout(screen2, g_small_font, param[i].str, gx + 8, gy + 30 + (5 - text_height(g_small_font) / 2) + i * 10, COLOR_GREEN);
-            textprintf(screen2, g_small_font, gx + 151, gy + 30 + (5 - text_height(g_small_font) / 2) + i * 10, COLOR_YELLOW02, "%d", param[i].cur);
+            textout(temp, g_small_font, param[i].str, 8, 30 + (5 - text_height(g_small_font) / 2) + i * 10, COLOR_GREEN);
+            textprintf(temp, g_small_font, 151, 30 + (5 - text_height(g_small_font) / 2) + i * 10, COLOR_YELLOW02, "%d", param[i].cur);
 
-            rect(screen2, gx + 170, gy + 32 + i * 10, gx + 170 + param[i].max, gy + 36 + i * 10, xcom1_color(param[i].col));
+            rect(temp, 170, 32 + i * 10, 170 + param[i].max, 36 + i * 10, xcom1_color(param[i].col));
             if (param[i].cur)
-                rectfill(screen2, gx + 170, gy + 33 + i * 10, gx + 170 + param[i].cur - 1, gy + 35 + i * 10, xcom1_color(param[i].col - 4));
+                rectfill(temp, 170, 33 + i * 10, 170 + param[i].cur - 1, 35 + i * 10, xcom1_color(param[i].col - 4));
 
             // special case for the health bar
             if (i == 2) // draw stun damage
                 if (ud.CurStun > 0)
                 {
                     if (ud.CurStun < ud.CurHealth)
-                        rectfill(screen2, gx + 170, gy + 33 + i * 10, gx + 170 + ud.CurStun - 1,   gy + 35 + i * 10, COLOR_WHITE1);
+                        rectfill(temp, 170, 33 + i * 10, 170 + ud.CurStun - 1, 35 + i * 10, COLOR_WHITE1);
                     else
-                        rectfill(screen2, gx + 170, gy + 33 + i * 10, gx + 170 + ud.CurHealth - 1, gy + 35 + i * 10, COLOR_WHITE1);
+                        rectfill(temp, 170, 33 + i * 10, 170 + ud.CurHealth - 1, 35 + i * 10, COLOR_WHITE1);
                 }
         }
     }
+    
+    set_trans_blender(0, 0, 0, 192);
+    draw_trans_sprite(screen2, temp, gx, gy);
+    destroy_bitmap(temp);
 }
 
 /**
