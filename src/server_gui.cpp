@@ -466,6 +466,9 @@ int connect_internet_server()
 				case SRV_USER_CHALLENGE_OUT:
 					users->update_user_info(packet, USER_STATUS_CHALLENGE_OUT);
 					break;
+                case SRV_DECLINE_CHALLENGE:
+					users->update_user_info(packet, USER_STATUS_READY);
+					break;
 				case SRV_USER_BUSY:
 					if (users->get_user_status(packet) != USER_STATUS_BUSY &&
 							users->get_user_status(packet) != USER_STATUS_OFFLINE) {
@@ -517,6 +520,8 @@ int connect_internet_server()
 						FS_MusicPlay(F(cfg_get_net1_music_file_name()));
 					lobby_init_mouse();
 					break;
+                default:
+                    break;
 			}
 
 			users_border->resize(-1, -1);
@@ -572,7 +577,7 @@ int connect_internet_server()
                     FS_MusicPlay(NULL);
                     g_console->printf(COLOR_SYS_OK, _("Music OFF") );
                     break;
-				case KEY_F1:
+    			case KEY_F1:
                     help( HELP_NET );
 					break;
 				case KEY_F9:
