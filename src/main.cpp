@@ -1579,7 +1579,12 @@ int main(int argc, char *argv[])
                     continue;
                 case MAINMENU_EDITOR:
 					play_midi(g_editor_midi_music, 1);
-                    editor->do_mapedit();
+//                  editor->do_mapedit();
+					set_palette((RGB *)datafile[DAT_GAMEPAL_BMP].dat);
+					gui_fg_color = xcom1_color(15);
+					gui_bg_color = xcom1_color(1);
+
+					alert(" ", "Map editor is currently disabled", " ", "    OK    ", NULL, 1, 0);
 					play_midi(NULL, 0);
                     continue;
                 case MAINMENU_HOTSEAT:

@@ -34,6 +34,8 @@ void configure();
 void aboutinfo();
 
 int cfg_get_base_accuracy();
+int cfg_get_screen_x_res();
+int cfg_get_screen_y_res();
 int cfg_get_min_color_depth();
 const char *cfg_get_menu_music_file_name();
 const char *cfg_get_setup_music_file_name();

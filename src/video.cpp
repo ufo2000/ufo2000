@@ -175,8 +175,8 @@ static void ufo2k_set_gfx_mode(int gfx_driver, int min_color_depth)
 			set_color_conversion(COLORCONV_TOTAL | COLORCONV_KEEP_TRANS);
 		}
 
-	//	Try both 640x400 and 640x480 video modes
-		int exit_code = set_gfx_mode(gfx_driver, 640, 400, 0, 0);
+	//	Try both selected in ini-file and 640x480 video modes
+		int exit_code = set_gfx_mode(gfx_driver, cfg_get_screen_x_res(), cfg_get_screen_y_res(), 0, 0);
 		if (exit_code == 0) break;
 		exit_code = set_gfx_mode(gfx_driver, 640, 480, 0, 0);
 		if (exit_code == 0) break;
@@ -331,16 +331,7 @@ void resize_screen2(int vw, int vh)
 
 int askmenu(char *mess)
 {
-	int omx = mouse_x, omy = mouse_y;
-	set_mouse_range(0, 0, 639, 399);
-
+	set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
 	int sel = alert(mess, "", "", "OK", "Cancel", 0, 0);
-	//set_mouse_speed(2, 2);
-	position_mouse(omx, omy);
-	//set_mouse_range(0, 0, 319, 199);
-	//set_mouse_range(0, 0, SCREEN2W-1, SCREEN2H-1);
-	set_mouse_range(0, 0, screen2->w - 1, screen2->h - 1);
-	if (sel == 1)
-		return 1;
-	return 0;
+	return (sel == 1);
 }

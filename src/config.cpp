@@ -39,6 +39,8 @@ static char *gen = "General";
 static char *edit = "Editor";
 
 static int base_accuracy = 75;
+static int preferred_screen_xres = 640;
+static int preferred_screen_yres = 400;
 static int min_color_depth = 8;
 static std::string menu_midi_file_name;
 static std::string setup_midi_file_name;
@@ -67,6 +69,16 @@ MIDI                  *g_net2_midi_music;
 int cfg_get_base_accuracy()
 {
 	return base_accuracy;
+}
+
+int cfg_get_screen_x_res()
+{
+	return preferred_screen_xres;
+}
+
+int cfg_get_screen_y_res()
+{
+	return preferred_screen_yres;
 }
 
 int cfg_get_min_color_depth()
@@ -161,6 +173,8 @@ void loadini()
 	g_time_limit = get_config_int(gen, "time_limit", -1);
 
 //	base_accuracy = get_config_int(gen, "accuracy", 75);
+	preferred_screen_xres = get_config_int(gen, "screen_x_res", 640);
+	preferred_screen_yres = get_config_int(gen, "screen_y_res", 400);
 	min_color_depth = get_config_int(gen, "color_depth", 8);
 	menu_midi_file_name = get_config_string(gen, "menu_music", "sound/gmstory.mid");
 	setup_midi_file_name = get_config_string(gen, "setup_music", "sound/gmenbase.mid");
