@@ -327,7 +327,6 @@ extern TerrainSet *terrain_set;
 extern Platoon *platoon_local, *platoon_remote;
 extern Explosive *elist;
 extern Net *net;
-extern int USERUSKEY;
 extern int BLOODYMENU;
 extern int MODEMPORT;
 extern int SOUND;

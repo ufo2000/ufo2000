@@ -21,11 +21,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef KEYS_H
 #define KEYS_H
 
-void keyswitch();
-char keymaper(char c);
-
-extern int USERUSKEY;
-extern int crel;
+void process_keyswitch();
+void keyswitch(int keyswitch_lang);
+int keymaper(int c);
 
 #define k_left       75
 #define k_right      77

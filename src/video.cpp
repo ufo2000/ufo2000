@@ -114,7 +114,7 @@ void initvideo()
 
 	initpal("geodata/palettes.dat");
 
-	font = (FONT*)datafile[DAT_FONT_CYR].dat;
+	font = (FONT*)datafile[DAT_UNIFONT_TXT].dat;
 	create_small_font();
 	create_large_font();
 
@@ -251,8 +251,8 @@ void reset_video()
 	set_mouse_range(0, 0, SCREEN2W - 1, SCREEN2H - 1);
 	set_mouse_sprite(mouser);
 	set_mouse_speed(1, 1);
-	gui_fg_color = 0;
-	gui_bg_color = 1;
+	gui_fg_color = xcom1_color(15);
+	gui_bg_color = xcom1_color(1);
 	REDRAW = 1;
 }
 

@@ -38,7 +38,6 @@ Wind::Wind(BITMAP *_backscr, int x1, int y1, int x2, int y2, int col, FONT *f)
 	m_x = x1; m_y = y1;
 	m_w = x2 - x1; m_h = y2 - y1;
 	m_screen = create_bitmap(m_w, m_h); clear(m_screen);
-	//m_screen = create_bitmap(_backscr->w, _backscr->h); clear(m_screen);
 	m_charh = text_height(m_font); 
 	m_charw = text_length(m_font, "m"); //FIXME: we don't actually need to know this, do we?
 
@@ -58,7 +57,6 @@ Wind::Wind(BITMAP *_backscr, int x1, int y1, int x2, int y2, int col, FONT *f)
 
 	m_dirty = new DirtyList(1000);
 	m_dirty2 = new DirtyList(1000);
-	//showcursor();
 }
 
 Wind::~Wind()
@@ -72,40 +70,16 @@ Wind::~Wind()
 	destroy_bitmap(m_screen);
 }
 
-void Wind::setfont(FONT *f) {
+void Wind::setfont(FONT *f) 
+{
 	m_font = (f == NULL) ? font : f;
 }	
 
 void Wind::redraw()
 {
-	/*
-		int i = 0;
-		text_mode(-1);
-		//clear(m_screen);
-		blit(m_backscr, m_screen, m_x,m_y, m_x,m_y, m_w+10, m_h+10); //?10?
-	 
-		//m_dirty->apply(m_backscr, screen);
-		//m_dirty->clear();
-		m_dirty2->copy(m_dirty);
-		m_dirty->clear();
-		do {
-			int l = (m_txtvis+i) % m_txth;
-			if (l == m_txtend) break;
-			//writestr(m_screen, 0, i*m_charh, m_txt[l]);
-			writestr(m_screen, m_x, m_y+i*m_charh, m_txt[l]);
-			m_dirty->add(m_x, m_y+i*m_charh, strlen(m_txt[l])*m_charw, m_charh);
-			i++;
-		} while (i<=m_scrh);
-	 
-		m_dirty2->add(m_dirty);
-		m_dirty2->sort();
-		m_dirty2->apply(m_screen, screen);
-		m_dirty2->clear();
-	*/
 	int i = 0;
-	text_mode( -1);
+	text_mode(-1);
 	blit(m_backscr, m_screen, m_x, m_y, 0, 0, m_w + 10, m_h + 10);
-	//blit(m_backscr, m_screen, 0,0, 0,0, m_w+10, m_h+10);
 
 	m_dirty2->copy(m_dirty);
 	m_dirty->clear();
@@ -113,7 +87,7 @@ void Wind::redraw()
 		int l = (m_txtvis + i) % m_txth;
 		if ((l == m_txtend) && (m_curx == 0)) break;
 		writestr(m_screen, 0, i * m_charh, m_txt[l], m_txtcolor[l]);
-		m_dirty->add(0, i * m_charh, strlen(m_txt[l]) * m_charw, m_charh);
+		m_dirty->add(0, i * m_charh, ustrlen(m_txt[l]) * m_charw, m_charh);
 		i++;
 	} while (i <= m_scrh);
 
@@ -166,13 +140,13 @@ void Wind::newline()
 	}
 }
 
-void Wind::printstr(char *str)
+void Wind::printstr(const char *str)
 {
-	while (*str)
-		printchr(*str++);
+	int c;
+	while ((c = ugetxc(&str)) != 0) printchr(c);
 }
 
-void Wind::printstr(char *str, int color)
+void Wind::printstr(const char *str, int color)
 {
 	int oc = m_scrcol;
 	m_scrcol = color;
@@ -181,7 +155,7 @@ void Wind::printstr(char *str, int color)
 }
 
 
-void Wind::printchr(char c)
+void Wind::printchr(int c)
 {
 	hidecursor();
 	//if ((c == 13) || (c == 10)) {
@@ -209,41 +183,43 @@ void Wind::printchr(char c)
 #define CVN 0
 #define SRPL 20
 
-void Wind::writestr(int _cx, int _cy, char *str)
+void Wind::writestr(int _cx, int _cy, const char *str)
 {
-	int l = strlen(str);
+	int l = ustrlen(str);
 	int x = m_x + m_w - l * m_charw - _cx;
 	int y = m_y - CVN - _cy;
 	BITMAP *txt = create_bitmap(l * m_charw + SRPL, m_charh);
 	blit(m_backscr, txt, x - SRPL, y, 0, 0, txt->w, txt->h);
-	text_mode( -1);
+	text_mode(-1);
 	writestr(txt, SRPL, 0, str);
 	blit(txt, screen, 0, 0, x - SRPL, y, txt->w, txt->h);
 	destroy_bitmap(txt);
 }
 
-void Wind::writestr(BITMAP *_bmp, int _x, int _y, char *str)
+void Wind::writestr(BITMAP *_bmp, int _x, int _y, const char *str)
 {
-	while (*str) {
-		writechr(_bmp, _x, _y, *str++);
+	int c;
+	while ((c = ugetxc(&str)) != 0) {
+		writechr(_bmp, _x, _y, c);
 		_x += m_charw;
 	}
 }
 
-void Wind::writechr(BITMAP *_bmp, int _x, int _y, char c)
+void Wind::writechr(BITMAP *_bmp, int _x, int _y, int c)
 {
 	textprintf(_bmp, m_font, _x, _y, m_scrcol, "%c", c);
 }
 
-void Wind::writestr(BITMAP *_bmp, int _x, int _y, char *str, int color)
+void Wind::writestr(BITMAP *_bmp, int _x, int _y, const char *str, int color)
 {
-	while (*str) {
-		writechr(_bmp, _x, _y, *str++, color);
+	int c;
+	while ((c = ugetxc(&str)) != 0) {
+		writechr(_bmp, _x, _y, c, color);
 		_x += m_charw;
 	}
 }
 
-void Wind::writechr(BITMAP *_bmp, int _x, int _y, char c, int color)
+void Wind::writechr(BITMAP *_bmp, int _x, int _y, int c, int color)
 {
 	textprintf(_bmp, m_font, _x, _y, color, "%c", c);
 }

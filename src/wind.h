@@ -58,16 +58,16 @@ public:
 	void redraw();
 	void redraw_full();
 
-	void printchr(char c);
-	void printstr(char *str);
-	void printstr(char *str, int color);
+	void printchr(int c);
+	void printstr(const char *str);
+	void printstr(const char *str, int color);
 
-	void writestr(int x, int y, char *str);
+	void writestr(int x, int y, const char *str);
 
-	void writechr(BITMAP *_bmp, int _x, int _y, char c);
-	void writestr(BITMAP *_bmp, int _x, int _y, char *str);
-	void writechr(BITMAP *_bmp, int _x, int _y, char c, int color);
-	void writestr(BITMAP *_bmp, int _x, int _y, char *str, int color);
+	void writechr(BITMAP *_bmp, int _x, int _y, int c);
+	void writestr(BITMAP *_bmp, int _x, int _y, const char *str);
+	void writechr(BITMAP *_bmp, int _x, int _y, int c, int color);
+	void writestr(BITMAP *_bmp, int _x, int _y, const char *str, int color);
 
 	void dump();
 	void info(int _x, int _y);

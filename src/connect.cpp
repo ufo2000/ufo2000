@@ -336,12 +336,7 @@ int Connect::do_chat()
 			DONE = 1;
 		}
 
-		if (USERUSKEY) {
-			if (key[KEY_RCONTROL])
-				keyswitch();
-			if (!key[KEY_RCONTROL])
-				crel = 1;
-		}
+		process_keyswitch();
 
 		if (keypressed()) {
 			int c = readkey();
@@ -379,8 +374,7 @@ int Connect::do_chat()
 						  break;*/
 				default:
 					c &= 0xff;
-					if (USERUSKEY)
-						c = keymaper(c);
+					c = keymaper(c);
 
 					local_win->printchr(c);
 					str[0] = c;
@@ -561,17 +555,13 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 			CHANGE = 1;
 		}
 
-		if (USERUSKEY) {
-			if (key[KEY_RCONTROL])
-				keyswitch();
-			if (!key[KEY_RCONTROL])
-				crel = 1;
-		}
+		process_keyswitch();
 
 		if (keypressed()) {
 			CHANGE = 1;
 
 			int c = readkey();
+
 			switch (c >> 8) {
 				case KEY_F1:
 					if (FLAGS & F_RAWMESSAGES) {
@@ -635,8 +625,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 					break;
 				default:
 					c &= 0xff;
-					if (USERUSKEY)
-						c = keymaper(c);
+					c = keymaper(c);
 
 					if ((c >= ' ') && (sendbuf_len < 78)) {
 						sendbuf[sendbuf_len++] = c;

@@ -292,7 +292,7 @@ void check_data_files()
 void initmain(int argc, char *argv[])
 {
 	srand(time(NULL));
-	set_uformat(U_ASCII);
+	set_uformat(U_UTF8);
 	allegro_init();
 	register_bitmap_file_type("jpg", load_jpg, NULL);
 	set_color_conversion(COLORCONV_REDUCE_TO_256);
@@ -646,8 +646,9 @@ void build_screen(int & select_y)
 	}
 }
 
-/** Main loop of the tactical part of the game
-*/
+/**
+ * Save game state to "ufo2000.sav" file
+ */
 void savegame()
 {
 	std::fstream f("ufo2000.sav", std::ios::binary | std::ios::out);
@@ -672,6 +673,12 @@ void savegame()
 	PersistWriteObject(archive, elist);
 }
 
+/**
+ * Load game state from a savefile
+ *
+ * @param filename name of the file in which the game state is stored
+ * @return         true on success, false on failure
+ */
 bool loadgame(const char *filename)
 {
 	std::fstream f(filename, std::ios::binary | std::ios::in);
@@ -708,10 +715,14 @@ bool loadgame(const char *filename)
 	return true;
 }
 
+/** 
+ * Main loop of the tactical part of the game
+ */
 void gameloop()
 {
 	char sendbuf[1000];
 	int sendbuf_len = 0;
+	int sendbuf_count = 0;
 	int mouse_leftr = 1, mouse_rightr = 1, select_y = 0;
 
 	clear_keybuf();
@@ -888,12 +899,7 @@ void gameloop()
 			//			CHANGE = 1;
 		}
 
-		if (USERUSKEY) {
-			if (key[KEY_RCONTROL])
-				keyswitch();
-			if (!key[KEY_RCONTROL])
-				crel = 1;
-		}
+		process_keyswitch();
 
 		if (keypressed()) {
 			int c = readkey();
@@ -1027,42 +1033,37 @@ void gameloop()
 						  net->replay();
 						  break;*/
 				case KEY_BACKSPACE:
-					if (sendbuf_len > 0) {
-						sendbuf[--sendbuf_len] = 0;
-						if (sendbuf_len < 0) {
-							sendbuf_len = 0;
-							sendbuf[0] = 0;
-						}
+					if (sendbuf_count > 0) {
+						usetat(sendbuf, --sendbuf_count, 0);
+						sendbuf_len = ustrsize(sendbuf);
 						rectfill(screen, 0, 392, 640, 400, 0);
 						textprintf(screen, font, 0, 392, 1, "%s", sendbuf);
-						/*text_mode(0);
-						for (int i=0; i<sendbuf_len; i++)
-						 textprintf(screen, font, i*8, 392, 1, "%c", sendbuf[i]);*/
 					}
 					break;
 				case KEY_ENTER:
-					if (sendbuf_len > 0) {
-						//if (FLAGS & F_RAWMESSAGES == 0) {
-						info->printstr(sendbuf, 48);
+					if (sendbuf_count > 0) {
+
+						info->printstr(sendbuf, xcom1_color(48));
 						info->printchr('\n');
-						//}
+
 						net->send_message(sendbuf);
 						sendbuf_len = 0;
+						sendbuf_count = 0;
+						usetc(sendbuf, 0);
 						rectfill(screen, 0, 392, 640, 400, 0);
 					}
 					break;
 				default:
 					c &= 0xff;
-					if (USERUSKEY)
-						c = keymaper(c);
+					c = keymaper(c);
 
-					if ((c >= ' ') && (sendbuf_len < 78)) {
-						sendbuf[sendbuf_len++] = c;
-						sendbuf[sendbuf_len] = 0;
-						textprintf(screen, font, 0, 392, 1, "%s", sendbuf);      //unishit
-						/*text_mode(0);
-						for (int i=0; i<sendbuf_len; i++)
-						 textprintf(screen, font, i*8, 392, 1, "%c", sendbuf[i]);*/
+					if ((c >= ' ') && (sendbuf_count < 78)) {
+
+						sendbuf_len += usetc(sendbuf + sendbuf_len, c);
+						usetc(sendbuf + sendbuf_len, 0);
+						sendbuf_count++;
+
+						textprintf(screen, font, 0, 392, 1, "%s", sendbuf);
 					}
 			}
 			CHANGE = 1;

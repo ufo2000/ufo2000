@@ -59,7 +59,7 @@ void loadini()
 
 	MAP_WIDTH = get_config_int(gen, "map_width", 4);
 	MAP_HEIGHT = get_config_int(gen, "map_height", 4);
-	USERUSKEY = get_config_int(gen, "russian", 1);
+//	USERUSKEY = get_config_int(gen, "russian", 1);
 	BLOODYMENU = get_config_int(gen, "bloodymenu", 0);
 	/*
 		if (rand() % 77 == 0)
