@@ -370,6 +370,8 @@ void Bullet::draw()
 			break;
 
 		case FLY: {
+            if (!map->visible(z / 12, x / 16, y / 16)) return;
+            
 			xg = map->x + x + y;
 			yg = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
 
