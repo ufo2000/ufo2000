@@ -47,6 +47,10 @@ ifndef OPTFLAGS
 	OPTFLAGS = -O2
 endif
 
+ifdef WINDIR
+	win32 = 1
+endif
+
 ifdef xmingw
     CC = i386-mingw32msvc-g++
     LD = i386-mingw32msvc-g++

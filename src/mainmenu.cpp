@@ -98,7 +98,7 @@ static int d_mainmenu_background_proc(int msg, DIALOG *d, int c)
 				"UFO2000 %s (revision >=%d)", UFO_VERSION_STRING, UFO_REVISION_NUMBER);
 		} else {
 			textprintf(screen, g_small_font, 0, 0, xcom1_menu_color(220), 
-				"UFO2000 %s (revision %s)", UFO_VERSION_STRING, UFO_SVNVERSION);
+				"UFO2000 %s.%s", UFO_VERSION_STRING, UFO_SVNVERSION);
 		}
 	}
 	return D_O_K;

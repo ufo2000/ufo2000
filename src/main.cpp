@@ -612,16 +612,13 @@ void closemain()
 
 	char revision[64];
 	if (strcmp(UFO_SVNVERSION, "unknown") == 0 || strcmp(UFO_SVNVERSION, "exported") == 0 || strcmp(UFO_SVNVERSION, "") == 0) {
-		sprintf(revision, ">=%d", UFO_REVISION_NUMBER);
+		sprintf(revision, "%s (revision >=%d)", UFO_VERSION_STRING, UFO_REVISION_NUMBER);
 	} else {
-		strcpy(revision, UFO_SVNVERSION);
+		sprintf(revision, "%s.%s", UFO_VERSION_STRING, UFO_SVNVERSION);
 	}
 
 	std::cout<<"\nUFO2000 "
-             <<UFO_VERSION_STRING
-             <<" (revision "
              <<revision
-             <<")"
              <<"\nCompiled with "
              <<allegro_id << " on "
              <<__TIME__<<" "
