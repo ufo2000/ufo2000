@@ -74,6 +74,7 @@ class Map: public persist::BaseObject
     DECLARE_PERSISTENCE(Map)
 private: 
     static PCK *cursor;
+    static PCK *x1;
     static SPK *scanbord;
     static uint16 *m_loftemp;
     static int m_loftemp_num;
@@ -321,6 +322,16 @@ public:
     {
         m_cell[lev][col][row]->m_smog_time--;
     }
+    
+    int explo_state(int lev, int col, int row)
+    {
+    	return m_cell[lev][col][row]->m_explo_state;
+    }
+    void set_explo_state(int lev, int col, int row, int value)
+    {
+    	m_cell[lev][col][row]->m_explo_state = value;
+    }
+    
     int pfval(int lev, int col, int row)
     {
         ASSERT((lev >= 0) && (lev < level) &&

@@ -81,7 +81,7 @@ void TerraPCK::add(const char *pckfname, int tftd_flag)
 	m_bmp.resize(m_imgnum + newnum);
 
 	for (num = 0; num < newnum; num++)
-		m_bmp[m_imgnum + num] = pckdat2bmp(&m_tbb[m_tbs[num]], m_tbs[num + 1] - m_tbs[num], tftd_flag);
+		m_bmp[m_imgnum + num] = pckdat2bmp(&m_tbb[m_tbs[num]], m_tbs[num + 1] - m_tbs[num], 32, 48, tftd_flag);
 
 	create_blackbmp(m_imgnum, newnum);
 	loadmcd(m_imgnum, newnum);

@@ -53,11 +53,11 @@ void free_pck_cache()
 	}
 }
 
-PCK::PCK(const char *pckfname, int tftd_flag)
+PCK::PCK(const char *pckfname, int tftd_flag, int width, int height)
 {
 	m_tftd_flag = tftd_flag;
 	m_imgnum = 0;
-	loadpck(pckfname);
+	loadpck(pckfname, width, height);
 }
 
 PCK::~PCK()
@@ -77,12 +77,12 @@ PCK::~PCK()
  * @param tftd_flag flag specifying whether we need to use tftd palette
  * @return     bitmap with a frame image
  */
-BITMAP *PCK::pckdat2bmp(const unsigned char *data, int size, int tftd_flag)
-{
-	BITMAP *bmp = create_bitmap(32, 48);
+BITMAP *PCK::pckdat2bmp(const unsigned char *data, int size, int width, int height, int tftd_flag)
+{   
+	BITMAP *bmp = create_bitmap(width, height);
 	clear_to_color(bmp, xcom1_color(0));
 
-	long ofs = ((int)*data * 32);
+	long ofs = ((int)*data * width);
 
 	if (data[--size] != 0xFF) ASSERT(false);
 
@@ -93,7 +93,7 @@ BITMAP *PCK::pckdat2bmp(const unsigned char *data, int size, int tftd_flag)
 			case 0x00: 
 				ofs++; break;
 			default:
-				putpixel(bmp, ofs % 32, ofs / 32, 
+				putpixel(bmp, ofs % width, ofs / width, 
 					tftd_flag ? tftd_color(data[j]) : xcom1_color(data[j]));
 				ofs++;
 				break;
@@ -109,9 +109,9 @@ BITMAP *PCK::pckdat2bmp(const unsigned char *data, int size, int tftd_flag)
  * @param pckfname name of PCK file to be loaded
  * @return         number of frames loaded
  */
-int PCK::loadpck(const char *pckfname)
+int PCK::loadpck(const char *pckfname, int width, int height)
 {
-	int i;
+	int i;                   
 
 	int fh = open(F(pckfname), O_RDONLY | O_BINARY);
 	ASSERT(fh != -1);
@@ -128,7 +128,7 @@ int PCK::loadpck(const char *pckfname)
     //	Just a single frame from .pck file
 		m_imgnum = 1;
 		m_bmp.resize(m_imgnum);
-		m_bmp[0] = pckdat2bmp(pck, pcksize, m_tftd_flag);
+		m_bmp[0] = pckdat2bmp(pck, pcksize, width, height, m_tftd_flag);
 		delete [] pck;
 		return 1;
 	} 
@@ -147,7 +147,7 @@ int PCK::loadpck(const char *pckfname)
 		tab[m_imgnum] = pcksize;
 		m_bmp.resize(m_imgnum);
 		for (i = 0; i < m_imgnum; i++)
-			m_bmp[i] = pckdat2bmp(&pck[tab[i]], tab[i + 1] - tab[i], 1);
+			m_bmp[i] = pckdat2bmp(&pck[tab[i]], tab[i + 1] - tab[i], width, height, 1);
 	} else {
     //	16-bit records in .tab file (UFO1)
 		uint16 *tab = (uint16 *)tabdata;
@@ -157,7 +157,7 @@ int PCK::loadpck(const char *pckfname)
 		tab[m_imgnum] = pcksize;
 		m_bmp.resize(m_imgnum);
 		for (i = 0; i < m_imgnum; i++)
-			m_bmp[i] = pckdat2bmp(&pck[tab[i]], tab[i + 1] - tab[i], 0);
+			m_bmp[i] = pckdat2bmp(&pck[tab[i]], tab[i + 1] - tab[i], width, height, 0);
 	}
 
 	delete [] pck;

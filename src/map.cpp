@@ -40,7 +40,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 uint16 *Map::m_loftemp = NULL;
 int Map::m_loftemp_num = 0;
 SPK *Map::scanbord = NULL;
-PCK *Map::smoke = NULL, *Map::cursor = NULL;
+PCK *Map::smoke = NULL, *Map::cursor = NULL, *Map::x1 = NULL;
 int Map::m_animation_cycle = 0;
 
 //			  dirs		0  1  2  3  4  5  6  7
@@ -105,6 +105,7 @@ void load_terrain_pck(const std::string &tid, TerraPCK *&terrain_pck)
 void Map::initpck()
 {
 	cursor	 = new PCK("$(xcom)/ufograph/cursor.pck");
+	x1		 = new PCK("$(xcom)/ufograph/x1.pck", 0, 128, 64);
 	scanbord = new SPK("$(xcom)/ufograph/scanbord.pck");
 	smoke	 = new PCK("$(xcom)/ufograph/smoke.pck");
 	int fh = open(F("$(xcom)/geodata/loftemps.dat"), O_RDONLY | O_BINARY);
@@ -300,7 +301,6 @@ void Map::draw()
 	else
 		l2 = sel_lev;
 
-
 	for (int lev = l1; lev <= l2; lev++) {
 		for (int row = r1; row <= r2; row++) {
 			for (int col = c2; col >= c1; col--) {
@@ -391,6 +391,23 @@ void Map::draw()
 			}
 		}
 	}
+	                               
+	//explosions have to be drawn over all other sprites                           
+	for (int lev = l1; lev <= l2; lev++) {
+		for (int row = r1; row <= r2; row++) {
+			for (int col = c2; col >= c1; col--) {
+				if (!seen(lev, col, row)) continue;
+				
+				sx = x + CELL_SCR_X * col + CELL_SCR_X * row;
+				sy = y - (col) * CELL_SCR_Y + CELL_SCR_Y * row - 26 - lev * CELL_SCR_Z - 1;
+				
+				int e = explo_state(lev, col, row);
+ 				if (e > 0) {
+ 					x1->showpck((e - 1) / 2, (sx + 16) - 64, (sy + 12) - 32);
+ 				}
+ 			}
+ 		}
+ 	}
 
 	m_cell[sel_lev][sel_col][sel_row]->MOUSE = 0;
 }
@@ -1395,6 +1412,7 @@ int Map::explode(int z, int x, int y, int max_damage)
     double HEIGHT_RATIO = 2; // how high is one level in squares
     int DEFAULT_SMOKE_TIME = 2; // how many half-turns will the smoke cloud exist
     
+    set_explo_state(z / 12, x / 16, y / 16, 1);
     soundSystem::getInstance()->play(SS_CV_GRENADE_BANG);
     
     // convert to coords relative to center of a cell
@@ -1439,6 +1457,7 @@ int Map::explode(int sniper, int z, int x, int y, int type)
     double EXPL_BORDER_DAMAGE = 0.5; // how much damage does explosion on its border
     double HEIGHT_RATIO = 2; // how high is one level in squares
     
+    set_explo_state(z / 12, x / 16, y / 16, 1);
     // should be sound associated with given weapon
     soundSystem::getInstance()->play(SS_CV_GRENADE_BANG);
     

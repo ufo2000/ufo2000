@@ -38,6 +38,7 @@ Cell::Cell()
 	m_smog_time = 0;
 	m_fire_state = 0;
  	m_fire_time = 0;
+ 	m_explo_state = 0;
 	memset(visi, 0, sizeof(visi));
 }
 
@@ -65,6 +66,11 @@ void Cell::cycle_smoke()
  				m_smog_state = 9;
  		}
  	}
+ 	
+ 	if (m_explo_state > 0)
+ 		m_explo_state++;
+ 	if (m_explo_state > 16)
+ 		m_explo_state = 0;
 }
 
 bool Cell::Write(persist::Engine &archive) const

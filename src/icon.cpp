@@ -598,11 +598,10 @@ void Icon::firemenu(int iplace)
 					if (it->obdata_accuracy(AUTO)) {
 						waccur[i] = sel_man->FAccuracy(it->obdata_accuracy(AUTO), it->obdata_twoHanded());
 						wtime[i] = sel_man->required(it->obdata_time(AUTO));
-						if (sel_man->havetime((wtime[i] + 2) / 3 * 3) == OK) {
-                            sprintf(dstr[i], _("AUTO SHOT   ACC>%02d%% TUs>%02d"), waccur[i], (wtime[i] + 2) / 3 * 3);
+						if (sel_man->havetime(wtime[i] * it->obdata_autoShots()) == OK) {
+                            sprintf(dstr[i], _("AUTO SHOT   ACC>%02d%% TUs>%02d"), waccur[i], wtime[i] * it->obdata_autoShots());
 							the_dialog[i].proc = firemenu_dialog_proc;
 							waction[i] = AUTOSHOT;
-							wtime[i] = (wtime[i] + 2) / 3;      // per 3
 							i++;
 						}
 					}

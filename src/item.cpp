@@ -182,9 +182,9 @@ void Item::od_info(int type, int gx, int gy, int gcol)
                        _("Firing-Type"), _("Accuracy"), _("TU cost") );
 		gy += 10;
 		if (obdata_accuracy(type, 0)) {
-            textprintf(screen2, font, gx, gy, gcol, "%13s     %3d%%    %5d%%",
-                       _("Auto"),
-                       obdata_accuracy(type, 0), obdata_time(type, 0));
+            textprintf(screen2, font, gx, gy, gcol, "%10s(%d)     %3d%%    %5d%%",
+                       _("Auto"), obdata_autoShots(type), obdata_accuracy(type, 0), 
+					   obdata_time(type, 0) * obdata_autoShots(type));
 			gy += 10;
 		}
 		if (obdata_accuracy(type, 1)) {

@@ -37,14 +37,14 @@ protected:
 
     char m_fname[0x100];
 
-	BITMAP *pckdat2bmp(const unsigned char *data, int size, int tftd_flag);
+	BITMAP *pckdat2bmp(const unsigned char *data, int size, int width, int height, int tftd_flag);
 
 	bool m_tftd_flag;
 
 public:
 	int m_imgnum;
 
-	PCK(const char *pckfname, int tftd_flag = 0);
+	PCK(const char *pckfname, int tftd_flag = 0, int width = 32, int height = 48);
 	~PCK();
 
 	BITMAP *get_image(int index)
@@ -53,7 +53,7 @@ public:
 		return m_bmp[index];
 	}
 
-	int loadpck(const char *pckfname);
+	int loadpck(const char *pckfname, int width, int height);
 	void showpck(int num, int xx, int yy);
 	static void showpck(BITMAP *img, int xx, int yy);
 	static void showpck(BITMAP *dest, BITMAP *img, int xx, int yy);

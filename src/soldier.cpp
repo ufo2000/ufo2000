@@ -1712,7 +1712,7 @@ void Soldier::berserk_fire()
     
     if(it->obdata_accuracy(0)) {
         target.accur = FAccuracy(it->obdata_accuracy(0), it->obdata_twoHanded()) / 2;
-        target.time = (required(it->obdata_time(0)) + 2) / 3;
+        target.time = required(it->obdata_time(0));
         target.action = AUTOSHOT;
     } else if(it->obdata_accuracy(1)) {
         target.accur = FAccuracy(it->obdata_accuracy(1), it->obdata_twoHanded()) / 2;
@@ -2297,7 +2297,7 @@ void Soldier::try_shoot()
     }
 
     if (target.action == AUTOSHOT)
-        FIRE_num = 3;
+        FIRE_num = target.item->obdata_autoShots();
     else
         FIRE_num = 1;
 
@@ -2348,7 +2348,7 @@ void Soldier::try_reaction_shot(Soldier *the_target)
     }
 
     if (target.action == AUTOSHOT)
-        FIRE_num = 3;
+        FIRE_num = target.item->obdata_autoShots();
     else
         FIRE_num = 1;
 
@@ -2454,7 +2454,7 @@ int Soldier::assign_target(Action action, int iplace)
             break;
         case AUTOSHOT:
             target.accur = FAccuracy(it->obdata_accuracy(AUTO), it->obdata_twoHanded());
-            target.time = (required(it->obdata_time(AUTO)) + 2) / 3;
+            target.time = required(it->obdata_time(AUTO));
             break;
         case PUNCH:
             target.accur = 100;
