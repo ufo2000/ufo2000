@@ -51,7 +51,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 void lua_message( const std::string &str1 );
 
 //! Interface to LUA-gettext()
-const char *gettext(const char *str);
+const char *ufo2k_gettext(const char *str);
 
 //! Translations for placenames
 void Init_place_names();

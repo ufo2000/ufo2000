@@ -393,7 +393,7 @@ extern char last_unit_name[1000];
 
 // gettext-translation deactivated / active:
 //#define _(String) (String)
-#define _(String) gettext(String)
+#define _(String) ufo2k_gettext(String)
 
 extern const char *place_name[11];
 

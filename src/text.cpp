@@ -65,7 +65,7 @@ void lua_message( const std::string &str1 )
  *
  * Todo: investigate performance, cache translated messages ...
  */
-const char *gettext(const char *str)
+const char *ufo2k_gettext(const char *str)
 { 
     if (L == NULL)   // lua is not yet working 
         return str;  // return input-string unchanged
