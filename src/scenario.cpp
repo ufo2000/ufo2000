@@ -95,7 +95,7 @@ void Scenario::init_escape ()
             
 void Scenario::init_sabotage ()
 {
-	name[SC_SABOTAGE] = "Sabotage";
+	name[SC_SABOTAGE] = "Diversion";
                                      
 	briefing_left[SC_SABOTAGE][0] = "You must place high explosives at places which   ";
 	briefing_left[SC_SABOTAGE][1] = "are indicated on your minimap. You can have high ";

@@ -1169,8 +1169,11 @@ void Map::destroy_cell_part(int lev, int col, int row, int _part)
 
 		if (mcd == 0 || mcd == 1)
 			m_cell[lev][col][row]->type[_part] = mcd;
-		else
+		else {
+			if (_part != 0)
+				m_cell[lev][col][row]->type[_part] = 0;
 			m_cell[lev][col][row]->type[m_terrain->m_mcd[mcd].Tile_Type] = mcd;
+		}
 					
 		if (m_terrain->m_mcd[ct].HE_Strength > 0)
 			explode(-1, lev, col, row, HIGH_EXPLOSIVE, 3, m_terrain->m_mcd[ct].HE_Strength);
@@ -1431,7 +1434,8 @@ void Map::explocell(int sniper, int lev, int col, int row, int damage, int type,
 	set_smog_state(lev, col, row, 8);
 	set_smog_time(lev, col, row, 0);
 
- 	for(int i=0; i<4; i++) {
+ 	//for(int i=0; i<4; i++) {
+ 	for (int i = 3; i >= 0; i--) {
  		if (mcd(lev, col, row, i)->Fuel > smog_time(lev, col, row)) {
  			set_smog_time(lev, col, row, mcd(lev, col, row, i)->Fuel);
  			if (mcd(lev, col, row, i)->Armour < damage) {
@@ -1700,8 +1704,8 @@ int Map::walk_time(int _z, int _x, int _y)
 {
 	int time;
 	time = (int)mcd(_z, _x, _y, 0)->TU_Walk;
-	if (time < 4) time = 4;
 	time += (int)mcd(_z, _x, _y, 3)->TU_Walk;
+	if (time < 4) time = 4;
 	return time;
 }
 
