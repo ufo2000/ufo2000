@@ -1,0 +1,33 @@
+# http://ufo2000.lxnt.info/pmwiki/index.php/Main/TipOfTheDayDE
+# 2004-11-09
+
+Deutsche Version der "Tips des Tages". [[<<]]
+Achtung: zur Verwendung in UFO2000 muss UTF8-Kodierung verwendet werden, d.h. [[<<]]
+ae: ä oe: ö ue: ü
+
+!! Allgemeine, grundlegende Bedienung
+* Mit den Tasten Seite-Auf und Seite-Ab kann man die Anzeige der Ebenen wechseln.
+* Mit der TAB-Taste kann man zum nächsten Soldaten springen.
+* Türen öffnen: erst mit Rechts-klick den Soldaten zur Tür drehen, einem weiterer Rechts-Klick hinter die Tür öffnet diese.
+* Die Pfeil-Tasten ändern die Grösse von Battlescape-Anzeige, Chat-Fenster und der Statistik nach Spielende. 
+
+!! Fortgeschrittene Bedienung
+* Mit der CTRL-Taste kann man auf der Karte die Bewegungskosten vom aktiven Soldaten zum Cursor einblenden.
+* Mit der ALT-Taste kann man die Visierlinie vom aktiven Soldaten zum Cursor einblenden.
+* Mit Rechts-Klick kann man die Bewegung einer Einheit stoppen.
+
+!! Waffen, Ausr�stung, Einheiten
+* Alle Waffen im Missionsplaner mit passender Munition laden, ggf. zusätzliche Munition mitnehmen.
+
+
+!! Gel�nde
+* Stets auf Deckung achten !
+
+
+!! Taktik und Strategie
+* Menschliche Gegner sind schlauer als die Computergegner aus XCOM oder TFTD.
+
+!! Diverses
+* Viel Spass !
+
+#.
