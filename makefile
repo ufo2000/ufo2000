@@ -81,7 +81,8 @@ ifdef valgrind
 	debug = 1
 endif
 
-VPATH = src src/jpgalleg src/dumbogg src/exchndl src/agup src/lua src/jinete src/glyphkeeper
+VPATH = src src/jpgalleg src/dumbogg src/exchndl src/agup src/lua \
+        src/jinete src/glyphkeeper src/loadpng
 
 SRCS_LUA = lapi.c lauxlib.c lbaselib.c lcode.c ldblib.c ldebug.c      \
            ldo.c ldump.c lfunc.c lgc.c liolib.c llex.c lmathlib.c     \
@@ -136,6 +137,12 @@ ifndef no_dumbogg
 	LIBS += -lvorbisfile -lvorbis -logg -laldmb -ldumb
 	SRCS += dumbogg.c
 	CFLAGS += -DHAVE_DUMBOGG
+endif
+
+ifndef no_png
+	LIBS += -lpng -lz
+	SRCS += loadpng.c regpng.c savepng.c
+	CFLAGS += -DHAVE_PNG
 endif
 
 ifdef win32

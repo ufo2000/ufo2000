@@ -51,6 +51,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "text.h"
 #include "random.h"
 #include "stats.h"
+#ifdef HAVE_PNG
+#include "loadpng/loadpng.h"
+#endif
 
 #include "sysworkarounds.h"
 
@@ -557,8 +560,12 @@ void initmain(int argc, char *argv[])
     srand(time(NULL));
     set_uformat(U_UTF8);
     allegro_init();
-    register_bitmap_file_type("jpg", load_jpg, NULL);
-    set_color_conversion(COLORCONV_TOTAL | COLORCONV_DITHER);
+    jpgalleg_init();
+#ifdef HAVE_PNG    
+    _png_screen_gamma = 0.0;
+	loadpng_init();
+#endif
+    set_color_conversion(COLORCONV_TOTAL | COLORCONV_KEEP_TRANS);
 
     L = lua_open();
     lua_register(L, "UpdateCrc32", lua_UpdateCrc32);
