@@ -26,6 +26,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "stdafx.h"
 
 #include "global.h"
+#include "colors.h"
 #include "text.h"
 
 #include "font.h"
@@ -242,6 +243,99 @@ const char *icontext( const int icon_nr )
     return txt.c_str();
 };
 
+
+//! Definitions and Procedures for GUI help-index:
+/*
+static const char *chapter_names[] = {
+    "Introduction",
+    "Battlescape",
+    "Mapview",
+    "Inventory",
+    "Stats-View",
+    "Endgame-Stats",
+    "Network",
+    "Mission-Planner",
+    "Scenarios",
+    NULL
+};
+*/
+
+//! helpmenu foreground color
+#define _FG COLOR_WHITE
+//! helpmenu background color
+#define _BG COLOR_BLACK1
+
+bool helpmenu_dialog_proc_exit = 0;
+
+int helpmenu_dialog_proc(int msg, DIALOG * d, int c)
+{
+    if (mouse_b & 2) {
+        while (mouse_b & 2) yield_timeslice();
+        helpmenu_dialog_proc_exit = 1;
+    return D_CLOSE;
+    }
+    return d_button_proc(msg, d, c);
+}
+
+/**
+ * Help-Index: show GUI-dialog to let user choose a help-chapter
+ */
+// Prototype / Todo: rewrite as selectbox with frame, title etc.
+int select_help()
+{
+  //return common_select_proc( _("Select help-chapter"), chapter_names, msg, d, c);
+  //int y = 300;
+  //static char dstr[9][100];
+/*
+    static const char *dstr[] = {
+    "Introduction",
+    "Battlescape",
+    "Mapview",
+    "Inventory",
+    "Stats-View",
+    "Endgame-Stats",
+    "Network",
+    "Mission-Planner",
+    "Scenarios",
+    NULL
+};
+*/
+    static DIALOG the_dialog[] = {
+        //         dialog proc,  x,   y,   w,  h,  fg,  bg, key,  flags, d1, d2,              dp,  dp2,  dp3
+        { helpmenu_dialog_proc, 16,  10, 200, 20, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Introduction"), NULL, NULL},
+        { helpmenu_dialog_proc, 16,  30, 200, 20, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Battlescape"), NULL, NULL},
+        { helpmenu_dialog_proc, 16,  50, 200, 20, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Mapview"), NULL, NULL},
+        { helpmenu_dialog_proc, 16,  70, 200, 20, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Inventory"), NULL, NULL},
+        { helpmenu_dialog_proc, 16,  90, 200, 20, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Stats-View"), NULL, NULL},
+        { helpmenu_dialog_proc, 16, 110, 200, 20, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Endgame-Stats"), NULL, NULL},
+        { helpmenu_dialog_proc, 16, 130, 200, 20, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Network"), NULL, NULL},
+        { helpmenu_dialog_proc, 16, 150, 200, 20, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Mission-Planner"), NULL, NULL},
+        { helpmenu_dialog_proc, 16, 170, 200, 20, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Scenarios"), NULL, NULL},
+        { d_yield_proc,          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
+        {                 NULL,  0,   0,   0,  0, _FG, _BG,   0,      0,  0,  0,            NULL, NULL, NULL}
+    };
+
+  //for (int d = 0; d < 9; d++) {
+      //the_dialog[d].x = (SCREEN2W - 200) / 2;
+      //the_dialog[d].y = y + 6 - d * 20;
+      //the_dialog[d].proc = helpmenu_dialog_proc;
+      //sprintf(dstr[d], "Help #%d", d );
+      //sprintf(dstr[d], "%s", chapter_names[d] );
+  //}
+    int sel = do_dialog(the_dialog, -1);
+
+    if (sel == 0) return HELP_INTRO;
+    if (sel == 1) return HELP_BATTLESCAPE;
+    if (sel == 2) return HELP_MAPVIEW;
+    if (sel == 3) return HELP_INVENTORY;
+    if (sel == 4) return HELP_STATS;
+    if (sel == 5) return HELP_ENDGAME;
+    if (sel == 6) return HELP_NET;
+    if (sel == 7) return HELP_PLANNER;
+    if (sel == 8) return HELP_SCENARIO;
+    return HELP_U2K_INDEX;
+};
+
 /**
  * Show a single help-page when KEY_F1 is pressed.
  * Each page of help can have only 3 lines of text.
@@ -255,7 +349,7 @@ void help( const int helppage )
 // Page    0   : Help-Index (Todo)
 // Page    1..8: Reserved
 // Pages  10+ 3: UFO2000-Introduction (extended ABOUT-Box)
-// Pages  20+15: Help for Battlescape 
+// Pages  20+15: Help for Battlescape
 // Pages  40+ 1: Help for Mapviewer
 // Pages  50+ 1: Help for Mindprobe (Todo)
 // Pages  60+ 1: Help for Motion-Scanner (Todo)
@@ -270,14 +364,15 @@ void help( const int helppage )
 // Pages 160+10: Help for Mission-Planner and Rules
 // Pages 171++: Scenario-Help (Todo)
 {
-    int b1       =   0;		//<! button-number the user pressed
-    int kp_0     =   0;		//<! Keypress: 0 : default
-    int kp_index = 105;		//<! Keypress for indexpage: 105:"i"
-    int kp_prev  = 112;		//<! Keypress for prev.page: 112:"p"
-    int kp_ok    =  27;		//<! Keypress for ok=close :  13:ENTER / 27:ESC
-    int kp_next  = 110;		//<! Keypress for nextpage : 110:"n"
+    int b1       =   0;    //<! button-number the user pressed
+    int kp_0     =   0;    //<! Keypress: 0 : default
+    int hp       =  10;
+    int kp_index = 105;    //<! Keypress for indexpage: 105:"i"
+    int kp_prev  = 112;    //<! Keypress for prev.page: 112:"p"
+    int kp_ok    =  27;    //<! Keypress for ok=close :  13:ENTER / 27:ESC
+    int kp_next  = 110;    //<! Keypress for nextpage : 110:"n"
     char index[32], prev[32], next[32], ok[32];
-    char exit[64];
+    char esc2exit[64];
 
 // Todo: Calculate keycode from "&I" in button-text
     sprintf(index, "%s", _("HELP-&INDEX") );
@@ -285,22 +380,28 @@ void help( const int helppage )
     sprintf(next,  "%s", _("&NEXT PAGE")  );
     sprintf(ok,    "%s", _("  CLOSE  ")   );
 
-    sprintf(exit,  "%s", _("To leave, press ESC.") );
-/* 
+    sprintf(esc2exit, "%s", _("To leave, press ESC.") );
+/*
     FILE *f1 = fopen( "gettext.log", "at");
     fprintf(f1, "#: '%s'\n", prev);
     fclose(f1);
- */ 
+ */
     rest(1); // Don't eat all CPU resources
 
+  //char test[64];
     switch (helppage) {
         case HELP_U2K_INDEX + 0 :
-            // Todo : Dialog for direct access to all help-chapters
-            help( HELP_INTRO       );
-            help( HELP_BATTLESCAPE );
+            hp = select_help();
+          //sprintf(test,  "Selected: %d", hp );
+          //b1 = alert3( "", test, "",
+          //             NULL, ok, NULL, kp_prev, kp_ok, kp_0);
+            help( hp );
             break;
 
         // UFO2000 - Introduction :
+        case HELP_INTRO - 1 :
+            help( HELP_U2K_INDEX );
+            break;
         case HELP_INTRO + 0 :
             b1 = alert3( _("UFO2000 is a multiplayer game in the spirit of 'X-COM: UFO Defense'."),
                          _("At the moment, only the tactical part of the game is playable,"),
@@ -327,11 +428,14 @@ void help( const int helppage )
             break;
 
         // Help for Battlescape:
+        case HELP_BATTLESCAPE - 1 :
+            help( HELP_U2K_INDEX );
+            break;
         case HELP_BATTLESCAPE + 0 :
             b1 = alert3( _("UFO2000 is controlled mainly with the mouse, and these keys:"),
                          _("F1: Help, F2+F3: Save+Load, F9: Keymap, F10: Window/Fullscreen"),
                          _("F12: Screenshot, Keypad+/-: adjust Music-Volume, ESC: Quit."),
-                         NULL, ok, next, kp_0, kp_ok, kp_next);
+                         index, ok, next, kp_index, kp_ok, kp_next);
             break;
         case HELP_BATTLESCAPE + 1 :
             b1 = alert3( _("The active soldier is highlighted by a yellow arrow above him."),
@@ -455,7 +559,7 @@ void help( const int helppage )
         case HELP_MINDPROBE + 0 :
             b1 = alert3( "With a mindprobe you can look at the stats of enemy soldiers.",
                          "(Todo)",
-                         exit,
+                         esc2exit,
                          index, ok, next, kp_index, kp_ok, kp_next);
             break;
         case HELP_MINDPROBE + 1 : 
@@ -472,7 +576,7 @@ void help( const int helppage )
         case HELP_SCANNER + 0 :
             b1 = alert3( "A Motion-Scanner indicates motion during the last enemy turn.",
                          "(Todo)",
-                         exit,
+                         esc2exit,
                          index, ok, next, kp_index, kp_ok, kp_next);
             break;
         case HELP_SCANNER + 1 : 
@@ -489,7 +593,7 @@ void help( const int helppage )
         case HELP_MEDIKIT + 0 :
             b1 = alert3( "A Medi-kit can heal wounded soldiers.",
                          "(Todo)",
-                         exit,
+                         esc2exit,
                          index, ok, next, kp_index, kp_ok, kp_next);
             break;
         case HELP_MEDIKIT + 1 : 
@@ -506,7 +610,7 @@ void help( const int helppage )
         case HELP_PSI_AMP + 0 :
             b1 = alert3( "To use a Psi-Amp, a soldiers needs high psi-strength.",
                          "(Todo)",
-                         exit,
+                         esc2exit,
                          index, ok, next, kp_index, kp_ok, kp_next);
             break;
         case HELP_PSI_AMP + 1 : 
@@ -523,7 +627,7 @@ void help( const int helppage )
         case HELP_BLASTER + 0 :
             b1 = alert3( "The Blaster-Launcher is an advanced alien rocket-launcher.",
                          "(Todo)",
-                         exit,
+                         esc2exit,
                          index, ok, next, kp_index, kp_ok, kp_next);
             break;
         case HELP_BLASTER + 1 : 
@@ -541,7 +645,7 @@ void help( const int helppage )
             b1 = alert3( _("Inventory: here you can manage the weapons"),
                          _("and equipment of your soldier."),
                          _("To leave, press the OK-button, or goto the next/previous man."),
-                         NULL, ok, next, kp_0, kp_ok, kp_next);
+                         index, ok, next, kp_index, kp_ok, kp_next);
             break;
         case HELP_INVENTORY + 1 : // Todo: save+load single soldiers
             b1 = alert3( _("In the mission-planner, you can use F2 && F3"),
@@ -583,7 +687,7 @@ void help( const int helppage )
             b1 = alert3( _("Stats-Display: the current attributes of the soldier."),
                          "",
                          _("To leave, press ESC or click a mousebutton."),
-                         NULL, ok, next, kp_0, kp_ok, kp_next);
+                         index, ok, next, kp_index, kp_ok, kp_next);
             break;
         case HELP_STATS + 1 :
             b1 = alert3( _("Stats:"),
@@ -648,12 +752,12 @@ void help( const int helppage )
             b1 = alert3( _("Endgame-Statistics:"),
                          "",
                          _("A summary of kills and damage for both teams."),
-                         NULL, ok, next, kp_0, kp_ok, kp_next);
+                         index, ok, next, kp_index, kp_ok, kp_next);
             break;
         case HELP_ENDGAME + 1 :
             b1 = alert3( _("Endgame-Statistics:"),
                          _("You can stay here to chat in private with your partner."),
-                         exit,
+                         esc2exit,
                          prev, ok, NULL, kp_prev, kp_ok, kp_0);  // no "next"-button
             break;
 
@@ -664,8 +768,8 @@ void help( const int helppage )
         case HELP_NET + 0 :
             b1 = alert3( _("Connect to an UFO2000-Server on your LAN (e.g. 192.168.1.2:2000)"),
                          _("or on the Internet (e.g. the offical server lxnt.info:2001)."),
-                         exit,
-                         NULL, ok, next, kp_0, kp_ok, kp_next);
+                         esc2exit,
+                         index, ok, next, kp_index, kp_ok, kp_next);
             break;
         case HELP_NET + 1 :
             b1 = alert3( _("To get a valid login-name at the official server,"),
@@ -700,7 +804,7 @@ void help( const int helppage )
             b1 = alert3( _("Mission-Planner: here you can select a map and a scenario,"),
                          _("set the game-rules, and select soldiers for a mission."),
                          _("When finished, press SEND, then START. To leave, press ESC."),
-                         NULL, ok, next, kp_0, kp_ok, kp_next);
+                         index, ok, next, kp_index, kp_ok, kp_next);
             break;
         case HELP_PLANNER + 1 :
             b1 = alert3( _("To edit one of your soldiers, CTRL-click on his name."),
