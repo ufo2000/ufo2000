@@ -820,7 +820,7 @@ void Soldier::draw_inventory()
 	int wht     = count_weight();
 	int max_wht = md.Strength;
 	int color   = max_wht < wht ? COLOR_RED03 : COLOR_GRAY02; 
-    textprintf(screen2, g_small_font, 0, 20, color, _("Equipment weight: %d/%d"), wht, max_wht);
+    textprintf(screen2, g_small_font, 0, 20, color, _("Equipment weight: %d/%2d"), wht, max_wht);
 
 	color = COLOR_ORANGE;
 	if (ud.CurTU < 20)              // $$$ Todo: use required(25) and havetime()
