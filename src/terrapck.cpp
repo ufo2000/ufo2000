@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002       ufo2000 development team
+Copyright (C) 2002-2005  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -33,17 +33,19 @@ TerraPCK::TerraPCK(const char *pckfname, int tftd_flag) : PCK(pckfname, tftd_fla
 	create_blackbmp(0, m_imgnum);
 	strcpy(m_fname, pckfname);
 	loadmcd(0, m_imgnum);
-	memset(&empty, 0, sizeof(MCD));
-	empty.No_Floor = 1;
 }
 
 TerraPCK::~TerraPCK()
 {
-	for (unsigned int i = 0; i < m_blackbmp.size(); i++) {
-		ASSERT(m_blackbmp[i] != NULL);
-		if (m_blackbmp[i] != NULL)
-			destroy_bitmap(m_blackbmp[i]);
+    int i;
+    for (i = 0; i < (int)m_blackbmp.size(); i++) {
+        ASSERT(m_blackbmp[i] != NULL);
+        if (m_blackbmp[i] != NULL)
+            destroy_bitmap(m_blackbmp[i]);
 	}
+    for (i = 0; i < (int)m_mcd.size(); i++) {
+        destroy_bitmap(m_mcd[i].ScangBitmap);
+    }
 }
 
 void TerraPCK::add(const char *pckfname, int tftd_flag)
@@ -88,26 +90,53 @@ void TerraPCK::add(const char *pckfname, int tftd_flag)
 
 void TerraPCK::loadmcd(int pck_base, int size)
 {
-	strcpy(strrchr(m_fname, '.') + 1, "mcd");
-	int fh = open(F(m_fname), O_RDONLY | O_BINARY);
-	ASSERT(fh != -1);
-	long fsize = filelength(fh);
-	ASSERT(fsize % 62 == 0);
-	long oldcount = m_mcd.size();
-	long newcount = fsize / 62;
-	m_mcd.resize(oldcount + newcount);
-	for (int i = 0; i < newcount; i++) {
-		ASSERT(offsetof(MCD, ufo2000_data_start_marker) == 62);
-		read(fh, &m_mcd[oldcount + i], 62);
-		m_mcd[oldcount + i].ScanG = intel_int16(m_mcd[oldcount + i].ScanG);
-		if (m_mcd[oldcount + i].Alt_MCD)
-			m_mcd[oldcount + i].Alt_MCD += oldcount;
-		if (m_mcd[oldcount + i].Die_MCD)
-			m_mcd[oldcount + i].Die_MCD += oldcount;
-		m_mcd[oldcount + i].pck_base = pck_base;
-		m_mcd[oldcount + i].tftd_flag = m_tftd_flag;
-	}
-	close(fh);
+   	int fh;
+    
+    // read information about displaying this tile on minimap
+    if (m_tftd_flag) 
+        fh = open(F("$(tftd)/geodata/scang.dat"), O_RDONLY | O_BINARY);
+    else
+        fh = open(F("$(xcom)/geodata/scang.dat"), O_RDONLY | O_BINARY);
+    ASSERT(fh != -1);
+    long scang_size = filelength(fh);
+    char *scang_data = new char[scang_size];
+    read(fh, scang_data, scang_size);
+    close(fh);
+
+    // load mcd file itself    
+    strcpy(strrchr(m_fname, '.') + 1, "mcd");
+    fh = open(F(m_fname), O_RDONLY | O_BINARY);
+    ASSERT(fh != -1);
+    long fsize = filelength(fh);
+    ASSERT(fsize % 62 == 0);
+    long oldcount = m_mcd.size();
+    long newcount = fsize / 62;
+    m_mcd.resize(oldcount + newcount);
+    
+    for (int i = 0; i < newcount; i++) {
+        ASSERT(offsetof(MCD, ufo2000_data_start_marker) == 62);
+        read(fh, &m_mcd[oldcount + i], 62);
+        m_mcd[oldcount + i].ScanG = intel_int16(m_mcd[oldcount + i].ScanG);
+        if (m_mcd[oldcount + i].Alt_MCD)
+            m_mcd[oldcount + i].Alt_MCD += oldcount;
+        if (m_mcd[oldcount + i].Die_MCD)
+            m_mcd[oldcount + i].Die_MCD += oldcount;
+        for (int j = 0; j < 8; j++) {
+            m_mcd[oldcount + i].FrameBitmap[j] = m_bmp[pck_base + m_mcd[oldcount + i].Frame[j]];
+            m_mcd[oldcount + i].FrameBlackBitmap[j] = m_blackbmp[pck_base + m_mcd[oldcount + i].Frame[j]];
+        }
+        m_mcd[oldcount + i].ScangBitmap = create_bitmap(4, 4);
+        int mt = m_mcd[oldcount + i].ScanG + 35;
+        ASSERT(scang_size >= mt * 16 + 16);
+        for (int k = 0; k < 16; k++) {
+            putpixel(m_mcd[oldcount + i].ScangBitmap, 3 - k / 4, k % 4, 
+                m_tftd_flag ? 
+                tftd_color(scang_data[mt * 16 + k]) :
+                xcom_color(scang_data[mt * 16 + k]));
+        }
+    }
+    close(fh);
+    delete [] scang_data;
 }
 
 void TerraPCK::create_blackbmp(int start, int size)
@@ -120,9 +149,4 @@ void TerraPCK::create_blackbmp(int start, int size)
 			if (getpixel(m_bmp[num], i % 32, i / 32) != bitmap_mask_color(m_bmp[num]))
 				putpixel(m_blackbmp[num], i % 32, i / 32, COLOR_BLACK1);
 	}
-}
-
-void TerraPCK::showblackpck(int num, int xx, int yy)
-{
-	draw_sprite(screen2, m_blackbmp[num], xx, yy - 6);
 }

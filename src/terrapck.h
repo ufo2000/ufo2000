@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002       ufo2000 development team
+Copyright (C) 2002-2005  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -115,12 +115,22 @@ struct MCD
 	unsigned char u62;
 
 //!	End of X-COM data, ufo2000 specific data comes next
-	unsigned char ufo2000_data_start_marker;
-	int pck_base;
-	int tftd_flag;
+    unsigned char ufo2000_data_start_marker;
+
+    BITMAP *FrameBitmap[8];
+    BITMAP *FrameBlackBitmap[8];
+    BITMAP *ScangBitmap;
 };
 #pragma pack()
 
+/**
+ * Map cell description data. Provides information about cell object
+ * shape, ability to walk/see through it, reference to pictures for
+ * rendering cell. Map cell is described by 4 MCD records: two walls,
+ * floor and object
+ *
+ * @ingroup battlescape
+ */
 class TerraPCK : public PCK
 {
 private:
@@ -131,17 +141,11 @@ private:
 
 public:
 	std::vector<MCD> m_mcd;
-	MCD empty;
-
-	int is_tftd(int index) { return index < (int)m_mcd.size() ? m_mcd[index].tftd_flag : 0; }
 
 	TerraPCK(const char *pckfname, int tftd_flag);
 	~TerraPCK();
 
 	void add(const char *pckfname, int tftd_flag);
-	void showblackpck(int num, int xx, int yy);
-
-	int mcdstart(int mcd_num);
 };
 
 #endif

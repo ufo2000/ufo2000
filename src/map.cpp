@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002-2003  ufo2000 development team
+Copyright (C) 2002-2005  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -39,8 +39,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 uint16 *Map::m_loftemp = NULL;
 int Map::m_loftemp_num = 0;
-char *Map::m_scang_xcom = NULL;
-char *Map::m_scang_tftd = NULL;
 SPK *Map::scanbord = NULL;
 PCK *Map::smoke = NULL, *Map::cursor = NULL;
 int Map::m_animation_cycle = 0;
@@ -109,25 +107,9 @@ void Map::initpck()
 	cursor	 = new PCK("$(xcom)/ufograph/cursor.pck");
 	scanbord = new SPK("$(xcom)/ufograph/scanbord.pck");
 	smoke	 = new PCK("$(xcom)/ufograph/smoke.pck");
-
-	int fh = open(F("$(xcom)/geodata/scang.dat"), O_RDONLY | O_BINARY);
+	int fh = open(F("$(xcom)/geodata/loftemps.dat"), O_RDONLY | O_BINARY);
 	ASSERT(fh != -1);
 	int fl = filelength(fh);
-	m_scang_xcom = new char[fl];
-	read(fh, m_scang_xcom, fl);
-	close(fh);
-
-	fh = open(F("$(tftd)/geodata/scang.dat"), O_RDONLY | O_BINARY);
-	if (fh != -1) {
-		fl = filelength(fh);
-		m_scang_tftd = new char[fl];
-		read(fh, m_scang_tftd, fl);
-		close(fh);
-	}
-
-	fh = open(F("$(xcom)/geodata/loftemps.dat"), O_RDONLY | O_BINARY);
-	ASSERT(fh != -1);
-	fl = filelength(fh);
 	m_loftemp = new uint16[fl / 2];
 	read(fh, m_loftemp, fl);
 	close(fh);
@@ -140,8 +122,6 @@ void Map::freepck()
 	delete scanbord;
 	delete smoke;
 
-	delete [] m_scang_xcom;
-	delete [] m_scang_tftd;
 	delete [] m_loftemp;
 }
 
@@ -280,25 +260,22 @@ void Map::drawitem(BITMAP *itype, int gx, int gy)
 void Map::draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type, int _seen)
 {
 	int i = m_cell[_lev][_col][_row]->type[_type];
+	if (i == 0) return;
+	
 	ASSERT(i < (int)m_terrain->m_mcd.size());
-
-	int frame;
+	
+	_y -= m_terrain->m_mcd[i].P_Level;
+	
+	BITMAP **frames = _seen ? m_terrain->m_mcd[i].FrameBitmap : m_terrain->m_mcd[i].FrameBlackBitmap;
+	BITMAP *frame;
 	
 	if (!m_terrain->m_mcd[i].UFO_Door)
-		frame = m_terrain->m_mcd[i].pck_base + m_terrain->m_mcd[i].Frame[m_animation_cycle];
+		frame = frames[m_animation_cycle];
 	else
-		frame = m_terrain->m_mcd[i].pck_base + m_terrain->m_mcd[i].Frame[7];
+		frame = frames[7];
 
-	_y -= m_terrain->m_mcd[i].P_Level;
-
-	ASSERT(frame < m_terrain->m_imgnum);
-
-	if (frame && frame < m_terrain->m_imgnum) {
-		if (_seen)
-			m_terrain->showpck(frame, _x, _y);
-		else
-			m_terrain->showblackpck(frame, _x, _y);
-	}
+	ASSERT(frame);
+	m_terrain->showpck(frame, _x, _y);
 }
 
 extern volatile unsigned int ANIMATION;
@@ -575,41 +552,17 @@ void Map::draw2d()
 
 BITMAP *Map::create_bitmap_of_map(int max_lev)
 {
-	int scang4x4[16];
 	BITMAP *bmp = create_bitmap(width * 10 * 4, height * 10 * 4);
 	clear_to_color(bmp, COLOR_BLACK1);
 
 	for (int lev = 0; lev <= max_lev; lev++) {
 		for (int row = 0; row < height*10; row++) {
 			for (int col = 0; col < width*10; col++) {
-				int i;
-
-				for (i = 0; i < 16; i++) scang4x4[i] = xcom_color(0);
-
 				for (int j = 0; j < 4; j++) {
 					int mcd_index = m_cell[lev][col][row]->type[j];
 					if (mcd_index == 0) continue;
-					MCD *m = &m_terrain->m_mcd[mcd_index];
-
-					int mt = m->ScanG;
-					int tftd_flag = m->tftd_flag;
-					char *scang = tftd_flag ? m_scang_tftd : m_scang_xcom;
-
-					ASSERT(scang != NULL);
-					/* if (mt > 0) */ {
-						mt += 35;
-						for (int i = 0; i < 16; i++) {
-							if (scang[mt * 16 + i])
-								scang4x4[i] = tftd_flag ? 
-									tftd_color(scang[mt * 16 + i]) :
-									xcom_color(scang[mt * 16 + i]);
-						}
-					}
+                    draw_sprite(bmp, m_terrain->m_mcd[mcd_index].ScangBitmap, col * 4, row * 4);
 				}
-
-				for (i = 0; i < 16; i++)
-					if (scang4x4[i] != xcom_color(0))
-						putpixel(bmp, col * 4 + (3 - i / 4), row * 4 + i % 4, scang4x4[i]);
 			}
 		}
 	}
@@ -1806,7 +1759,8 @@ int Map::walk_time(int _z, int _x, int _y)
 {
 	int time;
 	time = (int)mcd(_z, _x, _y, 0)->TU_Walk;
-	time += (int)mcd(_z, _x, _y, 3)->TU_Walk;
+    if (cell(_z, _x, _y)->type[3] != 0)
+        time += (int)mcd(_z, _x, _y, 3)->TU_Walk;
 	if (time < 4) time = 4;
 	return time;
 }

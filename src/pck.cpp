@@ -53,8 +53,6 @@ void free_pck_cache()
 	}
 }
 
-char PCK::m_fname[0x100];
-
 PCK::PCK(const char *pckfname, int tftd_flag)
 {
 	m_tftd_flag = tftd_flag;
@@ -208,7 +206,7 @@ void PCK::save_as_bmp(const char *fname)
 {
 	int rows = ((m_imgnum + SIZE - 1) / SIZE);
 	BITMAP *bmp = create_bitmap(32 * SIZE, 48 * rows);
-	clear_bitmap(bmp);
+	clear_to_color(bmp, xcom_color(0));
 
 	for (int i = 0; i < m_imgnum; i++)
 		draw_sprite(bmp, m_bmp[i], (i % SIZE) * 32, (i / SIZE) * 48);

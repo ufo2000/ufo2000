@@ -35,7 +35,7 @@ class PCK
 protected:
 	std::vector<BITMAP *> m_bmp;
 
-	static char m_fname[0x100];
+    char m_fname[0x100];
 
 	BITMAP *pckdat2bmp(const unsigned char *data, int size, int tftd_flag);
 

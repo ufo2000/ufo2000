@@ -75,8 +75,6 @@ class Map: public persist::BaseObject
 private: 
     static PCK *cursor;
     static SPK *scanbord;
-    static char *m_scang_xcom;
-    static char *m_scang_tftd;
     static uint16 *m_loftemp;
     static int m_loftemp_num;
 
@@ -201,10 +199,7 @@ public:
                (row >= 0) && (row < height * 10) &&
                (type >= 0) && (type < 4));
 
-        MCD *m = &m_terrain->m_mcd[m_cell[lev][col][row]->type[type]];
-        if (m->Tile_Type != type)
-            return & m_terrain->empty;
-        return m;
+        return &m_terrain->m_mcd[m_cell[lev][col][row]->type[type]];
     }
 
     Cell *cell(int lev, int col, int row)
