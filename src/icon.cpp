@@ -169,17 +169,19 @@ void Icon::firemenu(int iplace)
 				wtime[i] = sel_man->required(24);
 				if (sel_man->havetime(wtime[i])) {
 					if (it->is_explo()) {
-						if (!it->delay_time()) {
+						if (it->delay_time() == 0) {
 							sprintf(dstr[i], "PRIME EXPLOSIVE     TUS>%02d", wtime[i]);
 							the_dialog[i].proc = firemenu_dialog_proc;
 							waction[i] = PRIME;
 							i++;
 						}
 					} else {
-						sprintf(dstr[i], "PRIME GRENADE       TUS>%02d", wtime[i]);
-						the_dialog[i].proc = firemenu_dialog_proc;
-						waction[i] = PRIME;
-						i++;
+						if (it->delay_time() == 0) {
+							sprintf(dstr[i], "PRIME GRENADE       TUS>%02d", wtime[i]);
+							the_dialog[i].proc = firemenu_dialog_proc;
+							waction[i] = PRIME;
+							i++;
+						}
 					}
 				}
 			} else {

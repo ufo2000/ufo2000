@@ -2480,8 +2480,10 @@ void Soldier::drawinfo(int x, int y)
 		if (rhand_item()->clip() != NULL)
 			printsmall(x + 304, y + 47, xcom1_color(1), rhand_item()->roundsremain());
 		if (rhand_item()->is_grenade()) {
-			if (rhand_item()->delay_time())
+			if (rhand_item()->delay_time() > 0)
 				printsmall(x + 304, y + 47, xcom1_color(36), rhand_item()->delay_time() - 1);
+			if ((rhand_item()->m_type == PROXIMITY_GRENADE) && (rhand_item()->delay_time() < 0))
+				textout(screen2, g_small_font, "*", x + 304, y + 43, xcom1_color(36));
 		}
 	}
 	if (lhand_item() != NULL) {
@@ -2494,8 +2496,10 @@ void Soldier::drawinfo(int x, int y)
 		if (lhand_item()->clip() != NULL)
 			printsmall(x + 33, y + 47, xcom1_color(1), lhand_item()->roundsremain());
 		if (lhand_item()->is_grenade()) {
-			if (lhand_item()->delay_time())
+			if (lhand_item()->delay_time() > 0)
 				printsmall(x + 33, y + 47, xcom1_color(36), lhand_item()->delay_time() - 1);
+			if ((lhand_item()->m_type == PROXIMITY_GRENADE) && (lhand_item()->delay_time() < 0))
+				textout(screen2, g_small_font, "*", x + 32, y + 43, xcom1_color(36));
 		}
 	}
 	textout(screen2, g_small_font, md.Name, x + 134, y + 32, xcom1_color(130));

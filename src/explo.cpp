@@ -97,9 +97,10 @@ int Explosive::on_hand(Item *it)
 
 void Explosive::step(int crc)
 { // -1 if local
-	for(int i=0;i<EXPLOITEMS;i++)
+	for (int i = 0; i < EXPLOITEMS; i++)
 		if (item[i] != NULL) {
-			if (!item[i]->is_explo()) {// small grenade
+			if (!item[i]->is_explo()) {
+				// Only high explosive can detonate in hand
 				if (on_hand(item[i]))
 					continue;
 			}
@@ -112,8 +113,6 @@ void Explosive::step(int crc)
 					detonate(owner[i], item[i]);
 				else
 					item[i] = NULL;
-			} else if ((delaytime[i] <= 0) && (item[i]->m_type == PROXIMITY_GRENADE)) {
-				item[i] = NULL;
 			}
 		}
 }
@@ -121,7 +120,7 @@ void Explosive::step(int crc)
 
 void Explosive::check_for_detonation(int isprox, Item *it)
 {
-	for(int i=0;i<EXPLOITEMS;i++)
+	for (int i = 0; i < EXPLOITEMS; i++)
 		if (item[i] == it) {
 			if (((delaytime[i] == 1) && (item[i]->m_type != PROXIMITY_GRENADE)) || (isprox))
 				detonate(owner[i], it);
@@ -182,20 +181,6 @@ int Explosive::detonate(int SID, int lev, int col, int row, int iplace, int ix, 
 	assert(it != NULL);
 	return detonate(SID, it);
 }
-/*
-	void setdelay(int delay) {
-		delaytime = delay;
-	}
- 
-int Item::isprimed() {
-	if (delaytime != 0)
-		return 1;
-	return 0;
-}
- 
-	int isprimed();
- 
-*/
 
 bool Explosive::Write(persist::Engine &archive) const
 {
