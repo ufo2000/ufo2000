@@ -617,10 +617,17 @@ void closemain()
 	
 	lua_close(L);
 
+	char revision[64];
+	if (strcmp(UFO_SVNVERSION, "unknown") == 0 || strcmp(UFO_SVNVERSION, "exported") == 0 || strcmp(UFO_SVNVERSION, "") == 0) {
+		sprintf(revision, ">=%d", UFO_REVISION_NUMBER);
+	} else {
+		strcpy(revision, UFO_SVNVERSION);
+	}
+
 	std::cout<<"\nUFO2000 "
              <<UFO_VERSION_STRING
              <<" (revision "
-             <<UFO_SVNVERSION
+             <<revision
              <<")"
              <<"\nCompiled with "
              <<allegro_id << " on "

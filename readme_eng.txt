@@ -1,6 +1,6 @@
 
               **************************************************
-              **                UFO2000 0.3.XX                **
+              **                UFO2000 0.4.0                 **
               **             aka X-COM: Gladiators            **
               **        http://ufo2000.sourceforge.net/       **
               **                English Manual                **
@@ -9,7 +9,7 @@
                                   $Rev$
 
              Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-             Copyright (C) 2002-2003  ufo2000 development team
+             Copyright (C) 2002-2004  ufo2000 development team
 
 The development of UFO2000 is continued after about a year of inactivity. 
 Now UFO2000 is back and is improved by cooperative efforts of several
@@ -30,8 +30,6 @@ comments, ideas, bugreports and patches.
 
 See ChangeLog file for full change listings.
 
-This file was revised and added to by Jeremy Walker, aka Kuroshi X.
-
 ===============
 About
 ===============
@@ -39,49 +37,79 @@ About
 UFO2000 is a multiplayable remake of the tactical part of Microprose's 
 game, X-COM: UFO Defense (UFO: Enemy Unknown).
 
-It requires X-COM game files from the folders:
-   GEODATA GEOGRAPH MAPS SOUND TERRAIN UFOGRAPH UFOINTRO UNITS
+You need data files from the original X-COM to play UFO2000. The game 
+can also work with data files from X-COM demo, but you will be only able 
+to play on 'City' map and use a limited set of units in this case. So 
+having a full version of X-COM is highly recommended.
 
-The Windows version can be compiled either with Microsoft Visual C++ 6.0 or 
-free Mingw GCC compiler.
-
-The game also compiles and works in Linux and FreeBSD operating system.
+The game compiles and works in Windows, Linux and FreeBSD operating systems.
 Probably the game will also work in other UNIX like systems. If you managed 
 to successfully compile and run UFO2000 in one of them, please let us know.
 
-More detailed information about compiling UFO2000 can be found in INSTALL
+Detailed information about installing UFO2000 can be found in INSTALL
 file from UFO2000 directory.
 
-===============
-Map Editor
-===============
+=========
+Main Menu
+=========
 
-Use the right mouse button to select the tile you wish to replace, and 
-a selection menu will come up. Then select 10x10 tile type you want.
+After starting the game, you will see a number of available menu options:
 
-F2          Save
-F3          Load
-ESC         Finish
+   Connect to internet server
+
+      The game can connect to the server running in the internet or in a 
+      local network (to start the server on your computer, just run 
+      'ufo2000-srv' executable included in ufo2000 distributive). After 
+      selecting this menu option, you will see connect server dialog.
+      You need to enter server address, lxnt.info is used by default, it
+      is currently official ufo2000 server running in the internet. If 
+      you run want to play in local network, you need to start ufo2000 
+      server on one computer and enter its IP address when connecting
+      to it from ufo2000. The other two required fields are login and 
+      password. They are used to identify the user to track some 
+      statistics (http://ufo2000.lxnt.info/results.php currently). Login 
+      should be any name not used by other players and password should be 
+      at least 6 characters long. After successful login or registration, 
+      you will see internet server chat screen.
+
+   Start hotseat game
+
+      Starts the game on a single computer (no network is required). The 
+      players change each other after making turns. After clicking this menu
+      item, you will be moved directly to the mission planner screen.
+
+   Load saved game
+
+      Load previously saved game. Works only for hotseat games.
+
+   Quit
+
+      No comments ;)
 
 
-===============
-Connect Chat
-===============
+====================
+Internet Server Chat
+====================
 
-After starting the server, but before you move into the mission planner, 
-this is the screen you will be in. One player must start as the Server, 
-and another as the Client, before you can begin.
+After connecting to ufo2000 server, you will see a chat console and
+a list of players connected to the server. The status of each player
+is determined by the color of his name:
 
-F4          Redraw screen
-F10         Start game
-ESC         Cancel               
+white player name  - that's your own name
+gray player name   - available for chat
+yellow player name - you have sent a challenge to this player
+green player name  - you can accept a challenge from this player
+red player name    - the player is busy playing with someone else
 
+To challenge a player, just click on his name, it will turn yellow.
+If someone's name is green, that means he has challenged you and after
+clicking on his name, the game will start and the chat console will be 
+replaced by the mission planner screen.
 
 ===============
 Mission Planner
 ===============
 
-The next screen after the Connect Chat is the Mission Planner.
 Here you can select soldiers, determine their starting locations, and 
 edit their starting statistics/weapons by holding the left CTRL key 
 then clicking on your chosen soldier (see Unit Editor section below).
@@ -117,16 +145,16 @@ You can access this from within the Unit Placement screen. Hold CTRL
 and click on the soldier you wish to edit.
 
 Coming into this you can edit soldier parameters and loadout. Enabled 
-parameters for soldiers are: Time Units, Health, Firing, and Throwing 
-Accuracy. Other parameters, such as Strength, are disabled because we 
-don't know how they work in-game. If, after arranging your equipment, 
+parameters for soldiers are: Stamina, Strength, Time Units, Health, Firing, 
+Reactions, and Throwing Accuracy. Other parameters, are disabled because 
+we don't know how they work in-game. If, after arranging your equipment, 
 you wish to edit your stats again, click the chart on the right.
 
 Each parameter is restricted to be >= 50 and <= 80. The sum of these 
-four parameters must be <= 240 for each unit. There are no restrictions 
-for the kind and number of each weapon for your units, so during the 
-Mission Planner it is suggested that you look at your enemy's weapon 
-selection.
+parameters has a certain limit for each unit, so you can't set all 
+the parameters to maximum. There are no restrictions for the kind and 
+number of each weapon for your units, so during the Mission Planner it 
+is suggested that you look at your enemy's weapon selection.
 
 F2          Save
 F3          Load
@@ -139,21 +167,20 @@ Left ALT    also works in the inventory screen during the game.
 Game Controls
 ===============
 
-All unit actions, as in UFO1, are controlled with the mouse. You can
+All unit actions, as in X-COM, are controlled with the mouse. You can
 send and receive messages to/from the other player during the game, 
 just type your message out on the keyboard, then hit enter.
 
 These keys are used for game control: 
 
-F1          On/Off  Raw packets show
-F4          Redraw screen
-F5          Restart
 F10         Fullscreen/Windowed mode
 ESC         Exit to main menu
-ALT-X       Quick exit to OS
 
 Cursors &   change size of map screen
 Keypad +/-  
+
+Right CTRL  Fast switching between two keymaps selected in primary_keyboard 
+        and secondary_keyboard in ufo2000.ini file. 
 
 Right CTRL + 'b', 'd', 'e', 'p' or 'r' Switch between Belarusian, German,
         English, Polish and Russian keymaps (other languages can be
@@ -181,8 +208,6 @@ INI file
 (Astericks denote notes listed at the bottom of the section. e.g. '*1')
 
 [General]
-port=2000            #IP Port (not for Windows version)
-server=10.0.0.2      #Server's Default IP address (not for Windows version)
 width=500            #Battle Screen width
 height=280           #Battle Screen height
 map_width=4          #   "NEW" map size
@@ -200,7 +225,6 @@ last_unit_name = team_ru.units           #last unit name
 
 [Flags]
 F_FULLSCREEN = 0  # Set to 1 to start the game in fullscreen mode
-F_FILECHECK = 1   # Set to 0 to disable data files integrity check on start
 F_SELECTENEMY = 1 # Set to 0 to disable blue markers above enemy soldiers
 
 *1: Can be adjusted in-game, in the options menu.

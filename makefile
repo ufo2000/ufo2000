@@ -25,7 +25,7 @@ endif
 
 CC = g++
 LD = g++
-CFLAGS = -funsigned-char -Wall
+CFLAGS = -funsigned-char -Wall -Wno-deprecated-declarations
 CFLAGS += -pipe -DDEBUGMODE -DUFO_SVNVERSION=\"$(UFO_SVNVERSION)\"
 OBJDIR = obj
 NAME = ufo2000

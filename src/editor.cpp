@@ -460,13 +460,13 @@ int Editor::load_clip()
 #define D_POINTS       4
 #define D_ICON         6
 #define D_TIME         8
-#define D_HEALTH       D_TIME+2
-#define D_STAMINA      D_TIME+4
-#define D_REACTION     D_TIME+6
-#define D_STRENGTH     D_TIME+8
+#define D_STAMINA      D_TIME+2
+#define D_HEALTH       D_TIME+4
+#define D_BRAVERY      D_TIME+6
+#define D_REACTION     D_TIME+8
 #define D_FIRE_ACCUR   D_TIME+10
 #define D_THRU_ACCUR   D_TIME+12
-#define D_BRAVERY      D_TIME+14
+#define D_STRENGTH     D_TIME+14
 
 static int d_slider_pro2(int msg, DIALOG *d, int c);
 static char slider_text[8][14];
@@ -539,10 +539,14 @@ static int d_slider_pro2(int msg, DIALOG * d, int c)
 					 (sol_dialog[D_STRENGTH].d2 * 2) +
 					 sol_dialog[D_REACTION].d2;
 
-			if (points > MAXPOINTS) {
+			if (points > MAXPOINTS && d == &sol_dialog[D_STRENGTH]) {
+				points -= d->d2 * 2;
+				d->d2 = (MAXPOINTS - points) / 2;
+				points += d->d2 * 2;
+			} else if (points > MAXPOINTS) {
 				points -= d->d2;
 				d->d2 = MAXPOINTS - points;
-				points = MAXPOINTS;
+				points += d->d2;
 			}
 
 			scare_mouse();
@@ -582,13 +586,13 @@ void Editor::edit_soldier()
 {
 //	Attributes
 	sprintf(slider_text[0], "TimeUnits");
-	sprintf(slider_text[1], "Health");
-	sprintf(slider_text[2], "Stamina");
-	sprintf(slider_text[3], "Reaction");
-	sprintf(slider_text[4], "Strength");
+	sprintf(slider_text[1], "Stamina");
+	sprintf(slider_text[2], "Health");
+	sprintf(slider_text[3], "Bravery");
+	sprintf(slider_text[4], "Reactions");
 	sprintf(slider_text[5], "Firing");
 	sprintf(slider_text[6], "Throwing");
-	sprintf(slider_text[7], "Bravery");
+	sprintf(slider_text[7], "Strength");
 
 	sol_dialog[D_BRAVERY].flags  |= D_DISABLED;
 
