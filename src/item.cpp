@@ -111,6 +111,9 @@ void Item::initobdata()
 	obdata[INCENDIARY_ROCKET].damage = 20;
 	obdata[AUTO_CANNON_I_AMMO].damage = 15;
 	obdata[CANNON_I_AMMO].damage = 15;
+
+	obdata[PROXIMITY_GRENADE].damage = 30;
+
 	delete []buf;
 }
 
@@ -143,7 +146,6 @@ int Item::explo_range(int type)
 			range = 3;
 			break;
 		case GRENADE:
-		case PROXIMITY_GRENADE:
 		case SMOKE_GRENADE:
 			range = 5;
 			break;
@@ -157,6 +159,9 @@ int Item::explo_range(int type)
 			break;
 		case LARGE_ROCKET:
 			range = 10;
+			break;
+		case PROXIMITY_GRENADE:
+			range = 3;
 			break;
 	}
 	return range;
