@@ -1512,227 +1512,60 @@ static double randval(double min, double max)
 int Soldier::do_armour_check(int &pierce, int damdir)
 {
 	int hitloc;
-	int damagedir = damdir;
-	int pierce1 = (pierce / 2), pierce2 = (pierce / 2);
+    unsigned char *armor;
+  
+    // It is still a bit broken, but less than before.
+    // The problem is that right now there are 8 directions and 4 armor sections
+    // Dividing diagonal hits equaly between neighbouring sections was more of
+    // a problem than solution.
+    // The right way is to use either 4 or 16 directions.
+    switch (damdir) {
+        case DAMAGEDIR_FRONT:
+            armor = &ud.CurFront;
+  			hitloc = HITLOC_TORSO;
+            break;
+    	case DAMAGEDIR_FRONTLEFT:
+            armor = &ud.CurFront;
+  		    hitloc = HITLOC_TORSO;
+            break;
+        case DAMAGEDIR_LEFT:
+            armor = &ud.CurLeft;
+  	        hitloc = HITLOC_LEFTARM;
+            break;
+        case DAMAGEDIR_REARLEFT:
+            armor = &ud.CurLeft;
+            hitloc = HITLOC_LEFTLEG;
+            break;
+        case DAMAGEDIR_REAR:
+            armor = &ud.CurRear;
+            hitloc = HITLOC_TORSO;
+            break;
+        case DAMAGEDIR_REARRIGHT:
+            armor = &ud.CurRight;
+            hitloc = HITLOC_RIGHTLEG;
+            break;
+        case DAMAGEDIR_RIGHT:
+            armor = &ud.CurRight;
+            hitloc = HITLOC_RIGHTARM;
+            break;
+        case DAMAGEDIR_FRONTRIGHT:
+            armor = &ud.CurFront;
+            hitloc = HITLOC_TORSO;
+            break;
+        case DAMAGEDIR_UNDER:
+        default:
+            armor = &ud.CurUnder;
+            hitloc = HITLOC_TORSO;
+    }
+    
+    if (*armor >= pierce) {
+        *armor -= pierce;
+        return -1;
+    }
 
-	switch(damagedir)
-	{
-	case DAMAGEDIR_FRONT:
-		if (ud.CurFront >= pierce)
-		{
-			ud.CurFront -= pierce; // Can't get through the armour.
-			return -1;
-		}
-
-		pierce -=  ud.CurFront;
-		ud.CurFront = 0;
-
-		// Until we can get the random values transmitted over the net, we can't use 'em.
-/*		i = (int)randval(0, 4);
-		if (i >= 3)
-			hitloc = HITLOC_HEAD;
-		else */
-			hitloc = HITLOC_TORSO;
-		break;
-	case DAMAGEDIR_FRONTLEFT:
-		// Split this evenly between the two pieces of armour.
-		if (ud.CurFront >= pierce1)
-		{
-			ud.CurFront -= pierce1;
-			pierce1 = 0;
-		}
-		else
-		{
-			pierce1 -= ud.CurFront;
-			ud.CurFront = 0;
-		}
-		if (ud.CurLeft >= pierce2)
-		{
-			ud.CurLeft -= pierce2;
-			pierce2 = 0;
-		}
-		else
-		{
-			pierce2 -= ud.CurLeft;
-			ud.CurLeft = 0;
-		}
-		if ((pierce1 + pierce2) == 0) return -1; // Can't get through the armor.
-
-		// Pick a random location when the random values can be transmitted.
-		hitloc = HITLOC_LEFTARM;
-		break;
-	case DAMAGEDIR_LEFT:
-		if (ud.CurLeft >= pierce)
-		{
-			ud.CurLeft -= pierce; // Can't get through the armour.
-			return -1;
-		}
-
-		pierce -=  ud.CurLeft;
-		ud.CurLeft = 0;
-
-/*		i = (int)randval(0, 4);
-		switch(i)
-		{
-		default:
-		case 0:
-			hitloc = HITLOC_TORSO;
-			break;
-		case 1:
-			hitloc = HITLOC_LEFTARM;
-			break;
-		case 2: */
-			hitloc = HITLOC_LEFTLEG;
-/*			break;
-		case 3:
-			hitloc = HITLOC_HEAD;
-			break;
-		} */
-		break;
-	case DAMAGEDIR_REARLEFT:
-		// Split this evenly between the two pieces of armour.
-		if (ud.CurRear >= pierce1)
-		{
-			ud.CurRear -= pierce1;
-			pierce1 = 0;
-		}
-		else
-		{
-			pierce1 -= ud.CurRear;
-			ud.CurRear = 0;
-		}
-		if (ud.CurLeft >= pierce2)
-		{
-			ud.CurLeft -= pierce2;
-			pierce2 = 0;
-		}
-		else
-		{
-			pierce2 -= ud.CurLeft;
-			ud.CurLeft = 0;
-		}
-		if ((pierce1 + pierce2) == 0) return -1; // Can't get through the armour.
-
-		// Pick a random location when the random values can be transmitted.
-		hitloc = HITLOC_LEFTARM;
-		break;
-	case DAMAGEDIR_REAR:
-		if (ud.CurRear >= pierce)
-		{
-			ud.CurRear -= pierce; // Can't get through the armour.
-			return -1;
-		}
-
-		pierce -=  ud.CurRear;
-		ud.CurRear = 0;
-
-		// Until we can get the random values transmitted over the net, we can't use 'em.
-/*		i = (int)randval(0, 4);
-		if (i >= 3)
-			hitloc = HITLOC_HEAD;
-		else */
-			hitloc = HITLOC_TORSO;
-		break;
-	case DAMAGEDIR_REARRIGHT:
-		// Split this evenly between the two pieces of armour.
-		if (ud.CurRear >= pierce1)
-		{
-			ud.CurRear -= pierce1;
-			pierce1 = 0;
-		}
-		else
-		{
-			pierce1 -= ud.CurRear;
-			ud.CurRear = 0;
-		}
-		if (ud.CurRight >= pierce2)
-		{
-			ud.CurRight -= pierce2;
-			pierce2 = 0;
-		}
-		else
-		{
-			pierce2 -= ud.CurRight;
-			ud.CurLeft = 0;
-		}
-		if ((pierce1 + pierce2) == 0) return -1; // Can't get through the armuor.
-
-		// Pick a random location when the random values can be transmitted.
-		hitloc = HITLOC_RIGHTARM;
-		break;
-	case DAMAGEDIR_RIGHT:
-		if (ud.CurRight >= pierce)
-		{
-			ud.CurRight -= pierce; // Can't get through the armour.
-			return -1;
-		}
-
-		pierce -=  ud.CurRight;
-		ud.CurRight = 0;
-
-/*		i = (int)randval(0, 4);
-		switch(i)
-		{
-		default:
-		case 0:
-			hitloc = HITLOC_TORSO;
-			break;
-		case 1:
-			hitloc = HITLOC_RIGHTARM;
-			break;
-		case 2: */
-			hitloc = HITLOC_RIGHTLEG;
-/*			break;
-		case 3:
-			hitloc = HITLOC_HEAD;
-			break;
-		} */
-		break;
-	case DAMAGEDIR_FRONTRIGHT:
-		// Split this evenly between the two pieces of armour.
-		if (ud.CurFront >= pierce1)
-		{
-			ud.CurFront -= pierce1;
-			pierce1 = 0;
-		}
-		else
-		{
-			pierce1 -= ud.CurFront;
-			ud.CurFront = 0;
-		}
-		if (ud.CurRight >= pierce2)
-		{
-			ud.CurRight -= pierce2;
-			pierce2 = 0;
-		}
-		else
-		{
-			pierce2 -= ud.CurRight;
-			ud.CurLeft = 0;
-		}
-		if ((pierce1 + pierce2) == 0) return -1; // Can't get through the armuor.
-
-		// Pick a random location when the random values can be transmitted.
-		hitloc = HITLOC_RIGHTARM;
-		break;
-	case DAMAGEDIR_UNDER:
-		// Special case.
-		if (ud.CurUnder >= pierce)
-		{
-			ud.CurUnder -= pierce;
-			return -1; // Nope.
-		}
-
-		pierce -= ud.CurUnder;
-		ud.CurUnder = 0;
-
-		hitloc = HITLOC_TORSO;
-		break;
-	default:
-		hitloc = HITLOC_TORSO;
-		break;
-	}
-
+    pierce -= *armor;
+    *armor = 0;
+  
 	return hitloc;
 }
 
