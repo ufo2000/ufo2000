@@ -403,6 +403,40 @@ public:
     bool create_geodata(GEODATA &gd);
 };
 
+struct pathfinding_info
+{
+    int x, y, z;
+    // Have we found at least 1 path to this cell?
+    int path_is_known;
+    // TU cost and number of steps of the known path to this point
+    int tu_cost, steps_num;
+    // One step back in the known fastest way to this point
+    pathfinding_info* prev_point;
+    int prev_dir;
+};
+
+class Pathfinding
+{
+private:
+    pathfinding_info ****m_pf;
+    std::list<pathfinding_info*> pathfinding_cell_list;
+    int level, width, height;
+    pathfinding_info *pf_info(int lev, int col, int row)
+    {
+        ASSERT((lev >= 0) && (lev < level) &&
+               (col >= 0) && (col < width * 10) &&
+               (row >= 0) && (row < height * 10));
+
+        return m_pf[lev][col][row];
+    }
+    Map* map;
+    void SetMap(Map* _map);
+public:
+    int pathfind(Map* _map,int sz, int sx, int sy, int dz, int dx, int dy, int can_fly,char *way, PF_MODE pf_mode = PF_TRUE);
+    Pathfinding();
+    ~Pathfinding();
+};
+
 #undef map
 
 /**

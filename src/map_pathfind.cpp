@@ -293,3 +293,128 @@ int Map::step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2
 
     return 1;
 }
+
+int Pathfinding::pathfind(Map* _map,int sz, int sx, int sy, int dz, int dx, int dy, int can_fly, char *way, PF_MODE pf_mode)
+{
+    SetMap(_map);
+
+    if (map->stopWALK(dz, dx, dy, 0) || map->stopWALK(dz, dx, dy, 3))
+        return 0;
+
+	way[0] = DIR_NULL;
+
+	int k, i, j;
+
+	for (k = 0; k < map->level; k++)
+		for (i = 0; i < map->width * 10; i++)
+			for (j = 0; j < map->height * 10; j++)
+				pf_info(k, i, j)->path_is_known = 0;
+
+                pathfinding_cell_list.push_back(pf_info(sz, sx, sy));
+                pathfinding_cell_list.front() -> path_is_known = 1;
+                pathfinding_cell_list.front() -> x = sx;
+                pathfinding_cell_list.front() -> y = sy;
+                pathfinding_cell_list.front() -> z = sz;
+                pathfinding_cell_list.front() -> tu_cost = 0;
+                pathfinding_cell_list.front() -> steps_num = 0;
+                pathfinding_cell_list.front() -> prev_point = NULL;
+
+                while(!pathfinding_cell_list.empty()) {
+                    for (int dir = 0; dir < DIR_NULL; dir++) {
+                        int nx, ny, nz, tu_cost;
+                        int ox = pathfinding_cell_list.front() -> x;
+                        int oy = pathfinding_cell_list.front() -> y;
+                        int oz = pathfinding_cell_list.front() -> z;
+                        if(map->step_dest(oz, ox, oy, dir, can_fly, nz, nx, ny, tu_cost)) {
+                            if( (!pf_info(nz, nx, ny)->path_is_known ||
+                                pf_info(nz, nx, ny)->tu_cost > pf_info(oz, ox, oy)->tu_cost + tu_cost) &&
+                                (!pf_info(dz, dx, dy)->path_is_known ||
+                                pf_info(dz, dx, dy)->tu_cost > pf_info(oz, ox, oy)->tu_cost + tu_cost )
+                                //&& pf_info(oz, ox, oy)->tu_cost + tu_cost<80
+                                ) {
+                                pf_info(nz, nx, ny)->path_is_known = 1;
+                                pf_info(nz, nx, ny)->tu_cost = pf_info(oz, ox, oy)->tu_cost + tu_cost;
+                                pf_info(nz, nx, ny)->steps_num = pf_info(oz, ox, oy)->steps_num + 1;
+                                pf_info(nz, nx, ny)->prev_point = pf_info(oz, ox, oy);
+                                pf_info(nz, nx, ny)->prev_dir=dir;
+                                pathfinding_cell_list.push_back(pf_info(nz, nx, ny));
+                            }
+                        }
+                    }
+                    pathfinding_cell_list.pop_front();
+    }
+
+    if(!pf_info(dz, dx, dy)->path_is_known) return 0;
+
+    pathfinding_info* cur_pf=pf_info(dz, dx, dy);
+	for (i = pf_info(dz, dx, dy)->steps_num; i > 0; i--) {
+		way[i] = cur_pf->prev_dir;
+        cur_pf=cur_pf->prev_point;
+	}
+
+	return pf_info(dz, dx, dy)->steps_num + 1;
+}
+
+void Pathfinding::SetMap(Map* _map)
+{
+    map=_map;
+    if(level != map -> level || width != map -> width || height != map -> height)
+    {
+        int i, j, k;
+
+        if(level && width && height) {
+            for (i = 0; i < level; i++) {
+                for (j = 0; j < 10 * width; j++) {
+                    for (k = 0; k < 10 * height; k++) {
+                        delete m_pf[i][j][k];
+                    }
+        			delete [] m_pf[i][j];
+        		}
+        		delete [] m_pf[i];
+	       }
+	       delete [] m_pf;
+        }
+        level = map -> level;
+        width = map -> width;
+        height = map -> height;
+
+        m_pf = new pathfinding_info***[map->level];
+
+    	for (i = 0; i < level; i++) {
+    		m_pf[i] = new pathfinding_info ** [10 * width];
+        		for (j = 0; j < 10 * map->width; j++) {
+        			m_pf[i][j] = new pathfinding_info * [10 * height];
+        			for (k = 0; k < 10 * height; k++) {
+        				m_pf[i][j][k] = new pathfinding_info();
+        				m_pf[i][j][k] -> z = i;
+        				m_pf[i][j][k] -> x = j;
+        				m_pf[i][j][k] -> y = k;
+        			}
+        		}
+	    }
+     }
+}
+
+Pathfinding::Pathfinding()
+{
+    level = 0;
+    width = 0;
+    height = 0;
+}
+
+Pathfinding::~Pathfinding()
+{
+    if(level && width && height) {
+        int i, j, k;
+        for (i = 0; i < level; i++) {
+    		for (j = 0; j < 10 * width; j++) {
+	      		for (k = 0; k < 10 * height; k++) {
+	       			delete m_pf[i][j][k];
+		      	}
+			    delete [] m_pf[i][j];
+            }
+            delete [] m_pf[i];
+        }
+        delete [] m_pf;
+	}
+}
