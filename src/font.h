@@ -22,12 +22,14 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define FONT_H
 
 extern FONT *g_small_font;
+extern FONT *g_console_font;
 extern FONT *large;
 
-void create_small_font();
-void create_large_font();
-void free_small_font();
-void free_large_font();
+void set_console_font_size(int size);
+int get_console_font_size();
+
+void create_fonts();
+void destroy_fonts();
 
 void printsmall_x(BITMAP *bmp, int x, int y, int col, int value);
 void printsmall_center_x(BITMAP *bmp, int x, int y, int col, int value);

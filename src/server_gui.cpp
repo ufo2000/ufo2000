@@ -410,7 +410,7 @@ int connect_internet_server()
     if (set_autologin_on)
 	   g_server_autologin = 1; // Remember successful login
 
-	std::auto_ptr<ConsoleWindow> chat(new ConsoleWindow(SCREEN_W, SCREEN_H, cfg_get_console_font()));
+	std::auto_ptr<ConsoleWindow> chat(new ConsoleWindow(SCREEN_W, SCREEN_H));
 	std::auto_ptr<WindowBorder> chat_border(new WindowBorder(chat.get(), 
 		std::string( _("ufo2000 internet server (") ) + cfg_get_server_host() + std::string(")"), large));
 	chat_border->set_full_redraw();
@@ -599,12 +599,6 @@ int connect_internet_server()
 			int scancode; int keycode = ureadkey(&scancode);
 
 			switch (scancode) {
-				case KEY_PLUS_PAD:
-					FS_IncMusicVolume();
-					break;
-				case KEY_MINUS_PAD:
-					FS_DecMusicVolume();
-					break;
                 case KEY_ASTERISK:
                     FS_MusicPlay(NULL);
                     g_console->printf(COLOR_SYS_OK, _("Music OFF") );

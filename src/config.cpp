@@ -72,20 +72,12 @@ std::string g_server_password;
 std::string g_server_proxy;
 int         g_server_autologin;
 
-static std::string consolefont;
+static std::string console_font_file;
 static int music_volume;
 
-FONT *cfg_get_console_font()
+const char *cfg_get_console_font_file()
 {
-	FONT *fnt = (SCREEN_W >= 800) ? large : g_small_font;
-
-	if (consolefont == "xcom_small") {
-		fnt = g_small_font;
-	} else if (consolefont == "xcom_large") {
-		fnt = large;
-	}
-
-	return fnt;
+    return console_font_file.c_str();
 }
 
 int cfg_get_music_volume()                    { return music_volume; } 
@@ -134,6 +126,8 @@ void loadini()
     speed_mapscroll      = get_config_int(gen,       "speed_mapscroll", 30);
     mapscroll            = get_config_int(gen,       "mapscroll",       10);
 
+    set_console_font_size(get_config_int(gen, "console_font_size", 9));
+
     local_platoon_size   = get_config_int(edit,      "platoon_size",     1);
     strcpy(last_unit_name, get_config_string(edit,   "last_unit_name",  ""));
 
@@ -164,7 +158,7 @@ void loadini()
     win_image_file_name     = get_config_string(gen, "win_image",     "$(xcom)/geograph/back01.scr");
     lose_image_file_name    = get_config_string(gen, "lose_image",    "$(xcom)/geograph/back02.scr");
 
-    consolefont             = get_config_string(gen,  "consolefont", "xcom_small");
+    console_font_file       = get_config_string(gen,  "console_font_file", "$(ufo2000)/fonts/DejaVuSansMono-Roman.ttf");
     music_volume            = get_config_int(gen,     "music_volume", 255);
 
     g_server_host           = get_config_string(serv, "host", "127.0.0.1");
@@ -184,6 +178,8 @@ void saveini()
     set_config_int(gen,     "speed_mapscroll", speed_mapscroll);
     set_config_int(gen,     "mapscroll",       mapscroll);
 
+    set_config_int(gen,   "console_font_size", get_console_font_size());
+	
     set_config_int(edit,    "platoon_size",    local_platoon_size);
     set_config_string(edit, "last_unit_name",  last_unit_name);
 
@@ -281,4 +277,3 @@ void configure()
 		install_timers(speed_unit, speed_bullet, speed_mapscroll);
 	}
 }
-

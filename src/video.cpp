@@ -89,8 +89,7 @@ void initvideo()
     ji_font_init();
 #endif	
     font = (FONT*)datafile[DAT_UNIFONT_8X8].dat;
-    create_small_font();
-    create_large_font();
+    create_fonts();
 
     if (FLAGS & F_LARGEFONT) {
         font = large;
@@ -104,8 +103,7 @@ void initvideo()
 
 void closevideo()
 {
-    free_large_font();
-    free_small_font();
+    destroy_fonts();
 #ifdef HAVE_FREETYPE	
 	ji_font_exit();
 #endif

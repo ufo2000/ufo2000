@@ -794,7 +794,7 @@ void initmain(int argc, char *argv[])
     Map::initpck();
 
     console<<"new console window"<<std::endl;
-    g_console = new ConsoleWindow(SCREEN_W, SCREEN_H - SCREEN2H, cfg_get_console_font());
+    g_console = new ConsoleWindow(SCREEN_W, SCREEN_H - SCREEN2H);
 
     console<<"new icon"<<std::endl;
     icon = new Icon();
@@ -1690,14 +1690,6 @@ void endgame_stats()
                     FS_MusicPlay(NULL);
                     g_console->printf(COLOR_SYS_FAIL, _("Music OFF") );
                     break;
-                case KEY_PLUS_PAD:
-                    vol = FS_IncMusicVolume();
-                    g_console->printf(COLOR_SYS_OK, _("Music Volume: %d"), vol );
-                    break;
-                case KEY_MINUS_PAD:
-                    vol = FS_DecMusicVolume();
-                    g_console->printf(COLOR_SYS_OK, _("Music Volume: %d"), vol );
-                    break;
                 case KEY_F1:
                     help( HELP_ENDGAME );
                     break;
@@ -2111,14 +2103,6 @@ void gameloop()
                     //soundSystem::getInstance()->play(SS_WINDOW_OPEN_2);
                     FS_MusicPlay(NULL);
                     g_console->printf(COLOR_SYS_FAIL, _("Music OFF") );
-                    break;
-                case KEY_PLUS_PAD:
-                    vol = FS_IncMusicVolume();
-                    g_console->printf(COLOR_SYS_OK, _("Music Volume: %d"), vol );
-                    break;
-                case KEY_MINUS_PAD:
-                    vol = FS_DecMusicVolume();
-                    g_console->printf(COLOR_SYS_OK, _("Music Volume: %d"), vol );
                     break;
                 case KEY_LEFT:
                     if (!key[KEY_LSHIFT])

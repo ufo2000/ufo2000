@@ -435,14 +435,6 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
                     FS_MusicPlay(NULL);
                     g_console->printf(COLOR_SYS_FAIL, _("Music OFF") );
                     break;
-				case KEY_PLUS_PAD:
-					vol = FS_IncMusicVolume();
-                    g_console->printf(COLOR_SYS_OK, _("Music Volume: %d"), vol );
-					break;
-				case KEY_MINUS_PAD:
-					vol = FS_DecMusicVolume();
-                    g_console->printf(COLOR_SYS_OK, _("Music Volume: %d"), vol );
-					break;
 				case KEY_ESC:
                     if (askmenu( _("EXIT MISSION-PLANNER") )) {
 						net->send_quit();

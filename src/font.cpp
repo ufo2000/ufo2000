@@ -24,12 +24,14 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifdef HAVE_FREETYPE
 extern "C" {
 #include "jinete/ji_font.h"
+#include "glyphkeeper/glyph.h"
 }
 #endif
 
 #include "global.h"
 #include "font.h"
 #include "video.h"
+#include "config.h"
 
 
 /* 
@@ -692,26 +694,40 @@ static FONT *create_font(unsigned char *data00, unsigned char *data04, int w, in
 /** 'Large' UFO font. */
 FONT *large = NULL;
 
+GLYPH_FACE *g_large_font_face;
+GLYPH_KEEP *g_large_font_keep;
+GLYPH_REND *g_large_font_rend;
+
 /** 'Small' UFO font. */
 FONT *g_small_font = NULL;
+GLYPH_FACE *g_small_font_face;
+GLYPH_KEEP *g_small_font_keep;
+GLYPH_REND *g_small_font_rend;
 
-/** constructs a 'small' font */
-void create_small_font() 
+FONT *g_console_font = NULL;
+static GLYPH_FACE *g_console_font_face;
+static GLYPH_KEEP *g_console_font_keep;
+static GLYPH_REND *g_console_font_rend;
+static int g_console_font_size = 9;
+
+void set_console_font_size(int size)
+{
+    if (size < 9) size = 9;
+    g_console_font_size = size;
+    if (g_console_font_rend) {
+        gk_rend_set_size_pixels(g_console_font_rend, g_console_font_size, g_console_font_size);
+    }
+}
+
+int get_console_font_size()
+{
+    return g_console_font_size;
+}
+
+static bool create_xcom_small_font()
 {
     int fh = open(F("$(xcom)/geodata/smallset.dat"), O_RDONLY | O_BINARY);
-    if (fh == -1) {
-        // If we can't load x-com font, fallback to TTF font or 
-        // as the last resort - to standard allegro bitmap font
-#ifdef HAVE_FREETYPE    
-        g_small_font = ji_font_load_ttf(F("$(ufo2000)/fonts/DejaVuSansMono-Roman.ttf"));
-        if (g_small_font) {
-            ji_font_set_aa_mode(g_small_font, makecol(64, 64, 64));
-            ji_font_set_size(g_small_font, 12);
-        }
-#endif
-        if (!g_small_font) g_small_font = font;
-        return;
-    }
+    if (fh == -1) return false;
     int fl = filelength(fh);
     unsigned char *dat_lat = new unsigned char[fl];
     unsigned char *dat_cyr = (unsigned char *)datafile[DAT_SMALLSET_CYR].dat;
@@ -719,25 +735,13 @@ void create_small_font()
     close(fh);
     g_small_font = create_font(dat_lat, dat_cyr, 8, 9, 1);
     delete []dat_lat;
+    return true;
 }
 
-/** constructs a 'large' font */
-void create_large_font() 
+static bool create_xcom_large_font()
 {
     int fh = open(F("$(xcom)/geodata/biglets.dat"), O_RDONLY | O_BINARY);
-    if (fh == -1) {
-        // If we can't load x-com font, fallback to TTF font or 
-        // as the last resort - to standard allegro bitmap font
-#ifdef HAVE_FREETYPE
-        large = ji_font_load_ttf(F("$(ufo2000)/fonts/DejaVuSansMono-Roman.ttf"));
-        if (large) {
-            ji_font_set_aa_mode(large, makecol(64, 64, 64));
-            ji_font_set_size(large, 20);
-        }
-#endif
-        if (!large) large = font;
-        return;
-    }
+    if (fh == -1) return false;
     int fl = filelength(fh);
     unsigned char *dat_lat = new unsigned char[fl];
     unsigned char *dat_cyr = (unsigned char *)datafile[DAT_BIGLETS_CYR].dat;
@@ -745,25 +749,76 @@ void create_large_font()
     close(fh);
     large = create_font(dat_lat, dat_cyr, 16, 16, 1);
     delete []dat_lat;
+    return true;
 }
 
-/** Destroys a 'small' font.
+/** initializes fonts */
+void create_fonts() 
+{
+#ifdef HAVE_FREETYPE    
+    g_console_font_face = gk_load_face_from_file(F(cfg_get_console_font_file()), 0);
+    if (g_console_font_face) {
+        g_console_font_keep = gk_create_keeper(0, 0);
+        g_console_font_rend = gk_create_renderer(g_console_font_face, g_console_font_keep);
+        g_console_font = gk_create_allegro_font(g_console_font_rend);
+        set_console_font_size(get_console_font_size());
+    }
+#endif
+    if (!g_console_font) g_console_font = font;
+
+    if (!create_xcom_small_font()) {
+        // If we can't load x-com font, fallback to TTF font or 
+        // as the last resort - to standard allegro bitmap font
+#ifdef HAVE_FREETYPE    
+        g_small_font_face = gk_load_face_from_file(F("$(ufo2000)/fonts/DejaVuSansMono-Roman.ttf"), 0);
+        g_small_font_keep = gk_create_keeper(0, 0);
+        g_small_font_rend = gk_create_renderer(g_small_font_face, g_small_font_keep);
+        gk_rend_set_size_pixels(g_small_font_rend, 8, 9);
+        g_small_font = gk_create_allegro_font(g_small_font_rend);
+#endif
+        if (!g_small_font) g_small_font = font;
+    }
+    
+    if (!create_xcom_large_font()) {
+        // If we can't load x-com font, fallback to TTF font or 
+        // as the last resort - to standard allegro bitmap font
+#ifdef HAVE_FREETYPE
+        g_large_font_face = gk_load_face_from_file(F("$(ufo2000)/fonts/DejaVuSansMono-Roman.ttf"), 0);
+        g_large_font_keep = gk_create_keeper(0, 0);
+        g_large_font_rend = gk_create_renderer(g_large_font_face, g_large_font_keep);
+        gk_rend_set_size_pixels(g_large_font_rend, 15, 16);
+        large = gk_create_allegro_font(g_large_font_rend);
+#endif
+        if (!large) large = font;
+    }
+}
+
+/** Destroys fonts.
  *  Uses allegro function to reach destructor in the vtable. 
  */
-void free_small_font() 
+void destroy_fonts() 
 {
     if (g_small_font != font)
         destroy_font(g_small_font);
-}
-
-/** Destroys a 'large' font. 
- * Uses allegro function to reach destructor in the vtable.
- */
-void free_large_font(){
     if (large != font)
         destroy_font(large);
-}
+    if (g_console_font != font)
+        destroy_font(g_console_font);
 
+    if (g_console_font_rend) gk_done_renderer(g_console_font_rend);
+    if (g_small_font_rend) gk_done_renderer(g_small_font_rend);
+    if (g_large_font_rend) gk_done_renderer(g_large_font_rend);
+    
+    if (g_console_font_keep) gk_done_keeper(g_console_font_keep);
+    if (g_small_font_keep) gk_done_keeper(g_small_font_keep);
+    if (g_large_font_keep) gk_done_keeper(g_large_font_keep);
+    
+    if (g_console_font_face) gk_unload_face(g_console_font_face);
+    if (g_small_font_face) gk_unload_face(g_small_font_face);
+    if (g_large_font_face) gk_unload_face(g_large_font_face);
+    
+    gk_library_cleanup();
+}
 
 /** Prints a number in a 3x5 font onto a given position on the bitmap.
  * @param bmp Destination bitmap

@@ -81,7 +81,7 @@ ifdef valgrind
 	debug = 1
 endif
 
-VPATH = src src/jpgalleg src/dumbogg src/exchndl src/agup src/lua src/jinete
+VPATH = src src/jpgalleg src/dumbogg src/exchndl src/agup src/lua src/jinete src/glyphkeeper
 
 SRCS_LUA = lapi.c lauxlib.c lbaselib.c lcode.c ldblib.c ldebug.c      \
            ldo.c ldump.c lfunc.c lgc.c liolib.c llex.c lmathlib.c     \
@@ -128,8 +128,8 @@ else
 	CFLAGS += ${shell freetype-config --cflags}
 	LIBS += ${shell freetype-config --libs}
 endif
-	CFLAGS += -DHAVE_FREETYPE
-	SRCS += ji_font.c
+	CFLAGS += -DHAVE_FREETYPE -DGLYPH_TARGET=GLYPH_TARGET_ALLEGRO -DGK_NO_LEGACY
+	SRCS += glyph.c ji_font.c
 endif
 
 ifndef no_dumbogg

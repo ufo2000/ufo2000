@@ -47,7 +47,7 @@ const char *cfg_get_endturn_image_file_name();
 const char *cfg_get_win_image_file_name();
 const char *cfg_get_lose_image_file_name();
 
-FONT *cfg_get_console_font();
+const char *cfg_get_console_font_file();
 int cfg_get_music_volume();
 
 const std::string &cfg_get_server_host();

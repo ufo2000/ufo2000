@@ -80,7 +80,7 @@ class ConsoleStatusLine : public VisualObject
 	bool backspace();
 
 public:
-	ConsoleStatusLine(int width, FONT *font = g_small_font, int color = COLOR_WHITE);
+	ConsoleStatusLine(int width, FONT *font = g_console_font, int color = COLOR_WHITE);
 	virtual ~ConsoleStatusLine();
 
 	virtual void redraw_full(BITMAP *bmp, int x, int y);
@@ -107,7 +107,7 @@ class ConsoleWindow : public VisualObject
 	FONT                     *m_font;
 	bool                      m_need_redraw;
 public:
-	ConsoleWindow(int width, int height, FONT *font = font);
+	ConsoleWindow(int width, int height, FONT *font = g_console_font);
 	virtual ~ConsoleWindow();
 
 	virtual void redraw_full(BITMAP *bmp, int x, int y);

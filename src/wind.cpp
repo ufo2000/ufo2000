@@ -24,6 +24,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "global.h"
 #include "wind.h"
 #include "dirty.h"
+#include "music.h"
 
 ConsoleStatusLine::ConsoleStatusLine(int width, FONT *font, int color)
 {
@@ -71,6 +72,7 @@ void ConsoleStatusLine::redraw_full(BITMAP *bmp, int x, int y)
 bool ConsoleStatusLine::resize(int width, int height)
 {
 	if (height != -1) return false;
+    m_height = text_height(m_font);
 	m_width = width;
 	return true;
 }
@@ -231,6 +233,29 @@ bool ConsoleWindow::process_keyboard_input(int keycode, int scancode)
 		m_status_line->set_text("");
 		return true;
 	}
+    if (key[KEY_LSHIFT]) {
+        if (scancode == KEY_PLUS_PAD) {
+            set_console_font_size(get_console_font_size() + 1);
+            resize(m_width, m_height);
+            return false;
+        }
+        if (scancode == KEY_MINUS_PAD) {
+            set_console_font_size(get_console_font_size() - 1);
+            resize(m_width, m_height);
+            return false;
+        }
+    } else {
+		if (scancode == KEY_PLUS_PAD) {
+		    FS_IncMusicVolume();
+//            printf(COLOR_SYS_OK, _("Music Volume: %d"), vol );
+            return false;
+        }
+        if (scancode == KEY_MINUS_PAD) {
+            FS_DecMusicVolume();
+//            printf(COLOR_SYS_OK, _("Music Volume: %d"), vol );
+            return false;
+        }
+    }
 	m_status_line->process_keyboard_input(keycode, scancode);
 	return false;
 }
