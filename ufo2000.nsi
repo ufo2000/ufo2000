@@ -406,13 +406,13 @@ Section "${GAME_NAME} (required)" MainSec
 	File "readme_ru.html"
 	File "soundmap.xml"
 	File "squad.default.lua"
-	File "update_db.sql"
+	File "ufo2000.dat"
 	File "keyboard.dat"
 	File "ufo2000.exe"
 	File "ufo2000-srv.exe"
 	File "ufo2000.default.ini"
 	File "ufo2000-srv.conf"
-	File "ufo2000.db"
+	File "update_db.sql"
 	
 	SetOutPath $INSTDIR\arts
 	

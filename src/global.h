@@ -95,7 +95,7 @@ typedef unsigned int uint32;
 typedef signed long int32;
 typedef unsigned long uint32;
 #else
-#error Can't define int32 type
+#error Can not define int32 type
 #endif
 
 inline uint16 intel_uint16(uint16 x)
