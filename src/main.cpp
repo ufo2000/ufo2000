@@ -1600,9 +1600,11 @@ int main(int argc, char *argv[])
                 case MAINMENU_HOTSEAT:
                     h = sethotseatplay();
                     break;
+/*
                 case MAINMENU_TCPIP:
                     h = setsocketplay();
                     break;
+*/
                 case MAINMENU_INTERNET:
                     h = connect_internet_server();
                     break;

@@ -230,7 +230,7 @@ void saveini()
 	set_config_string(edit, "last_map_name", last_map_name);
 	set_config_string(edit, "last_unit_name", last_unit_name);
 }
-
+/*
 int selectplaymode()
 {
 	SPK * back01 = new SPK("geograph/back01.scr");
@@ -373,14 +373,15 @@ int selectplaymode()
 
 	return ishost;
 }
-
+*/
+/*
 int setsocketplay()
 {
 	int host = selectplaymode();
 	net->gametype = SOCK;
 	return host;
 }
-
+*/
 int sethotseatplay()
 {
 	net->gametype = HOTSEAT;

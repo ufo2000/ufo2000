@@ -41,7 +41,6 @@ void change_screen_mode();
 void set_video_mode();
 void reset_video();
 void initpal(char *fname);
-void setpal(RGB pal[PAL_SIZE], int pofs);
 
 extern int (*xcom1_color)(int c);
 extern int (*xcom1_menu_color)(int c);

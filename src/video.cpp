@@ -40,14 +40,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 unsigned long FLAGS = 0;
 
-RGB *gamepal;
 DATAFILE *datafile;
 
 BITMAP *mouser, *selector;
 BITMAP *screen2;
-
-char *palettes;
-int palettes_size;
 
 int SCREEN2W = 320, SCREEN2H = 200;
 
@@ -85,8 +81,6 @@ void initvideo()
 	screen2 = create_bitmap(SCREEN2W, SCREEN2H);
 	clear(screen2);
 
-	initpal("geodata/palettes.dat");
-
 	font = (FONT*)datafile[DAT_UNIFONT_8X8].dat;
 	create_small_font();
 	create_large_font();
@@ -105,8 +99,6 @@ void closevideo()
 {
 	free_large_font();
 	free_small_font();
-
-	delete [] palettes;
 
 	destroy_bitmap(screen2);
 }
@@ -218,7 +210,7 @@ void set_video_mode()
 
 void reset_video()
 {
-	set_palette(gamepal);
+	set_palette((RGB *)datafile[DAT_GAMEPAL_BMP].dat);
 	position_mouse(160, 100);
 	set_mouse_range(0, 0, SCREEN2W - 1, SCREEN2H - 1);
 	set_mouse_sprite(mouser);
@@ -226,33 +218,6 @@ void reset_video()
 	gui_fg_color = xcom1_color(15);
 	gui_bg_color = xcom1_color(1);
 	g_switch_in_counter++;
-}
-
-void initpal(char *fname)
-{
-	int fh = OPEN_ORIG(fname, O_RDONLY | O_BINARY);
-	assert(fh != -1);
-	palettes_size = filelength(fh);
-
-	palettes = new char[palettes_size];
-	palettes_size = read(fh, palettes, palettes_size);
-	close(fh);
-
-	gamepal = (RGB *)datafile[DAT_GAMEPAL_BMP].dat;
-}
-
-void setpal(RGB pal[PAL_SIZE], int pofs)
-{
-	//RGB pal[PAL_SIZE];
-	int j = pofs;     //0xC18;
-
-	for (int i = 0; i < PAL_SIZE; i++) {
-		pal[i].r = palettes[j++];
-		pal[i].g = palettes[j++];
-		pal[i].b = palettes[j++];
-		//pal[i].filler = 0;
-	}
-	set_palette(pal);
 }
 
 void savescreen()
@@ -265,7 +230,7 @@ void savescreen()
 		char filename[128];
 		sprintf(filename, "snapshot_%d.pcx", num);
 		if (!exists(filename)) {
-			save_pcx(filename, scr, gamepal);
+			save_pcx(filename, scr, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
 			destroy_bitmap(scr);
 			return;
 		}
