@@ -49,9 +49,10 @@ BITMAP *pck_image(const char *filename, int index)
 
 //! We cache loaded png files here
 static std::map<std::string, BITMAP *> g_png_cache;
+static std::map<std::string, BITMAP *> g_png_large_cache;
 
 /**
- * Load bitmap (function which is aware of truecolor transparency formats)
+ * Load bitmap (this function is aware of truecolor transparency)
  */
 static BITMAP *load_bitmap_alpha(const char *filename)
 {
@@ -68,7 +69,7 @@ static BITMAP *load_bitmap_alpha(const char *filename)
     set_color_conversion(cc);
     if (!bmp_orig) return NULL;
     
-    // Check color depth, if is 32 bit then we need some more work to do
+    // Check color depth, if it is 32 bit then we need some more work to do
     if (bitmap_color_depth(bmp_orig) != 32) return bmp_orig;
 
     BITMAP *bmp = create_bitmap(bmp_orig->w, bmp_orig->h);
@@ -85,13 +86,49 @@ static BITMAP *load_bitmap_alpha(const char *filename)
 }
 
 /**
- * Load sprite from PNG image
+ * Load sprite from PNG file. Is used for graphics resources loading 
+ * in the game.
+ *
+ * It could be a sprite stored as a separate png file. It can also
+ * be a sprite loaded as a part of much larger picture. Files having
+ * the name format like "../name/XXxYY-ZZZ.png" and NOT FOUND on disk
+ * are interpreted as sprite number ZZZ inside of "../name.png" file
+ * each sprite having width XX and height YY and organized as a grid 
+ * of rectangular images (with one pixel separator lines). Top left 
+ * sprite has index 1, other sprites have indexes numbered sequentially 
+ * with indexes growing from left to right and from top to bottom
+ *
+ * @param filename  path to a file with image on disk
+ * @return          allegro bitmap on success or NULL if any error occurs
  */
 BITMAP *png_image(const char *filename)
 {
 	std::string fullname = F(filename);
 	if (g_png_cache.find(fullname) == g_png_cache.end()) {
-		g_png_cache[fullname] = load_bitmap_alpha(fullname.c_str());
+        BITMAP *bmp = load_bitmap_alpha(fullname.c_str());
+        if (!bmp) {
+            // Maybe we could find this picture inside of large bitmap
+            int width, height, index;
+            char *p = get_filename(filename);
+            if (p > filename && sscanf(p, "%dx%d-%d.", &width, &height, &index) == 3) {
+                std::string large_bitmap_name = std::string(filename, p - filename - 1) + "." + get_extension(filename);
+                large_bitmap_name = F(large_bitmap_name.c_str());
+            	if (g_png_large_cache.find(large_bitmap_name) == g_png_large_cache.end()) {
+                    g_png_large_cache[large_bitmap_name] = load_bitmap_alpha(large_bitmap_name.c_str());
+                }
+                if (g_png_large_cache[large_bitmap_name] && index > 0) {
+                    // number of pictures in a row
+                    int rowcount = (g_png_large_cache[large_bitmap_name]->w + 1) / (width + 1);
+                    // calculate sprite coordinates from index
+                    int x = ((index - 1) % rowcount) * (width + 1);
+                    int y = ((index - 1) / rowcount) * (height + 1);
+                    // create sub bitmap
+                    bmp = create_sub_bitmap(g_png_large_cache[large_bitmap_name],
+                        x, y, width, height);
+                }
+            }
+        }
+		g_png_cache[fullname] = bmp;
     }
 	return g_png_cache[fullname];
 }
@@ -127,6 +164,11 @@ void free_png_cache()
 	while (it != g_png_cache.end()) {
 		destroy_bitmap(it->second);
 		it++;
+	}
+	std::map<std::string, BITMAP *>::iterator it_large = g_png_large_cache.begin();
+	while (it_large != g_png_large_cache.end()) {
+		destroy_bitmap(it_large->second);
+		it_large++;
 	}
 }
 
@@ -220,7 +262,7 @@ int PCK::loadpck(const char *pckfname, int width, int height)
 	fh = open(F(m_fname), O_RDONLY | O_BINARY);
 
 	if (fh == -1) {
-    //	Just a single frame from .pck file
+        //	Just a single frame from .pck file
 		m_imgnum = 1;
 		m_bmp.resize(m_imgnum);
 		m_bmp[0] = pckdat2bmp(pck, pcksize, width, height, m_tftd_flag);
@@ -234,7 +276,7 @@ int PCK::loadpck(const char *pckfname, int width, int height)
 	close(fh);
 
 	if (*(uint32 *)tabdata == 0x00000000) {
-    //	32-bit records in .tab file (UFO2)
+        //	32-bit records in .tab file (UFO2)
 		uint32 *tab = (uint32 *)tabdata;
 		m_imgnum = tabsize / 4;
 		for (i = 0; i < m_imgnum; i++)
@@ -244,7 +286,7 @@ int PCK::loadpck(const char *pckfname, int width, int height)
 		for (i = 0; i < m_imgnum; i++)
 			m_bmp[i] = pckdat2bmp(&pck[tab[i]], tab[i + 1] - tab[i], width, height, m_tftd_flag);
 	} else {
-    //	16-bit records in .tab file (UFO1)
+        //	16-bit records in .tab file (UFO1)
 		uint16 *tab = (uint16 *)tabdata;
 		m_imgnum = tabsize / 2;
 		for (i = 0; i < m_imgnum; i++)
