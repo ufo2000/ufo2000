@@ -6,14 +6,14 @@
               **                English Manual                **
               **************************************************
 
+                                  $Rev$
+
              Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
              Copyright (C) 2002-2003  ufo2000 development team
 
-                    This file was last changed in $Rev$
-
 The development of UFO2000 is continued after about a year of
 inactivity. Now UFO2000 is back and supported by a group called the
-"UFO2000 Development Team". The original author, Alexander Ivanov, has 
+"ufo2000 development team". The original author, Alexander Ivanov, has 
 neither time nor desire for doing all the work alone. It is very 
 difficult for a single person to maintain such a project. In addition, 
 the game is completely free (GPL) and nobody earns a single cent from 
@@ -31,12 +31,6 @@ submit your comments, ideas, bugreports and patches there.
 Primary tasks for this version branch (0.3.xx) are:
 - fix all the known bugs.
 - cleanup and comment the sources.
-
-ufo2000 development team members:
-- Alexander Ivanov aka 'sanami'
-- Serge Semashko aka 'ssvb'
-- Alexander Sabourenkov aka 'lxnt'
-- Roman Vil'chenko aka 'tavy'
 
 See CHANGELOG for full change listings.
 
@@ -230,5 +224,50 @@ F_SELECTENEMY = 1 # Set to 0 to disable blue markers above enemy soldiers
 UFO1, so you can use any "soldier.dat" from that game. However, you 
 must write the correct platoon_size in ufo2000.ini (e.g. number of 
 soldiers in "soldier.dat").
+
+===============
+Authors
+===============
+
+ufo2000 development team members:
+- Alexander Ivanov aka 'sanami'
+- Serge Semashko aka 'ssvb'
+- Alexander Sabourenkov aka 'lxnt'
+- Roman Vil'chenko aka 'tavy'
+
+===============
+Contributors
+===============
+
+Josh Day <koralt@yahoo.com>
+
+  UFO data files structs
+
+Anton Dobrinin aka Gargantua 
+
+  A patch for new fire and smoke code, incendiary ammo and proximity grenades.
+
+===============
+Thanks
+===============
+
+Consultant:
+   Josh Day <koralt@yahoo.com>
+
+Additional artwork:
+   "ppzaba" <zaba@peterlink.ru>
+
+General in Chief of Gameplay:
+   Ромка 'Tavy', tavy_@chat.ru
+
+Quality assurance:
+   Dima Ivanov
+   Tarantul@mail.kz, 2:6083/1.42
+
+   EvilOne, evilone@omen.ru
+   Anton (Zerocool), antonio_neo@chat.ru
+   
+   Olivier Ripoll
+   Павел Саныч aka MapcuaHuH [VMA]
 
 --END OF FILE--
