@@ -413,10 +413,9 @@ Icon::Icon()
 		spk->show(image, 0, 0);
 		delete(spk);
 		
-		width = 320;
-		height = 57;
+		width  = 320;
+		height =  57;
 
-		// Todo: show raised/depressed icon for active reserve-time-button
         iconsbmp = create_bitmap(width, height);
 		blit(image, iconsbmp, 0, 144, 0, 0, iconsbmp->w, iconsbmp->h); 
 		destroy_bitmap(image);
@@ -673,14 +672,36 @@ int Icon::doprime(Item *it)
 }
 
 /**
+ * Find out which button of the control-panel is under the mouse-cursor.
+ */
+int Icon::identify(int mx, int my)
+{
+    int icon_nr = -1;
+    mx -= x; my -= y;
+
+    for (int i = B_MAN_UP; i <= BUTTON_NUMBER; i++) { 
+        if (button[ i ].is_inside(mx, my)) { 
+            icon_nr = i; 
+            return icon_nr;
+        } 
+    } 
+    // Reserve-time-buttons are a separate class:
+    for (int i = R_TIME_FREE; i <= RESERVE_NUMBER; i++) { 
+        if (reserve[ i ].button.is_inside(mx, my)) {
+            icon_nr = i + BUTTON_NUMBER; 
+            return icon_nr;
+        } 
+    } 
+    return -1;
+}
+
+/**
  * If a button in the control-panel / icon-area was clicked, 
  * execute its command
  */
 void Icon::execute(int mx, int my)
 {
-	//int n;
 	mx -= x; my -= y;
-
     if (item[I_LEFT].button.is_inside(mx, my)) {
 		if (MODE != WATCH)
 			firemenu(P_ARM_LEFT);
@@ -812,7 +833,7 @@ void Icon::execute(int mx, int my)
 	} else
 	if (button[B_EXIT].is_inside(mx, my)) {
 		simulate_keypress(KEY_ESC << 8);
-	}	
+	}
 }
 
 /**
@@ -918,3 +939,4 @@ void Icon::draw_item(int itm, Item *it, int rounds, int prime, bool primed)
 	else if (primed)
 		item[itm].DrawPrimed(x, y);
 }
+

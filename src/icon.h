@@ -25,43 +25,43 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "item.h"
 #include "pck.h"
 
-#define B_MAN_UP		0
-#define B_MAN_DOWN		1
-#define B_VIEW_UP		2
-#define B_VIEW_DOWN		3
-#define B_MAP			4
-#define B_CROUCH		5
-#define B_INVENTORY		6
-#define B_CENTER_VIEW	7
-#define B_NEXT_MAN		8
-#define B_NEXT_MAN_2	9
-#define B_TOGGLE_ROOF	10
-#define B_OPTIONS		11
-#define B_DONE			12
-#define B_EXIT			13
-#define B_MAN_STATS		14
-#define B_BARCHART 		15
-#define BUTTON_NUMBER	16
+#define B_MAN_UP            0
+#define B_MAN_DOWN          1
+#define B_VIEW_UP           2
+#define B_VIEW_DOWN         3
+#define B_MAP               4
+#define B_CROUCH            5
+#define B_INVENTORY         6
+#define B_CENTER_VIEW       7
+#define B_NEXT_MAN          8
+#define B_NEXT_MAN_2        9
+#define B_TOGGLE_ROOF      10
+#define B_OPTIONS          11
+#define B_DONE             12
+#define B_EXIT             13
+#define B_MAN_STATS        14
+#define B_BARCHART         15
+#define BUTTON_NUMBER      16
 
-#define A_TIME_UNITS	0
-#define A_ENERGY		1
-#define A_HEALTH		2
-#define A_MORALE		3
-#define ATTRIBUTE_NUMBER	4
+#define A_TIME_UNITS        0
+#define A_ENERGY            1
+#define A_HEALTH            2
+#define A_MORALE            3
+#define ATTRIBUTE_NUMBER    4
 
-#define I_LEFT			0
-#define I_RIGHT			1
-#define ITEM_NUMBER		2
+#define I_LEFT              0
+#define I_RIGHT             1
+#define ITEM_NUMBER         2
 
-#define T_TURN_NUMBER	0
-#define T_MAN_NAME		1
-#define TEXT_NUMBER		2
+#define T_TURN_NUMBER       0
+#define T_MAN_NAME          1
+#define TEXT_NUMBER         2
 
-#define R_TIME_FREE		0
-#define R_TIME_AIM 		1
-#define R_TIME_SNAP		2
-#define R_TIME_AUTO		3
-#define RESERVE_NUMBER	4
+#define R_TIME_FREE         0
+#define R_TIME_AIM          1
+#define R_TIME_SNAP         2
+#define R_TIME_AUTO         3
+#define RESERVE_NUMBER      4
 
 enum BarDir {dir_hor, dir_vert};
 enum ItemDigs {dig_round, dig_count};
@@ -80,6 +80,9 @@ public:
 		y2 = _y2;
 	};
 	
+    /**
+     * Test if coordinates (of mousepointer) are inside the area of the button.
+     */
 	bool is_inside(int x, int y)
 	{
 		if ((x >= x1) && (x <= x2) && (y >= y1) && (y <= y2))
@@ -95,15 +98,18 @@ class IconItem
 {
 public:
 	IconButton button;
-	int ImageX, ImageY;
+	int ImageX,  ImageY;
 	int DigitsX, DigitsY;
 	int DigitsRoundsColor, DigitsPrimeColor;
 	
 	const char *name;
 	
+    /**
+     * Draw item (weapon) inside one of the hand-boxes of the control-panel.
+     */
 	void Draw(int x, int y, Item *it)
 	{
-		int dx = (2 - it->obdata_width()) * 16 / 2;
+		int dx = (2 - it->obdata_width())  * 16 / 2;
 		int dy = (3 - it->obdata_height()) * 15 / 2;
 
 		PCK::showpck(it->obdata_pInv(), x + ImageX + dx, y + ImageY + dy);
@@ -134,18 +140,21 @@ public:
 	
 	const char *name;
 	
+    /**
+     * Draw value and barchart for attributes, e.g. TU, health etc. in the control-panel.
+     */
 	void Draw(int x, int y, int val, int valmax)
 	{
 		if (BarDirection == dir_hor) {
-			hline(screen2, x + BarX, y + BarY, x + BarX + valmax + 1, xcom1_color(BColor));
-			hline(screen2, x + BarX, y + BarY + 1, x + BarX + val, xcom1_color(FColor)); 
+			hline(screen2,    x + BarX,              y + BarY,     x + BarX + valmax + 1, xcom1_color(BColor));
+			hline(screen2,    x + BarX,              y + BarY + 1, x + BarX + val, xcom1_color(FColor)); 
 			putpixel(screen2, x + BarX + valmax + 1, y + BarY + 1, xcom1_color(BColor));
-			hline(screen2, x + BarX, y + BarY + 2, x + BarX + valmax + 1, xcom1_color(BColor));
+			hline(screen2,    x + BarX,              y + BarY + 2, x + BarX + valmax + 1, xcom1_color(BColor));
 		} else {
-			vline(screen2, x + BarX, y + BarY, y + BarY - valmax - 1, xcom1_color(BColor));
-			vline(screen2, x + BarX + 1, y + BarY, y + BarY - val, xcom1_color(FColor)); 
+			vline(screen2,    x + BarX,     y + BarY,              y + BarY - valmax - 1, xcom1_color(BColor));
+			vline(screen2,    x + BarX + 1, y + BarY,              y + BarY - val, xcom1_color(FColor)); 
 			putpixel(screen2, x + BarX + 1, y + BarY - valmax - 1, xcom1_color(BColor));
-			vline(screen2, x + BarX + 2, y + BarY, y + BarY - valmax - 1, xcom1_color(BColor));
+			vline(screen2,    x + BarX + 2, y + BarY,              y + BarY - valmax - 1, xcom1_color(BColor));
 		}
 		printsmall(x + DigitsX, y + DigitsY, xcom1_color(DigitsColor), val);
 	};
@@ -171,6 +180,9 @@ public:
 	};
 };
 
+/**
+ * Icons for reserve-time - buttons, with border to show active state
+ */
 class IconReserve
 {
 public:
@@ -196,7 +208,7 @@ private:
 	SPK    *tac00;
 	BITMAP *iconsbmp;
 	
-	std::string filename;	
+	std::string filename;
 	
 	IconItem item[ITEM_NUMBER];
 	IconButton button[BUTTON_NUMBER];
@@ -211,6 +223,7 @@ public:
 
 	void draw();
 	int inside(int mx, int my);
+    int identify(int mx, int my);
 	void execute(int mx, int my);
 	void info();
 	void drawbar(int col1, int col2, int x2, int y2, int val, int valmax);
@@ -220,12 +233,13 @@ public:
 	void firemenu(int iplace);
 	int doprime(Item *it);
 
+    //! Set position of control-panel on the screen: bottom, centered
 	inline void setxy()
 	{
 		x = (SCREEN2W - width) / 2;
 		y = SCREEN2H - height;
 	}                        
-		
+	
 	void draw_item(int itm, Item *it, int rounds, int prime, bool primed);
 	void draw_text(int txt, char *val);
 	void draw_text(int txt, int val, char *format);
@@ -235,3 +249,4 @@ public:
 };                      
 
 #endif
+

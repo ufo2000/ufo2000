@@ -959,6 +959,10 @@ void soundSystem::getLoadedSyms(std::ostream *os) {
             *os<<i<<": '"<<getSymString(static_cast<SoundSym_e_t> (i))<<"'\n";
 }
 
+/**
+ * Test: Play all sounds at start of program, 
+ * when flag F_SOUNDCHECK in config-file ufo2000.ini is set.
+ */
 void soundSystem::playLoadedSamples(std::ostream *os) {
     if (!soundInstalled)
         return;

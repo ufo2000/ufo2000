@@ -39,17 +39,13 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 char *icontext( const int icon_nr )
 {
-    //char tt[64];
-    //sprintf(tt, "This is button #%d", icon_nr );
-    //return tt;
-
     switch (icon_nr) {
-        //                           ....+....1....+....2....+....3....+....4
+        //                           ....+....1....+....2....+....3
         case B_MAN_UP      : return "Move up one level";
 		case B_MAN_DOWN    : return "Move down one level";
 
-		case B_VIEW_UP     : return "View Up";
-		case B_VIEW_DOWN   : return "View Down";
+        case B_VIEW_UP     : return "View up one level";
+        case B_VIEW_DOWN   : return "View down one level";
 
 		case B_MAP         : return "Show Map";
 		case B_CROUCH      : return "Stand up / Crouch";
@@ -63,18 +59,23 @@ char *icontext( const int icon_nr )
 		case B_TOGGLE_ROOF : return "Toggle Roof";
 		case B_OPTIONS     : return "Options";
 
+        // when screen-width is set to minimum, "Exit Game" barely fits
 		case B_DONE        : return "Done with turn";
 		case B_EXIT        : return "Exit Game";
 
-		case B_MAN_STATS   : return "Show Stats";
-		case B_BARCHART    : return "Switch Barchart";
+        case B_MAN_STATS   : return "Show Stats of man";
+        case B_BARCHART    : return "Switch Barchart";
 
-		/*case B_TIME_FREE   : return "Reserve Time: None";
-		case B_TIME_AIM    : return "Reserve Time: Aimed shot";
-		case B_TIME_SNAP   : return "Reserve Time: Snapshot";
-		case B_TIME_AUTO   : return "Reserve Time: Autoshot";*/
+        case R_TIME_FREE + BUTTON_NUMBER : 
+                             return "Reserve Time: None";
+        case R_TIME_AIM  + BUTTON_NUMBER : 
+                             return "Reserve Time: Aimed shot";
+        case R_TIME_SNAP + BUTTON_NUMBER : 
+                             return "Reserve Time: Snapshot";
+        case R_TIME_AUTO + BUTTON_NUMBER : 
+                             return "Reserve Time: Autoshot";
 
-        default            : return "icon ??";
+		default            : return "icon ??";
     }
 }
 
@@ -267,8 +268,8 @@ void help( const int helppage )
             break;
         case HELP_STATS + 3 :
             b1 = alert3( "Stats:",
-                         "Stun: shown as an overlay to Health. When this reaches",
-                         "health, the soldier is stunned..",
+                         "Stun: shown as an overlay to Health. When the stun-value",
+                         "reaches the value of health, the soldier is stunned.",
                          prev, ok, next, kp_prev, kp_ok, kp_next);
             break;
         case HELP_STATS + 4 :
@@ -304,7 +305,7 @@ void help( const int helppage )
         case HELP_STATS + 9 :
             b1 = alert3( "Stats:",
                          "Armor: protection-value on all sides of the soldier.",
-                         "Under-armor protects against explosives.",
+                         "Under-armor protects against nearby explosions.",
                          prev, ok, NULL, kp_prev, kp_ok, kp_0);
             break;
         // Help for Endgame-Stats:
@@ -403,15 +404,15 @@ void help( const int helppage )
                          prev, ok, next, kp_prev, kp_ok, kp_next);
             break;
         case HELP_PLANNER + 9 :
-            b1 = alert3( "Gamerules - Map expored:",
-                         "Which part of the map will be explored initially.",
-                         "(0=nothing explored .. 2=everything explored)",
+            b1 = alert3( "Gamerules - Map explored:",
+                         "Settings: all map explored / fog of war.",
+                         "E.g. all parts of the map that you have not yet seen are black.",
                          prev, ok, next, kp_prev, kp_ok, kp_next);
             break;
         case HELP_PLANNER + 10 :
             b1 = alert3( "Gamerules - Ground",
                          "If this is off, you cannot leave the editor while items",
-                         "are on the ground (e.g. rockets to take on the mission).",
+                         "are on the ground (e.g. heavy rockets to take on the mission).",
                          prev, ok, next, kp_prev, kp_ok, kp_next);
                          // kp_next: continue with scenario-help
             break;

@@ -91,4 +91,5 @@ extern unsigned long FLAGS;
 #define F_LOGTOSTDOUT       0x00020000
 #define F_DEBUGDUMPS        0x00040000
 #define F_ENDTURNSND		0x00080000
+#define F_TOOLTIPS          0x00100000
 #endif

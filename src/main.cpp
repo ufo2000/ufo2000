@@ -553,6 +553,7 @@ void initmain(int argc, char *argv[])
     if (get_config_int("Flags", "F_SOUNDCHECK", 0)) FLAGS |= F_SOUNDCHECK;    // perform soundtest.
     if (get_config_int("Flags", "F_LOGTOSTDOUT", 0)) FLAGS |= F_LOGTOSTDOUT;  // Copy all init console output to stdout.
     if (get_config_int("Flags", "F_DEBUGDUMPS", 0)) FLAGS |= F_DEBUGDUMPS;    // Produce a lot of files with the information which can help in debugging
+    if (get_config_int("Flags", "F_TOOLTIPS",    0)) FLAGS |= F_TOOLTIPS;     // Enable display of tooltips for the control-panel
     if (get_config_int("Flags", "F_ENDTURNSND", 1)) FLAGS |= F_ENDTURNSND;	  // sound signal at the end of turn
 	const AGUP_THEME *gui_theme = agup_theme_by_name(get_config_string("General", "gui_theme", "BeOS"));
 
@@ -895,6 +896,7 @@ int GAMELOOP = 0;
  */
 void build_screen(int & select_y)
 {
+	int icon_nr = -9;
 	clear_to_color(screen2, BACKCOLOR);
 
 	switch (MODE) {
@@ -936,6 +938,19 @@ void build_screen(int & select_y)
 
 			if (MODE == WATCH)
 				textprintf(screen2, font, 0, 0, COLOR_WHITE, "%s", "WATCH");
+
+			if (FLAGS & F_TOOLTIPS) {
+				// Tooltips for the buttons of the control-panel:
+				if (icon->inside(mouse_x, mouse_y)) {
+					icon_nr = icon->identify(mouse_x, mouse_y);
+					// Todo: solid background for the tooltips,
+					if (icon_nr >= 0 ) {
+						textprintf(screen2, font,  mouse_x+7, mouse_y-2,
+									COLOR_WHITE, "%s", icontext(icon_nr) );
+					}
+				}
+            }
+
 			break;
 		case MAN:
 			if (sel_man != NULL) {
@@ -1550,9 +1565,10 @@ void gameloop()
 							map->center(sel_man);
 					}
 					break;
-//				case KEY_ASTERISK:   // ?? ToDo: Sound on/off
-//					soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
-//					break;
+//              case KEY_ASTERISK:   // ?? ToDo: Sound on/off
+//                  soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
+//                  FS_MusicPlay(NULL); 
+//                  break;
 				case KEY_PLUS_PAD:
 					vol = FS_IncMusicVolume();
 					g_console->printf(COLOR_SYS_OK, "Music Volume: %d", vol );
@@ -1614,6 +1630,16 @@ void gameloop()
 							savegame(F("$(home)/ufo2000.tmp"));
 					}
 					break;
+                case KEY_F5: 
+                    if (FLAGS & F_TOOLTIPS) { 
+                        FLAGS &= ~F_TOOLTIPS;
+                        g_console->printf(COLOR_SYS_FAIL, "Tooltips OFF" );
+                    } else {
+                        FLAGS |= F_TOOLTIPS;
+                        g_console->printf(COLOR_SYS_OK,   "Tooltips ON." ); 
+                    } 
+                    soundSystem::getInstance()->play(SS_BUTTON_PUSH_1); 
+                    break;
 				case KEY_F9:
 					keyswitch(0);
 					// g_console->printf(COLOR_SYS_OK, "%s", "Keyboard changed");
