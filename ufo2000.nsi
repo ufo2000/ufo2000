@@ -1,4 +1,4 @@
-; UFO2000 NSIS Installer v1.4.1 (see bottom for version history)
+; UFO2000 NSIS Installer v1.4.2 (see bottom for version history)
 ;
 ; This script was made by Daniel "SupSuper" Albano (supsuper@gmail.com) with Venis IX.
 ; UFO2000 is a massive multiplayer game based on XCOM saga: http://ufo2000.sourceforge.net
@@ -34,7 +34,21 @@
 	Var XCOMDEMO_FOLDER
 	Var TFTD_FOLDER
 	Var TFTDDEMO_FOLDER
+	Var INST_TYPE
 	
+;--------------------------------
+;Reserve Files
+  
+  ;These files should be inserted before other files in the data block
+  ;Keep these lines before any File command
+  ;Only for solid compression (by default, solid compression is enabled for BZIP2 and LZMA)
+	
+	ReserveFile "select_option.ini"
+	ReserveFile "xcom_folder.ini"
+	ReserveFile "demo_select.ini"
+	ReserveFile "readme_select.ini"
+	!insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
+
 ;--------------------------------
 ;Initialization
 
@@ -42,6 +56,7 @@ Function .onInit
 	!insertmacro MUI_INSTALLOPTIONS_EXTRACT "select_option.ini"
 	!insertmacro MUI_INSTALLOPTIONS_EXTRACT "xcom_folder.ini"
 	!insertmacro MUI_INSTALLOPTIONS_EXTRACT "demo_select.ini"
+	!insertmacro MUI_INSTALLOPTIONS_EXTRACT "readme_select.ini"
 	
 	System::Call 'kernel32::CreateMutexA(i 0, i 0, t "myMutex") i .r1 ?e' 
 
@@ -63,17 +78,30 @@ FunctionEnd
 	!define MUI_WELCOMEFINISHPAGE_BITMAP arts\installer-welcome.bmp
 	!define MUI_UNWELCOMEFINISHPAGE_BITMAP arts\installer-welcome.bmp
 	!define MUI_FINISHPAGE_RUN $INSTDIR\ufo2000.exe
-	!define MUI_UNCONFIRMPAGE_TEXT_TOP "${GAME_NAME} will be uninstalled from the following folder.\
-	Click Uninstall to start the uninstallation.$\r$\nWARNING: All files and folders in the ${GAME_NAME}\
+	!define MUI_UNCONFIRMPAGE_TEXT_TOP "${GAME_NAME} will be uninstalled from the following folder. \
+	Click Uninstall to start the uninstallation.$\r$\nWARNING: All files and folders in the ${GAME_NAME} \
 	folder will be deleted, including any downloaded X-Com/TFTD demos."
 	!define MUI_ABORTWARNING
 	
 ;--------------------------------
 ;Pages
 
+ Function CheckDirectory
+	ReadRegStr $0 HKLM "Software\${GAME_NAME}" "Install_Dir"
+	StrCmp $0 $INSTDIR upgrade fresh
+	upgrade: StrCpy $INST_TYPE "upgrade"
+	Goto end
+	fresh: StrCpy $INST_TYPE "fresh"
+	IfFileExists $INSTDIR\*.* error end
+	error: MessageBox MB_OK|MB_ICONSTOP|MB_DEFBUTTON1 "The installation folder is in use!"
+	Abort
+	end:
+FunctionEnd
+ 
   !insertmacro MUI_PAGE_WELCOME
 	!insertmacro MUI_PAGE_LICENSE gnu.txt
 	!insertmacro MUI_PAGE_COMPONENTS
+	!define MUI_PAGE_CUSTOMFUNCTION_LEAVE CheckDirectory
   !insertmacro MUI_PAGE_DIRECTORY
 	Page custom SelectOption
 	Page custom SearchXcom
@@ -83,6 +111,7 @@ FunctionEnd
   !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${GAME_NAME}" 
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
 	!insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
+	Page custom ReadmeSelect
 	!insertmacro MUI_PAGE_INSTFILES
 	!insertmacro MUI_PAGE_FINISH
 	!insertmacro MUI_UNPAGE_WELCOME
@@ -94,7 +123,6 @@ FunctionEnd
 ;Languages
  
 	!insertmacro MUI_LANGUAGE "English"
-	!include "ZipDLL.nsh"
 
 ;--------------------------------
 ; GetParent
@@ -208,7 +236,6 @@ Function SearchCallback
 	Push $0
 	Call GetParent
 	Pop $R0
-; IfFileExists "$R0\geograph\*.*" next1 end ;REMOVED: Demos don't have this folder
 	IfFileExists "$R0\maps\*.*" next1 end
 	next1: IfFileExists "$R0\missdat\*.*" next2 end
 	next2: IfFileExists "$R0\routes\*.*" next3 end
@@ -276,13 +303,22 @@ LangString TEXT_XCOMFOLDER_TITLE ${LANG_ENGLISH} "Choose X-Com Location"
 LangString TEXT_XCOMFOLDER_SUBTITLE ${LANG_ENGLISH} "Choose the folder where you have X-Com installed in."
 LangString TEXT_DEMOSEL_TITLE ${LANG_ENGLISH} "Download X-Com Demo"
 LangString TEXT_DEMOSEL_SUBTITLE ${LANG_ENGLISH} "Choose which X-Com demos you want installed."
+LangString TEXT_READSEL_TITLE ${LANG_ENGLISH} "Select Readmes"
+LangString TEXT_READSEL_SUBTITLE ${LANG_ENGLISH} "Choose which readmes you want shortcuts to be created for."
+
+Function SelectOption
+	StrCmp $INST_TYPE "upgrade" success failed
+	success: Abort
+	failed:
+	!insertmacro MUI_HEADER_TEXT "$(TEXT_SELOPT_TITLE)" "$(TEXT_SELOPT_SUBTITLE)"
+  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "select_option.ini"
+FunctionEnd
 
 Function SearchXcom
-	ReadRegStr $0 HKLM "Software\${GAME_NAME}" "Install_Dir"
-	StrCmp $0 $INSTDIR sucess fail
+	StrCmp $INST_TYPE "upgrade" sucess fail
 	sucess: Abort
 	fail:
-	ReadINIStr $0 "$PLUGINSDIR\select_option.ini" "Field 2" "State"
+	!insertmacro MUI_INSTALLOPTIONS_READ $0 "select_option.ini" "Field 2" "State"
 	StrCmp $0 "1" success failed
 	failed: Abort
 	success:
@@ -304,26 +340,27 @@ Function SearchXcom
 	end:
 FunctionEnd
 
-Function SelectOption
-	ReadRegStr $0 HKLM "Software\${GAME_NAME}" "Install_Dir"
-	StrCmp $0 $INSTDIR success failed
-	success: Abort
-	failed:
-	!insertmacro MUI_HEADER_TEXT "$(TEXT_SELOPT_TITLE)" "$(TEXT_SELOPT_SUBTITLE)"
-  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "select_option.ini"
-FunctionEnd
-
 Function XComFolder
-	ReadINIStr $0 "$PLUGINSDIR\select_option.ini" "Field 4" "State"
+	!insertmacro MUI_INSTALLOPTIONS_READ $0 "select_option.ini" "Field 4" "State"
 	StrCmp $0 "1" success failed
 	failed: Abort
 	success:
   !insertmacro MUI_HEADER_TEXT "$(TEXT_XCOMFOLDER_TITLE)" "$(TEXT_XCOMFOLDER_SUBTITLE)"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "xcom_folder.ini"
-	ReadINIStr $XCOM_FOLDER "$PLUGINSDIR\xcom_folder.ini" "Field 3" "State"
-	ReadINIStr $XCOMDEMO_FOLDER "$PLUGINSDIR\xcom_folder.ini" "Field 5" "State"
-	ReadINIStr $TFTD_FOLDER "$PLUGINSDIR\xcom_folder.ini" "Field 7" "State"
-	ReadINIStr $TFTDDEMO_FOLDER "$PLUGINSDIR\xcom_folder.ini" "Field 9" "State"
+	!insertmacro MUI_INSTALLOPTIONS_READ $XCOM_FOLDER "xcom_folder.ini" "Field 3" "State"
+	!insertmacro MUI_INSTALLOPTIONS_READ $XCOMDEMO_FOLDER "xcom_folder.ini" "Field 5" "State"
+	!insertmacro MUI_INSTALLOPTIONS_READ $TFTD_FOLDER "xcom_folder.ini" "Field 7" "State"
+	!insertmacro MUI_INSTALLOPTIONS_READ $TFTDDEMO_FOLDER "xcom_folder.ini" "Field 9" "State"
+FunctionEnd
+
+
+Function ReadmeSelect
+  StrCpy $0 $STARTMENU_FOLDER 1
+	StrCmp $0 ">" success failed
+	success: Abort
+	failed:
+	!insertmacro MUI_HEADER_TEXT "$(TEXT_READSEL_TITLE)" "$(TEXT_READSEL_SUBTITLE)"
+  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "readme_select.ini"	
 FunctionEnd
 
 ;--------------------------------
@@ -367,6 +404,7 @@ Section "${GAME_NAME} (required)" MainSec
 	File "readme_fi.txt"
 	File "readme_fr.txt"
 	File "readme_pl.txt"
+	File "readme_pt.txt"
 	File "readme_ru.html"
 	File "soundmap.xml"
 	File "items.default.dat"
@@ -421,20 +459,37 @@ Section "${GAME_NAME} (required)" MainSec
 	tftddemo_no:
 	
 	!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-
-		CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
-		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\UFO2000.lnk" "$INSTDIR\ufo2000.exe" "" "$INSTDIR\ufo2000.exe" 0
-		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\UFO2000 server.lnk" "$INSTDIR\ufo2000-srv.exe" "" "$INSTDIR\ufo2000-srv.exe" 0
-		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - English.lnk" "$INSTDIR\readme_eng.txt" "" "$INSTDIR\readme_eng.txt" 0
-		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - Spanish.lnk" "$INSTDIR\readme_es.txt" "" "$INSTDIR\readme_es.txt" 0
-		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - Polish.lnk" "$INSTDIR\readme_pl.txt" "" "$INSTDIR\readme_pl.txt" 0
-		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - French.lnk" "$INSTDIR\readme_fr.txt" "" "$INSTDIR\readme_fr.txt" 0
-		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - German.lnk" "$INSTDIR\readme_de.txt" "" "$INSTDIR\readme_de.txt" 0
-
-		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Manual - Russian.lnk" "$INSTDIR\readme_ru.html" "" "$INSTDIR\readme_ru.html" 0
+    
+    CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
+		!insertmacro MUI_INSTALLOPTIONS_READ $0 "readme_select.ini" "Field 3" "State"
+		StrCmp $0 "1" en en1		
+		en: CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - English.lnk" "$INSTDIR\readme_en.txt"
+		en1: !insertmacro MUI_INSTALLOPTIONS_READ $0 "readme_select.ini" "Field 9" "State"
+		StrCmp $0 "1" sp sp1		
+		sp: CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - Spanish.lnk" "$INSTDIR\readme_es.txt"
+		sp1: !insertmacro MUI_INSTALLOPTIONS_READ $0 "readme_select.ini" "Field 7" "State"
+		StrCmp $0 "1" pl pl1		
+		pl: CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - Polish.lnk" "$INSTDIR\readme_pl.txt"
+		pl1: !insertmacro MUI_INSTALLOPTIONS_READ $0 "readme_select.ini" "Field 5" "State"
+		StrCmp $0 "1" fr fr1
+		fr: CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - French.lnk" "$INSTDIR\readme_fr.txt"
+		fr1: !insertmacro MUI_INSTALLOPTIONS_READ $0 "readme_select.ini" "Field 2" "State"
+		StrCmp $0 "1" ru ru1
+		ru: CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Russian Manual.lnk" "$INSTDIR\readme_rus.html"
+		ru1: !insertmacro MUI_INSTALLOPTIONS_READ $0 "readme_select.ini" "Field 4" "State"
+		StrCmp $0 "1" fi fi1
+		fi: CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - Finnish.lnk" "$INSTDIR\readme_fi.txt"
+		fi1: !insertmacro MUI_INSTALLOPTIONS_READ $0 "readme_select.ini" "Field 8" "State"
+		StrCmp $0 "1" pt pt1
+		pt: CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - Portuguese.lnk" "$INSTDIR\readme_pt.txt"
+		pt1: !insertmacro MUI_INSTALLOPTIONS_READ $0 "readme_select.ini" "Field 6" "State"
+		StrCmp $0 "1" de de1
+		de: CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - German.lnk" "$INSTDIR\readme_de.txt"
+		de1: CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\uninstall.exe"
+		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${GAME_NAME}.lnk" "$INSTDIR\ufo2000.exe"
+		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${GAME_NAME} server.lnk" "$INSTDIR\ufo2000-srv.exe"
   
-	!insertmacro MUI_STARTMENU_WRITE_END
+  !insertmacro MUI_STARTMENU_WRITE_END
 	
 	WriteRegStr HKLM "SOFTWARE\${GAME_NAME}" "Install_Dir" "$INSTDIR"
   
@@ -448,7 +503,7 @@ SectionEnd
 
 Section "Desktop Shortcut" DesktopSec
 
-	CreateShortCut "$DESKTOP\UFO2000.lnk" "$INSTDIR\ufo2000.exe" "" "$INSTDIR\ufo2000.exe" 0
+	CreateShortCut "$DESKTOP\${GAME_NAME}.lnk" "$INSTDIR\ufo2000.exe"
   
 SectionEnd
 
@@ -517,18 +572,17 @@ Section /o -"TFTDDemoSec" TFTDDemoSec
 SectionEnd
 
 Function DemoSelect
-	ReadINIStr $0 "$PLUGINSDIR\select_option.ini" "Field 6" "State"
+	!insertmacro MUI_INSTALLOPTIONS_READ $0 "select_option.ini" "Field 6" "State"
 	StrCmp $0 "1" sucess fail
 	fail: Abort
 	sucess:
   !insertmacro MUI_HEADER_TEXT "$(TEXT_DEMOSEL_TITLE)" "$(TEXT_DEMOSEL_SUBTITLE)"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "demo_select.ini"
-	
-	ReadINIStr $1 "$PLUGINSDIR\demo_select.ini" "Field 2" "State"
-	StrCmp $1 "1" xcomdemo check
+	!insertmacro MUI_INSTALLOPTIONS_READ $0 "demo_select.ini" "Field 2" "State"
+	StrCmp $0 "1" xcomdemo check
 	xcomdemo: !insertmacro SelectSection ${XcomDemoSec}
-	check: ReadINIStr $1 "$PLUGINSDIR\demo_select.ini" "Field 3" "State"
-	StrCmp $1 "1" tftddemo end
+	check: !insertmacro MUI_INSTALLOPTIONS_READ $0 "demo_select.ini" "Field 3" "State"
+	StrCmp $0 "1" tftddemo end
 	tftddemo: !insertmacro SelectSection ${TFTDDemoSec}
 	end:
 FunctionEnd
@@ -555,16 +609,20 @@ Section "Uninstall"
 	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${GAME_NAME}"
 	DeleteRegKey HKLM "Software\${GAME_NAME}"
 
-	Delete "$DESKTOP\UFO2000.lnk"
-	RMDir /r "$SMPROGRAMS\$STARTMENU_FOLDER"
+	Delete "$DESKTOP\${GAME_NAME}.lnk"
+	!insertmacro MUI_STARTMENU_GETFOLDER Application $R0
+	RMDir /r "$SMPROGRAMS\$R0"
 	RMDir /r "$INSTDIR"
 
 SectionEnd
 
 ; Version History
 ;
-; 1.4.2 (13nd Sep 2004)
-; - Added "readme_de.txt"
+; 1.4.2 (30th Oct 2004)
+;
+; - Fixed bug #0000095: "Option for installing only selected Readme-files"
+; - Fixed bug #0000089: "Uninstaller deletes X-COM off computer"
+; - Fixed some text and did some improvements.
 ;
 ; 1.4.1 (2nd Sep 2004)
 ;
