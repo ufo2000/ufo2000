@@ -36,7 +36,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #endif
 
 #include "server_config.h"
-#include "sqlite/sqlite3_plus.h"
 
 #ifndef SERVER_LOG_FILENAME
 #define SERVER_LOG_FILENAME "ufo2000-srv.log"
@@ -84,7 +83,6 @@ struct ip_info
 
 static std::vector<ip_info>  accept_ip;
 static std::vector<ip_info>  reject_ip;
-static std::map<std::string, std::string> accept_user;
 
 static std::string config_file_pathname;
 static std::string server_log_pathname;
@@ -179,20 +177,20 @@ void load_config(const std::string &pathname)
 
     reject_ip.clear();
     accept_ip.clear();
-    accept_user.clear();
 
     while (fgets(buffer, 511, f)) {
         std::string var, val, comment;
         if (!get_variable(buffer, var, val, '#', comment)) continue;
 
         if (var == "accept_user") {
-            std::string login, password;
+        // We can place a moving data from config file to db here.
+/*            std::string login, password;
             if (!split_loginpass(val, login, password)) {
                 server_log("invalid user login format in config: %s\n", val.c_str());
             } else {
                 server_log("config accept_user = '%s'\n", val.c_str());
                 accept_user.insert(std::pair<std::string, std::string>(login, password));
-            }
+            }*/
         } else if (var == "reject_ip") {
             NLulong ip, mask;
             if (!decode_ip(val.c_str(), ip, mask)) {
@@ -221,17 +219,6 @@ void load_config(const std::string &pathname)
         }
     }
     fclose(f);
-}
-
-/**
- * @return  0 - not registered\n
- *          1 - password valid\n
- *         -1 - password invalid
- */
-int validate_user(const std::string &username, const std::string &password)
-{
-    if (accept_user.find(username) == accept_user.end()) return 0;
-    return accept_user[username] == password ? 1 : -1;
 }
 
 bool validate_ip(const std::string &ip_string)
@@ -335,23 +322,6 @@ bool split_loginpass(const std::string &str, std::string &login, std::string &pa
         }
     }
     return colon_found;
-}
-
-bool add_user(const std::string &login, const std::string &password)
-{
-    if (!accept_user.insert(std::pair<std::string, std::string>(login, password)).second)
-        return false;
-
-    FILE *f = fopen(config_file_pathname.c_str(), "at");
-    fprintf(f, "\naccept_user = %s:%s", login.c_str(), password.c_str());
-    fclose(f);
-    
-    sqlite3::connection con("ufo2000.db");
-    std::string s="";
-    s+="insert into ufo2000_users values('"+login+"','"+password+"');";
-    con.executenonquery(s.c_str());
-
-    return true;
 }
 
 int g_server_reload_config_flag = 0;

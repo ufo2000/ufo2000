@@ -23,6 +23,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define __SERVER_PROTOCOL_H__
 
 #include "server.h"
+#include "sqlite/sqlite3_plus.h"
 
 // server replies
 #define SRV_FAIL               0
@@ -50,6 +51,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define SRV_KEEP_ALIVE         15
 #define SRV_DECLINE_CHALLENGE  16
 
+#define DB_FILENAME "ufo2000.db"
+
 class ServerClientUfo: public ServerClient
 {
 	std::set<std::string>  m_challenged_opponents;
@@ -61,12 +64,17 @@ public:
 	static NLtime          m_last_user_disconnect_time;
 	
 	ServerClientUfo(ServerDispatch *d, NLsocket s)
-		: ServerClient(d, s), m_opponent(NULL), m_busy(false) { }
+		: ServerClient(d, s), m_opponent(NULL), m_busy(false), db_conn(DB_FILENAME) { }
 	virtual ~ServerClientUfo();
 	bool recv_packet(NLulong id, const std::string &packet);
 
 	ServerClientUfo *get_opponent() { return m_opponent; }
 	bool is_in_server_chat() { return !m_busy; }
+	
+private:
+    sqlite3::connection db_conn;
+    bool add_user(const std::string &username, const std::string &password);
+    int validate_user(const std::string &username, const std::string &password);
 };
 
 class ClientServerUfo: public ClientServer

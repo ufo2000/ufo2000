@@ -20,9 +20,11 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
 #include <stdio.h>
+#include <stdexcept>
 
 #include "server_protocol.h"
 #include "server_config.h"
+#include "server_game.h"
 
 std::string ServerClientUfo::m_last_user_name = "";
 NLtime      ServerClientUfo::m_last_user_disconnect_time;
@@ -285,6 +287,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
         //  Try to find self in the opponent's challenge list
             if (opponent->m_challenged_opponents.find(m_name) != opponent->m_challenged_opponents.end()) {
             //  opponent found in the challenge list
+                Server_Game_UFO::CreateGame(m_name, opponent->m_name);
 
                 server_log("game start: '%s' vs '%s'\n", m_name.c_str(), packet.c_str());
                 m_games_started++;
@@ -380,3 +383,38 @@ bool ClientServerUfo::decline_challenge(const std::string &user)
     if (!send_packet(SRV_DECLINE_CHALLENGE, user)) return false;
     return true;
 }
+
+bool ServerClientUfo::add_user(const std::string &login, const std::string &password)
+{
+    try {
+        db_conn.executenonquery("insert into ufo2000_users(name,password) values('%s','%s');", login.c_str(),password.c_str());
+    }
+    catch(std::exception &ex) {
+        server_log("Exception Occured: %s",ex.what());
+    }
+    return true;
+}
+
+/**
+ * @return  0 - not registered\n
+ *          1 - password valid\n
+ *         -1 - password invalid
+ */
+int ServerClientUfo::validate_user(const std::string &username, const std::string &password)
+{
+    try {
+    if (!db_conn.executeint32("select count(*) from ufo2000_users where name='%s';",username.c_str()))
+        return 0;
+    if (db_conn.executeint32("select count(*) from ufo2000_users where name='%s' and password='%s';",username.c_str(),password.c_str()))
+        return 1;
+    }
+    catch(std::exception &ex) {
+        server_log("Exception Occured: %s",ex.what());
+    }
+    return -1;
+    
+/*    sqlite3::reader reader=con.executereader("select * from t_test;");
+    if (accept_user.find(username) == accept_user.end()) return 0;
+    return accept_user[username] == password ? 1 : -1;*/
+}
+

@@ -39,8 +39,6 @@ void load_config();
 void load_config(const std::string &pathname);
 bool split_loginpass(const std::string &str, std::string &login, std::string &pass);
 bool validate_ip(const std::string &ip);
-int validate_user(const std::string &username, const std::string &password);
-bool add_user(const std::string &username, const std::string &password);
 void server_log(const char *fmt, ...);
 void strip_server_log(double delta_time);
 
