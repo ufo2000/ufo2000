@@ -170,19 +170,15 @@ void restartgame()
 {
 	win = 0;
 	loss = 0;
-	//map = new Map(4,4);
-	//map->load("floor0.map", Map::cultivat);
-	//map = new Map("GEODATA.DAT");
+
 	map = new Map(mapdata);
 	p1 = new Platoon(1000, &pd1);
 	p2 = new Platoon(2000, &pd2);
 
-	int fh = open(F("$(home)/cur_map.dat"), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, 0644);
-	ASSERT(fh != -1);
-	write(fh, &mapdata, sizeof(mapdata));
-	close(fh);
+	bool map_saved = Map::save_GEODATA("$(home)/cur_map.lua", &mapdata);
+	ASSERT(map_saved);
 
-	fh = open(F("$(home)/cur_p1.dat"), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, 0644);
+	int fh = open(F("$(home)/cur_p1.dat"), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, 0644);
 	ASSERT(fh != -1);
 	write(fh, &pd1, sizeof(pd1));
 	close(fh);
@@ -191,20 +187,6 @@ void restartgame()
 	ASSERT(fh != -1);
 	write(fh, &pd2, sizeof(pd2));
 	close(fh);
-
-	//srand(0); //workaround!!!
-	//p1 = new Platoon(1111, P1S, P1Z, P1X, P1Y, 0);
-	//p2 = new Platoon(2222, P2S, P2Z, P2X, P2Y, 4);
-	//srand(time(NULL));
-
-	/*map->place(0, P1X, P1Y+2)->put(new Item(HIGH_EXPLOSIVE));
-	map->place(0, P2X, P2Y+2)->put(new Item(HIGH_EXPLOSIVE));
-
-	map->place(0, P1X, P1Y+2)->put(new Item(LASER_PISTOL));
-	map->place(0, P2X, P2Y+2)->put(new Item(LASER_PISTOL));
-
-	map->place(0, P1X, P1Y+2)->put(new Item(LASER_GUN));
-	map->place(0, P2X, P2Y+2)->put(new Item(LASER_GUN));*/
 
 	elist = new Explosive();
 	elist->reset();
@@ -603,13 +585,7 @@ void initmain(int argc, char *argv[])
 	fade_out(FADE_SPEED);
 	clear(screen);
 
-	memset(&mapdata, 0, sizeof(mapdata));
-	int fh = open(F("$(home)/geodata.dat"), O_RDONLY | O_BINARY);
-	if (fh != -1) {
-		read(fh, &mapdata, sizeof(mapdata));
-		close(fh);
-	}
-	if (fh == -1 || !Map::valid_GEODATA(&mapdata))
+	if (!Map::load_GEODATA("$(home)/geodata.lua", &mapdata) || !Map::valid_GEODATA(&mapdata))
 		Map::new_GEODATA(&mapdata);
 
 	delete print_win;
@@ -1514,12 +1490,10 @@ void faststart()
 
 	//restartgame();
 
-	int fh = open(F("$(home)/cur_map.dat"), O_RDONLY | O_BINARY);
-	ASSERT(fh != -1);
-	read(fh, &mapdata, sizeof(mapdata));
-	close(fh);
+	bool map_loaded = Map::load_GEODATA("$(home)/cur_map.lua", &mapdata);
+	ASSERT(map_loaded);
 
-	fh = open(F("$(home)/cur_p1.dat"), O_RDONLY | O_BINARY);
+	int fh = open(F("$(home)/cur_p1.dat"), O_RDONLY | O_BINARY);
 	ASSERT(fh != -1);
 	read(fh, &pd1, sizeof(pd1));
 	close(fh);

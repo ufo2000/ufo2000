@@ -96,8 +96,14 @@ public:
 	static PCK *floorob, *smoke;
 	static void initpck();
 	static void freepck();
+    //! checks if GEODATA structure is valid
 	static int valid_GEODATA(GEODATA *gd);
+    //! creates new random GEODATA structure
 	static void new_GEODATA(GEODATA *mapdata);
+    //! loads GEODATA structure from lua-file
+	static bool load_GEODATA(const char *filename, GEODATA *mapdata);
+    //! saves GEODATA structure to lua-file
+	static bool save_GEODATA(const char *filename, GEODATA *mapdata);
 
 	int level, width, height;
 	int sel_lev, sel_row, sel_col;
@@ -361,7 +367,6 @@ public:
 	const std::string &get_name() { return m_name; }
 
 	bool create_geodata(GEODATA &gd);
-	bool check_geodata(const GEODATA &gd);
 };
 
 #undef map
@@ -392,9 +397,16 @@ public:
 		if (terrain.find(index) == terrain.end()) return "";
 		return terrain[index]->get_name();
 	}
-
+	int get_terrain_id(const std::string &name)
+	{
+		std::map<int, Terrain *>::iterator it = terrain.begin();
+		while (it != terrain.end()) {
+			if (it->second->get_name() == name) return it->first;
+			it++;
+		}
+		return -1;
+	}
 	bool create_geodata(int terrain_index, int size_x, int size_y, GEODATA &gd);
-	bool check_geodata(const GEODATA &gd);
 };
 
 #define map ufo2000_map

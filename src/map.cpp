@@ -1504,38 +1504,105 @@ int Map::valid_GEODATA(GEODATA *md)
 	return 1;
 }
 
+/**
+ * Loads GEODATA structure from lua-file
+ */
+bool Map::load_GEODATA(const char *filename, GEODATA *mapdata)
+{
+	memset(mapdata, 0, sizeof(GEODATA));
+	mapdata->z_size = 4; // !!! Hack
+
+	int stack_top = lua_gettop(L);
+	lua_dofile(L, F(filename));
+    // we have a table with map data returned at the top of the stack
+	if (!lua_istable(L, -1) || stack_top + 1 != lua_gettop(L)) {
+		lua_settop(L, stack_top);
+		return false;
+	}
+
+	lua_pushstring(L, "Name");
+	lua_gettable(L, -2);
+	if (!lua_isstring(L, -1)) { lua_settop(L, stack_top); return false; }
+	int tid = terrain_set->get_terrain_id(lua_tostring(L, -1));
+	if (tid < 0) { lua_settop(L, stack_top); return false; }
+	mapdata->terrain = (uint16)tid;
+	lua_pop(L, 1);
+
+	lua_pushstring(L, "Width");
+	lua_gettable(L, -2);
+	if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false;	}
+	mapdata->x_size = (uint16)lua_tonumber(L, -1);
+	lua_pop(L, 1);
+
+	lua_pushstring(L, "Height");
+	lua_gettable(L, -2);
+	if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false;	}
+	mapdata->y_size = (uint16)lua_tonumber(L, -1);
+	lua_pop(L, 1);
+
+	lua_pushstring(L, "Mapdata");
+	lua_gettable(L, -2);
+	if (!lua_istable(L, -1)) { lua_settop(L, stack_top); return false; }
+
+	int x = 0;
+
+	for (int row = 1; row <= mapdata->y_size; row++) {
+		lua_pushnumber(L, row);
+		lua_gettable(L, -2);
+		if (!lua_istable(L, -1)) { lua_settop(L, stack_top); return false; }
+
+		for (int col = 1; col <= mapdata->x_size; col++) {
+			lua_pushnumber(L, col);
+			lua_gettable(L, -2);
+			if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false; }
+
+			mapdata->mapdata[x++] = lua_tonumber(L, -1) == -1 ? 0xFE : (uint8)lua_tonumber(L, -1);
+			lua_pop(L, 1);
+		}
+
+		lua_pop(L, 1);
+	}
+
+	lua_settop(L, stack_top);
+	return true;
+}
+
+/**
+ * Saves GEODATA structure to lua-file
+ */
+bool Map::save_GEODATA(const char *filename, GEODATA *mapdata)
+{
+	FILE *fh = fopen(F(filename), "wt");
+	if (fh == NULL) return false;
+
+	fprintf(fh, "return {\n");
+	fprintf(fh, "\tName = \"%s\",\n", terrain_set->get_terrain_name(mapdata->terrain).c_str());
+	fprintf(fh, "\tWidth = %d, Height = %d,\n", mapdata->x_size, mapdata->y_size);
+	fprintf(fh, "\tMapdata = {\n");
+
+	int x = 0;
+	for (int i = 0; i < mapdata->y_size; i++) {
+		fprintf(fh, "\t\t{ ");
+		for (int j = 0; j < mapdata->x_size; j++) {
+			int ch = mapdata->mapdata[x++];
+			if (ch == 0xFE) fprintf(fh, "-1"); else fprintf(fh, "%02d", ch);
+			if (j + 1 < mapdata->x_size) fprintf(fh, ", ");
+		}
+		fprintf(fh, " },\n");
+	}
+
+	fprintf(fh, "\t}\n");
+	fprintf(fh, "}\n");
+
+	fclose(fh);
+	return true;
+}
+
 int Map::walk_time(int _z, int _x, int _y)
 {
 	return mcd(_z, _x , _y, 0)->TU_Walk + mcd(_z, _x , _y, 3)->TU_Walk;
 }
-/*
-void Map::set_map_data(int c, int r, char ter)
-{
-	//int i = 35 - (c * height + (height - r));
-	int i = (width - c - 1) * height + (height - r - 1);
-	gd.mapdata[i] = ter;
-	//for(int col=width-1; col>=0; col--) {
-	//	for(int row=height-1; row>=0; row--) {
-}
 
-void Map::save(char *fname)
-{
-	int fh = open(fname, O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
-	ASSERT(fh != -1);
-	write(fh, &gd, sizeof(gd));
-	close(fh);
-}
-
-void Map::load(char *fname)
-{
-	int fh = open(fname, O_RDONLY | O_BINARY);
-	ASSERT(fh != -1);
-	read(fh, &gd, sizeof(gd));
-	close(fh);
-
-	loadmaps(gd.mapdata);
-}
-*/
 bool Map::Write(persist::Engine &archive) const
 {
 	PersistWriteBinary(archive, *this);
