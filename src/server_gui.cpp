@@ -293,6 +293,9 @@ static int chat_msg_color(const std::string &msg)
 /**
  * Login-Dialog
  */
+ 
+bool set_autologin_on = false;
+
 static bool asklogin()
 {
 	static char login_buffer[1024];
@@ -301,15 +304,16 @@ static bool asklogin()
 
 	static DIALOG login_dialog[] = {
         //(dialog proc)           (x)  (y) (w) (h) (fg)(bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
-        { d_agup_shadow_box_proc,  0,   0, 280, 80, 0,  1,  0, 0,  0, 0, NULL, NULL, NULL },
+        { d_agup_shadow_box_proc,  0,   0, 280, 95, 0,  1,  0, 0,  0, 0, NULL, NULL, NULL },
         { d_agup_rtext_proc,      10,  10,  70, 10, 0,  1,  0, 0,  0, 0, (void *)_("Server:"), NULL, NULL },
         { d_agup_edit_proc,       80,  10, 192, 10, 0,  1,  0, 0, 22, 0, (void *)host_buffer, NULL, NULL },
         { d_agup_rtext_proc,      10,  25,  70, 10, 0,  1,  0, 0,  0, 0, (void *)_("Login:"), NULL, NULL },
         { d_agup_edit_proc,       80,  25, 192, 10, 0,  1,  0, 0, 22, 0, (void *)login_buffer, NULL, NULL },
         { d_agup_rtext_proc,      10,  40,  70, 10, 0,  1,  0, 0,  0, 0, (void *)_("Password:"), NULL, NULL },
         { d_agup_edit_proc,       80,  40, 192, 10, 0,  1,  0, 0, 22, 0, (void *)password_buffer, NULL, NULL },
-        { d_agup_button_proc,     140, 56,  60, 18, 0,  1, 13, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL },
-        { d_agup_button_proc,     210, 56,  60, 18, 0,  1, 27, D_EXIT, 0, 0, (void *)_("Cancel"), NULL, NULL },
+        { d_agup_check_proc,      78,  57, 192, 10, 0,  1,  0, 0,  1, 0, (void *)_("Autologin"), NULL, NULL },
+        { d_agup_button_proc,     140, 71,  60, 18, 0,  1, 13, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL },
+        { d_agup_button_proc,     210, 71,  60, 18, 0,  1, 27, D_EXIT, 0, 0, (void *)_("Cancel"), NULL, NULL },
 		{ d_yield_proc,           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
 		{ NULL }
 	};
@@ -321,10 +325,12 @@ static bool asklogin()
 	centre_dialog(login_dialog);
 	set_dialog_color(login_dialog, COLOR_BLACK1, COLOR_WHITE);
 
-	if (popup_dialog(login_dialog, 2) == 7) {
+	if (popup_dialog(login_dialog, 2) == 8) {
 		g_server_host     = host_buffer;
 		g_server_login    = login_buffer;
 		g_server_password = password_buffer;
+		if (login_dialog[7].flags == D_SELECTED)
+            set_autologin_on = true;
 		return true;
 	}
 	return false;
@@ -396,7 +402,8 @@ int connect_internet_server()
 		return -1;
 	}
 
-	g_server_autologin = 1; // Remember successful login
+    if (set_autologin_on)
+	   g_server_autologin = 1; // Remember successful login
 
 	std::auto_ptr<ConsoleWindow> chat(new ConsoleWindow(SCREEN_W, SCREEN_H, cfg_get_console_font()));
 	std::auto_ptr<WindowBorder> chat_border(new WindowBorder(chat.get(), 
