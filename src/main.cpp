@@ -221,7 +221,7 @@ void restartgame()
 
 	//sel_man = NULL;
 	sel_man = platoon_local->captain();
-	map->center(sel_man);
+	if (sel_man != NULL) map->center(sel_man);
 	DONE = 0; TARGET = 0; turn = 0;
 }
 
@@ -694,36 +694,11 @@ void switch_turn()
 	map->step();
 
 //	Still did not test where this code would be better to put
-	Soldier *check;
 
-	if (platoon_remote->captain() != NULL) // Win?
-	{
-		check = platoon_remote->captain();
-		while (check && (check->state() == STUN))
-		{
-			check = check->next();
-			if (check == platoon_remote->captain())
-				break;
-		}
-		if (((check == platoon_remote->captain()) && (check->state() == STUN)) || (check == NULL))
-			win = 1;
-	}
-	else
+	if (platoon_remote->captain() == NULL) // Win?
 		win = 1;
 
-	if (platoon_local->captain() != NULL) // Loss?
-	{
-		check = platoon_local->captain();
-		while (check && (check->state() == STUN))
-		{
-			check = check->next();
-			if (check == platoon_local->captain())
-				break;
-		}
-		if (((check == platoon_local->captain()) && (check->state() == STUN)) || (check == NULL))
-			loss = 1;
-	}
-	else
+	if (platoon_local->captain() == NULL) // Loss?
 		loss = 1;
 }
 
@@ -759,17 +734,7 @@ void send_turn()
 		platoon_remote = pt;
 
 		sel_man = platoon_local->captain();
-		while (sel_man && (sel_man->state() == STUN))
-		{
-			sel_man = sel_man->next();
-			if (sel_man == platoon_local->captain())
-			{
-				sel_man = NULL;
-				break;
-			}
-		}
-		if (sel_man != NULL)
-			map->center(sel_man);
+		if (sel_man != NULL) map->center(sel_man);
 
 		platoon_local->set_visibility_changed();
 
@@ -1520,7 +1485,7 @@ void faststart()
 	}
 
 	sel_man = platoon_local->captain();
-	map->center(sel_man);
+	if (sel_man != NULL) map->center(sel_man);
 	DONE = 0; TARGET = 0; turn = 0;
 
 	resize_screen2(0, 0);

@@ -243,22 +243,26 @@ Soldier *Platoon::findnum(int N)
 	return ss;
 }
 
-
+/**
+ * Returns pointer to the next soldier who is not still marked as moved.
+ * When reaching end of soldiers listm the search is wrapped around to the 
+ * first soldier
+ */
 Soldier *Platoon::next_not_moved_man(Soldier *sel_man)
 {
-	//sel_man->MOVED = 1; //in icon done
-	Soldier *ss = sel_man->next();
-	while ((ss != NULL) && (ss->state() != STUN)) {
-		if (!ss->MOVED)
-			return ss;
-		ss = ss->next();
+	if (sel_man == NULL || !sel_man->is_active()) sel_man = captain();
+	if (sel_man == NULL) return NULL;
+
+	Soldier *ss = sel_man->next_active_soldier();
+	while (ss != NULL) {
+		if (!ss->MOVED) return ss;
+		ss = ss->next_active_soldier();
 	}
 
-	ss = man;
-	while ((ss != NULL) && (ss != sel_man) && (ss->state() != STUN)) {
-		if (!ss->MOVED)
-			return ss;
-		ss = ss->next();
+	ss = captain();
+	while (ss != sel_man) {
+		if (!ss->MOVED) return ss;
+		ss = ss->next_active_soldier();
 	}
 
 	return sel_man;
@@ -281,7 +285,7 @@ int Platoon::nomoves()
 {
 	Soldier *ss = man;
 	while (ss != NULL) {
-		if ((ss->ismoving()) && (ss->state() != STUN))
+		if (ss->ismoving() && ss->is_active())
 			return 0;
 		ss = ss->next();
 	}
@@ -388,7 +392,7 @@ int Platoon::check_reaction_fire(Soldier *target)
 	int total = 0;
 	while (ss != NULL)
 	{
-		if ((ss->state() != STUN) && (ss->check_reaction_fire(target)))
+		if (ss->is_active() && ss->check_reaction_fire(target))
 			total++;
 		// Of course, it helps if you check everyone in the platoon....
 		ss = ss->next();

@@ -224,6 +224,33 @@ public:
 	void set_prev(Soldier *s) { m_prev = s; }
 	Bullet *bullet() { return m_bullet; }
 
+	bool is_active()
+	{
+		return m_state != STUN && m_state != DIE && z != -1;
+	}
+
+	Soldier *next_active_soldier()
+	{
+		Soldier *s = m_next;
+		while (s != NULL) {
+			if (s->is_active())
+				return s;
+			s = s->m_next;
+		}
+		return NULL;
+	}
+
+	Soldier *prev_active_soldier()
+	{
+		Soldier *s = m_prev;
+		while (s != NULL) {
+			if (s->is_active())
+				return s;
+			s = s->m_prev;
+		}
+		return NULL;
+	}
+
 	int check_reaction_fire(Soldier *the_target);
 	int do_reaction_fire(Soldier *the_target, Item *it, int shot_type);
 /*

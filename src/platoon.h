@@ -72,7 +72,7 @@ public:
 	int realsize();
 	int freeNID();
 
-	Soldier *captain() { return man; }
+	Soldier *captain() { return man->is_active() ? man : man->next_active_soldier(); }
 	int num_of_men() { return size; }
 
 	int check_reaction_fire(Soldier *target);
