@@ -100,7 +100,7 @@ void SPK::show_pck(BITMAP *_dest, int _x, int _y)
 BITMAP *SPK::spk2bmp()
 {
 	BITMAP *bmp = create_bitmap(320, 200);
-	clear(bmp);
+	clear_to_color(bmp, xcom_color(0));
 	long i = 0, j = 0;
 
 //	Process .scr files

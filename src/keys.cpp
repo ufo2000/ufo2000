@@ -28,18 +28,44 @@ static int keyswitch_lang = 0;
 
 void keyswitch(int keyswitch_lang)
 {
+	push_config_state();
+	set_config_file(F("$(home)/ufo2000.ini"));
+
 	switch (keyswitch_lang) {
-		case KEY_E: set_config_string("system", "keyboard", "us"); break;
-		case KEY_R: set_config_string("system", "keyboard", "ru"); break;
-		case KEY_B: set_config_string("system", "keyboard", "by"); break;
-		case KEY_P: set_config_string("system", "keyboard", "pl"); break;
-		case KEY_D: set_config_string("system", "keyboard", "de"); break;
-		default: return;
+		case 0: {
+			const char *current_keyboard = get_config_string("system", "keyboard", "us");
+			const char *primary_keyboard = get_config_string("system", "primary_keyboard", "us");
+			const char *secondary_keyboard = get_config_string("system", "secondary_keyboard", "ru");
+			if (strcmp(current_keyboard, primary_keyboard) == 0)
+				set_config_string("system", "keyboard", secondary_keyboard);
+			else
+				set_config_string("system", "keyboard", primary_keyboard);
+			break;
+		}
+		case KEY_E: 
+			set_config_string("system", "keyboard", "us"); 
+			break;
+		case KEY_R: 
+			set_config_string("system", "keyboard", "ru"); 
+			break;
+		case KEY_B: 
+			set_config_string("system", "keyboard", "by"); 
+			break;
+		case KEY_P: 
+			set_config_string("system", "keyboard", "pl"); 
+			break;
+		case KEY_D: 
+			set_config_string("system", "keyboard", "de"); 
+			break;
+		default: 
+			pop_config_state(); 
+			return;
 	}
 	
 	clear_keybuf();
 	remove_keyboard();
 	install_keyboard();
+	pop_config_state();
 }
 
 void process_keyswitch()
