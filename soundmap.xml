@@ -17,7 +17,7 @@
     You can find all SoundSymbols (values of 'sym' attribute) 
     known to the ufo2000 engine in the src/sound.cpp file 
     
-    http://lxnt.info:8888/repos/ufo2000/trunk/src/sound.cpp
+    http://lxnt.info:8888/repos/ufo2k/trunk/src/sound.cpp
         
     You can download playcat program to play the ufo .cat files
     at http://lxnt.info/stuff/playcat.exe
@@ -30,9 +30,9 @@
     Source : http://lxnt.info/stuff/playcat.c
     Requires Allegro 4.0 DLL : http://lxnt.info/stuff/alleg40.dll
     
-    You can test edited soundmap.xml file by launching the ufo2000
-    binary with -soundtest parameter. It will output all loaded 
-    sounds and play each once.
+    You can test edited soundmap.xml file by setting F_SOUNDCHECK flag to 1
+    in the ufo2000.ini file and launching the ufo2000.
+    It will print all loaded  sounds and play each once.
 -->
 
 <soundmap>

@@ -436,7 +436,8 @@ int soundFile::loadFile(const char *fname, std::ostream& log, bool verbose) {
 }
 
 SAMPLE * soundFile::fetchSample(int idx) {
-    return samples.at(idx);
+//    return samples.at(idx);
+    return samples[idx];
 }
 
 
@@ -445,8 +446,10 @@ cat_file_type_e_t soundFile::getFileType(const std::string& buf) {
     int i;
     int offs;
     const int head_len = 10;
+    char sbuf[head_len];
 
     buf.copy((char *)&offs, 4, 0); /* TODO: will break on big-endian arch. */
+    buf.copy(sbuf, head_len, offs);
     
 /* 
  * Assuming this is CE file, scan first head_len bytes for RIFF sequence.
@@ -454,8 +457,8 @@ cat_file_type_e_t soundFile::getFileType(const std::string& buf) {
  *
  */
     
-    for (i=offs; i<offs+head_len; i++) 
-        if ( 0 == buf.compare(offs, 4, "RIFF", 4))
+    for (i=0; i<head_len - 4; i++) 
+        if ( 0 == strcmp(sbuf+i, "RIFF"))
             return CT_CE; /* gotcha, this is CE file */
     
     return CT_ORIGINAL; 
@@ -616,7 +619,7 @@ void soundFile::loadOrigCat(const std::string& buf, std::ostream& log, bool verb
 
 /* XML parser state */
 struct xmlp_baton_t {
-    XML_Parser *parser;
+    XML_Parser parser;
     soundSystem *zeSys;
     
     bool inSoundMap, inFile, inSample, skipThisFile; // parse state
@@ -646,7 +649,7 @@ static XML_Char *h_getAttr(const XML_Char **atts, const char *name)
     return NULL;
 }
 
-static void h_recordXMLStreamPos(std::ostream& os, XML_Parser *xp) {
+static void h_recordXMLStreamPos(std::ostream& os, XML_Parser xp) {
     int line = XML_GetCurrentLineNumber(xp);
     int column = XML_GetCurrentColumnNumber(xp);
     os<<" line "<<line<<", column "<<column<<" ";
@@ -779,7 +782,6 @@ soundSystem::soundSystem() { }
 //~soundSystem::soundSystem() { }
 
 int soundSystem::initialize(const std::string& xml, std::ostream *log, bool verbose) {
-    XML_Parser *xp;
     xmlp_baton_t baton;
     std::stringstream *backup_log = NULL;
     
@@ -803,9 +805,7 @@ int soundSystem::initialize(const std::string& xml, std::ostream *log, bool verb
 
     theSamples.assign(sizeof(KNOWN_SYMS), NULL);
 
-    xp = (XML_Parser *)XML_ParserCreate((XML_Char *)NULL);
-    
-    
+    baton.parser = XML_ParserCreate((XML_Char *)NULL);
     baton.zeSys = this;
     baton.current = NULL;
     baton.inSoundMap = false;
@@ -816,20 +816,19 @@ int soundSystem::initialize(const std::string& xml, std::ostream *log, bool verb
     baton.verbose = verbose;
     baton.curSample = NULL;
     baton.curSampleIndex = 0;
-    baton.parser = xp;
     
-    XML_SetElementHandler(xp, h_StartEl, h_EndEl);
-    XML_SetUserData(xp, &baton);
-    XML_Parse(xp, xml.data(), xml.size(), 1);
+    XML_SetElementHandler(baton.parser, h_StartEl, h_EndEl);
+    XML_SetUserData(baton.parser, &baton);
+    XML_Parse(baton.parser, xml.data(), xml.size(), 1);
     
-    if (XML_GetErrorCode(xp) != XML_ERROR_NONE) {
-        *log<<"XML parse error: "<<XML_ErrorString(XML_GetErrorCode(xp))
-           <<" at line "<<XML_GetCurrentLineNumber(xp)
-           <<" col "<<XML_GetCurrentColumnNumber(xp)<<std::endl;
+    if (XML_GetErrorCode(baton.parser) != XML_ERROR_NONE) {
+        *log<<"XML parse error: "<<XML_ErrorString(XML_GetErrorCode(baton.parser))
+           <<" at line "<<XML_GetCurrentLineNumber(baton.parser)
+           <<" col "<<XML_GetCurrentColumnNumber(baton.parser)<<std::endl;
         return -1;
     }
     
-    XML_ParserFree(xp);
+    XML_ParserFree(baton.parser);
     
     if (backup_log!= NULL)
         delete backup_log;
@@ -871,7 +870,7 @@ soundSystem *soundSystem::getInstance() {
 
 void soundSystem::getLoadedSyms(std::ostream *os) {
     for (unsigned i = 0; i != theSamples.size(); i++) 
-        if (theSamples.at(i) != NULL)
+        if (theSamples[i] != NULL)
             *os<<i<<": '"<<getSymString(static_cast<SoundSym_e_t> (i))<<"'\n";
 }
 
@@ -879,13 +878,13 @@ void soundSystem::playLoadedSamples(std::ostream *os) {
     if (!soundInstalled)
         return;
     for (unsigned i = 0; i != theSamples.size(); i++) 
-        if (theSamples.at(i) != NULL) {
+        if (theSamples[i] != NULL) {
             *os<<"Playing '"<<getSymString(static_cast<SoundSym_e_t> (i))<<"' (#"<<i
-            <<", bits "<<(theSamples.at(i)->bits)
-            <<" stereo "<<(theSamples.at(i)->stereo)
-            <<" freq "<<(theSamples.at(i)->freq)
-            <<" pri "<<(theSamples.at(i)->priority)
-            <<" len "<<(theSamples.at(i)->len)<<")"<< std::endl;
+            <<", bits "<<(theSamples[i]->bits)
+            <<" stereo "<<(theSamples[i]->stereo)
+            <<" freq "<<(theSamples[i]->freq)
+            <<" pri "<<(theSamples[i]->priority)
+            <<" len "<<(theSamples[i]->len)<<")"<< std::endl;
             play(static_cast<SoundSym_e_t> (i));
             rest(1500); // sleep 1.5 secs to allow the sample to play.
         }
