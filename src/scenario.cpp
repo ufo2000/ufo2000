@@ -32,9 +32,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 IMPLEMENT_PERSISTENCE(Scenario, "Scenario");
 
-int explosives[3][8] = {{GRENADE, SMOKE_GRENADE, PROXIMITY_GRENADE, CANNON_HE_AMMO, CANNON_I_AMMO, AUTO_CANNON_HE_AMMO, AUTO_CANNON_I_AMMO, STUN_MISSILE},
-						{HIGH_EXPLOSIVE, SMALL_ROCKET, INCENDIARY_ROCKET, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe},
-						{ALIEN_GRENADE, LARGE_ROCKET, BLASTER_BOMB, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe}};
+int explosives[3][6] = {{GRENADE, PROXIMITY_GRENADE, CANNON_HE_AMMO, CANNON_I_AMMO, AUTO_CANNON_HE_AMMO, AUTO_CANNON_I_AMMO},
+						{HIGH_EXPLOSIVE, SMALL_ROCKET, INCENDIARY_ROCKET, 0xfe, 0xfe, 0xfe},
+						{ALIEN_GRENADE, LARGE_ROCKET, BLASTER_BOMB, 0xfe, 0xfe, 0xfe}};
 						
 Scenario::Scenario (int sc_type)
 {
@@ -733,7 +733,7 @@ bool Scenario::platoon_common (long points, Platoon *platoon, PanPos pos, char b
 	if(rules[0] < 3) {
 		for (int i = 0; i < len; i++) {
 			for (int j = rules[0]; j < 3; j++) {
-			    for (int k = 0; k < 8; k++) {
+			    for (int k = 0; k < 6; k++) {
 			        if (buf[i] == explosives[j][k]) {
 			            if (type != SC_SABOTAGE || explosives[j][k] != HIGH_EXPLOSIVE || pos != POS_LEFT) {
 							g_console->printf(xcom1_color(36), "%s isn't allowed.", Item::obdata_name(explosives[j][k]).c_str());
