@@ -248,7 +248,7 @@ void Units::print(int gcol)
 	else*/
 
   //int yy = 240;
-    int yy = gy + size * 15 - 2;
+    int yy = gy + size * 15 - 3;
     damage_points = draw_items_stats(gx, yy + 10, buf, len);
 
     textprintf_centre(screen2, g_small_font, gx + 10 * 8, yy, COLOR_GREEN,
@@ -588,12 +588,13 @@ void Units::print_simple(int gcol)
 		build_items_stats(&pd_remote->id[i], buf, len);
 	}
 
+	int yy = gy + size * 15 - 3;
 	/*if (pos == POS_LEFT)
 		draw_items_stats(0, 160+10, buf, len);
 	else*/
-	points += draw_items_stats(gx, 160 + 10, buf, len);
+	points += draw_items_stats(gx, yy + 10, buf, len);
 
-    textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, COLOR_GREEN, _("Total points=%d"), points);
+    textprintf_centre(screen2, g_small_font, gx + 10 * 8, yy, COLOR_GREEN, _("Total points=%d"), points);
 }
 
 /**
