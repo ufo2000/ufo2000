@@ -58,7 +58,8 @@ Scenario::Scenario (int sc_type)
 	rules[0] = 3;	//all explosives allowed
 	rules[1] = 10;	//10k points limit
 	rules[2] = 0;	//no turn limit
-	rules[3] = 0;   //all map isn't explored	
+	rules[3] = 0;   //all map isn't explored
+	rules[4] = 0;	//weapons on ground in editor aren't allowed	
 	
 	new_scenario(sc_type);
 }
@@ -693,18 +694,14 @@ bool Scenario::is_correct_platoon (long points, Platoon *platoon, char *first_so
 	
 	if (n == false) return n;
 	
-	n = platoon_common(points, pos, buf, len);
+	n = platoon_common(points, platoon, pos, buf, len);
 	if (n == false) return n;
 	
 	return true;
 }
 
-bool Scenario::platoon_common (long points, PanPos pos, char buf[10000], int len)
+bool Scenario::platoon_common (long points, Platoon *platoon, PanPos pos, char buf[10000], int len)
 {
-	if (points > rules[1] * 1000) {
-	    g_console->printf("%d points limit exceeded!", rules[1] * 1000);
-	    return false;
-	}
 	if(rules[0] < 3) {
 		for (int i = 0; i < len; i++) {
 			for (int j = rules[0]; j < 3; j++) {
@@ -717,6 +714,25 @@ bool Scenario::platoon_common (long points, PanPos pos, char buf[10000], int len
 					}
 				}
 			}
+		}
+	}
+	
+	if (points > rules[1] * 1000) {
+	    g_console->printf("%d points limit exceeded!", rules[1] * 1000);
+	    return false;
+	}
+	
+	if (!rules[4]) {
+		char tmp[10000]; memset(tmp, 0, sizeof(tmp));
+		//char *buf2 = tmp;
+		int len2 = 0;
+		
+		for (int i = 0; i < platoon->num_of_men(); i++)
+			platoon->findnum(i)->place(P_MAP)->build_items_stats(tmp, len2);
+			
+		if (len2 > 0) {
+			g_console->printf("Items on the ground aren't allowed (you have: %d, including unselected soldiers).", len2);
+			return false;
 		}
 	}
 

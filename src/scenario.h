@@ -129,7 +129,7 @@ private:
 	bool			minimap_rescue (int col, int row);               
 	bool			minimap_capture (int lev, int col, int row, Map *m_map);
 	
-	bool            platoon_common (long points, PanPos pos, char buf[10000], int len);
+	bool            platoon_common (long points, Platoon *platoon, PanPos pos, char buf[10000], int len);
 	bool            platoon_escape (Platoon *platoon, PanPos pos, char *first_soldier);
 	bool            platoon_sabotage (PanPos pos, char buf[10000], int len);
 	bool            platoon_assassin (Platoon *platoon, PanPos pos, char *first_soldier);
@@ -152,7 +152,7 @@ public:
 	bool			new_scenario (std::string sc_name);
     void            new_coords ();
     
-    int             rules[4]; //0 - allowed explosives, 1 - points limit(x1000), 2 - turn limit, 3 - all map explored
+    int             rules[5]; //0 - allowed explosives, 1 - points limit(x1000), 2 - turn limit, 3 - all map explored, 4 - weapons on ground in editor
     Option			*options[SCENARIO_NUMBER][3];
 	
 	int				type;

@@ -178,9 +178,9 @@ void Units::print(int gcol)
 	textout_centre(screen2, font, terrain_set->get_terrain_name(mapdata.terrain).c_str(), gmx + gmw / 2, SCREEN2H - 41, xcom1_color(BUTTON));
 	
 	int tmp;
-	g_time_limit == -1 ? tmp = 0 : tmp = g_time_limit;
+	g_time_limit == -1 ? tmp = 0 : tmp = g_time_limit;                      
 	textout_centre(screen2, font, "Game rules:", gmx + gmw / 2, SCREEN2H - 28, xcom1_color(BUTTON));
-	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 16, xcom1_color(BUTTON), "%d; %dk; %d; %d; %d", scenario->rules[0], scenario->rules[1], scenario->rules[2], tmp, scenario->rules[3]);
+	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 16, xcom1_color(BUTTON), "%d; %dk; %d; %d; %d; %d", scenario->rules[0], scenario->rules[1], scenario->rules[2], tmp, scenario->rules[3], scenario->rules[4]);
 	
 	for (int i = 0; i < len; i++) buf[i] = 0;
 	len = 0;
@@ -315,14 +315,15 @@ void Units::draw_map_window()
 
 void Units::draw_rules_window()
 {
-	rect(screen2, gmx + gmw / 2 - 80, SCREEN2H - 103, gmx + gmw / 2 + 80, SCREEN2H - 37, xcom1_color(1));
-	rectfill(screen2, gmx + gmw / 2 - 80 + 1, SCREEN2H - 103 + 1, gmx + gmw / 2 + 80 - 1, SCREEN2H - 37 - 1, xcom1_color(14));
+	rect(screen2, gmx + gmw / 2 - 80, SCREEN2H - 103, gmx + gmw / 2 + 80, SCREEN2H - 25, xcom1_color(1));
+	rectfill(screen2, gmx + gmw / 2 - 80 + 1, SCREEN2H - 103 + 1, gmx + gmw / 2 + 80 - 1, SCREEN2H - 25 - 1, xcom1_color(14));
 	
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 97, xcom1_color(BUTTON), "Explosives level: %d", scenario->rules[0]);
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 85, xcom1_color(BUTTON), "Points limit: %d000", scenario->rules[1]);
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 73, xcom1_color(BUTTON), scenario->rules[2] == 0 ? "No turns limit" : "Turns limit: %d", scenario->rules[2]);
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 61, xcom1_color(BUTTON), g_time_limit == -1 ? "No time limit" : "Time limit: %d sec", g_time_limit);
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 49, xcom1_color(BUTTON), scenario->rules[3] ? "All map is explored" : "Map isn't explored");
+	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 37, xcom1_color(BUTTON), scenario->rules[4] ? "Editor: ground on" : "Editor: ground off");
 }
 
 void Units::draw_rules_0_window()
@@ -405,7 +406,7 @@ int Units::draw_items_stats(int gx, int gy, char *buf, int len)
 				num++;
 		}
 		// Count damage for platoon costs.
-		if ((Item::obdata_damage(weapon[w]) > 0) && (num > 0))
+		if ((Item::obdata_cost(weapon[w]) > 0) && (num > 0))
 			damage_points += (Item::obdata_cost(weapon[w]) * num);
 		if (Item::obdata_isAmmo(weapon[w])) continue;
 		if (num != 0) {
@@ -842,27 +843,35 @@ void Units::execute_map(Map *map, int map_change_allowed)
 
 void Units::execute_rules(Map *map, int map_change_allowed)
 {
-    if (!mouse_inside(gmx + gmw / 2 - 80, SCREEN2H - 103, gmx + gmw / 2 + 80, SCREEN2H - 37))
+    if (!mouse_inside(gmx + gmw / 2 - 80, SCREEN2H - 103, gmx + gmw / 2 + 80, SCREEN2H - 25))
 		state = PS_MAIN;
 
-    if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 101, gmx + gmw / 2 + 75, SCREEN2H - 88))
+    if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 101, gmx + gmw / 2 + 75, SCREEN2H - 89))
         state = PS_RULES_0;
 
-    if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 87, gmx + gmw / 2 + 75, SCREEN2H - 74))
+    if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 88, gmx + gmw / 2 + 75, SCREEN2H - 76))
         state = PS_RULES_1;
 
-    if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 73, gmx + gmw / 2 + 75, SCREEN2H - 60))
+    if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 75, gmx + gmw / 2 + 75, SCREEN2H - 63))
         state = PS_RULES_2;
         
-    if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 59, gmx + gmw / 2 + 75, SCREEN2H - 48))
+    if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 62, gmx + gmw / 2 + 75, SCREEN2H - 50))
         state = PS_RULES_3;
         
-	if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 47, gmx + gmw / 2 + 75, SCREEN2H - 32)) {
+	if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 49, gmx + gmw / 2 + 75, SCREEN2H - 37)) {
 	    if (scenario->rules[3] == 0)
 	        scenario->rules[3] = 1;
 		else
 		    scenario->rules[3] = 0;
 		net->send_rules(3, scenario->rules[3]);
+	}
+	
+	if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 36, gmx + gmw / 2 + 75, SCREEN2H - 25)) {
+		if (scenario->rules[4] == 0)
+			scenario->rules[4] = 1;
+		else
+			scenario->rules[4] = 0;
+		net->send_rules(4, scenario->rules[4]);
 	}
 }
 

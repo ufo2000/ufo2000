@@ -1358,7 +1358,9 @@ void Net::send_rules(int index, int value)
 	
 	send(pkt.str(), pkt.str_len());
 	
-	local.START = 0;
+	local.SEND =
+	local.START = 
+	remote.SEND =
 	remote.START = 0;
 }
 
@@ -1369,7 +1371,9 @@ int Net::recv_rules()
 	pkt >> index;
 	pkt >> scenario->rules[index];
 
-	local.START = 0;
+	local.SEND =
+	local.START = 
+	remote.SEND =
 	remote.START = 0;
 
 	return 1;
@@ -1386,7 +1390,9 @@ void Net::send_options(int scenario_type, int index, int value)
 	
 	send(pkt.str(), pkt.str_len());
 	
-	local.START = 0;
+	local.SEND =
+	local.START = 
+	remote.SEND =
 	remote.START = 0;
 }
 
@@ -1399,7 +1405,9 @@ int Net::recv_options()
 	pkt >> index;
 	pkt >> scenario->options[scenario_type][index]->value;
 
-	local.START = 0;
+	local.SEND =
+	local.START = 
+	remote.SEND =
 	remote.START = 0;
 	
 	if (scenario->options[scenario_type][index]->reset_deploy)
