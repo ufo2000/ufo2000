@@ -1398,7 +1398,6 @@ void Soldier::wayto(int dest_lev, int dest_col, int dest_row)
     //  Should make normal pathfinding code to find paths across stairs
         dest_lev = z;
 
-        map->set_pathfind_mode(PF_TRUE);
         curway = 1;
         waylen = map->pathfind(z, x, y, dest_lev, dest_col, dest_row, way);
         if (map->man(dest_lev, dest_col, dest_row) != NULL) {

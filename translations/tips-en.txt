@@ -2,33 +2,36 @@
 # 2004-10-27 20:40
 
 ## Basic usage of Ufo2000 (user-interface etc.) :
-* The keys Page-Up and Page-Down can also be used to switch between levels.
-* The Tab-key can be used to jump to the next soldier.
+* You can use PageUp and PageDown keys to switch between levels.
+* You can use the Tab key to jump to the next soldier both in battlescape view and in Unit editor.
 * To open doors: right-click to turn the soldier towards the door, then right-click behind the door.
-* Arrow keys change size of battlescape view, chat window and SHOW/HIDE minimap. 
+* You can use Arrow keys to scroll the battlescape view.
+* Shift+Arrow keys change the size of the battlescape view, chat window and SHOW/HIDE minimap.
+* You can show/hide the minimap and review previous chat or game messages by resizing the battlescape view.
+
 ## Advanced usage of Ufo2000:
-* When moving, if you place the cursor on the map and hit Ctrl you will know how much TU's it costs to move the unit there.
-* When aiming, hold Ctrl to know if there's a valid line of sight between the soldier and the target.
-* When throwing an object (such as a grenade), hold Ctrl to see how it will be thrown.
-* To stop immediately a unit's movement click the Right mouse button.
-* To use precise aiming hold Shift when firing a weapon.
-* Crouching gives more accuracy.
+* When moving, if you place the cursor on the map and hit Left Ctrl you will know how much TU's it costs to move the unit there.
+* When aiming, hold Left Alt key to know if there's a valid line of sight between the soldier and the target.
+* When throwing an object (such as a grenade), hold Left Alt to see how it will be thrown.
+* To stop immediately a unit's movement, click the Right mouse button.
+* To use precise aiming, hold Left Shift while firing a weapon.
+* Kneeling gives your units more accuracy; moreover, they become harder to hit.
 * Keeping time units allows a soldier to get a reaction fire on the first enemies he might "see".
 
 ## Weapons / Equipment / Units:
-* A soldier's skin also effects its armour.
-* Aliens don't wear armor.
+* A soldier's skin also effects his or her armour.
+* Aliens don't wear armour.
 * Don't forget ammo for your weapon.
 * When editing soldiers' starting equipment, remember to load any weapons you add.
 * For heavy weapons, like cannon and rocket-launcher, give extra ammo to another soldier.
 * Throwing grenades requires airspace, otherwise they might hit the ceiling.
 * The timer of grenades does not count down when you hold it in you hand.
-* The timer on high explosives cannot be stopped after it is primed. 
-* Prox mines explode when a unit steps into any of the tiles surrounding the mine's own. 
+* The timer on high explosives cannot be stopped after it is primed.
+* Proximity mines explode when a unit steps into any of the tiles surrounding the mine's own.
 * Smoke can last up to three turns.
-* Notice that heavy plasma doesn't have auto-fire as it had it X-Com.
+* Notice that heavy plasma doesn't have auto-fire as it had in X-Com.
 * When stun-damage goes above health, the soldier goes to sleep.
-* Powerarmor and flying-armor is not affected from stun-bombs.
+* Powerarmor and flying-armor are affected with stun-bombs just like any other skins.
 
 ## Terrain:
 * Units tend to survive more if placed behind cover.

@@ -126,8 +126,9 @@ To place your units, press the left mouse button on his/her name and
 point to your chosen starting position on the map. Press again to 
 confirm. To deselect the soldier click the right mouse button on his/her name.
 
-Info about player units:
-   1) "total men points=..." Total points cost for selected units.
+Information about player units:
+   1) "Total points=X (of Y)": X is the total points cost of selected units,
+       while Y stands for the total points cost of all units in the squad.
    2) Number of weapons of each kind for the selected units.
 
 "Match settings" box:
@@ -151,31 +152,50 @@ or match rules will revert all words to red.
 To return to the main menu, press ESC.
 
 
-===============
+===========
 Unit Editor
-===============
+===========
 
-You can access this from within the Unit Placement screen. Hold CTRL 
-and click on the soldier you wish to edit.
+You can access Unit Edotir from the Mission Planner. Hold CTRL and click
+on the soldier you wish to edit. You can alternatively press F4.
 
-Coming into this you can edit soldier parameters and loadout. Enabled 
-parameters for soldiers are: Stamina, Strength, Time Units, Health, Firing, 
-Reactions, and Throwing Accuracy. Other parameters are disabled because 
-we don't know how they work in-game. If, after arranging your equipment, 
-you wish to edit your stats again, click the chart on the right.
+Here you can change both parameters and equipment of your soldiers.
 
-Each parameter is restricted to be >= 50 and <= 80. The sum of these 
-parameters has a certain limit for each unit, so you can't set all 
-the parameters to maximum. You can save and load various unit/squad 
-configurations with these keys:
+To change your soldier's equipment, select an item from the armoury box
+below with the left mouse button, and then put that item to soldier's
+backpack, hands, belt, or pockets. When you have finished giving your
+soldiers a particular piece of equipment, put it back to the armoury box
+or simply click the right mouse button. To deselect some item already
+given to your soldiers, click it with the right mouse button, or select
+it by the left mouse button and put to some free place in the armoury box.
+
+To change your soldier's parameters, click the chart on the right.
+Currently available parameters are: Time Units, Stamina, Health, Reactions,
+Firing Accuracy, Throwing Accuracy, and Strength. You can also change the
+name of your soldier, his or her race, armor and appearance (the two latter
+properties can only be changed for the human race).
+
+Each parameter is restricted to be >= 50 and <= 80 except Strength which
+can have a value between 25 and 40. The sum of these parameters (with
+Strength doubled) has a certain limit for each unit, so you can't set
+all the parameters to maximum. Currently the points limit is 420, giving
+an average of 60 points per parameter with the exception for Strength
+which gets only 30 points because of its double cost.
+
+You can save and load various unit/squad configurations with these keys:
 
 F2          Save
 F3          Load
 
+Use arrow buttons at the top of the screen or arrow keys to cycle between
+soldiers. You can also use the TAB key to advance to the next soldier.
 
-===============
+To return to the Mission Planner, press ESC or click OK button at the top
+of the screen.
+
+=============
 Game Controls
-===============
+=============
 
 All unit actions, as in X-COM, are controlled with the mouse. UFO2000 uses
 the same controls as the original games with only minor differences:
@@ -186,34 +206,46 @@ the same controls as the original games with only minor differences:
 You can send and receive messages to/from the other player during the game. 
 Just type your message out on the keyboard, then hit enter.
 
-These keys are used for game control: 
+The following keys are used to control the game:
 
 F10         Switch Fullscreen/Windowed mode
 
 ESC         Exit to main menu
 
-Cursors     Scroll the map window
+Arrows      Scroll the map window
 
-Right CTRL  Fast switching between two keymaps selected in primary_keyboard 
-F9          and secondary_keyboard in ufo2000.ini file. 
+Right CTRL  Fast switching between two keymaps selected as primary_keyboard
+ +F9        and secondary_keyboard in ufo2000.ini file.
 
 Right CTRL  + 'b', 'd', 'e', 'p' or 'r' Switch between Belarusian, German,
             English, Polish and Russian keymaps (other languages can be
-            selected in ufo2000.ini file)
+            selected in ufo2000.ini file).
 
-Left CTRL   Show route of selected man to the cursor cell with TU cost.
-        In targeting mode it shows the trajectory of your shots and
-        thrown items. In the inventory screen, it will show item
-        damage value. (ALT alternative)
+Left CTRL   Shows the route of the selected soldier to the cursor cell
+            with number of TUs left at each cell of the path.
+            In the inventory screen, it will show item damage value
+            as a damage bar.
 
-Left SHIFT  Allows precise aiming if held down until after firing with
-        the left mouse button.
+Left ALT    Shows the trajectory of your shots assuming the accuracy of the
+            shot is ideal.
+            When THROW for an object in hand is selected, it alternatively
+            shows the trajectory of an ideal throw.
+            In the inventory screen, it will show item damage value
+            in digits.
 
-Left SHIFT  + cursor keys Change size of map screen
+Left SHIFT  Allows precise aiming if held down while ordering a soldier to
+            shoot with the left mouse button.
 
-ENTER       Send message
-BKSP        Remove last character in message
+Left SHIFT  Change size of map screen.
+ +Arrows
 
-F12         save the screen to "snapshot.pcx" file 
+ENTER       Send message.
 
+BKSP        Remove last character in the message.
+
+F12         Save the screen to "snapshot_n.pcx" file where n is the number
+            of the snapshot.
+
+Other keys such as Latin letters, numbers, etc. can be used to write
+a message to your opponent.
 --END OF FILE--

@@ -843,7 +843,7 @@ int Map::stopWALK(int oz, int ox, int oy, int part)
 	if (m_terrain->m_mcd[ct].TU_Walk == 255) return 1;
 
     if (part == 0 || part == 3) {
-        switch (pathfind_mode) {
+        switch (m_pathfind_mode) {
             case PF_TRUE:
                 if (man(oz, ox, oy)) return 1;
                 break;

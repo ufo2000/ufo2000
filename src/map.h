@@ -83,7 +83,7 @@ private:
     TerraPCK *m_terrain;
 
     static int m_animation_cycle;
-    PF_MODE pathfind_mode;
+    PF_MODE m_pathfind_mode;
 
     void create(int l, int w, int h);
 
@@ -168,7 +168,7 @@ public:
 
     int findneibo(int &dz, int &dx, int &dy, int value);
     int setneibos(int oz, int ox, int oy, int value);
-    int pathfind(int sz, int sx, int sy, int dz, int dx, int dy, char *way);
+    int pathfind(int sz, int sx, int sy, int dz, int dx, int dy, char *way, PF_MODE pf_mode = PF_TRUE);
     void path_show(int _z, int _x, int _y, char *way, int waylen, Soldier *sld);
     void draw_path_from(Soldier *s);
     int walk_time(int z, int x, int y);
@@ -184,8 +184,6 @@ public:
 
     int eot_save(char *buf, int &buf_size);
     int saveitems(char *txt);
-
-    void set_pathfind_mode(PF_MODE new_pathfind_mode) {pathfind_mode = new_pathfind_mode;}
 
     MCD *mcd(int lev, int col, int row, int type)
     {
