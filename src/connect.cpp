@@ -31,6 +31,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "connect.h"
 #include "platoon.h"
 #include "units.h"
+#include "version.h"
 
 int MAP_WIDTH = 5, MAP_HEIGHT = 5;
 
@@ -229,6 +230,8 @@ void Connect::recv_mendata(char *_str)
 
 int Connect::do_chat()
 {
+	bool version_check_passed = false;
+
 	reset_video();
 
 	set_mouse_range(0, 0, 640, 400);
@@ -274,22 +277,63 @@ int Connect::do_chat()
 			break;
 	}
 
-	info_win->printstr("\nF10 - start game\nESC - cancel\n");
+	remote_win->printstr("\n");
+	remote_win->printstr("Comparing local and remote UFO2000 versions...\n");
+	remote_win->printstr("Press ESC to cancel\n");
+
+	char version_check_packet[128];
+	sprintf(version_check_packet, "UFO2000 REVISION OF YOUR OPPONENT: %d\r\n", UFO_REVISION_NUMBER);
+	net->send_raw(version_check_packet);
 
 	while (!DONE) {
 		if (net->recv_raw(buf)) {
-			remote_win->printstr(buf);
+			int remote_revision;
+			if (sscanf(buf, "UFO2000 REVISION OF YOUR OPPONENT: %d", &remote_revision) == 1) {
+				if (UFO_REVISION_NUMBER == remote_revision) {
+					net->send_raw("START\r\n");
+					version_check_passed = true;
+				} else {
+					if (remote_revision < UFO_REVISION_NUMBER) {
+						net->send_raw("UFO2000 VERSION CHECK FAILED!\r\n");
+						net->send_raw("YOU UFO2000 VERSION IS OUTDATED\r\n");
+						net->send_raw("\r\n");
+						net->send_raw("PLEASE VISIT http://ufo2000.sourceforge.net\r\n");
+						net->send_raw("AND UPGRADE YOUR UFO2000 VERSION\r\n");
+						net->send_raw("\r\n");
+						remote_win->printstr("\nUnfortunately your opponent has an\n");
+						remote_win->printstr("outdated UFO2000 version and you will be\n");
+						remote_win->printstr("unable to play until he upgrades\n");
+				    } else {
+						remote_win->printstr("\nUnfortunately you have older UFO2000\n");
+						remote_win->printstr("version than your opponent has.\n");
+						remote_win->printstr("Please visit http://ufo2000.sourceforge.net\n");
+						remote_win->printstr("and upgrade your UFO2000 version\n");
+				    }
+					net->send_raw("QUIT\r\n");
+					net->SEND = 0;
+					DONE = 1;
+				}
+			}
 
 			if (strstr(buf, "QUIT") != NULL) {
 				net->SEND = 0;
 				DONE = 1;
 			}
 			if (strstr(buf, "START") != NULL) {
-				net->send_raw("CONFIRM\r\n");
-				DONE = 1;     //net->SEND = 0;
-			}
-			if (strstr(buf, "CONFIRM") != NULL) {
-				DONE = 1;     //net->SEND = 0;
+				if (!version_check_passed) {
+					net->send_raw("UFO2000 VERSION CHECK FAILED!\r\n");
+					net->send_raw("YOU UFO2000 VERSION IS OUTDATED\r\n");
+					net->send_raw("\r\n");
+					net->send_raw("PLEASE VISIT http://ufo2000.sourceforge.net\r\n");
+					net->send_raw("AND UPGRADE YOUR UFO2000 VERSION\r\n");
+					net->send_raw("\r\n");
+					remote_win->printstr("\nUnfortunately your opponent has an\n");
+					remote_win->printstr("outdated UFO2000 version and you will be\n");
+					remote_win->printstr("unable to play until he upgrades\n");
+					net->send_raw("QUIT\r\n");
+					net->SEND = 0;
+				}
+				DONE = 1;
 			}
 		}
 
@@ -298,8 +342,6 @@ int Connect::do_chat()
 			readkey();
 			DONE = 1;
 		}
-
-		process_keyswitch();
 
 		if (keypressed()) {
 			int scancode;
@@ -317,21 +359,10 @@ int Connect::do_chat()
 					net->SEND = 0;
 					DONE = 1;
 					break;
-				case KEY_F10:
-					net->send_raw("START\r\n");
-					//DONE = 1;
-					break;
-				default:
-					if (g_console->process_keyboard_input(keycode, scancode))
-						net->send_raw((char *)g_console->get_text());
 			}
 		}
 	}
-	//	goto g_skipclose;
 g_return:
-	        //closenet();
-	        //g_skipclose:
-	        //readkey(); savescreen();
 	remove_int(drawit_timer);
 	delete back09;
 	delete local_win; local_win = NULL;
