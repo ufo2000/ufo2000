@@ -119,11 +119,22 @@ BaseObject* TypeManager::CreateInstanceOf(const char* name)
 const uint32 NullObject = 0xffffffff;
 
 Engine::Engine(std::iostream& stream, EngineMode mode) THROWS (PersistException)
-	: myUnderlyingStream(stream), myOperationalMode(mode)
+	: myUnderlyingIStream(&stream), myUnderlyingOStream(&stream), myOperationalMode(mode)
 {
 	// Nothing else to initialise for now
 }
 
+Engine::Engine(std::istream& stream) THROWS (PersistException)
+	: myUnderlyingIStream(&stream), myOperationalMode(modeRead)
+{
+	// Nothing else to initialise for now
+}
+
+Engine::Engine(std::ostream& stream) THROWS (PersistException)
+	: myUnderlyingOStream(&stream), myOperationalMode(modeWrite)
+{
+	// Nothing else to initialise for now
+}
 
 Engine::~Engine()
 {
@@ -135,13 +146,13 @@ void Engine::WriteBinary(const uint8* data, const uint32 size)
 	THROWS (Engine::Exception)
 {
 	ASSERT(myOperationalMode == modeWrite);
-	myUnderlyingStream.write((const char *)data,size);
+	myUnderlyingOStream->write((const char *)data,size);
 }
 
 void Engine::ReadBinary(uint8* data, uint32 size) THROWS (Engine::Exception)
 {
 	ASSERT(myOperationalMode == modeRead);
-	myUnderlyingStream.read((char *)data,size);
+	myUnderlyingIStream->read((char *)data,size);
 }
 
 /*

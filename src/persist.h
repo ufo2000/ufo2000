@@ -225,6 +225,8 @@ public:
 	 * to this call or problems will ensue.
 	 */
 	CCXX_MEMBER_EXPORT(CCXX_EMPTY) Engine(std::iostream& stream, EngineMode mode) THROWS (PersistException);
+	CCXX_MEMBER_EXPORT(CCXX_EMPTY) Engine(std::ostream& stream) THROWS (PersistException);
+	CCXX_MEMBER_EXPORT(CCXX_EMPTY) Engine(std::istream& stream) THROWS (PersistException);
 	
 	/**
 	 * This Flushes the buffers and closes the Persistence::Engine
@@ -275,7 +277,8 @@ private:
 	/**
 	 * The underlying stream
 	 */
-	std::iostream& myUnderlyingStream;
+	std::istream* myUnderlyingIStream;
+	std::ostream* myUnderlyingOStream;
 	
 	/**
 	 * The mode of the engine

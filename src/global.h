@@ -317,9 +317,9 @@ class ConsoleWindow;
 extern ConsoleWindow *g_console;
 
 bool loadgame(const char *filename);
-bool loadgame_stream(std::iostream &stream);
+bool loadgame_stream(std::istream &stream);
 void savegame(const char *filename);
-void savegame_stream(std::iostream &stream);
+void savegame_stream(std::ostream &stream);
 
 void check_crc(int crc);
 void recv_turn(int crc);

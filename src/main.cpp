@@ -1239,13 +1239,13 @@ void savereplay(const char *filename)
     }
 }
 
-void savegame_stream(std::iostream &stream)
+void savegame_stream(std::ostream &stream)
 {
     char sign[64];
     sprintf(sign, "ufo2000 %s (%s %s)\n", UFO_VERSION_STRING, __DATE__, __TIME__);
     stream.write(sign, strlen(sign) + 1);
 
-    persist::Engine archive(stream, persist::Engine::modeWrite);
+    persist::Engine archive(stream);
 
     PersistWriteBinary(archive, &turn, sizeof(turn));
     PersistWriteBinary(archive, &MODE, sizeof(MODE));
@@ -1272,7 +1272,7 @@ void savegame_stream(std::iostream &stream)
 bool loadgame(const char *filename)
 {
     std::fstream f(filename, std::ios::binary | std::ios::in);
-    if (!f.is_open()) return false;
+    if (!f.good()) return false;
 
     return loadgame_stream(f);
 }
@@ -1282,12 +1282,13 @@ bool loadgame(const char *filename)
  */
 bool loadreplay(const char *filename)
 {
-    net->m_replay_file = new std::fstream(filename, std::ios::binary | std::ios::in);
-    if (!net->m_replay_file->is_open()) return false;
+    std::fstream* fs = new std::fstream(filename, std::ios::binary | std::ios::in);
+    if (!fs->is_open()) return false;
+    net->m_replay_file = fs;
     return loadgame_stream(*net->m_replay_file);
 }
 
-bool loadgame_stream(std::iostream &stream)
+bool loadgame_stream(std::istream &stream)
 {
     char sign[64], buff[64];
     sprintf(sign, "ufo2000 %s (%s %s)\n", UFO_VERSION_STRING, __DATE__, __TIME__);
@@ -1297,7 +1298,7 @@ bool loadgame_stream(std::iostream &stream)
         return false;  // "version of savegame not compatible"
     }
 
-    persist::Engine archive(stream, persist::Engine::modeRead);
+    persist::Engine archive(stream);
 
     PersistReadBinary(archive, &turn, sizeof(turn));
     PersistReadBinary(archive, &MODE, sizeof(MODE));
@@ -2263,8 +2264,10 @@ void gameloop()
 
     if (win || loss)
     {
-        net->m_replay_file->close();
-    
+        // Closes replay file (input or output according to mode, play or replay)
+        delete net->m_replay_file;
+        net->m_replay_file = NULL;
+
         if (net->gametype != GAME_TYPE_REPLAY && askmenu(_("Save replay?"))) {
             std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
                 _("Save replay (*.replay file)"), F("$(home)"), "replay", true);
@@ -2299,10 +2302,6 @@ void gameloop()
     net->send_quit();
 
     clear(screen);
-
-    // Closes replay file (input or output according to mode, play or replay)
-    delete net->m_replay_file;
-    net->m_replay_file = NULL;
 }
 
 void faststart()
