@@ -208,8 +208,8 @@ void Item::od_info(int type, int gx, int gy, int gcol)
 	}
 
 	if (obdata_damage(type) > 0) {
-        textprintf(screen2, font, gx, gy, gcol, "%13s: %3d %8s: %d", 
-                   _("Damage"),     obdata_damage(type), 
+        textprintf(screen2, font, gx, gy, gcol, "%13s: %3d (%2d%%) %8s: %d",
+                   _("Damage"),     obdata_damage(type), obdata_dDeviation(type),
                    _("Ammo-Type"),   obdata_damageType(type));
 		gy += 10;
 	}
@@ -309,7 +309,7 @@ void Item::shot()
 {
 	if (m_ammo->m_rounds > 0)
 		m_ammo->m_rounds--;
-	if (m_ammo->m_rounds == 0) {
+	if (m_ammo->m_rounds == 0 && m_ammo->obdata_disappear()) {
 		if (m_ammo != NULL) {
 			delete m_ammo;
 			m_ammo = NULL;

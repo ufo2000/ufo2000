@@ -119,6 +119,7 @@ public:
 		set_full_redraw();
 		return true;
 	}
+	int get_minimap_width() { return m_minimap->get_width(); }
 };
 
 #endif

@@ -854,3 +854,12 @@ void printsmall_center_x(BITMAP *bmp, int x, int y, int col, int value)
     sprintf(buf, "%d", value);
     printsmall_x(bmp, x - strlen(buf) * 4 / 2, y, col, value);
 }
+
+/** Same as printsmall_center_x, but with a background. @see printsmall_center. */
+void printsmall_center_back_x(BITMAP *bmp, int x, int y, int col, int back, int value)
+{
+    char buf[100];
+    sprintf(buf, "%d", value);
+    rectfill(bmp, x - strlen(buf) * 4 / 2 - 1, y - 1, x + strlen(buf) * 4 / 2 - 1, y + 5, back);
+    printsmall_x(bmp, x - strlen(buf) * 4 / 2, y, col, value);
+}

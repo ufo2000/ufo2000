@@ -176,6 +176,7 @@ void MinimapArea::redraw_full(BITMAP *bmp, int x, int y)
 	acquire_bitmap(bmp);
 	BITMAP *temp_bmp = create_bitmap(m_width, m_height);
 	clear_to_color(temp_bmp, COLOR_BLACK1);
+	line(temp_bmp, 1, 0, 1, SCREEN2H, COLOR_GRAY05);
 	
 	if (m_width >= m_minimap->get_width()) {
 		m_minimap->set_full_redraw();

@@ -77,6 +77,7 @@ public:
 	static std::string obdata_get_string(int item_index, const char *property_name);
 
 	static int obdata_damage(int index) { return obdata_get_int(index, "damage"); }
+	static int obdata_dDeviation(int index) { return obdata_get_int(index, "dDeviation"); }
 	static int obdata_cost(int index) { return obdata_get_int(index, "cost"); }
 	static int obdata_isAmmo(int index) { return obdata_get_int(index, "isAmmo"); }
 	static std::string obdata_name(int index) { return obdata_get_string(index, "name"); }
@@ -88,6 +89,7 @@ public:
 	static int obdata_twoHanded(int index) { return obdata_get_int(index, "twoHanded"); }
 	static int obdata_hitType(int index) { return obdata_get_int(index, "hitType"); }
 	static int obdata_rounds(int index) { return obdata_get_int(index, "rounds"); }
+	static int obdata_disappear(int index) { return obdata_get_int(index, "disappear"); }
 	static int obdata_isGun(int index) { return obdata_get_int(index, "isGun"); }
 
   char* get_damage_name();
@@ -125,10 +127,12 @@ public:
 	int obdata_isGun() { return obdata_isGun(m_type); }
 	int obdata_twoHanded() { return obdata_twoHanded(m_type); }
 	int obdata_damage() { return obdata_damage(m_type); }
+	int obdata_dDeviation() { return obdata_dDeviation(m_type); }
 	int obdata_accuracy(int n) { return obdata_get_array_int(m_type, "accuracy", n); }
 	int obdata_time(int n) { return obdata_get_array_int(m_type, "time", n); }
 	int obdata_importance() { return obdata_get_int(m_type, "importance"); }
 	int obdata_weight() { return obdata_weight(m_type); }
+	int obdata_disappear() { return obdata_disappear(m_type); }
 
 	bool can_use_ammo_type(const std::string &ammo_type) {
 		std::vector<std::string> ammo_list;

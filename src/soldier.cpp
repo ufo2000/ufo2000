@@ -1341,7 +1341,7 @@ void Soldier::apply_wound(int hitloc)
     return;
 }
 
-void Soldier::hit(int sniper, int pierce, int type, int hitdir)
+void Soldier::hit(int sniper, int pierce, int type, int hitdir, int dam_dev)
 {
     // TODO look at this closer
     int damagedir = (dir + (hitdir + 4)) % 8; // Becomes DAMAGEDIR_*, except DAMAGEDIR_UNDER...
@@ -1349,7 +1349,7 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir)
 
     // Currently just randomizing the damage to be from 0.5 to 1.5 of
     // the table value, NOT 0.0 to 2.0 as it was in X-Com.
-    pierce = (int) cur_random->getUniform(pierce * 0.5, pierce * 1.5);
+    pierce = (int) cur_random->getUniform(pierce * (1.0 - (dam_dev / 100.0)), pierce * (1.0 + (dam_dev / 100.0)));
 
     // Give credit to the sniper for inflicting damage if it's not stun damage.
     if (sniper && (type != DT_STUN))
@@ -2155,7 +2155,7 @@ int Soldier::check_for_hit(int _z, int _x, int _y)
 void Soldier::apply_hit(int sniper, int _z, int _x, int _y, int _wtype, int _hitdir)
 {
     if (check_for_hit(_z, _x, _y)) {    
-        hit(sniper, Item::obdata_damage(_wtype), Item::obdata_damageType(_wtype), _hitdir);
+        hit(sniper, Item::obdata_damage(_wtype), Item::obdata_damageType(_wtype), _hitdir, Item::obdata_dDeviation(_wtype));
     }
 }
 
@@ -2639,10 +2639,10 @@ void Soldier::drawinfo(int x, int y)
     }
 }
 
-void Soldier::draw_stats(BITMAP* bitmap, int x, int y)
+void Soldier::draw_stats(BITMAP* bitmap, int x, int y, bool selected)
 {   
     int dx = 15;
-    textprintf(bitmap, g_small_font, x, y, COLOR_WHITE, "%s", md.Name); x += 70;
+    textprintf(bitmap, g_small_font, x, y, selected ? COLOR_BLUE02 : COLOR_WHITE, "%s", md.Name); x += 70;
     textprintf(bitmap, g_small_font, x, y, COLOR_GREEN, "%d", ud.CurTU); x += dx;
     textprintf(bitmap, g_small_font, x, y, COLOR_RED, "%d", ud.CurHealth); x += dx;
     textprintf(bitmap, g_small_font, x, y, COLOR_WHITE, "%d", ud.CurFront); x += dx;

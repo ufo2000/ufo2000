@@ -219,7 +219,7 @@ public:
 	void draw_blue_selector();
 	void showspk();
 	void drawinfo(int x, int y);
-	void draw_stats(BITMAP* bitmap, int x, int y);
+	void draw_stats(BITMAP* bitmap, int x, int y, bool selected);
 	void draw_bullet_way();
 	void draw_enemy_seen(int select_y);
 	int center_enemy_seen();
@@ -262,7 +262,7 @@ public:
 	void apply_hit(int sniper, int _z, int _x, int _y, int _type, int _hitdir);
 	int do_armour_check(int &pierce, int damdir);
 	void apply_wound(int hitloc);
-	void hit(int sniper, int pierce, int type, int hitdir);
+	void hit(int sniper, int pierce, int type, int hitdir, int dam_dev = 0);
 	void explo_hit(int sniper, int pierce, int type, int hitdir);      //silent
 
 	int ismoving();

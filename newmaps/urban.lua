@@ -28,7 +28,8 @@ AddXcomTerrain {
 		"$(ufo2000)/newmaps/urban21.map",
 		"$(ufo2000)/newmaps/urban22.map",
 		"$(ufo2000)/newmaps/urban23.map",
-		"$(ufo2000)/newmaps/urban24.map"
+		"$(ufo2000)/newmaps/urban24.map",
+		"$(ufo2000)/newmaps/urban25.map"
 	},
 	MapGenerator = function(tmp)
 		local function add_roads(size_x, size_y, map)
@@ -36,12 +37,18 @@ AddXcomTerrain {
 	
 			if (math.random(1, size_x) ~= 1) then
 				x = math.random(1, size_x)
-				for i = 1, size_y do map[x][i] = 1 end
+				for i = 1, size_y do
+                    if (i == size_y) then
+                        map[x][i] = random {01, 21}
+                    else
+                        map[x][i] = random {01, 01, 22}
+                    end
+                end
 			end
 	
 			if (math.random(1, size_y) ~= 1) then
 				y = math.random(1, size_y)
-				for i = 1, size_x do map[i][y] = 0 end
+				for i = 1, size_x do map[i][y] = random {00, 00, 25} end
 			end
 	
 			if (x and y) then
@@ -50,18 +57,27 @@ AddXcomTerrain {
 		end
 
 		local function random_normal()
-			return random {03, 04, 14, 15, 16, 17, 18, 21, 22}
+			return random {03, 04, 14, 15, 16, 17, 18}
 		end	
 
 		local function random_double(x, y, map)
-			local a = x + 1
-			local b = y + 1
-			if (map[x][y] > 2 and map[a][y] > 2 and map[x][b] > 2 and map[a][b] > 2) then
-				map[x][y] = random {05, 06, 07, 08, 09, 19, 20, 23, 24}
-				map[a][y] = -1
-				map[x][b] = -1
-				map[a][b] = -1
+            local do_not_place = {-1, 00, 01, 05, 06, 07, 08, 09, 19, 20, 21, 22, 23, 24, 25}
+            local dnp_num = 15
+
+            for i = 0, 1 do
+                for j = 0, 1 do
+                    for k = 1, dnp_num do
+                        if (map[x + i][y + j] == do_not_place[k]) then
+                            return
+                        end
+                    end
+                end
 			end
+
+			map[x][y] = random {05, 06, 07, 08, 09, 19, 20, 23, 24}
+		    map[x + 1][y] = -1
+			map[x][y + 1] = -1
+            map[x + 1][y + 1] = -1
 		end
 
 		for i = 1, tmp.SizeY do

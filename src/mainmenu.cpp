@@ -211,7 +211,7 @@ int do_mainmenu()
     the_dialog[MAINMENU_HOTSEAT].dp     = (void *) _("start hotseat game");
     the_dialog[MAINMENU_EDITOR].dp      = (void *) _("editor");
     the_dialog[MAINMENU_LOADGAME].dp    = (void *) _("load saved game");
-    the_dialog[MAINMENU_SHOW_REPLAY].dp = (void *) _("show last played game");
+    the_dialog[MAINMENU_SHOW_REPLAY].dp = (void *) _("load a replay");
     the_dialog[MAINMENU_ABOUT].dp       = (void *) _("about");
     the_dialog[MAINMENU_TIP_OF_DAY].dp  = (void *) _("tip of the day");
   //the_dialog[MAINMENU_DEMO].dp        = (void *) _("demo");

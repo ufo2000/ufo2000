@@ -56,7 +56,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 //#define DEBUG
 #define MSCROLL 10
-#define BACKCOLOR COLOR_BLACK1  
+#define BACKCOLOR COLOR_BLACK1
 
 Target target;
 int HOST, DONE, TARGET, turn;
@@ -1072,9 +1072,13 @@ void recv_turn(int crc)
 
 int GAMELOOP = 0;
 
+#define STAT_PANEL_W 200
+
 void draw_stats()
 { 
-    BITMAP *stat_panel = create_bitmap(200, 200);
+    if (screen->w - SCREEN2W < STAT_PANEL_W) return;
+    
+    BITMAP *stat_panel = create_bitmap(STAT_PANEL_W, 200);
     clear_to_color(stat_panel, BACKCOLOR);
     int i = 0;
     Soldier *man;
@@ -1083,9 +1087,9 @@ void draw_stats()
     for (i = 0; i < SQUAD_LIMIT; i++) {
         man = platoon_local->findnum(i);
         if (man != NULL)
-            man->draw_stats(stat_panel, 10, 10 * (i + 1));
+            man->draw_stats(stat_panel, 10, 10 * (i + 1), (man == sel_man));
     }
-    blit(stat_panel, screen, 0, 0, SCREEN2W, 240, screen->w, screen->h);
+    blit(stat_panel, screen, 0, 0, screen->w - STAT_PANEL_W, 250, STAT_PANEL_W, 200);
     destroy_bitmap(stat_panel);
 }
 
@@ -1357,7 +1361,7 @@ void endgame_stats()
 {
     lua_message( "Enter: endgame_stats" );
     net->send_debug_message("result:%s", (win == loss) ? ("draw") : (win ? "victory" : "defeat"));
-
+    
     BITMAP *back;
     BITMAP *scr = create_bitmap(320, 200);
     BITMAP *newscr = create_bitmap(SCREEN_W, SCREEN_H);
@@ -1750,7 +1754,7 @@ void gameloop()
 {
     // If it's not replay mode, this code start to write information into replay file
     if (net->gametype != GAME_TYPE_REPLAY)
-        savereplay(F("$(home)/replay.sav"));
+        savereplay(F("$(home)/replay.tmp"));
 
     int select_y = 0;
     int mouse_leftr = 1, mouse_rightr = 1;
@@ -2053,7 +2057,12 @@ void gameloop()
                     if (!key[KEY_LSHIFT])
                         map->move(mapscroll, 0);
                     else
-                        resize_screen2(-10, 0);
+                        //resize_screen2(-10, 0);
+                        if (SCREEN2W == screen->w) {
+                            int wth = map->m_minimap_area->get_minimap_width();
+                            wth += wth >= STAT_PANEL_W ? 0 : STAT_PANEL_W - wth;
+                            resize_screen2(-(wth + 10), 0);
+                        }
                     break;
                 case KEY_UP:
                     if (!key[KEY_LSHIFT])
@@ -2065,7 +2074,9 @@ void gameloop()
                     if (!key[KEY_LSHIFT])
                         map->move(-mapscroll, 0);
                     else
-                        resize_screen2(10, 0);
+                        //resize_screen2(10, 0);
+                        if (SCREEN2W < screen->w)
+                            resize_screen2(screen->w - SCREEN2W, 0);
                     break;
                 case KEY_DOWN:
                     if (!key[KEY_LSHIFT])
@@ -2194,6 +2205,30 @@ void gameloop()
 
     if (win || loss)
     {
+        if (net->gametype != GAME_TYPE_REPLAY && askmenu(_("Save replay?"))) {
+            net->m_replay_file->close();
+
+            char path[1000]; *path = 0;
+
+            if (file_select_mr( _("Save REPLAY.rep file"), path, "rep")) {
+                if (exists(F("$(home)/replay.tmp"))) {
+                    if (rename(F("$(home)/replay.tmp"), path) == 0) {
+                        g_console->printf("Replay saved as %s", path);
+                    } else {
+                        g_console->printf("Unable to save %s!", path);
+                        g_console->printf("%s (%d)", strerror(errno), errno);
+                    }
+                }
+            }
+        }
+
+        if (exists(F("$(home)/replay.tmp"))) {
+            if (remove(F("$(home)/replay.tmp")) != -0) {
+                g_console->printf("Unable to delete temporary file %s!", F("$(home)/replay.tmp"));
+                g_console->printf("%s (%d)", strerror(errno), errno);
+            }
+        }
+    
         endgame_stats();
     }
 
@@ -2309,8 +2344,19 @@ game have been played before. I don't know how to fix it in other way.*/
     reset_video();
     clear_to_color(screen, COLOR_BLACK1);
 
-    if (!loadreplay(F("$(home)/replay.sav"))) {
+    /*if (!loadreplay(F("$(home)/replay.sav"))) {
         alert( "", _("Replay is not available or was saved by incompatible version"), "", _("OK"), NULL, 0, 0);
+        return;
+    }*/
+    
+    char path[1000]; *path = 0;
+    
+    if (file_select_mr( _("Load REPLAY.sav file"), path, "rep")) {
+        if (!loadreplay(path)) {
+            alert( "", _("Replay is invalid!"), _("(Probably it was saved by incompatible version)."), _("OK"), NULL, 0, 0);
+            return;
+        }
+    } else {
         return;
     }
     battle_report( "# %s: %d\n", _("START REPLAY"), turn );

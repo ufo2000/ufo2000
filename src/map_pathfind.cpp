@@ -240,7 +240,7 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen, Soldier *sld)
                 TU_color =  4;      // COLOR_GRAY04
 			}
 			if (TU < 0) break;
-			printsmall_center(sx, sy, xcom1_color(TU_color), TU);
+			printsmall_center_back(sx, sy, xcom1_color(TU_color), COLOR_GRAY15, TU);
 		}
 
 		//textprintf(screen, font, 0+i*80, SCREEN2H+20, COLOR_WHITE, "way[%d]=%d ", i, way[i]);
