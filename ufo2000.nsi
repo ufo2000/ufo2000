@@ -211,10 +211,10 @@ Section "Desktop Shortcut" DesktopSec
   
 SectionEnd
 
-Section /o "Download X-Com Demo" XComDemoSec
+Section "Download X-Com Demo" XComDemoSec
 
 	;(uses NSISdl.dll)
-	NSISdl::download "http://freelancer.ag.ru/demo/xcomdemo.zip" "$TEMP\xcomdemo.zip"
+	NSISdl::download "http://ufo2000.lxnt.info/files/xcomdemo.zip" "$TEMP\xcomdemo.zip"
 	Pop $0
 	StrCmp $0 success success1
 		SetDetailsView show
