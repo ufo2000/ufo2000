@@ -23,13 +23,26 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "server_protocol.h"
 #include "server_config.h"
 
+std::string ServerClientUfo::m_last_user_name = "";
+NLtime      ServerClientUfo::m_last_user_disconnect_time;
+
 static std::string time_to_string(long t)
 {
-	char buffer[32];
+	char buffer[64];
+	long days    = t / (24 * 3600 * 1000); t -= days * (3600 * 1000);
 	long hours   = t / (3600 * 1000); t -= hours * (3600 * 1000);
 	long minutes = t / (60 * 1000); t -= minutes * (60 * 1000);
 	long seconds = t / 1000;
-	sprintf(buffer, "%02ld:%02ld:%02ld", hours, minutes, seconds);
+
+	if (days > 0)
+		sprintf(buffer, "%ldd %02ldh %02ldm %02lds", days, hours, minutes, seconds);
+	else if (hours > 0)
+		sprintf(buffer, "%02ldh %02ldm %02lds", hours, minutes, seconds);
+	else if (minutes > 0)
+		sprintf(buffer, "%02ldm %02lds", minutes, seconds);
+	else
+		sprintf(buffer, "%lds", seconds);
+
 	return buffer;
 }
 
@@ -113,6 +126,11 @@ ServerClientUfo::~ServerClientUfo()
 			opponent->m_challenged_opponents.erase(m_name);
 			it++;
 		}
+
+	//	Save the name and disconnect time of user
+		m_last_user_name = m_name;
+		nlTime(&m_last_user_disconnect_time);
+
 	}
 //	if there is opponent playing with this user, remove pointer to
 //	self from opponent's data
@@ -199,6 +217,22 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 					send_packet_back(SRV_USER_ONLINE, opponent->m_name);
 				it++;
 	    	}
+
+        //	If we are alone on the server, show information about the last user disconnected
+	    	if (m_server->m_clients_by_name.size() == 0 && !m_last_user_name.empty()) {
+				NLtime now;
+				nlTime(&now);
+	    		std::string message;
+				send_packet_back(SRV_MESSAGE, "server: There are no other users connected now");
+				send_packet_back(SRV_MESSAGE, "server: You have to wait for someone else before you can play games");
+	    		message += "server: ";
+	    		message += m_last_user_name;
+	    		message += " was here ";
+				message += time_to_string(get_time_diff(m_last_user_disconnect_time, now));
+	    		message += " ago";
+				send_packet_back(SRV_MESSAGE, message);
+	    	}
+
 			m_server->m_clients_by_name[m_name] = this;
 			break;
 		}

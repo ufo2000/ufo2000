@@ -48,6 +48,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 class ServerClientUfo: public ServerClient
 {
+	static std::string     m_last_user_name;
+	static NLtime          m_last_user_disconnect_time;
+
 	std::set<std::string>  m_challenged_opponents;
 	ServerClientUfo       *m_opponent;
 	bool                   m_busy;

@@ -535,35 +535,12 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 						FLAGS |= F_RAWMESSAGES;
 					}
 					break;
-					/*case KEY_F2:
-						  if (askmenu("SEND UNIT DATA"))
-							  editor->send_Units(local);
-						  break;
-					case KEY_F3:
-						  if (askmenu("SEND MAP DATA")) {
-							  //map->send_GEODATA(&mapdata);
-							  net->send_map_data(&mapdata);
-						  }
-						  break;
-					case KEY_F4:
-						  if (askmenu("NEW MAP DATA")) {
-							  map->new_GEODATA(&mapdata);
-							  net->send_map_data(&mapdata);
-							  mapdata.load_game = 77;
-						  }
-						  break;*/
-/*
-				case KEY_F10:
-					if (F10ALLOWED)
-						if ((local.SEND) && askmenu("FINISH"))
-							DONE = 1;
-					break;
-*/
 				case KEY_F10:
 					change_screen_mode();
 					break;
 				case KEY_ESC:
 					if (askmenu("EXIT GAME")) {
+						net->send_quit();
 						net->SEND = 0;
 						DONE = 1;
 					}
