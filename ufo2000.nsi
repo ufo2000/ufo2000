@@ -412,7 +412,6 @@ Section "${GAME_NAME} (required)" MainSec
 	File "ufo2000.dat"
 	File "keyboard.dat"
 	File "ufo2000.exe"
-	File "..\ufo2000.map"
 	File "ufo2000-srv.exe"
 	File "ufo2000.default.ini"
 	File "ufo2000-srv.conf"
@@ -433,7 +432,7 @@ Section "${GAME_NAME} (required)" MainSec
 	
 	SetOutPath $INSTDIR\newmusic
 	
-	File newmusic\*
+	File ..\newmusic\*
 	
 	SetOutPath $INSTDIR\newunits
 	
