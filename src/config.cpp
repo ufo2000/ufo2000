@@ -56,15 +56,8 @@ void loadini()
 	if (SCREEN2W < 430) SCREEN2W = 430;
 	if (SCREEN2H < 280) SCREEN2H = 280;
 
-
 	MAP_WIDTH = get_config_int(gen, "map_width", 4);
 	MAP_HEIGHT = get_config_int(gen, "map_height", 4);
-//	USERUSKEY = get_config_int(gen, "russian", 1);
-	BLOODYMENU = get_config_int(gen, "bloodymenu", 0);
-	/*
-		if (rand() % 77 == 0)
-			BLOODYMENU = 1 - BLOODYMENU;
-	*/
 	speed_unit = get_config_int(gen, "speed_unit", 30);
 	speed_bullet = get_config_int(gen, "speed_bullet", 30);
 	speed_mapscroll = get_config_int(gen, "speed_mapscroll", 30);

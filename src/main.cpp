@@ -1174,8 +1174,7 @@ int main(int argc, char *argv[])
 	}
 
 	int mm = 2, h = -1;
-	//0 quit 1 about 2 edit 3 hot 4 mdm 5 tcp/ip 6 ipx
-	while ((mm = do_mainmenu()) != 0) {
+	while ((mm = do_mainmenu()) != MAINMENU_QUIT) {
 		h = -1;
 		switch (mm) {
 			case MAINMENU_ABOUT:
