@@ -241,4 +241,6 @@ inline int Item::is_explo()
 	return (m_type == HIGH_EXPLOSIVE);
 }
 
+bool is_item_allowed(int type);
+
 #endif

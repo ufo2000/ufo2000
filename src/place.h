@@ -71,6 +71,7 @@ public:
 	int eot_save(int ip, char *txt);
 
 	int count_weight();
+	int has_forbidden_equipment();
 
 	void scroll_left();
 	void scroll_right();

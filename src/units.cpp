@@ -183,6 +183,14 @@ void Units::print(int gcol)
 
 		x1 = gx - 2;          x2 = gx + MAN_NAME_LEN * 8 + 2;	
 		y1 = gy + i * 15 - 2; y2 = y1 + 8 + 3;
+
+        // Highlight the soldiers who are equipped with forbidden items in in red color
+		Soldier *ss = editor->platoon()->findman(name[i]);
+		ASSERT(ss != NULL);
+		if (ss->has_forbidden_equipment()) {
+			color = COLOR_RED12;
+		}
+
 		rectfill(screen2, x1, y1, x2, y2, color);   // Background for name-field
 
 		//textprintf(screen2, font, gx, gy+i*15, gcol, "%d", cost[i]);

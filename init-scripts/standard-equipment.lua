@@ -33,14 +33,14 @@ AddEquipment {
 		{14, 02, "STUN MISSILE"},
 		{14, 03, "SMALL LAUNCHER"},
 		{14, 06, "SMALL ROCKET"},
-		{15, 00, "Flare"},
+--		{15, 00, "Flare"},
 		{16, 00, "HIGH EXPLOSIVE"},
-		{16, 06, "BLASTER LAUNCHER"},
-		{17, 03, "MIND PROBE"},
-		{18, 00, "MEDI-KIT"},
-		{18, 06, "BLASTER BOMB"},
-		{19, 00, "MOTION SCANNER"},
-		{19, 03, "PSI-AMP"},
+--		{16, 06, "BLASTER LAUNCHER"},
+--		{17, 03, "MIND PROBE"},
+--		{18, 00, "MEDI-KIT"},
+--		{18, 06, "BLASTER BOMB"},
+--		{19, 00, "MOTION SCANNER"},
+--		{19, 03, "PSI-AMP"},
 	}
 }
 

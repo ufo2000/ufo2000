@@ -67,9 +67,16 @@ static char weapon_in_use[] = {
  * and not allowed to select if this function returns false (this function
  * may be useful when points limit is exceeded for example)
  */
-static bool is_weapon_allowed(int type)
+bool is_item_allowed(int type)
 {
-	return memchr(weapon_in_use, type, sizeof(weapon_in_use)) != NULL;
+	int stack_top = lua_gettop(L);
+	lua_pushstring(L, "IsItemAllowed");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	lua_pushstring(L, Item::obdata_name(type).c_str());
+	lua_safe_call(L, 1, 1);
+	bool result = lua_toboolean(L, -1) != 0;
+	lua_settop(L, stack_top);
+	return result && memchr(weapon_in_use, type, sizeof(weapon_in_use)) != NULL;
 }
 
 Editor::Editor()
@@ -224,7 +231,7 @@ bool Editor::handle_mouse_leftclick()
 		if (sel_item == NULL) {  // Pick up item from armory
 			sel_item = m_armoury->mselect();
 			if (sel_item != NULL) {
-				if (is_weapon_allowed(sel_item->m_type)) {
+				if (is_item_allowed(sel_item->m_type)) {
 					sel_item_place = P_ARMOURY;
 					dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
 				} else {
@@ -357,7 +364,7 @@ void Editor::show()
 			} else {
 				Item *it = m_armoury->item_under_mouse();
 				if (it != NULL) {
-					if (is_weapon_allowed(it->m_type))
+					if (is_item_allowed(it->m_type))
 						it->od_info(330, 220, COLOR_GRAY05);
 					else
 						it->od_info(330, 220, COLOR_GRAY10);

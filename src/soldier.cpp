@@ -2934,6 +2934,14 @@ int Soldier::count_weight()
 	return weight;
 }
 
+int Soldier::has_forbidden_equipment()
+{
+	for (int i = 0; i < NUMBER_OF_PLACES; i++)
+		if (m_place[i]->has_forbidden_equipment())
+			return 1;
+	return 0;
+}
+
 bool Soldier::Write(persist::Engine &archive) const
 {
 	PersistWriteBinary(archive, *this);

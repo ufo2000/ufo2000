@@ -277,6 +277,7 @@ public:
 	int eot_save(char *txt);
 
 	int count_weight();
+	int has_forbidden_equipment();
 
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	static int calc_mandata_cost(MANDATA _md);

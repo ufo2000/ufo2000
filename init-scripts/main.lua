@@ -235,14 +235,23 @@ function AddEquipment(x)
 	Message("AddEquipment: '%s', crc32 = %08X", x.Name, x.Crc32)
 end
 
+local CurrentEquipmentTable
+
 -- fill armoury with the specified equipment set
 function SetEquipment(name)
 	if EquipmentTable[name] then
+		CurrentEquipmentTable = {}
 		Armoury:destroy_all_items()
 		for k, v in EquipmentTable[name].Layout do
 			Armoury:add_item(v[1], v[2], v[3])
+			CurrentEquipmentTable[v[3]] = true
 		end
 	end
+end
+
+-- check if the item is in current equipment set
+function IsItemAllowed(item)
+	return CurrentEquipmentTable[item]
 end
 
 -- return random element from a table 

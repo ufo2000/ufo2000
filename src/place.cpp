@@ -306,6 +306,21 @@ void Place::drawgrid(int PLACE_NUM)
 	Item *t = m_item;
 	while (t != NULL) {
 		if ((t->m_x >= viscol - 1) && (t->m_x < viscol + 20)) {
+
+			if (!is_item_allowed(t->itemtype())) {
+				int x = gx + (t->m_x - viscol) * 16;
+				int y = gy + t->m_y * 15;
+				int sx = t->obdata_width() * 16;
+				int sy = t->obdata_height() * 15;
+				if (ishand()) {
+					x = gx; 
+					y = gy;
+					sx = width * 16;
+					sy = height * 15;
+				}
+				rectfill(screen2, x + 1, y + 1, x + sx - 1, y + sy - 1, COLOR_RED06);
+			}
+
 			int x = gx + (t->m_x - viscol) * 16;
 			int y = gy + t->m_y * 15 + 5;
 
@@ -481,6 +496,9 @@ int Place::eot_save(int ip, char *txt)
 	return len;
 }
 
+/**
+ * Calculate and return weight for all the equipment stored at this place
+ */
 int Place::count_weight()
 {
 	Item *t = m_item;
@@ -494,6 +512,23 @@ int Place::count_weight()
 		t = t->m_next;
 	}
 	return weight;
+}
+
+/**
+ * Check if any banned equipment (not in allowed equipment set) is stored 
+ * at this place
+ */
+int Place::has_forbidden_equipment()
+{
+	Item *t = m_item;
+
+	while (t != NULL)
+	{
+		if (!is_item_allowed(t->itemtype()))
+			return 1;
+		t = t->m_next;
+	}
+	return 0;
 }
 
 void Place::destroy_all_items()
