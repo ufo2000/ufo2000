@@ -1,5 +1,5 @@
 AddXcomTerrain {
-	Index = 202, Name = "Modified City",
+	Name = "Modified City",
 	Tiles =	{
 		"$(xcom)/terrain/blanks.*",
 		"$(xcom)/terrain/roads.*",

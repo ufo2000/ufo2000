@@ -1,5 +1,5 @@
 AddXcomTerrain {
-	Index = 200, Name = "Warehouse",
+	Name = "Warehouse",
 	Tiles =	{
 		"$(xcom)/terrain/blanks.*",
 		"$(xcom)/terrain/roads.*",

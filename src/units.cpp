@@ -743,21 +743,15 @@ void Units::execute_map(Map *map, int map_change_allowed)
 	if (mouse_inside(gmx + gmw / 2 + 20, SCREEN2H - 49, gmx + gmw / 2 + 60, SCREEN2H - 36)) {
 		//"LOAD"
 		char path[1000]; *path = 0;
-		if (file_select("GEODATA file", path, "MAP;DAT")) {
+		if (file_select("GEODATA file", path, "lua")) {
 			GEODATA gd;
-			memset(&gd, 0, sizeof(gd));
 
-			int fh = open(path, O_RDONLY | O_BINARY);
-			ASSERT(fh != -1);
-			read(fh, &gd, sizeof(gd));
-			close(fh);
-
-			if (Map::valid_GEODATA(&gd)) {
+			if (!Map::load_GEODATA(path, &gd) || !Map::valid_GEODATA(&gd)) {
+				g_console->printf("%s", "invalid map file.");
+			} else {
 				memcpy(&mapdata, &gd, sizeof(mapdata));
 				net->send_map_data(&mapdata);
 				mapdata.load_game = 77;
-			} else {
-				g_console->printf("%s", "invalid GEODATA file.");
 			}
 		}
 	}

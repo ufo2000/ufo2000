@@ -2,10 +2,18 @@
 -- A place for standard x-com maps initialization.                          --
 -- Editing this file is not recommended, better add new *.lua map init      --
 -- files into 'newmaps' subdirectory along with your *.map files            --
+--                                                                          --
+-- Notes:                                                                   --
+--   The entrance level must be a 3x3 maps, not randomised. ENTRYXX.map     --
+--   Alien base has no corridors A_BASEXX.map                               --
+--   Alien ship has no corridors AlshipXX.map                               --
+--   Cruise ships cannot be randomised linertxx.map && linertbXX.map        --
+--   T'leth levels must not be randomised. levelxx.map && cryptxx.map       --
+--   xbasesXX.maps do not have any walls                                    --
 ------------------------------------------------------------------------------
 
 AddXcomTerrain {
-	Index = 0, Name = "Jungle",
+	Name = "Jungle",
 	Tiles =	{
 		"$(xcom)/terrain/blanks.*",
 		"$(xcom)/terrain/jungle.*",
@@ -27,7 +35,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 1, Name = "Farm",
+	Name = "Farm",
 	Tiles =	{
 		"$(xcom)/terrain/blanks.*",
 		"$(xcom)/terrain/cultivat.*",
@@ -57,7 +65,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 2, Name = "Forest",
+	Name = "Forest",
 	Tiles =	{
 		"$(xcom)/terrain/blanks.*",
 		"$(xcom)/terrain/forest.*"
@@ -79,7 +87,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 5, Name = "City",
+	Name = "City",
 	Tiles =	{
 		"$(xcom)/terrain/blanks.*",
 		"$(xcom)/terrain/roads.*",
@@ -107,7 +115,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 6, Name = "Desert",
+	Name = "Desert",
 	Tiles =	{
 		"$(xcom)/terrain/blanks.*",
 		"$(xcom)/terrain/desert.*"
@@ -129,7 +137,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 7, Name = "Mountain",
+	Name = "Mountain",
 	Tiles =	{
 		"$(xcom)/terrain/blanks.*",
 		"$(xcom)/terrain/mount.*"
@@ -152,7 +160,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 8, Name = "Arctic",
+	Name = "Arctic",
 	Tiles =	{
 		"$(xcom)/terrain/blanks.*",
 		"$(xcom)/terrain/polar.*"
@@ -176,7 +184,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 9, Name = "Cydonia",
+	Name = "Cydonia",
 	Tiles =	{
 		"$(xcom)/terrain/blanks.*",
 		"$(xcom)/terrain/mars.*",
@@ -198,7 +206,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 100, Name = "Seabed",
+	Name = "Seabed",
 	Tiles =	{
 		"$(tftd)/terrain/blanks.*",
 		"$(tftd)/terrain/sand.*",
@@ -226,7 +234,7 @@ AddXcomTerrain {
 
 
 AddXcomTerrain {
-	Index = 101, Name = "Pipes",
+	Name = "Pipes",
 	Tiles =	{
 		"$(tftd)/terrain/blanks.*",
 		"$(tftd)/terrain/sand.*",
@@ -250,7 +258,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 102, Name = "Plane",
+	Name = "Plane",
 	Tiles =	{
 		"$(tftd)/terrain/blanks.*",
 		"$(tftd)/terrain/sand.*",
@@ -283,7 +291,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 103, Name = "Atlantis",
+	Name = "Atlantis",
 	Tiles =	{
 		"$(tftd)/terrain/blanks.*",
 		"$(tftd)/terrain/sand.*",
@@ -308,7 +316,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 104, Name = "Mu",
+	Name = "Mu",
 	Tiles =	{
 		"$(tftd)/terrain/blanks.*",
 		"$(tftd)/terrain/sand.*",
@@ -335,7 +343,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 105, Name = "Galleon",
+	Name = "Galleon",
 	Tiles =	{
 		"$(tftd)/terrain/blanks.*",
 		"$(tftd)/terrain/sand.*",
@@ -364,7 +372,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 106, Name = "MSunk",
+	Name = "MSunk",
 	Tiles =	{
 		"$(tftd)/terrain/blanks.*",
 		"$(tftd)/terrain/sand.*",
@@ -391,7 +399,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 107, Name = "Volcanic",
+	Name = "Volcanic",
 	Tiles =	{
 		"$(tftd)/terrain/blanks.*",
 		"$(tftd)/terrain/sand.*",
@@ -415,7 +423,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 108, Name = "Coral",
+	Name = "Coral",
 	Tiles =	{
 		"$(tftd)/terrain/blanks.*",
 		"$(tftd)/terrain/sand.*",
@@ -441,7 +449,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 109, Name = "Artifact",
+	Name = "Artifact",
 	Tiles =	{
 		"$(tftd)/terrain/blanks.*",
 		"$(tftd)/terrain/sand.*",
@@ -466,65 +474,12 @@ AddXcomTerrain {
 	}
 }
 
---[[  Alien Base, impossible to play, it makes the game crash anyway.
+------------------------------------------------------------------------------
+-- A little bit of sea in the middle of town is not TOO bad. portxx.map     --
+------------------------------------------------------------------------------
 
 AddXcomTerrain {
-	Index = 110, Name = "Grunge",
-	Tiles =	{
-		"$(tftd)/terrain/blanks.*",
-		"$(tftd)/terrain/grunge1.*",
-		"$(tftd)/terrain/grunge2.*",
-		"$(tftd)/terrain/grunge3.*",
-		"$(tftd)/terrain/grunge4.*",
-		"$(tftd)/terrain/ufobits.*"
-	},
-	Maps = {
-		"$(tftd)/maps/grunge00.map",
-		"$(tftd)/maps/grunge01.map",
-		"$(tftd)/maps/grunge02.map",
-		"$(tftd)/maps/grunge03.map",
-		"$(tftd)/maps/grunge04.map",
-		"$(tftd)/maps/grunge05.map",
-		"$(tftd)/maps/grunge06.map",
-		"$(tftd)/maps/grunge07.map",
-		"$(tftd)/maps/grunge08.map",
-		"$(tftd)/maps/grunge09.map",
-		"$(tftd)/maps/grunge10.map",
-		"$(tftd)/maps/grunge11.map",
-		"$(tftd)/maps/grunge12.map",
-		"$(tftd)/maps/grunge13.map",
-		"$(tftd)/maps/grunge14.map",
-		"$(tftd)/maps/grunge15.map",
-		"$(tftd)/maps/grunge16.map"
-	}
-}
-
-]]
-
---[[  The cargo must be pre-prepared in order to play in them. Randomisation is impossible.
-
-AddXcomTerrain {
-	Index = 111, Name = "Cargo",
-	Tiles =	{
-		"$(tftd)/terrain/sea.*",
-		"$(tftd)/terrain/cargo1.*",
-		"$(tftd)/terrain/cargo2.*",
-		"$(tftd)/terrain/xbits.*",
-		"$(tftd)/terrain/cargo3.*"
-	},
-	Maps = {
-		"$(tftd)/maps/cargo00.map",
-		"$(tftd)/maps/cargo01.map",
-		"$(tftd)/maps/cargo02.map"
-	}
-}
-
-]]
-
---[[ A little bit of sea in the middle of town is not TOO bad. portxx.map ]]
-
-AddXcomTerrain {
-	Index = 112, Name = "Port",
+	Name = "Port",
 	Tiles =	{
 		"$(tftd)/terrain/blanks.*",
 		"$(tftd)/terrain/sea.*",
@@ -556,12 +511,62 @@ AddXcomTerrain {
 	}
 }
 
---[[  The entrance level must be a 3x3 maps, not randomised. ENTRYXX.map ]]
---[[  Alien base has no corridors A_BASEXX.map ]]
---[[  Alien ship has no corridors AlshipXX.map ]]
---[[  Cruise ships cannot be randomised linertxx.map && linertbXX.map ]]
---[[  T'leth levels must not be randomised. levelxx.map && cryptxx.map ]]
---[[  xbasesXX.maps do not have any walls ]]
+--[[  
 
+------------------------------------------------------------------------------
+-- Alien Base, impossible to play (no passages)                             --
+------------------------------------------------------------------------------
 
+AddXcomTerrain {
+	Name = "Grunge",
+	Tiles =	{
+		"$(tftd)/terrain/blanks.*",
+		"$(tftd)/terrain/grunge1.*",
+		"$(tftd)/terrain/grunge2.*",
+		"$(tftd)/terrain/grunge3.*",
+		"$(tftd)/terrain/grunge4.*",
+		"$(tftd)/terrain/ufobits.*"
+	},
+	Maps = {
+		"$(tftd)/maps/grunge00.map",
+		"$(tftd)/maps/grunge01.map",
+		"$(tftd)/maps/grunge02.map",
+		"$(tftd)/maps/grunge03.map",
+		"$(tftd)/maps/grunge04.map",
+		"$(tftd)/maps/grunge05.map",
+		"$(tftd)/maps/grunge06.map",
+		"$(tftd)/maps/grunge07.map",
+		"$(tftd)/maps/grunge08.map",
+		"$(tftd)/maps/grunge09.map",
+		"$(tftd)/maps/grunge10.map",
+		"$(tftd)/maps/grunge11.map",
+		"$(tftd)/maps/grunge12.map",
+		"$(tftd)/maps/grunge13.map",
+		"$(tftd)/maps/grunge14.map",
+		"$(tftd)/maps/grunge15.map",
+		"$(tftd)/maps/grunge16.map"
+	}
+}
 
+------------------------------------------------------------------------------
+-- The cargo must be pre-prepared in order to play in them. Randomisation   --
+-- is impossible.                                                           --
+------------------------------------------------------------------------------
+
+AddXcomTerrain {
+	Name = "Cargo",
+	Tiles =	{
+		"$(tftd)/terrain/sea.*",
+		"$(tftd)/terrain/cargo1.*",
+		"$(tftd)/terrain/cargo2.*",
+		"$(tftd)/terrain/xbits.*",
+		"$(tftd)/terrain/cargo3.*"
+	},
+	Maps = {
+		"$(tftd)/maps/cargo00.map",
+		"$(tftd)/maps/cargo01.map",
+		"$(tftd)/maps/cargo02.map"
+	}
+}
+
+--]]

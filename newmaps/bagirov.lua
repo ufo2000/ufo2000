@@ -1,5 +1,5 @@
 AddXcomTerrain {
-	Index = 203, Name = "Industrial",
+	Name = "Industrial",
 	Tiles =	{
 		"$(xcom)/terrain/blanks.*",
 		"$(tftd)/terrain/port01.*",

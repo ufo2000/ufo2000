@@ -1,5 +1,5 @@
 AddXcomTerrain {
-	Index = 201, Name = "XBase+",
+	Name = "XBase+",
 	Tiles =	{
 		"$(xcom)/terrain/blanks.*",
 		"$(xcom)/terrain/xbase1.*",

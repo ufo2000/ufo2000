@@ -856,38 +856,3 @@ void Editor::do_mapedit()
 	clear(screen);
 }
 #endif
-
-/**
- * Load map (used in planner screen)
- */
-void Editor::load_map()
-{
-	char path[1000];
-	strcpy(path, last_map_name);
-	if (file_select("LOAD MAP", path, "DAT")) {
-		// got path from fileselector - don't do pfxopen.
-		int fh = open(path, O_RDONLY | O_BINARY); 
-		ASSERT(fh != -1);
-		read(fh, &mapdata, sizeof(mapdata));
-		close(fh);
-
-		delete m_map;
-		m_map = new Map(mapdata);
-		m_map->center(0, m_map->width * 5, m_map->height * 5);
-		m_map->unhide();
-
-		strcpy(last_map_name, path);
-	}
-}
-/*
-void Editor::save_map()
-{
-	char path[1000];
-	//strcpy(path, "geodata2.dat");
-	strcpy(path, last_map_name);
-	if (file_select("SAVE MAP", path, "DAT")) {
-		m_map->save(path);
-		strcpy(last_map_name, path);
-	}
-}
-*/
