@@ -364,6 +364,7 @@ void draw_bullet_trace(int x0, int y0, int z0, int x, int y, int z, int length, 
 void Bullet::draw()
 {
 	int xg, yg;
+	double xt, yt, zt;
 	int xg2, yg2;
 	int xe, ye, ze;
 
@@ -392,13 +393,33 @@ void Bullet::draw()
 			break;
 		}
 		case BEAM:
-			xg = map->x + x0 + y0;
+			/*xg = map->x + x0 + y0;
 			yg = (int)(map->y - (x0 + 1) / 2.0 + y0 / 2.0 - z0 * 2.0 - 2);
 
 			xg2 = map->x + x + y;
 			yg2 = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
 
-			line(screen2, xg, yg, xg2, yg2, xcom1_color(143 + i));
+			line(screen2, xg, yg, xg2, yg2, xcom1_color(143 + i));*/
+            for (int j = 3; j < 100000; j++) {
+                zt = z0 + j * cos(fi);
+                xt = x0 + j * cos(te) * sin(fi);
+                yt = y0 + j * sin(te) * sin(fi);
+                
+                if ((!map->inside((int)zt, (int)xt, (int)yt)) ||
+                    (!map->pass_lof_cell((int)zt, (int)xt, (int)yt)))
+                    break;
+                if (platoon_remote->check_for_hit((int)zt, (int)xt, (int)yt) ||
+                    platoon_local->check_for_hit((int)zt, (int)xt, (int)yt))
+                    break;
+
+                if (!map->visible((int)(zt) / 12, (int)(xt) / 16, (int)(yt) / 16))
+                    continue;
+                
+                xg = (int)(map->x + xt + yt);
+                yg = (int)(map->y - (xt + 1) / 2.0 + yt / 2.0 - zt * 2.0 - 2);
+                
+                putpixel(screen2, xg, yg, xcom1_color(143 + i));
+            }
 			break;
 
 		case THROWN:
