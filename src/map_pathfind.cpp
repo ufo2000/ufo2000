@@ -341,7 +341,7 @@ int Pathfinding::pathfind(Map* _map,int sz, int sx, int sy, int dz, int dx, int 
                 pathfinding_cell_list.front() -> prev_point = NULL;
 
                 while(!pathfinding_cell_list.empty()) {
-                    for (int dir = 0; dir < DIR_NULL; dir++) {
+                    for (int dir = 0; dir < DIR_NUM; dir++) {
                         int nx, ny, nz, tu_cost;
                         int ox = pathfinding_cell_list.front() -> x;
                         int oy = pathfinding_cell_list.front() -> y;
