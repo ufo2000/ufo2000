@@ -62,7 +62,15 @@ void ServerDispatch::MakeHtmlReport(std::string &html_body)
 	long traffic_in_cur = 0;
 	long traffic_out_cur = 0;
 
-	html_body = "<html><head></head><body>";
+	html_body = "<html><head><title>UFO2000 Matchmaker</title></head><body>";
+    html_body += "<h3>UFO2000 matchmaking server.</h3><blockquote>";
+    html_body += "Useful links:<br>";
+    html_body += "<a href='http://ufo2000.sourceforge.net/'>English site (Sourceforge)</a>.<br>";
+    html_body += "<a href='http://sourceforge.net/projects/ufo2000'>Sourceforge project info</a>.<br>";
+    html_body += "<a href='http://sourceforge.net/project/showfiles.php?group_id=23295'>Sourceforge download page</a>.<br>";
+    html_body += "<a href='http://lxnt.info/mailman/listinfo/ufo2000'>Mailing list</a>.<br>";
+    html_body += "<a href='http://lxnt.info/ff/'>Forum (maillist gateway)</a>.<br>";
+    html_body += "<a href='http://ufo2000.lxnt.info/'>Russian site</a>.<br></blockquote><hr>";
 	html_body += "<table border=1>";
 	html_body += "<tr><td>user name<td>bytes from<td>bytes to<td>max average traffic<td>time online<td>status";
 
@@ -173,7 +181,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 			std::string login, password;
 			split_loginpass(packet, login, password);
 
-			server_log("user login (name='%s', pwd='%s', ip=%s)\n", 
+			server_log("user login (name='%s', pwd='%s', ip=%s)\n",
 				login.c_str(), password.c_str(), m_ip.c_str());
 
 			if (login.size() > USERNAME_SIZE_LIMIT) {
@@ -223,7 +231,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 	    	std::map<std::string, ServerClient *>::iterator it = m_server->m_clients_by_name.begin();
 	    	while (it != m_server->m_clients_by_name.end()) {
 	    		ServerClientUfo *opponent = dynamic_cast<ServerClientUfo *>(it->second);
-	    		
+
 				printf("send user online: %s\n", opponent->m_name.c_str());
 				opponent->send_packet_back(SRV_USER_ONLINE, m_name);
 				if (opponent->m_busy)
@@ -300,7 +308,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 			break;
 	    }
 		case SRV_GAME_PACKET: {
-		// send packet to the opponent	
+		// send packet to the opponent
 			if (m_opponent != NULL) {
 				m_opponent->send_packet_back(SRV_GAME_PACKET, packet);
 			} else {
