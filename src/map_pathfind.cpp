@@ -139,10 +139,13 @@ exitloop:
 			for (i = 0; i < width*10; i++) {
 				for (j = 0; j < height*10; j++) {
 					int color = pfval(k, i, j) * 16;
-					if (pfval(k, i, j) == -2)
-						color = 39;
-					else if (pfval(k, i, j) == 0)
-						color = 56;
+                    if (pfval(k, i, j) == -2)   // LAST_CELL ??
+                        color =  39;   // COLOR_RED07
+                    else if (pfval(k, i, j) == 0)
+                        color =  56;   // COLOR_GREEN08
+
+                    if ((color < 0) || (color > 255))  // catch possible crash
+                        color = 199;   // COLOR_VIOLET07 
 
 					rectfill(path2d, i * PATH2DSIZE, j * PATH2DSIZE,
 					         i * PATH2DSIZE + PATH2DSIZE, j * PATH2DSIZE + PATH2DSIZE, xcom1_color(color));
@@ -160,7 +163,7 @@ exitloop:
 		way[i + 1] = DIR_REVERSE(dir);
 	}
 
-	//	  dirs		0  1  2  3  4  5  6  7
+    //       dirs    0  1  2   3   4   5  6  7
 	int dir2xy[8] = {1, 1, 0, -1, -1, -1, 0, 1};
 
 	for (i = 1; i < cur_iter + 2; i++) {
