@@ -138,6 +138,7 @@ void Platoon::recalc_visibility()
                                 m_seen_item_index[k][i][j] = map->place(k, i, j)->top_item()->itemtype();
                             else
                                 m_seen_item_index[k][i][j] = -1;
+                        }
 					}
 		}
 		ss = ss->next();
