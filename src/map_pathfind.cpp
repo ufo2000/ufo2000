@@ -259,11 +259,11 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen)
 			//printsmall(sx, sy, 1, time_of_dst);
 			TU -= time_of_dst;
 			// Keep showing consecutive turns.
-			while (TU < 0) {
+			if (TU < 0) {
 				TU = TU_max - time_of_dst;
 				TU_color += 4;
 			}
-			//if (TU >= 0)
+			if (TU <0) break;
 			printsmall_center(sx, sy, xcom1_color(TU_color), TU);
 		}
 
