@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFO2000\n"
 "POT-Creation-Date: 2004-11-19 04:55+0100\n"
-"PO-Revision-Date: unknown\n"
-"Last-Translator: Serge Semashko\n"
+"PO-Revision-Date: 2004-11-23 21:50+0200\n"
+"Last-Translator: \n"
 "Language-Team: Belarusian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -18,597 +18,648 @@ msgstr ""
 
 #: src/config.cpp:294
 msgid "Configuration"
-msgstr ""
+msgstr "Канфігурацыя"
 
-#: src/config.cpp:299 src/connect.cpp:260 src/editor.cpp:1087
-#: src/main.cpp:1848 src/main.cpp:1999 src/video.cpp:362
+#: src/config.cpp:299
+#: src/connect.cpp:261
+#: src/editor.cpp:1183
+#: src/main.cpp:1863
+#: src/main.cpp:2018
+#: src/video.cpp:362
 #: src/server_gui.cpp:310
 msgid "OK"
-msgstr ""
+msgstr "ОК"
 
-#: src/config.cpp:300 src/icon.cpp:647 src/video.cpp:362
+#: src/config.cpp:300
+#: src/icon.cpp:647
+#: src/video.cpp:362
 #: src/server_gui.cpp:311
 msgid "Cancel"
-msgstr ""
+msgstr "Адмена"
 
 #: src/config.cpp:301
 msgid "movement speed"
-msgstr ""
+msgstr "хуткасць перамяшчэння"
 
 #: src/config.cpp:302
 msgid "fire speed"
-msgstr ""
+msgstr "хуткась стральбы"
 
 #: src/config.cpp:303
 msgid "scroll speed"
-msgstr ""
+msgstr "хуткасць пракруткі"
 
 #: src/config.cpp:304
 msgid "mapscroll points"
-msgstr ""
+msgstr "дыскрэтнасць пракруткі"
 
 #: src/connect.cpp:80
-msgid "Comparing local and remote UFO2000 versions...\n"
-msgstr ""
+msgid "Comparing local and remote UFO2000 versions..."
+msgstr "Параўнанне версій UFO2000..."
 
 #: src/connect.cpp:81
-msgid "Press ESC to cancel\n"
-msgstr ""
+msgid "Press ESC to cancel"
+msgstr "Націснуць ESC для адмены"
 
 #: src/connect.cpp:133
-msgid ""
-"\n"
-"connection closed"
-msgstr ""
+msgid "connection closed"
+msgstr "злучэнне разарвана"
 
-#: src/connect.cpp:217
+#: src/connect.cpp:218
 msgid "Welcome to the mission-planner !"
-msgstr ""
+msgstr "Запрашаем у планіроўшчык місіі !"
 
-#: src/connect.cpp:259
+#: src/connect.cpp:260
 msgid "Remote player does not have any of your maps"
-msgstr ""
+msgstr "У удаленного гульца няма некаторых Вашых картаў"
 
-#: src/connect.cpp:295
+#: src/connect.cpp:296
 msgid "You can select a map and change the match-settings."
-msgstr ""
-
-#: src/connect.cpp:297
-msgid "The map is already set for this game, and cannot be changed."
-msgstr ""
+msgstr "Вы можаце вылучыць карту і змяніць налады місіі."
 
 #: src/connect.cpp:298
-msgid "To edit a soldier, CTRL-click on his name."
-msgstr ""
+msgid "The map is already set for this game, and cannot be changed."
+msgstr "Карта ўжо вылучана і не можа быць зменена."
 
 #: src/connect.cpp:299
-msgid "Left-click to place a soldier on the map, right-click to remove him."
-msgstr ""
+msgid "To edit a soldier, CTRL-click on his name."
+msgstr "Для рэдагавання салдата CTRL-клік на яго імя."
 
 #: src/connect.cpp:300
+msgid "Left-click to place a soldier on the map, right-click to remove him."
+msgstr "Правым клікам можна дадаць салдата на карту, левым - выдаліць."
+
+#: src/connect.cpp:301
 msgid "When finished, click SEND, then START.  Press ESC to quit, F1 for help."
-msgstr ""
+msgstr "Калі ўсё зроблена, націснуць SEND і затым START. Націснуць ESC для адмены, F1 для дапамогі."
 
-#: src/connect.cpp:363
+#: src/connect.cpp:365
 msgid "PREPARATIONS FOR MISSION FINISHED"
-msgstr ""
+msgstr "СКОНЧЫЦЬ ПАДРЫХТОЎКУ ДА МІСІІ"
 
-#: src/connect.cpp:419
+#: src/connect.cpp:423
+#: src/main.cpp:1459
+#: src/main.cpp:1796
+#: src/server_gui.cpp:599
+msgid "Music OFF"
+msgstr "Музыка Адкл."
+
+#: src/connect.cpp:427
+#: src/connect.cpp:431
+#: src/main.cpp:1463
+#: src/main.cpp:1467
+#: src/main.cpp:1800
+#: src/main.cpp:1804
+#, c-format
+msgid "Music Volume: %d"
+msgstr "Гучнасць Музыки: %d"
+
+#: src/connect.cpp:434
 msgid "EXIT MISSION-PLANNER"
-msgstr ""
+msgstr "ВЫЙСЦІ З ПЛАНІРОЎШЧЫКА МІСІІ"
 
-#: src/connect.cpp:436
+#: src/connect.cpp:451
 msgid "ok."
-msgstr ""
+msgstr "ок."
 
-#: src/connect.cpp:456
+#: src/connect.cpp:471
 msgid "INFO"
-msgstr ""
+msgstr "ІНФАРМАЦЫЯ"
 
-#: src/connect.cpp:466
+#: src/connect.cpp:481
 #, c-format
 msgid "Total men points=%d"
-msgstr ""
+msgstr "Усяго поінтаў=%d"
 
 #: src/editor.cpp:130
 msgid "LOAD UNITS DATA"
-msgstr ""
+msgstr "ЗАГРУЗІЦЬ САЛДАТА"
 
 #: src/editor.cpp:149
 msgid "SAVE UNITS DATA"
-msgstr ""
+msgstr "ЗАХАВАЦЬ САЛДАТА"
 
-#: src/editor.cpp:475
-msgid ""
-"Click-and-drop weapons from the armory to the soldier, right-click to remove"
-msgstr ""
+#: src/editor.cpp:568
+msgid "Click-and-drop weapons from the armory to the soldier, right-click to remove"
+msgstr "Для дадання перацягніце узбраенне да байца, правы клік для выдалення"
 
-#: src/editor.cpp:476
+#: src/editor.cpp:569
 msgid "F1 Help   F2 Save Team   F3 Load Team   F4 Edit Attributes"
-msgstr ""
+msgstr "F1 Дапамога   F2 Захаваць Атрад   F3 Загрузіць Атрад  F4 Змяніць Атрыбуты"
 
-#: src/editor.cpp:564 src/editor.cpp:572 src/inventory.cpp:94
+#: src/editor.cpp:621
+#: src/editor.cpp:629
+#: src/inventory.cpp:94
 #: src/inventory.cpp:105
 msgid "AMMO:"
-msgstr ""
+msgstr "АМУНІЦЫЯ:"
 
-#: src/editor.cpp:565 src/editor.cpp:573 src/inventory.cpp:95
+#: src/editor.cpp:622
+#: src/editor.cpp:630
+#: src/inventory.cpp:95
 #: src/inventory.cpp:106
 msgid "ROUNDS"
-msgstr ""
+msgstr "ЗАРАДАЎ"
 
-#: src/editor.cpp:566 src/editor.cpp:574 src/inventory.cpp:85
-#: src/inventory.cpp:96 src/inventory.cpp:107
+#: src/editor.cpp:623
+#: src/editor.cpp:631
+#: src/inventory.cpp:85
+#: src/inventory.cpp:96
+#: src/inventory.cpp:107
 msgid "LEFT="
-msgstr ""
+msgstr "РЭШТА="
 
-#: src/editor.cpp:591
+#: src/editor.cpp:648
 msgid "Use keys with shift to configure them:"
-msgstr ""
+msgstr "Выкарыстаць кнопкі з shift'ом для налады:"
 
-#: src/editor.cpp:592 src/editor.cpp:593 src/editor.cpp:594 src/editor.cpp:595
+#: src/editor.cpp:649
+#: src/editor.cpp:650
+#: src/editor.cpp:651
+#: src/editor.cpp:652
 msgid "Soldier-Type"
-msgstr ""
+msgstr "Cпецыяльнасць"
 
-#: src/editor.cpp:597
+#: src/editor.cpp:654
 msgid "Name-generator"
-msgstr ""
+msgstr "Генератар Імёнаў"
 
-#: src/editor.cpp:599
+#: src/editor.cpp:656
 msgid "Cycle thru Appearances"
-msgstr ""
+msgstr "Змяніць знешнасць"
 
-#: src/editor.cpp:600
+#: src/editor.cpp:657
 msgid "Cycle thru Armor-types"
-msgstr ""
+msgstr "Змяніць тып брані"
 
-#: src/editor.cpp:602
+#: src/editor.cpp:659
 msgid "Delete Equipment of current man"
-msgstr ""
+msgstr "Зняць усю экіпіроўку"
 
-#: src/editor.cpp:603
+#: src/editor.cpp:660
 msgid "Next soldier"
-msgstr ""
+msgstr "Наступны салдат"
 
-#: src/editor.cpp:610 src/soldier.cpp:854
+#: src/editor.cpp:667
+#: src/soldier.cpp:854
 #, c-format
 msgid "Equipment weight: %d/%2d"
-msgstr ""
+msgstr "Вага экіпіроўкі: %d/%2d"
 
-#: src/editor.cpp:614
+#: src/editor.cpp:671
 msgid "Equipment cost"
-msgstr ""
+msgstr "Кошт экіпіроўкі"
 
-#: src/editor.cpp:973
+#: src/editor.cpp:1069
 msgid "Select unit race"
-msgstr ""
+msgstr "Вылучыць расу салдата"
 
-#: src/editor.cpp:978
+#: src/editor.cpp:1074
 msgid "Select unit armour"
-msgstr ""
+msgstr "Вылучыць браню салдата"
 
-#: src/editor.cpp:983
+#: src/editor.cpp:1079
 msgid "Select unit appearance"
-msgstr ""
+msgstr "Вылучыць знешнасць салдата"
 
-#: src/editor.cpp:1037 src/editor.cpp:1141
+#: src/editor.cpp:1133
+#: src/editor.cpp:1237
 #, c-format
 msgid "Points remain: %2d "
-msgstr ""
+msgstr "Вольных поінтаў: %2d  "
 
-#: src/editor.cpp:1088
+#: src/editor.cpp:1184
 msgid "Name:"
-msgstr ""
+msgstr "Імя:"
 
-#: src/editor.cpp:1092
+#: src/editor.cpp:1188
 msgid "Race:"
-msgstr ""
+msgstr "Раса:"
 
-#: src/editor.cpp:1095
+#: src/editor.cpp:1191
 msgid "Armour:"
-msgstr ""
+msgstr "Браня:"
 
-#: src/editor.cpp:1098
+#: src/editor.cpp:1194
 msgid "Appearance:"
-msgstr ""
+msgstr "Знешнасць:"
 
-#: src/editor.cpp:1101
+#: src/editor.cpp:1197
 msgid "Time Units"
-msgstr ""
+msgstr "Адзінкі Ходу"
 
-#: src/editor.cpp:1103
+#: src/editor.cpp:1199
 msgid "Stamina"
-msgstr ""
+msgstr "Вынослівасць."
 
-#: src/editor.cpp:1105
+#: src/editor.cpp:1201
 msgid "Health"
-msgstr ""
+msgstr "Здароўе"
 
-#: src/editor.cpp:1107
+#: src/editor.cpp:1203
 msgid "Bravery"
-msgstr ""
+msgstr "Храбрасць"
 
-#: src/editor.cpp:1109
+#: src/editor.cpp:1205
 msgid "Reactions"
-msgstr ""
+msgstr "Рэакцыя"
 
-#: src/editor.cpp:1111
+#: src/editor.cpp:1207
 msgid "Firing"
-msgstr ""
+msgstr "Стральба"
 
-#: src/editor.cpp:1113
+#: src/editor.cpp:1209
 msgid "Throwing"
-msgstr ""
+msgstr "Кідкі"
 
-#: src/editor.cpp:1115
+#: src/editor.cpp:1211
 msgid "Strength"
-msgstr ""
+msgstr "Сіла"
 
 #: src/icon.cpp:512
 msgid "CANCEL"
-msgstr ""
+msgstr "АДМЕНА"
 
 #: src/icon.cpp:519
 #, c-format
 msgid "THROW       ACC>%02d%% TUs>%02d"
-msgstr ""
+msgstr "КІНУЦЬ      ДАК>%02d%% АД>%02d"
 
 #: src/icon.cpp:531
 #, c-format
 msgid "STUN        ACC>%02d%% TUs>%02d"
-msgstr ""
+msgstr "ЗНЯДВІЖЫЦЬ  ДАК>%02d%% АД>%02d"
 
 #: src/icon.cpp:533
 #, c-format
 msgid "PUNCH       ACC>%02d%% TUs>%02d"
-msgstr ""
+msgstr "УДАРЫЦЬ     ДАК>%02d%% АД>%02d"
 
 #: src/icon.cpp:542
 #, c-format
 msgid "AIMED THROW ACC>%02d%% TUs>%02d"
-msgstr ""
+msgstr "КІНУЦЬ      ДАК>%02d%% АД>%02d"
 
 #: src/icon.cpp:554
 #, c-format
 msgid "PRIME EXPLOSIVE     TUs>%02d"
-msgstr ""
+msgstr "УЗВЕСЦІ УЗРЫЎЧАТКУ  АХ>%02d"
 
 #: src/icon.cpp:561
 #, c-format
 msgid "PRIME GRENADE       TUs>%02d"
-msgstr ""
+msgstr "УЗВЕСЦІ ГРАНАТУ     АД>%02d"
 
 #: src/icon.cpp:574
 #, c-format
 msgid "AUTO SHOT   ACC>%02d%% TUs>%02d"
-msgstr ""
+msgstr "ЧАРГОЙ      ДАК>%02d%% АД>%02d"
 
 #: src/icon.cpp:585
 #, c-format
 msgid "SNAP SHOT   ACC>%02d%% TUs>%02d"
-msgstr ""
+msgstr "НАЎСКІДКУ   ДАК>%02d%% ОХ>%02d"
 
 #: src/icon.cpp:595
 #, c-format
 msgid "AIMED SHOT  ACC>%02d%% TUs>%02d"
-msgstr ""
+msgstr "ПРЫЦЭЛЬНА   ДАК>%02d%% ОХ>%02d"
 
 #: src/inventory.cpp:83
 msgid "DELAY"
-msgstr ""
+msgstr "ЗАТРЫМКА"
 
 #: src/inventory.cpp:84
 msgid "TIME:"
-msgstr ""
+msgstr "ЧАС:"
 
 #: src/item.cpp:217
 msgid "Firing-Type"
-msgstr ""
+msgstr "Тып выстралу"
 
 #: src/item.cpp:217
 msgid "Accuracy"
-msgstr ""
+msgstr "Дакладнасць"
 
 #: src/item.cpp:217
 msgid "TU cost"
-msgstr ""
+msgstr "Кошт у АД"
 
 #: src/item.cpp:221
 msgid "Auto"
-msgstr ""
+msgstr "Чаргой"
 
 #: src/item.cpp:227
 msgid "Snap"
-msgstr ""
+msgstr "Наўскідку"
 
 #: src/item.cpp:233
 msgid "Aimed"
-msgstr ""
+msgstr "Прыцэльна"
 
 #: src/item.cpp:241
 msgid "Two-handed weapon"
-msgstr ""
+msgstr "Двуручная зброя"
 
-#: src/item.cpp:247 src/main.cpp:1368 src/main.cpp:1370 src/main.cpp:1374
+#: src/item.cpp:247
+#: src/main.cpp:1376
+#: src/main.cpp:1378
+#: src/main.cpp:1382
 msgid "Damage"
-msgstr ""
+msgstr "Пашкоджанне"
 
 #: src/item.cpp:248
 msgid "Ammo-Type"
-msgstr ""
+msgstr "Тып амуніцыі"
 
 #: src/item.cpp:254
 msgid "Rounds"
-msgstr ""
+msgstr "Зарадаў"
 
 #: src/item.cpp:263
 msgid "Ammo#"
-msgstr ""
+msgstr "Амуніцыя#"
 
 #: src/item.cpp:268
 msgid "Weight"
-msgstr ""
+msgstr "Вага"
 
 #: src/item.cpp:271
 msgid "Cost"
-msgstr ""
+msgstr "Кошт"
 
 #: src/main.cpp:82
 #, c-format
 msgid "Time left: %d"
-msgstr ""
+msgstr "Рэштка Часу: %d"
 
-#: src/main.cpp:797
+#: src/main.cpp:798
+#: src/main.cpp:804
 msgid "wrong wholeCRC"
-msgstr ""
+msgstr "wrong whole CRC"
 
-#: src/main.cpp:842 src/main.cpp:844
+#: src/main.cpp:849
+#: src/main.cpp:850
 msgid "Turn end"
-msgstr ""
+msgstr "Канец Ходу"
 
-#: src/main.cpp:874
+#: src/main.cpp:880
 msgid "  NEXT TURN  "
-msgstr ""
+msgstr "  НАСТУПНЫ ХОД  "
 
-#: src/main.cpp:875 src/multiplay.cpp:131 src/multiplay.cpp:140
-#: src/server_gui.cpp:386 src/server_gui.cpp:392 src/server_gui.cpp:438
+#: src/main.cpp:881
+#: src/multiplay.cpp:131
+#: src/multiplay.cpp:140
+#: src/server_gui.cpp:386
+#: src/server_gui.cpp:392
+#: src/server_gui.cpp:446
 msgid "    OK    "
-msgstr ""
+msgstr "    ОК    "
 
-#: src/main.cpp:908
+#: src/main.cpp:914
 #, c-format
 msgid "Next turn. local = %d, remote = %d soldiers"
-msgstr ""
+msgstr "Наступны ход. Колькасць байцоў: у нас = %d, у праціўніка = %d"
 
-#: src/main.cpp:915
+#: src/main.cpp:923
 msgid "Next turn"
-msgstr ""
+msgstr "Наступны Ход"
 
-#: src/main.cpp:968
+#: src/main.cpp:975
 msgid "WATCH"
-msgstr ""
+msgstr "ГЛЯДЗІ"
 
-#: src/main.cpp:1250 src/main.cpp:1272
+#: src/main.cpp:1257
+#: src/main.cpp:1279
 msgid "DRAW!"
-msgstr ""
+msgstr "НІЧЫЯ!"
 
-#: src/main.cpp:1255 src/main.cpp:1259
+#: src/main.cpp:1262
+#: src/main.cpp:1266
 msgid "PLAYER 2 WINS!"
-msgstr ""
+msgstr "ГУЛЕЦ 2 ПЕРАМОГ!"
 
-#: src/main.cpp:1256 src/main.cpp:1258
+#: src/main.cpp:1263
+#: src/main.cpp:1265
 msgid "PLAYER 1 WINS!"
-msgstr ""
+msgstr "ГУЛЕЦ 1 ПЕРАМОГ!"
 
-#: src/main.cpp:1267
+#: src/main.cpp:1274
 msgid "YOU WIN!"
-msgstr ""
+msgstr "ВЫ ПЕРАМАГЛІ!"
 
-#: src/main.cpp:1271
+#: src/main.cpp:1278
 msgid "YOU LOSE!"
-msgstr ""
+msgstr "ВЫ ПРАЙГРАЛІ!"
 
-#: src/main.cpp:1280
+#: src/main.cpp:1288
 msgid "Summary"
-msgstr ""
+msgstr "Зводка"
 
-#: src/main.cpp:1291 src/main.cpp:1341 src/main.cpp:1349 src/main.cpp:1357
+#: src/main.cpp:1299
+#: src/main.cpp:1349
+#: src/main.cpp:1357
+#: src/main.cpp:1365
 #: src/units.cpp:314
 msgid "Player 1"
-msgstr ""
+msgstr "Гулец 1"
 
-#: src/main.cpp:1292 src/main.cpp:1341 src/main.cpp:1349 src/main.cpp:1357
+#: src/main.cpp:1300
+#: src/main.cpp:1349
+#: src/main.cpp:1357
+#: src/main.cpp:1365
 #: src/units.cpp:320
 msgid "Player 2"
-msgstr ""
-
-#: src/main.cpp:1297
-msgid "Your Platoon"
-msgstr ""
-
-#: src/main.cpp:1298
-msgid "Remote Platoon"
-msgstr ""
+msgstr "Гулец 2"
 
 #: src/main.cpp:1305
-msgid "Total Kills:"
-msgstr ""
+msgid "Your Platoon"
+msgstr "Ваш Атрад"
 
-#: src/main.cpp:1310 src/main.cpp:1373
-msgid "Player"
-msgstr ""
+#: src/main.cpp:1306
+msgid "Remote Platoon"
+msgstr "Атрад Праціўніка"
 
 #: src/main.cpp:1313
+msgid "Total Kills:"
+msgstr "Усяго Забіта:"
+
+#: src/main.cpp:1318
+#: src/main.cpp:1381
+msgid "Player"
+msgstr "Гулец"
+
+#: src/main.cpp:1321
 msgid "Death:"
-msgstr ""
+msgstr "Забітых у Вас:"
 
-#: src/main.cpp:1320
+#: src/main.cpp:1328
 msgid "Total Damage Inflicted:"
-msgstr ""
+msgstr "Нанесеныя Страты:"
 
-#: src/main.cpp:1327
+#: src/main.cpp:1335
 msgid "Total Damage Taken:"
-msgstr ""
-
-#: src/main.cpp:1338
-msgid "Most Valuable Soldier:"
-msgstr ""
-
-#: src/main.cpp:1339
-#, c-format
-msgid "%s (%s, %d kills)"
-msgstr ""
-
-#: src/main.cpp:1341 src/main.cpp:1349 src/main.cpp:1357
-msgid "Remote"
-msgstr ""
-
-#: src/main.cpp:1341 src/main.cpp:1349 src/main.cpp:1357
-msgid "Local"
-msgstr ""
+msgstr "Атрыманыя Страты:"
 
 #: src/main.cpp:1346
-msgid "Most Devastating Soldier:"
-msgstr ""
+msgid "Most Valuable Soldier:"
+msgstr "Самы Карысны Салдат:"
 
-#: src/main.cpp:1347 src/main.cpp:1355
+#: src/main.cpp:1347
 #, c-format
-msgid "%s (%s, %d damage inflicted)"
-msgstr ""
+msgid "%s (%s, %d kills)"
+msgstr "%s (%s, %d забіта)"
+
+#: src/main.cpp:1349
+#: src/main.cpp:1357
+#: src/main.cpp:1365
+msgid "Remote"
+msgstr "Remote"
+
+#: src/main.cpp:1349
+#: src/main.cpp:1357
+#: src/main.cpp:1365
+msgid "Local"
+msgstr "Local"
 
 #: src/main.cpp:1354
-msgid "Most Cowardly Soldier:"
-msgstr ""
+msgid "Most Devastating Soldier:"
+msgstr "Самы Разбуральны Салдат:"
 
-#: src/main.cpp:1368 src/main.cpp:1370 src/main.cpp:1374
-msgid "Name"
-msgstr ""
-
-#: src/main.cpp:1368 src/main.cpp:1370 src/main.cpp:1374
-msgid "Kills"
-msgstr ""
-
-#: src/main.cpp:1372
-msgid "Details"
-msgstr ""
-
-#: src/main.cpp:1405
-msgid "End"
-msgstr ""
-
-#: src/main.cpp:1414
-msgid "You can chat here.  Press ESC when finished."
-msgstr ""
-
-#: src/main.cpp:1435
-msgid "EXIT TO MAIN MENU"
-msgstr ""
-
-#: src/main.cpp:1447 src/main.cpp:1783 src/server_gui.cpp:581
-msgid "Music OFF"
-msgstr ""
-
-#: src/main.cpp:1451 src/main.cpp:1455 src/main.cpp:1787 src/main.cpp:1791
+#: src/main.cpp:1355
+#: src/main.cpp:1363
 #, c-format
-msgid "Music Volume: %d"
-msgstr ""
+msgid "%s (%s, %d damage inflicted)"
+msgstr "%s (%s, %d пашкоджанняў нанесена)"
 
-#: src/main.cpp:1527
+#: src/main.cpp:1362
+msgid "Most Cowardly Soldier:"
+msgstr "Самы Няўдалы Салдат:"
+
+#: src/main.cpp:1376
+#: src/main.cpp:1378
+#: src/main.cpp:1382
+msgid "Name"
+msgstr "Імя"
+
+#: src/main.cpp:1376
+#: src/main.cpp:1378
+#: src/main.cpp:1382
+msgid "Kills"
+msgstr "Забіта"
+
+#: src/main.cpp:1380
+msgid "Details"
+msgstr "Дэталі"
+
+#: src/main.cpp:1417
+msgid "End"
+msgstr "Скончыць"
+
+#: src/main.cpp:1426
+msgid "You can chat here.  Press ESC when finished."
+msgstr "Можна пагутарыць з апанентам. Націснуць ESC для завершання."
+
+#: src/main.cpp:1447
+msgid "EXIT TO MAIN MENU"
+msgstr "ВЫЙСЦІ У ГАЛОЎНАЕ МЕНЮ"
+
+#: src/main.cpp:1539
 msgid "Welcome to the battlescape of UFO2000 !"
-msgstr ""
+msgstr "Запрашаем на поле боя UFO2000 !"
 
-#: src/main.cpp:1528
+#: src/main.cpp:1540
 msgid "Press F1 for help."
-msgstr ""
+msgstr "Націснуць F1 для дапамогі."
 
-#: src/main.cpp:1538
+#: src/main.cpp:1552
 msgid "Battlereport"
-msgstr ""
+msgstr "Баявая зводка"
 
-#: src/main.cpp:1833
+#: src/main.cpp:1846
 msgid "SAVE GAME"
-msgstr ""
+msgstr "ЗАХАВАЦЬ ГУЛЬНЮ"
 
-#: src/main.cpp:1836 src/main.cpp:1839
+#: src/main.cpp:1849
+#: src/main.cpp:1854
 msgid "Game saved"
-msgstr ""
+msgstr "Гульня захаваная"
 
-#: src/main.cpp:1844 src/main.cpp:1847 src/main.cpp:1850 src/main.cpp:2003
+#: src/main.cpp:1858
+#: src/main.cpp:1862
+#: src/main.cpp:1866
+#: src/main.cpp:2024
 msgid "LOAD GAME"
-msgstr ""
+msgstr "ЗАГРУЗІЦЬ ГУЛЬНЮ"
 
-#: src/main.cpp:1847
+#: src/main.cpp:1862
 msgid "failed"
-msgstr ""
+msgstr "няўдача"
 
-#: src/main.cpp:1848
+#: src/main.cpp:1863
 msgid "Saved game not found"
-msgstr ""
+msgstr "Захаваная гульня не знойдзена"
 
-#: src/main.cpp:1850
+#: src/main.cpp:1866
 msgid "success"
-msgstr ""
+msgstr "поспех"
 
-#: src/main.cpp:1861
+#: src/main.cpp:1877
 msgid "Tooltips OFF"
-msgstr ""
+msgstr "Падказкі Адкл."
 
-#: src/main.cpp:1864
+#: src/main.cpp:1880
 msgid "Tooltips ON."
-msgstr ""
+msgstr "Падказкі Ўкл."
 
-#: src/main.cpp:1878
+#: src/main.cpp:1894
 msgid "STOP NOTIFY"
 msgstr ""
 
-#: src/main.cpp:1881
+#: src/main.cpp:1897
 msgid "START NOTIFY"
 msgstr ""
 
-#: src/main.cpp:1888
+#: src/main.cpp:1904
 msgid "SCREEN-SNAPSHOT"
-msgstr ""
+msgstr "ЗРАБІЦЬ СКРЫНШОТ"
 
-#: src/main.cpp:1898
+#: src/main.cpp:1916
 msgid "ABORT MISSION ?"
-msgstr ""
+msgstr "СПЫНІЦЬ МІСІЮ ?"
 
-#: src/main.cpp:1899
+#: src/main.cpp:1917
 msgid "YES=RESIGN"
-msgstr ""
+msgstr "ДА=ЗАВЕРШЭННЕ"
 
-#: src/main.cpp:1899
-msgid "OFFER DRAW"
-msgstr ""
-
-#: src/main.cpp:1899
+#: src/main.cpp:1917
 msgid "NO=CONTINUE"
-msgstr ""
+msgstr "НЕ=ПРАЦЯГНУЦЬ"
 
-#: src/main.cpp:1903
+#: src/main.cpp:1923
 msgid "Game aborted"
-msgstr ""
+msgstr "Гульня спынена"
 
-#: src/main.cpp:1999
+#: src/main.cpp:2018
 msgid "Saved game not available"
-msgstr ""
+msgstr "Захаванай гульні не знойдзена"
 
-#: src/main.cpp:2155
+#: src/main.cpp:2175
 #, c-format
 msgid "UFO2000 v%s.%s - a free and opensource multiplayer game"
-msgstr ""
+msgstr "UFO2000 v%s.%s - бясплатная сеткавая гульня з адкрытым кодам"
 
-#: src/main.cpp:2158
+#: src/main.cpp:2178
 msgid "inspired by 'X-COM: UFO Defense', see http://ufo2000.sf.net."
-msgstr ""
+msgstr "па матывах гульняй 'X-COM: UFO Defense', http://ufo2000.sf.net"
 
-#: src/main.cpp:2160
+#: src/main.cpp:2180
 msgid " &MORE "
-msgstr ""
+msgstr " &ЯШЧЭ "
 
-#: src/main.cpp:2160
+#: src/main.cpp:2180
 msgid " OK "
-msgstr ""
+msgstr " ОК "
 
 #: src/mainmenu.cpp:209
 msgid "connect to internet server"
@@ -624,7 +675,7 @@ msgstr "рэдактар"
 
 #: src/mainmenu.cpp:212
 msgid "load saved game"
-msgstr "загрузіць захаваную гульню"
+msgstr "загрузіць гульню"
 
 #: src/mainmenu.cpp:213
 msgid "about"
@@ -632,23 +683,23 @@ msgstr "аб стваральніках"
 
 #: src/mainmenu.cpp:214
 msgid "tip of the day"
-msgstr ""
+msgstr "парада дня"
 
 #: src/mainmenu.cpp:216
 msgid "quit"
-msgstr "выхад"
+msgstr "выйсціЕ"
 
 #: src/map.cpp:1994
 msgid "Select terrain type"
-msgstr ""
+msgstr "Вылучыць тып мясцовасці"
 
 #: src/multiplay.cpp:131
 msgid "  NEXT PLAYER  "
-msgstr ""
+msgstr "  НАСТУПНЫ ГУЛЕЦ  "
 
 #: src/multiplay.cpp:140
 msgid "  GAME START  "
-msgstr ""
+msgstr "  СТАРТ ГУЛЬНІ  "
 
 #: src/multiplay.cpp:190
 #, c-format
@@ -667,1465 +718,1496 @@ msgstr ""
 
 #: src/multiplay.cpp:1345
 #, c-format
-msgid ""
-"Remote player has the following %d maps that can be used for network game:\n"
-msgstr ""
+msgid "Remote player has the following %d maps that can be used for network game:\n"
+msgstr "Апанент мае %d картаў якія могуць быць выкарыстаныя ў сеткавай гульні:\n"
 
 #: src/multiplay.cpp:1370
-msgid ""
-"The following maps can not be used, they are modified or just not installed "
-"by remote player:\n"
-msgstr ""
+msgid "The following maps can not be used, they are modified or just not installed by remote player:\n"
+msgstr "Наступныя карты не могуць быць выкарыстаны, яны мадыфікаваныя або не ўсталяваны апанентам\n"
 
-#: src/text.cpp:160 src/text.cpp:437
+#: src/text.cpp:182
+#: src/text.cpp:459
 msgid "  CLOSE  "
-msgstr ""
+msgstr "  ЗАЧЫНІЦЬ  "
 
-#: src/text.cpp:161
+#: src/text.cpp:183
 msgid "&RANDOM TIP"
-msgstr ""
+msgstr "&СЛУЧ. ПАРАДА"
 
-#: src/text.cpp:162
+#: src/text.cpp:184
 msgid "&NEXT TIP"
-msgstr ""
+msgstr "&НАСТ. ПАРАДА"
 
-#: src/text.cpp:163
+#: src/text.cpp:185
 msgid "RANDOM TIP"
-msgstr ""
+msgstr "ЛЮБАЯ ПАРАДА"
 
-#: src/text.cpp:164
+#: src/text.cpp:186
 msgid "NEXT TIP"
-msgstr ""
+msgstr "НАСТ. ПАРАДА"
 
-#: src/text.cpp:206
+#: src/text.cpp:228
 msgid "Tip"
-msgstr ""
+msgstr "Падказка"
 
-#: src/text.cpp:244
+#: src/text.cpp:266
 msgid "RIGHT SHOULDER"
-msgstr ""
+msgstr "ПРАВАЕ ПЛЯЧО"
 
-#: src/text.cpp:245
+#: src/text.cpp:267
 msgid "LEFT SHOULDER"
-msgstr ""
+msgstr "ЛЕВАЕ ПЛЯЧО"
 
-#: src/text.cpp:246
+#: src/text.cpp:268
 msgid "RIGHT HAND"
-msgstr ""
-
-#: src/text.cpp:247
-msgid "LEFT HAND"
-msgstr ""
-
-#: src/text.cpp:248
-msgid "RIGHT LEG"
-msgstr ""
-
-#: src/text.cpp:249
-msgid "LEFT LEG"
-msgstr ""
-
-#: src/text.cpp:250
-msgid "BACK PACK"
-msgstr ""
-
-#: src/text.cpp:251
-msgid "BELT"
-msgstr ""
-
-#: src/text.cpp:252
-msgid "GROUND"
-msgstr ""
-
-#: src/text.cpp:253
-msgid "ARMOURY"
-msgstr ""
-
-#: src/text.cpp:254
-msgid "COMMON POOL"
-msgstr ""
+msgstr "ПРАВАЯ РУКА"
 
 #: src/text.cpp:269
-msgid "Move up one level"
-msgstr ""
+msgid "LEFT HAND"
+msgstr "ЛЕВАЯ РУКА"
 
 #: src/text.cpp:270
-msgid "Move down one level"
-msgstr ""
+msgid "RIGHT LEG"
+msgstr "ПРАВАЯ НАГА"
+
+#: src/text.cpp:271
+msgid "LEFT LEG"
+msgstr "ЛЕВАЯ НАГА"
 
 #: src/text.cpp:272
-msgid "View up one level"
-msgstr ""
+msgid "BACK PACK"
+msgstr "РЭЧМЯШОК"
 
 #: src/text.cpp:273
-msgid "View down one level"
-msgstr ""
+msgid "BELT"
+msgstr "ПАС"
+
+#: src/text.cpp:274
+msgid "GROUND"
+msgstr "ЗЯМЛЯ"
 
 #: src/text.cpp:275
-msgid "Show Map"
-msgstr ""
+msgid "ARMOURY"
+msgstr "ЖАЎНЕРНЯ"
 
 #: src/text.cpp:276
-msgid "Stand up / Crouch"
-msgstr ""
-
-#: src/text.cpp:278 src/text.cpp:341
-msgid "Inventory"
-msgstr ""
-
-#: src/text.cpp:279
-msgid "CenterView"
-msgstr ""
-
-#: src/text.cpp:281
-msgid "Jump to Next Man"
-msgstr ""
-
-#: src/text.cpp:282
-msgid "Done with this man"
-msgstr ""
-
-#: src/text.cpp:284
-msgid "Toggle Roof"
-msgstr ""
-
-#: src/text.cpp:285 src/units.cpp:327
-msgid "Options"
-msgstr ""
-
-#: src/text.cpp:288
-msgid "Done with turn"
-msgstr ""
-
-#: src/text.cpp:289
-msgid "Exit Game"
-msgstr ""
+msgid "COMMON POOL"
+msgstr "АГУЛЬНЫ ЗАПАС"
 
 #: src/text.cpp:291
-msgid "Show Stats of man"
-msgstr ""
+msgid "Move up one level"
+msgstr "Падняцца на ўзровень уверх"
 
 #: src/text.cpp:292
+msgid "Move down one level"
+msgstr "Спусціцца на ўзровень уніз"
+
+#: src/text.cpp:294
+msgid "View up one level"
+msgstr "На адзін узровень уверх"
+
+#: src/text.cpp:295
+msgid "View down one level"
+msgstr "На адзін узровень уніз"
+
+#: src/text.cpp:297
+msgid "Show Map"
+msgstr "Паказаць Карту"
+
+#: src/text.cpp:298
+msgid "Stand up / Crouch"
+msgstr "Устаць / На калена"
+
+#: src/text.cpp:300
+#: src/text.cpp:363
+msgid "Inventory"
+msgstr "Экіпіроўка"
+
+#: src/text.cpp:301
+msgid "CenterView"
+msgstr "Центраваць"
+
+#: src/text.cpp:303
+msgid "Jump to Next Man"
+msgstr "Наступны баец"
+
+#: src/text.cpp:304
+msgid "Done with this man"
+msgstr "Скончыць з гэтым байцом"
+
+#: src/text.cpp:306
+msgid "Toggle Roof"
+msgstr "Пераключыць дах"
+
+#: src/text.cpp:307
+#: src/units.cpp:327
+msgid "Options"
+msgstr "Налады"
+
+#: src/text.cpp:310
+msgid "Done with turn"
+msgstr "Скончыць Ход"
+
+#: src/text.cpp:311
+msgid "Exit Game"
+msgstr "Выйсці з гульні"
+
+#: src/text.cpp:313
+msgid "Show Stats of man"
+msgstr "Паглядзець параметры байца"
+
+#: src/text.cpp:314
 msgid "Switch Barchart"
 msgstr ""
 
-#: src/text.cpp:295
+#: src/text.cpp:317
 msgid "Reserve Time: None"
-msgstr ""
+msgstr "Захаваць час: няма"
 
-#: src/text.cpp:298
+#: src/text.cpp:320
 msgid "Reserve Time: Aimed shot"
-msgstr ""
+msgstr "Захаваць час: Прыцэльны стрэл"
 
-#: src/text.cpp:301
+#: src/text.cpp:323
 msgid "Reserve Time: Snapshot"
-msgstr ""
+msgstr "Захаваць Час: Стрэл наўскідку"
 
-#: src/text.cpp:304
+#: src/text.cpp:326
 msgid "Reserve Time: Autoshot"
-msgstr ""
+msgstr "Захаваць час: Выстрал Чаргой"
 
-#: src/text.cpp:338
+#: src/text.cpp:360
 msgid "Introduction"
-msgstr ""
+msgstr "Уводзіны"
 
-#: src/text.cpp:339
+#: src/text.cpp:361
 msgid "Battlescape"
-msgstr ""
+msgstr "Поле бою"
 
-#: src/text.cpp:340
+#: src/text.cpp:362
 msgid "Mapview"
-msgstr ""
+msgstr "Карта"
 
-#: src/text.cpp:342
+#: src/text.cpp:364
 msgid "Stats-View"
-msgstr ""
+msgstr "Параметры"
 
-#: src/text.cpp:343
+#: src/text.cpp:365
 msgid "Endgame-Stats"
-msgstr ""
+msgstr "Статыстыка"
 
-#: src/text.cpp:344
-#, fuzzy
+#: src/text.cpp:366
 msgid "Network"
-msgstr "рэдактар"
-
-#: src/text.cpp:345
-msgid "Mission-Planner"
-msgstr ""
-
-#: src/text.cpp:346
-msgid "Scenarios"
-msgstr ""
+msgstr "Сетка"
 
 #: src/text.cpp:367
+msgid "Mission-Planner"
+msgstr "Планіроўшчык"
+
+#: src/text.cpp:368
+msgid "Scenarios"
+msgstr "Сцэнарыі"
+
+#: src/text.cpp:389
 msgid "Select Help-Page"
-msgstr ""
+msgstr "Вылучыць Старонку Дапамогі"
 
-#: src/text.cpp:434
+#: src/text.cpp:456
 msgid "HELP-&INDEX"
-msgstr ""
+msgstr "ДАПАМОГА-&ЗМЕСТ"
 
-#: src/text.cpp:435
+#: src/text.cpp:457
 msgid "&PREV PAGE"
-msgstr ""
+msgstr "&ПРАД. СТАР."
 
-#: src/text.cpp:436
+#: src/text.cpp:458
 msgid "&NEXT PAGE"
-msgstr ""
+msgstr "&НАСТ. СТАР."
 
-#: src/text.cpp:439
+#: src/text.cpp:461
 msgid "To leave, press ESC."
-msgstr ""
+msgstr "Для выйсця націснуць ESC"
 
-#: src/text.cpp:464
+#: src/text.cpp:486
 msgid "UFO2000 is a multiplayer game in the spirit of 'X-COM: UFO Defense'."
-msgstr ""
+msgstr "UFO2000 гэта сеткавая гульня накшталт 'X-COM: UFO Defense'."
 
-#: src/text.cpp:465
+#: src/text.cpp:487
 msgid "At the moment, only the tactical part of the game is playable,"
-msgstr ""
+msgstr "Зараз можна гуляць толькі ў тактычную частку гульні,"
 
-#: src/text.cpp:466
+#: src/text.cpp:488
 msgid "e.g. two teams of soldiers and/or aliens fighting each other."
-msgstr ""
+msgstr "т.ч. дзве каманды байцоў (людзей або прышэльцаў) ваююць між сабой."
 
-#: src/text.cpp:470
+#: src/text.cpp:492
 msgid "UFO2000 needs data (graphics, sound, maps) from an original XCOM-game."
-msgstr ""
-
-#: src/text.cpp:471
-msgid "Files from the XCOM-Demo can be used if you don't own XCOM-1,"
-msgstr ""
-
-#: src/text.cpp:472
-msgid "but this demo only has a few of the maps and aliens."
-msgstr ""
-
-#: src/text.cpp:476
-msgid "If you also have Terror-from-the-Deep (aka UFO-2) or the TFTD-demo,"
-msgstr ""
-
-#: src/text.cpp:477
-msgid "some additional maps from this game can be used."
-msgstr ""
-
-#: src/text.cpp:478
-msgid "(But XCOM-1 is always required)"
-msgstr ""
-
-#: src/text.cpp:482
-msgid "UFO2000 can be played hotseat (solo, or 2 players on 1 computer),"
-msgstr ""
-
-#: src/text.cpp:483
-msgid "or via LAN or internet.  The offical server runs on lxnt.info:2001."
-msgstr ""
-
-#: src/text.cpp:484
-msgid "There is no AI implemented yet."
-msgstr ""
+msgstr "UFO2000 патрабуецца рэсурсы (графіка, гукі, карты) з арыгінальнай гульні."
 
 #: src/text.cpp:493
-msgid "UFO2000 is controlled mainly with the mouse, and these keys:"
-msgstr ""
+msgid "Files from the XCOM-Demo can be used if you don't own XCOM-1,"
+msgstr "Калі няма арыгінальнай гульні, то падыдуць файлы з демаверсіі XCOM,"
 
 #: src/text.cpp:494
-msgid "F1: Help, F2+F3: Save+Load, F9: Keymap, F10: Window/Fullscreen"
-msgstr ""
+msgid "but this demo only has a few of the maps and aliens."
+msgstr "але ў дэмаверсіі ёсць не ўсе карты і прышэльцы."
 
-#: src/text.cpp:495
-msgid "F12: Screenshot, Keypad+/-: adjust Music-Volume, ESC: Quit."
-msgstr ""
+#: src/text.cpp:498
+msgid "If you also have Terror-from-the-Deep (aka UFO-2) or the TFTD-demo,"
+msgstr "Калі таксама ёсць Terror-from-the-Deep (aka UFO-2) або дэма TFTD,"
 
 #: src/text.cpp:499
-msgid "The active soldier is highlighted by a yellow arrow above him."
-msgstr ""
+msgid "some additional maps from this game can be used."
+msgstr "гэта дае магчымасць выкарыстаць карты і з іх."
 
 #: src/text.cpp:500
-msgid "Click on any of your soldiers to make him active."
-msgstr ""
+msgid "(But XCOM-1 is always required)"
+msgstr "(Але без XCOM-1 усё роўна не абысціся)"
+
+#: src/text.cpp:504
+msgid "UFO2000 can be played hotseat (solo, or 2 players on 1 computer),"
+msgstr "UFO2000 мае і hotseat рэжим (гульня на 1 кампутару для 1 або 2 гульцоў),"
 
 #: src/text.cpp:505
-msgid "To move the active soldier, left-click on the map."
-msgstr ""
+msgid "or via LAN or internet.  The offical server runs on lxnt.info:2001."
+msgstr "або можна гуляць праз LAN або інтэрнэт. Афіцыйны сэрвер запушчаны на lxnt.info:2001."
 
 #: src/text.cpp:506
-msgid "Right-click turns him towards the cursor, opens doors,"
-msgstr ""
+msgid "There is no AI implemented yet."
+msgstr "Кампутарнага апанента ў гульні пакуль няма."
 
-#: src/text.cpp:507
-msgid "and stops movement (e.g. in case of a mis-click)."
-msgstr ""
+#: src/text.cpp:515
+msgid "UFO2000 is controlled mainly with the mouse, and these keys:"
+msgstr "Кіраванне ў UFO2000 ажыццяўляецца з дапамогай мышы або клавішаў:"
 
-#: src/text.cpp:511
-msgid "To fire a gun, click on the weapon in the left or right hand,"
-msgstr ""
-
-#: src/text.cpp:512
-msgid "select the fire-mode (aimed, snapshot, autoshot), then click"
-msgstr ""
-
-#: src/text.cpp:513
-msgid "on the target.  Use the up&&down-buttons to aim at other levels."
-msgstr ""
+#: src/text.cpp:516
+msgid "F1: Help, F2+F3: Save+Load, F9: Keymap, F10: Window/Fullscreen"
+msgstr "F1: Дапамога, F2+F3: Зах.+Загр., F9: Раскладка, F10: У Акенцы/На Поўны Экран"
 
 #: src/text.cpp:517
+msgid "F12: Screenshot, Keypad+/-: adjust Music-Volume, ESC: Quit."
+msgstr "F12: Скрыншот, Keypad+/-: . гучнасць музыкі, ESC: Выйсці."
+
+#: src/text.cpp:521
+msgid "The active soldier is highlighted by a yellow arrow above him."
+msgstr "Вылучаны салдат падсвечаны жоўтай стрэлкай над ім."
+
+#: src/text.cpp:522
+msgid "Click on any of your soldiers to make him active."
+msgstr "Клікнуць мышшу на салдаце каб вылучыць яго."
+
+#: src/text.cpp:527
+msgid "To move the active soldier, left-click on the map."
+msgstr "Перамяшчэнне вылучанага байца - левы клік на карце."
+
+#: src/text.cpp:528
+msgid "Right-click turns him towards the cursor, opens doors,"
+msgstr "Правы клік гэта і паварот байца ў бок курсора,"
+
+#: src/text.cpp:529
+msgid "and stops movement (e.g. in case of a mis-click)."
+msgstr " і адкрыццё дзвераў, і прыпынак руху байца."
+
+#: src/text.cpp:533
+msgid "To fire a gun, click on the weapon in the left or right hand,"
+msgstr "Для страляніны - клік на зброі ў левай або правай руцэ,"
+
+#: src/text.cpp:534
+msgid "select the fire-mode (aimed, snapshot, autoshot), then click"
+msgstr "вылучыць рэжим страляніны (прыцэльн., наўскідку, чарг.), і клік"
+
+#: src/text.cpp:535
+msgid "on the target.  Use the up&&down-buttons to aim at other levels."
+msgstr "на цэль. Кнопкі ўверх&&уніз для прыцэльвання па іншых узроўнях."
+
+#: src/text.cpp:539
 msgid "Grenades should be primed before they are thrown."
-msgstr ""
+msgstr "Гранаты трэба ўзвесці перад кідком."
 
-#: src/text.cpp:518
+#: src/text.cpp:540
 msgid "The delay is the number of rounds before they go off."
-msgstr ""
+msgstr "Затрымка - гэта колькасць хадоў да выбуху."
 
-#: src/text.cpp:519
+#: src/text.cpp:541
 msgid "Zero delay means they explode at the end of your turn."
-msgstr ""
+msgstr "Пры нулявой затрымцы выбух будзе па заканчэнні ходу."
 
-#: src/text.cpp:523
+#: src/text.cpp:545
 msgid "While you hold a grenade in your hand, it does not countdown,"
-msgstr ""
+msgstr "Пакуль граната ў руцэ, таймер затрымкі выключаны,"
 
-#: src/text.cpp:524
+#: src/text.cpp:546
 msgid "but a high-explosive does !"
-msgstr ""
+msgstr "але гэта не датычыцца узрыўчаткі!"
 
-#: src/text.cpp:525
+#: src/text.cpp:547
 msgid "Primed proxy-grenades get hot when thrown or put on the ground."
-msgstr ""
+msgstr "Актывацыя гранат-пастак - узвесці і кінуць або пакласці на землю."
 
-#: src/text.cpp:530
+#: src/text.cpp:552
 msgid "The control-panel at the bottom of the screen:"
-msgstr ""
+msgstr "Панэль кіравання ўнізе экрана:"
 
-#: src/text.cpp:531
+#: src/text.cpp:553
 msgid "The boxes at the left and right show the items in hand, e.g. weapons."
-msgstr ""
-
-#: src/text.cpp:532
-msgid "Between them are some buttons and a small status-display."
-msgstr ""
-
-#: src/text.cpp:536
-msgid "Control-panel:  Buttons in column 1:"
-msgstr ""
-
-#: src/text.cpp:537
-msgid "Climb up && down a level."
-msgstr ""
-
-#: src/text.cpp:538
-msgid "This works only when standing on a gravlift."
-msgstr ""
-
-#: src/text.cpp:542
-msgid "Control-panel:  Buttons in column 2 (Ladder-symbol):"
-msgstr ""
-
-#: src/text.cpp:543
-msgid "Change level up && down: Look (and aim) at other levels."
-msgstr ""
-
-#: src/text.cpp:544
-msgid "Maps have 4 levels.  Keyboard-shortcut: PgUp && PgDn-Keys."
-msgstr ""
-
-#: src/text.cpp:548
-msgid "Control-panel:  Buttons in column 3:"
-msgstr ""
-
-#: src/text.cpp:549
-msgid "Map-Display: Invoke the map-viewer for a small overhead-view."
-msgstr ""
-
-#: src/text.cpp:550
-msgid "Stand up / Kneel:  Kneeling improves aiming (10%)."
-msgstr ""
+msgstr "Слоты справа і злева паказваюць што ў руках, напрыклад зброя."
 
 #: src/text.cpp:554
-msgid "Control-panel:  Buttons in column 4:"
-msgstr ""
+msgid "Between them are some buttons and a small status-display."
+msgstr "Між імі некалькі кнопак і невялікі статут-дысплэй."
 
-#: src/text.cpp:555
-msgid "Inventory: access your belt, backpack etc., and items on the ground."
-msgstr ""
+#: src/text.cpp:558
+msgid "Control-panel:  Buttons in column 1:"
+msgstr "Панэль кіравання: Кнопкі ў 1 калонцы:"
 
-#: src/text.cpp:556
-msgid "Center view: scroll map-display to center around the current man."
-msgstr ""
+#: src/text.cpp:559
+msgid "Climb up && down a level."
+msgstr "Перамясціцца на верхні або ніжні ўзровень. "
 
 #: src/text.cpp:560
-msgid "Control-panel:  Buttons in column 5:"
-msgstr ""
+msgid "This works only when standing on a gravlift."
+msgstr "Працуюць толькі калі баец знаходзіцца ў ліфце."
 
-#: src/text.cpp:561
-msgid "Switch to next man, who still has TUs left.      "
-msgstr ""
+#: src/text.cpp:564
+msgid "Control-panel:  Buttons in column 2 (Ladder-symbol):"
+msgstr "Панэль кіравання: Кнопкі ў 2 калонцы:"
 
-#: src/text.cpp:562
-msgid "Switch to next man, and mark current man as done."
-msgstr ""
+#: src/text.cpp:565
+msgid "Change level up && down: Look (and aim) at other levels."
+msgstr "Змяніць узровень (уверх && уніз): паглядзець (і прыцэліццы) на іншым узроўні."
 
 #: src/text.cpp:566
-msgid "Control-panel:  Buttons in column 6:"
-msgstr ""
+msgid "Maps have 4 levels.  Keyboard-shortcut: PgUp && PgDn-Keys."
+msgstr "Карта 4-х узроўневая. Хоткеі: PgUp && PgDn-Keys."
 
-#: src/text.cpp:567
-msgid "Show/hide other levels (e.g. show roof of buildings etc.)"
-msgstr ""
+#: src/text.cpp:570
+msgid "Control-panel:  Buttons in column 3:"
+msgstr "Панэль кіравання: Кнопкі ў 3 калонцы:"
 
-#: src/text.cpp:568
-msgid "Config-Dialog: adjust movement speed, scrolling speed etc."
-msgstr ""
+#: src/text.cpp:571
+msgid "Map-Display: Invoke the map-viewer for a small overhead-view."
+msgstr "Паказаць-Картц: выклікае экран агляду карты."
 
 #: src/text.cpp:572
-msgid "Control-panel:  Buttons in column 7:"
-msgstr ""
+msgid "Stand up / Kneel:  Kneeling improves aiming (10%)."
+msgstr "Устаць / На калена: пры страляніне з калена трапнасць вышэй (на 10%)."
 
-#: src/text.cpp:573
-msgid "End your turn."
-msgstr ""
+#: src/text.cpp:576
+msgid "Control-panel:  Buttons in column 4:"
+msgstr "Панэль кіравання: Кнопкі ў 4 калонцы:"
 
-#: src/text.cpp:574
-msgid "Quit: abort mission (same as ESC)."
-msgstr ""
+#: src/text.cpp:577
+msgid "Inventory: access your belt, backpack etc., and items on the ground."
+msgstr "Экіпіроўка: доступ да кішэняў, рэчмяшку і інш., і да прадметаў на зямле."
 
 #: src/text.cpp:578
-msgid "Control-panel:  green&&red buttons at the lower left:"
-msgstr ""
+msgid "Center view: scroll map-display to center around the current man."
+msgstr "Цэнтраванне: цэнтруе выгляд па выдаткаванаму байцу."
 
-#: src/text.cpp:579
-msgid "Green: Reserve no time, move freely.                   "
-msgstr ""
+#: src/text.cpp:582
+msgid "Control-panel:  Buttons in column 5:"
+msgstr "Панэль кіравання: Кнопкі ў 5 калонцы:"
 
-#: src/text.cpp:580
-msgid "Red:   Reserve time for aimed shot, snapshot, autofire."
-msgstr ""
+#: src/text.cpp:583
+msgid "Switch to next man, who still has TUs left.      "
+msgstr "Вылучыць наст. байца з невыкарыстанымі АД."
 
 #: src/text.cpp:584
-msgid "Control-panel:  big brown button in the center"
-msgstr ""
+msgid "Switch to next man, and mark current man as done."
+msgstr "Вылучыць наст. байца, і пазначыць выдзеленага як гатовага."
 
-#: src/text.cpp:585
-msgid "(shows turn-number):"
-msgstr ""
+#: src/text.cpp:588
+msgid "Control-panel:  Buttons in column 6:"
+msgstr "Панэль кіравання: Кнопкі ў 6 калонцы:"
 
-#: src/text.cpp:586
-msgid "Invoke statistics-display for current man."
-msgstr ""
+#: src/text.cpp:589
+msgid "Show/hide other levels (e.g. show roof of buildings etc.)"
+msgstr "Паказать/схаваць іншыя ўзроўні (напрыклад дахі будынкаў і інш.)"
+
+#: src/text.cpp:590
+msgid "Config-Dialog: adjust movement speed, scrolling speed etc."
+msgstr "Налады: змена хуткасці перамяшчэння, пракруткі і інш."
+
+#: src/text.cpp:594
+msgid "Control-panel:  Buttons in column 7:"
+msgstr "Панэль кіравання: Кнопкі ў 7 калонцы:"
 
 #: src/text.cpp:595
-msgid "The map-viewer shows a small overhead-view of the map."
-msgstr ""
+msgid "End your turn."
+msgstr "Завяршыць ход."
 
 #: src/text.cpp:596
-msgid "To look at other levels, use the up&&down-buttons at the left."
-msgstr ""
+msgid "Quit: abort mission (same as ESC)."
+msgstr "Спыніць місію (як і пры ESC)."
 
-#: src/text.cpp:597
-msgid "To leave, click on the red OK-button, or press ESC."
-msgstr ""
+#: src/text.cpp:600
+msgid "Control-panel:  green&&red buttons at the lower left:"
+msgstr "Панэль кіравання: зялёная і чырвоныя кнопкі злева ўнізе:"
 
 #: src/text.cpp:601
-msgid "A click on the map-area centers the view to this spot."
-msgstr ""
+msgid "Green: Reserve no time, move freely.                   "
+msgstr "Зялёная: няма рэзерва АД, вольны рух."
 
-#: src/text.cpp:603
-msgid "Unexplored areas are shown as black."
-msgstr ""
+#: src/text.cpp:602
+msgid "Red:   Reserve time for aimed shot, snapshot, autofire."
+msgstr "Чырвоныя: рэзерв АД на прыцэльны выстрал, наўскідку або чаргой."
+
+#: src/text.cpp:606
+msgid "Control-panel:  big brown button in the center"
+msgstr "Панэль кіравання: вялікая рудая кнопка ў центры"
 
 #: src/text.cpp:607
-msgid "Yellow dots: your men.             "
-msgstr ""
+msgid "(shows turn-number):"
+msgstr "(паказвае нумар ходу):"
 
 #: src/text.cpp:608
+msgid "Invoke statistics-display for current man."
+msgstr "Выклікае дысплэй з параметрамі выдзеленага байца."
+
+#: src/text.cpp:617
+msgid "The map-viewer shows a small overhead-view of the map."
+msgstr "Карта паказвае тэрыторыю з выглядам зверху."
+
+#: src/text.cpp:618
+msgid "To look at other levels, use the up&&down-buttons at the left."
+msgstr "Для агляду іншых узроўняў выкарыстаюцца ўверх&&уніз кнопкі злева."
+
+#: src/text.cpp:619
+msgid "To leave, click on the red OK-button, or press ESC."
+msgstr "Для выйсця клікнуць па чырвонай кнопцы ОК, або на націснуць ESC."
+
+#: src/text.cpp:623
+msgid "A click on the map-area centers the view to this spot."
+msgstr "Клік на карце цэнтруе выгляд па пункце кліку."
+
+#: src/text.cpp:625
+msgid "Unexplored areas are shown as black."
+msgstr "Неразведаная тэрыторыя адлюстроўваецца чорным."
+
+#: src/text.cpp:629
+msgid "Yellow dots: your men.             "
+msgstr "Жоўтыя кропкі: свае байцы."
+
+#: src/text.cpp:630
 msgid "Red dots   : enemy soldiers.       "
-msgstr ""
+msgstr "Чырвоныя кропкі: байцы праціўніка."
 
-#: src/text.cpp:609
+#: src/text.cpp:631
 msgid "Blue dots  : map-tiles with damage."
-msgstr ""
+msgstr "Сінія кропкі: пашкоджаныя клеткі."
 
-#: src/text.cpp:703
+#: src/text.cpp:725
 msgid "Inventory: here you can manage the weapons"
-msgstr ""
+msgstr "Экіпіроўка: тут можна размеркаваць ўзбраенне"
 
-#: src/text.cpp:704
+#: src/text.cpp:726
 msgid "and equipment of your soldier."
-msgstr ""
-
-#: src/text.cpp:705
-msgid "To leave, press the OK-button, or goto the next/previous man."
-msgstr ""
-
-#: src/text.cpp:709
-msgid "In the mission-planner, you can use F2 && F3"
-msgstr ""
-
-#: src/text.cpp:710
-msgid "to save && load a team of soldiers."
-msgstr ""
-
-#: src/text.cpp:715
-msgid "Use the mouse to move items between the slots"
-msgstr ""
-
-#: src/text.cpp:716
-msgid "for hands, belt, backpack etc."
-msgstr ""
-
-#: src/text.cpp:717
-msgid "Note: during battle, each such move costs time."
-msgstr ""
-
-#: src/text.cpp:721
-msgid "To unload a weapon, move it over the clip-button"
-msgstr ""
-
-#: src/text.cpp:722
-msgid "(top right, below the arrow-buttons) and click there."
-msgstr ""
-
-#: src/text.cpp:723
-msgid "You must have your second hand free."
-msgstr ""
+msgstr "і іншую экіпіроўку байца."
 
 #: src/text.cpp:727
-msgid "To load an empty weapon, hold it in one hand,"
-msgstr ""
+msgid "To leave, press the OK-button, or goto the next/previous man."
+msgstr "Зачыніць націснуўшы на ОК, або пераключыцца на след./прад. байца."
 
-#: src/text.cpp:728
-msgid "and move ammo of the matching type into the weapon-slot."
-msgstr ""
+#: src/text.cpp:731
+msgid "In the mission-planner, you can use F2 && F3"
+msgstr "У планіроўшчыку можна выкарыстаць F2 && F3"
 
-#: src/text.cpp:734
-msgid "The armor cannot be changed during a battle."
-msgstr ""
+#: src/text.cpp:732
+msgid "to save && load a team of soldiers."
+msgstr "для зах. або загр. атраду салдатаў"
 
-#: src/text.cpp:735
-msgid "Flying armor does not work yet (it only has stronger armor)."
-msgstr ""
+#: src/text.cpp:737
+msgid "Use the mouse to move items between the slots"
+msgstr "Для перамяшчэння між слотамі (рукі, рэчмяшок,"
 
-#: src/text.cpp:736
-msgid "Click on the picture of the soldier to get to his stats."
-msgstr ""
+#: src/text.cpp:738
+msgid "for hands, belt, backpack etc."
+msgstr "пас, і інш.) выкарыстаецца мыш."
 
-#: src/text.cpp:742
-msgid "Quick-Setup: (experimental feature)"
-msgstr ""
+#: src/text.cpp:739
+msgid "Note: during battle, each such move costs time."
+msgstr "Увага: у баю кожнае перамяшчэнне варте АД."
 
 #: src/text.cpp:743
-msgid "With F5..F8 a predefined soldier-type can be selected."
-msgstr ""
+msgid "To unload a weapon, move it over the clip-button"
+msgstr "Разрадзіць зброю можна перацягнуўшы яе на кнопку"
 
 #: src/text.cpp:744
+msgid "(top right, below the arrow-buttons) and click there."
+msgstr "(у верхнім правым куту) і націснуць яе."
+
+#: src/text.cpp:745
+msgid "You must have your second hand free."
+msgstr "Пры гэтым рукі павінны быць вольныя."
+
+#: src/text.cpp:749
+msgid "To load an empty weapon, hold it in one hand,"
+msgstr "Для зарадкі пустой зброі, змясціць яго ў руку,"
+
+#: src/text.cpp:750
+msgid "and move ammo of the matching type into the weapon-slot."
+msgstr "і перамясціць на яго прыдатная крама."
+
+#: src/text.cpp:756
+msgid "The armor cannot be changed during a battle."
+msgstr "Браня не можа быць замененая ў бою."
+
+#: src/text.cpp:757
+msgid "Flying armor does not work yet (it only has stronger armor)."
+msgstr "Лятаючая браня пакуль не лётае (яна проста больш магутная)."
+
+#: src/text.cpp:758
+msgid "Click on the picture of the soldier to get to his stats."
+msgstr "Клікнуўшы на малюнак байца выводзім яго параметры."
+
+#: src/text.cpp:764
+msgid "Quick-Setup: (experimental feature)"
+msgstr "Хуткі. Налада: (выпрабавальная фіча)"
+
+#: src/text.cpp:765
+msgid "With F5..F8 a predefined soldier-type can be selected."
+msgstr "Кнопкамі F5..F8 можна вылучыць гатовыя Спецыяльнасці."
+
+#: src/text.cpp:766
 msgid "Shift-F5..F8 set up these keys."
 msgstr ""
 
-#: src/text.cpp:748 src/text.cpp:754 src/text.cpp:760
+#: src/text.cpp:770
+#: src/text.cpp:776
+#: src/text.cpp:782
 msgid "Quick-Setup:"
-msgstr ""
-
-#: src/text.cpp:749
-msgid "DEL: delete equipment of the current soldier."
-msgstr ""
-
-#: src/text.cpp:750
-msgid "TAB/Shift-TAB: jump to next/previous soldier."
-msgstr ""
-
-#: src/text.cpp:755
-msgid "F9: generate a name for the current soldier."
-msgstr ""
-
-#: src/text.cpp:756
-msgid "Shift-F9: configure the name-generator."
-msgstr ""
-
-#: src/text.cpp:761
-msgid "F11: cycle thru apperances of the current soldier. "
-msgstr ""
-
-#: src/text.cpp:762
-msgid "F12: cycle thru armor-types of the current soldier."
-msgstr ""
+msgstr "Хуткая-Налада:"
 
 #: src/text.cpp:771
-msgid "Stats-Display: the current attributes of the soldier."
-msgstr ""
+msgid "DEL: delete equipment of the current soldier."
+msgstr "DEL: вычысціць экіпіроўку выдзеленага байца."
 
-#: src/text.cpp:773
-msgid "To leave, press ESC or click a mousebutton."
-msgstr ""
+#: src/text.cpp:772
+msgid "TAB/Shift-TAB: jump to next/previous soldier."
+msgstr "TAB/Shift+TAB: вылучыць наст./папяр. байца."
 
-#: src/text.cpp:777 src/text.cpp:783 src/text.cpp:789 src/text.cpp:795
-#: src/text.cpp:801 src/text.cpp:807 src/text.cpp:813 src/text.cpp:819
-#: src/text.cpp:825
-msgid "Stats:"
-msgstr ""
+#: src/text.cpp:777
+msgid "F9: generate a name for the current soldier."
+msgstr "F9: згенераваць імя для выдзеленага байца."
 
 #: src/text.cpp:778
-msgid "Time-Units: every action costs time."
-msgstr ""
+msgid "Shift-F9: configure the name-generator."
+msgstr "Shift-F9: Наладзіць генератар імёнаў."
 
-#: src/text.cpp:779
-msgid "Energy: some actions also cost energy (e.g. walking)."
-msgstr ""
+#: src/text.cpp:783
+msgid "F11: cycle thru apperances of the current soldier. "
+msgstr "F11: вылучыць знешнасць выдзеленага байца."
 
 #: src/text.cpp:784
+msgid "F12: cycle thru armor-types of the current soldier."
+msgstr "F12: вылучыць браню для выдзеленага байца."
+
+#: src/text.cpp:793
+msgid "Stats-Display: the current attributes of the soldier."
+msgstr "Акно Параметраў: параметры байца."
+
+#: src/text.cpp:795
+msgid "To leave, press ESC or click a mousebutton."
+msgstr "Зачыняецца па ESC або па кліку мышы."
+
+#: src/text.cpp:799
+#: src/text.cpp:805
+#: src/text.cpp:811
+#: src/text.cpp:817
+#: src/text.cpp:823
+#: src/text.cpp:829
+#: src/text.cpp:835
+#: src/text.cpp:841
+#: src/text.cpp:847
+msgid "Stats:"
+msgstr "Параметры:"
+
+#: src/text.cpp:800
+msgid "Time-Units: every action costs time."
+msgstr "Адзінкі-Дзеяння: любое дзеянне мае кошт у АД."
+
+#: src/text.cpp:801
+msgid "Energy: some actions also cost energy (e.g. walking)."
+msgstr "Вынослівасть: частка дзеянняу каштуе энергію (напрыклад, хада). "
+
+#: src/text.cpp:806
 msgid "Health: when this reaches zero, the soldier dies."
-msgstr ""
+msgstr "Здароўе: калі яно нуль, значыць баец мёртвы."
 
-#: src/text.cpp:785
+#: src/text.cpp:807
 msgid "Fatal Wounds: amount of health-loss each round."
-msgstr ""
+msgstr "Фатальныя Раны: велічыня страты здароўя кожны ход."
 
-#: src/text.cpp:790
+#: src/text.cpp:812
 msgid "Stun: shown as an overlay to health. When the stun-value"
-msgstr ""
+msgstr "Шок: адлюстроўваецца па-над здароўем. Калі велічыня"
 
-#: src/text.cpp:791
+#: src/text.cpp:813
 msgid "reaches the value of health, the soldier gets unconscious."
-msgstr ""
+msgstr "шоку зраўняецца з велічынёй здароўя, баец губляе прытомнасць."
 
-#: src/text.cpp:796
+#: src/text.cpp:818
 msgid "Bravery: (not yet implemented - same for all man)"
-msgstr ""
+msgstr "Храбрасць: (пакуль не выкарыстаецца - цыфры адвольныя)"
 
-#: src/text.cpp:797
+#: src/text.cpp:819
 msgid "Morale: current morale. Goes down when own men die."
-msgstr ""
+msgstr "Маральны Дух: Уменьшается пры стратах у атрадзе."
 
-#: src/text.cpp:802
+#: src/text.cpp:824
 msgid "Reactions: chance for firing at an enemy during their round."
-msgstr ""
+msgstr "Рэакцыя: шанец стрэліць па ворагу ў яго ход."
 
-#: src/text.cpp:803
+#: src/text.cpp:825
 msgid "This needs time for at least a snapshot."
-msgstr ""
+msgstr "Патрабуюцца вольныя АД, хаця б на самы хуткі выстрал."
 
-#: src/text.cpp:808
+#: src/text.cpp:830
 msgid "Firing accuracy: for pistols and guns."
-msgstr ""
+msgstr "Дакладнасць Страляніны: для пісталетаў, вінтовак і інш."
 
-#: src/text.cpp:809
+#: src/text.cpp:831
 msgid "Throwing accuracy: for grenades."
-msgstr ""
+msgstr "Дакладнасць Кідкоў: для кідання гранат, зарадаў СТСТ і інш."
 
-#: src/text.cpp:814
+#: src/text.cpp:836
 msgid "Strength: this determines how much the soldier can carry."
-msgstr ""
+msgstr "Сіла: паказвае колькі баец можа на сабе несці."
 
-#: src/text.cpp:815
+#: src/text.cpp:837
 msgid "When overloaded, he gets less TU each round."
-msgstr ""
+msgstr "Пры перавышэнні, памяншаецца колькасць АД на ход."
 
-#: src/text.cpp:820
+#: src/text.cpp:842
 msgid "PSI-Strength: (not yet implemented)"
-msgstr ""
+msgstr "ПСІ-Сіла: (пакуль не выкарыстаецца)"
 
-#: src/text.cpp:826
+#: src/text.cpp:848
 msgid "Armor: protection-value on all sides of the soldier."
-msgstr ""
+msgstr "Браня: абароненасць байца з кожнага боку."
 
-#: src/text.cpp:827
+#: src/text.cpp:849
 msgid "Under-armor protects against nearby explosions."
-msgstr ""
+msgstr "Браня знізу абараняе ад раненняў пры блізкіх выбухах."
 
-#: src/text.cpp:836 src/text.cpp:842
+#: src/text.cpp:858
+#: src/text.cpp:864
 msgid "Endgame-Statistics:"
-msgstr ""
-
-#: src/text.cpp:838
-msgid "A summary of kills and damage for both teams."
-msgstr ""
-
-#: src/text.cpp:843
-msgid "You can stay here to chat in private with your partner."
-msgstr ""
-
-#: src/text.cpp:853
-msgid "Connect to an UFO2000-Server on your LAN (e.g. 192.168.1.2:2000)"
-msgstr ""
-
-#: src/text.cpp:854
-msgid "or on the Internet (e.g. the offical server lxnt.info:2001)."
-msgstr ""
-
-#: src/text.cpp:859
-msgid "To get a valid login-name at the official server,"
-msgstr ""
+msgstr "Статыстыка Боя:"
 
 #: src/text.cpp:860
-msgid "register at http://ufo2000.lxnt.info/admin.php"
-msgstr ""
-
-#: src/text.cpp:861
-msgid "Registration is free, and no personal data is required."
-msgstr ""
+msgid "A summary of kills and damage for both teams."
+msgstr "Статыстыка стратаў і нанесенай страты абедзвух бакоў."
 
 #: src/text.cpp:865
+msgid "You can stay here to chat in private with your partner."
+msgstr "Тут можна затрымацца і пагутарыць з апанентам."
+
+#: src/text.cpp:875
+msgid "Connect to an UFO2000-Server on your LAN (e.g. 192.168.1.2:2000)"
+msgstr "Злучыцца праз сэрвер UFO2000 можна як у LAN (напр. 192.168.1.2:2000),"
+
+#: src/text.cpp:876
+msgid "or on the Internet (e.g. the offical server lxnt.info:2001)."
+msgstr "так і праз Інтэрнэт (напр. аф. сервер lxnt.info:2001)."
+
+#: src/text.cpp:881
+msgid "To get a valid login-name at the official server,"
+msgstr "Для атрымання дзейснага лагіна на аф.сэрвере,"
+
+#: src/text.cpp:882
+msgid "register at http://ufo2000.lxnt.info/admin.php"
+msgstr "патрабуецца рэгістрацыя на http://ufo2000.lxnt.info/admin.php"
+
+#: src/text.cpp:883
+msgid "Registration is free, and no personal data is required."
+msgstr "Рэгістрацыя бясплатная і не патрабуе асабістых дадзеных."
+
+#: src/text.cpp:887
 msgid "To chat, just type your message, and press ENTER."
-msgstr ""
-
-#: src/text.cpp:866
-msgid "To challenge another player, or accept his/her challenge,"
-msgstr ""
-
-#: src/text.cpp:867
-msgid "click on his/her name in the player-list at the right."
-msgstr ""
-
-#: src/text.cpp:871
-msgid "Colors of the playernames:"
-msgstr ""
-
-#: src/text.cpp:872
-msgid "White: You.                             "
-msgstr ""
-
-#: src/text.cpp:873
-msgid "Gray : Someone else, available for chat."
-msgstr ""
-
-#: src/text.cpp:877
-msgid "Red   : He/she is busy, playing with someone else."
-msgstr ""
-
-#: src/text.cpp:878
-msgid "Yellow: You have sent a challenge to him/her.     "
-msgstr ""
-
-#: src/text.cpp:879
-msgid "Green : You can accept a challenge from him/her.  "
-msgstr ""
+msgstr "Для зносінаў, набрать паведамленне і націснуць ENTER."
 
 #: src/text.cpp:888
-msgid "Mission-Planner: here you can select a map and a scenario,"
-msgstr ""
+msgid "To challenge another player, or accept his/her challenge,"
+msgstr "Для вызава іншага гульца або прыняцця яго вызава,"
 
 #: src/text.cpp:889
-msgid "set the game-rules, and select soldiers for a mission."
-msgstr ""
+msgid "click on his/her name in the player-list at the right."
+msgstr "клікнуць на яго імя ў спісе імёнаў справа."
 
-#: src/text.cpp:890
-msgid "When finished, press SEND, then START. To leave, press ESC."
-msgstr ""
+#: src/text.cpp:893
+msgid "Colors of the playernames:"
+msgstr "Колеры імёнаў гульцоў:"
 
 #: src/text.cpp:894
-msgid "To edit one of your soldiers, CTRL-click on his name."
-msgstr ""
+msgid "White: You.                             "
+msgstr "Белы: Вы."
 
 #: src/text.cpp:895
-msgid "Left-click to place a soldier on the map (your side only),"
-msgstr ""
+msgid "Gray : Someone else, available for chat."
+msgstr "Шэры: любы гулец з якім можна пагутарыць."
 
-#: src/text.cpp:896
-msgid "right-click to remove him."
-msgstr ""
+#: src/text.cpp:899
+msgid "Red   : He/she is busy, playing with someone else."
+msgstr "Чырвоны: гулец заняты - ён у гульні."
 
 #: src/text.cpp:900
-msgid "SAVE && LOAD for a team can be found on the soldier-edit-screen."
-msgstr ""
+msgid "Yellow: You have sent a challenge to him/her.     "
+msgstr "Жоўты: Гэтаму гульцу Вы паслалі выклік на бой."
 
-#: src/text.cpp:906
-msgid "To change the scenario, click on the text below 'MATCH SETTINGS'."
-msgstr ""
+#: src/text.cpp:901
+msgid "Green : You can accept a challenge from him/her.  "
+msgstr "Зялены: Ад гэтага гульца Вам паступіў выклік на бой."
 
-#: src/text.cpp:907
-msgid "To generate a new map, click on the terrain-name,"
-msgstr ""
+#: src/text.cpp:910
+msgid "Mission-Planner: here you can select a map and a scenario,"
+msgstr "Планироўшчык місіі: у ім можна вылучыць тып карты і сцэнарыя,"
 
-#: src/text.cpp:908
-msgid "then click on LOAD, NEW or select a new size (4*4, 5*5, 6*6)."
-msgstr ""
+#: src/text.cpp:911
+msgid "set the game-rules, and select soldiers for a mission."
+msgstr "выявіць правілы гульні і вылучыць байцоў."
 
 #: src/text.cpp:912
-msgid "Click on 'Game rules' for fine-tuning the settings:"
-msgstr ""
+msgid "When finished, press SEND, then START. To leave, press ESC."
+msgstr "Завяршыўшы планаванне націснуць SEND, затым START. Або ESC каб зачыніць."
 
-#: src/text.cpp:913
-msgid "Explosives, Pointlimit, Turnlimit, Timelimit, FOW, Items on Ground."
-msgstr ""
+#: src/text.cpp:916
+msgid "To edit one of your soldiers, CTRL-click on his name."
+msgstr "Для рэдагавання салдата CTRL-клік на яго імя."
 
-#: src/text.cpp:914
-msgid "You should negotiate them via chat with your partner."
-msgstr ""
+#: src/text.cpp:917
+msgid "Left-click to place a soldier on the map (your side only),"
+msgstr "Правым клікам можна дадаць салдата на карту (толькі ў сваю зону), "
 
 #: src/text.cpp:918
-msgid "Gamerules - Explosives:"
-msgstr ""
+msgid "right-click to remove him."
+msgstr "левы клік - здымае яго з карты."
 
-#: src/text.cpp:919
-msgid "What kind of grenades and rockets are allowed."
-msgstr ""
+#: src/text.cpp:922
+msgid "SAVE && LOAD for a team can be found on the soldier-edit-screen."
+msgstr "Зах. і Загр. атрад можна праз экран рэдагавання байцоў."
 
-#: src/text.cpp:920
-msgid "(0=no explosives .. 3=everything allowed)"
-msgstr ""
+#: src/text.cpp:928
+msgid "To change the scenario, click on the text below 'MATCH SETTINGS'."
+msgstr "Для змены сцэнарыя, клікнуць на тэкст пад надпісам 'НАЛАДЫ МІСІІ'."
 
-#: src/text.cpp:924
-msgid "Gamerules - Pointlimit:"
-msgstr ""
-
-#: src/text.cpp:925
-msgid "How many points you can spend on your soldiers,"
-msgstr ""
-
-#: src/text.cpp:926
-msgid "their attributes, armor, weapons and equipment."
-msgstr ""
+#: src/text.cpp:929
+msgid "To generate a new map, click on the terrain-name,"
+msgstr "Для стварэння новай карты, клікнуць на тэкст з типам карты,"
 
 #: src/text.cpp:930
-msgid "Gamerules - Turnlimit:"
-msgstr ""
+msgid "then click on LOAD, NEW or select a new size (4*4, 5*5, 6*6)."
+msgstr "затым клікнуць на ЗАГРУЗІЦЬ, НОВАЯ або вылучыць новы памер (4*4, 5*5, 6*6)."
 
-#: src/text.cpp:931
-msgid "How many turns the match will last."
-msgstr ""
+#: src/text.cpp:934
+msgid "Click on 'Game rules' for fine-tuning the settings:"
+msgstr "Націснуць на 'Правілы гульні' для больш дакладнай налады:"
+
+#: src/text.cpp:935
+msgid "Explosives, Pointlimit, Turnlimit, Timelimit, FOW, Items on Ground."
+msgstr "Абмежаванні - на Ўзрыўчатку, на Закупку, на колькасць Хадоў, на Час і інш."
 
 #: src/text.cpp:936
-msgid "Gamerules - Timelimit:"
-msgstr ""
+msgid "You should negotiate them via chat with your partner."
+msgstr "Можна дамовіцца аб іх у чату з партнёрам па гульні."
 
-#: src/text.cpp:937
-msgid "How many seconds each turn lasts."
-msgstr ""
+#: src/text.cpp:940
+msgid "Gamerules - Explosives:"
+msgstr "Правіла - Узрыўчатка:"
 
-#: src/text.cpp:938
-msgid "This is for fast, blitz-type games."
-msgstr ""
+#: src/text.cpp:941
+msgid "What kind of grenades and rockets are allowed."
+msgstr "Вызначае, што з гранат і ракет дазволена."
 
 #: src/text.cpp:942
-msgid "Gamerules - Map Exploration Level at start of game:"
-msgstr ""
+msgid "(0=no explosives .. 3=everything allowed)"
+msgstr "(0=без узрыўчаткі зусім .. 3=дазволена ўсё)"
 
-#: src/text.cpp:943
-msgid ""
-"0: map not explored, 1: deployment-area explored, 2: whole map explored."
-msgstr ""
+#: src/text.cpp:946
+msgid "Gamerules - Pointlimit:"
+msgstr "Правіла - Абмежаванне на закупку:"
 
-#: src/text.cpp:944
-msgid "Unexplored (not yet seen) parts of the map are shown as black."
-msgstr ""
+#: src/text.cpp:947
+msgid "How many points you can spend on your soldiers,"
+msgstr "Вызначае колькасць поінтаў якія можна патраціць на байцоў,"
 
 #: src/text.cpp:948
-msgid "Gamerules - Ground"
-msgstr ""
+msgid "their attributes, armor, weapons and equipment."
+msgstr "іх параметры, браню, зброю і іншую экіпіроўку."
 
-#: src/text.cpp:949
-msgid "If this is off, you cannot leave the editor while items"
-msgstr ""
+#: src/text.cpp:952
+msgid "Gamerules - Turnlimit:"
+msgstr "Правіла - Абмежаванне Хадоў."
 
-#: src/text.cpp:950
-msgid "are on the ground (e.g. heavy rockets to take on the mission)."
-msgstr ""
-
-#: src/text.cpp:957
-msgid "There are several scenario-types available:"
-msgstr ""
+#: src/text.cpp:953
+msgid "How many turns the match will last."
+msgstr "Тут можна задаць даўжыню матча ў хадах."
 
 #: src/text.cpp:958
-msgid "Deathmatch, Escape, Control, Sabotage, Capture ..."
-msgstr ""
+msgid "Gamerules - Timelimit:"
+msgstr "Правіла - Абмежаванне Часу."
+
+#: src/text.cpp:959
+msgid "How many seconds each turn lasts."
+msgstr "Тут можна задаць даўжыню ходу ў секундах."
+
+#: src/text.cpp:960
+msgid "This is for fast, blitz-type games."
+msgstr "Гэта для хуткіх, бліц-гульняў."
 
 #: src/text.cpp:964
-msgid "Deathmatch - the most basic scenario:"
-msgstr ""
+msgid "Gamerules - Map Exploration Level at start of game:"
+msgstr "Правіла - Узровень выведкі тэрыторыі пры старце гульні."
 
 #: src/text.cpp:965
-msgid "To win, you just have to survive,"
-msgstr ""
+msgid "0: map not explored, 1: deployment-area explored, 2: whole map explored."
+msgstr "0: карта не выведана, 1: вядомая зона высадки, 2: уся карта разведана."
 
 #: src/text.cpp:966
-msgid "and kill or stun everybody else."
-msgstr ""
+msgid "Unexplored (not yet seen) parts of the map are shown as black."
+msgstr "Неразведаныя часткі карты адлюстроўваюцца чорным."
+
+#: src/text.cpp:970
+msgid "Gamerules - Ground"
+msgstr "Правіла - Зямля"
+
+#: src/text.cpp:971
+msgid "If this is off, you cannot leave the editor while items"
+msgstr "Калі выключана, то нельга пакінуць рэдактар,"
 
 #: src/text.cpp:972
+msgid "are on the ground (e.g. heavy rockets to take on the mission)."
+msgstr "пакуль на зямле ёсць хоць адзін прадмет."
+
+#: src/text.cpp:979
+msgid "There are several scenario-types available:"
+msgstr "Ёсць некалькі тыпаў сцэнарыяў:"
+
+#: src/text.cpp:980
+msgid "Deathmatch, Escape, Control, Sabotage, Capture ..."
+msgstr "Мясарубка, Уцёкі, Цар гары, Дыверсія, Захоп ..."
+
+#: src/text.cpp:986
+msgid "Deathmatch - the most basic scenario:"
+msgstr "Мясарубка - самы просты"
+
+#: src/text.cpp:987
+msgid "To win, you just have to survive,"
+msgstr "Перамог калі выжыў,"
+
+#: src/text.cpp:988
+msgid "and kill or stun everybody else."
+msgstr "уклаўшы, пры гэтым, усіх ворагаў."
+
+#: src/text.cpp:994
 msgid "(to be continued)"
-msgstr ""
+msgstr "(працяг)"
 
 #: src/soldier.cpp:863
 msgid "TUs>"
-msgstr ""
+msgstr "АД>"
 
 #: src/soldier.cpp:885
 msgid "Health>"
-msgstr ""
+msgstr "Здароўе>"
 
 #: src/soldier.cpp:920
 msgid "TIME UNITS"
-msgstr ""
+msgstr "АДЗІНКІ ДЗЕЯННЯ"
 
 #: src/soldier.cpp:921
 msgid "ENERGY"
-msgstr ""
+msgstr "ЭНЕРГІЯ"
 
 #: src/soldier.cpp:922
 msgid "HEALTH"
-msgstr ""
+msgstr "ЗДАРОЎЕ"
 
 #: src/soldier.cpp:923
 msgid "FATAL WOUNDS"
-msgstr ""
+msgstr "ФАТАЛЬНЫЯ РАНЫ"
 
 #: src/soldier.cpp:924
 msgid "BRAVERY"
-msgstr ""
+msgstr "ХРАБРАСЦЬ"
 
 #: src/soldier.cpp:925
 msgid "MORALE"
-msgstr ""
+msgstr "МАРАЛЬНЫ СТАН"
 
 #: src/soldier.cpp:926
 msgid "REACTIONS"
-msgstr ""
+msgstr "РЭАКЦЫЯ"
 
 #: src/soldier.cpp:927
 msgid "FIRING ACCURACY"
-msgstr ""
+msgstr "ДАКЛАДНАСЦЬ СТРАЛЯНІНЫ"
 
 #: src/soldier.cpp:928
 msgid "THROWING ACCURACY"
-msgstr ""
+msgstr "ДАКЛАДНАСЦЬ КІДКОЎ"
 
 #: src/soldier.cpp:929
 msgid "STRENGTH"
-msgstr ""
+msgstr "СІЛА"
 
 #: src/soldier.cpp:932
 msgid "FRONT ARMOUR"
-msgstr ""
+msgstr "БРАНЯ НАПЕРАДЗЕ"
 
 #: src/soldier.cpp:933
 msgid "LEFT ARMOUR"
-msgstr ""
+msgstr "БРАНЯ ЗЛЕВА"
 
 #: src/soldier.cpp:934
 msgid "RIGHT ARMOUR"
-msgstr ""
+msgstr "БРАНЯ СПРАВА"
 
 #: src/soldier.cpp:935
 msgid "REAR ARMOUR"
-msgstr ""
+msgstr "БРАНЯ ЗЗАДУ"
 
 #: src/soldier.cpp:936
 msgid "UNDER ARMOUR"
-msgstr ""
+msgstr "БРАНЯ ЗНІЗУ"
 
 #: src/soldier.cpp:1317
 msgid "Time units are reserved for snap shot."
-msgstr ""
+msgstr "Адзінкі дзеяння захаваныя для выстралу наўскідку."
 
 #: src/soldier.cpp:1324
 msgid "Time units are reserved for aimed shot."
-msgstr ""
+msgstr "Адзінкі дзеяння захаваныя для прыцэльнаго выстралу."
 
 #: src/soldier.cpp:1331
 msgid "Time units are reserved for auto shot."
-msgstr ""
+msgstr "Адзінкі дзеяння захаваныя для выстралу чаргой."
 
 #: src/soldier.cpp:1338
 msgid "Time units are reserved for grenade throw."
-msgstr ""
+msgstr "Адзінкі дзеяння захаваныя для кідку гранаты."
 
-#: src/soldier.cpp:1984
+#: src/soldier.cpp:1819
 msgid "killed"
-msgstr ""
+msgstr "забіты"
 
-#: src/soldier.cpp:2028
+#: src/soldier.cpp:1865
 msgid "stunned"
-msgstr ""
+msgstr "знядвіжаны"
 
-#: src/soldier.cpp:2078
+#: src/soldier.cpp:1916
 msgid "Panicked"
-msgstr ""
+msgstr "панікуе"
 
 #: src/units.cpp:210
 msgid "MATCH SETTINGS"
-msgstr ""
+msgstr "НАЛАДЫ МІСІІ"
 
 #: src/units.cpp:216
 msgid "Game rules:"
-msgstr ""
+msgstr "Правілы гульні:"
 
 #: src/units.cpp:255
 #, c-format
 msgid "Total points=%d (of %d)"
-msgstr ""
+msgstr "Усяго поінтаў=%d (з %d)"
 
 #: src/units.cpp:366
 msgid "NEW"
-msgstr ""
+msgstr "НОВАЯ"
 
 #: src/units.cpp:367
 msgid "LOAD"
-msgstr ""
+msgstr "ЗАГР."
 
 #: src/units.cpp:368
 msgid "SAVE"
-msgstr ""
+msgstr "ЗАХ."
 
 #: src/units.cpp:377
 #, c-format
 msgid "Explosives level: %d"
-msgstr ""
+msgstr "Узр. Узрыўчаткі: %d"
 
 #: src/units.cpp:378
 #, c-format
 msgid "Points limit: %d000"
-msgstr ""
+msgstr "Абмеж. поінтаў: %d000"
 
 #: src/units.cpp:379
 msgid "No turns limit"
-msgstr ""
+msgstr "Без абмеж. па хадах"
 
 #: src/units.cpp:379
 #, c-format
 msgid "Turns limit: %d"
-msgstr ""
+msgstr "Абмеж. па хадах: %d"
 
 #: src/units.cpp:380
 msgid "No time limit"
-msgstr ""
+msgstr "Без абмеж. па часе"
 
 #: src/units.cpp:380
 #, c-format
 msgid "Time limit: %d sec"
-msgstr ""
+msgstr "Час на ход: %d сек"
 
 #: src/units.cpp:381
 #, c-format
 msgid "Exploration level: %d"
-msgstr ""
+msgstr "Узровень Выведкі: %d"
 
 #: src/units.cpp:382
 msgid "Editor: ground on"
-msgstr ""
+msgstr "Рэдактар: зямля ўкл."
 
 #: src/units.cpp:382
 msgid "Editor: ground off"
-msgstr ""
+msgstr "Рэдактар: зямля выкл."
 
 #: src/units.cpp:400
 msgid "All explosives are prohibited."
-msgstr ""
+msgstr "Любая ўзрыўчатка забароненая."
 
 #: src/units.cpp:404
 msgid "High explosives, all rockets and"
-msgstr ""
+msgstr "Зарады ўзрыўчаткі, усё ракеты і"
 
 #: src/units.cpp:405
 msgid "alien grenades are prohibited."
-msgstr ""
+msgstr "гранаты чужых забароненыя."
 
 #: src/units.cpp:409
 msgid "Large rockets and alien grenades"
-msgstr ""
+msgstr "Вялікія ракеты і гранаты чужых"
 
 #: src/units.cpp:410
 msgid "are prohibited."
-msgstr ""
+msgstr "забароненыя."
 
 #: src/units.cpp:414
 msgid "All explosives are allowed."
-msgstr ""
+msgstr "Любая ўзрыўчатка дазволеная."
 
-#: src/units.cpp:440 src/units.cpp:453
+#: src/units.cpp:440
+#: src/units.cpp:453
 msgid "no"
-msgstr ""
+msgstr "не"
 
 #: src/units.cpp:472
 msgid "Map isn't explored at all."
-msgstr ""
+msgstr "Карта не разведана."
 
 #: src/units.cpp:476
 msgid "Deployment area is explored."
-msgstr ""
+msgstr "Разведана зона высадкі."
 
 #: src/units.cpp:480
 msgid "The entire map is explored."
-msgstr ""
+msgstr "Уся карта разведана."
 
 #: src/units.cpp:597
 #, c-format
 msgid "Total points=%d"
-msgstr ""
+msgstr "Усяго поінтаў=%d"
 
 #: src/units.cpp:613
 msgid "SERVER"
-msgstr ""
+msgstr "СЭРВЕР"
 
 #: src/units.cpp:616
 msgid "CLIENT"
-msgstr ""
+msgstr "КЛІЕНТ"
 
 #: src/units.cpp:623
 msgid "SEND"
-msgstr ""
+msgstr "SEND"
 
 #: src/units.cpp:630
 msgid "START"
-msgstr ""
+msgstr "START"
 
 #: src/units.cpp:982
 msgid "load GEODATA.lua file"
-msgstr ""
+msgstr "Загрузіць файл GEODATA.lua"
 
 #: src/units.cpp:986
 msgid "Invalid map file."
-msgstr ""
+msgstr "Файл карты няправільны!."
 
 #: src/units.cpp:1004
 msgid "Save GEODATA.lua file"
-msgstr ""
+msgstr "Захаваць файл GEODATA.lua"
 
 #: src/units.cpp:1006
 msgid "Can't save geodata."
-msgstr ""
+msgstr "Geodata не захаваны!."
 
 #: src/video.cpp:295
 #, c-format
 msgid "Screenshot saved as %s"
-msgstr ""
+msgstr "Скрыншот захаваны як %s"
 
 #: src/server_gui.cpp:304
 msgid "Server:"
-msgstr ""
+msgstr "Сэрвер:"
 
 #: src/server_gui.cpp:306
 msgid "Login:"
-msgstr ""
+msgstr "Лагін:"
 
 #: src/server_gui.cpp:308
 msgid "Password:"
-msgstr ""
+msgstr "Пароль:"
 
 #: src/server_gui.cpp:380
 msgid "Connecting to server..."
-msgstr ""
+msgstr "Злучэнне з сэрвером..."
 
 #: src/server_gui.cpp:401
-#, fuzzy
 msgid "ufo2000 internet server ("
-msgstr "далучыцца да сэрвера"
+msgstr "ufo2000 інтэрнэт сервер ("
 
 #: src/server_gui.cpp:405
 msgid "users online"
-msgstr ""
+msgstr "наяўныя гульцы"
 
 #: src/server_gui.cpp:409
-#, fuzzy
 msgid "You have just connected to ufo2000 internet server"
-msgstr "далучыцца да сэрвера"
+msgstr "Вы далучыліся да сервера ufo2000"
 
 #: src/server_gui.cpp:410
 msgid "There are two windows here: chat console in the left window"
-msgstr ""
+msgstr "Тут два акны: акно чата злева"
 
 #: src/server_gui.cpp:411
 msgid "and the list of online players in the right"
-msgstr ""
+msgstr "і спіс далучаных да сэрвера гульцоў справа"
 
 #: src/server_gui.cpp:413
 msgid "white player name - that's your own name"
-msgstr ""
+msgstr "імя белага колеру - Вы"
 
 #: src/server_gui.cpp:414
 msgid "gray player name - available for chat"
-msgstr ""
+msgstr "імя шэрага колеру - гулец гатовы для зносінаў у чату"
 
 #: src/server_gui.cpp:415
 msgid "yellow player name - you have sent a challenge to this player"
-msgstr ""
+msgstr "імя жоўтага колеру - гулец вылучаны Вамі ў якасці апанента"
 
 #: src/server_gui.cpp:416
 msgid "green player name - you can accept a challenge from this player"
-msgstr ""
+msgstr "імя зялёнага колеру - гулец вылучыў Вас у якасці апанента"
 
 #: src/server_gui.cpp:417
 msgid "red player name - the player is busy playing with someone else"
-msgstr ""
+msgstr "імя чырвонага колеру - гулец ужо з кім-то гуляе"
 
 #: src/server_gui.cpp:419
 msgid "You can left click on player names to select them as your opponents"
-msgstr ""
+msgstr "Левым клікам можна пазначыць імя гульца як патэнцыйнага апанента"
+
+#: src/server_gui.cpp:437
+msgid "Connected to server"
+msgstr "Далучаны да сэрвера"
 
 #: src/server_gui.cpp:438
-msgid "  Connection lost  "
+msgid "as user"
 msgstr ""
 
-#: src/server_gui.cpp:449
+#: src/server_gui.cpp:446
+#: src/server_gui.cpp:447
+msgid "  Connection lost  "
+msgstr "Злучэнне страчана"
+
+#: src/server_gui.cpp:459
 #, c-format
 msgid "%s is back from a game"
-msgstr ""
+msgstr "%s вярнуўся з гульні"
 
-#: src/server_gui.cpp:451
+#: src/server_gui.cpp:461
 #, c-format
 msgid "%s is here"
-msgstr ""
+msgstr "%s тут"
 
-#: src/server_gui.cpp:458
+#: src/server_gui.cpp:468
 #, c-format
 msgid "%s disconnected"
-msgstr ""
+msgstr "%s адлучыўся"
 
-#: src/server_gui.cpp:476
+#: src/server_gui.cpp:486
 #, c-format
 msgid "%s left chat to play a game"
+msgstr "%s пакінуў чат для гульні"
+
+#: src/server_gui.cpp:498
+msgid "Start networkgame with"
 msgstr ""
 
-#: src/server_gui.cpp:594
-msgid "DISCONNECT FROM SERVER"
+#: src/server_gui.cpp:523
+msgid "Join networkgame with"
 msgstr ""
+
+#: src/server_gui.cpp:612
+#: src/server_gui.cpp:614
+#: src/server_gui.cpp:637
+msgid "DISCONNECT FROM SERVER"
+msgstr "РАЗАРВАТЬ ЗЛУЧЭННЕ"
 
 #: src/scenario.cpp:74
 msgid "Deathmatch"
-msgstr ""
+msgstr "Мясарубка"
 
 #: src/scenario.cpp:76
 msgid "Kill 'em all!"
-msgstr ""
+msgstr "Забіць усіх ворагаў!"
 
 #: src/scenario.cpp:85
 msgid "Escape"
-msgstr ""
+msgstr "Уцёкі"
 
 #: src/scenario.cpp:87
 msgid "You must get your leader (first selected soldier)"
-msgstr ""
+msgstr "Лідэр (першы вылучаны баец) павінен"
 
 #: src/scenario.cpp:88
 msgid "to the opposite edge of the map to win.          "
-msgstr ""
+msgstr "дасягнуць процілеглага боку карты."
 
 #: src/scenario.cpp:89
 msgid "Your leader is always visible on your opponent's "
-msgstr ""
+msgstr "Лідэр заўсёды паказаны на мінікарце"
 
 #: src/scenario.cpp:90
 msgid "minimap."
-msgstr ""
+msgstr "праціўніка."
 
-#: src/scenario.cpp:92 src/scenario.cpp:140
+#: src/scenario.cpp:92
+#: src/scenario.cpp:140
 msgid "You must kill enemy leader (first selected       "
-msgstr ""
+msgstr "Забіць лідэра ворага (першы вылучаны баец)"
 
 #: src/scenario.cpp:93
 msgid "soldier) before he gets to your edge of the map. "
-msgstr ""
+msgstr "да таго як ён дасягне боку карты."
 
 #: src/scenario.cpp:94
 msgid "Leader is always visible on your minimap.        "
-msgstr ""
+msgstr "Лідэр ворага заўсёды паказаны на мінікарце."
 
 #: src/scenario.cpp:104
 msgid "Diversion"
-msgstr ""
+msgstr "Дыверсія"
 
 #: src/scenario.cpp:106
 msgid "You must place high explosives at places which   "
-msgstr ""
+msgstr "Выявіць зарады ўзрыўчаткі ў указаных на"
 
 #: src/scenario.cpp:107
 msgid "are indicated on your minimap. You can have high "
-msgstr ""
+msgstr "мінікарце месцах. Трэба мець зарады "
 
 #: src/scenario.cpp:108
 msgid "explosives even if they aren't allowed by rules  "
-msgstr ""
+msgstr "узрыўчаткі, інакш мэта місіі не зможа быць"
 
 #: src/scenario.cpp:109
 msgid "of the match.                                    "
-msgstr ""
+msgstr "дасягнута."
 
 #: src/scenario.cpp:111
 msgid "You must kill all enemy soldiers before they     "
-msgstr ""
+msgstr "Знішчыць салдатаў праціўніка да залажэння"
 
 #: src/scenario.cpp:112
 msgid "plant explosives at places which are indicated on"
-msgstr ""
+msgstr "імі зарадаў узрыўчаткі ў адзначаных на"
 
 #: src/scenario.cpp:113
 msgid "the minimap.                                     "
-msgstr ""
+msgstr "мінікарце месцах."
 
 #: src/scenario.cpp:122
 msgid "Control"
-msgstr ""
+msgstr "Цар гары"
 
 #: src/scenario.cpp:124
 msgid "You must control the 10x10 area in the centre of "
-msgstr ""
+msgstr "Неабходна кантраляваць надзел 10x10"
 
 #: src/scenario.cpp:125
 msgid "the map for number of successive half-turns set  "
-msgstr ""
+msgstr "у центры карты такую колькасць паўхадоў "
 
 #: src/scenario.cpp:126
 msgid "in the \"Options\" section.                      "
-msgstr ""
+msgstr "запар якое ўсталявана ў наладах."
 
 #: src/scenario.cpp:127
 msgid "To control an area you have to have in it more   "
-msgstr ""
+msgstr "Для кантроля трэба мець у зоне больш байцоў"
 
 #: src/scenario.cpp:128
 msgid "soldiers than your opponent.                     "
-msgstr ""
+msgstr "чым там мае праціўнік."
 
 #: src/scenario.cpp:138
 msgid "Assassination"
-msgstr ""
+msgstr "Ліквідацыя"
 
 #: src/scenario.cpp:141
 msgid "soldier). Enemy leader is always visible on your "
-msgstr ""
+msgstr "Варожы лідэр заўсёды паказаны на сваёй "
 
 #: src/scenario.cpp:142
 msgid "minimap.                                         "
-msgstr ""
+msgstr "мінікарце."
 
 #: src/scenario.cpp:144
 msgid "You must save your leader (first selected        "
-msgstr ""
+msgstr "Абараніць свайго лідэра (першы вылучаны"
 
 #: src/scenario.cpp:145
 msgid "soldier). He is always visible for your opponent "
-msgstr ""
+msgstr "баец). Лідэр заўсёды паказаны на мінікарце "
 
 #: src/scenario.cpp:146
 msgid "on the minimap.                                  "
-msgstr ""
+msgstr "праціўніка."
 
 #: src/scenario.cpp:156
 msgid "Hold"
-msgstr ""
+msgstr "Утрымліваць пазіцыю"
 
 #: src/scenario.cpp:158
 msgid "You must save at least half of your squad        "
-msgstr ""
+msgstr "Неабходна захаваць больш паловы"
 
-#: src/scenario.cpp:159 src/scenario.cpp:163
+#: src/scenario.cpp:159
+#: src/scenario.cpp:163
 msgid "(rounded down) until the end of the match (number"
-msgstr ""
+msgstr "атрада да заканчэння місіі (працягласць"
 
-#: src/scenario.cpp:160 src/scenario.cpp:164
+#: src/scenario.cpp:160
+#: src/scenario.cpp:164
 msgid "of turns is set in the \"Options\" section).       "
-msgstr ""
+msgstr "усталёўваецца ў наладах)."
 
-#: src/scenario.cpp:162 src/scenario.cpp:181
+#: src/scenario.cpp:162
+#: src/scenario.cpp:181
 msgid "You must kill more than half of enemy squad      "
-msgstr ""
+msgstr "Знішчыць больш паловы байцоў ворага"
 
 #: src/scenario.cpp:174
 msgid "Breakthrough"
-msgstr ""
+msgstr "Прорва"
 
 #: src/scenario.cpp:176
 msgid "You must bring at least half of your squad       "
-msgstr ""
+msgstr "Трэба правесці не меней паловы атрада"
 
 #: src/scenario.cpp:177
 msgid "(rounded up) to the opposite edge of the map if  "
-msgstr ""
+msgstr "да процілеглага боку карты калі вылучаны"
 
 #: src/scenario.cpp:178
 msgid "standard deployment is selected or to any edge if"
-msgstr ""
+msgstr "стандартны тып высадкі або да любога боку"
 
 #: src/scenario.cpp:179
 msgid "\"surrounded\" deployment is selected.             "
-msgstr ""
+msgstr "карты калі вылучаны тып высадкі ў акружэнні."
 
 #: src/scenario.cpp:182
 msgid "(rounded up) before they get to your edge of the "
-msgstr ""
+msgstr "да таго як яны дасягнуць процілеглага"
 
 #: src/scenario.cpp:183
 msgid "map if standard deployment is selected or to any "
-msgstr ""
+msgstr "боку карты пры стандартнай высадцы або любога"
 
 #: src/scenario.cpp:184
 msgid "edge if \"surrounded\" deployment is selected.     "
-msgstr ""
+msgstr "боку карты пры высадцы ў акружэнні."
 
 #: src/scenario.cpp:194
 msgid "Capture"
-msgstr ""
+msgstr "Захоп"
 
 #: src/scenario.cpp:196
 msgid "You must capture enemy leader (first selected    "
-msgstr ""
+msgstr "Трэба захапіць варожага лідэра (першы    "
 
 #: src/scenario.cpp:197
 msgid "soldier). To do this you must stun him and bring "
-msgstr ""
+msgstr "вылучаны баец). Для захопу яго трэба знядвіжыць "
 
 #: src/scenario.cpp:198
 msgid "to your edge of the map. Leader is always visible"
-msgstr ""
+msgstr "і вынесці да свайго ўскрайка карты. Варожы лідэр"
 
 #: src/scenario.cpp:199
 msgid "on your minimap.                                 "
-msgstr ""
+msgstr "заўсёды паказаны на мінікарце."
 
 #: src/scenario.cpp:201
 msgid "You must save your leader (first selected man)   "
-msgstr ""
+msgstr "Абараніць свайго лідэра (першы вылучаны"
 
 #: src/scenario.cpp:202
 msgid "from capturing by enemy. He is always visible on "
-msgstr ""
+msgstr "баец)  ад захопу ворагам. Лідэр заўсёды паказаны"
 
 #: src/scenario.cpp:203
 msgid "your opponent's minimap.                         "
-msgstr ""
+msgstr "на мінікарце праціўніка."
 
 #: src/scenario.cpp:488
 #, c-format
 msgid "Player 1 is controlling the target area for %d turn(s)."
-msgstr ""
+msgstr "Мэтавую зону кантралюе гулец 1 %d ход(а)."
 
 #: src/scenario.cpp:496
 #, c-format
 msgid "Player 2 is controlling the target area for %d turn(s)."
-msgstr ""
+msgstr "Мэтавую зону кантралюе гулец 2 %d ход(а)."
 
 #: src/scenario.cpp:501
 msgid "Nobody is controlling the target area."
-msgstr ""
+msgstr "Мэтавую зону ніхто не кантралюе."
 
 #: src/scenario.cpp:780
 #, c-format
 msgid "%s isn't allowed."
-msgstr ""
+msgstr "%s недапушчальна."
 
 #: src/scenario.cpp:790
 #, c-format
 msgid "%d points limit exceeded!"
-msgstr ""
+msgstr "%d звыш ліміта!"
 
 #: src/scenario.cpp:803
 #, c-format
-msgid ""
-"Items on the ground aren't allowed (you have: %d, including unselected "
-"soldiers)."
-msgstr ""
+msgid "Items on the ground aren't allowed (you have: %d, including unselected soldiers)."
+msgstr "Прадметы на зямле недапушчальныя (маецца: %d, уключаючы нявылучаных байцоў)."
 
-#: src/scenario.cpp:827 src/scenario.cpp:871 src/scenario.cpp:933
+#: src/scenario.cpp:827
+#: src/scenario.cpp:871
+#: src/scenario.cpp:933
 msgid "Soldier #1 can't have two-handed weapons!"
-msgstr ""
+msgstr "Баец #1 не можа мець двуручнае зброі!"
 
 #: src/scenario.cpp:847
 msgid "You must have at least 2 high explosives."
-msgstr ""
+msgstr "Трэба мець не меней 2 зарадаў узрыўчаткі."
 
 #: src/scenario.cpp:915
 msgid "You must have at least one stun rod or one loaded stun launcher."
-msgstr ""
+msgstr "Трэба мець не меней аднога ручнога шокера або шок-ланчэра."
 
-#: src/scenario.cpp:1082 src/scenario.cpp:1096
+#: src/scenario.cpp:1082
+#: src/scenario.cpp:1096
 msgid "Leader can't use two-handed weapons."
-msgstr ""
+msgstr "Лідэр не можа выкарыстоўваць двуручную зброю."
+
