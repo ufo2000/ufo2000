@@ -2426,7 +2426,12 @@ void Soldier::apply_accuracy(REAL & fi, REAL & te)
 	REAL TE_STEP = (PI /  8. / (double)(cfg_get_base_accuracy()));
 	REAL FI_STEP = (PI / 32. / (double)(cfg_get_base_accuracy()));
 
-	double acc = 100. * 100. / (double)(target.accur * target.accur);
+//  double acc = 100. * 100. / (double)(target.accur * target.accur);
+    double acc = 100. / (double)(target.accur);
+//	Make acc tend to 0.0 while target.accur tends to 100.
+    if (acc > 1.20) acc -= 1.0;
+//	However, if accuracy is very good, some chance to miss should be left.
+    else acc /= 6.0;
 
 //	According to central limit theorem, the sum of many small random values
 //	is normally distributed

@@ -39,7 +39,7 @@ extern int mapscroll;
 static char *gen = "General";
 static char *edit = "Editor";
 
-static int base_accuracy = 75;
+static int base_accuracy = 20;
 static int preferred_screen_xres = 640;
 static int preferred_screen_yres = 400;
 static int min_color_depth = 8;
