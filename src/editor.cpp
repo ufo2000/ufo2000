@@ -111,23 +111,31 @@ Editor::~Editor()
 
 void Editor::load()
 {
+	set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
+	
 	char path[1000];
 	strcpy(path, last_unit_name);
 	if (file_select("LOAD UNITS DATA", path, "UNITS")) {
 		m_plt->load_FULLDATA(path);
 		strcpy(last_unit_name, path);
 	}
+	
+	set_mouse_range(0, 0, 639, 399);
 }
 
 
 void Editor::save()
 {
+	set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
+
 	char path[1000];
 	strcpy(path, last_unit_name);
 	if (file_select("SAVE UNITS DATA", path, "UNITS")) {
 		m_plt->save_FULLDATA(path);
 		strcpy(last_unit_name, path);
 	}
+	
+	set_mouse_range(0, 0, 639, 399);
 }
 
 int Editor::set_man(char *name)
@@ -660,6 +668,8 @@ static void fixup_unit_info()
 
 void Editor::edit_soldier()
 {
+	set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
+
 //	Attributes
 	sprintf(slider_text[0], "Time Units");
 	sprintf(slider_text[1], "Stamina");
@@ -744,6 +754,8 @@ void Editor::edit_soldier()
 	man->md.Bravery    = sol_dialog[D_BRAVERY].d2;
 
 	man->process_MANDATA();
+	
+	set_mouse_range(0, 0, 639, 399);
 }
 
 int Editor::do_mapselect()

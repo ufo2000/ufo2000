@@ -771,9 +771,13 @@ void Units::execute_map(Map *map, int map_change_allowed)
 
 	if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 77, gmx + gmw / 2 + 75, SCREEN2H - 64)) {
 		//MAP TYPE
-		
+		               
+		::set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
+					             
 		std::string current_terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
 		std::string terrain_name = terrain_set->select_terrain_gui_dialog(current_terrain_name);
+		
+		::set_mouse_range(0, 0, 639, SCREEN2H);
 
 		if (current_terrain_name != terrain_name) {
 			Map::new_GEODATA(&mapdata, terrain_name);
@@ -825,6 +829,9 @@ void Units::execute_map(Map *map, int map_change_allowed)
 	if (mouse_inside(gmx + gmw / 2 + 20, SCREEN2H - 49, gmx + gmw / 2 + 60, SCREEN2H - 36)) {
 		//"LOAD"
 		char path[1000]; *path = 0;
+		
+		::set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
+		
 		if (file_select("GEODATA file", path, "lua")) {
 			GEODATA gd;
 
@@ -837,6 +844,8 @@ void Units::execute_map(Map *map, int map_change_allowed)
 				net->send_scenario();
 			}
 		}
+		
+		::set_mouse_range(0, 0, 639, SCREEN2H);
 	}
 }
 
