@@ -325,8 +325,12 @@ void Icon::execute(int mx, int my)
 					break;
 				case 4:      //cprintf("4"); //next
 					TARGET = 0;
-					if ((sel_man != NULL) && (!sel_man->ismoving())) {
-						Soldier * s = sel_man;
+					if (sel_man == NULL) {
+						sel_man = platoon_local->captain();
+						if (sel_man != NULL)
+							map->center(sel_man);
+					} else if (!sel_man->ismoving()) {
+						Soldier *s = sel_man;
 						sel_man = platoon_local->next_not_moved_man(sel_man);
 						if (s != sel_man)
 							map->center(sel_man);
@@ -366,7 +370,11 @@ void Icon::execute(int mx, int my)
 					break;
 				case 4:      //cprintf("b"); //next !moved
 					TARGET = 0;
-					if ((sel_man != NULL) && (!sel_man->ismoving())) {
+					if (sel_man == NULL) {
+						sel_man = platoon_local->captain();
+						if (sel_man != NULL)
+							map->center(sel_man);
+					} else if (!sel_man->ismoving()) {
 						sel_man->MOVED = 1;
 						Soldier *s = sel_man;
 						sel_man = platoon_local->next_not_moved_man(sel_man);

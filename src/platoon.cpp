@@ -110,7 +110,7 @@ void Platoon::move(int ISLOCAL)
 	Soldier *ss = man;
 	while (ss != NULL) {
 		if (ss->move(ISLOCAL) == 0) { //dead, or stunned
-			if (ss->ud.CurHealth == 0) // dead. New captain for platoon needed.
+			if (ss->is_dead()) // dead. New captain for platoon needed.
 			{
 				if (ss == man)
 					man = man->nextman();      //!!ret this if no other
@@ -121,19 +121,15 @@ void Platoon::move(int ISLOCAL)
 			if (ss == sel_man) sel_man = NULL;
 			Soldier *s = ss;
 			ss = ss->next();
-			if (s->ud.CurHealth == 0) // dead.
-			{
+			if (s->is_dead()) {
 				s->die();
 				size--;
 				delete s;
 				m_visibility_changed = 1;
-			}
-			else
-			  if (s->x != -1)
-			  {
-			 	s->stun();
+			} else if (s->x != -1) {
+				s->stun();
 				m_visibility_changed = 1;
-			  }
+			}
 			
 		} else {
 			ss = ss->next();
@@ -146,7 +142,7 @@ void Platoon::move(int ISLOCAL)
 
 		ss = man;
 		while (ss != NULL) {
-			if (ss->state() != STUN) {
+			if (ss->is_active()) {
 				ss->calc_visible_cells();
 				int n = 0, k, i, j, width_10 = 10 * map->width, height_10 = 10 * map->height;
 				for (k = 0; k < map->level; k++)
@@ -283,7 +279,7 @@ int Platoon::nomoves()
 {
 	Soldier *ss = man;
 	while (ss != NULL) {
-		if (ss->ismoving() && ss->is_active())
+		if (ss->ismoving())
 			return 0;
 		ss = ss->next();
 	}

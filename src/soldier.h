@@ -63,7 +63,7 @@ extern int g_skins_count;
 
 int get_skin_index(int skin_type, int female_flag);
 
-enum State { SIT = 0, STAND, MARCH, STUN, DIE };
+enum State { SIT = 0, STAND, MARCH, FALL, LIE };
 
 /**
  * A class which describes unit with all his equipment, health status and
@@ -226,7 +226,17 @@ public:
 
 	bool is_active()
 	{
-		return m_state != STUN && m_state != DIE && z != -1;
+		return !is_dead() && !is_stunned() && z != -1;
+	}
+
+	bool is_dead()
+	{
+		return ud.CurHealth == 0;
+	}
+
+	bool is_stunned()
+	{
+		return ud.CurStun >= ud.CurHealth;
 	}
 
 	Soldier *next_active_soldier()

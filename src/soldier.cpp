@@ -543,7 +543,6 @@ void Soldier::build_items_stats(char *buf, int &len)
 	}
 }
 
-
 void Soldier::restore()
 {
 	seen_enemy_num = 0;
@@ -561,29 +560,27 @@ void Soldier::restore()
 	if (ud.CurStun > 0) // Do we have stun damage?
 	{
 		int i = 5; //(int)randval(1, 11);
-		if (m_state == STUN) // Are we currently stunned?
-		{
-			if (ud.CurStun > i)
-				ud.CurStun -= i;
-			else
-				ud.CurStun = 0;
-			if (ud.CurStun < ud.CurHealth) // This means we should wake up, so find the body!
-			{
-				int z0 = -1, x0 = -1, y0 = -1, found = 0;
-				Place *target = m_body->get_place();
-				for (z0 = 0; z0 < map->level; z0++)
-				{
-					for (x0 = 0; x0 < map->width*10; x0++)
-					{
-						for (y0 = 0; y0 < map->height*10; y0++)
+
+		// Are we currently stunned?
+		bool was_stunned = is_stunned();
+
+        // Reduce stun damage
+		if (ud.CurStun > i)
+			ud.CurStun -= i;
+		else
+			ud.CurStun = 0;
+
+		// This means we should wake up, so find the body!
+		if (was_stunned && !is_stunned()) {
+			int z0 = -1, x0 = -1, y0 = -1, found = 0;
+			Place *target = m_body->get_place();
+			for (z0 = 0; z0 < map->level; z0++) {
+				for (x0 = 0; x0 < map->width*10; x0++) {
+					for (y0 = 0; y0 < map->height*10; y0++) {
+						if (target == map->place(z0, x0, y0))
 						{
-							if (target == map->place(z0, x0, y0))
-							{
-								found = 1;
-								break;
-							}
-							if (found)
-								break;
+							found = 1;
+							break;
 						}
 						if (found)
 							break;
@@ -591,32 +588,24 @@ void Soldier::restore()
 					if (found)
 						break;
 				}
-				if (found) // In other words, are we not being carried?
-				{
-					if (map->man(z0, x0, y0) == NULL) // Don't get up if you're being stood upon.
-					{
-						z = z0;
-						x = x0;
-						y = y0;
-						m_body->unlink();
-						delete m_body;
-						m_body = NULL;
-						map->set_man(z0, x0, y0, this); // Get back into action.
-						m_state = STAND;
-						phase = 0;
-					}
-				}
+				if (found)
+					break;
+			}
+			// Body found on map (not in someone's backback) and also
+			// nobody is standing at this place.
+			if (found && map->man(z0, x0, y0) == NULL) {
+				z = z0;
+				x = x0;
+				y = y0;
+				m_body->unlink();
+				delete m_body;
+				m_body = NULL;
+				map->set_man(z0, x0, y0, this); // Get back into action.
+				m_state = STAND;
+				phase = 0;
 			}
 		}
-		else
-		{
-			if (ud.CurStun > i)
-				ud.CurStun -= i;
-			else
-				ud.CurStun = 0;
-		}
 	}
-
 }
 
 #define Y_SIT 5
@@ -629,14 +618,14 @@ void Soldier::draw()
 
 	// The female appearance of the power suit is the flying suit.
 	// This icky-looking switch causes the proper suit to be displayed regardless of gender.
-	switch(md.SkinType)
+	switch (md.SkinType)
 	{
-	default:
-		if (!md.fFemale) break;
-	case S_XCOM_3:
-		head_frame = 16 * 16 + 11;
-	case S_XCOM_2:
-		break;
+		default:
+			if (!md.fFemale) break;
+		case S_XCOM_3:
+			head_frame = 16 * 16 + 11;
+		case S_XCOM_2:
+			break;
 	}
 
 	int gx = map->x + CELL_SCR_X * x + CELL_SCR_X * y;
@@ -649,7 +638,7 @@ void Soldier::draw()
 	}
 
 
-	if ((m_state == DIE) || (m_state == STUN)) {
+	if (m_state == FALL) {
 		m_pck[md.SkinType]->showpck(264 + phase / 3, gx, gy);
 		return ;
 	}
@@ -690,7 +679,7 @@ void Soldier::draw()
 	}
 
 	switch (state) {
-		case DIE: case STUN: break;      //neverhap
+		case FALL: case LIE: break;      //neverhap
 		case SIT:
 			m_pck[md.SkinType]->drawpck(dir + 8 * arm1, image, Y_SIT);
 			m_pck[md.SkinType]->drawpck(dir + head_frame, image, Y_SIT + 1);      //head
@@ -958,7 +947,7 @@ void Soldier::turnto(int destdir)
 
 int Soldier::ismoving()
 {
-	return ((m_state == MARCH) || (m_state == DIE) || (m_state == STUN) || (!m_bullet->ready()) ||
+	return ((m_state == MARCH) || (m_state == FALL) || (!m_bullet->ready()) ||
 	        (curway != -1) || (waylen != 0));
 }
 
@@ -1036,12 +1025,15 @@ int Soldier::move(int ISLOCAL)
 	map->set_man(z, x, y, this);      //preventor!!
 	m_place[P_MAP] = map->place(z, x, y);
 
-	if ((m_state == DIE) || (m_state == STUN)) {
+	if (m_state == FALL) {
 		//textprintf(screen, font, 1, 100, 1, "phase=%d", phase);
-		if (phase < 2 * 3)
+		if (phase < 2 * 3) {
 			phase++;
-		else
+		} else {
+			phase = 0;
+			m_state = LIE;
 			return 0;
+		}
 	}
 
 	if (m_state == MARCH) {
@@ -1091,7 +1083,7 @@ int Soldier::move(int ISLOCAL)
 			// Check for proximity grenades
 			if (map->check_mine(z, x, y)) {
 				finish_march(ISLOCAL);
-				if (m_state == DIE) return 0;
+				if (!is_active()) return 0;
 			}
 
 			// Check for reaction fire.
@@ -1170,7 +1162,7 @@ void Soldier::wayto(int dest_lev, int dest_col, int dest_row)
 
 void Soldier::finish_march(int ISLOCAL)
 {
-	if (m_state != DIE)
+	if (is_active())
 		m_state = STAND;
 	curway = -1;
 	waylen = 0;
@@ -1523,12 +1515,10 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir)
 
 	if ((hitloc = do_armour_check(pierce, damagedir)) == -1) return; // Can't pierce the armour.
 
-	if (type == DT_STUN)
-	{
+	if (type == DT_STUN) {
 		ud.CurStun += pierce;
-		if (ud.CurStun >= ud.CurHealth)
-		{
-			m_state = STUN;
+		if (is_stunned()) {
+			m_state = FALL;
 			phase = 0;
 		}
 		return;
@@ -1546,47 +1536,46 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir)
 		// Record that we died
 		this->get_platoon()->get_stats()->get_stat_for_SID(NID)->set_dead(1);
 		ud.CurHealth = 0;
-		if (m_state != DIE)
+		if (m_state != FALL)
 		{
-			switch(md.SkinType)
+			switch (md.SkinType)
 			{
 			    case S_SECTOID:
-				soundSystem::getInstance()->play(SS_SECTOID_DEATH);
-				break;
+					soundSystem::getInstance()->play(SS_SECTOID_DEATH);
+					break;
 			    case S_MUTON:
-				soundSystem::getInstance()->play(SS_MUTON_DEATH);
-				break;
+					soundSystem::getInstance()->play(SS_MUTON_DEATH);
+					break;
 			    default:
-				if (md.fFemale == 1)
-				    soundSystem::getInstance()->play(SS_FEMALE_DEATH);
-				else
-				    soundSystem::getInstance()->play(SS_MALE_DEATH);
+					if (md.fFemale == 1)
+					    soundSystem::getInstance()->play(SS_FEMALE_DEATH);
+					else
+					    soundSystem::getInstance()->play(SS_MALE_DEATH);
 			}
-			m_state = DIE;
+			m_state = FALL;
 			phase = 0;
 		}
-	}
-	else {
+	} else {
 		apply_wound(hitloc);
 		ud.CurHealth -= pierce;
-		switch(md.SkinType)
+		switch (md.SkinType)
 		{
 		    case S_SECTOID:
-			soundSystem::getInstance()->play(SS_SECTOID_WOUND);
-			break;
+				soundSystem::getInstance()->play(SS_SECTOID_WOUND);
+				break;
 		    case S_MUTON:
-			soundSystem::getInstance()->play(SS_MUTON_WOUND);
-			break;
+				soundSystem::getInstance()->play(SS_MUTON_WOUND);
+				break;
 		    default:
-			if (md.fFemale == 1)
-			    soundSystem::getInstance()->play(SS_FEMALE_WOUND);
-			else
-			    soundSystem::getInstance()->play(SS_MALE_WOUND);
+				if (md.fFemale == 1)
+				    soundSystem::getInstance()->play(SS_FEMALE_WOUND);
+				else
+				    soundSystem::getInstance()->play(SS_MALE_WOUND);
 		}
 
-		if (ud.CurStun >= ud.CurHealth)
+		if (is_stunned())
 		{
-			m_state = STUN;
+			m_state = FALL;
 			phase = 0;
 		}
 	}
@@ -1617,9 +1606,9 @@ void Soldier::explo_hit(int sniper, int pierce, int type, int hitdir, int dist) 
 	if (type == DT_STUN) // Did we get stunned?
 	{
 		ud.CurStun += pierce;
-		if (ud.CurStun >= ud.CurHealth)
+		if (is_stunned())
 		{
-			m_state = STUN;
+			m_state = FALL;
 			phase = 0;
 		}
 		return;
@@ -1637,23 +1626,23 @@ void Soldier::explo_hit(int sniper, int pierce, int type, int hitdir, int dist) 
 		// Record that we died
 		this->get_platoon()->get_stats()->get_stat_for_SID(NID)->set_dead(1);
 		ud.CurHealth = 0;
-		if (m_state != DIE)
+		if (m_state != FALL)
 		{
 			switch(md.SkinType)
 			{
 			    case S_SECTOID:
-				soundSystem::getInstance()->play(SS_SECTOID_DEATH);
-				break;
+					soundSystem::getInstance()->play(SS_SECTOID_DEATH);
+					break;
 			    case S_MUTON:
-				soundSystem::getInstance()->play(SS_MUTON_DEATH);
-				break;
+					soundSystem::getInstance()->play(SS_MUTON_DEATH);
+					break;
 			    default:
-				if (md.fFemale == 1)
-				    soundSystem::getInstance()->play(SS_FEMALE_DEATH);
-				else
-				    soundSystem::getInstance()->play(SS_MALE_DEATH);
+					if (md.fFemale == 1)
+					    soundSystem::getInstance()->play(SS_FEMALE_DEATH);
+					else
+					    soundSystem::getInstance()->play(SS_MALE_DEATH);
 			}
-			m_state = DIE;
+			m_state = FALL;
 			phase = 0;
 		}
 	}
@@ -1662,9 +1651,9 @@ void Soldier::explo_hit(int sniper, int pierce, int type, int hitdir, int dist) 
 		apply_wound(hitloc);
 		ud.CurHealth -= pierce;
 
-		if (ud.CurStun >= ud.CurHealth)
+		if (is_stunned())
 		{
-			m_state = STUN;
+			m_state = FALL;
 			phase = 0;
 		}
 	}

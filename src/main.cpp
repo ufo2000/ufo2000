@@ -621,19 +621,20 @@ void closemain()
 	closevideo();
 
 	allegro_exit();
-	std::cout<<"\nUFO 2000 remake version "
+	std::cout<<"\nUFO2000 "
              <<UFO_VERSION_STRING
-             <<" revision "
+             <<" (revision "
              <<UFO_SVNVERSION
-             <<"\nCopyright Sanami (C) "
+             <<")"
+             <<"\nCompiled with "
+             <<allegro_id << " on "
              <<__TIME__<<" "
-             <<__DATE__
+             <<__DATE__<<"\n"
+             <<"\nCopyright (C) 2000-2001  Alexander Ivanov aka Sanami"
+             <<"\nCopyright (C) 2002-2003  ufo2000 development team"
              <<"\n\n"
-             <<"Yakutsk nightware\n\n"
-             <<"http://sourceforge.net/projects/ufo2000/\n"
-             <<"http://ufo2k-allegro.lxnt.info/\n"
-             <<"http://pages.ykt.ru/ufo2000/\n\n";
-
+             <<"http://ufo2000.sourceforge.net/\n"
+             <<"http://ufo2000.lxnt.info/\n\n";
 }
 
 int build_crc()
@@ -1181,6 +1182,8 @@ void gameloop()
 							alert("saved game not found", "", "", "OK", NULL, 0, 0);
 						}
 						inithotseatgame();
+						if (net->gametype == HOTSEAT)
+							savegame("ufo2000.tmp");
 					}
 					break;
 				case KEY_F5:

@@ -117,18 +117,17 @@ void Inventory::execute()
 			Soldier *s = sel_man;
  			if (mouse_inside(273, 1, 295, 22)) {  // <
  				sel_man = sel_man->prevman();
-				while ((sel_man->state() == STUN) && (sel_man != s))
+				while (!sel_man->is_active() && (sel_man != s))
 					sel_man = sel_man->prevman();
-				if ((sel_man == s) && (s->state() == STUN))
+				if ((sel_man == s) && !s->is_active())
 					MODE = MAP3D; // we were stunned while we were looking at the screen, so move away!
-			} else
- 				if (mouse_inside(297, 1, 319, 22)) {  // >
- 					sel_man = sel_man->nextman();
-				while ((sel_man->state() == STUN) && (sel_man != s))
+			} else if (mouse_inside(297, 1, 319, 22)) {  // >
+ 				sel_man = sel_man->nextman();
+				while (!sel_man->is_active() && (sel_man != s))
 					sel_man = sel_man->nextman();
-				if ((sel_man == s) && (s->state() == STUN))
-					MODE = MAP3D;
-				}
+				if ((sel_man == s) && !s->is_active())
+					MODE = MAP3D; // we were stunned while we were looking at the screen, so move away!
+			}
 		}
 	}
 	if (mouse_inside(288, 32, 319, 57)) {  // clip
