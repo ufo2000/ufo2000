@@ -5,7 +5,7 @@
 
 CONFIG= -DLINUX -DHAVE_VSNPRINTF -DHAVE_ARPA_INET_H 
 
-# windoze (tested on: MinGW 2.0)
+# windoze (not yet tested on: MinGW 2.0)
 
 # CONFIG= -DWIN32 
 
@@ -17,8 +17,8 @@ CONFIG= -DLINUX -DHAVE_VSNPRINTF -DHAVE_ARPA_INET_H
 #ALLEGLIB=${shell allegro-config --libs}
 
 #debug options:
-OPTCFLAGS=-ggdb -Wall -Werror
-OPTLDFLAGS=-ggdb
+OPTCFLAGS=-g -Wall -Werror
+OPTLDFLAGS=-g
 ALLEGINC=${shell allegro-config --cflags debug}
 ALLEGLIB=${shell allegro-config --libs --static debug}
 
@@ -30,7 +30,7 @@ CC = g++
 LD = g++
 CFLAGS = -funsigned-char -pipe $(CONFIG)
 CFLAGS += $(OPTCFLAGS) $(ALLEGINC) $(EXTRAINC)
-LIBS = $(OPTLDFLAGS) $(ALLEGLIB) $(EXTRALIB) -lexpat -ljpgal
+LIBS = $(OPTLDFLAGS) $(ALLEGLIB) $(EXTRALIB) -lexpatS -ljpgal
 
 SRCS = about.cpp bullet.cpp cell.cpp config.cpp connect.cpp dirty.cpp \
        editor.cpp explo.cpp font.cpp icon.cpp inventory.cpp item.cpp  \
