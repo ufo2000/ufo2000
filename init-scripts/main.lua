@@ -248,6 +248,8 @@ function MapGenerator(name, size_x, size_y)
 	return TerrainTable[name].MapGenerator(CreateMapTemplate(size_x, size_y))
 end
 
+Message("#\n# UFO2000 started: %s\n#", os.date())
+
 -- perform data files integrity check before applying security
 -- restrictions
 dofile(ufo2000_dir .. "/init-scripts/filecheck.lua")

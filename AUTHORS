@@ -36,8 +36,9 @@ Programming:
 	  * Numerous improvements in user interface (map size and type selection,
 	    ability to switch between map levels and soldiers in WATCH mode, ...)
 	  * Lots of bugfixes
+	  * Morale system
 
-   РђР»РµРєСЃР°РЅРґСЂ Р§РµСЂРЅРѕР±СЂРѕРІС‹Р№ aka Dream
+   Александр Чернобровый aka Dream
       * Some performance improvements and fixes to UFO2000 code
 
 Artwork and other game related data files:
@@ -86,7 +87,7 @@ Manual writing and translations:
    Jeremy Walker aka Kuroshi X
       * Update and spellchecking for the English version of game manual
 
-   JosГ© Ignacio RodrГ­guez FernГЎndez
+   Jos? Ignacio Rodr?guez Fern?ndez
       * Spanish translation of game manual
 
    Benjamin Power and JFarceur
@@ -105,16 +106,16 @@ Testing the game, bugreports and valuable suggestions:
    J-F Pruneau
    HaJo
    Hobbes
-   DiversanT, diver2160@hotbox.ru
-   Molox
+   [XT]DiversanT, xt_diversant@front.ru
+   Molox[DVM]
    Olivier Ripoll
    Photek
    Roman Vil'chenko
    Skybuck
    Thrawn
    Twilight Owl
-   РџР°РІРµР» РЎР°РЅС‹С‡ aka MapcuaHuH [VMA]
-   РђР»РµРєСЃР°РЅРґСЂ Р§РµСЂРЅРѕР±СЂРѕРІС‹Р№ aka Dream
+   Павел Саныч aka MapcuaHuH [VMA]
+   Александр Чернобровый aka Dream
 
 Other:
    Alexander Sabourenkov aka lxnt

@@ -587,6 +587,7 @@ void Soldier::restore()
 
 		// Are we currently stunned?
 		bool was_stunned = is_stunned();
+		unsigned char was_stun = ud.CurStun;
 
         // Reduce stun damage
 		if (ud.CurStun > i)
@@ -627,7 +628,7 @@ void Soldier::restore()
 				map->set_man(z0, x0, y0, this); // Get back into action.
 				m_state = STAND;
 				phase = 0;
-			}
+			} else ud.CurStun = was_stun; // Otherwise don't wake up yet.
 		}
 	}
 }

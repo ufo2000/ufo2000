@@ -411,8 +411,8 @@ void Platoon::check_morale()
 		ss = ss->next();
 	}
 	
-	//if (!panicked)				//disabled to see how this affects the balance
-	//	change_morale(5, true);		
+	if (!panicked)				//balance issue - maybe should be disabled
+		change_morale(5, true);		
 }
 
 void Platoon::save_FULLDATA(char *fn)
