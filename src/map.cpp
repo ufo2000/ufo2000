@@ -210,8 +210,8 @@ void Map::loadmaps(unsigned char *_map)
 	ASSERT(lua_istable(L, -1));
 
 	int i = 0;
-	for (int col = width - 1; col >= 0; col--) {
-		for (int row = height - 1; row >= 0; row--) {
+	for (int row = 0; row < height; row++) {
+		for (int col = 0; col < width; col++) {
 			if (_map[i] != 0xFE) {
 				
 				lua_pushnumber(L, _map[i]);
@@ -229,15 +229,19 @@ void Map::loadmaps(unsigned char *_map)
 
 int Map::loadmap(const char *fname, int _r, int _c)
 {
-	char mbuf[10000];
 	int fh = open(fname, O_RDONLY | O_BINARY);
 	if (fh == -1) return 0;
-	read(fh, mbuf, 10000);
+	long size = filelength(fh);
+	char *mbuf = new char[size];
+	read(fh, mbuf, size);
 	close(fh);
 
 	int w = mbuf[0];
 	int h = mbuf[1];
 	int l = mbuf[2];
+
+	_r = _r - 10 + w;
+	_c = _c - 10 + h;
 
 	for (int lev = 0; lev < l; lev++) {
 		int i = 3 + (l - lev - 1) * 4 * w * h;
@@ -253,6 +257,7 @@ int Map::loadmap(const char *fname, int _r, int _c)
 			}
 		}
 	}
+	delete [] mbuf;
 	return 1;
 }
 
@@ -1271,10 +1276,10 @@ static char field[8 * 6*10 * 6*10];
 
 int Map::calc_visible_cells(Soldier *watcher, int z, int x, int y, int dir, char *visicells, int *ez, int *ex, int *ey)
 {
-	visicells[z * width * 10 * height * 10 + x * width * 10 + y] = 1;
+	visicells[z * width * 10 * height * 10 + x * height * 10 + y] = 1;
 	if (z > 0) {
 		if (isStairs(z - 1, x, y)) {
-			visicells[(z - 1) * width * 10 * height * 10 + x * width * 10 + y] = 1;
+			visicells[(z - 1) * width * 10 * height * 10 + x * height * 10 + y] = 1;
 		}
 	}
 
@@ -1308,9 +1313,9 @@ int Map::calc_visible_cells(Soldier *watcher, int z, int x, int y, int dir, char
 
 				if (!m_cell[oz][ox][oy]->visi[vz - oz + 1][vx - ox + 1][vy - oy + 1]) break;
 
-				visicells[vz * width * 10 * height * 10 + vx * width * 10 + vy] = 1;
+				visicells[vz * width * 10 * height * 10 + vx * height * 10 + vy] = 1;
 
-				if (field[vz * width * 10 * height * 10 + vx * width * 10 + vy] == 0)
+				if (field[vz * width * 10 * height * 10 + vx * height * 10 + vy] == 0)
 					if (man(vz, vx, vy) != NULL) {
 						if (!watcher->get_platoon()->belong(man(vz, vx, vy))) {
 							ez[en] = vz;
@@ -1319,7 +1324,7 @@ int Map::calc_visible_cells(Soldier *watcher, int z, int x, int y, int dir, char
 							en++;
 						}
 					}
-				field[vz * width * 10 * height * 10 + vx * width * 10 + vy] = 1;
+				field[vz * width * 10 * height * 10 + vx * height * 10 + vy] = 1;
 
 				oz = vz; ox = vx; oy = vy;
 
@@ -1368,9 +1373,9 @@ int Map::explode(int sniper, int lev, int col, int row, int type, int maxrange, 
 				dam -= (damage / (range + range / 2)) * l;
 				if (dam < 1) dam = 1;
 
-				if (field[nz * width * 10 * height * 10 + nx * width * 10 + ny] != 0)
+				if (field[nz * width * 10 * height * 10 + nx * height * 10 + ny] != 0)
 					continue;
-				field[nz * width * 10 * height * 10 + nx * width * 10 + ny] = 1;
+				field[nz * width * 10 * height * 10 + nx * height * 10 + ny] = 1;
 
 				// Figure out which way the damage is going.
 				// 567
@@ -1754,14 +1759,6 @@ Terrain::Terrain(const std::string &terrain_name)
 	ASSERT(lua_isnumber(L, -1)); 
 	m_crc32 = (unsigned long)lua_tonumber(L, -1);
 	lua_pop(L, 1);
-/*
-    // Extract terrain name
-	lua_pushstring(L, "Name");
-	lua_gettable(L, -2);
-	ASSERT(lua_isstring(L, -1)); 
-	m_name = lua_tostring(L, -1);
-	lua_pop(L, 1);
-*/
 	m_name = terrain_name;
 	// Enter 'Maps' table
 	lua_pushstring(L, "Maps");

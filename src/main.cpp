@@ -651,7 +651,7 @@ void initmain(int argc, char *argv[])
 	fade_out(FADE_SPEED);
 	clear(screen);
 
-	if (!Map::load_GEODATA("$(home)/geodata.lua", &mapdata) || !Map::valid_GEODATA(&mapdata))
+	if (!Map::load_GEODATA("$(home)/cur_map.lua", &mapdata) || !Map::valid_GEODATA(&mapdata))
 		Map::new_GEODATA(&mapdata);	
 
 	delete print_win;

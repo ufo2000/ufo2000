@@ -23,9 +23,7 @@ FilesTable = {
 	["$(ufo2000)/ufo2000.dat"]        = { Crc32 = X("0x8536FF43") },
 	["$(ufo2000)/keyboard.dat"]       = { Crc32 = X("0xC796755E") },
 
-	["$(home)/geodata.lua"]           = { Origin = "$(ufo2000)/geodata.default.lua" },
 	["$(home)/soldier.dat"]           = { Origin = "$(ufo2000)/soldier.default.dat" },
-	["$(home)/armoury.lua"]           = { Origin = "$(ufo2000)/armoury.default.lua" },
 	["$(home)/items.dat"]             = { Origin = "$(ufo2000)/items.default.dat" },
 	["$(home)/ufo2000.ini"]           = { Origin = "$(ufo2000)/ufo2000.default.ini" },
 	["$(home)/init-scripts.log"]      = { },

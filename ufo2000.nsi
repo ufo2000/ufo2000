@@ -366,8 +366,6 @@ Section "${GAME_NAME} (required)" MainSec
 	File "readme_pl.txt"
 	File "readme_ru.html"
 	File "soundmap.xml"
-	File "armoury.default.lua"
-	File "geodata.default.lua"
 	File "items.default.dat"
 	File "soldier.default.dat"
 	File "ufo2000.dat"

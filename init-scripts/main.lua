@@ -230,9 +230,7 @@ function MapGenerator(name, size_x, size_y)
 		end
 	end
 	-- pass map template to appropriate map generator function
-	TerrainTable[name].MapGenerator(tmp)
-	-- return final map data (maybe some verification here is needed)
-	return tmp
+	return TerrainTable[name].MapGenerator(tmp)
 end
 
 -- perform data files integrity check before applying security

@@ -118,12 +118,12 @@ AddXcomTerrain {
 	
 			if (math.random(1, size_x) ~= 1) then
 				x = math.random(1, size_x)
-				for i = 1, size_y do map[x][i] = 0 end
+				for i = 1, size_y do map[x][i] = 1 end
 			end
 	
 			if (math.random(1, size_y) ~= 1) then
 				y = math.random(1, size_y)
-				for i = 1, size_x do map[i][y] = 1 end
+				for i = 1, size_x do map[i][y] = 0 end
 			end
 	
 			if (x and y) then
@@ -165,6 +165,8 @@ AddXcomTerrain {
 				end
 			end
 		end
+
+		return tmp
 	end		
 }
 
