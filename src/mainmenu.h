@@ -25,25 +25,22 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #error DJGPP is now not supported
 #endif
 
-#ifdef WIN32
-#define MAINMENU_COUNT    7
-
-#define MAINMENU_LOADGAME 6
-#define MAINMENU_DPLAY    5
-#define MAINMENU_TCPIP    4
-#define MAINMENU_HOTSEAT  3
-#define MAINMENU_EDITOR   2
-#define MAINMENU_ABOUT    1
-#define MAINMENU_QUIT     0
-#else
-#define MAINMENU_COUNT    6
-#define MAINMENU_LOADGAME 5
-#define MAINMENU_TCPIP    4
-#define MAINMENU_HOTSEAT  3
-#define MAINMENU_EDITOR   2
-#define MAINMENU_ABOUT    1
-#define MAINMENU_QUIT     0
+/**
+ * Main menu items (shown in reverse order)
+ */
+enum MAINMENU_ITEMS
+{
+	MAINMENU_QUIT = 0,
+	MAINMENU_ABOUT,
+	MAINMENU_EDITOR,
+	MAINMENU_HOTSEAT,
+	MAINMENU_TCPIP,
+#ifdef HAVE_DPLAY
+    MAINMENU_DPLAY,
 #endif
+	MAINMENU_LOADGAME,
+	MAINMENU_COUNT
+};
 
 void initmainmenu();
 int do_mainmenu();
