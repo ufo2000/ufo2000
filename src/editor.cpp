@@ -1362,6 +1362,9 @@ void change_equipment_callback(const char *name)
 void Editor::copy_soldier(Soldier *src)
 {
 	buffer.empty = false;
+	
+	src->build_ITEMDATA();
+	
 	buffer.md = src->md;
 	buffer.id = src->id;
 }
