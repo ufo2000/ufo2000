@@ -426,10 +426,8 @@ int soundFile::loadFile(const char *fname, std::ostream& log, bool verbose) {
     switch(getFileType(sbuf.str())) {
         case CT_ORIGINAL:
             loadOrigCat(sbuf.str(), log, verbose);
-            break;
         case CT_CE:
             loadCeCat(sbuf.str(), log, verbose);
-            break;
         default:
             log<<"Unknown file type\n";
             return -1;
@@ -684,13 +682,12 @@ static void h_StartEl(void *userData,
             b->errorOccured = true;
             *b->log<<"No 'name' attribute in file element ";
             h_recordXMLStreamPos(*b->log, b->parser);
-
             return;
         }
-        *b->log<<"Loading '"<<fname<<"'\n";
+        *b->log<<"Loading '"<<fname<<"'"<<std::endl;
         if (b->current->loadFile(fname, *b->log, b->verbose) != 0) {
             b->skipThisFile = true;
-            *b->log<<"can not load, skipping.\n";
+            *b->log<<"can not load, skipping."<<std::endl;
             return;
         }
         b->inFile = true;
@@ -698,6 +695,9 @@ static void h_StartEl(void *userData,
     }
 
     if ( 0 == strcmp(name, "sample") ) {
+        if (b->skipThisFile)
+            return;
+
         XML_Char *sym;
         SAMPLE *sample;
         SoundSym_e_t soundSym;
@@ -724,6 +724,9 @@ static void h_StartEl(void *userData,
     }
 
     if ( 0 == strcmp(name, "alias") ) {
+        if (b->skipThisFile)
+            return;
+
         XML_Char *sym;
         SoundSym_e_t soundSym;
 
@@ -779,6 +782,11 @@ static void h_EndEl(void *userData, const XML_Char *name)
         b->curSampleIndex++;
         return;
     }
+
+    if ( 0 == strcmp(name, "alias") ) {
+        /* do Nothing */
+        return;
+    }
 }
 
 /* soundSystem implementation */
@@ -801,7 +809,7 @@ int soundSystem::initialize(const std::string& xml, std::ostream *log, bool verb
 
 	if (install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) != 0) {
 		*log<<"Error initialising sound system: "<<allegro_error<<std::endl;
-        return -1;
+        //return -1;
     }
     soundInstalled = true;
 
