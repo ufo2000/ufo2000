@@ -470,7 +470,10 @@ void Platoon::check_morale()
 		change_morale(5, true);		
 }
 
-void Platoon::save_FULLDATA(char *fn)
+/**
+ * Save full team information (soldiers, their stats, equipment) into a binary file
+ */
+void Platoon::save_FULLDATA(const char *fn)
 {
 	int fh = open(F(fn), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
 	if (fh == -1) {
@@ -487,7 +490,10 @@ void Platoon::save_FULLDATA(char *fn)
 	close(fh);
 }
 
-void Platoon::load_FULLDATA(char *fn)
+/**
+ * Load full team information (soldiers, their stats, equipment) from a binary file
+ */
+void Platoon::load_FULLDATA(const char *fn)
 {
 	char *buf;
 	unsigned int buf_size;
@@ -523,85 +529,6 @@ void Platoon::load_FULLDATA(char *fn)
 }
 
 
-void Platoon::save_MANDATA(const char *fn)
-{
-	int fh = open(F(fn), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
-	ASSERT(fh != -1);
-	Soldier *ss = man;
-	while (ss != NULL) {
-		write(fh, &ss->md, sizeof(ss->md));
-		ss = ss->next();
-	}
-	close(fh);
-}
-
-
-void Platoon::load_MANDATA(const char *fn)
-{
-	char *buf;
-	unsigned int buf_size;
-
-	int fh = open(F(fn), O_RDONLY | O_BINARY);
-	ASSERT(fh != -1);
-	buf_size = filelength(fh);
-	buf = new char[buf_size];
-	buf_size = read(fh, buf, buf_size);
-	close(fh);
-
-	Soldier *ss = man;
-	unsigned int ofs = 0;
-	while (ss != NULL) {
-		if (ofs + sizeof(ss->md) > buf_size)
-			break;
-		memcpy(&ss->md, buf + ofs, sizeof(ss->md));
-		ss->process_MANDATA();
-		ofs += sizeof(ss->md);
-		ss = ss->next();
-	}
-	delete []buf;
-}
-
-
-void Platoon::save_ITEMDATA(const char *fn)
-{
-	int fh = open(F(fn), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
-	ASSERT(fh != -1);
-	Soldier *ss = man;
-	while (ss != NULL) {
-		ss->build_ITEMDATA();
-		write(fh, &ss->id, sizeof(ss->id));
-		ss = ss->next();
-	}
-	close(fh);
-}
-
-
-void Platoon::load_ITEMDATA(const char *fn)
-{
-	char *buf;
-	unsigned int buf_size;
-
-	int fh = open(F(fn), O_RDONLY | O_BINARY);
-	ASSERT(fh != -1);
-	buf_size = filelength(fh);
-	buf = new char[buf_size];
-	buf_size = read(fh, buf, buf_size);
-	close(fh);
-
-	Soldier *ss = man;
-	unsigned int ofs = 0;
-	while (ss != NULL) {
-		if (ofs + sizeof(ss->id) > buf_size)
-			break;
-		memcpy(&ss->id, buf + ofs, sizeof(ss->id));
-		ss->process_ITEMDATA();
-		ofs += sizeof(ss->id);
-		ss = ss->next();
-	}
-	delete []buf;
-}
-
-
 void Platoon::build_Units(Units &u)
 {
 	Soldier * ss = man;
@@ -618,7 +545,9 @@ void Platoon::build_Units(Units &u)
 	}
 }
 
-
+/**
+ * Send information about our team to the remote player
+ */
 void Platoon::send_Units(Units &u)
 {
     net->send_unit_data_size(0);
@@ -644,7 +573,8 @@ void Platoon::send_Units(Units &u)
 }
 
 /**
- * End-of-turn - Save
+ * Output information about team in a text buffer.
+ * It is used for synchronization bugs detection.
  */
 int Platoon::eot_save(char *buf, int &buf_size)
 {
@@ -688,5 +618,4 @@ void Platoon::sit_on_start()
 			ss->set_start_sit();
 		ss = ss->next();
 	}
-
 }

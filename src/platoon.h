@@ -94,12 +94,8 @@ public:
 	void change_morale(int delta, bool send_to_remote);
 	void check_morale();
 
-	void save_MANDATA(const char *fn);
-	void load_MANDATA(const char *fn);
-	void save_ITEMDATA(const char *fn);
-	void load_ITEMDATA(const char *fn);
-	void save_FULLDATA(char *fn);
-	void load_FULLDATA(char *fn);
+	void save_FULLDATA(const char *fn);
+	void load_FULLDATA(const char *fn);
 
 	void build_Units(Units &local);
 	void send_Units(Units &local);

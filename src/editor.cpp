@@ -104,8 +104,7 @@ Editor::Editor()
     if (local_platoon_size > 15) local_platoon_size = 15;      //Maybe we should allow more
     ASSERT(local_platoon_size > 0);
     m_plt = new Platoon(2001, local_platoon_size);
-    m_plt->load_MANDATA("$(home)/soldier.dat");
-    m_plt->load_ITEMDATA("$(home)/items.dat");
+    m_plt->load_FULLDATA("$(home)/squad.dat");
     man = m_plt->captain();
 
     sel_item = NULL;
@@ -948,8 +947,7 @@ void Editor::show()
         }
     }
 
-    m_plt->save_MANDATA(F("$(home)/soldier.dat"));
-    m_plt->save_ITEMDATA(F("$(home)/items.dat"));
+    m_plt->save_FULLDATA(F("$(home)/squad.dat"));
 
     destroy_bitmap(editor_bg);
     destroy_bitmap(screen2);
