@@ -536,6 +536,9 @@ Message("#\n# UFO2000 started: %s\n#", os.date("%Y-%m-%d %H:%M:%S"))
 -- before applying security restrictions
 dofile(ufo2000_dir .. "/init-scripts/filecheck.lua")
 
+-- Initialize external formats importing library
+dofile(ufo2000_dir .. "/init-scripts/external-resources.lua")
+
 -- For security reasons, we do not want lua scripts to have write access 
 -- to the filesystem. The code below enforces this restriction:
 io.open = function(fname, mode)

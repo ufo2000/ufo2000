@@ -82,6 +82,31 @@ void TerraPCK::add(const char *mcd_name, int tftd_flag)
     // load mcd file itself    
 	strcpy(m_fname, mcd_name);
 	strcpy(strrchr(m_fname, '.') + 1, "mcd");
+    
+    if (FLAGS & F_CONVERT_XCOM_DATA) {
+        std::string filename;
+        char *p = get_filename(mcd_name);
+        while (*p != '.' && *p != 0) {
+            filename += *p++;
+        }
+		std::string dir = F("$(home)/converted_xcom_data");
+#ifdef LINUX
+        mkdir(dir.c_str(), 0755);
+#else
+        mkdir(dir.c_str());
+#endif
+        std::string html_name = dir + "/" + filename + ".html";
+        lua_pushstring(L, "convert_xcom_tileset");
+        lua_gettable(L, LUA_GLOBALSINDEX);
+        lua_pushstring(L, F(m_fname));
+        lua_safe_call(L, 1, 1);
+        ASSERT(lua_isstring(L, -1));
+        FILE *f = fopen(F(html_name.c_str()), "wt");
+        fprintf(f, "%s", lua_tostring(L, -1));
+        fclose(f);
+        lua_pop(L, 1);
+    }
+    
     fh = open(F(m_fname), O_RDONLY | O_BINARY);
     ASSERT(fh != -1);
     long fsize = filelength(fh);
