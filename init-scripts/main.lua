@@ -214,15 +214,23 @@ end
 -- compatible equipment sets
 ------------------------------------------------------------------------------
 function AddEquipment(x)
-	local function UpdateTableCrc32(initcrc, tbl)
+	local function UpdateTableCrc32(initcrc, tbl, exclude_list)
 		local sorted_tbl = {}
-		for k, v in tbl do table.insert(sorted_tbl, {k, v}) end
+		for k, v in tbl do 
+			local need_exclude = false
+			for _, exclude_property in exclude_list do
+				if k == exclude_property then need_exclude = true end
+			end
+			if not need_exclude then
+				table.insert(sorted_tbl, {k, v}) 
+			end
+		end
 		table.sort(sorted_tbl, function(a, b) return a[1] < b[1] end)
 		for _, v in ipairs(sorted_tbl) do
 			initcrc = UpdateCrc32(initcrc, tostring(v[1]))
 			initcrc = UpdateCrc32(initcrc, "=")
 			if type(v[2]) == "table" then
-				initcrc = UpdateTableCrc32(initcrc, v[2])
+				initcrc = UpdateTableCrc32(initcrc, v[2], exclude_list)
 			elseif type(v[2]) == "string" or type(v[2]) == "number" then
 				initcrc = UpdateCrc32(initcrc, tostring(v[2]))
 			else
@@ -237,7 +245,10 @@ function AddEquipment(x)
 	for k, v in x.Layout do table.insert(sorted_tbl, {v[3], ItemsTable[v[3]]}) end
 	table.sort(sorted_tbl, function(a, b) return a[1] < b[1] end)
 	x.Crc32 = 0
-	for _, v in ipairs(sorted_tbl) do x.Crc32 = UpdateTableCrc32(x.Crc32, v[2]) end
+	for _, v in ipairs(sorted_tbl) do 
+		x.Crc32 = UpdateTableCrc32(x.Crc32, v[2], 
+			{"pInv", "pMap", "pHeld", "sound"}) 
+	end
 	EquipmentTable[x.Name] = x
 	Message("AddEquipment: '%s', crc32 = %08X", x.Name, x.Crc32)
 end
