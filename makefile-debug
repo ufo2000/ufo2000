@@ -31,7 +31,6 @@ clean:
 	$(RM) $(NAME)
 	$(RM) makefile.dep
 
-# test
 
 makefile.dep: $(SRCS_DIR)/*.cpp $(SRCS_DIR)/*.h
 #	$(RM) makefile.dep
