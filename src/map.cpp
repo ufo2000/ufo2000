@@ -33,6 +33,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "crc32.h"
 #include "scenario.h"
 #include "text.h"
+#include "random.h"
 
 #define SCANGSIZE 4
 
@@ -1215,6 +1216,9 @@ void Map::destroy_cell_part(int lev, int col, int row, int _part)
 void Map::damage_cell_part(int lev, int col, int row, int _part, int _wtype)
 {
 	int dam = Item::obdata_damage(_wtype);
+    // Currently just randomizing the damage to be from 0.0 to 2.0 of
+    // the table value, as it was in X-Com.
+    dam = (int) cur_random->getUniform(0.0, dam * 2.0);
 	if (mcd(lev, col, row, _part)->Armour < dam) {
 		destroy_cell_part(lev, col, row, _part);
 	}

@@ -26,7 +26,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "text.h"
 #endif
 #include "mouse.h"
-MouseRange *MouseRange::cur_mouse_range = NULL;
+MouseRange *MouseRange::m_cur_mouse_range = NULL;
 
 /**
  * Call generic set_mouse_range procedure
@@ -48,7 +48,7 @@ void MouseRange::reset_mouse_range(int xminn, int yminn, int xmaxn, int ymaxn)
     lua_message("MouseRange::reset_mouse_range(int xminn, int yminn, int xmaxn, int ymaxn)");
 #endif
     ASSERT(xminn <= xmaxn); ASSERT(yminn <= ymaxn);
-    ASSERT(cur_mouse_range == this);
+    ASSERT(m_cur_mouse_range == this);
     m_x_min = xminn; m_y_min = yminn; m_x_max = xmaxn; m_y_max = ymaxn;
     set_mouse_range();
 }
@@ -63,8 +63,8 @@ MouseRange::MouseRange(int xminn, int yminn, int xmaxn, int ymaxn)
 #endif
     ASSERT(xminn <= xmaxn); ASSERT(yminn <= ymaxn);
     m_x_min = xminn; m_y_min = yminn; m_x_max = xmaxn; m_y_max = ymaxn;
-    m_prev_mouse_range = cur_mouse_range;
-    cur_mouse_range = this;
+    m_prev_mouse_range = m_cur_mouse_range;
+    m_cur_mouse_range = this;
     set_mouse_range();
 }
 
@@ -76,9 +76,9 @@ MouseRange::~MouseRange()
 #ifdef MOUSE_DEBUG
     lua_message("MouseRange::~MouseRange()");
 #endif
-    ASSERT(cur_mouse_range == this);
-    cur_mouse_range = m_prev_mouse_range;
-    if (cur_mouse_range != NULL) cur_mouse_range->set_mouse_range();
+    ASSERT(m_cur_mouse_range == this);
+    m_cur_mouse_range = m_prev_mouse_range;
+    if (m_cur_mouse_range != NULL) m_cur_mouse_range->set_mouse_range();
 }
 
 /*
@@ -89,7 +89,7 @@ void reset_mouse_range()
 #ifdef MOUSE_DEBUG
     lua_message("reset_mouse_range()");
 #endif
-    MouseRange::cur_mouse_range->set_mouse_range();
+    MouseRange::m_cur_mouse_range->set_mouse_range();
 }
 
 /*
@@ -100,5 +100,5 @@ void reset_mouse_range(int xminn, int yminn, int xmaxn, int ymaxn)
 #ifdef MOUSE_DEBUG
     lua_message("reset_mouse_range(int xminn, int yminn, int xmaxn, int ymaxn)");
 #endif
-    MouseRange::cur_mouse_range->reset_mouse_range(xminn, yminn, xmaxn, ymaxn);
+    MouseRange::m_cur_mouse_range->reset_mouse_range(xminn, yminn, xmaxn, ymaxn);
 }

@@ -35,6 +35,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "colors.h"
 #include "text.h"
 #include "mouse.h"
+#include "random.h"
 
 //uncomment to view some formulas results (reaction fire)
 #define SHOW_DEBUG_INFO
@@ -1632,6 +1633,10 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir)
 {
     int damagedir = (dir + (hitdir + 4)) % 8; // Becomes DAMAGEDIR_*, except DAMAGEDIR_UNDER...
     int hitloc;
+
+    // Currently just randomizing the damage to be from 0.0 to 2.0 of
+    // the table value, as it was in X-Com.
+    pierce = (int) cur_random->getUniform(0.0, pierce * 2.0);
 
     // Give credit to the sniper for inflicting damage if it's not stun damage.
     if (sniper && (type != DT_STUN))

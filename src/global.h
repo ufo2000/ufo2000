@@ -353,6 +353,7 @@ class Wind;
 class PCK;
 class Soldier;
 class Scenario;
+class Random;
 
 //! Display-Modes
 enum Mode { MAP2D, MAP3D, MAN, WATCH, UNIT_INFO, PLANNER };
@@ -374,6 +375,7 @@ extern TerrainSet *terrain_set;
 extern std::set<std::string> g_net_allowed_terrains;
 extern Platoon *platoon_local, *platoon_remote, *p1, *p2;
 extern Explosive *elist;
+extern Random *cur_random;
 extern Net *net;
 extern int BLOODYMENU;
 extern int SOUND;

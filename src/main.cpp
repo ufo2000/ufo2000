@@ -49,6 +49,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "scenario.h"
 #include "colors.h"
 #include "text.h"
+#include "random.h"
 
 #include "sysworkarounds.h"
 
@@ -104,6 +105,7 @@ Platoon *p1, *p2;
 Platoon *platoon_local, *platoon_remote;
 Soldier *sel_man = NULL;
 Explosive *elist;
+Random *cur_random;
 
 volatile unsigned int ANIMATION = 0;
 volatile int CHANGE = 1;
@@ -187,6 +189,38 @@ int win;
 int loss;
 
 /**
+ * Generate a pseudo-random number based on local time.
+ * Use for initializing some more randomizing number generator.
+ */
+int getsomerand()
+{
+    time_t now = time(NULL);
+    struct tm * time_now = localtime(&now);
+    return (time_now->tm_sec * 60 + time_now->tm_min); // shuffled on purpose, to make randomness better
+}
+
+/**
+ * Initialize synchronized random number generator
+ */
+void initrand()
+{
+    int chk, random_init[2];
+    Mode old_MODE;
+    char tmp[128];
+    old_MODE = MODE;
+    MODE = WATCH; // for net->recv(buf)
+    std::string buf;
+    random_init[0] = getsomerand();
+    sprintf(tmp, "%d", random_init[0]);
+    net->send(tmp);
+    while (!net->recv(buf)) rest(1); // Too rude and should be escapable
+    chk = sscanf(buf.c_str(), "%d", &random_init[1]);
+    ASSERT(chk == 1);
+    cur_random->init(random_init[HOST] * 3600 + random_init[!HOST]);
+    MODE = old_MODE;
+}
+
+/**
  * Initialize game state
  */ 
 //simple all of new - rem about rand in sol's constructors
@@ -196,9 +230,10 @@ void restartgame()
 	win  = 0;
 	loss = 0;
 
-	map = new Map(mapdata);
-	p1  = new Platoon(1000, &pd1, scenario->deploy_type[0]);
-	p2  = new Platoon(2000, &pd2, scenario->deploy_type[1]);
+    map = new Map(mapdata);
+    p1  = new Platoon(1000, &pd1, scenario->deploy_type[0]);
+    p2  = new Platoon(2000, &pd2, scenario->deploy_type[1]);
+    cur_random = new Random;
 
 	bool map_saved = Map::save_GEODATA("$(home)/cur_map.lua", &mapdata);
 	ASSERT(map_saved);
@@ -262,6 +297,7 @@ int initgame()
 
 	reset_video();
 	restartgame();
+    initrand();
 	//clear_to_color(screen, 58); //!!!!!
 	
 	// Set/Clear some scenario specific variables and effects:
@@ -275,6 +311,8 @@ int initgame()
  */ 
 void closegame()
 {
+    delete cur_random;
+    cur_random = NULL;
 	delete p1;
 	p1 = NULL;
 	delete p2;
@@ -1062,6 +1100,7 @@ void savegame_stream(std::iostream &stream)
 	PersistWriteObject(archive, map);
 	PersistWriteObject(archive, sel_man);
 	PersistWriteObject(archive, elist);
+    PersistWriteObject(archive, cur_random);
 }
 
 /**
@@ -1108,6 +1147,7 @@ bool loadgame_stream(std::iostream &stream)
 	PersistReadObject(archive, map);
 	PersistReadObject(archive, sel_man);
 	PersistReadObject(archive, elist);
+    PersistReadObject(archive, cur_random);
 
 	TARGET = 0;
 
@@ -2011,6 +2051,7 @@ void faststart()
 	DONE = 0; TARGET = 0; turn = 0;
 
 	clear_to_color(screen, 58);      //!!!!!
+    initrand();
 	gameloop();
 	closegame();
 }
