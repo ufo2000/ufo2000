@@ -409,6 +409,12 @@ void Soldier::process_MANDATA()
 		md.Strength  = 25;
 	}
 
+	char *p = strchr(md.Name, '_');
+	while (p) {
+		*p = ' ';
+		p = strchr(md.Name, '_');
+	}
+
 	strcpy(ud.Name, md.Name);
 	ud.MaxTU = md.TimeUnits;
 	ud.MaxHealth = md.Health;
