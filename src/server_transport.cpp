@@ -22,7 +22,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#include "stdafx.h"
+#include <vector>
+
+#ifdef WIN32
+#include <windows.h>
+#define usleep(t) Sleep((t + 999) / 1000)
+#endif
 
 #include "server.h"
 #include "server_protocol.h"
@@ -30,134 +35,134 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 
 ServerClient::ServerClient(ServerDispatch *server, NLsocket socket)
-	:m_socket(socket), m_server(server)
+    :m_socket(socket), m_server(server)
 {
-	m_error = false;
-	nlTime(&m_connection_time);
-	m_max_ave_traffic = 0;
-	m_http = false;
-	m_server->m_clients_by_socket[m_socket] = this;
+    m_error = false;
+    nlTime(&m_connection_time);
+    m_max_ave_traffic = 0;
+    m_http = false;
+    m_server->m_clients_by_socket[m_socket] = this;
 }
 
 ServerClient::~ServerClient()
 {
-	if (m_http) {
-		m_server->m_http_traffic_in  += nlGetSocketStat(m_socket, NL_BYTES_RECEIVED);
-		m_server->m_http_traffic_out += nlGetSocketStat(m_socket, NL_BYTES_SENT);
-	} else {
-		m_server->m_traffic_in  += nlGetSocketStat(m_socket, NL_BYTES_RECEIVED);
-		m_server->m_traffic_out += nlGetSocketStat(m_socket, NL_BYTES_SENT);
-	}
-	m_server->m_clients_by_socket.erase(m_socket);
-	if (m_name != "") m_server->m_clients_by_name.erase(m_name);
-	nlGroupDeleteSocket(m_server->m_group, m_socket);
-	nlClose(m_socket);
+    if (m_http) {
+        m_server->m_http_traffic_in  += nlGetSocketStat(m_socket, NL_BYTES_RECEIVED);
+        m_server->m_http_traffic_out += nlGetSocketStat(m_socket, NL_BYTES_SENT);
+    } else {
+        m_server->m_traffic_in  += nlGetSocketStat(m_socket, NL_BYTES_RECEIVED);
+        m_server->m_traffic_out += nlGetSocketStat(m_socket, NL_BYTES_SENT);
+    }
+    m_server->m_clients_by_socket.erase(m_socket);
+    if (m_name != "") m_server->m_clients_by_name.erase(m_name);
+    nlGroupDeleteSocket(m_server->m_group, m_socket);
+    nlClose(m_socket);
 
-	server_log("connection closed (name='%s', max_ave_traffic=%d, ip=%s)\n", 
-		m_name.c_str(), m_max_ave_traffic, m_ip.c_str());
+    server_log("connection closed (name='%s', max_ave_traffic=%d, ip=%s)\n", 
+        m_name.c_str(), m_max_ave_traffic, m_ip.c_str());
 }
 
 #define PACKET_HEADER_SIZE 8
 
 static int stream_to_packet(std::string &stream, NLulong &id, std::string &packet)
 {
-	if (stream.size() < PACKET_HEADER_SIZE) return 0;
+    if (stream.size() < PACKET_HEADER_SIZE) return 0;
 
-	const char *p = stream.data();
+    const char *p = stream.data();
 
-	NLulong size = nlSwapl(*(NLulong *)p);
-	if (size > PACKET_SIZE_LIMIT) return -1;
+    NLulong size = nlSwapl(*(NLulong *)p);
+    if (size > PACKET_SIZE_LIMIT) return -1;
 
-//	if the packet is still not completely transmitted, exit from this cycle
-	if (stream.size() < PACKET_HEADER_SIZE + size) return 0;
+//  if the packet is still not completely transmitted, exit from this cycle
+    if (stream.size() < PACKET_HEADER_SIZE + size) return 0;
 
-	id = nlSwapl(*(NLulong *)(p + 4));
-	packet = std::string(p + PACKET_HEADER_SIZE, size);
-	stream.erase(stream.begin(), stream.begin() + PACKET_HEADER_SIZE + size);
-	return 1;
+    id = nlSwapl(*(NLulong *)(p + 4));
+    packet = std::string(p + PACKET_HEADER_SIZE, size);
+    stream.erase(stream.begin(), stream.begin() + PACKET_HEADER_SIZE + size);
+    return 1;
 }
 
 static bool packet_to_stream(std::string &stream, NLulong id, const std::string &packet)
 {
-	NLulong size = nlSwapl(packet.size());
-	id = nlSwapl(id);
-	
-	stream += std::string((const char *)&size, sizeof(size));
-	stream += std::string((const char *)&id, sizeof(id));
-	stream += packet;
+    NLulong size = nlSwapl(packet.size());
+    id = nlSwapl(id);
+    
+    stream += std::string((const char *)&size, sizeof(size));
+    stream += std::string((const char *)&id, sizeof(id));
+    stream += packet;
 
-	return true;
+    return true;
 }
 
 static bool stream_to_socket(NLsocket socket, std::string &stream)
 {
-	NLint size_written = nlWrite(socket, stream.data(), stream.size());
+    NLint size_written = nlWrite(socket, stream.data(), stream.size());
 
-	if (size_written == NL_INVALID && nlGetError() != NL_CON_PENDING)
-		return false;
+    if (size_written == NL_INVALID && nlGetError() != NL_CON_PENDING)
+        return false;
 
-	if (size_written != NL_INVALID)
-		stream.erase(stream.begin(), stream.begin() + size_written);
+    if (size_written != NL_INVALID)
+        stream.erase(stream.begin(), stream.begin() + size_written);
 
-	return true;	
+    return true;    
 }
 
 void ServerDispatch::HandleSocket(NLsocket socket)
 {
-	ServerClient *client = m_clients_by_socket[socket];
-	std::string &stream = client->m_stream;
+    ServerClient *client = m_clients_by_socket[socket];
+    std::string &stream = client->m_stream;
 
     NLulong id;
     std::string packet;
     int err;
 
     if (client->m_name.empty() && stream.size() >= 3 && stream[0] == 'G' && 
-    	stream[1] == 'E' && stream[2] == 'T') {
-	//	HTTP request    	
-		client->m_http = true;
-		std::string http_reply;
-		http_reply += "HTTP/1.0 200 OK\n";
-		http_reply += "Content-Type: text/html;charset=utf-8\n\n";
-		std::string html_body;
-		MakeHtmlReport(html_body);
-		http_reply += html_body;
-		client->m_stream_out += http_reply;
-	    server_log("http request from %s\n", client->m_ip.c_str());
+        stream[1] == 'E' && stream[2] == 'T') {
+    //  HTTP request        
+        client->m_http = true;
+        std::string http_reply;
+        http_reply += "HTTP/1.0 200 OK\n";
+        http_reply += "Content-Type: text/html;charset=utf-8\n\n";
+        std::string html_body;
+        MakeHtmlReport(html_body);
+        http_reply += html_body;
+        client->m_stream_out += http_reply;
+        server_log("http request from %s\n", client->m_ip.c_str());
         return;
     }
 
-	while ((err = stream_to_packet(stream, id, packet)) == 1)
-		client->recv_packet(id, packet);
+    while ((err = stream_to_packet(stream, id, packet)) == 1)
+        client->recv_packet(id, packet);
 
-	if (err < 0 || client->m_error)
-		delete client;
+    if (err < 0 || client->m_error)
+        delete client;
 }
 
 void ServerDispatch::HandleNewConnections()
 {
-//	Check timeouts for authentication
-	NLtime now;
-	nlTime(&now);
+//  Check timeouts for authentication
+    NLtime now;
+    nlTime(&now);
 
-	std::map<NLsocket, ServerClient *>::iterator it = m_clients_by_socket.begin();
-	while (it != m_clients_by_socket.end()) {
-		ServerClient *client = it->second; it++;
-		if (!client->m_name.empty()) continue;
-		if (get_time_diff(client->m_connection_time, now) > (long)LOGIN_TIME_LIMIT) {
-			server_log("connection timeout ip=%s\n", client->m_ip.c_str());
-			delete client;
-		}
-	}
+    std::map<NLsocket, ServerClient *>::iterator it = m_clients_by_socket.begin();
+    while (it != m_clients_by_socket.end()) {
+        ServerClient *client = it->second; it++;
+        if (!client->m_name.empty()) continue;
+        if (get_time_diff(client->m_connection_time, now) > (long)LOGIN_TIME_LIMIT) {
+            server_log("connection timeout ip=%s\n", client->m_ip.c_str());
+            delete client;
+        }
+    }
 
-//	Check limit for the number of connections
-	if (m_clients_by_socket.size() >= CONNECTIONS_COUNT_LIMIT) return;
+//  Check limit for the number of connections
+    if (m_clients_by_socket.size() >= CONNECTIONS_COUNT_LIMIT) return;
 
-//	check for a new client
+//  check for a new client
     NLsocket newsock = nlAcceptConnection(m_socket);
     if (newsock == NL_INVALID) {
-    	if (nlGetError() != NL_NO_PENDING)
-    		server_log("Warning (nlGetError() != NL_NO_PENDING in ServerDispatch::HandleNewConnections)");
-    	return;
+        if (nlGetError() != NL_NO_PENDING)
+            server_log("Warning (nlGetError() != NL_NO_PENDING in ServerDispatch::HandleNewConnections)");
+        return;
     }
 
     NLaddress addr;
@@ -165,117 +170,117 @@ void ServerDispatch::HandleNewConnections()
 
     NLbyte string[NL_MAX_STRING_LENGTH];
     
-	if (!validate_ip(nlAddrToString(&addr, string))) {
-		server_log("rejected connection from %s, address found in blacklist\n",
-			nlAddrToString(&addr, string));
-		nlClose(newsock);
-		return;
+    if (!validate_ip(nlAddrToString(&addr, string))) {
+        server_log("rejected connection from %s, address found in blacklist\n",
+            nlAddrToString(&addr, string));
+        nlClose(newsock);
+        return;
     } else {
-		server_log("accepted connection from %s\n", nlAddrToString(&addr, string));
+        server_log("accepted connection from %s\n", nlAddrToString(&addr, string));
     }
 
-	nlGroupAddSocket(m_group, newsock);
-	ServerClient *client = CreateServerClient(newsock);
-	if (client == NULL) {
-		server_log("Error (client == NULL in ServerDispatch::HandleNewConnections)");
-		exit(1);
-	}
-	client->m_ip = nlAddrToString(&addr, string);
+    nlGroupAddSocket(m_group, newsock);
+    ServerClient *client = CreateServerClient(newsock);
+    if (client == NULL) {
+        server_log("Error (client == NULL in ServerDispatch::HandleNewConnections)");
+        exit(1);
+    }
+    client->m_ip = nlAddrToString(&addr, string);
 }
 
 void ServerDispatch::Run(NLsocket sock)
 {
-	static std::vector<NLsocket> s;
+    static std::vector<NLsocket> s;
 
-	nlTime(&m_connection_time);
-	m_traffic_in       = 0;
-	m_traffic_out      = 0;
-	m_http_traffic_in  = 0;
-	m_http_traffic_out = 0;
-	m_socket           = sock;
+    nlTime(&m_connection_time);
+    m_traffic_in       = 0;
+    m_traffic_out      = 0;
+    m_http_traffic_in  = 0;
+    m_http_traffic_out = 0;
+    m_socket           = sock;
 
     m_group = nlGroupCreate();
 
     time_t last_log_strip_time = time(NULL);
-	strip_server_log(g_srv_keep_log_time * 24 * 3600);
+    strip_server_log(g_srv_keep_log_time * 24 * 3600);
 
     while (1) {
 
-    //	Strip server log every 8 hours
-    	if (difftime(time(NULL), last_log_strip_time) > 8 * 3600) {
-    		last_log_strip_time = time(NULL);
-			strip_server_log(g_srv_keep_log_time * 24 * 3600);
-    	}
+    //  Strip server log every 8 hours
+        if (difftime(time(NULL), last_log_strip_time) > 8 * 3600) {
+            last_log_strip_time = time(NULL);
+            strip_server_log(g_srv_keep_log_time * 24 * 3600);
+        }
 
-    	if (g_server_reload_config_flag) {
-    		load_config();
-			g_server_reload_config_flag = 0;
-    	}
+        if (g_server_reload_config_flag) {
+            load_config();
+            g_server_reload_config_flag = 0;
+        }
 
-    	HandleNewConnections();
+        HandleNewConnections();
         
-    //	Check for incoming messages
+    //  Check for incoming messages
         if (s.size() < CONNECTIONS_COUNT_LIMIT) s.resize(CONNECTIONS_COUNT_LIMIT);
         NLint count = nlPollGroup(m_group, NL_READ_STATUS, &s[0], CONNECTIONS_COUNT_LIMIT, 0);
         if (count == NL_INVALID) {
-			server_log("Warning (count == NL_INVALID in ServerDispatch::Run)");
-        	continue;
+            server_log("Warning (count == NL_INVALID in ServerDispatch::Run)");
+            continue;
         }
 
-	//	Loop through the clients and read the packets
+    //  Loop through the clients and read the packets
         for (NLint i = 0; i < count; i++) {
-			ServerClient *client = m_clients_by_socket[s[i]];
-			int readlen;
-			NLbyte buffer[128];
+            ServerClient *client = m_clients_by_socket[s[i]];
+            int readlen;
+            NLbyte buffer[128];
 
-			while ((readlen = nlRead(s[i], buffer, sizeof(buffer))) > 0) {
-				client->m_stream.append(buffer, readlen);
-            //	Check for traffic limit
-				unsigned long ave_traffic = nlGetSocketStat(s[i], NL_AVE_BYTES_RECEIVED);
-				if (ave_traffic > client->m_max_ave_traffic)
-					client->m_max_ave_traffic = ave_traffic;
-				if (ave_traffic > AVE_TRAFFIC_LIMIT) {
-					server_log("flooder detected, connection terminated: user '%s' from %s\n",
-						client->m_name.c_str(), client->m_ip.c_str());
-					client->m_error = true;
-					break;
-				}
-			}
+            while ((readlen = nlRead(s[i], buffer, sizeof(buffer))) > 0) {
+                client->m_stream.append(buffer, readlen);
+            //  Check for traffic limit
+                unsigned long ave_traffic = nlGetSocketStat(s[i], NL_AVE_BYTES_RECEIVED);
+                if (ave_traffic > client->m_max_ave_traffic)
+                    client->m_max_ave_traffic = ave_traffic;
+                if (ave_traffic > AVE_TRAFFIC_LIMIT) {
+                    server_log("flooder detected, connection terminated: user '%s' from %s\n",
+                        client->m_name.c_str(), client->m_ip.c_str());
+                    client->m_error = true;
+                    break;
+                }
+            }
 
-			if (readlen == NL_INVALID) {
-				NLenum err = nlGetError();
-				if (err == NL_MESSAGE_END || err == NL_SOCK_DISCONNECT) {
-					client->m_error = true;
-				} else {
-					server_log("socket read error %d: user '%s' from %s\n",
-						err, client->m_name.c_str(), client->m_ip.c_str());
-				}
+            if (readlen == NL_INVALID) {
+                NLenum err = nlGetError();
+                if (err == NL_MESSAGE_END || err == NL_SOCK_DISCONNECT) {
+                    client->m_error = true;
+                } else {
+                    server_log("socket read error %d: user '%s' from %s\n",
+                        err, client->m_name.c_str(), client->m_ip.c_str());
+                }
             }
 
             HandleSocket(s[i]);
         }
 
-    //	Loop through the clients and write the packets
-    	std::map<NLsocket, ServerClient *>::iterator it = m_clients_by_socket.begin();
-		while (it != m_clients_by_socket.end()) {
-			ServerClient *client = it->second; it++;
-			if (client->m_stream_out.empty()) continue;
+    //  Loop through the clients and write the packets
+        std::map<NLsocket, ServerClient *>::iterator it = m_clients_by_socket.begin();
+        while (it != m_clients_by_socket.end()) {
+            ServerClient *client = it->second; it++;
+            if (client->m_stream_out.empty()) continue;
 
-			NLint size_written = nlWrite(client->m_socket,
-				client->m_stream_out.data(), client->m_stream_out.size());
+            NLint size_written = nlWrite(client->m_socket,
+                client->m_stream_out.data(), client->m_stream_out.size());
 
-			if (size_written != NL_INVALID) {
-				client->m_stream_out.erase(client->m_stream_out.begin(), 
-					client->m_stream_out.begin() + size_written);
-			} else {
-				NLenum err = nlGetError();
-				server_log("socket write error %d: user '%s' from %s\n",
-					err, client->m_name.c_str(), client->m_ip.c_str());
-			}
+            if (size_written != NL_INVALID) {
+                client->m_stream_out.erase(client->m_stream_out.begin(), 
+                    client->m_stream_out.begin() + size_written);
+            } else {
+                NLenum err = nlGetError();
+                server_log("socket write error %d: user '%s' from %s\n",
+                    err, client->m_name.c_str(), client->m_ip.c_str());
+            }
 
-			if (client->m_http && client->m_stream_out.empty())
-				delete client;
-		}
+            if (client->m_http && client->m_stream_out.empty())
+                delete client;
+        }
 
         usleep(50000);
     }
@@ -283,8 +288,8 @@ void ServerDispatch::Run(NLsocket sock)
 
 bool ServerClient::send_packet_back(NLulong id, const std::string &packet)
 {
-	packet_to_stream(m_stream_out, id, packet);
-	return stream_to_socket(m_socket, m_stream_out);
+    packet_to_stream(m_stream_out, id, packet);
+    return stream_to_socket(m_socket, m_stream_out);
 }
 
 /**
@@ -292,41 +297,41 @@ bool ServerClient::send_packet_back(NLulong id, const std::string &packet)
  */
 bool ServerClient::send_packet_all(NLulong id, const std::string &packet)
 {
-	std::map<std::string, ServerClient *>::iterator it = m_server->m_clients_by_name.begin();
-	while (it != m_server->m_clients_by_name.end()) {
-		if (it->first != "" && it->first != m_name)
-			it->second->send_packet_back(id, packet);
-		it++;
-	}
-	return true;
+    std::map<std::string, ServerClient *>::iterator it = m_server->m_clients_by_name.begin();
+    while (it != m_server->m_clients_by_name.end()) {
+        if (it->first != "" && it->first != m_name)
+            it->second->send_packet_back(id, packet);
+        it++;
+    }
+    return true;
 }
 
 /****************************************************************************/
 
 bool ClientServer::connect(
-	const std::string &ufo2000_server,
-	const std::string &http_proxy,
-	std::string &error_message)
+    const std::string &ufo2000_server,
+    const std::string &http_proxy,
+    std::string &error_message)
 {
-	m_socket = NL_INVALID;
-	NLaddress addr;
+    m_socket = NL_INVALID;
+    NLaddress addr;
 
-	std::string host = ufo2000_server;
-	if (host.find(':') == std::string::npos) host.append(":2000");
+    std::string host = ufo2000_server;
+    if (host.find(':') == std::string::npos) host.append(":2000");
 
-	std::string proxy = http_proxy;
-	if (proxy == "disabled") proxy = "";
-	if (proxy == "auto") proxy = getenv("http_proxy") ? getenv("http_proxy") : "";
+    std::string proxy = http_proxy;
+    if (proxy == "disabled") proxy = "";
+    if (proxy == "auto") proxy = getenv("http_proxy") ? getenv("http_proxy") : "";
 
-	if (!proxy.empty()) {
-		error_message = "Failed to connect HTTP proxy";
-	    if (nlGetAddrFromName(proxy.c_str(), &addr) != NL_TRUE)
-	    	return false;
-	} else {
-		error_message = "Failed to connect UFO2000 server";
-	    if (nlGetAddrFromName(host.c_str(), &addr) != NL_TRUE)
-	    	return false;
-	}
+    if (!proxy.empty()) {
+        error_message = "Failed to connect HTTP proxy";
+        if (nlGetAddrFromName(proxy.c_str(), &addr) != NL_TRUE)
+            return false;
+    } else {
+        error_message = "Failed to connect UFO2000 server";
+        if (nlGetAddrFromName(host.c_str(), &addr) != NL_TRUE)
+            return false;
+    }
 
     m_socket = nlOpen(0, NL_RELIABLE);
     if (m_socket == NL_INVALID) return false;
@@ -334,50 +339,50 @@ bool ClientServer::connect(
     if (nlConnect(m_socket, &addr) == NL_FALSE) return false;
 
     if (!proxy.empty()) {
-		int retry;
-    	char tmp[512];
-		sprintf(tmp, "CONNECT %s HTTP/1.1\r\n\r\n", host.c_str());
-		std::string request = tmp;
-		std::string reply;
+        int retry;
+        char tmp[512];
+        sprintf(tmp, "CONNECT %s HTTP/1.1\r\n\r\n", host.c_str());
+        std::string request = tmp;
+        std::string reply;
 
-		bool fail_flag = true;
-		for (retry = 0; retry < 50; retry++) {
-			if (!stream_to_socket(m_socket, request)) return false;
-			if (request.empty()) { fail_flag = false; break; }
-			usleep(50000);
-		}
+        bool fail_flag = true;
+        for (retry = 0; retry < 50; retry++) {
+            if (!stream_to_socket(m_socket, request)) return false;
+            if (request.empty()) { fail_flag = false; break; }
+            usleep(50000);
+        }
 
-		if (fail_flag) return false;
+        if (fail_flag) return false;
 
-		fail_flag = true;
-		for (retry = 0; retry < 50; retry++) {
-			int readlen = nlRead(m_socket, tmp, sizeof(tmp));
-			if (readlen > 0) {
-				reply += std::string(tmp, tmp + readlen);
-				std::string::size_type end_of_hdr = reply.find("\r\n\r\n");
-				if (end_of_hdr != std::string::npos) {
-					std::string::size_type end_of_first_line = reply.find("\r\n");
-					reply.resize(end_of_first_line);
-					fail_flag = false;
-					break;
-				}
-			}
-			usleep(50000);
-		}
+        fail_flag = true;
+        for (retry = 0; retry < 50; retry++) {
+            int readlen = nlRead(m_socket, tmp, sizeof(tmp));
+            if (readlen > 0) {
+                reply += std::string(tmp, tmp + readlen);
+                std::string::size_type end_of_hdr = reply.find("\r\n\r\n");
+                if (end_of_hdr != std::string::npos) {
+                    std::string::size_type end_of_first_line = reply.find("\r\n");
+                    reply.resize(end_of_first_line);
+                    fail_flag = false;
+                    break;
+                }
+            }
+            usleep(50000);
+        }
 
-		if (fail_flag) return false;
+        if (fail_flag) return false;
 
-		int http_code = 0;
-		if (sscanf(reply.c_str(), "%s %d", tmp, &http_code) != 2) {
-			error_message = "Invalid or no reply from HTTP proxy";
-			return false;
-		}
+        int http_code = 0;
+        if (sscanf(reply.c_str(), "%s %d", tmp, &http_code) != 2) {
+            error_message = "Invalid or no reply from HTTP proxy";
+            return false;
+        }
 
-		if (http_code != 200) {
-			sprintf(tmp, "HTTP proxy returned error %d", http_code);
-			error_message = tmp;
-			return false;
-		}
+        if (http_code != 200) {
+            sprintf(tmp, "HTTP proxy returned error %d", http_code);
+            error_message = tmp;
+            return false;
+        }
     }
 
     return true;
@@ -385,28 +390,28 @@ bool ClientServer::connect(
 
 ClientServer::~ClientServer()
 {
-	if (m_socket != NL_INVALID)
-		nlClose(m_socket);
+    if (m_socket != NL_INVALID)
+        nlClose(m_socket);
 }
 
 bool ClientServer::send_packet(NLulong id, const std::string &packet)
 {
-	packet_to_stream(m_stream_out, id, packet);
-	return stream_to_socket(m_socket, m_stream_out);
+    packet_to_stream(m_stream_out, id, packet);
+    return stream_to_socket(m_socket, m_stream_out);
 }
 
 bool ClientServer::send_delayed_packet()
 {
-	return stream_to_socket(m_socket, m_stream_out);
+    return stream_to_socket(m_socket, m_stream_out);
 }
 
 bool ClientServer::flush_sent_packets()
 {
-	while (!m_stream_out.empty()) {
-		if (!stream_to_socket(m_socket, m_stream_out))
-			return false;
-	}
-	return true;
+    while (!m_stream_out.empty()) {
+        if (!stream_to_socket(m_socket, m_stream_out))
+            return false;
+    }
+    return true;
 }
 
 int ClientServer::recv_packet(NLulong &id, std::string &packet)
@@ -417,35 +422,35 @@ int ClientServer::recv_packet(NLulong &id, std::string &packet)
     unsigned long stream_size_before = m_stream.size();
 
     while ((readlen = nlRead(m_socket, buffer, sizeof(buffer))) > 0)
-    	m_stream.append(buffer, readlen);
+        m_stream.append(buffer, readlen);
 
     if (stream_size_before == m_stream.size() && readlen == NL_INVALID)
     {
         NLenum err = nlGetError();
         if (err == NL_MESSAGE_END || err == NL_SOCK_DISCONNECT)
-        	return -1;
+            return -1;
     }
 
     int result = stream_to_packet(m_stream, id, packet);
     if (result < 0) return result;
 
     if (result && (id == SRV_KEEP_ALIVE)) {
-   		// send the same packet back to the server to confirm that 
-   		// we are still online, the rest of client code does not 
-   		// even need to know that we have received this packet
-   		send_packet(id, packet);
-   		return 0;
-   	}
+        // send the same packet back to the server to confirm that 
+        // we are still online, the rest of client code does not 
+        // even need to know that we have received this packet
+        send_packet(id, packet);
+        return 0;
+    }
 
-	return result;
+    return result;
 }
 
 int ClientServer::wait_packet(NLulong &id, std::string &buffer)
 {
     while (true) {
-    	if (!send_delayed_packet()) return -1;
-    	int res = recv_packet(id, buffer);
-		if (res != 0) return res;
+        if (!send_delayed_packet()) return -1;
+        int res = recv_packet(id, buffer);
+        if (res != 0) return res;
         usleep(1);
     }
 }

@@ -23,7 +23,13 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #pragma warning(disable:4786)
 #endif
 
-#include "stdafx.h"
+#include <stdio.h>
+#include <time.h>
+#include <stdarg.h>
+#include <nl.h>
+#include <string>
+#include <vector>
+#include <map>
 
 #include "server_config.h"
 
@@ -35,12 +41,12 @@ static std::map<std::string, unsigned long *> config_variables;
 
 static unsigned long init_server_variable(const std::string name, unsigned long *val, unsigned long defval)
 {
-	config_variables[name] = val;
-	return defval;
+    config_variables[name] = val;
+    return defval;
 }
 
 #define SERVER_CONFIG_VARIABLE(a, d) \
-	unsigned long g_srv_##a = init_server_variable(#a, &g_srv_##a, d)
+    unsigned long g_srv_##a = init_server_variable(#a, &g_srv_##a, d)
 
 SERVER_CONFIG_VARIABLE(tcp_port,                2000);
 // Limit for average incoming traffic (average is calculated by HawkNL
@@ -65,10 +71,10 @@ SERVER_CONFIG_VARIABLE(daemonize,           1);
 
 struct ip_info
 {
-	NLulong ip;
-	NLulong mask;
-	ip_info(): ip(0), mask(0xFFFFFFFF) { }
-	ip_info(NLulong _ip, NLulong _mask): ip(_ip), mask(_mask) { }
+    NLulong ip;
+    NLulong mask;
+    ip_info(): ip(0), mask(0xFFFFFFFF) { }
+    ip_info(NLulong _ip, NLulong _mask): ip(_ip), mask(_mask) { }
 };
 
 static std::vector<ip_info>  accept_ip;
@@ -83,47 +89,47 @@ static std::string server_log_pathname;
  */
 static bool decode_ip(const char *buffer, NLulong &ip, NLulong &mask)
 {
-	unsigned int p1, p2, p3, p4, x;
-	if (sscanf(buffer, "%u.%u.%u.%u /%u", &p1, &p2, &p3, &p4, &x) == 5)	{
-		if (p1 > 255 || p2 > 255 || p3 > 255 || p4 > 255) return false;
-		ip   = (p1 << 24) | (p2 << 16) | (p3 << 8) | p4;
-		mask = 0;
-		for (int i = 31; i >= 0 && x > 0; i--, x--) mask |= 1 << i;
-		return true;
-	} else if (sscanf(buffer, "%u.%u.%u.%u", &p1, &p2, &p3, &p4) == 4) {
-		if (p1 > 255 || p2 > 255 || p3 > 255 || p4 > 255) return false;
-		ip   = (p1 << 24) | (p2 << 16) | (p3 << 8) | p4;
-		mask = 0xFFFFFFFF;
-		return true;
-	}
-	return false;
+    unsigned int p1, p2, p3, p4, x;
+    if (sscanf(buffer, "%u.%u.%u.%u /%u", &p1, &p2, &p3, &p4, &x) == 5) {
+        if (p1 > 255 || p2 > 255 || p3 > 255 || p4 > 255) return false;
+        ip   = (p1 << 24) | (p2 << 16) | (p3 << 8) | p4;
+        mask = 0;
+        for (int i = 31; i >= 0 && x > 0; i--, x--) mask |= 1 << i;
+        return true;
+    } else if (sscanf(buffer, "%u.%u.%u.%u", &p1, &p2, &p3, &p4) == 4) {
+        if (p1 > 255 || p2 > 255 || p3 > 255 || p4 > 255) return false;
+        ip   = (p1 << 24) | (p2 << 16) | (p3 << 8) | p4;
+        mask = 0xFFFFFFFF;
+        return true;
+    }
+    return false;
 }
 
 static bool check_ip_match(NLulong ip, const ip_info &info)
 {
-	return (ip & info.mask) == (info.ip & info.mask);
+    return (ip & info.mask) == (info.ip & info.mask);
 }
 
 /**
  * Parses text line and extracts variable name + value from it
  */
 static bool get_variable(
-	const std::string & str,
-	std::string       & var,
-	std::string       & val,
-	char                comment_char,
-	std::string       & comment_string)
+    const std::string & str,
+    std::string       & var,
+    std::string       & val,
+    char                comment_char,
+    std::string       & comment_string)
 {
     std::string::size_type comment_pos = str.find(comment_char);
     if (comment_pos == std::string::npos) {
-    	comment_pos = str.size();
-	    if (&comment_string != NULL) comment_string = "";
+        comment_pos = str.size();
+        if (&comment_string != NULL) comment_string = "";
     } else {
-	    if (&comment_string != NULL) {
-	    	comment_string = str.substr(
-	    		comment_pos, str.find_last_not_of(" \t\n\r") - comment_pos + 1);
-	    }
-	}
+        if (&comment_string != NULL) {
+            comment_string = str.substr(
+                comment_pos, str.find_last_not_of(" \t\n\r") - comment_pos + 1);
+        }
+    }
 
     if (comment_pos == 0) return false;
 
@@ -153,12 +159,12 @@ void load_config()
 
 void load_config(const std::string &pathname)
 {
-	char buffer[512];
-	FILE *f = fopen(pathname.c_str(), "rt");
-	if (f == NULL) {
-		printf("Error: can't open config file '%s'\n", pathname.c_str());
-		return;
-	}
+    char buffer[512];
+    FILE *f = fopen(pathname.c_str(), "rt");
+    if (f == NULL) {
+        printf("Error: can't open config file '%s'\n", pathname.c_str());
+        return;
+    }
     config_file_pathname.assign(pathname);
 
     /* make up default log file name - in current directory */
@@ -166,50 +172,50 @@ void load_config(const std::string &pathname)
     server_log_pathname.append(SERVER_LOG_FILENAME);
 
 
-	reject_ip.clear();
-	accept_ip.clear();
-	accept_user.clear();
+    reject_ip.clear();
+    accept_ip.clear();
+    accept_user.clear();
 
-	while (fgets(buffer, 511, f)) {
-		std::string var, val, comment;
-		if (!get_variable(buffer, var, val, '#', comment)) continue;
+    while (fgets(buffer, 511, f)) {
+        std::string var, val, comment;
+        if (!get_variable(buffer, var, val, '#', comment)) continue;
 
-		if (var == "accept_user") {
-			std::string login, password;
-			if (!split_loginpass(val, login, password)) {
-				server_log("invalid user login format in config: %s\n", val.c_str());
-			} else {
-				server_log("config accept_user = '%s'\n", val.c_str());
-				accept_user.insert(std::pair<std::string, std::string>(login, password));
-			}
-		} else if (var == "reject_ip") {
-			NLulong ip, mask;
-			if (!decode_ip(val.c_str(), ip, mask)) {
-				server_log("invalid ip address format in config: %s\n", val.c_str());
-			} else {
-				server_log("config reject_ip = '%s' (0x%08X 0x%08X)\n", val.c_str(), (int)ip, (int)mask);
-				reject_ip.push_back(ip_info(ip, mask));
-			}
-		} else if (var == "accept_ip") {
-			NLulong ip, mask;
-			if (!decode_ip(val.c_str(), ip, mask)) {
-				server_log("invalid ip address format in config: %s\n", val.c_str());
-			} else {
-				server_log("config accept_ip = '%s' (0x%08X 0x%08X)\n", val.c_str(), (int)ip, (int)mask);
-				accept_ip.push_back(ip_info(ip, mask));
-			}
-		} else if (var == "server_log") {
+        if (var == "accept_user") {
+            std::string login, password;
+            if (!split_loginpass(val, login, password)) {
+                server_log("invalid user login format in config: %s\n", val.c_str());
+            } else {
+                server_log("config accept_user = '%s'\n", val.c_str());
+                accept_user.insert(std::pair<std::string, std::string>(login, password));
+            }
+        } else if (var == "reject_ip") {
+            NLulong ip, mask;
+            if (!decode_ip(val.c_str(), ip, mask)) {
+                server_log("invalid ip address format in config: %s\n", val.c_str());
+            } else {
+                server_log("config reject_ip = '%s' (0x%08X 0x%08X)\n", val.c_str(), (int)ip, (int)mask);
+                reject_ip.push_back(ip_info(ip, mask));
+            }
+        } else if (var == "accept_ip") {
+            NLulong ip, mask;
+            if (!decode_ip(val.c_str(), ip, mask)) {
+                server_log("invalid ip address format in config: %s\n", val.c_str());
+            } else {
+                server_log("config accept_ip = '%s' (0x%08X 0x%08X)\n", val.c_str(), (int)ip, (int)mask);
+                accept_ip.push_back(ip_info(ip, mask));
+            }
+        } else if (var == "server_log") {
             server_log_pathname.assign(val);
-		} else if (config_variables.find(var) != config_variables.end()) {
-			unsigned long old = *config_variables[var];
-			*config_variables[var] = atoi(val.c_str());
-			if (old != *config_variables[var])
-				server_log("config variable '%s' changed to %d\n", var.c_str(), *config_variables[var]);
-		} else {
-			server_log("unrecognized variable in config: %s\n", var.c_str());
-		}
-	}
-	fclose(f);
+        } else if (config_variables.find(var) != config_variables.end()) {
+            unsigned long old = *config_variables[var];
+            *config_variables[var] = atoi(val.c_str());
+            if (old != *config_variables[var])
+                server_log("config variable '%s' changed to %d\n", var.c_str(), *config_variables[var]);
+        } else {
+            server_log("unrecognized variable in config: %s\n", var.c_str());
+        }
+    }
+    fclose(f);
 }
 
 /**
@@ -219,24 +225,24 @@ void load_config(const std::string &pathname)
  */
 int validate_user(const std::string &username, const std::string &password)
 {
-	if (accept_user.find(username) == accept_user.end()) return 0;
-	return accept_user[username] == password ? 1 : -1;
+    if (accept_user.find(username) == accept_user.end()) return 0;
+    return accept_user[username] == password ? 1 : -1;
 }
 
 bool validate_ip(const std::string &ip_string)
 {
-	NLulong ip = 0;
-	unsigned int p1, p2, p3, p4;
-	if (sscanf(ip_string.c_str(), "%u.%u.%u.%u", &p1, &p2, &p3, &p4) != 4)
-		return false;
-	ip = (p1 << 24) | (p2 << 16) | (p3 << 8) | p4;
+    NLulong ip = 0;
+    unsigned int p1, p2, p3, p4;
+    if (sscanf(ip_string.c_str(), "%u.%u.%u.%u", &p1, &p2, &p3, &p4) != 4)
+        return false;
+    ip = (p1 << 24) | (p2 << 16) | (p3 << 8) | p4;
 
-	unsigned int i;
-	for (i = 0; i < accept_ip.size(); i++)
-		if (check_ip_match(ip, accept_ip[i])) return true;
-	for (i = 0; i < reject_ip.size(); i++)
-		if (check_ip_match(ip, reject_ip[i])) return false;
-	return true;
+    unsigned int i;
+    for (i = 0; i < accept_ip.size(); i++)
+        if (check_ip_match(ip, accept_ip[i])) return true;
+    for (i = 0; i < reject_ip.size(); i++)
+        if (check_ip_match(ip, reject_ip[i])) return false;
+    return true;
 }
 
 
@@ -246,24 +252,24 @@ bool validate_ip(const std::string &ip_string)
  */
 void server_log(const char *fmt, ...)
 {
-	time_t now = time(NULL);
-	struct tm * t = localtime(&now);
-	char timebuf[1000];
-	strftime(timebuf, 1000, "%d/%m/%Y %H:%M:%S", t);
+    time_t now = time(NULL);
+    struct tm * t = localtime(&now);
+    char timebuf[1000];
+    strftime(timebuf, 1000, "%d/%m/%Y %H:%M:%S", t);
 #ifndef WIN32
     snprintf(timebuf + strlen(timebuf), sizeof(timebuf), " [%d]", getpid());
 #endif
-	va_list arglist;
-	va_start(arglist, fmt);
+    va_list arglist;
+    va_start(arglist, fmt);
 
-	FILE *flog = fopen(server_log_pathname.c_str(), "at");
-	if (flog != NULL) {
-		fprintf(flog, "%s ", timebuf);
-		vfprintf(flog, fmt, arglist);
-		fclose(flog);
-	}
+    FILE *flog = fopen(server_log_pathname.c_str(), "at");
+    if (flog != NULL) {
+        fprintf(flog, "%s ", timebuf);
+        vfprintf(flog, fmt, arglist);
+        fclose(flog);
+    }
 
-	va_end(arglist);
+    va_end(arglist);
 }
 
 /**
@@ -277,64 +283,64 @@ void server_log(const char *fmt, ...)
  */
 void strip_server_log(double delta_time)
 {
-	time_t now = time(NULL);
+    time_t now = time(NULL);
     std::string tmp_name;
 
     tmp_name.assign(server_log_pathname);
     tmp_name.append(".tmp");
 
-	char buffer[1000];
-	FILE *flog = fopen(server_log_pathname.c_str(), "rt");
-	if (flog == NULL)
+    char buffer[1000];
+    FILE *flog = fopen(server_log_pathname.c_str(), "rt");
+    if (flog == NULL)
         return;
-	FILE *flog_tmp = fopen(tmp_name.c_str(), "wt");
-	if (flog_tmp == NULL) {
-		fclose(flog);
-		return;
-	}
+    FILE *flog_tmp = fopen(tmp_name.c_str(), "wt");
+    if (flog_tmp == NULL) {
+        fclose(flog);
+        return;
+    }
 
-	int flag = 0;
-	while (fgets(buffer, 999, flog)) {
-		tm t; t.tm_isdst = 0;
-		if (!flag && sscanf(buffer, "%d/%d/%d %d:%d:%d", &t.tm_mday, &t.tm_mon, &t.tm_year,
-							&t.tm_hour, &t.tm_min, &t.tm_sec) == 6) {
-			t.tm_mon--;	t.tm_year -= 1900;
-			if (difftime(now,  mktime(&t)) < delta_time) flag = 1;
-		}
-		if (flag) fprintf(flog_tmp, "%s", buffer);
-	}
+    int flag = 0;
+    while (fgets(buffer, 999, flog)) {
+        tm t; t.tm_isdst = 0;
+        if (!flag && sscanf(buffer, "%d/%d/%d %d:%d:%d", &t.tm_mday, &t.tm_mon, &t.tm_year,
+                            &t.tm_hour, &t.tm_min, &t.tm_sec) == 6) {
+            t.tm_mon--; t.tm_year -= 1900;
+            if (difftime(now,  mktime(&t)) < delta_time) flag = 1;
+        }
+        if (flag) fprintf(flog_tmp, "%s", buffer);
+    }
 
-	fclose(flog);
-	fclose(flog_tmp);
+    fclose(flog);
+    fclose(flog_tmp);
 
-	remove(server_log_pathname.c_str());
-	rename(tmp_name.c_str(), server_log_pathname.c_str());
+    remove(server_log_pathname.c_str());
+    rename(tmp_name.c_str(), server_log_pathname.c_str());
 }
 
 bool split_loginpass(const std::string &str, std::string &login, std::string &password)
 {
-	bool colon_found = false;
-	for (unsigned int i = 0; i < str.size(); i++) {
-		if (!colon_found && str[i] == ':') {
-			colon_found = true;
-		} else if (!colon_found) {
-			login.append(str.substr(i, 1));
-		} else {
-			password.append(str.substr(i, 1));
-		}
-	}
-	return colon_found;
+    bool colon_found = false;
+    for (unsigned int i = 0; i < str.size(); i++) {
+        if (!colon_found && str[i] == ':') {
+            colon_found = true;
+        } else if (!colon_found) {
+            login.append(str.substr(i, 1));
+        } else {
+            password.append(str.substr(i, 1));
+        }
+    }
+    return colon_found;
 }
 
 bool add_user(const std::string &login, const std::string &password)
 {
-	if (!accept_user.insert(std::pair<std::string, std::string>(login, password)).second)
-		return false;
+    if (!accept_user.insert(std::pair<std::string, std::string>(login, password)).second)
+        return false;
 
-	FILE *f = fopen(config_file_pathname.c_str(), "at");
-	fprintf(f, "\naccept_user = %s:%s", login.c_str(), password.c_str());
-	fclose(f);
-	return true;
+    FILE *f = fopen(config_file_pathname.c_str(), "at");
+    fprintf(f, "\naccept_user = %s:%s", login.c_str(), password.c_str());
+    fclose(f);
+    return true;
 }
 
 int g_server_reload_config_flag = 0;

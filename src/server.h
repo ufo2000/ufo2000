@@ -7,6 +7,7 @@
 
 #include <string>
 #include <map>
+#include <set>
 #include <nl.h>
 
 // Limit for average incoming traffic (average is calculated by HawkNL 
@@ -26,7 +27,7 @@
 
 inline long get_time_diff(const NLtime &x, const NLtime &y)
 {
-	return (y.seconds - x.seconds) * 1000 + (y.mseconds - x.mseconds);
+    return (y.seconds - x.seconds) * 1000 + (y.mseconds - x.mseconds);
 }
 
 /**
@@ -34,20 +35,20 @@ inline long get_time_diff(const NLtime &x, const NLtime &y)
  */
 class ClientServer
 {
-	std::string m_stream;
-	std::string m_stream_out;
+    std::string m_stream;
+    std::string m_stream_out;
     NLsocket    m_socket;
 public:
-	virtual ~ClientServer();
-	bool ClientServer::connect(
-		const std::string &host,
-		const std::string &proxy,
-		std::string &error_message);
-	bool send_packet(NLulong id, const std::string &packet);
-	bool send_delayed_packet();
-	bool flush_sent_packets();
-	int recv_packet(NLulong &id, std::string &packet);
-	int wait_packet(NLulong &id, std::string &buffer);
+    virtual ~ClientServer();
+    bool ClientServer::connect(
+        const std::string &host,
+        const std::string &proxy,
+        std::string &error_message);
+    bool send_packet(NLulong id, const std::string &packet);
+    bool send_delayed_packet();
+    bool flush_sent_packets();
+    int recv_packet(NLulong &id, std::string &packet);
+    int wait_packet(NLulong &id, std::string &buffer);
 };
 
 /**
@@ -56,34 +57,34 @@ public:
 class ServerClient
 {
 protected:
-	friend class    ServerDispatch;
-	std::string     m_name;
-	std::string     m_stream;
-	std::string     m_stream_out;
-	NLsocket        m_socket;
-	bool            m_error;
-	ServerDispatch *m_server;
+    friend class    ServerDispatch;
+    std::string     m_name;
+    std::string     m_stream;
+    std::string     m_stream_out;
+    NLsocket        m_socket;
+    bool            m_error;
+    ServerDispatch *m_server;
 
     unsigned long   m_max_ave_traffic;
     NLtime          m_connection_time;
 
-	std::string     m_ip;
-	bool            m_http;
+    std::string     m_ip;
+    bool            m_http;
 
-	void Run();
+    void Run();
 
 public:
-	ServerClient(ServerDispatch *server, NLsocket socket);
-	virtual ~ServerClient();
-//	This function sends a data packet to the specified recipient
-	bool send_packet_back(NLulong id, const std::string &packet);
-//	This function sends a packet to all users
-	bool send_packet_all(NLulong id, const std::string &packet);
-//	This function sends a packet to the opponent of this user
-	bool send_packet_opponent(NLulong id, const std::string &packet);
+    ServerClient(ServerDispatch *server, NLsocket socket);
+    virtual ~ServerClient();
+//  This function sends a data packet to the specified recipient
+    bool send_packet_back(NLulong id, const std::string &packet);
+//  This function sends a packet to all users
+    bool send_packet_all(NLulong id, const std::string &packet);
+//  This function sends a packet to the opponent of this user
+    bool send_packet_opponent(NLulong id, const std::string &packet);
 
-//	Function that handles packets received from this client 
-	virtual bool recv_packet(NLulong id, const std::string &packet) = 0;
+//  Function that handles packets received from this client 
+    virtual bool recv_packet(NLulong id, const std::string &packet) = 0;
 };
 
 /**
@@ -92,26 +93,26 @@ public:
 class ServerDispatch
 {
 public:
-	friend class ServerClient;
-	std::map<NLsocket, ServerClient *>    m_clients_by_socket;
-	std::map<std::string, ServerClient *> m_clients_by_name;
-	NLint                                 m_group;
-	NLsocket                              m_socket;
+    friend class ServerClient;
+    std::map<NLsocket, ServerClient *>    m_clients_by_socket;
+    std::map<std::string, ServerClient *> m_clients_by_name;
+    NLint                                 m_group;
+    NLsocket                              m_socket;
 
-	NLtime                                m_connection_time;
-	unsigned long                         m_traffic_in;
-	unsigned long                         m_traffic_out;
-	unsigned long                         m_http_traffic_in;
-	unsigned long                         m_http_traffic_out;
+    NLtime                                m_connection_time;
+    unsigned long                         m_traffic_in;
+    unsigned long                         m_traffic_out;
+    unsigned long                         m_http_traffic_in;
+    unsigned long                         m_http_traffic_out;
 
-	void HandleNewConnections();
-	void HandleSocket(NLsocket socket);
+    void HandleNewConnections();
+    void HandleSocket(NLsocket socket);
 public:
-	void Run(NLsocket sock);
-	virtual ~ServerDispatch() {}
-//	A function that is called when a new client wants to connect
-	virtual ServerClient *CreateServerClient(NLsocket socket);
-	virtual void MakeHtmlReport(std::string &html_body);
+    void Run(NLsocket sock);
+    virtual ~ServerDispatch() {}
+//  A function that is called when a new client wants to connect
+    virtual ServerClient *CreateServerClient(NLsocket socket);
+    virtual void MakeHtmlReport(std::string &html_body);
 };
 
 #endif
