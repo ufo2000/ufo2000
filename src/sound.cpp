@@ -222,7 +222,6 @@ static short buf_igetw(const std::string& inbuf, unsigned *curp) {
     if (*curp + 2 > inbuf.size())
         return EOF;
 
-/* TODO: fixup endianness. */
     inbuf.copy((char *)&rval, 2, *curp);
     *curp += 2;
 
@@ -234,7 +233,6 @@ static int buf_igetl(const std::string& inbuf, unsigned *curp) {
     if (*curp + 4 > inbuf.size() )
         return EOF;
 
-/* TODO: fixup endianness. */
     inbuf.copy((char *)&rval, 4, *curp);
     *curp += 4;
 
@@ -457,9 +455,10 @@ cat_file_type_e_t soundFile::getFileType(const std::string& buf) {
     const int head_len = 10;
     char sbuf[head_len];
 
-    /* TODO: will break on big-endian arch. */
     buf.copy(reinterpret_cast<char *>(&offs), 4, 0);
+    offs = intel_uint32(offs);
     buf.copy(sbuf, head_len, offs);
+
 
 #if defined(DEBUGMODE)
 {
@@ -492,7 +491,6 @@ void soundFile::loadCeCat(const std::string& buf, std::ostream& log,
     int i, count, nsamples;
 
     buf.copy((char *)&nsamples, 4, 0);
-/* TODO: fixup endianness. */
     nsamples = intel_uint32(nsamples);
     nsamples /= 8;
 
@@ -505,7 +503,6 @@ void soundFile::loadCeCat(const std::string& buf, std::ostream& log,
         buf.copy((char *)&(lengths[count]), 4, 4 * (2 * count +1));
         offsets[count] = intel_uint32(offsets[count]);
         lengths[count] = intel_uint32(lengths[count]);
-/* TODO: fixup endianness. */
         count++;
     } while(count < nsamples);
 
@@ -578,7 +575,6 @@ void soundFile::loadOrigCat(const std::string& buf, std::ostream& log,
     int i, count, nsamples;
 
     buf.copy((char *)&nsamples, 4, 0);
-/* TODO: fixup endianness. */
     nsamples = intel_uint32(nsamples);
     nsamples /= 8;
 
@@ -591,7 +587,6 @@ void soundFile::loadOrigCat(const std::string& buf, std::ostream& log,
         buf.copy((char *)&(lengths[count]), 4, 4 * (2 * count +1));
         offsets[count] = intel_uint32(offsets[count]);
         lengths[count] = intel_uint32(lengths[count]);
-/* TODO: fixup endianness. */
         count++;
     } while(count < nsamples);
 
