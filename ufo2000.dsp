@@ -83,7 +83,7 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib dplay.lib dxguid.lib alleg.lib /nologo /subsystem:windows /incremental:no /debug /machine:I386 /pdbtype:sept
 # SUBTRACT BASE LINK32 /pdb:none
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib dplay.lib dxguid.lib alleg.lib wsock32.lib /nologo /subsystem:windows /map /debug /machine:I386 /out:"ufo2000-debug.exe" /pdbtype:sept
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib dplay.lib dxguid.lib alleg.lib wsock32.lib libexpat.lib /nologo /subsystem:windows /map /debug /machine:I386 /out:"ufo2000-debug.exe" /pdbtype:sept
 # SUBTRACT LINK32 /pdb:none /incremental:no
 
 !ENDIF 
@@ -149,7 +149,7 @@ SOURCE=.\src\item.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\jpeg.cpp
+SOURCE=.\src\jpgalleg\jpeg.cpp
 # End Source File
 # Begin Source File
 
@@ -305,7 +305,7 @@ SOURCE=.\src\item.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\jpgalleg.h
+SOURCE=.\src\jpgalleg\jpgalleg.h
 # End Source File
 # Begin Source File
 
