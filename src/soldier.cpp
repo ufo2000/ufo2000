@@ -1881,6 +1881,9 @@ void Soldier::explo_hit(int sniper, int pierce, int type, int hitdir, int dist) 
 	{
 		StatEntry *stat = platoon_local->get_stats()->get_stat_for_SID(sniper);
 		if (!stat) stat = platoon_remote->get_stats()->get_stat_for_SID(sniper);
+    // Todo: to avoid counting the same kill several times 
+	// (e.g. when several High-Explosives go off at once),
+	// we should check if victim is still alive / only credit remaining damage
 		if (stat) stat->inc_damage_inflicted(pierce);
 	}
 	
@@ -1977,6 +1980,9 @@ void Soldier::die()
 	m_platoon->change_morale(-(100 / (m_platoon->num_of_men() + 1)), false);
 
 	g_console->printf(COLOR_BLUE, "%s killed.", md.Name);
+    FILE *f_br = fopen( "battlereport.txt", "at");
+    fprintf(f_br, "%s: %s\n", _("killed"), md.Name);
+    fclose(f_br);  // Battlereport
 }
 
 
@@ -2018,6 +2024,9 @@ void Soldier::stun()
 	m_reaction_chances = 0;
 
 	g_console->printf(COLOR_BLUE, "%s stunned.", md.Name);
+    FILE *f_br = fopen( "battlereport.txt", "at");
+    fprintf(f_br, "%s: %s\n", _("stunned"), md.Name);
+    fclose(f_br);  // Battlereport
 }
 
 
@@ -2065,6 +2074,9 @@ void Soldier::panic()
 	net->send_panic(NID);
 		
 	g_console->printf(COLOR_ROSE, "%s has panicked.", md.Name);
+    FILE *f_br = fopen( "battlereport.txt", "at");
+    fprintf(f_br, "%s: %s\n", _("Panicked"), md.Name);
+    fclose(f_br);  // Battlereport
 }
 
 /**

@@ -838,6 +838,9 @@ void send_turn()
 	int crc = build_crc();
 	net->send_endturn(crc);
 
+    FILE *f_br = fopen( "battlereport.txt", "at");
+    fprintf(f_br, "# %s: %d\n", _("Turn end"), turn );
+    fclose(f_br);  // Battlereport
     g_console->printf(COLOR_VIOLET00, "%s", _("Turn end") );
 	if(FLAGS & F_ENDTURNSND)
 		soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
@@ -907,6 +910,10 @@ void recv_turn(int crc)
 		platoon_remote->num_of_men());
 	if(FLAGS & F_ENDTURNSND)
 		soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
+
+    FILE *f_br = fopen( "battlereport.txt", "at");
+    fprintf(f_br, "# %s: %d\n", _("Next turn"), turn );
+    fclose(f_br);  // Battlereport
 }
 
 int GAMELOOP = 0;
@@ -1047,14 +1054,17 @@ bool loadgame_stream(std::iostream &stream)
 	char sign[64], buff[64];
 	sprintf(sign, "ufo2000 %s (%s %s)\n", UFO_VERSION_STRING, __DATE__, __TIME__);
 	stream.read(buff, strlen(sign) + 1);
-	if (strcmp(sign, buff) != 0) return false;
+    if (strcmp(sign, buff) != 0) {
+      // Developers: comment this out, to re-use saved game after new compile
+        return false;  // "version of savegame not compatible"
+    }
 
 	persist::Engine archive(stream, persist::Engine::modeRead);
 
 	PersistReadBinary(archive, &turn, sizeof(turn));
 	PersistReadBinary(archive, &MODE, sizeof(MODE));
-	PersistReadBinary(archive, &pd1, sizeof(pd1));
-	PersistReadBinary(archive, &pd2, sizeof(pd2));
+    PersistReadBinary(archive, &pd1,  sizeof(pd1));
+    PersistReadBinary(archive, &pd2,  sizeof(pd2));
 	PersistReadBinary(archive, &mapdata, sizeof(mapdata));
 
 	delete p1;
@@ -1149,6 +1159,7 @@ void endgame_stats()
 // damage from explosions might be accounted several times,
 // stun-damage is not accounted at all, 
 // a scout who gets no kills himself is hardly a coward, etc.
+// See also: Soldier::explo_hit()
 {
     lua_message( "Enter: endgame_stats" );
 	net->send_debug_message("result:%s", (win == loss) ? ("draw") : (win ? "victory" : "defeat"));
@@ -1158,6 +1169,8 @@ void endgame_stats()
 	BITMAP *newscr = create_bitmap(SCREEN_W, SCREEN_H);
 	clear(scr);
 	clear(newscr);
+	char player1[64];
+	char player2[64];
 	char winner[64];
     char txt[64];
 
@@ -1171,14 +1184,14 @@ void endgame_stats()
 		platoon_local = ptemp;
 	}
 
-	int local_kills      = platoon_local ->get_stats()->total_kills();
-	int remote_kills     = platoon_remote->get_stats()->total_kills();
-	int local_dead       = platoon_local ->get_stats()->total_dead();
-	int remote_dead      = platoon_remote->get_stats()->total_dead();
-	int local_inflicted  = platoon_local ->get_stats()->total_damage_inflicted();
-	int remote_inflicted = platoon_remote->get_stats()->total_damage_inflicted();
-	int local_taken      = platoon_local ->get_stats()->total_damage_taken();
-	int remote_taken     = platoon_remote->get_stats()->total_damage_taken();
+    int local_kills      = platoon_local ->get_stats()->total_kills();
+    int remote_kills     = platoon_remote->get_stats()->total_kills();
+    int local_dead       = platoon_local ->get_stats()->total_dead();
+    int remote_dead      = platoon_remote->get_stats()->total_dead();
+    int local_inflicted  = platoon_local ->get_stats()->total_damage_inflicted();
+    int remote_inflicted = platoon_remote->get_stats()->total_damage_inflicted();
+    int local_taken      = platoon_local ->get_stats()->total_damage_taken();
+    int remote_taken     = platoon_remote->get_stats()->total_damage_taken();
 
 	int mvp_remote = 0, devastating_remote = 0, coward_remote = 0;
 	StatEntry *mvp = platoon_local->get_stats()->get_most_kills();
@@ -1231,16 +1244,14 @@ void endgame_stats()
 
 	if (net->gametype == GAME_TYPE_HOTSEAT)
  	{
-		if (win == loss)
- 		{
+       if (win == loss) {
 			FS_MusicPlay(F(cfg_get_lose_music_file_name()));
 			back = back_lose;
             strcpy(winner, _("DRAW!"));
         } else {
 			FS_MusicPlay(F(cfg_get_win_music_file_name()));
 			back = back_win;
- 			if (win)
- 			{
+            if (win) {
                 if (turn % 2 == 0) strcpy(winner, _("PLAYER 2 WINS!") );
 				else               strcpy(winner, _("PLAYER 1 WINS!") );
             } else {
@@ -1250,8 +1261,7 @@ void endgame_stats()
  		}
     } else {
 		// Only go to the top case if it's an exclusive win.
-		if ((win && (!loss)))
-		{
+        if ((win && (!loss))) {
 			FS_MusicPlay(F(cfg_get_win_music_file_name()));
 			back = back_win;
             strcpy(winner, _("YOU WIN!") );
@@ -1263,7 +1273,12 @@ void endgame_stats()
 		}
  	}
 
+	// Todo: other background-image, or make this one darker
 	stretch_blit(back, newscr, 0, 0, back->w, back->h, 0, 0, SCREEN_W, SCREEN_H);
+
+    FILE *f_br = fopen( "battlereport.txt", "at");
+    fprintf(f_br, "\n# %s:\n\n", _("Summary") );
+    fprintf(f_br, "%s \n\n", winner);
 
     textprintf_centre(newscr, large, 320, 12-4, COLOR_RED00, "%s", winner);
 
@@ -1271,58 +1286,73 @@ void endgame_stats()
     int y1 =  38-8, y2 =  56-8, h = 8, w = 8;
     if (net->gametype == GAME_TYPE_HOTSEAT)
 	{
-		//textprintf(newscr, g_small_font,   8, 60, COLOR_WHITE, "Player 1");
+        //textprintf(newscr, g_small_font,   8, 60, COLOR_WHITE, "Player 1");
 		//textprintf(newscr, g_small_font, 328, 60, COLOR_WHITE, "Player 2");
-        textprintf(newscr, large,  x1, y1, COLOR_GREEN, _("Player 1") );
-        textprintf(newscr, large,  x2, y1, COLOR_GREEN, _("Player 2") );
+        strcpy(player1, _("Player 1") );
+        strcpy(player2, _("Player 2") );
+      //textprintf(newscr, large,  x1, y1, COLOR_GREEN, _("Player 1") );
+      //textprintf(newscr, large,  x2, y1, COLOR_GREEN, _("Player 2") );
     } else {
-        textprintf(newscr, large,  x1, y1, COLOR_GREEN, _("Your Platoon") );
-        textprintf(newscr, large,  x2, y1, COLOR_GREEN, _("Remote Platoon") );
+        // Todo: Use login-name of other player
+        strcpy(player1, _("Your Platoon") );
+        strcpy(player2, _("Remote Platoon") );
+      //textprintf(newscr, large,  x1, y1, COLOR_GREEN, _("Your Platoon") );
+      //textprintf(newscr, large,  x2, y1, COLOR_GREEN, _("Remote Platoon") );
     }
+    textprintf(newscr, large,  x1, y1, COLOR_GREEN, player1 );
+    textprintf(newscr, large,  x2, y1, COLOR_GREEN, player2 );
+
     strcpy(txt, _("Total Kills:") );
     textprintf(newscr, g_small_font,  x1+ 0, y2+0*h, COLOR_RED03,  "%s",  txt );
     textprintf(newscr, g_small_font,  x2+ 0, y2+0*h, COLOR_YELLOW, "%s",  txt);
-    textprintf(newscr, g_small_font,  x1+54, y2+0*h, COLOR_RED03,  "%2d", local_kills);
-    textprintf(newscr, g_small_font,  x2+54, y2+0*h, COLOR_YELLOW, "%2d", remote_kills);
+    textprintf(newscr, g_small_font,  x1+68, y2+0*h, COLOR_RED03,  "%2d", local_kills);
+    textprintf(newscr, g_small_font,  x2+68, y2+0*h, COLOR_YELLOW, "%2d", remote_kills);
+    fprintf(f_br, "%-30s: %14s %14s\n", _("Player"), player1, player2);
+    fprintf(f_br, "%-30s  %14d %14d\n", txt, local_kills, remote_kills);
 
     strcpy(txt, _("Death:") );
     textprintf(newscr, g_small_font,  x1+ 0, y2+1*h, COLOR_YELLOW, "%s",  txt);
     textprintf(newscr, g_small_font,  x2+ 0, y2+1*h, COLOR_RED03,  "%s",  txt);
-    textprintf(newscr, g_small_font,  x1+54, y2+1*h, COLOR_YELLOW, "%2d", local_dead);
-    textprintf(newscr, g_small_font,  x2+54, y2+1*h, COLOR_RED03,  "%2d", remote_dead);
+    textprintf(newscr, g_small_font,  x1+68, y2+1*h, COLOR_YELLOW, "%2d", local_dead);
+    textprintf(newscr, g_small_font,  x2+68, y2+1*h, COLOR_RED03,  "%2d", remote_dead);
+    fprintf(f_br, "%-30s  %18d %18d\n", txt, local_dead, remote_dead);
 
     strcpy(txt, _("Total Damage Inflicted:") );
-    textprintf(newscr, g_small_font,  x1+ 0, y2+2*h, COLOR_BLUE,   "%s",  txt);
-    textprintf(newscr, g_small_font,  x2+ 0, y2+2*h, COLOR_GRAY,   "%s",  txt);
-    textprintf(newscr, g_small_font,  x1+99, y2+2*h, COLOR_BLUE,   "%6d", local_inflicted);
-    textprintf(newscr, g_small_font,  x2+99, y2+2*h, COLOR_GRAY,   "%6d", remote_inflicted);
+    textprintf(newscr, g_small_font,  x1+  0, y2+2*h, COLOR_BLUE,   "%s",  txt);
+    textprintf(newscr, g_small_font,  x2+  0, y2+2*h, COLOR_GRAY,   "%s",  txt);
+    textprintf(newscr, g_small_font,  x1+104, y2+2*h, COLOR_BLUE,   "%6d", local_inflicted);
+    textprintf(newscr, g_small_font,  x2+104, y2+2*h, COLOR_GRAY,   "%6d", remote_inflicted);
+    fprintf(f_br, "%-30s  %14d %14d\n", txt, local_inflicted, remote_inflicted);
 
     strcpy(txt, _("Total Damage Taken:") );
-    textprintf(newscr, g_small_font,  x1+ 0, y2+3*h, COLOR_GRAY,   "%s",  txt);
-    textprintf(newscr, g_small_font,  x2+ 0, y2+3*h, COLOR_BLUE,   "%s",  txt);
-    textprintf(newscr, g_small_font,  x1+99, y2+3*h, COLOR_GRAY,   "%6d", local_taken);
-    textprintf(newscr, g_small_font,  x2+99, y2+3*h, COLOR_BLUE,   "%6d", remote_taken);
+    textprintf(newscr, g_small_font,  x1+  0, y2+3*h, COLOR_GRAY,   "%s",  txt);
+    textprintf(newscr, g_small_font,  x2+  0, y2+3*h, COLOR_BLUE,   "%s",  txt);
+    textprintf(newscr, g_small_font,  x1+104, y2+3*h, COLOR_GRAY,   "%6d", local_taken);
+    textprintf(newscr, g_small_font,  x2+104, y2+3*h, COLOR_BLUE,   "%6d", remote_taken);
+    fprintf(f_br, "%-30s  %14d %14d\n", txt, local_taken, remote_taken);
+
+    // Useless ranking - not logged to battlereport...
 
 	//textprintf_centre(newscr, large,        320, 108, COLOR_GOLD, "Most Valuable Soldier:");
 	//textprintf_centre(newscr, g_small_font, 320, 124, COLOR_GOLD, "%s (%s, %d kills)",
-    textprintf_centre(newscr, large,         96, 100, COLOR_GOLD, _("Most Valuable Soldier:"));
-    textprintf_centre(newscr, g_small_font,  96, 116, COLOR_GOLD, _("%s (%s, %d kills)"),
+    textprintf_centre(newscr, large,        104, 100, COLOR_GOLD, _("Most Valuable Soldier:"));
+    textprintf_centre(newscr, g_small_font, 110, 116, COLOR_GOLD, _("%s (%s, %d kills)"),
 		mvp->get_name(),
 		(mvp_remote) ? ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 2") : _("Remote") ) : ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 1") : _("Local") ),
 		mvp->get_kills());
 
 	//textprintf_centre(newscr, large,        320, 140, COLOR_MAGENTA, "Most Devastating Soldier:");
 	//textprintf_centre(newscr, g_small_font, 320, 156, COLOR_MAGENTA, "%s (%s, %d damage inflicted)",
-    textprintf_centre(newscr, large,        308, 100-12, COLOR_MAGENTA, _("Most Devastating Soldier:") );
-    textprintf_centre(newscr, g_small_font, 308, 116-12, COLOR_MAGENTA, _("%s (%s, %d damage inflicted)"),
+    textprintf_centre(newscr, large,        300, 100-10, COLOR_MAGENTA, _("Most Devastating Soldier:") );
+    textprintf_centre(newscr, g_small_font, 300, 116-10, COLOR_MAGENTA, _("%s (%s, %d damage inflicted)"),
 		devastating->get_name(),
         (devastating_remote) ? ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 2") : _("Remote")) : ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 1") : _("Local") ),
 		devastating->get_inflicted());
 
 	//textprintf_centre(newscr, large,        320, 172, COLOR_ROSE, "Most Cowardly Soldier:");
 	//textprintf_centre(newscr, g_small_font, 320, 188, COLOR_ROSE, "%s (%s, %d damage inflicted)",
-    textprintf_centre(newscr, large,        524, 100, COLOR_ROSE, _("Most Cowardly Soldier:") );
-    textprintf_centre(newscr, g_small_font, 524, 116, COLOR_ROSE, _("%s (%s, %d damage inflicted)"),
+    textprintf_centre(newscr, large,        516, 100, COLOR_ROSE, _("Most Cowardly Soldier:") );
+    textprintf_centre(newscr, g_small_font, 504, 116, COLOR_ROSE, _("%s (%s, %d damage inflicted)"),
 		coward->get_name(),
         (coward_remote) ? ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 2") : _("Remote") ) : ((net->gametype == GAME_TYPE_HOTSEAT) ? _("Player 1") : _("Local") ),
 		coward->get_inflicted());
@@ -1334,16 +1364,24 @@ void endgame_stats()
     int x  =   0, y  =   0;
     int dead = 0, kills = 0, damage = 0;
 
-    textprintf(newscr, font, x1,    y1, COLOR_WHITE, "%-18s %9s %6s", 
-                                                     _("Name"), _("Kills"), _("Damage") );
-    textprintf(newscr, font, x1+x2, y1, COLOR_WHITE, "%-18s %9s %6s", 
-                                                     _("Name"), _("Kills"), _("Damage") );
+    textprintf(newscr, font, x1,    y1, COLOR_WHITE, 
+               "%-18s %9s %6s", _("Name"), _("Kills"), _("Damage") );
+    textprintf(newscr, font, x1+x2, y1, COLOR_WHITE, 
+               "%-18s %9s %6s", _("Name"), _("Kills"), _("Damage") );
+
+    fprintf(f_br, "\n# %s:\n", _("Details") );
+    fprintf(f_br, "\n%-20s: %-18s %9s %6s\n", _("Player"),
+            _("Name"), _("Kills"), _("Damage") );
 
     for (int pl = 0; pl < 2; pl++) {
-        if (pl == 0) 
+        fprintf(f_br, "---\n");
+        if (pl == 0) {
             temp = platoon_local ->get_stats()->getfirst();
-        else
+            strcpy(txt, player2 ); // ??
+        } else {
             temp = platoon_remote->get_stats()->getfirst();
+            strcpy(txt, player1 );  // ??
+        }
 
         for (int nr = 1; nr <= 15 ; nr++) { // screen-space for 15 soldiers per side
             x = x1   + pl * x2;
@@ -1356,11 +1394,16 @@ void endgame_stats()
                 textprintf(newscr, font, x,      y, name_color(pl, nr, dead), "%-22s", temp->get_name());
                 textprintf(newscr, font, x+22*w, y, kills_color(kills  ), "%5d", kills  );
                 textprintf(newscr, font, x+28*w, y, damage_color(damage), "%6d", damage );
+                fprintf(f_br, "%-20s: %-22s %5d %6d\n", txt,
+                        temp->get_name(), kills, damage);
 
                 temp = temp->getnext();
             }
         }
     }
+
+    fprintf(f_br, "# %s #\n\n", _("End") );
+    fclose(f_br);  // Battlereport
 
 	g_console->set_full_redraw();
 
@@ -1484,6 +1527,16 @@ void gameloop()
     g_console->printf( COLOR_SYS_HEADER, _("Welcome to the battlescape of UFO2000 !") );
     g_console->printf( COLOR_SYS_INFO1,  _("Press F1 for help.") );  // see KEY_F1
 	color1 = 0;
+
+    FILE *f_br = fopen( "battlereport.txt", "at");
+	// Todo: general time-function
+    time_t now = time(NULL);
+    struct tm * t = localtime(&now);
+    char timebuf[128];
+    strftime(timebuf, 128, "%Y-%m-%d %H:%M:%S", t);
+
+    fprintf(f_br, "*\n* %s: %s\n*\n\n", _("Battlereport"), timebuf );
+    fclose(f_br);  // Battlereport
 
 	platoon_local->set_visibility_changed();
 	platoon_remote->set_visibility_changed();
@@ -1781,13 +1834,22 @@ void gameloop()
 						savegame(F("$(home)/ufo2000.sav"));
 						// Todo: test if save was successful
                         g_console->printf(COLOR_SYS_OK, _("Game saved") );
+
+                        FILE *f_br = fopen( "battlereport.txt", "at");
+                        fprintf(f_br, "# %s\n", _("Game saved") );
+                        fclose(f_br);  // Battlereport
 					}
 					break;
 				case KEY_F3:
                     if (askmenu( _("LOAD GAME") )) {
+                        FILE *f_br = fopen( "battlereport.txt", "at");
 						if (!loadgame(F("$(home)/ufo2000.sav"))) {
+                            fprintf(f_br, "# %s: %s\n", _("LOAD GAME"), _("failed") );
                             alert( _("Saved game not found"), "", "", _("OK"), NULL, 0, 0);
-						}
+                        } else {
+                            fprintf(f_br, "# %s: %s\n", _("LOAD GAME"), _("success") );
+                        }
+                        fclose(f_br);  // Battlereport
 						inithotseatgame();
 						if (net->gametype == GAME_TYPE_HOTSEAT)
 							savegame(F("$(home)/ufo2000.tmp"));
@@ -1837,6 +1899,9 @@ void gameloop()
                                      _("YES=RESIGN"), _("OFFER DRAW"), _("NO=CONTINUE"), 0,0,1 );
                         if (b1 == 1) {
                             DONE = 1;
+                            FILE *f_br = fopen( "battlereport.txt", "at");
+                            fprintf(f_br, "# %s\n", _("Game aborted") );
+                            fclose(f_br);  // Battlereport
                         }
                         if (b1 == 2) {
                             // Todo: process draw-button
@@ -1934,6 +1999,10 @@ void start_loadgame()
         alert( "", _("Saved game not available"), "", _("OK"), NULL, 0, 0);
    		return;
    	}
+    FILE *f_br = fopen( "battlereport.txt", "at");
+    fprintf(f_br, "# %s: %d\n", _("LOAD GAME"), turn );
+    fclose(f_br);  // Battlereport
+
 	inithotseatgame();
 
 	map->center(sel_man);

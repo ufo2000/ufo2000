@@ -38,13 +38,13 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define HELP_PSI_AMP     80
 #define HELP_BLASTER     90
 #define HELP_INVENTORY  100
-#define HELP_STATS      110
-#define HELP_ENDGAME    130
-#define HELP_NET        140
+#define HELP_STATS      120
+#define HELP_ENDGAME    140
+#define HELP_NET        150
 
 // First page of scenario-help follows directly
 // after last page of help for mission-planner:
-#define HELP_PLANNER    160
+#define HELP_PLANNER    170
 #define HELP_SCENARIO   HELP_PLANNER + 11
 
 //! Write message into init-scripts.log

@@ -412,7 +412,7 @@ void help( const int helppage )
 // Pages  70+ 1: Help for Medi-kit (Todo)
 // Pages  80+ 1: Help for PSI-Amp  (Todo)
 // Pages  90+ 1: Help for Blaster-Launcher (Todo)
-// Pages 100+ 5: Inventory Help
+// Pages 100+ 9: Inventory Help
 // Pages 110+ 9: Stats Help
 // Pages 130+ 1: Endgame-Stats Help
 // Pages 140+ 4: Network Help
@@ -429,7 +429,6 @@ void help( const int helppage )
     int kp_next  = 110;    //<! Keypress for nextpage : 110:"n"
     char index[32], prev[32], next[32], ok[32];
     char esc2exit[64];
-    char test[128];
 
 // Todo: Calculate keycode from "&I" in button-text
     sprintf(index, "%s", _("HELP-&INDEX") );
@@ -438,6 +437,7 @@ void help( const int helppage )
     sprintf(ok,    "%s", _("  CLOSE  ")   );
 
     sprintf( esc2exit, "%s", _("To leave, press ESC.") );
+  //char test[128];
   //sprintf( test,  "Charset-Test: %s", 
   //         _("DE: ae=ä  oe=ö  ue=ü  Ae=Ä  Oe=Ö  Ue=Ü  sz=ß") 
   //);
@@ -734,6 +734,32 @@ void help( const int helppage )
             b1 = alert3( _("The armor cannot be changed during a battle."),
                          _("Flying armor does not work yet (it only has stronger armor)."),
                          _("Click on the picture of the soldier to get to his stats."),
+                         prev, ok, next, kp_prev, kp_ok, kp_next);
+            break;
+
+        // Todo: Extra chapter for Quick-Setup, connected to Inventory ??
+        case HELP_INVENTORY + 6 : 
+            b1 = alert3( _("Quick-Setup: (experimental feature)"),
+                         _("With F5..F8 a predefined soldier-type can be selected."),
+                         _("Shift-F5..F8 set up these keys."),
+                         prev, ok, next, kp_prev, kp_ok, kp_next);
+            break;
+        case HELP_INVENTORY + 7 : 
+            b1 = alert3( _("Quick-Setup:"),
+                         _("DEL: delete equipment of the current soldier."),
+                         _("TAB/Shift-TAB: jump to next/previous soldier."),
+                         prev, ok, next, kp_prev, kp_ok, kp_next);
+            break;
+        case HELP_INVENTORY + 8 : 
+            b1 = alert3( _("Quick-Setup:"),
+                         _("F9: generate a name for the current soldier."),
+                         _("Shift-F9: configure the name-generator."),
+                         prev, ok, next, kp_prev, kp_ok, kp_next);
+            break;
+        case HELP_INVENTORY + 9 : 
+            b1 = alert3( _("Quick-Setup:"),
+                         _("F11: cycle thru apperances of the current soldier. "),
+                         _("F12: cycle thru armor-types of the current soldier."),
                          prev, ok, NULL, kp_prev, kp_ok, kp_0);  // no "next"-button
             break;
 

@@ -130,7 +130,7 @@ void Editor::load()
     if (file_select( _("LOAD UNITS DATA"), path, "UNITS")) {
 		m_plt->load_FULLDATA(path);
 		strcpy(last_unit_name, path);
-        lua_message( std::string("Team loaded:") + path );
+        lua_message( std::string("Team loaded: ") + path );
 	}
 	
 	set_mouse_range(0, 0, 639, 399);
@@ -149,7 +149,7 @@ void Editor::save()
     if (file_select( _("SAVE UNITS DATA"), path, "UNITS")) {
 		m_plt->save_FULLDATA(path);
 		strcpy(last_unit_name, path);
-        lua_message( std::string("Team saved:") + path );
+        lua_message( std::string("Team saved: ") + path );
 	}
 	
 	set_mouse_range(0, 0, 639, 399);
@@ -418,30 +418,36 @@ void prep_soldier( int NID, int s_type )
         ss->putitem(new Item(itemtype), P_BELT);
     }
 
-    if (s_type == 4) {
-        sprintf( name, "%-18s #%02d", "Special", nr );
+    if (s_type == 4) {              // ....+....1....+...
+        sprintf( name, "%-18s #%02d", "Maximum-Demolition", nr );
         strcpy(ss->md.Name, name);
         ss->md.TimeUnits  = 80;
-        ss->md.Stamina    = 78;
-        ss->md.Health     = 50;
+        ss->md.Stamina    = 50;
+        ss->md.Health     = 68;
         ss->md.Bravery    =  0;
         ss->md.Reactions  = 50;
-        ss->md.Firing     = 52;
-        ss->md.Throwing   = 60;
-        ss->md.Strength   = 25;
-        ss->md.SkinType   = S_XCOM_0;
+        ss->md.Firing     = 50;
+        ss->md.Throwing   = 50;
+      //ss->md.Strength   = 25;
+        ss->md.Strength   = 36;
+      //ss->md.SkinType   = S_XCOM_0;
+        ss->md.SkinType   = S_SECTOID;
         ss->md.fFemale    = 0;
-        ss->md.Appearance = 2;
+        ss->md.Appearance = 0;
         ss->process_MANDATA();
 
-        itemtype = LASER_PISTOL;
-        it = new Item( itemtype );
-        ss->putitem(it, P_BELT);
+      //itemtype = LASER_PISTOL;
+      //it = new Item( itemtype );
+      //ss->putitem(it, P_BELT);
 
         itemtype = HIGH_EXPLOSIVE;
         ss->putitem(new Item(itemtype), P_ARM_RIGHT);
         ss->putitem(new Item(itemtype), P_ARM_LEFT);
         ss->putitem(new Item(itemtype), P_SHL_RIGHT);
+        ss->putitem(new Item(itemtype), P_SHL_LEFT);
+        ss->putitem(new Item(itemtype), P_LEG_RIGHT);
+        ss->putitem(new Item(itemtype), P_LEG_LEFT);
+        ss->putitem(new Item(itemtype), P_BELT);
     }
 
 };
@@ -468,7 +474,7 @@ void Editor::show()
     text_mode(-1);
     textout(editor_bg, g_small_font, _("Click-and-drop weapons from the armory to the soldier, right-click to remove"), 8, 364, COLOR_WHITE); 
     textout(editor_bg, large, _("F1 Help   F2 Save Team   F3 Load Team   F4 Edit Attributes"), 8, 380, COLOR_LT_BLUE);
-    textout(editor_bg, large, _("F5-F12 Quick-Setup"), 485, 380, COLOR_BLUE);
+  //textout(editor_bg, large, _("F5-F12 Quick-Setup"), 485, 380, COLOR_BLUE);
 
 	position_mouse(320, 200);
 	set_mouse_range(0, 0, 639, 399);
@@ -573,13 +579,28 @@ void Editor::show()
 				PCK::showpck(sel_item->obdata_pInv(),
 				                mouse_x - sel_item->obdata_width()  * 16 / 2,
 				                mouse_y - sel_item->obdata_height() * 16 / 2 + 8);
-			} else {
+            } else {
 				Item *it = m_armoury->item_under_mouse();
 				if (it != NULL) {
 					if (is_item_allowed(it->m_type))
 						it->od_info(330, 220, COLOR_GRAY05);
 					else
 						it->od_info(330, 220, COLOR_GRAY10);
+                } else {
+                    textprintf(screen2, large, 330, 220, COLOR_LT_BLUE, "%s:", "Quick-Setup");
+                    textprintf(screen2, font,  330, 240, COLOR_BLUE, "%s", _("Use keys with shift to configure them:") );
+                    textprintf(screen2, font,  330, 250, COLOR_BLUE, "%-3s: %s #%d", "F5", _("Soldier-Type"), 1 );
+                    textprintf(screen2, font,  330, 260, COLOR_BLUE, "%-3s: %s #%d", "F6", _("Soldier-Type"), 2 );
+                    textprintf(screen2, font,  330, 270, COLOR_BLUE, "%-3s: %s #%d", "F7", _("Soldier-Type"), 3 );
+                    textprintf(screen2, font,  330, 280, COLOR_BLUE, "%-3s: %s #%d", "F8", _("Soldier-Type"), 4 );
+
+                    textprintf(screen2, font,  330, 295, COLOR_BLUE, "%-3s: %s", "F9", _("Name-generator") );
+                    // F10: Window/Fullscreen
+                    textprintf(screen2, font,  330, 310, COLOR_LT_BLUE, "%-3s: %s", "F11", _("Cycle thru Appearances") );
+                    textprintf(screen2, font,  330, 320, COLOR_LT_BLUE, "%-3s: %s", "F12", _("Cycle thru Armor-types") );
+
+                    textprintf(screen2, font,  330, 335, COLOR_LT_BLUE, "%-3s: %s", "DEL", _("Delete Equipment of current man") );
+                    textprintf(screen2, font,  330, 345, COLOR_LT_BLUE, "%-3s: %s", "TAB", _("Next soldier") );
 				}
 			}
 			
@@ -1013,7 +1034,7 @@ static int d_agup_slider_pro2(int msg, DIALOG * d, int c)
 			scare_mouse();
 
 			SEND_MESSAGE(d, MSG_DRAW, 0);
-            sprintf(points_str, _("points remain: %2d "), MAXPOINTS - points);
+            sprintf(points_str, _("Points remain: %2d "), MAXPOINTS - points);
 			SEND_MESSAGE(&sol_dialog[D_POINTS], MSG_DRAW, 0);
 
 			unscare_mouse();
@@ -1117,7 +1138,7 @@ void Editor::edit_soldier()
 	         sol_dialog[D_FIRE_ACCUR].d2 + sol_dialog[D_THRU_ACCUR].d2 +
 			 sol_dialog[D_STAMINA].d2 + (sol_dialog[D_STRENGTH].d2 * 2) +
 			 sol_dialog[D_REACTION].d2;
-	sprintf(points_str, _("points remain: %2d "), MAXPOINTS - points);
+	sprintf(points_str, _("Points remain: %2d "), MAXPOINTS - points);
 	
 	sol_dialog[D_POINTS].fg = gui_fg_color;
 	sol_dialog[D_POINTS].bg = gui_bg_color;

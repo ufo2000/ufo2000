@@ -634,7 +634,7 @@ void Icon::firemenu(int iplace)
 }
 
 /**
- * Prime grenade: select delay
+ * Dialog to prime a grenade: select delay
  */
 int Icon::doprime(Item *it)
 {
@@ -645,11 +645,11 @@ int Icon::doprime(Item *it)
 	static DIALOG dPrime[] = {
 		//  dialog proc, x                , y                ,  w,  h,  fg,  bg, key,  flags, d1, d2, dp              ,  dp2,  dp3
         { d_button_proc, DX               , DY - 17          , 98, 15, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Cancel"), NULL, NULL},
-		{ d_button_proc, DX               , DY               , DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"0"     , NULL, NULL},
-		{ d_button_proc, DX + (DS + 2) * 1, DY               , DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"1"     , NULL, NULL},
-		{ d_button_proc, DX + (DS + 2) * 2, DY               , DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"2"     , NULL, NULL},
-		{ d_button_proc, DX + (DS + 2) * 3, DY               , DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"3"     , NULL, NULL},
-		{ d_button_proc, DX + (DS + 2) * 4, DY               , DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"4"     , NULL, NULL},
+        { d_button_proc, DX               , DY               , DS, DS, _FG, _BG,  48, D_EXIT,  0,  0, (void *)"&0"     , NULL, NULL},
+        { d_button_proc, DX + (DS + 2) * 1, DY               , DS, DS, _FG, _BG,  49, D_EXIT,  0,  0, (void *)"&1"     , NULL, NULL},
+        { d_button_proc, DX + (DS + 2) * 2, DY               , DS, DS, _FG, _BG,  50, D_EXIT,  0,  0, (void *)"&2"     , NULL, NULL},
+        { d_button_proc, DX + (DS + 2) * 3, DY               , DS, DS, _FG, _BG,  51, D_EXIT,  0,  0, (void *)"&3"     , NULL, NULL},
+        { d_button_proc, DX + (DS + 2) * 4, DY               , DS, DS, _FG, _BG,  52, D_EXIT,  0,  0, (void *)"&4"     , NULL, NULL},
 		{ d_button_proc, DX               , DY + (DS + 2) * 1, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"5"     , NULL, NULL},
 		{ d_button_proc, DX + (DS + 2) * 1, DY + (DS + 2) * 1, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"6"     , NULL, NULL},
 		{ d_button_proc, DX + (DS + 2) * 2, DY + (DS + 2) * 1, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"7"     , NULL, NULL},
