@@ -31,8 +31,15 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "map.h"
 #include "units.h"
 
-class Editor
+struct Buffer
 {
+	bool empty;
+	MANDATA md;
+	ITEMDATA id;
+}; 
+
+class Editor
+{ 
 private:
 	Place   *m_armoury;
 	Soldier *man;
@@ -46,7 +53,9 @@ private:
 	Item    *dup_item;
 	int     sel_item_place;
 
-	BITMAP  *terrain_bmp;
+	BITMAP  *terrain_bmp;        
+	
+	Buffer buffer;
 
 	int load_clip();
 	bool handle_mouse_leftclick();
@@ -72,7 +81,10 @@ public:
 	void do_mapedit();
 	int do_mapselect();
 	void load_map();
-	void save_map();
+	void save_map();       
+	
+	void copy_soldier(Soldier *src);
+	void paste_soldier(Soldier *dest);
 };
 
 #endif

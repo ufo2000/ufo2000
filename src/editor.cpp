@@ -109,7 +109,8 @@ Editor::Editor()
 	man = m_plt->captain();
 
 	sel_item = NULL;
-	dup_item = NULL;
+	dup_item = NULL;    
+	buffer.empty = true;                                   
 }
 
 Editor::~Editor()
@@ -897,6 +898,15 @@ void Editor::show()
                     break;
 //
                 case KEY_INSERT:  // Todo: Copy items from last DEL to current man
+                	if ((key[KEY_LCONTROL]) || (key[KEY_RCONTROL])) {
+                		copy_soldier(man);
+                		break;
+                	}
+                    if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT])) {
+                    	paste_soldier(man);
+                    	break;
+                    }
+                    
                       // Test:
                       //change_equipment();
                       //setup_f5 = select_setup( _("Select setup for F5") );
@@ -937,7 +947,7 @@ void Editor::show()
                     break;
                 case KEY_RIGHT:
                     man = man->nextman();
-                    break;
+                    break;     
 
               //case KEY_ASTERISK:   // Test
               //    Editor::do_mapedit();
@@ -1349,6 +1359,24 @@ void change_equipment_callback(const char *name)
 	eqsets.push_back(name);
 }
 
+void Editor::copy_soldier(Soldier *src)
+{
+	buffer.empty = false;
+	buffer.md = src->md;
+	buffer.id = src->id;
+}
+
+void Editor::paste_soldier(Soldier *dest)
+{
+	if (buffer.empty) return;
+	
+	dest->md = buffer.md;
+	dest->id = buffer.id;
+	
+	dest->process_MANDATA();
+	dest->process_ITEMDATA();
+}
+         
 /**
  * Let the user select a set of equipment available in the armory, 
  * e.g. "standard", "no explosives", "no alien weapons" etc.
@@ -1432,5 +1460,5 @@ int Editor::do_mapselect()
 
 	//destroy_bitmap(terrain_bmp);
 	return -1;
-}
+}                                                                        
 
