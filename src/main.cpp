@@ -1534,6 +1534,19 @@ void gameloop()
 						position_mouse(mouse_x, mouse_y + 24);
 					}
 					break;
+				case KEY_TAB:	//next soldier
+					TARGET = 0;
+					if (sel_man == NULL) {
+						sel_man = platoon_local->captain();
+						if (sel_man != NULL)
+							map->center(sel_man);
+					} else if (!sel_man->ismoving()) {
+						Soldier *s = sel_man;
+						sel_man = platoon_local->next_not_moved_man(sel_man);
+						if (s != sel_man)
+							map->center(sel_man);
+					}
+					break;
 //				case KEY_ASTERISK:   // ?? ToDo: Sound on/off
 //					soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
 //					break;
