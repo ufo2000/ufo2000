@@ -33,7 +33,7 @@ private:
 	int cost[20];
 	int x[20], y[20];
 	int lev[20], col[20], row[20];
-	int selected;
+	int selected;                   //!< number of the soldier currently selected for editing
 	int mx, my, mx1, my1, mx2, my2;
 	int gx, gy, gmx, gmw, gmy, gmh;
 	PanPos pos;
@@ -69,6 +69,8 @@ public:
 
 	void print(int gcol);
 	void print_simple(int gcol);
+
+	int total_points();
 
 	void build_items_stats(ITEMDATA *id, char *buf, int &len);
 	int draw_items_stats(int gx, int gy, char *buf, int len);

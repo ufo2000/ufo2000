@@ -34,14 +34,14 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "scenario.h"
 #include "colors.h"
 
-#define CAPTION			8
-#define COMMENT			3
-#define BUTTON			5
-#define SELECTED		52
-#define SWITCH_ON		55
-#define SWITCH_OFF		40
-#define LOCAL_COLOR		48
-#define REMOTE_COLOR	32
+#define CAPTION          8
+#define COMMENT          3
+#define BUTTON           5
+#define SELECTED        52
+#define SWITCH_ON       55
+#define SWITCH_OFF      40
+#define LOCAL_COLOR     48
+#define REMOTE_COLOR    32
 // From colors.h :
 //  8: COLOR_GRAY08
 //  3: COLOR_GRAY03
@@ -55,8 +55,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 char buf[10000];
 int len = 0;
 
-int points = 0;
-int damage_points = 0;
+int points = 0;        //!< Total points: soldier, attributes, armor + items
+int damage_points = 0; //!< Point-value from items only (weapons and equipment)
 
 Units::Units()
 {
@@ -69,13 +69,13 @@ Units::Units()
 void Units::reset()
 {
 	size = 0;
-	memset(x, 0, sizeof(x));
-	memset(y, 0, sizeof(y));
+	memset(x,    0, sizeof(x));
+	memset(y,    0, sizeof(y));
 	memset(cost, 0, sizeof(cost));
-	memset(lev, 0, sizeof(lev));
-	memset(col, 0, sizeof(col));
-	memset(row, 0, sizeof(row));
-	memset(buf, 0, sizeof(buf));
+	memset(lev,  0, sizeof(lev));
+	memset(col,  0, sizeof(col));
+	memset(row,  0, sizeof(row));
+	memset(buf,  0, sizeof(buf));
 	SEND = 0; START = 0;
 	state = PS_MAIN;
 	selected = -1;
@@ -83,8 +83,8 @@ void Units::reset()
 
 void Units::reset_selections()
 {
-	memset(x, 0, sizeof(x));
-	memset(y, 0, sizeof(y));
+	memset(x,   0, sizeof(x));
+	memset(y,   0, sizeof(y));
 	memset(lev, 0, sizeof(lev));
 	memset(col, 0, sizeof(col));
 	memset(row, 0, sizeof(row));
@@ -95,14 +95,17 @@ void Units::reset_selections()
 void Units::set_pos(PanPos pos, int gx, int gy, int gmx, int gmw, int gmy, int gmh)
 {
 	this->pos = pos;
-	this->gx = gx;
-	this->gy = gy;
+	this->gx  = gx;
+	this->gy  = gy;
 	this->gmx = gmx;
 	this->gmw = gmw;
 	this->gmy = gmy;
 	this->gmh = gmh;
 }
 
+/**
+ * Select unit (for going on the mission) by putting it onto the map
+ */
 int Units::select_unit(int num, int mx, int my)
 {
 	if (num >= size)
@@ -113,6 +116,9 @@ int Units::select_unit(int num, int mx, int my)
 	return 1;
 }
 
+/**
+ * Deselect unit (for going on the mission) by removing it from the map
+ */
 int Units::deselect_unit(int num)
 {
 	if (num >= size)
@@ -139,9 +145,10 @@ int Units::add(int num, char *nm, int ct)
 	strcpy(name[size], nm);
 	cost[size] = ct;
 	size++;
-	SEND = 0; START = 0;*/ 
+	SEND = 0; START = 0;*/
 	return 1;
 }
+
 
 /**
  * Print list of soldiers to select from,
@@ -196,7 +203,7 @@ void Units::print(int gcol)
 	textout_centre(screen2, font, terrain_set->get_terrain_name(mapdata.terrain).c_str(), gmx + gmw / 2, SCREEN2H - 41, xcom1_color(BUTTON));
 	
 	int tmp;
-	g_time_limit == -1 ? tmp = 0 : tmp = g_time_limit;                      
+	g_time_limit == -1 ? tmp = 0 : tmp = g_time_limit;
 	textout_centre(screen2, font, "Game rules:", gmx + gmw / 2, SCREEN2H - 28, xcom1_color(BUTTON));
 	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 16, xcom1_color(BUTTON), "%d; %dk; %d; %d; %d; %d", scenario->rules[0], scenario->rules[1], scenario->rules[2], tmp, scenario->rules[3], scenario->rules[4]);
 	
@@ -232,8 +239,9 @@ void Units::print(int gcol)
 	else*/
 	damage_points = draw_items_stats(gx, 160 + 10, buf, len);
 
-	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, COLOR_GREEN, "Total points=%d", points + damage_points);
-		
+	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, COLOR_GREEN,
+			"Total points=%d (of %d)", points + damage_points, total_points());
+
 	scenario->draw_deploy_zone(pos, gmx, 0, xcom1_color(LOCAL_COLOR));
 	
 	switch(state) {
@@ -278,11 +286,11 @@ void Units::draw_scenario_window()
 {
     rect(    screen2, gmx + gmw / 2 - 200,     SCREEN2H - 320,     gmx + gmw / 2 + 200,     SCREEN2H - 37,     COLOR_WHITE);
     rectfill(screen2, gmx + gmw / 2 - 200 + 1, SCREEN2H - 320 + 1, gmx + gmw / 2 + 200 - 1, SCREEN2H - 37 - 1, COLOR_GRAY14);
-    
+
     textout_centre(screen2, font, scenario->name[scenario->type], gmx + gmw / 2, SCREEN2H - 310, xcom1_color(SELECTED));
     textout_centre(screen2, font, "<", gmx + gmw / 2 - 150 + 50, SCREEN2H - 310, xcom1_color(BUTTON));
     textout_centre(screen2, font, ">", gmx + gmw / 2 + 150 - 50, SCREEN2H - 310, xcom1_color(BUTTON));
-    
+
     textout_centre(screen2, font, "Player 1", gmx + gmw / 2, SCREEN2H - 285, xcom1_color(CAPTION));
 	for (int i = 0; i < 8; i++)
     	textprintf(screen2, font, gmx + gmw / 2 - 200 + 5, SCREEN2H - 270 + i * 9, xcom1_color(COMMENT), scenario->briefing_left[scenario->type][i]);
@@ -361,17 +369,17 @@ void Units::draw_rules_0_window()
 	    case 0:
 	    textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 121, xcom1_color(COMMENT), "All explosives are prohibited.");
 	    break;
-	    
+
      	case 1:
 	    textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 121, xcom1_color(COMMENT), "High explosives, all rockets and");
 	    textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 109, xcom1_color(COMMENT), "alien grenades are prohibited.");
 	    break;
-	    
+
 	    case 2:
 	    textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 121, xcom1_color(COMMENT), "Large rockets and alien grenades");
 	    textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 109, xcom1_color(COMMENT), "are prohibited.");
 	    break;
-	    
+
 		case 3:
 	    textprintf(screen2, font, gmx + gmw / 2 - 130 + 3, SCREEN2H - 121, xcom1_color(COMMENT), "All explosives are allowed.");
 	    break;
@@ -405,7 +413,7 @@ void Units::draw_rules_2_window()
 }
 
 /**
- * Rules3: Map explored ?
+ * Rules3: Timelimit
  */
 void Units::draw_rules_3_window()
 {
@@ -417,6 +425,22 @@ void Units::draw_rules_3_window()
 	textout_centre(screen2, font, ">", gmx + gmw / 2 + 20, SCREEN2H - 71, xcom1_color(BUTTON));
 }
 
+/**
+ * Calculate total point-cost of all soldiers (selected + unselected) of a team,
+ * including soldiers & attributes, armor, weapons & equipment
+ */
+int Units::total_points()
+{
+ 	int points = 0;
+
+	for (int i = 0; i < size; i++) {
+		Soldier * ss = editor->platoon()->findman(name[i]);
+		ASSERT(ss != NULL);
+		points += ss->calc_full_ammunition_cost();
+	}
+	return points;
+}
+
 void Units::build_items_stats(ITEMDATA *id, char *buf, int &len)
 {
 	for (int i = 0; i < id->num; i++) {
@@ -426,6 +450,10 @@ void Units::build_items_stats(ITEMDATA *id, char *buf, int &len)
 
 extern int weapon[];
 
+/**
+ * Show summary of equipment for the platoon:
+ * list of type and number of weapons to go on the mission.
+ */
 int Units::draw_items_stats(int gx, int gy, char *buf, int len)
 {
 	int aa = 0;
@@ -535,7 +563,7 @@ void Units::draw_text()
 	if (START)
 		color = SWITCH_ON;      //green
 	else
-		color = SWITCH_OFF;      //red
+		color = SWITCH_OFF;     //red
 
 	textout_centre(screen2, font, "START", gx + 5 * 8, SCREEN2H - 16, xcom1_color(color));
 }
@@ -746,16 +774,16 @@ void Units::execute_scenario(Map *map, int map_change_allowed)
 		net->send_scenario();
 		mapdata.load_game = 77;
 	}
-	
+
 	for (int i = 0; i < 3; i++) {
 		if (mouse_inside(gmx + gmw / 2 - 200 + 2, SCREEN2H - 71 + i * 10, gmx + gmw / 2 + 200 - 2, SCREEN2H - 62 + i * 10)) {
 			//options
-			switch(scenario->options[scenario->type][i]->type) {                                                    
-				case OPT_NONE:                               
-				case OPT_HIDDEN:                                                       
-				return;                                                                                             
+			switch(scenario->options[scenario->type][i]->type) {
+				case OPT_NONE:
+				case OPT_HIDDEN:
+				return;
 				break;
-				
+
 				case OPT_NUMBER:
 				if (mouse_inside(gmx + gmw / 2 + 145, SCREEN2H - 71 + i * 10, gmx + gmw / 2 + 155, SCREEN2H - 62 + i * 10)) {
 				    //"<"
@@ -810,9 +838,9 @@ void Units::execute_map(Map *map, int map_change_allowed)
 
 	if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 77, gmx + gmw / 2 + 75, SCREEN2H - 64)) {
 		//MAP TYPE
-		               
+
 		::set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
-					             
+
 		std::string current_terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
 		std::string terrain_name = terrain_set->select_terrain_gui_dialog(current_terrain_name);
 		
@@ -901,10 +929,10 @@ void Units::execute_rules(Map *map, int map_change_allowed)
 
     if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 75, gmx + gmw / 2 + 75, SCREEN2H - 63))
         state = PS_RULES_2;
-        
+
     if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 62, gmx + gmw / 2 + 75, SCREEN2H - 50))
         state = PS_RULES_3;
-        
+
 	if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 49, gmx + gmw / 2 + 75, SCREEN2H - 37)) {
 	    if (scenario->rules[3] == 0)
 	        scenario->rules[3] = 1;
@@ -1130,3 +1158,4 @@ void Units::draw_lines(int gcol)
 			}
 	}
 }
+
