@@ -371,3 +371,9 @@ bool ClientServerUfo::challenge(const std::string &user)
 	if (!send_packet(SRV_CHALLENGE, user)) return false;
 	return true;
 }
+
+bool ClientServerUfo::decline_challenge(const std::string &user)
+{
+	if (!send_packet(SRV_DECLINE_CHALLENGE, user)) return false;
+	return true;
+}

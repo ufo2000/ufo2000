@@ -489,17 +489,15 @@ int connect_internet_server()
 		if (!(mouse_b & 1)) mouse_leftr = 1;
 		if (!(mouse_b & 2)) mouse_rightr = 1;
 
-		if ((mouse_b & 1) && (mouse_leftr)) {
-			mouse_leftr = 0;
+		if (((mouse_b & 1) && (mouse_leftr)) || ((mouse_b & 2) && (mouse_rightr))) {
 			std::string name = users->mouse_click(mouse_x, mouse_y);
 			if (name != "") {
 				switch (users->get_user_status(name)) {
 					case USER_STATUS_READY:
-						if (server->challenge(name))
-							users->update_user_info(name, USER_STATUS_CHALLENGE_OUT);
-						break;
 					case USER_STATUS_CHALLENGE_IN:
-						server->challenge(name);
+					case USER_STATUS_CHALLENGE_OUT:
+						if (mouse_leftr) server->challenge(name);
+						if (mouse_rightr) server->decline_challenge(name);
 						break;
 					default:
 						soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
@@ -511,8 +509,7 @@ int connect_internet_server()
 				chat_border->set_full_redraw();
 				users_border->set_full_redraw();
 			}
-		}
-		if ((mouse_b & 1) && (mouse_leftr)) {
+			mouse_leftr = 0;
 			mouse_rightr = 0;
 		}
 

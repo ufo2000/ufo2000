@@ -48,6 +48,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #define SRV_DEBUG_MESSAGE      14
 
+#define SRV_KEEP_ALIVE         15
+#define SRV_DECLINE_CHALLENGE  16
+
 class ServerClientUfo: public ServerClient
 {
 	std::set<std::string>  m_challenged_opponents;
@@ -74,6 +77,7 @@ public:
 		std::string &error_message);
 	bool message(const std::string &text);
 	bool challenge(const std::string &user);
+	bool decline_challenge(const std::string &user);
 };
 
 #endif
