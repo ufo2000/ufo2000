@@ -78,31 +78,26 @@ end
 local function AddXcomMap(ti, map_filename)
 	local _, _, map_id = string.find(string.lower(map_filename), "(%d+)%.map$")
 	if not map_id then
-		Warning("AddXcomMap: invalid map file name '%s' - skipped", map_filename) 
-		return nil 
+		return string.format("invalid map file name '%s'", map_filename)
 	end
 
 	map_id = tonumber(map_id)
 
 	local map_data = ReadFile(map_filename)
 	if map_data == nil then
-		Warning("AddXcomMap: can't open '%s' - skipped", map_filename) 
-		return nil 
+		return string.format("can't open '%s'", map_filename)
 	end
 	local size_x = string.byte(map_data, 1)
 	local size_y = string.byte(map_data, 2)
 	local size_z = string.byte(map_data, 3)
 	if 3 + size_x * size_y * size_z * 4 ~= string.len(map_data) then
-		Warning("AddXcomMap: invalid data format in '%s' - skipped", map_filename) 
-		return nil
+		return string.format("invalid data format in '%s'", map_filename)
 	end
 	ti.Crc32 = UpdateCrc32(ti.Crc32, map_id)
 	ti.Crc32 = UpdateCrc32(ti.Crc32, map_data)
 	ti.Maps[map_id] = map_filename
 
---	Message("AddXcomMap: '%s' - OK", map_filename)
-
-	return 1
+	return nil
 end
 
 -- adds new terrain
@@ -141,16 +136,23 @@ function AddXcomTerrain(terrain)
 	end
 
 	local number_of_maps = 0
+	local errmsg = nil
 	for k, v in ipairs(terrain.Maps) do
-		if AddXcomMap(tmp, LocateFile(v)) then number_of_maps = number_of_maps + 1 end
+		errmsg = AddXcomMap(tmp, LocateFile(v))
+		if errmsg then
+			number_of_maps = 0
+			break
+		else
+			number_of_maps = number_of_maps + 1
+		end
 	end
 
 	if number_of_maps > 0 then
 		TerrainTable[tmp.Index] = tmp
-		Message("AddXcomTerrain: '%s' terrain - OK, %d maps (crc32 = %08X)",
+		Message("AddXcomTerrain: '%s' terrain - OK, %d maps, crc32 = %08X",
 			tmp.Name, number_of_maps, tmp.Crc32) 
 	else
-		Warning("AddXcomTerrain: '%s' terrain - FAILED (no maps found)", tmp.Name) 
+		Warning("AddXcomTerrain: '%s' terrain - FAILED (%s)", tmp.Name, errmsg) 
 	end
 
 	return 1

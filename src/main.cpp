@@ -402,6 +402,17 @@ static int lua_UpdateCrc32(lua_State *L)
     return 1;
 }
 
+static int lua_ALERT(lua_State *L)
+{
+	int n = lua_gettop(L);
+	if (n != 1 || !lua_isstring(L, 1)) {
+		display_error_message("Lua unknown error");
+		return 0;
+	}
+	display_error_message(lua_tostring(L, 1));
+	return 0;
+}
+
 void initmain(int argc, char *argv[])
 {
 	srand(time(NULL));
@@ -412,6 +423,7 @@ void initmain(int argc, char *argv[])
 
 	L = lua_open();
 	lua_register(L, "UpdateCrc32", lua_UpdateCrc32);
+	lua_register(L, "_ALERT", lua_ALERT);
 	luaopen_base(L);
 	luaopen_string(L);
 	// $$$ Not a very good idea to allow file operations from scripts,
