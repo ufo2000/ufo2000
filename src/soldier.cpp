@@ -2088,8 +2088,7 @@ int Soldier::walktime(int _dir)
 		dx += DIR_DELTA_X(_dir);
 		dy += DIR_DELTA_Y(_dir);
 	}
-	int time_of_dst = map->mcd(dz, dx, dy, 0)->TU_Walk;
-	time_of_dst += map->mcd(dz, dx, dy, 3)->TU_Walk;
+	int time_of_dst = map->walk_time(dz, dx, dy);
 
 	if (_dir != -1 && DIR_DIAGONAL(_dir))
 		time_of_dst = time_of_dst * 3 / 2; // Diagonal move multiplier.

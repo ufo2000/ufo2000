@@ -223,6 +223,7 @@ void Map::draw_path_from(Soldier * s)
 	char way[100];
 	int waylen = pathfind(s->z, s->x, s->y, sel_lev, sel_col, sel_row, way);
 	TU = s->ud.CurTU;
+	if (s->state() == SIT) TU -= 8;		//time to stand up
 	TU_max = s->ud.MaxTU;
 	TU_color = 1;
 	path_show(s->z, s->x, s->y, way, waylen);
@@ -231,7 +232,7 @@ void Map::draw_path_from(Soldier * s)
 void Map::path_show(int _z, int _x, int _y, char *way, int waylen)
 {
 	//text_mode(0);
-	//textprintf(screen, font, 0, SCREEN2H, 1, "waylen=%d ", waylen);
+	//textprintf(screen, font, 0, SCREEN2H, xcom1_color(1), "waylen=%d ", waylen);
 
 	for (int i = 1; i < waylen; i++) {
 		int dir = way[i];
@@ -251,8 +252,8 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen)
 		if ((sx > -32) && (sx < SCREEN2W) && (sy >= -34) && (sy < SCREEN2H)) {
 			//circlefill(screen2, sx, sy, 1, 1);
 			//printsmall(sx, sy, 1, i);
-			int time_of_dst = mcd(_z, _x , _y, 0)->TU_Walk;
-			time_of_dst += mcd(_z, _x , _y, 3)->TU_Walk;
+			int time_of_dst = walk_time(_z, _x, _y);
+			
 			if (DIR_DIAGONAL(dir))
 				time_of_dst = time_of_dst * 3 / 2; // diagonal moves use 1.5 TUs
 			//printsmall(sx, sy, 1, time_of_dst);
@@ -266,7 +267,7 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen)
 			printsmall_center(sx, sy, xcom1_color(TU_color), TU);
 		}
 
-		//textprintf(screen, font, 0+i*80, SCREEN2H+20, 1, "way[%d]=%d ", i, way[i]);
-		//textprintf(screen, font, 0+i*8, SCREEN2H+10, 1, "%d            ", way[i]);
+		//textprintf(screen, font, 0+i*80, SCREEN2H+20, xcom1_color(1), "way[%d]=%d ", i, way[i]);
+		//textprintf(screen, font, 0+i*8, SCREEN2H+10, xcom1_color(1), "%d            ", way[i]);
 	}
 }

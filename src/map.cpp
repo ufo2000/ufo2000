@@ -1152,13 +1152,16 @@ void Map::destroy_cell_part(int lev, int col, int row, int _part)
 		if ((_part == 0) && (lev > 0)) {
 			m_cell[lev][col][row]->type[_part] = 0;
 			return ;
-		}
+		}                                        
 		
 		if (_part == 0 && lev == 0 && mcd == 0)
 			mcd = 1;					//"scorched earth" instead of blank space on the ground level
 
-		m_cell[lev][col][row]->type[_part] = mcd;
-		
+		if (mcd == 0 || mcd == 1)
+			m_cell[lev][col][row]->type[_part] = mcd;
+		else
+			m_cell[lev][col][row]->type[m_terrain->m_mcd[mcd].Tile_Type] = mcd;
+					
 		if (m_terrain->m_mcd[ct].HE_Strength > 0)
 			explode(-1, lev, col, row, HIGH_EXPLOSIVE, 3, m_terrain->m_mcd[ct].HE_Strength);
 
@@ -1689,7 +1692,11 @@ bool Map::save_GEODATA(const char *filename, GEODATA *mapdata)
 
 int Map::walk_time(int _z, int _x, int _y)
 {
-	return mcd(_z, _x , _y, 0)->TU_Walk + mcd(_z, _x , _y, 3)->TU_Walk;
+	int time;
+	time = (int)mcd(_z, _x, _y, 0)->TU_Walk;
+	if (time < 4) time = 4;
+	time += (int)mcd(_z, _x, _y, 3)->TU_Walk;
+	return time;
 }
 
 bool Map::Write(persist::Engine &archive) const
