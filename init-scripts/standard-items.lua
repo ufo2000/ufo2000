@@ -583,7 +583,7 @@ AddXcomItem {
 	height = 1,
 	pHeld = 15,
 	damageType = 4,
-	rounds = 35,
+	rounds = 16,
 	weight = 3,
 	isAmmo = 1,
 	isAlien = 1,
