@@ -8,6 +8,39 @@ in the future. You can ask questions and discuss it in ufo2000 mailing list
 like to see changed or updated here.
 
 ==============================================================================
+== Getting started
+==============================================================================
+
+First you need to get the latest sources of the game. We are using Subversion
+(http://subversion.tigris.org) as a version control system. It is very similar
+to CVS, so if you are familiar with CVS, you will have no problems using it.
+
+Checking out your working copy of ufo2000 sources:
+# svn co http://lxnt.info:8888/repos/ufo2k/trunk ufo2000
+
+When other people commit their changes to the repository, you need to update 
+your working copy to keep it up to date:
+# svn up
+
+If you added some useful feature to the game or fixed a bug, you may want
+share your changes with the other people and get them in the next version
+of the game. Please review everything you have changed to avoid adding bugs 
+and breaking existing code, check that your code conforms to our sources 
+formatting style described in the next chapter. Also the patch should be
+reasonably small, readable and address a single problem. Finally create a
+patch using subversion:
+# svn diff > somefile.diff
+
+You can send the patch to our mailing list and one of the developers with 
+full access to the repository can review it and commit. Also if anyone finds
+any problems with the patch, we can discuss it in the mailing list before it 
+gets committed.
+
+If you are looking for a task to do, you can visit our bugtracker to see 
+currently open and unassigned bugs and feature requests: 
+http://ufo2000.lxnt.info/mantis/
+
+==============================================================================
 == Sources formatting style
 ==============================================================================
 
@@ -82,6 +115,31 @@ here: http://www.doxygen.org).
 
 Note: not all the UFO2000 sources are formatted as described here, this
 is a guide for writing new code and fixing old code when refactoring.
+
+==============================================================================
+== Good rules of programming
+==============================================================================
+
+1. Copy/paste is a bad habbit, better create a function containing reusable 
+   code
+2. Hide implementation details for classes (use private members when possible) 
+   and modules (use static functions and variables). It makes the interaction 
+   between different parts of code more obvious and easier to understand.
+3. Avoid the use of global variables, as they are visible from just anywhere, you 
+   never know for sure when they can be unexpectedly modified.
+4. Don't add anything that "can be useful in the future". The code that is not
+   really used tends to contain bugs and makes the sources harder to maintain.
+   In addition, when the future really comes, there is a good chance that 
+   this code will need to be rewritten anyway :)
+5. If you have to add some dirty hack to make a quick fix or workaround
+   some weird problem, always add a comment explaining why you did this. 
+   Otherwise other people (or even you after some time) will have problems
+   understanding this code in the future increasing a chance of breaking it.
+6. Comment every nontrivial function, input arguments and return value, 
+   interaction with the rest of code if there are some issues. If you find 
+   that something is hard to comment, that's an indication that this code
+   is probably written wrong :)
+7. More to add....
 
 ==============================================================================
 == Commit access

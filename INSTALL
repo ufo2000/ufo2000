@@ -16,17 +16,23 @@ In order to successfully run ufo2000, you need a set of data files from
 demo-version of this game, but you will only have a limited set of features 
 available in this case.
 
+Important: if the game fails to start and suggests you to read this file,
+most likely you have problems with the data files from X-COM (you may have
+some X-COM mod installed which is incompatible with ufo2000), try using
+X-COM demo in this case and see if it helps (link to it is given in the 
+instructions below).
+
 ------------------------------------------------------------------------------
 -- 2. Platform-specific instructions
 ------------------------------------------------------------------------------
 
 --- Win32 ---
 
-1) Download the latest win32-binary distributive of ufo2000 from
-   http://ufo2000.sourceforge.net or compile the game from sources 
-   yourself.
+1) If you don't want to compile the game yourself, please download
+   the installer, run it and follow all the instructions, you should have 
+   no problems
 
-   If you want to compile the sources (if you don't, just skip the rest
+2) If you want to compile the sources (if you don't, just skip the rest
    of this section), it is recommended to use free MinGW compiler 
    (Win32-port of GNU C++). You also need to install MSYS (minimalistic 
    set of unix tools). Both MinGW and MSYS can be downloaded from:
@@ -41,21 +47,15 @@ available in this case.
 
    After you have all the libraries installed, unpack archive with
    the sources of the game, enter the directory that will be created 
-   and just type 'make win32=1' from the command line.
-   To compile game server, run 'make win32=1 server'
+   and just type 'make' from the command line.
+   To compile game server, run 'make server'
 
-   Note: there is Microsoft Visual C++ 6.0 project file in the source
-   distribution, but it has not been updated for a long time (I do not
-   have MSVC 6.0 installed any longer --serge). The fact that it is not 
-   up to date is a known problem. Please do not report it and do not 
-   ask to fix it. But if you can make it work, please send an updated 
-   copy to us.
+   The sources can be also compiled using Microsoft Visual C++ with little
+   or no changes. If anyone wants to join ufo2000 development team and wants
+   to use MSVC IDE, please contact the developers via our mailing list, we 
+   will surely help.
 
-2) Unpack archive with ufo2000 binary into any directory of your choice
-   ('c:\games\ufo2000' for example). If you compiled the game yourself,
-   you can just use the same directory that you used for compilation.
-
-3) If you own a full version of X-COM, you can copy all the files from 
+3) If you have a full version of X-COM, you can copy all the files from 
    the directory where you have X-COM: UFO Defense installed into 
    'XCOM' subdirectory of ufo2000 (it is initially empty).
 
@@ -94,7 +94,7 @@ available in this case.
      can be found at http://www.talula.demon.co.uk/allegro/
    Expat library 1.95.6
      can be found at http://expat.sourceforge.net/
-   HawkNL network library 1.66
+   HawkNL network library 1.68
      can be found at http://www.hawksoft.com/hawknl/
    Lua scripting language and library version 5.0
      can be found at http://www.lua.org/
@@ -112,7 +112,7 @@ available in this case.
 
    # make
 
-3) If you own a full version of X-COM, you can just copy all the files
+3) If you have a full version of X-COM, you can just copy all the files
    from the installed X-COM directory into 'XCOM' subdirectory of ufo2000
    (it is initially empty)
 
