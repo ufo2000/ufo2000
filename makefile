@@ -182,6 +182,11 @@ lng-de: $(SRCS)
 	msgmerge --update translations/ufo2000-de.po translations/ufo2000.pot
 	msgfmt -c translations/ufo2000-de.po
 
+lng-es: $(SRCS)
+	xgettext -o translations/ufo2000.pot --keyword=_ $^
+	msgmerge --update translations/ufo2000-es.po translations/ufo2000.pot
+	msgfmt -c translations/ufo2000-es.po
+
 lng-fr: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
 	msgmerge --update translations/ufo2000-fr.po translations/ufo2000.pot

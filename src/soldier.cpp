@@ -82,9 +82,9 @@ SPK *Soldier::m_spk[6][2][4] = {{{NULL, NULL, NULL, NULL}, {NULL, NULL, NULL, NU
 
 BITMAP *Soldier::m_unibord = NULL;
 
-//dirs      0  1  2  3  4  5  6  7
+//                  dirs   0  1  2   3   4   5  6  7
 int Soldier::dir2ofs[8] = {1, 1, 0, -1, -1, -1, 0, 1};
-//y  x   -1  0  1
+//                    y  x     -1  0  1
 char Soldier::ofs2dir[3][3] = {{5, 6, 7},
                                {4, 8, 0},
                                {3, 2, 1}};
@@ -291,15 +291,15 @@ Soldier::Soldier(Platoon *platoon, int _NID)
 	m_platoon = platoon;
 
 	m_bullet = new Bullet(this);
-	m_place[P_SHL_RIGHT] = new Place(16, 40, 2, 1);
-	m_place[P_SHL_LEFT] = new Place(112, 40, 2, 1);
-	m_place[P_ARM_RIGHT] = new Place(0, 64, 2, 3);
-	m_place[P_ARM_LEFT] = new Place(128, 64, 2, 3);
-	m_place[P_LEG_RIGHT] = new Place(0, 120, 2, 1);
-	m_place[P_LEG_LEFT] = new Place(128, 120, 2, 1);
-	m_place[P_BACK] = new Place(192, 40, 3, 3);
-	m_place[P_BELT] = new Place(192, 104, 4, 2);
-	m_place[P_MAP] = new Place(0, 152, 20 * 10, 3);      //as map
+	m_place[P_SHL_RIGHT] = new Place( 16,  40,  2, 1);
+	m_place[P_SHL_LEFT]  = new Place(112,  40,  2, 1);
+	m_place[P_ARM_RIGHT] = new Place(  0,  64,  2, 3);
+	m_place[P_ARM_LEFT]  = new Place(128,  64,  2, 3);
+	m_place[P_LEG_RIGHT] = new Place(  0, 120,  2, 1);
+	m_place[P_LEG_LEFT]  = new Place(128, 120,  2, 1);
+	m_place[P_BACK]      = new Place(192,  40,  3, 3);
+	m_place[P_BELT]      = new Place(192, 104,  4, 2);
+	m_place[P_MAP]       = new Place(  0, 152, 20 * 10, 3);      //as map
 	m_p_map_allocated = true;
 
 	curway = -1; waylen = 0;
@@ -372,14 +372,14 @@ Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *md
 	m_platoon = platoon;
 
 	m_bullet = new Bullet(this);
-	m_place[P_SHL_RIGHT] = new Place(16, 40, 2, 1);
-	m_place[P_SHL_LEFT] = new Place(112, 40, 2, 1);
-	m_place[P_ARM_RIGHT] = new Place(0, 64, 2, 3);
-	m_place[P_ARM_LEFT] = new Place(128, 64, 2, 3);
-	m_place[P_LEG_RIGHT] = new Place(0, 120, 2, 1);
-	m_place[P_LEG_LEFT] = new Place(128, 120, 2, 1);
-	m_place[P_BACK] = new Place(192, 40, 3, 3);
-	m_place[P_BELT] = new Place(192, 104, 4, 2);
+	m_place[P_SHL_RIGHT] = new Place( 16,  40, 2, 1);
+	m_place[P_SHL_LEFT]  = new Place(112,  40, 2, 1);
+	m_place[P_ARM_RIGHT] = new Place(  0,  64, 2, 3);
+	m_place[P_ARM_LEFT]  = new Place(128,  64, 2, 3);
+	m_place[P_LEG_RIGHT] = new Place(  0, 120, 2, 1);
+	m_place[P_LEG_LEFT]  = new Place(128, 120, 2, 1);
+	m_place[P_BACK]      = new Place(192,  40, 3, 3);
+	m_place[P_BELT]      = new Place(192, 104, 4, 2);
 	m_place[P_MAP] = map->place(z, x, y);      //!!
 	m_p_map_allocated = false;
 
@@ -3032,3 +3032,4 @@ void Soldier::set_reserve_type(int type)
 		net->send_reserve_time(NID, type);
 	}
 };
+
