@@ -16,20 +16,28 @@
 ##############################################################################
 
 UFO_SVNVERSION := ${shell svnversion .}
-
-ifdef VERSION
-	DISTNAME := ufo2000-$(VERSION)
+UFO_VERSION := ${shell awk 'BEGIN {FS="\""} /UFO_VERSION_STRING/ { print $$2; }' src/version.h}
+ifneq ($(UFO_VERSION),)
+ifneq ($(UFO_SVNVERSION),)
+	DISTNAME := ufo2000-$(UFO_VERSION).$(UFO_SVNVERSION)
 else
-	DISTNAME := ufo2000-r$(UFO_SVNVERSION)
+	DISTNAME := ufo2000-$(UFO_VERSION)
+endif
+else
+	DISTNAME := ufo2000
 endif
 
 CC = g++
 LD = g++
 CFLAGS = -funsigned-char -Wall -Wno-deprecated-declarations
-CFLAGS += -pipe -DDEBUGMODE -DUFO_SVNVERSION=\"$(UFO_SVNVERSION)\"
+CFLAGS += -pipe -DDEBUGMODE
 OBJDIR = obj
 NAME = ufo2000
 SERVER_NAME = ufo2000-srv
+
+ifneq ($(UFO_SVNVERSION),)
+	CFLAGS += -DUFO_SVNVERSION=\"$(UFO_SVNVERSION)\"
+endif
 
 ifdef DATA_DIR
 	CFLAGS += -DDATA_DIR=\"$(DATA_DIR)\"
@@ -135,6 +143,7 @@ source-bz2:
 # create tar.bz2 archive with ufo2000 sources (on *nix systems)
 	-$(RM) $(DISTNAME)-src.tar.bz2
 	svn export . $(DISTNAME)
+	sed 's,unknown,$(UFO_SVNVERSION),g' < src/version.h > $(DISTNAME)/src/version.h
 	tar -cjf $(DISTNAME)-src.tar.bz2 $(DISTNAME)
 	svn delete --force $(DISTNAME)
 	cp ufo2000.ebuild $(DISTNAME).ebuild
