@@ -102,6 +102,8 @@ BITMAP *PCK::pckdat2bmp(const unsigned char *data, int size, int tftd_flag)
  */
 int PCK::loadpck(const char *pckfname)
 {
+	int i;
+
 	int fh = open(F(pckfname), O_RDONLY | O_BINARY);
 	ASSERT(fh != -1);
 	long pcksize = filelength(fh);
@@ -127,21 +129,25 @@ int PCK::loadpck(const char *pckfname)
 	read(fh, tabdata, tabsize);
 	close(fh);
 
-	if (*(unsigned long *)tabdata == 0x00000000) {
+	if (*(uint32 *)tabdata == 0x00000000) {
     //	32-bit records in .tab file (UFO2)
-		unsigned long *tab = (unsigned long *)tabdata;
+		uint32 *tab = (uint32 *)tabdata;
 		m_imgnum = tabsize / 4;
+		for (i = 0; i < m_imgnum; i++)
+			tab[i] = intel_uint32(tab[i]);
 		tab[m_imgnum] = pcksize;
 		m_bmp.resize(m_imgnum);
-		for (int i = 0; i < m_imgnum; i++)
+		for (i = 0; i < m_imgnum; i++)
 			m_bmp[i] = pckdat2bmp(&pck[tab[i]], tab[i + 1] - tab[i], 1);
 	} else {
     //	16-bit records in .tab file (UFO1)
-		unsigned short *tab = (unsigned short *)tabdata;
+		uint16 *tab = (uint16 *)tabdata;
 		m_imgnum = tabsize / 2;
+		for (i = 0; i < m_imgnum; i++)
+			tab[i] = intel_uint16(tab[i]);
 		tab[m_imgnum] = pcksize;
 		m_bmp.resize(m_imgnum);
-		for (int i = 0; i < m_imgnum; i++)
+		for (i = 0; i < m_imgnum; i++)
 			m_bmp[i] = pckdat2bmp(&pck[tab[i]], tab[i + 1] - tab[i], 0);
 	}
 

@@ -27,9 +27,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "video.h"
 #include "terrapck.h"
 
-unsigned char TerraPCK::m_tbb[0xFFFF];
-unsigned short TerraPCK::m_tbs[0xFFF];
-
 TerraPCK::TerraPCK(const char *pckfname, int tftd_flag) : PCK(pckfname, tftd_flag)
 {
 	ASSERT(m_imgnum > 0);
@@ -51,6 +48,10 @@ TerraPCK::~TerraPCK()
 
 void TerraPCK::add(const char *pckfname, int tftd_flag)
 {
+	int num;
+	static unsigned char m_tbb[0xFFFF];
+	static uint16        m_tbs[0xFFF];
+
 	m_tftd_flag = tftd_flag;
 	strcpy(m_fname, pckfname);
 
@@ -70,9 +71,14 @@ void TerraPCK::add(const char *pckfname, int tftd_flag)
 	int newnum = read(fh, (char *)m_tbs, fsize) >> 1;
 	ASSERT(newnum > 0);
 	close(fh);
+
+	for (num = 0; num < newnum; num++)
+		m_tbs[num] = intel_uint16(m_tbs[num]);
+
 	m_tbs[newnum] = newlen;
 	m_bmp.resize(m_imgnum + newnum);
-	for (int num = 0; num < newnum; num++)
+
+	for (num = 0; num < newnum; num++)
 		m_bmp[m_imgnum + num] = pckdat2bmp(&m_tbb[m_tbs[num]], m_tbs[num + 1] - m_tbs[num], tftd_flag);
 
 	create_blackbmp(m_imgnum, newnum);
@@ -93,6 +99,7 @@ void TerraPCK::loadmcd(int pck_base, int size)
 	for (int i = 0; i < newcount; i++) {
 		ASSERT(offsetof(MCD, ufo2000_data_start_marker) == 62);
 		read(fh, &m_mcd[oldcount + i], 62);
+		m_mcd[oldcount + i].ScanG = intel_int16(m_mcd[oldcount + i].ScanG);
 		if (m_mcd[oldcount + i].Alt_MCD)
 			m_mcd[oldcount + i].Alt_MCD += oldcount;
 		if (m_mcd[oldcount + i].Die_MCD)

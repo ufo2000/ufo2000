@@ -292,12 +292,12 @@ void savescreen()
 // bit is always assumed to be set, thus we only use 16 bits to
 // represent the 17 bit value.
 
-unsigned short crc16(char *data_p)
+uint16 crc16(char *data_p)
 {
 	unsigned char i;
 	unsigned int data;
 	unsigned int crc = 0xffff;
-	unsigned short length = strlen(data_p);
+	uint16 length = strlen(data_p);
 
 	if (length == 0)
 		return (~crc);

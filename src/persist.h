@@ -37,12 +37,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define CCXX_MEMBER(t) t
 #define CCXX_MEMBER_EXPORT(t) t
 #define CCXX_CLASS_EXPORT
-typedef char int8;
-typedef short int16;
-typedef long int32;
-typedef unsigned char uint8;
-typedef unsigned short uint16;
-typedef unsigned long uint32;
 
 #define THROW(x)
 #define THROWS(x)

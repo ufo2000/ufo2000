@@ -145,7 +145,11 @@ int do_mainmenu()
 {
 	clear_keybuf();
 
-    DIALOG the_dialog[MAINMENU_COUNT + 1];
+	// static added to workaround a weird crash bug on exit
+	// (looks like after exit from do_mainmenu() function, Allegro 
+	// still tries to use the_dialog data on already invalid stack)
+    static DIALOG the_dialog[MAINMENU_COUNT + 1];
+    memset(the_dialog, 0, sizeof(the_dialog));
     
     int i;
     

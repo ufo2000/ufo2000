@@ -53,6 +53,38 @@ extern "C" {
 #include "lauxlib.h"
 }
 
+#include <nl.h>
+
+// We rely on HawkNL in defining data types of proper system independent size
+typedef NLbyte int8;
+typedef NLshort int16;
+typedef NLlong int32;
+typedef NLubyte uint8;
+typedef NLushort uint16;
+typedef NLulong uint32;
+
+inline uint16 intel_uint16(uint16 x)
+{
+#ifdef ALLEGRO_BIG_ENDIAN
+	return (uint16)(((((uint16)x) & 0x00ff) << 8) | ((((uint16)x) & 0xff00) >> 8));
+#else
+	return x;
+#endif
+}
+
+inline uint32 intel_uint32(uint32 x)
+{
+#ifdef ALLEGRO_BIG_ENDIAN
+	return (uint32)(((((uint32)x) & 0x000000ff) << 24) | ((((uint32)x) & 0x0000ff00) << 8) | 
+		((((uint32)x) & 0x00ff0000) >> 8) | ((((uint32)x) & 0xff000000) >> 24));
+#else
+	return x;
+#endif
+}
+
+inline int16 intel_int16(int16 x) { return (int16)intel_uint16((uint16)x); }
+inline int32 intel_int32(int32 x) { return (int32)intel_uint32((uint32)x); }
+
 #include "persist.h"
 #define map ufo2000_map
 
@@ -92,7 +124,7 @@ template<class TYPE> void PersistReadObject(persist::Engine &archive, TYPE &obje
 template<class TYPE> void PersistWriteBinary(persist::Engine &archive, TYPE &object)
 {
 	ASSERT(static_cast<const persist::BaseObject *>(&object));
-	archive.WriteBinary((const uint8 *)&object + 4, sizeof(object) - 4);
+	archive.WriteBinary((const uint8 *)&object + sizeof(void *), sizeof(object) - sizeof(void *));
 }
 
 /**
@@ -107,30 +139,13 @@ template<class TYPE> void PersistWriteBinary(persist::Engine &archive, TYPE &obj
 template<class TYPE> void PersistReadBinary(persist::Engine &archive, TYPE &object)
 {
 	ASSERT(static_cast<persist::BaseObject *>(&object));
-	archive.ReadBinary((uint8 *)&object + 4, sizeof(object) - 4);
+	archive.ReadBinary((uint8 *)&object + sizeof(void *), sizeof(object) - sizeof(void *));
 }
-
-#ifdef FIXED_POINT_MATH
-
-#define REAL  fix
-#define PI    128
-
-inline fix floor(fix x)
-{
-	fix t; t.v = fixfloor(x.v); return t;
-}
-inline fix ceil(fix x)
-{
-	fix t; t.v = fixceil(x.v); return t;
-}
-#else
 
 #include <math.h>
 #define REAL  float
 #ifndef PI
 #define PI    3.141592654
-#endif
-
 #endif
 
 #include "explo.h"
@@ -141,11 +156,11 @@ inline fix ceil(fix x)
 
 struct GEODATA
 {
-	unsigned short x_size;      //!< Distance e/w in tens of tiles
-	unsigned short y_size;      //!< Distance n/s in tens of tiles
-	unsigned short z_size;      //!< Height of map (tiles)
-	unsigned short ship[2];     //!< The types of each of the two ships
-	unsigned short terrain;     //!< Terrain set; refers to the MCD combo sets ---  A JUNGLE, FOREST, etc...
+	uint16        x_size;       //!< Distance e/w in tens of tiles
+	uint16        y_size;       //!< Distance n/s in tens of tiles
+	uint16        z_size;       //!< Height of map (tiles)
+	uint16        ship[2];      //!< The types of each of the two ships
+	uint16        terrain;      //!< Terrain set; refers to the MCD combo sets ---  A JUNGLE, FOREST, etc...
 	unsigned char mapdata[36];  //!< The actual map data - refers to the number at the end of map name; i.e. urban12 would be number
 	unsigned char use_rmp[36];  //!< Tells it if it should use the RMPs of each square(if no, there will be no units in that square)
 	unsigned char ship1_y;      //!< These coords are given in tiles
@@ -157,15 +172,15 @@ struct GEODATA
 
 struct MANDATA
 {
-	short          Rank;        //!< Rank  == -1 --> Not used
-	short          Base;        //!< Base  == -1 --> Transfer in progress
-	short          Craft;       //!< Craft == -1 --> Not on any craft
-	short int      OldCraft;
-	unsigned short Missions;
-	unsigned short Kills;
-	unsigned short Recovery;    //!< The number of days before their injuries are gone.
-	unsigned short DeathCost;   //!< The number of points you lose when they die.
-	char Name[26];              //!< There are actually 26 bytes allocated for this, but only the first 23 are used.  The names can be up to 22 bytes.
+	int16         Rank;         //!< Rank  == -1 --> Not used
+	int16         Base;         //!< Base  == -1 --> Transfer in progress
+	int16         Craft;        //!< Craft == -1 --> Not on any craft
+	int16         OldCraft;
+	uint16        Missions;
+	uint16        Kills;
+	uint16        Recovery;     //!< The number of days before their injuries are gone.
+	uint16        DeathCost;    //!< The number of points you lose when they die.
+	char          Name[26];     //!< There are actually 26 bytes allocated for this, but only the first 23 are used.  The names can be up to 22 bytes.
 	unsigned char TimeUnits;
 	unsigned char Health;
 	unsigned char Stamina;
@@ -193,7 +208,6 @@ struct MANDATA
 	unsigned char fFemale;
 	unsigned char Appearance;
 };
-
 
 struct UNITDATA
 {
@@ -283,7 +297,7 @@ struct UNITDATA
 	unsigned char u84;
 	unsigned char u85;
 	unsigned char u86;
-	char Name[25];              //!< The unit name!!
+	char          Name[25];     //!< The unit name!!
 	unsigned char u112;
 	unsigned char u113;
 	unsigned char u114;

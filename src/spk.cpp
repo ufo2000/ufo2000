@@ -104,7 +104,7 @@ BITMAP *SPK::spk2bmp()
 	long i = 0, j = 0;
 
 //	Process .scr files
-	if (m_datlen == 64000 && (*(unsigned short *)m_dat & 0xFFF0) != 0xFFF0) {
+	if (m_datlen == 64000 && (intel_uint16(*(uint16 *)m_dat) & 0xFFF0) != 0xFFF0) {
 		long size = 64000;
 		while (size--) {
 			putpixel(bmp, j % 320, j / 320, xcom1_color(m_dat[i++]));
@@ -116,10 +116,10 @@ BITMAP *SPK::spk2bmp()
 //	Process .spk files
 	while (true) {
 		ASSERT(i + 2 <= m_datlen);
-		switch (*(unsigned short *)(m_dat + i)) {
+		switch (intel_uint16(*(uint16 *)(m_dat + i))) {
 			case 0xFFFF: {
 				ASSERT(i + 4 <= m_datlen);
-				long size = (long)(*(unsigned short *)(m_dat + i + 2)) * 2;
+				long size = (long)intel_uint16((*(uint16 *)(m_dat + i + 2))) * 2;
 				i += 4;
 				ASSERT(j + size <= 64000);
 				j += size;
@@ -127,7 +127,7 @@ BITMAP *SPK::spk2bmp()
 			}
 			case 0xFFFE: {
 				ASSERT(i + 4 <= m_datlen);
-				long size = (long)(*(unsigned short *)(m_dat + i + 2)) * 2;
+				long size = (long)intel_uint16((*(uint16 *)(m_dat + i + 2))) * 2;
 				i += 4;
 				ASSERT(i + size <= m_datlen && j + size <= 64000);
 				while (size--) {

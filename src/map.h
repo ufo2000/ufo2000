@@ -72,7 +72,7 @@ private:
 	static SPK *scanbord;
 	static char *m_scang_xcom;
 	static char *m_scang_tftd;
-	static unsigned short *m_loftemp;
+	static uint16 *m_loftemp;
 	static int m_loftemp_num;
 
 	GEODATA gd;
@@ -151,8 +151,8 @@ public:
 
 	int scroll(int mx, int my);
 
-	void build_lof_cell(int _z, int _x, int _y, unsigned short *lof_cell);
-	void build_lof_cell_part(int _z, int _x, int _y, int _part, unsigned short *lof_cell);
+	void build_lof_cell(int _z, int _x, int _y, uint16 *lof_cell);
+	void build_lof_cell_part(int _z, int _x, int _y, int _part, uint16 *lof_cell);
 	BITMAP *create_lof_bitmap(int lev, int col, int row);
 	void show_lof_cell();
 	int pass_lof_cell(int _z, int _x, int _y);

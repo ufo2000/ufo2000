@@ -34,7 +34,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #define SCANGSIZE 4
 
-unsigned short *Map::m_loftemp = NULL;
+uint16 *Map::m_loftemp = NULL;
 int Map::m_loftemp_num = 0;
 char *Map::m_scang_xcom = NULL;
 char *Map::m_scang_tftd = NULL;
@@ -126,7 +126,7 @@ void Map::initpck()
 	fh = open(F("$(xcom)/geodata/loftemps.dat"), O_RDONLY | O_BINARY);
 	ASSERT(fh != -1);
 	fl = filelength(fh);
-	m_loftemp = new unsigned short[fl / 2];
+	m_loftemp = new uint16[fl / 2];
 	read(fh, m_loftemp, fl);
 	close(fh);
 	m_loftemp_num = fl / 32;
@@ -1010,7 +1010,7 @@ int Map::open_door(int z, int x, int y, int dir)
 }
 
 
-void Map::build_lof_cell(int _z, int _x, int _y, unsigned short *lof_cell)
+void Map::build_lof_cell(int _z, int _x, int _y, uint16 *lof_cell)
 {
 	memset(lof_cell, 0, 2 * 16 * 12);
 
@@ -1029,7 +1029,7 @@ void Map::build_lof_cell(int _z, int _x, int _y, unsigned short *lof_cell)
 	}
 }
 
-void Map::build_lof_cell_part(int _z, int _x, int _y, int _part, unsigned short *lof_cell)
+void Map::build_lof_cell_part(int _z, int _x, int _y, int _part, uint16 *lof_cell)
 {
 	memset(lof_cell, 0, 2 * 16 * 12);
 
@@ -1049,7 +1049,7 @@ void Map::build_lof_cell_part(int _z, int _x, int _y, int _part, unsigned short 
 
 BITMAP *Map::create_lof_bitmap(int lev, int col, int row)
 {
-	unsigned short lof_cell[16 * 12];
+	uint16 lof_cell[16 * 12];
 	build_lof_cell(lev, col, row, lof_cell);
 
 	BITMAP *bmp = create_bitmap(20 * 4, 20 * 3);
@@ -1071,7 +1071,7 @@ BITMAP *Map::create_lof_bitmap(int lev, int col, int row)
 		if (Tlev < 0) Tlev = 0;*/
 
 		for (int i = 0; i < 16; i++) {
-			unsigned short l = lof_cell[j * 16 + i];
+			uint16 l = lof_cell[j * 16 + i];
 			//textprintf(screen, font, SCREEN2W, SCREEN2H-80+i*8, 1, "%04x ", l);
 			for (int k = 0; k < 16; k++) {
 				/*if (l & 0x8000) {
@@ -1135,7 +1135,7 @@ int Map::pass_lof_cell(int _z, int _x, int _y)
 	int col = _x / 16;
 	int row = _y / 16;
 
-	unsigned short lof_cell[16 * 12];
+	uint16 lof_cell[16 * 12];
 	build_lof_cell(lev, col, row, lof_cell);
 
 	lev = _z % 12;
@@ -1155,7 +1155,7 @@ int Map::pass_lof_cell_part(int _z, int _x, int _y, int _part)
 	int col = _x / 16;
 	int row = _y / 16;
 
-	unsigned short lof_cell[16 * 12];
+	uint16 lof_cell[16 * 12];
 	build_lof_cell_part(lev, col, row, _part, lof_cell);
 
 	lev = _z % 12;

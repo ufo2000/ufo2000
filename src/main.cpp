@@ -320,7 +320,7 @@ void display_error_message(const std::string &error_text)
 
 static int assert_handler(const char *msg)
 {
-	net->send_debug_message("assert:%s", msg);
+	if (net) net->send_debug_message("assert:%s", msg);
 	display_error_message(msg);
 	return 0;
 }
@@ -612,6 +612,7 @@ void closemain()
 	delete inventory;
 	delete icon;
 	delete g_console;
+	net = NULL;
 
 	Item::freebigobs();
 	Map::freepck();
@@ -626,15 +627,8 @@ void closemain()
 	
 	lua_close(L);
 
-	char revision[64];
-	if (strcmp(UFO_SVNVERSION, "unknown") == 0 || strcmp(UFO_SVNVERSION, "exported") == 0 || strcmp(UFO_SVNVERSION, "") == 0) {
-		sprintf(revision, "%s (revision >=%d)", UFO_VERSION_STRING, UFO_REVISION_NUMBER);
-	} else {
-		sprintf(revision, "%s.%s", UFO_VERSION_STRING, UFO_SVNVERSION);
-	}
-
 	std::cout<<"\nUFO2000 "
-             <<revision
+             <<g_version_id.c_str()
              <<"\nCompiled with "
              <<allegro_id << " on "
              <<__TIME__<<" "
@@ -1603,11 +1597,6 @@ int main(int argc, char *argv[])
                 case MAINMENU_HOTSEAT:
                     h = sethotseatplay();
                     break;
-/*
-                case MAINMENU_TCPIP:
-                    h = setsocketplay();
-                    break;
-*/
                 case MAINMENU_INTERNET:
                     h = connect_internet_server();
                     break;

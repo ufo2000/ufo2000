@@ -70,7 +70,7 @@ void savescreen();
 void resize_screen2(int vw, int vh);
 int askmenu(char *mess);
 
-unsigned short crc16(char *data_p);
+uint16 crc16(char *data_p);
 
 extern unsigned long FLAGS;
 #define F_CLEARSEEN		    0x00000001

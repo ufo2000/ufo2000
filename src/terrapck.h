@@ -32,7 +32,7 @@ struct MCD
 //!	The 12 levels of references into GEODATA\LOFTEMPS.DAT
 	unsigned char LOFT[12];      
 //!	A reference into the GEODATA\SCANG.DAT
-	short int ScanG;
+	int16         ScanG;
 	unsigned char u23;
 	unsigned char u24;
 	unsigned char u25;
@@ -119,9 +119,6 @@ class TerraPCK : public PCK
 {
 private:
 	std::vector<BITMAP *> m_blackbmp;
-
-	static unsigned char m_tbb[0xFFFF];
-	static unsigned short m_tbs[0xFFF];
 
 	void loadmcd(int start, int size);
 	void create_blackbmp(int start, int size);
