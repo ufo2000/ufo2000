@@ -9,6 +9,7 @@ Currently, the following languages are available:
 * ES - Spanish
 * DE - German
 * RU - Russian
+* BE - Belarusian
 A french translation is in the works.
 
 To select one of the available languages, 

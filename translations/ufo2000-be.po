@@ -1,4 +1,4 @@
-# UFO2000 - Language-File: BY=Belarusian
+# UFO2000 - Language-File: BE=Belarusian
 # Copyright (C) 2001-2004 ufo2000 development team
 # This file is distributed under the same license as the UFO2000 package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2004.
