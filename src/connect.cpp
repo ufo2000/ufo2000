@@ -240,7 +240,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 		// Wait until a complete list of remote terrains is received
 		while (g_net_allowed_terrains.find("") == g_net_allowed_terrains.end()) {
 			net->check();
-			yield_timeslice();
+            rest(1);
 		}
 
         // Remove end marker
@@ -280,6 +280,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 
 	while (!DONE) {
 
+        rest(1); // Don't eat all CPU resources
 		g_console->redraw(screen, 0, SCREEN2H);
 
 		net->check();
@@ -351,12 +352,10 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 
 		if (!(mouse_b & 1)) {
 			mouse_leftr = 1;
-//			CHANGE = 1;
 		}
 
 		if (!(mouse_b & 2)) {
 			mouse_rightr = 1;
-//			CHANGE = 1;
 		}
 
 		process_keyswitch();

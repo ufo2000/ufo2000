@@ -257,11 +257,24 @@ bool Editor::handle_mouse_leftclick()
 	return false;
 }
 
+/**
+ * Activate unit stats and inventory edit screen
+ */
 void Editor::show()
 {
 	reset_video();
 	destroy_bitmap(screen2);
-	screen2 = create_bitmap(640, 400); clear(screen2);
+    screen2 = create_bitmap(640, 400); 
+    clear(screen2);
+	
+    // Prepare background picture for editor screen to improve 
+    // performance a bit (static image that is never changed)
+    BITMAP *editor_bg = create_bitmap(640, 400);
+    clear_to_color(editor_bg, xcom_color(15));
+    tac01->show(editor_bg, 0, 0);
+    draw_sprite_h_flip(editor_bg, b5, 255, 137);
+    text_mode(-1);
+    textout(editor_bg, large, "F2 Save   F3 Load", 8, 380, xcom_color(130));
 
 	position_mouse(320, 200);
 	set_mouse_range(0, 0, 639, 399);
@@ -269,25 +282,23 @@ void Editor::show()
 	int DONE = 0;
 	int mouse_leftr = 1, mouse_rightr = 1;
 	int i;
-	//int color = 1;
 
 	while (!DONE) {
-		if (CHANGE) {
-			clear(screen2);
-			tac01->show(screen2, 0, 0);
-			draw_sprite_h_flip(screen2, b5, 255, 137);
-			man->showspk();
 
+        rest(1); // Don't eat all CPU resources
+	
+		if (CHANGE) {
+            blit(editor_bg, screen2, 0, 0, 0, 0, editor_bg->w, editor_bg->h);
+            man->showspk();
+
+            text_mode(-1);
 			textout(screen2, large, man->md.Name, 0, 0, xcom1_color(66));
+			
 			for (i = 0; i < NUMBER_OF_PLACES; i++) //man->drawgrid();
 				man->place(i)->drawgrid(i);
 			m_armoury->drawgrid(P_ARMOURY);
 
-			text_mode( -1);
-			textout(screen2, large, "F2 Save   F3 Load", 8, 380, xcom1_color(130));
-
 			man->draw_unibord(320, 0);
-
 			if (sel_item != NULL) {
 				if (dup_item != NULL)
 					sel_item->od_info(330, 220, xcom1_color(1));
@@ -377,16 +388,14 @@ void Editor::show()
 
 		if (!(mouse_b & 1)) {
 			mouse_leftr = 1;
-			CHANGE = 1;
 		}
 
 		if (!(mouse_b & 2)) {
 			mouse_rightr = 1;
-			CHANGE = 1;
 		}
 
-		//readkey();
 		if (keypressed()) {
+            CHANGE = 1;
 			int c = readkey();
 			switch (c >> 8) {
 				case KEY_F1:
@@ -418,6 +427,7 @@ void Editor::show()
 	m_plt->save_MANDATA(F("$(home)/soldier.dat"));
 	m_plt->save_ITEMDATA(F("$(home)/items.dat"));
 
+    destroy_bitmap(editor_bg);
 	destroy_bitmap(screen2);
 	screen2 = create_bitmap(SCREEN2W, SCREEN2H); clear(screen2);
 
@@ -736,7 +746,7 @@ void Editor::edit_soldier()
 	sol_dialog[D_POINTS].fg = gui_fg_color;
 	sol_dialog[D_POINTS].bg = gui_bg_color;
 
-	while (mouse_b & 3) yield_timeslice();
+    while (mouse_b & 3) rest(1);
 
 	if (man->md.SkinType == S_XCOM_0 || man->md.SkinType == S_XCOM_1 ||
 			man->md.SkinType == S_XCOM_2 || man->md.SkinType == S_XCOM_3) {
@@ -769,7 +779,7 @@ void Editor::edit_soldier()
 
 	set_dialog_color(sol_dialog, gui_fg_color, gui_bg_color);
 	centre_dialog(sol_dialog);
-	do_dialog(sol_dialog, -1);
+    popup_dialog(sol_dialog, -1);
 
 	man->md.fFemale = sol_dialog[D_APPEARANCE].d1 >= 4;
 	man->md.Appearance = sol_dialog[D_APPEARANCE].d1 % 4;

@@ -1264,6 +1264,8 @@ void gameloop()
 		savegame(F("$(home)/ufo2000.tmp"));
 
 	while (!DONE) {
+	
+        rest(1); // Don't eat all CPU resources
 
 		if (MODE != WATCH && g_time_left == 0) {
 			TARGET = 0;
