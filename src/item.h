@@ -37,39 +37,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define PT_Smoke     0x02
 #define PT_Proximity 0x03
 
-struct OBDATA
-{
-	char          name[20];       //The name of the object; used internally only
-	unsigned char pInv;           //The image on the inventory screen
-	unsigned char pMap;           //floorob//The image on the isometric map screen
-	unsigned char damage;         //The damage value
-	unsigned char importance;     //In a stack of items, the item with the highest importance is shown
-	unsigned char width;          //The width on the inventory
-	unsigned char height;         //The height on the inventory
-	unsigned char ammo[3];        //The three item numbers that can be ammo, 0xFF=unused
-	unsigned char pHeld;          //handob	//The picture to use on the map while it's being held
-	unsigned char _1E;            //Changing this seems to have no effect...
-	unsigned char damageType;     //The type of attack; refer to DT_nnnn
-	unsigned char accuracy[3];    //The accuracy for each of the three kinds of shots; 0=can't take this type of shot.  [0]=Auto  [1]=Snap  [2]=Aimed
-	unsigned char time[3];        //The TU% for each of the three kinds of shots.  0=can't take this type of shot.  [0]=Auto  [1]=Snap  [2]=Aimed
-	unsigned char rounds;         //The number of rounds in the clip
-	unsigned char hitType;        //The type of damage that hitting with it does.  Only matters on stun rods/thermal tazers.  Refer to DT_nnnn
-	unsigned char throw_accuracy; //Always 0x64
-	unsigned char _29;            //Always 0x32
-	unsigned char _2A;
-	unsigned char weight;         //The weight of the object
-	unsigned char primeType;      //The way in which the object can be primed.  See PT_nnnn
-	unsigned char _2D;
-	unsigned char isShootable;    //This item can be shot. (0=no,1=yes)
-	unsigned char isWeapon;       //This item is a weapon. (0=no,1=yes)
-	unsigned char isGun;          //This is a gun which requires ammo. (0=no,1=yes)
-	unsigned char isAmmo;         //This item is a clip. (0=no,1=yes)
-	unsigned char twoHanded;      //Is more accurate with two hands (0=no,1=yes)
-	unsigned char wayPoints;      //Has a 'launch missile' option  (0=no,1=yes)
-	unsigned char _34;            //Scott T. Jones has this marked as 'Research'.  This makes sense, but I can find no evidence to support it...
-	unsigned char _35;            //Scott T. Jones has this marked as 'Points'...
-};
-
 enum Action { NONE, THROW, PRIME, SNAPSHOT, AIMEDSHOT, AUTOSHOT, PUNCH, AIMEDTHROW };
 
 class Place;
@@ -79,8 +46,6 @@ class Item: public persist::BaseObject
 {
 	DECLARE_PERSISTENCE(Item);
 private:
-	static int obdata_num;
-	static OBDATA *obdata;
 
 	int  m_type;
 	int  m_x, m_y;
@@ -92,29 +57,31 @@ private:
 	Item *m_ammo;
 
 public:
-	static void initobdata();
 	static void initbigobs();
 	static void freebigobs();
 	static int explo_range(int type);
 	static void od_info(int type, int gx, int gy, int gcol);
 
 	static int obdata_get_int(int item_index, const char *property_name);
+	static int obdata_get_array_int(int item_index, const char *property_name, int index);
 	static std::string obdata_get_string(int item_index, const char *property_name);
 
 	static int obdata_damage(int index) { return obdata_get_int(index, "damage"); }
 	static int obdata_cost(int index) { return obdata_get_int(index, "cost"); }
-	static int obdata_isAmmo(int index) { return obdata[index].isAmmo; }
+	static int obdata_isAmmo(int index) { return obdata_get_int(index, "isAmmo"); }
 	static std::string obdata_name(int index) { return obdata_get_string(index, "name"); }
-	static int obdata_damageType(int index) { return obdata[index].damageType; }
-	static int obdata_wayPoints(int index) { return obdata[index].wayPoints; }
-	static int obdata_accuracy(int index, int n) { return obdata[index].accuracy[n]; }
-	static int obdata_time(int index, int n) { return obdata[index].time[n]; }
-	static int obdata_weight(int index) { return obdata[index].weight; }
-	static int obdata_twoHanded(int index) { return obdata[index].twoHanded; }
-	static int obdata_hitType(int index) { return obdata[index].hitType; }
-	static int obdata_rounds(int index) { return obdata[index].rounds; }
-	static int obdata_ammo(int index, int n) { return obdata[index].ammo[n]; }
-	static int obdata_isGun(int index) { return obdata[index].isGun; }
+	static int obdata_damageType(int index) { return obdata_get_int(index, "damageType"); }
+	static int obdata_wayPoints(int index) { return obdata_get_int(index, "wayPoints"); }
+	static int obdata_accuracy(int index, int n) { return obdata_get_array_int(index, "accuracy", n); }
+	static int obdata_time(int index, int n) { return obdata_get_array_int(index, "time", n); }
+	static int obdata_weight(int index) { return obdata_get_int(index, "weight"); }
+	static int obdata_twoHanded(int index) { return obdata_get_int(index, "twoHanded"); }
+	static int obdata_hitType(int index) { return obdata_get_int(index, "hitType"); }
+	static int obdata_rounds(int index) { return obdata_get_int(index, "rounds"); }
+	static int obdata_isGun(int index) { return obdata_get_int(index, "isGun"); }
+
+    //! Get list of ammo types that can be used with this weapon
+	static bool get_ammo_list(const std::string itemname, std::vector<std::string> &ammo);
 
 	Item();
 	Item(int _type);
@@ -139,22 +106,26 @@ public:
 	int inside(int _x, int _y);
 
 	std::string name() { return obdata_name(m_type); }
-	int obdata_pMap() { return obdata[m_type].pMap; }
-	int obdata_pInv() { return obdata[m_type].pInv; }
-	int obdata_pHeld() { return obdata[m_type].pHeld; }
-	int obdata_width() { return obdata[m_type].width; }
-	int obdata_height() { return obdata[m_type].height; }
-	int obdata_isAmmo() { return obdata[m_type].isAmmo; }
-	int obdata_isGun() { return obdata[m_type].isGun; }
-	int obdata_twoHanded() { return obdata[m_type].twoHanded; }
-	int obdata_damage() { return obdata[m_type].damage; }
-	int obdata_accuracy(int n) { return obdata[m_type].accuracy[n]; }
-	int obdata_time(int n) { return obdata[m_type].time[n]; }
-	int obdata_importance() { return obdata[m_type].importance; }
-	int obdata_weight() { return obdata[m_type].weight; }
+	int obdata_pMap() { return obdata_get_int(m_type, "pMap"); } // FIXME
+	int obdata_pInv() { return obdata_get_int(m_type, "pInv"); } // FIXME
+	int obdata_pHeld() { return obdata_get_int(m_type, "pHeld"); } // FIXME
+	int obdata_width() { return obdata_get_int(m_type, "width"); }
+	int obdata_height() { return obdata_get_int(m_type, "height"); }
+	int obdata_isAmmo() { return obdata_isAmmo(m_type); }
+	int obdata_isGun() { return obdata_isGun(m_type); }
+	int obdata_twoHanded() { return obdata_twoHanded(m_type); }
+	int obdata_damage() { return obdata_damage(m_type); }
+	int obdata_accuracy(int n) { return obdata_get_array_int(m_type, "accuracy", n); }
+	int obdata_time(int n) { return obdata_get_array_int(m_type, "time", n); }
+	int obdata_importance() { return obdata_get_int(m_type, "importance"); }
+	int obdata_weight() { return obdata_weight(m_type); }
 
-	bool can_use_ammo_type(char type) {
-		return (memchr(obdata[m_type].ammo, type, 3) != NULL);
+	bool can_use_ammo_type(const std::string &ammo_type) {
+		std::vector<std::string> ammo_list;
+		get_ammo_list(obdata_name(m_type), ammo_list);
+		for (int i = 0; i < (int)ammo_list.size(); i++)
+			if (ammo_list[i] == ammo_type) return true;
+		return false;
 	}
 	
 	Item *clip() { return m_ammo; }
@@ -169,7 +140,6 @@ public:
 
 	void od_info(int gx, int gy, int gcol)
 	{
-		ASSERT((m_type >= 0) && (m_type < obdata_num));
 		od_info(m_type, gx, gy, gcol);
 	}
 

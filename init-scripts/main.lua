@@ -191,9 +191,15 @@ function AddXcomTerrain(terrain)
 	return 1
 end
 
+-- currently dummy stub
+function pck_image(filename, index)
+	return index
+end
+
 -- adds new item
 function AddXcomItem(item)
 	ItemsTable[item.index] = item
+	ItemsTable[item.name] = item
 end
 
 -- perform data files integrity check before applying security

@@ -345,11 +345,21 @@ void Place::save_to_file(const char *fn, const char *prefix)
 
 void Place::add_item(int x, int y, const char *item_name)
 {
-	for (int i = 0; i < Item::obdata_num; i++)
-		if (strcmp(Item::obdata_name(i).c_str(), item_name) == 0) {
-			put(new Item(i), x, y);
-			return;
-		}
+	int stack_top = lua_gettop(L);
+    // Enter 'ItemsTable' table
+	lua_pushstring(L, "ItemsTable");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	ASSERT(lua_istable(L, -1)); 
+    // Enter [item_name] table
+	lua_pushstring(L, item_name);
+	lua_gettable(L, -2);
+	if (!lua_isnil(L, -1)) {
+		lua_pushstring(L, "index");
+		lua_gettable(L, -2);
+		ASSERT(lua_isnumber(L, -1));
+		put(new Item((int)lua_tonumber(L, -1)), x, y);
+	}
+	lua_settop(L, stack_top);
 }
 
 void Place::build_ITEMDATA(int ip, ITEMDATA * id) //don't save clip rounds

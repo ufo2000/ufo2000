@@ -32,45 +32,13 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "sound.h"
 
 PCK *bigobs;
-OBDATA *Item::obdata = NULL;
-int Item::obdata_num = 0;
 
 IMPLEMENT_PERSISTENCE(Item, "Item");
-
-void Item::initobdata()
-{
-	int fh = open(F("$(xcom)/geodata/obdata.dat"), O_RDONLY | O_BINARY);
-	ASSERT(fh != -1);
-	int buflen = filelength(fh);
-	char *buf = new char[buflen];
-	buflen = read(fh, buf, buflen);
-	ASSERT(buflen > 0);
-	close(fh);
-
-	obdata_num = buflen / sizeof(OBDATA);
-	obdata = new OBDATA[obdata_num];
-	for (int i = 0; i < obdata_num; i++)
-		memcpy(&obdata[i], buf + i * sizeof(OBDATA), sizeof(OBDATA));
-
-	delete []buf;
-
-	obdata[SMOKE_GRENADE].damage = 0;
-	obdata[INCENDIARY_ROCKET].damage = 20;
-	obdata[AUTO_CANNON_I_AMMO].damage = 15;
-	obdata[CANNON_I_AMMO].damage = 15;
-
-	obdata[PROXIMITY_GRENADE].damage = 30;
-
-	obdata[STUN_ROD].accuracy[0] = 100;     	//apunch
-	obdata[STUN_ROD].damage = 100;
-
-	obdata[Heavy_Plasma].accuracy[0] = 0; // Disable auto fire for heavy plasma
-}
 
 int Item::obdata_get_int(int item_index, const char *property_name)
 {
 	int stack_top = lua_gettop(L);
-    // Enter 'TerrainTable' table
+    // Enter 'ItemsTable' table
 	lua_pushstring(L, "ItemsTable");
 	lua_gettable(L, LUA_GLOBALSINDEX);
 	ASSERT(lua_istable(L, -1)); 
@@ -81,8 +49,37 @@ int Item::obdata_get_int(int item_index, const char *property_name)
     // Get property value
 	lua_pushstring(L, property_name);
 	lua_gettable(L, -2);
-	ASSERT(lua_isnumber(L, -1));
-	int result = (int)lua_tonumber(L, -1);
+	int result = 0;
+	if (lua_isnumber(L, -1)) result = (int)lua_tonumber(L, -1);
+	lua_settop(L, stack_top);
+	return result;
+}
+
+int Item::obdata_get_array_int(int item_index, const char *property_name, int index)
+{
+	int stack_top = lua_gettop(L);
+    // Enter 'ItemsTable' table
+	lua_pushstring(L, "ItemsTable");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	ASSERT(lua_istable(L, -1)); 
+    // Enter [item_index] table
+	lua_pushnumber(L, item_index);
+	lua_gettable(L, -2);
+	ASSERT(lua_istable(L, -1));
+    // Get property value
+	lua_pushstring(L, property_name);
+	lua_gettable(L, -2);
+	if (!lua_istable(L, -1)) {
+		lua_settop(L, stack_top);
+		return 0;
+	}
+    // Index a value inside of property
+	lua_pushnumber(L, index + 1);
+	lua_gettable(L, -2);
+
+	int result = 0;
+	if (lua_isnumber(L, -1)) result = (int)lua_tonumber(L, -1);
+
 	lua_settop(L, stack_top);
 	return result;
 }
@@ -90,7 +87,7 @@ int Item::obdata_get_int(int item_index, const char *property_name)
 std::string Item::obdata_get_string(int item_index, const char *property_name)
 {
 	int stack_top = lua_gettop(L);
-    // Enter 'TerrainTable' table
+    // Enter 'ItemsTable' table
 	lua_pushstring(L, "ItemsTable");
 	lua_gettable(L, LUA_GLOBALSINDEX);
 	ASSERT(lua_istable(L, -1)); 
@@ -110,6 +107,44 @@ std::string Item::obdata_get_string(int item_index, const char *property_name)
 	return result;
 }
 
+bool Item::get_ammo_list(const std::string item_name, std::vector<std::string> &ammo)
+{
+	ammo.clear();
+
+	int stack_top = lua_gettop(L);
+    // Enter 'ItemsTable' table
+	lua_pushstring(L, "ItemsTable");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	ASSERT(lua_istable(L, -1)); 
+    // Enter [item_index] table
+	lua_pushstring(L, item_name.c_str());
+	lua_gettable(L, -2);
+	if (!lua_istable(L, -1)) {
+		lua_settop(L, stack_top);
+		return false;
+	}
+	lua_pushstring(L, "ammo");
+	lua_gettable(L, -2);
+	if (!lua_istable(L, -1)) {
+		lua_settop(L, stack_top);
+		return true;
+	}
+
+	int i = 1;
+
+	while (true) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, -2);
+		if (!lua_isstring(L, -1)) {
+			lua_settop(L, stack_top);
+			return true;
+		}
+		ammo.push_back(lua_tostring(L, -1));
+		lua_pop(L, 1);
+		i++;
+	}
+}
+
 void Item::initbigobs()
 {
 	bigobs = new PCK("$(xcom)/units/bigobs.pck");
@@ -118,7 +153,6 @@ void Item::initbigobs()
 void Item::freebigobs()
 {
 	delete bigobs;
-	delete [] obdata;
 }
 
 int Item::explo_range(int type)
@@ -158,6 +192,9 @@ int Item::explo_range(int type)
 	return range;
 }
 
+/**
+ * Show object stats information in the armoury
+ */
 void Item::od_info(int type, int gx, int gy, int gcol)
 {
 	text_mode(-1);
@@ -202,16 +239,11 @@ void Item::od_info(int type, int gx, int gy, int gcol)
 		gy += 10;
 	}
 
-	if (obdata_ammo(type, 0) != 255) {
-		textprintf(screen2, font, gx, gy, gcol, " Ammo1: %s", obdata_name(obdata_ammo(type, 0)).c_str());
-		gy += 10;
-	}
-	if (obdata_ammo(type, 1) != 255) {
-		textprintf(screen2, font, gx, gy, gcol, " Ammo2: %s", obdata_name(obdata_ammo(type, 1)).c_str());
-		gy += 10;
-	}
-	if (obdata_ammo(type, 2) != 255) {
-		textprintf(screen2, font, gx, gy, gcol, " Ammo3: %s", obdata_name(obdata_ammo(type, 2)).c_str());
+	std::vector<std::string> ammo;
+	get_ammo_list(obdata_name(type), ammo);
+
+	for (int i = 0; i < (int)ammo.size(); i++) {
+		textprintf(screen2, font, gx, gy, gcol, " Ammo%d: %s", i + 1, ammo[i].c_str());
 		gy += 10;
 	}
 
@@ -266,7 +298,7 @@ void Item::unlink()
 int Item::loadclip(Item *clip)
 {
 	ASSERT(clip != NULL);
-	if ((m_ammo == NULL) && can_use_ammo_type(clip->m_type)) {
+	if ((m_ammo == NULL) && can_use_ammo_type(obdata_name(clip->m_type))) {
 		clip->unlink();
 		m_ammo = clip;
 		return 1;

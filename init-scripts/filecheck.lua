@@ -127,7 +127,6 @@ FilesTable = {
 	["$(xcom)/ufograph/icons.pck"]   = { Crc32 = X("0xD407EF95") },
 
 	["$(xcom)/geodata/loftemps.dat"] = { Crc32 = X("0x7B354479") },
-	["$(xcom)/geodata/obdata.dat"]   = { Crc32 = X("0x040A286A") },
 	["$(xcom)/geodata/scang.dat"]    = { Crc32 = X("0x26C1BD1B") },
 
 	["$(xcom)/units/bigobs.pck"]     = { Crc32 = X("0xBB5FB17D") },

@@ -568,9 +568,6 @@ void initmain(int argc, char *argv[])
 	console<<"initpck terrain"<<std::endl;
 	Map::initpck();
 
-	console<<"init obdata"<<std::endl;
-	Item::initobdata();
-
 	console<<"init bigobs"<<std::endl;
 	Item::initbigobs();
 
