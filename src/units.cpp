@@ -406,7 +406,7 @@ int Units::draw_items_stats(int gx, int gy, char *buf, int len)
 		}
 		// Count damage for platoon costs.
 		if ((Item::obdata_damage(weapon[w]) > 0) && (num > 0))
-			damage_points += (Item::obdata_damage(weapon[w]) * num);
+			damage_points += (Item::obdata_cost(weapon[w]) * num);
 		if (Item::obdata_isAmmo(weapon[w])) continue;
 		if (num != 0) {
 			textprintf(screen2, g_small_font, gx + (aa / 72) * 90, gy + (aa % 72),
