@@ -19,6 +19,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include "global.h"
+#undef map
 #include "server_protocol.h"
 #include "global.h"
 #include <string>
@@ -274,13 +276,13 @@ int connect_internet_server()
 		return -1;
     }
 
-	ConsoleWindow *chat = new ConsoleWindow(SCREEN_W, SCREEN_H, g_small_font);
-	WindowBorder *chat_border = new WindowBorder(chat, 
-		std::string("ufo2000 internet server (") + cfg_get_server_host() + std::string(")"), large);
+	std::auto_ptr<ConsoleWindow> chat(new ConsoleWindow(SCREEN_W, SCREEN_H, g_small_font));
+	std::auto_ptr<WindowBorder> chat_border(new WindowBorder(chat.get(), 
+		std::string("ufo2000 internet server (") + cfg_get_server_host() + std::string(")"), large));
 	chat_border->set_full_redraw();
-	UsersList *users = new UsersList(large);
+	std::auto_ptr<UsersList> users(new UsersList(large));
 	users->update_user_info(g_server_login, USER_STATUS_SELF);
-	WindowBorder *users_border = new WindowBorder(users, "users online", large);
+	std::auto_ptr<WindowBorder> users_border(new WindowBorder(users.get(), "users online", large));
 	users_border->set_full_redraw();
 
 //	Write greetings and the short help to the chat console
@@ -404,7 +406,7 @@ int connect_internet_server()
 
 			if (chat->process_keyboard_input(keycode, scancode)) {
 				server->send_packet(SRV_MESSAGE, chat->get_text());
-
+#if 0 // we do not need this code anymore
 				if (strncmp(chat->get_text(), "add ", 4) == 0)
 					users->update_user_info(chat->get_text() + 4, USER_STATUS_READY);
 				if (strncmp(chat->get_text(), "del ", 4) == 0)
@@ -415,6 +417,7 @@ int connect_internet_server()
 					users->update_user_info(chat->get_text() + 5, USER_STATUS_CHALLENGE_IN);
 				if (strncmp(chat->get_text(), "busy ", 5) == 0)
 					users->update_user_info(chat->get_text() + 5, USER_STATUS_BUSY);
+#endif
 				users_border->resize(-1, -1);
 				users_border->resize(users_border->get_width(), SCREEN_H);
 				chat_border->resize(SCREEN_W - users_border->get_width(), SCREEN_H);
@@ -423,11 +426,6 @@ int connect_internet_server()
 			}
 		}
 	}
-
-	delete users;
-	delete users_border;
-	delete chat;
-	delete chat_border;
 
 	return -1;
 }
