@@ -106,11 +106,13 @@ ifdef win32
 	CFLAGS += -DWIN32 -DALLEGRO_STATICLINK -I mingw-libs/include -L mingw-libs/lib
 	LIBS += -lNL_s -lalleg_s -lws2_32 -lkernel32 -luser32 -lgdi32 -lcomdlg32 \
 	        -lole32 -ldinput -lddraw -ldxguid -lwinmm -ldsound
+	SERVER_LIBS = -lNL_s -lws2_32
 else
 	CFLAGS += -DLINUX
 	INCLUDES = ${shell allegro-config --cflags}
 	CFLAGS += $(INCLUDES)
 	LIBS += -lNL ${shell allegro-config --libs}
+	SERVER_LIBS = -lNL
 endif
 
 OBJS := $(SRCS:.cpp=.o)
@@ -148,7 +150,7 @@ $(NAME): $(OBJS)
 	$(CX) $(CFLAGS) -o $@ $^ $(LIBS) $(SUBSYSTEM)
 
 $(SERVER_NAME): $(OBJS_SERVER)
-	$(CX) $(CFLAGS) -o $@ $^ -lNL
+	$(CX) $(CFLAGS) -o $@ $^ $(SERVER_LIBS)
 
 clean:
 	$(RM) $(OBJDIR)/*.o
