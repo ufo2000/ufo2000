@@ -223,7 +223,7 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen, Soldier *sld)
 
 // Pathfinding version 2:
         int time_of_dst;
-        step_dest(_z, _x, _y, dir, 0 /*sld->can_fly()*/, _z, _x, _y, time_of_dst);
+        step_dest(_z, _x, _y, dir, sld->can_fly(), _z, _x, _y, time_of_dst);
 
 		int sx = x + 16 * _x + 16 * _y + 16;
 		int sy = y - (_x + 1) * 8 + 8 * _y - 8 - _z * CELL_SCR_Z;
