@@ -419,7 +419,7 @@ int connect_internet_server()
 		std::string packet;
 		int res = server->recv_packet(id, packet);
 		if (res == -1) {
-			alert(" ", "  Connecton lost  ", " ", "    OK    ", NULL, 1, 0);
+			alert(" ", "  Connection lost  ", " ", "    OK    ", NULL, 1, 0);
 			return -1;
 		}
 		if (res != 0)
