@@ -28,6 +28,34 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "pck.h"
 #include "../ufo2000.h"
 
+#undef map
+
+//! We cache loaded pck files here
+static std::map<std::string, PCK *> g_pck_cache;
+
+/**
+ * Load image from pck file
+ */
+BITMAP *pck_image(const char *filename, int index)
+{
+	std::string fullname = F(filename);
+	if (g_pck_cache.find(fullname) == g_pck_cache.end())
+		g_pck_cache[fullname] = new PCK(fullname.c_str());
+	return g_pck_cache[fullname]->get_image(index);
+}
+
+/**
+ * Free all loaded pck files (used at exit)
+ */
+void free_pck_cache()
+{
+	std::map<std::string, PCK *>::iterator it = g_pck_cache.begin();
+	while (it != g_pck_cache.end()) {
+		delete it->second;
+		it++;
+	}
+}
+
 char PCK::m_fname[0x100];
 
 PCK::PCK(const char *pckfname, int tftd_flag)
@@ -148,6 +176,11 @@ void PCK::showpck(int num, int xx, int yy)
 		return;
 	}
 	draw_sprite(screen2, m_bmp[num], xx, yy - 6);
+}
+
+void PCK::showpck(BITMAP *img, int xx, int yy)
+{
+	draw_sprite(screen2, img, xx, yy - 6);
 }
 
 void PCK::showpck(int num)

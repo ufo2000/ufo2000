@@ -24,6 +24,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "global.h"
 #include <vector>
 
+BITMAP *pck_image(const char *filename, int index);
+
+void free_pck_cache();
+
 class PCK
 {
 protected:
@@ -41,9 +45,16 @@ public:
 	PCK(const char *pckfname, int tftd_flag = 0);
 	~PCK();
 
+	BITMAP *get_image(int index)
+	{
+		if (index < 0 || index >= (int)m_bmp.size()) return NULL;
+		return m_bmp[index];
+	}
+
 	int loadpck(const char *pckfname);
 	void showpck(int num);
 	void showpck(int num, int xx, int yy);
+	static void showpck(BITMAP *img, int xx, int yy);
 	void drawpck(int num, BITMAP *dest, int y);
 	int add_image(BITMAP *bmp);
 	void save_as_bmp(const char *fname);

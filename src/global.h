@@ -79,6 +79,11 @@ extern "C" {
 	lua_setmetatable(L, -2); \
 	lua_remove(L, -2);
 
+#define LUA_REGISTER_FUNCTION(L, functionname) \
+	lua_pushstring(L, #functionname); \
+	lua_pushdirectclosure(L, functionname, 0); \
+	lua_settable(L, LUA_GLOBALSINDEX); \
+
 #include <nl.h>
 
 // We rely on HawkNL in defining data types of proper system independent size
@@ -396,7 +401,6 @@ extern int HOST;
 extern GEODATA mapdata;
 extern PLAYERDATA pd1, pd2;
 extern PLAYERDATA *pd_local, *pd_remote;
-extern PCK *bigobs;
 extern Target target;
 extern int TARGET;
 extern Soldier *sel_man;

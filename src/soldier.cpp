@@ -2529,7 +2529,7 @@ void Soldier::drawinfo(int x, int y)
 		int dx = (2 - it_width) * 16 / 2;
 		int dy = (3 - it_height) * 15 / 2;
 
-		bigobs->showpck(rhand_item()->obdata_pInv(), x + 280 + dx, y + 10 + dy);
+		PCK::showpck(rhand_item()->obdata_pInv(), x + 280 + dx, y + 10 + dy);
 		if (rhand_item()->clip() != NULL)
 			printsmall(x + 304, y + 47, xcom1_color(1), rhand_item()->roundsremain());
 		if (rhand_item()->is_grenade()) {
@@ -2545,7 +2545,7 @@ void Soldier::drawinfo(int x, int y)
 		int dx = (2 - it_width) * 16 / 2;
 		int dy = (3 - it_height) * 15 / 2;
 
-		bigobs->showpck(lhand_item()->obdata_pInv(), x + 8 + dx, y + 10 + dy);
+		PCK::showpck(lhand_item()->obdata_pInv(), x + 8 + dx, y + 10 + dy);
 		if (lhand_item()->clip() != NULL)
 			printsmall(x + 33, y + 47, xcom1_color(1), lhand_item()->roundsremain());
 		if (lhand_item()->is_grenade()) {

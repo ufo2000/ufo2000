@@ -40,7 +40,7 @@ int Map::m_loftemp_num = 0;
 char *Map::m_scang_xcom = NULL;
 char *Map::m_scang_tftd = NULL;
 SPK *Map::scanbord = NULL;
-PCK *Map::smoke = NULL, *Map::cursor = NULL, *Map::floorob = NULL;
+PCK *Map::smoke = NULL, *Map::cursor = NULL;
 int Map::m_animation_cycle = 0;
 
 //			  dirs		0  1  2  3  4  5  6  7
@@ -104,7 +104,6 @@ void load_terrain_pck(const std::string &tid, TerraPCK *&terrain_pck)
 
 void Map::initpck()
 {
-	floorob  = new PCK("$(xcom)/units/floorob.pck");
 	cursor	 = new PCK("$(xcom)/ufograph/cursor.pck");
 	scanbord = new SPK("$(xcom)/ufograph/scanbord.pck");
 	smoke	 = new PCK("$(xcom)/ufograph/smoke.pck");
@@ -135,7 +134,6 @@ void Map::initpck()
 
 void Map::freepck()
 {
-	delete floorob;
 	delete cursor;
 	delete scanbord;
 	delete smoke;
@@ -258,9 +256,9 @@ int Map::loadmap(const char *fname, int _r, int _c)
 	return 1;
 }
 
-void Map::drawitem(int itype, int gx, int gy)
+void Map::drawitem(BITMAP *itype, int gx, int gy)
 {
-	floorob->showpck(itype, gx, gy);
+	PCK::showpck(itype, gx, gy);
 }
 
 

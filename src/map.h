@@ -93,7 +93,7 @@ private:
 public:
 	MinimapArea *m_minimap_area;
 
-	static PCK *floorob, *smoke;
+	static PCK *smoke;
 	static void initpck();
 	static void freepck();
     //! checks if GEODATA structure is valid
@@ -113,7 +113,7 @@ public:
 	Map(GEODATA &mapdata);
 	virtual ~Map();
 
-	void drawitem(int itype, int gx, int gy);
+	void drawitem(BITMAP *itype, int gx, int gy);
 	void draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type, int _seen);
 	void draw();
 	void draw2d();

@@ -31,8 +31,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "multiplay.h"
 #include "sound.h"
 
-PCK *bigobs;
-
 IMPLEMENT_PERSISTENCE(Item, "Item");
 
 int Item::obdata_get_int(int item_index, const char *property_name)
@@ -51,6 +49,26 @@ int Item::obdata_get_int(int item_index, const char *property_name)
 	lua_gettable(L, -2);
 	int result = 0;
 	if (lua_isnumber(L, -1)) result = (int)lua_tonumber(L, -1);
+	lua_settop(L, stack_top);
+	return result;
+}
+
+BITMAP *Item::obdata_get_bitmap(int item_index, const char *property_name)
+{
+	int stack_top = lua_gettop(L);
+    // Enter 'ItemsTable' table
+	lua_pushstring(L, "ItemsTable");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	ASSERT(lua_istable(L, -1)); 
+    // Enter [item_index] table
+	lua_pushnumber(L, item_index);
+	lua_gettable(L, -2);
+	ASSERT(lua_istable(L, -1));
+    // Get property value
+	lua_pushstring(L, property_name);
+	lua_gettable(L, -2);
+	BITMAP *result = NULL;
+	if (lua_islightuserdata(L, -1)) result = (BITMAP *)lua_topointer(L, -1);
 	lua_settop(L, stack_top);
 	return result;
 }
@@ -143,16 +161,6 @@ bool Item::get_ammo_list(const std::string item_name, std::vector<std::string> &
 		lua_pop(L, 1);
 		i++;
 	}
-}
-
-void Item::initbigobs()
-{
-	bigobs = new PCK("$(xcom)/units/bigobs.pck");
-}
-
-void Item::freebigobs()
-{
-	delete bigobs;
 }
 
 int Item::explo_range(int type)
@@ -253,19 +261,6 @@ void Item::od_info(int type, int gx, int gy, int gcol)
 	gy += 10;
 }
 
-
-Item::Item()
-{
-	m_type = 0;
-	m_x = 0; m_y = 0;
-	m_next = NULL; m_prev = NULL; m_place = NULL;
-	m_rounds = 0;
-	m_delay_time = 0;
-	m_ammo = NULL;
-
-	m_health = 100;
-}
-
 Item::Item(int _type)
 {
 	m_type = _type;
@@ -276,6 +271,11 @@ Item::Item(int _type)
 	m_ammo = NULL;
 
 	m_health = health_max();
+
+	m_pInv = obdata_get_bitmap(m_type, "pInv");
+	ASSERT(m_pInv);
+	m_pMap = obdata_get_bitmap(m_type, "pMap");
+	ASSERT(m_pMap);
 }
 
 Item::~Item()
@@ -467,6 +467,11 @@ bool Item::Read(persist::Engine &archive)
 	PersistReadObject(archive, m_prev);
 	PersistReadObject(archive, m_place);
 	PersistReadObject(archive, m_ammo);
+
+	m_pInv = obdata_get_bitmap(m_type, "pInv");
+	ASSERT(m_pInv);
+	m_pMap = obdata_get_bitmap(m_type, "pMap");
+	ASSERT(m_pMap);
 
 	return true;
 }

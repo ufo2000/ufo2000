@@ -395,6 +395,7 @@ void initmain(int argc, char *argv[])
 	luaopen_math(L);
 	LUA_REGISTER_CLASS(L, Place);
 	LUA_REGISTER_CLASS_METHOD(L, Place, add_item);
+	LUA_REGISTER_FUNCTION(L, pck_image);
 	
 #ifdef LINUX
 	// Do not silently exit on broken network connection
@@ -451,7 +452,6 @@ void initmain(int argc, char *argv[])
 
 	lua_dofile(L, DATA_DIR "/init-scripts/main.lua");
 	lua_dofile(L, DATA_DIR "/init-scripts/standard-maps.lua");
-	lua_dofile(L, DATA_DIR "/init-scripts/standard-items.lua");
 
 	for_each_file(DATA_DIR "/newmaps/*.lua", FA_RDONLY | FA_ARCH, find_lua_files_callback, 0);
 
@@ -518,6 +518,8 @@ void initmain(int argc, char *argv[])
 
 	console<<"allegro_init"<<std::endl;
 
+	lua_dofile(L, DATA_DIR "/init-scripts/standard-items.lua");
+
 	console<<"install_timer"<<std::endl;
 	install_timer();
 	console<<"install_mouse"<<std::endl;
@@ -568,9 +570,6 @@ void initmain(int argc, char *argv[])
 	console<<"initpck terrain"<<std::endl;
 	Map::initpck();
 
-	console<<"init bigobs"<<std::endl;
-	Item::initbigobs();
-
 	console<<"new console window"<<std::endl;
 	g_console = new ConsoleWindow(SCREEN_W, SCREEN_H - SCREEN2H, cfg_get_console_font());
 
@@ -619,7 +618,8 @@ void closemain()
 	delete g_console;
 	net = NULL;
 
-	Item::freebigobs();
+	free_pck_cache();
+
 	Map::freepck();
 	Soldier::freepck();
 

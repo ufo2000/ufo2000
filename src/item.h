@@ -56,14 +56,16 @@ private:
 	int  m_delay_time;
 	Item *m_ammo;
 
+	BITMAP *m_pMap;
+	BITMAP *m_pInv;
+
 public:
-	static void initbigobs();
-	static void freebigobs();
 	static int explo_range(int type);
 	static void od_info(int type, int gx, int gy, int gcol);
 
 	static int obdata_get_int(int item_index, const char *property_name);
 	static int obdata_get_array_int(int item_index, const char *property_name, int index);
+	static BITMAP *obdata_get_bitmap(int item_index, const char *property_name);
 	static std::string obdata_get_string(int item_index, const char *property_name);
 
 	static int obdata_damage(int index) { return obdata_get_int(index, "damage"); }
@@ -106,8 +108,8 @@ public:
 	int inside(int _x, int _y);
 
 	std::string name() { return obdata_name(m_type); }
-	int obdata_pMap() { return obdata_get_int(m_type, "pMap"); } // FIXME
-	int obdata_pInv() { return obdata_get_int(m_type, "pInv"); } // FIXME
+	BITMAP *obdata_pMap() { return m_pMap; }
+	BITMAP *obdata_pInv() { return m_pInv; }
 	int obdata_pHeld() { return obdata_get_int(m_type, "pHeld"); } // FIXME
 	int obdata_width() { return obdata_get_int(m_type, "width"); }
 	int obdata_height() { return obdata_get_int(m_type, "height"); }

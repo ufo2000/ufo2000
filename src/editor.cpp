@@ -228,7 +228,7 @@ void Editor::show(int NEXTPREV)
 					textout(screen2, g_small_font, "LEFT=", 272, 80, xcom1_color(66));
 					textprintf(screen2, g_small_font, 299, 80, xcom1_color(18), "%d", sel_item->roundsremain());
 					rect(screen2, 272, 88, 303, 135, xcom1_color(8));      //clip
-					bigobs->showpck(sel_item->clip()->obdata_pInv(), 272, 88 + 8);
+					PCK::showpck(sel_item->clip()->obdata_pInv(), 272, 88 + 8);
 				} else if (sel_item->obdata_isAmmo()) {
 					//textprintf(screen2, font, 272, 80, color, "%d", sel_item->rounds);
 					textout(screen2, g_small_font, "AMMO:", 272, 64, xcom1_color(66));
@@ -236,9 +236,9 @@ void Editor::show(int NEXTPREV)
 					textout(screen2, g_small_font, "LEFT=", 272, 80, xcom1_color(66));
 					textprintf(screen2, g_small_font, 299, 80, xcom1_color(18), "%d", sel_item->m_rounds);
 					rect(screen2, 272, 88, 303, 135, xcom1_color(8));      //clip
-					bigobs->showpck(sel_item->obdata_pInv(), 272, 88 + 8);
+					PCK::showpck(sel_item->obdata_pInv(), 272, 88 + 8);
 				}
-				bigobs->showpck(sel_item->obdata_pInv(),
+				PCK::showpck(sel_item->obdata_pInv(),
 				                mouse_x - sel_item->obdata_width() * 16 / 2,
 				                mouse_y - sel_item->obdata_height() * 16 / 2 + 8);
 			} else {

@@ -288,7 +288,7 @@ void Place::drawgrid(int PLACE_NUM)
 				y = gy + (height - it_height) * 15 / 2 + 5;
 			}
 
-			bigobs->showpck(t->obdata_pInv(), x, y);
+			PCK::showpck(t->obdata_pInv(), x, y);
 			if (key[KEY_LCONTROL]) {
 				t->draw_health(1, x + 1, y - 4);
 			}
