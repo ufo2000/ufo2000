@@ -800,6 +800,12 @@ void Units::execute_main(Map *map, int map_change_allowed)
 		
 		for (i = 0; i < editor->platoon()->num_of_men(); i++) {
 			if (x[i] != 0 && y[i] != 0) {
+				Soldier *ss = editor->platoon()->findman(name[i]);
+				ASSERT(ss != NULL);
+				if (ss->has_forbidden_equipment()) {
+					g_console->printf(COLOR_RED04, _("Some of the soldiers selected for battle are equipped with forbidden weapons"));
+					return;
+				}
 				num_of_men_sel++;
 				if (index_of_first == -1)
 			    	index_of_first = i;
