@@ -82,7 +82,7 @@ ifdef valgrind
 endif
 
 VPATH = src src/jpgalleg src/dumbogg src/exchndl src/agup src/lua \
-        src/jinete src/glyphkeeper src/loadpng
+        src/jinete src/glyphkeeper src/loadpng src/sqlite
 
 SRCS_LUA = lapi.c lauxlib.c lbaselib.c lcode.c ldblib.c ldebug.c      \
            ldo.c ldump.c lfunc.c lgc.c liolib.c llex.c lmathlib.c     \
@@ -98,7 +98,9 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
        scenario.cpp server_config.cpp server_gui.cpp                  \
        server_protocol.cpp server_transport.cpp skin.cpp soldier.cpp  \
        sound.cpp spk.cpp stats.cpp terrapck.cpp text.cpp units.cpp    \
-       video.cpp wind.cpp zfstream.cpp                                 \
+       video.cpp wind.cpp zfstream.cpp                                \
+       sqlite3_command.cpp sqlite3_connection.cpp                     \
+       sqlite3_internal.cpp sqlite3_reader.cpp                        \
                                                                       \
        $(SRCS_LUA)                                                    \
                                                                       \
@@ -106,7 +108,10 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
        aphoton.c awin95.c decode.c encode.c io.c jpgalleg.c
 
 SRCS_SERVER = server_config.cpp server_main.cpp server_protocol.cpp   \
-              server_transport.cpp $(SRCS_LUA)
+              server_transport.cpp $(SRCS_LUA)                        \
+              sqlite3_command.cpp sqlite3_connection.cpp              \
+              sqlite3_internal.cpp sqlite3_reader.cpp                 \
+
 
 ifdef debug
 	CFLAGS += -g
