@@ -49,10 +49,11 @@ function process_log(filename, history)
 		users[name] = {login_time = gettime(l)}
 		if not tournament_table[name] then 
 			tournament_table[name] = {
-				win_count   = 0, 
-				games_count = 0, 
-				time_online = 0,
-				battle_time = 0
+				win_count      = 0, 
+				games_started  = 0, 
+				games_finished = 0, 
+				time_online    = 0,
+				battle_time    = 0
 			}
 		end
 	end
@@ -71,10 +72,16 @@ function process_log(filename, history)
 		end
 	end
 
-	local function user_endgame(name, time_bonus)
+	local function user_startgame(name, time_bonus)
 		if tournament_table[name] then
-			tournament_table[name].games_count = tournament_table[name].games_count + 1
+			tournament_table[name].games_started = tournament_table[name].games_started + 1
 			tournament_table[name].battle_time = tournament_table[name].battle_time + time_bonus
+		end
+	end
+
+	local function user_endgame(name)
+		if tournament_table[name] then
+			tournament_table[name].games_finished = tournament_table[name].games_finished + 1
 		end
 	end
 
@@ -99,9 +106,13 @@ function process_log(filename, history)
 			if game_info.terrain then
 				terrain_table[game_info.terrain] = (terrain_table[game_info.terrain] or 0) + 1 
 			end
+			if not game_info.version_error then
+				user_startgame(game_info.p1, game_info.end_time - game_info.start_time)
+				user_startgame(game_info.p2, game_info.end_time - game_info.start_time)
+			end
 			if game_info.winner then
-				user_endgame(game_info.p1, game_info.end_time - game_info.start_time)
-				user_endgame(game_info.p2, game_info.end_time - game_info.start_time)
+				user_endgame(game_info.p1)
+				user_endgame(game_info.p2)
 				user_win(game_info.winner)
 			end
 			table.insert(history, game_info)
@@ -233,14 +244,14 @@ out:write("<html><head></head><body>")
 
 -- tournament table
 out:write("<br>")
-out:write(string.format("<b>UFO2000 players rating table (%s)</b><br>", os.date()))
+out:write(string.format("<b>UFO2000 players rating table calculated for last 7 days</b><br>"))
 out:write("<table border=1>")
 out:write("<tr><td>rank<td>name<td>games played<td>games won<td>server chat time<td>battle time<td>score\n")
 local tmp = {}
 
 -- process pager suffixes
 for name, data in tournament_table do
-	if data.games_count == 0 then 
+	if data.games_started == 0 then 
 		local _, _, stripped_name = string.find(name, "(.*) P%d+$")
 		if stripped_name and stripped_name ~= name and tournament_table[stripped_name] then
 			tournament_table[stripped_name].time_online = 
@@ -252,20 +263,19 @@ end
 
 for name, data in tournament_table do
 	-- calculate score
-	data.score = data.win_count * 10 + (data.games_count - data.win_count) * 3 + 
-		(data.time_online - data.battle_time) / (30 * 60)
-	if data.games_count > 0 then table.insert(tmp, {name, data}) end
+	data.score = data.win_count * 10 + (data.games_finished - data.win_count) * 3 + 
+		(data.time_online - data.battle_time) / (30 * 60 * data.games_finished)
+	if data.games_finished > 0 then table.insert(tmp, {name, data}) end
 end
 table.sort(tmp, function(a, b) return a[2].score > b[2].score end)
 tournament_table = tmp
 
 for index, data in tournament_table do
-	if data[2].score < 0.3 then break end
 	out:write(string.format(
 		"<tr><td>%d<td>%s<td>%d<td>%d<td>%s<td>%s<td>%d\n", 
 		index,
 		data[1], 
-		data[2].games_count,
+		data[2].games_finished,
 		data[2].win_count,
 		timestring(data[2].time_online - data[2].battle_time),
 		timestring(data[2].battle_time),
