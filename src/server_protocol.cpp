@@ -50,7 +50,7 @@ void ServerDispatch::MakeHtmlReport(std::string &html_body)
 
 	html_body = "<html><head></head><body>";
 	html_body += "<table border=1>";
-	html_body += "<tr><td>address<td>user name<td>bytes from<td>bytes to<td>max average traffic<td>time online";
+	html_body += "<tr><td>address<td>user name<td>bytes from<td>bytes to<td>max average traffic<td>time online<td>status";
 
 //	Report other players status
 	std::map<std::string, ServerClient *>::iterator it = m_clients_by_name.begin();
@@ -71,7 +71,12 @@ void ServerDispatch::MakeHtmlReport(std::string &html_body)
 		html_body += num_to_string(client->m_max_ave_traffic);
 		html_body += "<td>";
 		html_body += time_to_string(get_time_diff(client->m_connection_time, now));
-
+		html_body += "<td>";
+		if (client->get_opponent()) {
+			html_body += "playing vs " + client->get_opponent()->m_name;
+		} else {
+			html_body += "in server chat";
+		}
 		it++;
 	}
 
@@ -118,7 +123,7 @@ ServerClientUfo::~ServerClientUfo()
 
 bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 {
-	printf("received packet from socket %d {id=%d, data=%s}\n", (int)m_socket, (int)id, packet.c_str());
+	server_log("packet from %s {id=%d, data=%s}\n", m_name.c_str(), (int)id, packet.c_str());
 
 //	only SRV_LOGIN packet is accepted from not authenticated users
 	if (m_name == "" && id != SRV_LOGIN) {

@@ -263,8 +263,17 @@ void savescreen()
 	BITMAP *scr = create_bitmap(SCREEN_W, SCREEN_H);
 	blit(screen, scr, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
 
-	save_pcx("snapshot.pcx", scr, gamepal);
-	destroy_bitmap(scr);
+	int num = 1;
+	while (true) {
+		char filename[128];
+		sprintf(filename, "snapshot_%d.pcx", num);
+		if (!exists(filename)) {
+			save_pcx(filename, scr, gamepal);
+			destroy_bitmap(scr);
+			return;
+		}
+		num++;
+	}
 }
 
 #define POLY 0x8408

@@ -160,6 +160,11 @@ public:
 		resize(-1, -1);
 	}
 
+	void remove_all_users()
+	{
+		m_users.clear();
+	}
+
 	virtual void redraw_full(BITMAP *bmp, int x, int y)
 	{
 		m_x = x; m_y = y; // Hack - only has sence when bmp is screen
@@ -262,6 +267,18 @@ static initHawkNL HawkNL;
 
 //////////////////////////////////////////////////////////////////////////////
 
+static int chat_msg_color(const std::string &msg)
+{
+	int sum = 0;
+	for (unsigned int i = 0; i < msg.size(); i++) {
+		unsigned char ch = (unsigned char)msg[i];
+		sum += ch;
+		if (ch == ':') break;
+	}
+	int colors[] = { 1, 2, 3, 4, 6, 7, 8, 9, 12 };
+	return xcom1_color(colors[sum % (sizeof(colors) / sizeof(colors[0]))] * 16);
+}
+
 int connect_internet_server()
 {
 	if ((rand() % 2) == 1)
@@ -326,8 +343,9 @@ int connect_internet_server()
 				case SRV_USER_CHALLENGE_IN: users->update_user_info(packet, USER_STATUS_CHALLENGE_IN); break;
 				case SRV_USER_CHALLENGE_OUT: users->update_user_info(packet, USER_STATUS_CHALLENGE_OUT); break;
 				case SRV_USER_BUSY: users->update_user_info(packet, USER_STATUS_BUSY); break;
-				case SRV_MESSAGE: chat->printf(COLOR_GRAY, "%s", packet.c_str()); break;
+				case SRV_MESSAGE: chat->printf(chat_msg_color(packet), "%s", packet.c_str()); break;
 				case SRV_GAME_START_HOST:
+					show_mouse(NULL);
 					alert(" ", "  Game should start as host now ", " ", "    OK    ", NULL, 1, 0);
 					play_midi(NULL, 0);
 		            HOST = 1;
@@ -339,6 +357,9 @@ int connect_internet_server()
 		                closegame();
 		            }
 
+					users->remove_all_users();
+					users->update_user_info(g_server_login, USER_STATUS_SELF);
+
 					server->send_packet(SRV_ENDGAME, "");
 					if ((rand() % 2) == 1)
 						play_midi(g_net2_midi_music, 1);
@@ -347,6 +368,7 @@ int connect_internet_server()
 					lobby_init_mouse();
 					break;
 				case SRV_GAME_START_JOIN:
+					show_mouse(NULL);
 					alert(" ", "  Game should start as client now ", " ", "    OK    ", NULL, 1, 0);
 					play_midi(NULL, 0);
 		            HOST = 0;
@@ -357,6 +379,9 @@ int connect_internet_server()
 		                gameloop();
 		                closegame();
 		            }
+
+					users->remove_all_users();
+					users->update_user_info(g_server_login, USER_STATUS_SELF);
 
 					server->send_packet(SRV_ENDGAME, "");
 					if ((rand() % 2) == 1)
@@ -441,6 +466,7 @@ int connect_internet_server()
 		}
 	}
 
+	show_mouse(NULL);
 	play_midi(NULL, 0);
 	return -1;
 }
