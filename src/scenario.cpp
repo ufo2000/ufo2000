@@ -371,7 +371,7 @@ int Scenario::conditions_common ()
 {
 	int win = 0, loss = 0;
 
-	int num_l = 0, num_r = 0;
+	int points_l = 0, points_r = 0;
 
     if (platoon_remote->captain() == NULL)
 		win = 2;
@@ -381,12 +381,12 @@ int Scenario::conditions_common ()
 
 	if (rules[2] > 0) {
 		if ((turn / 2) + 1 > rules[2]) {
-	        num_l = platoon_local->num_of_men();
-	        num_r = platoon_remote->num_of_men();
+	        points_l = platoon_local->calc_platoon_cost();
+	        points_r = platoon_remote->calc_platoon_cost();
 
-	        if (num_l >= num_r)
+	        if (points_l >= points_r)
 	            win = 2;
-			else
+            if (points_l <= points_r)
 			    loss = 1;
 		}
 	}

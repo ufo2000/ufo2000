@@ -84,6 +84,7 @@ public:
 		return man->is_active() ? man : man->next_active_soldier();
 	}
 	int num_of_men() { ASSERT(size == realsize()); return size; }
+	int calc_platoon_cost();
 
 	int check_reaction_fire(Soldier *target);
 	

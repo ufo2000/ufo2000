@@ -347,6 +347,20 @@ int Platoon::realsize()
 }
 
 
+int Platoon::calc_platoon_cost()
+{
+    int n = 0;
+    Soldier *ss = man;
+    
+    while (ss != NULL) {
+        n += ss->calc_full_ammunition_cost();
+        ss = ss->next();
+    }
+
+    return n;
+}
+
+
 Place *Platoon::find_item(Item *it, int &lev, int &col, int &row)
 {
 	Soldier *ss = man;
