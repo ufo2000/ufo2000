@@ -25,6 +25,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "video.h"
 #include "editor.h"
 #include "colors.h"
+#include "text.h"
 
 char last_unit_name[1000];
 char last_map_name[1000];
@@ -292,7 +293,7 @@ void Editor::show()
     draw_sprite_h_flip(editor_bg, b5, 255, 137); // Button: Scroll-left
     text_mode(-1);
     textout(editor_bg, g_small_font, "Click-and-drop weapons from the armory to the soldier, right-click to remove", 8, 364, COLOR_WHITE); 
-    textout(editor_bg, large, "F2 Save Team   F3 Load Team   F4 Edit Attributes", 8, 380, COLOR_LT_BLUE);
+    textout(editor_bg, large, "F1 Help   F2 Save Team   F3 Load Team   F4 Edit Attributes", 8, 380, COLOR_LT_BLUE);
 
 	position_mouse(320, 200);
 	set_mouse_range(0, 0, 639, 399);
@@ -421,10 +422,7 @@ void Editor::show()
 			int c = readkey();
 			switch (c >> 8) {
 				case KEY_F1:
-					//edit_soldier();
-					if (askmenu("SAVE ARMOURY")) {
-						m_armoury->save_to_file("$(home)/armoury.lua", "Armoury");
-					}
+					help( HELP_INVENTORY );
 					break;
 				case KEY_F2:
 					//if (askmenu("SAVE DATA")) {
@@ -438,6 +436,12 @@ void Editor::show()
 					break;
 				case KEY_F4:
 					edit_soldier();   // Edit Attributes+Armor
+					break;
+				case KEY_F5:
+					//edit_soldier();
+					if (askmenu("SAVE ARMOURY")) {
+						m_armoury->save_to_file("$(home)/armoury.lua", "Armoury");
+					}
 					break;
 				case KEY_F10:
 					change_screen_mode();
@@ -778,8 +782,10 @@ void Editor::edit_soldier()
 
     while (mouse_b & 3) rest(1);
 
-	if (man->md.SkinType == S_XCOM_0 || man->md.SkinType == S_XCOM_1 ||
-			man->md.SkinType == S_XCOM_2 || man->md.SkinType == S_XCOM_3) {
+	if (man->md.SkinType == S_XCOM_0 || 
+	    man->md.SkinType == S_XCOM_1 || 
+	    man->md.SkinType == S_XCOM_2 || 
+	    man->md.SkinType == S_XCOM_3) {
 		appearance_names = appearance_names_human;
 		armour_names = armour_names_human;
 		if (man->md.Appearance >= 4) man->md.Appearance = 0;

@@ -77,7 +77,7 @@ VPATH = src src/jpgalleg src/dumbogg src/exchndl src/agup
 SRCS = bullet.cpp cell.cpp config.cpp connect.cpp dirty.cpp           \
        editor.cpp explo.cpp font.cpp icon.cpp inventory.cpp item.cpp  \
        keys.cpp main.cpp mainmenu.cpp map.cpp map_pathfind.cpp        \
-       multiplay.cpp packet.cpp pck.cpp place.cpp                     \
+       multiplay.cpp text.cpp packet.cpp pck.cpp place.cpp            \
        platoon.cpp soldier.cpp sound.cpp spk.cpp terrapck.cpp         \
        units.cpp video.cpp wind.cpp crc32.cpp persist.cpp             \
        jpgalleg.c decode.c encode.c io.c minimap.cpp                  \

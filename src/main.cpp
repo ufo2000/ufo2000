@@ -59,6 +59,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "music.h"
 #include "scenario.h"
 #include "colors.h"
+#include "text.h"
 
 #include "sysworkarounds.h"
 
@@ -565,7 +566,7 @@ void initmain(int argc, char *argv[])
 	loadini();
 	pop_config_state();
 
-	datafile = load_datafile("#");
+	datafile = load_datafile("#");   // contains palette-info, and graphics (mouse-pointer...)
 	if (datafile == NULL) {
 		datafile = load_datafile(F("$(ufo2000)/ufo2000.dat"));
 		if (datafile == NULL) {
@@ -1236,6 +1237,9 @@ void endgame_stats()
 				case KEY_DOWN:
 					resize_screen2(0, 10);
 					break;
+				case KEY_F1:
+					help( HELP_ENDGAME );
+					break;
 				case KEY_F9:
 					keyswitch(0);
 					//g_console->printf(COLOR_SYS_OK, "%s", "Keyboard changed");
@@ -1299,6 +1303,8 @@ void gameloop()
 	clear_keybuf();
 	GAMELOOP = 1;
 	ReserveTimeMode = RESERVE_FREE;
+	g_console->printf( COLOR_SYS_HEADER, "%s", "Welcome to the battlescape of UFO2000 !");
+	g_console->printf( COLOR_SYS_INFO1,  "Press F1 for help.");  // see KEY_F1
 	color1 = 0;
 
 	platoon_local->set_visibility_changed();
@@ -1467,6 +1473,9 @@ void gameloop()
 					MODE = MAP3D;
 					break;
 				case MAP3D:
+					// Todo: catch right-click on icons of the control-panel
+					// (to avoid turning the soldiers around)
+
 					if (TARGET)
 						TARGET = 0;
 					else {
@@ -1525,7 +1534,7 @@ void gameloop()
 						position_mouse(mouse_x, mouse_y + 24);
 					}
 					break;
-//				case KEY_MULTIPLY:   // ?? ToDo: Sound on/off
+//				case KEY_ASTERISK:   // ?? ToDo: Sound on/off
 //					soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
 //					break;
 				case KEY_PLUS_PAD:
@@ -1559,6 +1568,18 @@ void gameloop()
 						map->move(0, -10);
 					else
 						resize_screen2(0, 10);
+					break;
+				case KEY_F1:
+					switch (MODE) {
+						case UNIT_INFO:
+							help( HELP_STATS );
+							break;
+						case MAN:
+							help( HELP_INVENTORY );
+							break;
+						default:
+							help( HELP_BATTLESCAPE );
+					}
 					break;
 				case KEY_F2:
 					if (askmenu("SAVE GAME")) {

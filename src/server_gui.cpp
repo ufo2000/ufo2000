@@ -31,6 +31,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "music.h"
 #include "multiplay.h"
 #include "colors.h"
+#include "text.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -573,6 +574,9 @@ int connect_internet_server()
 					break;
 				case KEY_MINUS_PAD:
 					FS_DecMusicVolume();
+					break;
+				case KEY_F1:
+					help( HELP_NET );
 					break;
 				case KEY_F9:
 					keyswitch(0);

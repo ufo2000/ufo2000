@@ -34,11 +34,11 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "music.h"
 #include "scenario.h"
 #include "colors.h"
+#include "text.h"
 
 /**
  * Routines for Network-play (LAN, Internet)
  */
-
 int Connect::do_chat()
 {
 	Wind *local_win = NULL, *remote_win = NULL, *info_win = NULL;
@@ -293,7 +293,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 		g_console->printf( COLOR_SYS_FAIL, "The map is already set for this game, and cannot be changed.");
 	g_console->printf( COLOR_SYS_INFO1,  "To edit a soldier, CTRL-click on his name.");
 	g_console->printf( COLOR_SYS_INFO1,  "Left-click to place a soldier on the map, right-click to remove him.");
-	g_console->printf( COLOR_SYS_PROMPT, "When finished, click SEND, then START.  Press ESC to quit."); 
+	g_console->printf( COLOR_SYS_PROMPT, "When finished, click SEND, then START.  Press ESC to quit, F1 for help."); 
 
 	while (!DONE) {
 
@@ -341,7 +341,6 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 			//if (remote.SEND)
 			// draw_pd_info(pd_remote, remote.gx, 170);
 
-
 			draw_sprite(screen2, mouser, mouse_x, mouse_y);
 			blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
 
@@ -385,6 +384,9 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 
 			switch (scancode) {
 				case KEY_F1:
+					help( HELP_PLANNER );
+					break;
+				case KEY_F5:
 					if (FLAGS & F_RAWMESSAGES) {
 						FLAGS &= ~F_RAWMESSAGES;
 					} else {
@@ -394,14 +396,14 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 				case KEY_F9:
 					keyswitch(0);
 					break;
+				case KEY_F10:
+					change_screen_mode();
+					break;
 				case KEY_PLUS_PAD:
 					FS_IncMusicVolume();
 					break;
 				case KEY_MINUS_PAD:
 					FS_DecMusicVolume();
-					break;
-				case KEY_F10:
-					change_screen_mode();
 					break;
 				case KEY_ESC:
 					if (askmenu("EXIT GAME")) {
@@ -451,3 +453,4 @@ void Connect::draw_pd_info(void *_pd, int gx, int gy)
 	}
 	textprintf(screen2, g_small_font, gx, gy + 10, COLOR_WHITE, "total men points=%d", points);
 }
+
