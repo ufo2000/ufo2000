@@ -23,6 +23,8 @@ local games_history = {}
 local os_table = {}
 -- table of terrain types used in games
 local terrain_table = {}
+-- table of scenario types used in games
+local scenario_table = {}
 -- scores and other information for each player
 local tournament_table = {}
 
@@ -108,6 +110,9 @@ function process_log(filename, history)
 			if game_info.terrain then
 				terrain_table[game_info.terrain] = (terrain_table[game_info.terrain] or 0) + 1 
 			end
+			if game_info.scenario then
+				scenario_table[game_info.scenario] = (scenario_table[game_info.scenario] or 0) + 1 
+			end
 			if not game_info.version_error then
 				user_startgame(game_info.p1, game_info.end_time - game_info.start_time)
 				user_startgame(game_info.p2, game_info.end_time - game_info.start_time)
@@ -163,6 +168,9 @@ function process_log(filename, history)
 				elseif id == "terrain" then
 					-- handle terrain type
 					if games[p] then games[p].terrain = value end
+				elseif id == "scenario" then
+					-- handle scenario type
+					if games[p] then games[p].scenario = value end
 				elseif id == "result" and value == "victory" then
 					-- detect who is the winner in a battle
 					if games[p] then games[p].winner = p end
@@ -246,7 +254,18 @@ function timestring(x)
 	return result .. seconds .. "s"
 end
 
-out:write("<html><head></head><body>")
+out:write([[
+<html><head><style type="text/css" media=screen><!--
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  font-family: arial;
+  font-size: small;
+  white-space: nowrap;
+  background: #F0F0F0;
+}
+--></style><meta http-equiv="content-type" content="text/html; charset=UTF-8">
+</head><body>]])
 
 -- tournament table
 out:write("<br>")
@@ -293,7 +312,7 @@ out:write("</table>")
 out:write("<br>")
 out:write("<b>UFO2000 played games statistics table</b><br>")
 out:write("<table border=1>")
-out:write("<tr><td>version<td>player 1<td>player 2<td>terrain type<td>winner<td>time<td>comment\n")
+out:write("<tr><td>version<td>player 1<td>player 2<td>terrain type<td>scenario<td>winner<td>time<td>comment\n")
 for k, game_info in ipairs(games_history) do
 	local attrib = ""
 	if game_info.version_error then attrib = attrib .. "ver<br>" end
@@ -303,11 +322,12 @@ for k, game_info in ipairs(games_history) do
 	if game_info.connection_error then attrib = attrib .. "connection lost<br>" end
 	if not string.find(attrib, "^ver") then
 		out:write(string.format(
-			"<tr><td>%d<td>%s<td>%s<td>%s<td>%s<td>%s<td>%s\n", 
+			"<tr><td>%d<td>%s<td>%s<td>%s<td>%s<td>%s<td>%s<td>%s\n", 
 			game_info.version, 
 			game_info.p1,
 			game_info.p2,
 			game_info.terrain or "-",
+			game_info.scenario or "-",
 			game_info.winner or "-",
 			timestring(os.difftime(game_info.end_time, game_info.start_time)), 
 			attrib))
@@ -329,6 +349,24 @@ table.sort(terrain_table, function (a, b) return a[2] > b[2] end)
 out:write("<table border=1>")
 out:write("<tr><td>terrain type<td>number of times used<td>percent share\n") 
 for k, v in ipairs(terrain_table) do
+	out:write(string.format("<tr><td>%s<td>%d<td>%.1f%%", v[1], v[2], v[2] / count * 100))
+end
+out:write("</table>")
+
+-- display scenario types popularity statistics
+out:write("<br>")
+out:write("<b>Scenario types statistics table</b><br>")
+local count = 0
+local tmp = {} 
+for k, v in scenario_table do 
+	count = count + v 
+	table.insert(tmp, {k, v}) 
+end 
+scenario_table = tmp
+table.sort(scenario_table, function (a, b) return a[2] > b[2] end)
+out:write("<table border=1>")
+out:write("<tr><td>scenario type<td>number of times used<td>percent share\n") 
+for k, v in ipairs(scenario_table) do
 	out:write(string.format("<tr><td>%s<td>%d<td>%.1f%%", v[1], v[2], v[2] / count * 100))
 end
 out:write("</table>")

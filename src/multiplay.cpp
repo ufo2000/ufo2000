@@ -1323,6 +1323,7 @@ void Net::send_scenario()
 
 	send(pkt.str(), pkt.str_len());
 	
+	net->send_debug_message("scenario:%s", scenario->name[scenario->type]);
 	//local.START = 0;
 	//remote.START = 0;
 }
