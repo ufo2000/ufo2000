@@ -39,6 +39,8 @@ private:
 
 	int m_smog_state;
 	int m_smog_time;
+ 	int m_fire_state;
+ 	int m_fire_time;
 
 	int m_pfval;      //path finder internal
 	int MOUSE;

@@ -44,6 +44,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "video.h"
 #include "keys.h"
 #include "crc32.h"
+#include "pfxopen.h"
 #ifdef WIN32
 #include <allegro/platform/aintwin.h>
 #include "../resource.h"
@@ -157,17 +158,17 @@ void restartgame()
 	p1 = new Platoon(1111, &pd1);
 	p2 = new Platoon(2222, &pd2);
 
-	int fh = open("cur_map.dat", O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
+	int fh = OPEN_GTEMP("cur_map.dat", O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
 	assert(fh != -1);
 	write(fh, &mapdata, sizeof(mapdata));
 	close(fh);
 
-	fh = open("cur_p1.dat", O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
+	fh = OPEN_GTEMP("cur_p1.dat", O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
 	assert(fh != -1);
 	write(fh, &pd1, sizeof(pd1));
 	close(fh);
 
-	fh = open("cur_p2.dat", O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
+	fh = OPEN_GTEMP("cur_p2.dat", O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
 	assert(fh != -1);
 	write(fh, &pd2, sizeof(pd2));
 	close(fh);
@@ -313,13 +314,32 @@ void initmain(int argc, char *argv[])
 	if (get_config_int("Flags", "F_SAFEVIDEO", 1)) FLAGS |= F_SAFEVIDEO;      // enable if you experience bugs with video
 	if (get_config_int("Flags", "F_SELECTENEMY", 1)) FLAGS |= F_SELECTENEMY;  // draw blue arrows and numbers above seen enemies
 	if (get_config_int("Flags", "F_FILECHECK", 1)) FLAGS |= F_FILECHECK;      // check for datafiles integrity
+	if (get_config_int("Flags", "F_LARGEFONT", 1)) FLAGS |= F_LARGEFONT;      // use big ufo font for dialogs, console and stuff.
+	origfiles_prefix = get_config_string("Paths",  "origfiles", NULL); // original ufo files here
+	ownfiles_prefix  = get_config_string("Paths",  "ownfiles",  NULL); // own data files here (ufo2000.dat & bitmaps)
+	gametemp_prefix  = get_config_string("Paths",  "gametemp",  NULL); // game temporary files here (may span launches)
+	runtemp_prefix	 = get_config_string("Paths",  "runtemp",   NULL); // runtime temporary files here (get deleted by the time of exit)
+	
+	if (origfiles_prefix != NULL) {
+		origfiles_prefix = ustrdup(origfiles_prefix);
+	}
+	if (ownfiles_prefix != NULL)  {
+		ownfiles_prefix = ustrdup(ownfiles_prefix);
+	}
+	if (gametemp_prefix != NULL) {
+		gametemp_prefix = ustrdup(gametemp_prefix);
+	}
+	if (runtemp_prefix != NULL) {
+		runtemp_prefix = ustrdup(runtemp_prefix);
+	}
+	
 	pop_config_state();
-
+	
 	if (FLAGS & F_FILECHECK) check_data_files();
 
 	datafile = load_datafile("#");
 	if (datafile == NULL) {
-		datafile = load_datafile("ufo2000.dat");
+		datafile = LOADDATA_OWN("ufo2000.dat");
 		if (datafile == NULL) {
 			allegro_exit();
 			fprintf(stderr, "Error loading datafile!\n\n");
@@ -334,7 +354,7 @@ void initmain(int argc, char *argv[])
 		read(fh, &mapdata, sizeof(mapdata));
 		close(fh);
 	} else {
-		int fh = open("geodata.dat", O_RDONLY | O_BINARY);
+		int fh = OPEN_GTEMP("geodata.dat", O_RDONLY | O_BINARY);
 		assert(fh != -1);
 		read(fh, &mapdata, sizeof(mapdata));
 		close(fh);
@@ -490,7 +510,7 @@ int build_crc()
 	p2->eot_save(buf, buf_size);
 	map->eot_save(buf, buf_size);
 
-	int fh = open("eot_save.txt", O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
+	int fh = OPEN_GTEMP("eot_save.txt", O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
 	assert(fh != -1);
 	buf_size = write(fh, buf, buf_size);
 	close(fh);
@@ -1069,17 +1089,17 @@ void faststart()
 
 	//restartgame();
 
-	int fh = open("cur_map.dat", O_RDONLY | O_BINARY);
+	int fh = OPEN_GTEMP("cur_map.dat", O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	read(fh, &mapdata, sizeof(mapdata));
 	close(fh);
 
-	fh = open("cur_p1.dat", O_RDONLY | O_BINARY);
+	fh = OPEN_GTEMP("cur_p1.dat", O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	read(fh, &pd1, sizeof(pd1));
 	close(fh);
 
-	fh = open("cur_p2.dat", O_RDONLY | O_BINARY);
+	fh = OPEN_GTEMP("cur_p2.dat", O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	read(fh, &pd2, sizeof(pd2));
 	close(fh);

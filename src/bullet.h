@@ -59,6 +59,8 @@ public:
 
 	void detonate();
 	int explodable();
+	int incendiary();
+
 
 	void showline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d);
 	void showthrow(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d);

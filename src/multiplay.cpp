@@ -37,6 +37,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "netdplay.h"
 #include "packet.h"
 #include "units.h"
+#include "pfxopen.h"
 
 void inithotseatgame()
 {
@@ -61,7 +62,7 @@ Net::Net()
 	SEND = 1;
 	queue = new BQ(1000);
 	connect = new Connect();
-	flog = fopen("ufo2000.log", "at");
+	flog = FOPEN_RTEMP("ufo2000.log", "at");
 	log("_____________Net()");
 }
 
@@ -1353,7 +1354,7 @@ void Net::replay_load(char *fn)
 	REPLAY = 0;
 	replay_cur = 0;
 
-	int fh = open(fn, O_RDONLY | O_BINARY);
+	int fh = OPEN_GTEMP(fn, O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	if (fh == -1)
 		return ;

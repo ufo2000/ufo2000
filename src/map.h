@@ -107,10 +107,11 @@ public:
 	void step();
 	void smoker();
 	int explode(int lev, int col, int row, int type, int range, int damage);
-	void explocell(int lev, int col, int row, int damage);
-
+	void explocell(int lev, int col, int row, int damage, int type);
+	void check_mine(int lev, int col, int row);
 	int stopWALK(int oz, int ox, int oy, int part);
 	int stopDOOR(int oz, int ox, int oy, int part);
+	int passable(int oz, int ox, int oy);
 	int passable(int oz, int ox, int oy, int dir);
 
 	int stopLOS(int oz, int ox, int oy, int part);
@@ -234,6 +235,37 @@ public:
 	{
 		platoon_local->set_seen(lev, col, row, value);
 	}
+
+ 	int fire_state(int lev, int col, int row)
+ 	{
+ 		return m_cell[lev][col][row]->m_fire_state; 
+ 	}
+ 	void set_fire_state(int lev, int col, int row, int value)
+ 	{
+ 		m_cell[lev][col][row]->m_fire_state = value; 
+ 	}
+ 	void dec_fire_state(int lev, int col, int row)
+ 	{
+ 		m_cell[lev][col][row]->m_fire_state--;
+ 	}
+ 	void inc_fire_state(int lev, int col, int row) 
+ 	{
+ 		m_cell[lev][col][row]->m_fire_state++; 
+ 	}
+ 
+ 	int fire_time(int lev, int col, int row) 
+ 	{
+ 		return m_cell[lev][col][row]->m_fire_time; 
+ 	}
+ 	void set_fire_time(int lev, int col, int row, int value)
+ 	{
+ 		m_cell[lev][col][row]->m_fire_time = value; 
+ 	}
+ 	void dec_fire_time(int lev, int col, int row) 
+ 	{ 
+ 		m_cell[lev][col][row]->m_fire_time--;
+ 	}
+
 
 	int smog_state(int lev, int col, int row)
 	{

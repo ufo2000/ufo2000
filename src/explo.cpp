@@ -100,11 +100,10 @@ int Explosive::on_hand(Item *it)
 	return ((iplace == P_ARM_RIGHT) || (iplace == P_ARM_LEFT));
 }
 
-void Explosive::step(int crc)
-{ // -1 if local
-	for (int i = 0; i < EXPLOITEMS; i++)
+void Explosive::step(int crc) { // -1 if local
+	for(int i=0;i<EXPLOITEMS;i++)
 		if (item[i] != NULL) {
-			if (!item[i]->is_explo()) { // small grenade
+			if (!item[i]->is_explo()) {// small grenade
 				if (on_hand(item[i]))
 					continue;
 			}
@@ -112,7 +111,7 @@ void Explosive::step(int crc)
 			delaytime[i]--;
 			item[i]->set_delay_time(delaytime[i]);
 
-			if (delaytime[i] <= 0) {
+			if ((delaytime[i] <= 0)&&(item[i]->type!=PROXIMITY_GRENADE)) {
 				if (crc == -1)
 					detonate(item[i]);
 				else
@@ -121,13 +120,13 @@ void Explosive::step(int crc)
 		}
 }
 
-void Explosive::check_for_detonation(Item *it)
-{
-	for (int i = 0; i < EXPLOITEMS; i++)
+
+void Explosive::check_for_detonation(Item *it) {
+	for(int i=0;i<EXPLOITEMS;i++)
 		if (item[i] == it) {
-			if (delaytime[i] == 1)
+			if ((delaytime[i] == 1)&&(item[i]->type!=PROXIMITY_GRENADE))
 				detonate(it);
-			return ;
+			return;
 		}
 }
 

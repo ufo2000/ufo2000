@@ -27,6 +27,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "video.h"
 #include "dirty.h"
 #include "about.h"
+#include "pfxopen.h"
 
 char About::aboutstr[100][80] = {
 	"UFO 2000",
@@ -49,7 +50,7 @@ About::About()
 
 int About::load(char *fname)
 {
-	FILE * f = fopen(fname, "rt");
+	FILE * f = FOPEN_OWN(fname, "rt");
 	if (f == NULL) return 0;
 	aboutstr_size = 0;
 	while (fscanf(f, "%[^\n]\n", aboutstr[aboutstr_size]) == 1) {
@@ -70,7 +71,7 @@ void About::transinfo()
 	install_int_ex(drawit_timer, BPS_TO_TIMER(20));      //ticks each second
 
 	RGB pal[PAL_SIZE];
-	BITMAP *pict = load_bitmap("ufointro/pict4.lbm", pal);
+	BITMAP *pict = LOADBITMAP_ORIG("ufointro/pict4.lbm", pal);
 	set_palette(pal);
 	BITMAP *back = create_bitmap(SCREEN_W, SCREEN_H);
 	stretch_blit(pict, back, 0, 0, 320, 200, 0, 0, SCREEN_W, SCREEN_H);

@@ -37,6 +37,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #endif
 #include "wind.h"
 #include "../ufo2000.h"
+#include "pfxopen.h"
 
 unsigned long FLAGS = 0;
 /*
@@ -118,7 +119,10 @@ void initvideo()
 	font = (FONT*)datafile[DAT_FONT_CYR].dat;
 	create_small_font();
 	create_large_font();
-
+	
+	if (FLAGS & F_LARGEFONT) {
+		font = large;
+	}
 }
 
 void closevideo()
@@ -237,7 +241,7 @@ void reset_video()
 
 void initpal(char *fname)
 {
-	int fh = open(fname, O_RDONLY | O_BINARY);
+	int fh = OPEN_ORIG(fname, O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	palettes_size = filelength(fh);
 

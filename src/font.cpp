@@ -26,6 +26,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <sys/stat.h>
 #include <allegro.h>
 #include <allegro/internal/aintern.h>
+#include "pfxopen.h"
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <winalleg.h>
@@ -37,6 +38,7 @@ static int small_w[256];
 
 FONT *large;
 static int large_w[256];
+
 
 static void calc_glyph_width(AL_CONST FONT *f, int *width)
 {
@@ -120,6 +122,17 @@ static int large_length(AL_CONST FONT *f, AL_CONST char *text)
 	return w + 1;
 }
 
+static int common_font_height(AL_CONST FONT *f) {
+	return f->height;
+}
+
+static int small_char_length(AL_CONST FONT *f, int ch) {
+	return small_w[ch];
+}
+
+static int large_char_length(AL_CONST FONT *f, int ch) {
+	return large_w[ch];
+}
 
 static void small_render(AL_CONST FONT *f, AL_CONST char *text, int fg, int bg, BITMAP *bmp, int x, int y)
 {
@@ -179,6 +192,13 @@ static void large_render(AL_CONST FONT *f, AL_CONST char *text, int fg, int bg, 
 	_textmode = old_textmode;
 }
 
+int common_render_char(AL_CONST FONT *f, int ch, int fg, int bg, BITMAP *bmp, int x, int y) {
+	printf("\ncommon_render_char() called! (not implemented)");
+	printf("\n parameters: f = %p ch = %c fg = %d bg = %d bmp = %p x = %d y =%d",
+		f,ch,fg,bg,bmp,x,y);
+	printf("\n    (large = %p, small = %p", large, small);
+	return 0;
+}
 
 static void destroy_glyph(FONT *f)
 {
@@ -200,21 +220,43 @@ static void destroy_glyph(FONT *f)
 	free(f);
 }
 
+/*
+
+As of allegro 4.1.3 this internal struct must be fiiled out something like that: 
+
+typedef struct FONT_VTABLE
+{
+   AL_METHOD(int, font_height, (AL_CONST FONT *f));
+   AL_METHOD(int, char_length, (AL_CONST FONT *f, int ch));
+   AL_METHOD(int, text_length, (AL_CONST FONT *f, AL_CONST char *text));
+   AL_METHOD(int, render_char, (AL_CONST FONT *f, int ch, int fg, int bg, BITMAP *bmp, int x, int y));
+   AL_METHOD(void, render, (AL_CONST FONT *f, AL_CONST char *text, int fg, int bg, BITMAP *bmp, int x, int y));
+   AL_METHOD(void, destroy, (FONT *f));
+} FONT_VTABLE;
+
+
+-- 
+
+lxnt
+
+*/
+
+
 
 static FONT_VTABLE font_vtable_small = {
-                                           NULL,
-                                           NULL,
+                                           common_font_height,
+                                           small_char_length,
                                            small_length,
-                                           NULL,
+                                           common_render_char,
                                            small_render,
                                            destroy_glyph
                                        };
 
 static FONT_VTABLE font_vtable_large = {
-                                           NULL,
-                                           NULL,
+                                           common_font_height,
+                                           large_char_length,
                                            large_length,
-                                           NULL,
+                                           common_render_char,
                                            large_render,
                                            destroy_glyph
                                        };
@@ -225,7 +267,7 @@ static FONT_COLOR_DATA *fcd_small, *fcd_large;
 
 void create_small_font()
 {
-	int fh = open("geodata/smallset.dat", O_RDONLY | O_BINARY);
+	int fh = OPEN_ORIG("geodata/smallset.dat", O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	int fl = filelength(fh);
 	char *dat = new char[fl];
@@ -274,7 +316,7 @@ void free_small_font()
 
 void create_large_font()
 {
-	int fh = open("geodata/biglets.dat", O_RDONLY | O_BINARY);
+	int fh = OPEN_ORIG("geodata/biglets.dat", O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	int fl = filelength(fh);
 	char *dat = new char[fl];

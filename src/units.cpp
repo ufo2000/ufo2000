@@ -312,7 +312,7 @@ void Units::draw_text()
 	textout_centre(screen2, font, "START", gx + 5 * 8, SCREEN2H - 16, color);
 }
 
-void Units::execute(int map_change_allowed)
+void Units::execute(Map *map, int map_change_allowed)
 {
 	if (selected != -1) {
 		int mx = mouse_x;
@@ -329,6 +329,8 @@ void Units::execute(int map_change_allowed)
 					return ;
 			}
 		}
+
+		if (!map->passable(0, c, r)) return;
 
 		for (int s = 0; s < size; s++) {
 			if (s == selected)
@@ -426,7 +428,7 @@ void Units::execute(int map_change_allowed)
 			GEODATA gd;
 			memset(&gd, 0, sizeof(gd));
 
-			int fh = open(path, O_RDONLY | O_BINARY);
+			int fh = open(path, O_RDONLY | O_BINARY); 
 			assert(fh != -1);
 			read(fh, &gd, sizeof(gd));
 			close(fh);

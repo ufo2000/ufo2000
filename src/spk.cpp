@@ -26,6 +26,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <fcntl.h>
 #include "video.h"
 #include "spk.h"
+#include "pfxopen.h"
 
 SPK::SPK()
 {
@@ -49,7 +50,7 @@ SPK::~SPK()
 
 void SPK::load(const char *fname)
 {
-	int fh = open(fname, O_RDONLY | O_BINARY);
+	int fh = OPEN_ORIG(fname, O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	m_datlen = filelength(fh);
 	if (m_dat != NULL) delete [] m_dat;

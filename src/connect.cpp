@@ -536,7 +536,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 		{
 			mouse_leftr = 0;
 			CHANGE = 1;
-			local.execute(map_change_allowed);
+			local.execute(map, map_change_allowed);
 
 			//	"START"
 			if (mouse_inside(local.gx + 5 * 8 - 20, SCREEN2H - 20, local.gx + 5 * 8 + 20, SCREEN2H - 5))

@@ -27,6 +27,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "../ufo2000.h"
 #include "mainmenu.h"
 #include "version.h"
+#include "pfxopen.h"
 
 int BLOODYMENU = 1;
 static int old_mouse_x = -1, old_mouse_y = -1;
@@ -51,7 +52,7 @@ static Word *now;
 void initmainmenu2()
 {
 	//triton = load_bitmap("triton.pcx", menupal);
-	menuback = load_bitmap("ufointro/pict2.lbm", menupal);
+	menuback = LOADBITMAP_ORIG("ufointro/pict2.lbm", menupal);
 	menuscr = create_bitmap(320, 200);
 	//set_display_switch_callback(SWITCH_OUT, cb);
 }
@@ -63,7 +64,7 @@ void initmainmenu()
 		return ;
 	}
 
-	menuback = load_bitmap("ufointro/pict5.lbm", menupal);
+	menuback = LOADBITMAP_ORIG("ufointro/pict5.lbm", menupal);
 	create_rgb_table(&rgb_table, menupal, NULL);
 	rgb_map = &rgb_table;
 	create_light_table(&light_table, menupal, 0, 0, 0, NULL);
@@ -196,6 +197,7 @@ static __dpmi_free_mem_info dpmi_free_mem;
 
 int do_mainmenu2()
 {
+	
 	static char dstr[7][100];      /////////////////////////////
 #ifdef DJGPP
 	int DY = 100;
@@ -215,6 +217,8 @@ int do_mainmenu2()
 	    { d_baton_proc, DX + 41, DY,       237, 25, FG,  BG,  0,    D_EXIT, 0,   0,   (void *)dstr[6], NULL, NULL},
 	    { NULL,         0,       0,        0,   0,  0,   0,   0,    0,      0,   0,   NULL,            NULL, NULL}
 	};
+	
+	
 
 #ifdef DJGPP
 	sprintf(dstr[6], "play by modem");
@@ -235,20 +239,25 @@ int do_mainmenu2()
 #else
 	the_dialog[6].proc = NULL;
 	sprintf(dstr[MAINMENU_LOADGAME], "load saved game");
-	sprintf(dstr[MAINMENU_TCPIP],    "tcp/ip");
-	sprintf(dstr[MAINMENU_HOTSEAT],  "hotseat");
-	sprintf(dstr[MAINMENU_EDITOR],   "editor");
-	sprintf(dstr[MAINMENU_ABOUT],    "about");
-	sprintf(dstr[MAINMENU_QUIT],     "quit");
+	sprintf(dstr[MAINMENU_TCPIP],    "tcp/ip"); 
+	sprintf(dstr[MAINMENU_HOTSEAT],  "hotseat"); 
+	sprintf(dstr[MAINMENU_EDITOR],   "editor"); 
+	sprintf(dstr[MAINMENU_ABOUT],    "about"); 
+	sprintf(dstr[MAINMENU_QUIT],     "quit"); 
 #endif
 	//BITMAP *mouser2 = load_bitmap("mouse2.bmp",menupal);
 	RGB *menupal = (RGB *)datafile[DAT_MENUPAL].dat;
 	BITMAP *mouser2 = (BITMAP*)datafile[DAT_MOUSE2].dat;
+//	DATAFILE *dfp = find_datafile_object(datafile, "DAT_MENUPAL");
+//	RGB *menupal = (RGB *)(dfp->dat);
+//	dfp = find_datafile_object(datafile, "DAT_MOUSE2");
+//	BITMAP *mouser2 = (BITMAP*)(dfp->dat);
 
 	set_mouse_sprite(mouser2);
 	set_palette(menupal);
 	set_mouse_speed(1, 1);
 	set_mouse_range(0, 0, 639, 399);
+	
 	if (old_mouse_x != -1)
 		position_mouse(old_mouse_x, old_mouse_y);
 	else
@@ -256,6 +265,8 @@ int do_mainmenu2()
 	//position_mouse(320, 200);
 
 	clear(menuscr);
+	assert(menuback != NULL);
+	assert(menuscr != NULL);
 	blit(menuback, menuscr, 0, 0, 0, 0, menuback->w, menuback->h);
 	stretch_blit(menuscr, screen, 0, 0, 320, 200, 0, 0, 640, 400);
 
@@ -274,11 +285,13 @@ int do_mainmenu2()
 #endif
 
 	int v = do_dialog(the_dialog, -1);
+	
 	old_mouse_x = mouse_x;
 	old_mouse_y = mouse_y;
 
 	fade_out(10);
 	clear(screen);
+	
 	//set_mouse_sprite(NULL);
 	//destroy_bitmap(mouser2);
 	return v;

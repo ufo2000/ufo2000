@@ -871,8 +871,8 @@ void Soldier::calc_visible_cells()
 	}
 }
 
-int Soldier::move(int ISLOCAL)
-{
+int Soldier::move(int ISLOCAL) {
+	map->check_mine(z,x,y);
 	if ((z > 0) && map->mcd(z, x, y, 0)->No_Floor) {
 		if (!map->isStairs(z - 1, x, y)) {
 			map->set_man(z, x, y, NULL);

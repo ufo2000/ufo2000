@@ -30,6 +30,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "map.h"
 #include "multiplay.h"
 #include "platoon.h"
+#include "pfxopen.h"
 
 #define SCANGSIZE 4
 
@@ -57,14 +58,14 @@ void Map::initpck()
 	scanbord = new SPK("ufograph/scanbord.pck");
 	smoke	 = new PCK("ufograph/smoke.pck");
 
-	int fh = open("geodata/scang.dat", O_RDONLY | O_BINARY);
+	int fh = OPEN_ORIG("geodata/scang.dat", O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	int fl = filelength(fh);
 	m_scang = new char[fl];
 	read(fh, m_scang, fl);
 	close(fh);
 
-	fh = open("geodata/loftemps.dat", O_RDONLY | O_BINARY);
+	fh = OPEN_ORIG("geodata/loftemps.dat", O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	fl = filelength(fh);
 	m_loftemp = new unsigned short[fl / 2];
@@ -211,7 +212,7 @@ void Map::loadmaps(unsigned char *_map)
 int Map::loadmap(const char *fname, int _r, int _c)
 {
 	char mbuf[10000];
-	int fh = open(fname, O_RDONLY | O_BINARY);
+	int fh = OPEN_ORIG(fname, O_RDONLY | O_BINARY);
 	if (fh == -1) return 0;
 	read(fh, mbuf, 10000);
 	close(fh);
@@ -351,14 +352,15 @@ void Map::draw()
 					}
 
 					if (seen(lev, col, row)) {
-						int s = smog_state(lev, col, row);
-						if (s > 0) {
-							if (s <= 8)
-								smoke->showpck(8 - s, sx, sy);
-							else
-								smoke->showpck(s - 1, sx, sy);
-						}
-					}
+ 						int s = fire_state(lev, col, row);
+ 						if (fire_time(lev,col,row)>0) {
+ 							smoke->showpck(8-s, sx, sy);
+ 						} else {
+ 							s = smog_state(lev, col, row);
+ 							if (smog_time(lev,col,row)>0)
+ 								smoke->showpck(s-1, sx, sy);
+ 						}
+ 					}
 				}
 			}
 		}
@@ -370,13 +372,33 @@ void Map::draw()
 
 void Map::step()
 {
-	for (int k = 0; k < level; k++)
-		for (int i = 0; i < 10 * width; i++)
-			for (int j = 0; j < 10 * height; j++)
-				if (smog_time(k, i, j)) {
-					dec_smog_time(k, i, j);
-					if (smog_time(k, i, j) <= 0)
-						set_smog_state(k, i, j, 0);
+ 	for(int k=0; k<level;k++)
+ 		for(int i=0; i<10*width;i++)
+ 			for(int j=0; j<10*height;j++)
+ 				if (fire_time(k,i,j)>0) {
+ 					dec_fire_time(k,i,j);
+ 					for (int h=0; h<4; h++)
+ 						damage_cell_part(k,i,j,h,PISTOL_CLIP);
+ 					if (man(k, i, j) != NULL)
+ 						man(k, i, j)->hit(10);
+ 					if (fire_time(k,i,j) > 1)
+ 						set_fire_state(k,i,j,1);
+ 					if (fire_time(k,i,j) == 1)
+ 						set_fire_state(k,i,j,5);
+ 					if (fire_time(k,i,j) <= 0)
+ 						set_fire_state(k,i,j,0);
+ 				} else {
+ 					if (smog_time(k, i, j)>0) {
+ 						dec_smog_time(k, i, j);
+ 						if (smog_time(k, i, j) > 2)
+ 							set_smog_state(k, i, j, 17);
+ 						if (smog_time(k, i, j) == 2)
+ 							set_smog_state(k, i, j, 13);
+ 						if (smog_time(k, i, j) == 1)
+ 							set_smog_state(k, i, j, 9);
+ 						if (smog_time(k, i, j) == 0)
+ 							set_smog_state(k, i, j, 0);
+ 					}
 				}
 }
 
@@ -839,11 +861,16 @@ int Map::stopDOOR(int oz, int ox, int oy, int part)
 	return 0;
 }
 
+int Map::passable(int oz, int ox, int oy)
+{
+	if (stopWALK(oz, ox, oy, 0) || stopWALK(oz, ox, oy, 3))
+		return 0;
+		return 1;
+}
 
 int Map::passable(int oz, int ox, int oy, int dir)
 {
-	if (stopWALK(oz, ox, oy, 0) || stopWALK(oz, ox, oy, 3))
-		return 1;
+	if (!passable(oz, ox, oy)) return 0;
 
 	switch (dir) {
 		case DIR_EAST:
@@ -1399,7 +1426,7 @@ int Map::explode(int lev, int col, int row, int type, int maxrange, int damage)
 
 				//dam -= (damage / (range+range/2)) * l;
 				//if (dam < 1) dam = 1;
-				explocell(nz, nx, ny, dam);
+				explocell(nz, nx, ny, dam, type);
 			}
 		}
 	}
@@ -1408,19 +1435,56 @@ int Map::explode(int lev, int col, int row, int type, int maxrange, int damage)
 	return 1;
 }
 
-void Map::explocell(int lev, int col, int row, int damage)
+void Map::check_mine(int lev, int col, int row) {
+char *field = new char[level * width*10 * height*10];
+	memset(field, 0, level * width*10 * height*10);
+
+	for(int ll=lev-1; ll<=lev+1; ll++) {
+		if ((ll < 0) || (ll >= level))
+			continue;
+		int range = 2 - abs(lev-ll);
+		if (range <= 0)
+			continue;
+		for(float te=-PI; te < PI; te += TE_STEP) {
+			for(int l=0; l<range; l++) {
+				int nz, nx, ny;
+				nz = ll;
+				nx = col + (int)floor(l * cos(te)+0.5);
+				ny = row + (int)floor(l * sin(te)+0.5);
+				if (!cell_inside(nz, nx, ny))
+					break;
+				if (field[nz*width*10*height*10 + nx*width*10 + ny] != 0)
+					continue;
+				field[nz*width*10*height*10 + nx*width*10 + ny] = 1;
+				place(nz, nx, ny)->check_mine();
+			}
+		}
+	}
+	delete (field);
+}
+
+void Map::explocell(int lev, int col, int row, int damage, int type)
 {
 	set_smog_state(lev, col, row, 8);
 	set_smog_time(lev, col, row, 0);
 
-	for (int i = 0; i < 4; i++) {
-		if (mcd(lev, col, row, i)->Fuel > smog_time(lev, col, row))
-			set_smog_time(lev, col, row, mcd(lev, col, row, i)->Fuel);
+ 	for(int i=0; i<4; i++) {
+ 		if (mcd(lev, col, row, i)->Fuel > smog_time(lev, col, row)) {
+ 			set_smog_time(lev, col, row, mcd(lev, col, row, i)->Fuel);
+ 			if (mcd(lev, col, row, i)->Armour < damage) {
 
-		if (mcd(lev, col, row, i)->Armour < damage) {
-			destroy_cell_part(lev, col, row, i);
-		}
-	}
+ 				if ((type==INCENDIARY_ROCKET)|(type==AUTO_CANNON_I_AMMO)|(type==CANNON_I_AMMO)) {
+ 					set_fire_time(lev, col, row, mcd(lev, col, row, i)->Fuel);
+ 					set_fire_state(lev, col, row, 4);
+ 				}
+ 			}	
+ 		} else {
+ 			set_smog_time(lev,col,row,2);
+ 		}
+ 		if ((mcd(lev, col, row, i)->Armour < damage)&&(type!=STUN_MISSILE)) {
+ 			destroy_cell_part(lev, col, row, i);
+ 		}
+ 	}
 	//place(_z, _x, _y)->damage_items(Item::obdata[_wtype].damage);
 	place(lev, col, row)->damage_items(damage);
 
@@ -1567,13 +1631,12 @@ bool Map::Read(persist::Engine &archive)
 #undef map
 
 Terrain::Terrain(const char *fileprefix, const char *name, int rand_weight):
-	m_name(name), m_rand_weight(rand_weight), m_blocks_count(0)
-{
+	m_name(name), m_rand_weight(rand_weight), m_blocks_count(0){
 	while (true) {
 		assert(m_blocks_count < 100);
 		char fname[256];
 		sprintf(fname, "maps/%s%02d.map", fileprefix, m_blocks_count);
-		int fh = open(fname, O_RDONLY | O_BINARY);
+		int fh = OPEN_ORIG(fname, O_RDONLY | O_BINARY);
 		if (fh == -1) break;
 		unsigned char tmp[3];
 		read(fh, &tmp, sizeof(tmp));

@@ -53,9 +53,9 @@ static char weapon_in_use[] = {
 	Plasma_Pistol , Plasma_Pistol_Clip ,
 	Plasma_Rifle , Plasma_Rifle_Clip ,
 	LASER_PISTOL , LASER_GUN ,
-	HEAVY_CANNON , CANNON_HE_AMMO ,
-	AUTO_CANNON , AUTO_CANNON_HE_AMMO,
-	GRENADE , HIGH_EXPLOSIVE ,
+	HEAVY_CANNON , CANNON_HE_AMMO, CANNON_I_AMMO ,
+	AUTO_CANNON , AUTO_CANNON_HE_AMMO, AUTO_CANNON_I_AMMO ,
+	GRENADE , HIGH_EXPLOSIVE , PROXIMITY_GRENADE , SMOKE_GRENADE ,
 	KASTET , KNIFE
 };
 
@@ -831,7 +831,7 @@ void Editor::load_map()
 	strcpy(path, last_map_name);
 	if (file_select("LOAD MAP", path, "DAT")) {
 		//m_map->load(path);
-		int fh = open(path, O_RDONLY | O_BINARY);
+		int fh = open(path, O_RDONLY | O_BINARY); // got  path from fileselector - don't do pfxopen.
 		assert(fh != -1);
 		read(fh, &mapdata, sizeof(mapdata));
 		close(fh);

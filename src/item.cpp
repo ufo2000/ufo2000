@@ -30,6 +30,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "map.h"
 #include "multiplay.h"
 #include "sound.h"
+#include "pfxopen.h"
 
 PCK *bigobs;
 OBDATA *Item::obdata = NULL;
@@ -39,7 +40,7 @@ IMPLEMENT_PERSISTENCE(Item, "Item");
 
 void Item::initobdata()
 {
-	int fh = open("geodata/obdata.dat", O_RDONLY | O_BINARY);
+	int fh = OPEN_ORIG("geodata/obdata.dat", O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	int buflen = filelength(fh);
 	char *buf = new char[buflen];
@@ -106,7 +107,10 @@ void Item::initobdata()
 	obdata[KNIFE].ammo[2] = 0xFF;
 	obdata[KNIFE].weight = 5;     		//The weight of the object
 	obdata[KNIFE].isWeapon = 1;     	//This item is a weapon. (0=no,1=yes)
-
+	obdata[SMOKE_GRENADE].damage = 0;
+	obdata[INCENDIARY_ROCKET].damage = 20;
+	obdata[AUTO_CANNON_I_AMMO].damage = 15;
+	obdata[CANNON_I_AMMO].damage = 15;
 	delete []buf;
 }
 
@@ -129,7 +133,13 @@ int Item::explo_range(int type)
 
 	switch (type) {
 		case CANNON_HE_AMMO:
+		case CANNON_I_AMMO:
+			range = 4;
+			break;
 		case AUTO_CANNON_HE_AMMO:
+			range = 3;
+			break;
+		case AUTO_CANNON_I_AMMO:
 			range = 3;
 			break;
 		case GRENADE:

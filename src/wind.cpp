@@ -23,16 +23,24 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <allegro.h>
 #include <string.h>
 #include "wind.h"
+#include "pfxopen.h"
 
 
-Wind::Wind(BITMAP *_backscr, int x1, int y1, int x2, int y2, int col)
+Wind::Wind(BITMAP *_backscr, int x1, int y1, int x2, int y2, int col, FONT *f)
 {
+	if (f != NULL) {
+		m_font = f;
+	} else {
+		m_font = font;
+	}
+	
 	m_backscr = _backscr;
 	m_x = x1; m_y = y1;
 	m_w = x2 - x1; m_h = y2 - y1;
-	m_screen = create_bitmap(m_w + 10, m_h + 10); clear(m_screen);
+	m_screen = create_bitmap(m_w, m_h); clear(m_screen);
 	//m_screen = create_bitmap(_backscr->w, _backscr->h); clear(m_screen);
-	m_charw = 9; m_charh = 9;
+	m_charh = text_height(m_font); 
+	m_charw = text_length(m_font, "m"); //FIXME: we don't actually need to know this, do we?
 
 	m_scrw = m_w / m_charw; m_scrh = m_h / m_charh;
 	m_scrcol = col;
@@ -63,6 +71,10 @@ Wind::~Wind()
 	delete []m_txtcolor;
 	destroy_bitmap(m_screen);
 }
+
+void Wind::setfont(FONT *f) {
+	m_font = (f == NULL) ? font : f;
+}	
 
 void Wind::redraw()
 {
@@ -179,7 +191,7 @@ void Wind::printchr(char c)
 		newline();
 	} else {
 		text_mode( -1);
-		textprintf(screen, font, m_x + m_curx * m_charw, m_y + m_cury * m_charh, m_scrcol, "%c", c);
+		textprintf(screen, m_font, m_x + m_curx * m_charw, m_y + m_cury * m_charh, m_scrcol, "%c", c);
 		//writechr(m_screen, m_curx*m_charw, m_cury*m_charh, c);
 		//m_dirty->add(m_x+m_curx*m_charw, m_y+m_cury*m_charh, m_charw, m_charh);
 		m_txt[m_txtend][m_curx] = c;
@@ -220,7 +232,7 @@ void Wind::writestr(BITMAP *_bmp, int _x, int _y, char *str)
 
 void Wind::writechr(BITMAP *_bmp, int _x, int _y, char c)
 {
-	textprintf(_bmp, font, _x, _y, m_scrcol, "%c", c);
+	textprintf(_bmp, m_font, _x, _y, m_scrcol, "%c", c);
 }
 
 void Wind::writestr(BITMAP *_bmp, int _x, int _y, char *str, int color)
@@ -233,7 +245,7 @@ void Wind::writestr(BITMAP *_bmp, int _x, int _y, char *str, int color)
 
 void Wind::writechr(BITMAP *_bmp, int _x, int _y, char c, int color)
 {
-	textprintf(_bmp, font, _x, _y, color, "%c", c);
+	textprintf(_bmp, m_font, _x, _y, color, "%c", c);
 }
 
 void Wind::showcursor()
@@ -250,7 +262,7 @@ void Wind::hidecursor()
 
 void Wind::dump()
 {
-	FILE * f = fopen("m_txt.dump", "wt");
+	FILE * f = FOPEN_RTEMP("m_txt.dump", "wt");
 	for (int i = 0; i < m_txth; i++)
 		fprintf(f, "%d:[%s]\n", i, m_txt[i]);
 	fflush(f);
@@ -259,7 +271,7 @@ void Wind::dump()
 void Wind::info(int _x, int _y)
 {
 	text_mode(1);
-	textprintf(screen, font, _x, _y, 0,
+	textprintf(screen, m_font, _x, _y, 0,
 	           "m_txtbeg=%d, m_txtend=%d, m_txtvis=%d, m_curx=%d, m_cury=%d, m_w=%d, m_h=%d ",
 	           m_txtbeg, m_txtend, m_txtvis, m_curx, m_cury, m_w, m_h);
 }

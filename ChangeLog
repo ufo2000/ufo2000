@@ -1,3 +1,8 @@
+Changes in version 0.3.51     tbd, now Sun 20 Oct 2002
+   - merged incendiary ammunition patch
+   - fixed bug with firing accuracy decrease for two-handed weapons
+   - now game can use original ufo font instead of allegro's default 8x8 (but colors are broken yet)
+   
 Changes in version 0.3.50     Tue 13 Aug 2002
    - added 4 more terrain types, now the following terrains are 
      supported: cultivated, city, polar, jungle and mars

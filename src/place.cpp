@@ -26,6 +26,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "video.h"
 #include "place.h"
 #include "map.h"
+#include "pfxopen.h"
 
 IMPLEMENT_PERSISTENCE(Place, "Place");
 
@@ -358,7 +359,7 @@ void Place::save_bin(char *fn)
 		it = it->next;
 	}
 
-	int fh = open(fn, O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
+	int fh = OPEN_OWN(fn, O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
 	assert(fh != -1);
 	write(fh, buf, buf_size);
 	close(fh);
@@ -369,7 +370,7 @@ void Place::load_bin(char *fn)
 	char buf[3 * 1000];
 	int buf_size;
 
-	int fh = open(fn, O_RDONLY | O_BINARY);
+	int fh = OPEN_OWN(fn, O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	buf_size = read(fh, buf, sizeof(buf));
 	close(fh);
@@ -489,6 +490,15 @@ void Place::damage_items(int dam)
 		it = it->next;
 	}*/
 }
+
+void Place::check_mine() {
+	Item *it;
+	it = m_item;
+	if (it!=NULL)
+		if ((it->is_grenade())&&(it->type == PROXIMITY_GRENADE)&&(it->delay_time()<=0))
+			elist->detonate(it);
+}
+
 
 void Place::draw_deselect_time(int PLACE_NUM, int time)
 {

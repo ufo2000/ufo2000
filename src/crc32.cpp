@@ -22,6 +22,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <stdio.h>
 #include <vector>
 #include <string>
+#include "pfxopen.h"
 
 //////////////////////////////////////////////////////////////////////////////
 /// Table needed to check data files integrity                             ///
@@ -29,13 +30,14 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 struct { const char *mName; unsigned long mCrc32; } DataFilesCrc32[] =
 {
+/*
     { "./geodata.dat", 0x00000000 },
     { "./soldier.dat", 0x00000000 },
     { "./armoury.set", 0x00000000 },
     { "./items.dat", 0x00000000 },
     { "./ufo2000.ini", 0x00000000 },
     { "./ufo2000.dat", 0x3014DC2B },
-
+*/
     { "./sound/sound1.cat", 0x514BD2C6 },
     { "./sound/sound2.cat", 0x432F7EBF },
 
@@ -473,8 +475,9 @@ unsigned long update_crc32(unsigned long InitCrc, void *pInBuff, unsigned long I
 bool check_file_crc32(const char *filename, unsigned long crc32)
 {
 	char buffer[1024];
-	FILE *f = fopen(filename, "rb");
-	if (f == NULL) return false;
+	FILE *f = FOPEN_ORIG(filename, "rb");
+	
+	if (f == NULL) return false; 
 	if (crc32 == 0)	{
 		fclose(f);
 		return true;

@@ -274,6 +274,11 @@ void Bullet::move()
 					break;
 				}
 			}
+			if (incendiary()) {
+					  detonate();
+					  state = READY;
+					  break;
+			}
 			phase++;
 			if (phase == 2 * PHASE)
 				hitman();
@@ -553,6 +558,14 @@ int Bullet::explodable()
 	        (type == SMALL_ROCKET) ||
 	        (type == LARGE_ROCKET) ||
 	        (type == INCENDIARY_ROCKET))
+		return 1;
+	return 0;
+}
+
+int Bullet::incendiary() {
+	if ((type == INCENDIARY_ROCKET)||
+		(type == AUTO_CANNON_I_AMMO) ||
+		(type == CANNON_I_AMMO))
 		return 1;
 	return 0;
 }

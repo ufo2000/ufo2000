@@ -56,7 +56,7 @@ public:
 	void build_items_stats(ITEMDATA *id, char *buf, int &len);
 	void draw_items_stats(int gx, int gy, char *buf, int len);
 
-	void execute(int map_change_allowed = 1);
+	void execute(Map *map, int map_change_allowed = 1);
 	void execute_right();
 	void deselect();
 	void draw_lines(int gcol);

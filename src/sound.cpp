@@ -29,6 +29,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #endif
 #include "sound.h"
 
+#include "pfxopen.h"
+
 #ifdef USE_JGMOD
 static JGMOD *mod;
 #endif
@@ -91,7 +93,7 @@ void initsound()
 	set_volume(digvol, -1);
 
 	// sound3 = sound1+sound1 !!!!!! //outdated joke
-	int fh = open("sound/sound1.cat", O_RDONLY | O_BINARY);
+	int fh = OPEN_ORIG("sound/sound1.cat", O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	raw_size = filelength(fh);
 	raw = new unsigned char[raw_size];

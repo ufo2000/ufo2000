@@ -45,9 +45,10 @@ protected:
 
 	DirtyList *m_dirty, *m_dirty2;
 	BITMAP *m_backscr, *m_screen;
+	FONT *m_font;
 
 public:
-	Wind(BITMAP *_backscr, int x1, int y1, int x2, int y2, int col);
+	Wind(BITMAP *_backscr, int x1, int y1, int x2, int y2, int col, FONT *f = NULL);
 	~Wind();
 
 	void showcursor();
@@ -70,6 +71,8 @@ public:
 
 	void dump();
 	void info(int _x, int _y);
+	
+	void setfont(FONT *f);
 };
 
 #endif

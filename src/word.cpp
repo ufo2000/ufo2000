@@ -26,6 +26,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <fcntl.h>
 #include <sys/stat.h>
 #include "word.h"
+#include "pfxopen.h"
 
 /*
 extern DATAFILE *datafile;
@@ -233,7 +234,7 @@ void Word::add(int mx, int my)
 int Word::load()
 {
 	clean();
-	FILE *f = fopen(fname, "rt");
+	FILE *f = FOPEN_OWN(fname, "rt");
 	if (f == NULL) {
 		return 0;
 	}
@@ -244,7 +245,7 @@ int Word::load()
 
 void Word::save()
 {
-	FILE * f = fopen(fname, "wt");
+	FILE * f = FOPEN_OWN(fname, "wt");
 	for (int i = 0; i < size; i++)
 		fprintf(f, "%d %d\n", x[i], y[i]);
 	fclose(f);
@@ -263,7 +264,7 @@ void Word::savebwd()
 		xy[i * 2] = x[i];
 		xy[i * 2 + 1] = y[i];
 	}
-	int fh = open(bfname, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, S_IRUSR | S_IWUSR);
+	int fh = OPEN_OWN(bfname, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY);
 	assert(fh != -1);
 	write(fh, xy, (size * 2 + 1) * sizeof(int));
 	close(fh);
