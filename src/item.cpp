@@ -175,6 +175,60 @@ void Item::od_info(int type, int gx, int gy, int gcol)
 {
 	text_mode(-1);
 	OBDATA *od = &obdata[type];
+
+#if 1
+	textprintf(screen2, font, gx, gy, gcol, "%s",  od->name);
+	gy += 15;
+
+	if (od->wayPoints || od->isGun) {
+		textprintf(screen2, font, gx, gy, gcol,      "Type   Accuracy  TUs cost");
+		gy += 10;
+		if (od->accuracy[0]) {
+			textprintf(screen2, font, gx, gy, gcol, "Auto     %3d%%      %3d%%",
+			           od->accuracy[0], od->time[0]);
+			gy += 10;
+		}
+		if (od->accuracy[1]) {
+			textprintf(screen2, font, gx, gy, gcol, "Snap     %3d%%      %3d%%",
+			           od->accuracy[1], od->time[1]);
+			gy += 10;
+		}
+		if (od->accuracy[2]) {
+			textprintf(screen2, font, gx, gy, gcol, "Aimed    %3d%%      %3d%%",
+			           od->accuracy[2], od->time[2]);
+			gy += 10;
+		}
+		gy += 5;
+	}
+
+	if (od->damage > 0) {
+		textprintf(screen2, font, gx, gy, gcol, "Damage: %d  Type: %d", od->damage,
+		(od->hitType > 0 ? od->hitType : od->damageType));
+		gy += 10;
+	}
+
+	if (od->isAmmo) {
+		textprintf(screen2, font, gx, gy, gcol, "Rounds: %d", od->rounds);
+		gy += 10;
+	}
+
+	if (od->ammo[0] != 255) {
+		textprintf(screen2, font, gx, gy, gcol, "Ammo1: %s", obdata[od->ammo[0]].name);
+		gy += 10;
+	}
+	if (od->ammo[1] != 255) {
+		textprintf(screen2, font, gx, gy, gcol, "Ammo2: %s", obdata[od->ammo[1]].name);
+		gy += 10;
+	}
+	if (od->ammo[2] != 255) {
+		textprintf(screen2, font, gx, gy, gcol, "Ammo3: %s", obdata[od->ammo[2]].name);
+		gy += 10;
+	}
+
+	textprintf(screen2, font, gx, gy, gcol, "Weight: %d", od->weight);
+	gy += 10;
+
+#else
 	textprintf(screen2, font, gx, gy, gcol, "%d name=%s ", type, od->name);
 	textprintf(screen2, font, gx, gy + 10, gcol,
 	           "weight=%d width=%d height=%d twoHand=%d",
@@ -197,6 +251,8 @@ void Item::od_info(int type, int gx, int gy, int gcol)
 	textprintf(screen2, font, gx, gy + 70, gcol,
 	           "imp=%d pInv=%d pMap=%d pHeld=%d",
 	           od->importance, od->pInv, od->pMap, od->pHeld);
+#endif
+
 }
 
 

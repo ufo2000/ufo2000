@@ -1053,7 +1053,7 @@ BITMAP *Map::create_lof_bitmap(int lev, int col, int row)
 	build_lof_cell(lev, col, row, lof_cell);
 
 	BITMAP *bmp = create_bitmap(20 * 4, 20 * 3);
-	clear_to_color(bmp, xcom1_color(0));
+	clear_to_color(bmp, xcom1_color(15));
 
 	int dir = -1, s = 0;     //, tl = 0;
 	if (visible(lev, col, row))
@@ -1085,18 +1085,18 @@ BITMAP *Map::create_lof_bitmap(int lev, int col, int row)
 
 				if (dir != -1) {
 					if (Soldier::m_bof[s][dir][j][i][15 - k])
-						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, 52);
+						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, xcom_color(52));
 					else if (l & 0x8000)
-						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, 1);
+						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, xcom_color(1));
 					else
-						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, 12);
+						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, xcom_color(12));
 				} else {
 					if (l & 0x8000)
 						//putpixel(screen, SCREEN2W+k  +(j/3)*20, SCREEN2H+i  +(2 - j%3 )*20, 1);
-						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, 1);
+						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, xcom_color(1));
 					else
 						//putpixel(screen, SCREEN2W+k  +(j/3)*20, SCREEN2H+i  +(2 - j%3 )*20, 12);
-						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, 12);
+						putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, xcom_color(12));
 				}
 				l <<= 1;
 			}
