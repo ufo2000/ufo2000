@@ -253,7 +253,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 13,
-	cost = 225,
+	cost = 200,
 	name = "SMALL ROCKET",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 16),
 	pMap = pck_image("$(xcom)/units/floorob.pck", 16),
@@ -550,7 +550,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 34,
-	cost = 250,
+	cost = 300,
 	name = "Heavy Plasma",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 30),
 	pMap = pck_image("$(xcom)/units/floorob.pck", 29),
@@ -573,7 +573,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 35,
-	cost = 100,
+	cost = 150,
 	name = "Heavy Plasma Clip",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 25),
 	pMap = pck_image("$(xcom)/units/floorob.pck", 33),
@@ -591,7 +591,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 36,
-	cost = 250,
+	cost = 400,
 	name = "Plasma Rifle",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 31),
 	pMap = pck_image("$(xcom)/units/floorob.pck", 30),
@@ -614,7 +614,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 37,
-	cost = 150,
+	cost = 200,
 	name = "Plasma Rifle Clip",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 41),
 	pMap = pck_image("$(xcom)/units/floorob.pck", 33),
