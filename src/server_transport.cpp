@@ -9,6 +9,13 @@
 
 #include "server.h"
 
+#ifdef WIN32
+#include <windows.h>
+#define usleep(t) Sleep((t + 999) / 1000)
+#else
+#include <unistd.h>
+#endif
+
 ServerClient::ServerClient(ServerDispatch *server, NLsocket socket)
 	:m_socket(socket), m_server(server)
 {
@@ -54,7 +61,7 @@ static bool send_to_socket(NLsocket socket, const char *buffer, NLint size)
 		if (size_written == NL_INVALID)
 		{
 	        if (nlGetError() != NL_CON_PENDING) return false;
-            nlThreadYield();
+            usleep(1);
             continue;
 		}
 		buffer += size_written;
@@ -148,7 +155,7 @@ void ServerDispatch::Run(NLsocket sock)
             HandleSocket(s[i]);
         }
 
-        nlThreadYield();
+        usleep(1);
     }
 }
 
@@ -195,10 +202,12 @@ int ClientServer::recv_packet(NLulong &id, std::string &packet)
     int readlen;
     NLbyte buffer[128];
 
+    unsigned long stream_size_before = m_stream.size();
+
     while ((readlen = nlRead(m_socket, buffer, sizeof(buffer))) > 0)
     	m_stream.append(buffer, readlen);
 
-    if (readlen == NL_INVALID)
+    if (stream_size_before == m_stream.size() && readlen == NL_INVALID)
     {
         NLenum err = nlGetError();
         if (err == NL_MESSAGE_END || err == NL_SOCK_DISCONNECT)
