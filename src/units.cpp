@@ -512,6 +512,10 @@ int Units::draw_items_stats(int gx, int gy, char *buf, int len)
 }
 
 
+/**
+ * Print table of soldier-names, with lines from the names
+ * to their positions on the map.
+ */
 void Units::print_simple(int gcol)
 {
 	text_mode( -1);	
@@ -601,7 +605,8 @@ void Units::draw_text()
 }
 
 /**
- * Depending on PlannerState, execute different procedures of mission-planner
+ * Depending on PlannerState, execute different procedures of mission-planner:
+ * Edit soldiers, select map, scenario, game-rules etc.
  */
 void Units::execute(Map *map, int map_change_allowed)
 {
@@ -637,8 +642,8 @@ void Units::execute(Map *map, int map_change_allowed)
 }
 
 /**
- * Mission-planner: select position for a soldier in deployment-area on map,
- * ...
+ * Mission-planner: select position for a soldier in deployment-area on map.
+ * When user ctrl-clicks on a soldier-name, call editor for soldier-equipment.
  */
 void Units::execute_main(Map *map, int map_change_allowed)
 {

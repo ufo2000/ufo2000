@@ -1055,6 +1055,70 @@ bool loadgame_stream(std::iostream &stream)
 }
 
 /**
+ * Set colors for list of soldier-names,
+ * e.g. in endgame-stats.
+ */
+int name_color( int player, int nr, int dead )
+{
+    static int alive = 0;
+    int c1;
+
+    if (dead)
+        return COLOR_DARKGRAY08;
+
+    alive ++;
+    if (nr == 1)
+       alive = 0;
+
+    if (player == 0)
+        c1 =  16;  // COLOR_ORANGE00
+    else
+        c1 =  48;  // COLOR_GREEN00
+
+    return xcom_color(c1 + alive);
+}
+/**
+ * Set colors for displaying number of kills
+ */
+int kills_color( int kills )
+{
+    if (kills == 0)
+        return COLOR_GRAY02;
+    else if (kills <= 1)
+        return COLOR_RED00;
+    else if (kills <= 2)
+        return COLOR_RED03;
+    else if (kills <= 3)
+        return COLOR_RED07;
+    else if (kills <= 4)
+        return COLOR_RED10;
+
+    return COLOR_RED12;
+}
+/**
+ * Set colors for displaying amount of damage done
+ */
+int damage_color( int damage )
+{
+    //int c1 = 192;  // COLOR_VIOLET00
+    //int c1 = 224;  // COLOR_GRAYBLUE00
+    int c1 = 208;  // COLOR_SKYBLUE00
+
+    if (damage == 0)
+        return COLOR_GRAY02;
+    else if (damage <= 50)
+        return xcom1_color(c1 + 0);
+    else if (damage <= 100)
+        return xcom1_color(c1 + 2);
+    else if (damage <= 200)
+        return xcom1_color(c1 + 5);
+    else if (damage <= 300)
+        return xcom1_color(c1 + 8);
+
+    return xcom1_color(c1 + 10);
+}
+
+/**
  * Display combat-statistics after a game
  */
 void endgame_stats()
@@ -1067,6 +1131,7 @@ void endgame_stats()
 	clear(scr);
 	clear(newscr);
 	char winner[64];
+    char txt[64];
 
 	StatEntry *temp;
 	Platoon *ptemp;
@@ -1174,51 +1239,97 @@ void endgame_stats()
 
 	stretch_blit(back, newscr, 0, 0, back->w, back->h, 0, 0, SCREEN_W, SCREEN_H);
 
-	textprintf_centre(newscr, large, 320, 24, COLOR_RED00, "%s", winner);
+    textprintf_centre(newscr, large, 320, 12, COLOR_RED00, "%s", winner);
 
 	if (net->gametype == GAME_TYPE_HOTSEAT)
 	{
 		//textprintf(newscr, g_small_font,   8, 60, COLOR_WHITE, "Player 1");
 		//textprintf(newscr, g_small_font, 328, 60, COLOR_WHITE, "Player 2");
-		textprintf(newscr, large,  16, 50, COLOR_GREEN, "Player 1");
-		textprintf(newscr, large, 336, 50, COLOR_GREEN, "Player 2");
-	}
-	else
-	{
-		//textprintf(newscr, g_small_font,   8, 60, COLOR_GREEN, "Your Platoon");
-		//textprintf(newscr, g_small_font, 328, 60, COLOR_GREEN, "Remote Platoon");
-		textprintf(newscr, large,  16, 50, COLOR_GREEN, "Your Platoon");
-		textprintf(newscr, large, 336, 50, COLOR_GREEN, "Remote Platoon");
-	}
-	textprintf(newscr, g_small_font,  16, 68, COLOR_RED03,  "Total Kills: %d", local_kills);
-	textprintf(newscr, g_small_font, 336, 68, COLOR_YELLOW, "Total Kills: %d", remote_kills);
+        textprintf(newscr, large,  16, 38, COLOR_GREEN, "Player 1");
+        textprintf(newscr, large, 336, 38, COLOR_GREEN, "Player 2");
+    } else {
+        textprintf(newscr, large,  16, 38, COLOR_GREEN, "Your Platoon");
+        textprintf(newscr, large, 336, 38, COLOR_GREEN, "Remote Platoon");
+    }
+    strcpy(txt, "Total Kills:");
+    textprintf(newscr, g_small_font,  16+ 0, 56, COLOR_RED03,  "%s",  txt );
+    textprintf(newscr, g_small_font, 336+ 0, 56, COLOR_YELLOW, "%s",  txt);
+    textprintf(newscr, g_small_font,  16+54, 56, COLOR_RED03,  "%2d", local_kills);
+    textprintf(newscr, g_small_font, 336+54, 56, COLOR_YELLOW, "%2d", remote_kills);
 
-	textprintf(newscr, g_small_font,  16, 76, COLOR_YELLOW, "Deaths: %d", local_dead);
-	textprintf(newscr, g_small_font, 336, 76, COLOR_RED03,  "Deaths: %d", remote_dead);
+    strcpy(txt, "Death:");
+    textprintf(newscr, g_small_font,  16+ 0, 64, COLOR_YELLOW, "%s",  txt);
+    textprintf(newscr, g_small_font, 336+ 0, 64, COLOR_RED03,  "%s",  txt);
+    textprintf(newscr, g_small_font,  16+54, 64, COLOR_YELLOW, "%2d", local_dead);
+    textprintf(newscr, g_small_font, 336+54, 64, COLOR_RED03,  "%2d", remote_dead);
 
-	textprintf(newscr, g_small_font,  16, 84, COLOR_BLUE,   "Total Damage Inflicted: %d", local_inflicted);
-	textprintf(newscr, g_small_font, 336, 84, COLOR_GRAY,   "Total Damage Inflicted: %d", remote_inflicted);
+    strcpy(txt, "Total Damage Inflicted:");
+    textprintf(newscr, g_small_font,  16+ 0, 72, COLOR_BLUE,   "%s",  txt);
+    textprintf(newscr, g_small_font, 336+ 0, 72, COLOR_GRAY,   "%s",  txt);
+    textprintf(newscr, g_small_font,  16+99, 72, COLOR_BLUE,   "%6d", local_inflicted);
+    textprintf(newscr, g_small_font, 336+99, 72, COLOR_GRAY,   "%6d", remote_inflicted);
 
-	textprintf(newscr, g_small_font,  16, 92, COLOR_GRAY,   "Total Damage Taken: %d", local_taken);
-	textprintf(newscr, g_small_font, 336, 92, COLOR_BLUE,   "Total Damage Taken: %d", remote_taken);
+    strcpy(txt, "Total Damage Taken:");
+    textprintf(newscr, g_small_font,  16+ 0, 80, COLOR_GRAY,   "%s",  txt);
+    textprintf(newscr, g_small_font, 336+ 0, 80, COLOR_BLUE,   "%s",  txt);
+    textprintf(newscr, g_small_font,  16+99, 80, COLOR_GRAY,   "%6d", local_taken);
+    textprintf(newscr, g_small_font, 336+99, 80, COLOR_BLUE,   "%6d", remote_taken);
 
-	textprintf_centre(newscr, large,        320, 108, COLOR_GOLD, "Most Valuable Soldier:");
-	textprintf_centre(newscr, g_small_font, 320, 124, COLOR_GOLD, "%s (%s, %d kills)",
-		mvp->get_name(), 
+	//textprintf_centre(newscr, large,        320, 108, COLOR_GOLD, "Most Valuable Soldier:");
+	//textprintf_centre(newscr, g_small_font, 320, 124, COLOR_GOLD, "%s (%s, %d kills)",
+	textprintf_centre(newscr, large,         96, 100, COLOR_GOLD, "Most Valuable Soldier:");
+	textprintf_centre(newscr, g_small_font,  96, 116, COLOR_GOLD, "%s (%s, %d kills)",
+		mvp->get_name(),
 		(mvp_remote) ? ((net->gametype == GAME_TYPE_HOTSEAT) ? "Player 2" : "Remote") : ((net->gametype == GAME_TYPE_HOTSEAT) ? "Player 1" : "Local"),
 		mvp->get_kills());
 
-	textprintf_centre(newscr, large,        320, 140, COLOR_MAGENTA, "Most Devastating Soldier:");
-	textprintf_centre(newscr, g_small_font, 320, 156, COLOR_MAGENTA, "%s (%s, %d damage inflicted)",
-		devastating->get_name(), 
+	//textprintf_centre(newscr, large,        320, 140, COLOR_MAGENTA, "Most Devastating Soldier:");
+	//textprintf_centre(newscr, g_small_font, 320, 156, COLOR_MAGENTA, "%s (%s, %d damage inflicted)",
+	textprintf_centre(newscr, large,        300, 100, COLOR_MAGENTA, "Most Devastating Soldier:");
+	textprintf_centre(newscr, g_small_font, 300, 116, COLOR_MAGENTA, "%s (%s, %d damage inflicted)",
+		devastating->get_name(),
 		(devastating_remote) ? ((net->gametype == GAME_TYPE_HOTSEAT) ? "Player 2" : "Remote") : ((net->gametype == GAME_TYPE_HOTSEAT) ? "Player 1" : "Local"),
 		devastating->get_inflicted());
 
-	textprintf_centre(newscr, large,        320, 172, COLOR_ROSE, "Most Cowardly Soldier:");
-	textprintf_centre(newscr, g_small_font, 320, 188, COLOR_ROSE, "%s (%s, %d damage inflicted)",
-		coward->get_name(), 
+	//textprintf_centre(newscr, large,        320, 172, COLOR_ROSE, "Most Cowardly Soldier:");
+	//textprintf_centre(newscr, g_small_font, 320, 188, COLOR_ROSE, "%s (%s, %d damage inflicted)",
+	textprintf_centre(newscr, large,        500, 100, COLOR_ROSE, "Most Cowardly Soldier:");
+	textprintf_centre(newscr, g_small_font, 500, 116, COLOR_ROSE, "%s (%s, %d damage inflicted)",
+		coward->get_name(),
 		(coward_remote) ? ((net->gametype == GAME_TYPE_HOTSEAT) ? "Player 2" : "Remote") : ((net->gametype == GAME_TYPE_HOTSEAT) ? "Player 1" : "Local"),
 		coward->get_inflicted());
+
+    // Table of soldier-names for both players, with kills and damage:
+    int x1 =  20, x2 = 320, y1 = 138;
+    int h  =  12, w  =   8;
+    int x  =   0, y  =   0;
+    int dead = 0, kills = 0, damage = 0;
+
+    textprintf(newscr, font, x1,    y1, COLOR_WHITE, "%-22s %5s %6s", "Name", "Kills", "Damage");
+    textprintf(newscr, font, x1+x2, y1, COLOR_WHITE, "%-22s %5s %6s", "Name", "Kills", "Damage");
+
+    for (int pl = 0; pl < 2; pl++) {
+        if (pl == 0) 
+            temp = platoon_local ->get_stats()->getfirst();
+        else
+            temp = platoon_remote->get_stats()->getfirst();
+
+        for (int nr = 1; nr <= 14 ; nr++) { // screen-space for 14 soldiers per side
+            x = x1   + pl * x2;
+            y = y1+4 + nr * h;
+            if (temp != NULL) {
+                dead   = temp->is_dead();
+                kills  = temp->get_kills();
+                damage = temp->get_inflicted();
+
+                textprintf(newscr, font, x,      y, name_color(pl, nr, dead), "%-22s", temp->get_name());
+                textprintf(newscr, font, x+22*w, y, kills_color(kills  ), "%5d", kills  );
+                textprintf(newscr, font, x+28*w, y, damage_color(damage), "%6d", damage );
+
+                temp = temp->getnext();
+            }
+        }
+    }
 
 	g_console->set_full_redraw();
 
@@ -1226,7 +1337,7 @@ void endgame_stats()
 
 	CHANGE = 1;
 
-	g_console->printf(COLOR_SYS_PROMPT, "%s\n\n", "Press ESC to continue");
+    g_console->printf(COLOR_SYS_PROMPT, "You can chat here.  Press ESC when finished.\n\n");
 	while (!DONE)
 	{
 		net->check();
@@ -1241,6 +1352,7 @@ void endgame_stats()
 		process_keyswitch();
 
 		if (keypressed()) {
+            int vol;
 			int scancode;
 			int keycode = ureadkey(&scancode);
 
@@ -1254,6 +1366,19 @@ void endgame_stats()
 					break;
 				case KEY_DOWN:
 					resize_screen2(0, 10);
+					break;
+                case KEY_ASTERISK:   // ?? ToDo: Sound+Music on/off
+                    //soundSystem::getInstance()->play(SS_WINDOW_OPEN_2);
+                    FS_MusicPlay(NULL);
+                    g_console->printf(COLOR_SYS_OK, "Music off" );
+                    break;
+				case KEY_PLUS_PAD:
+					vol = FS_IncMusicVolume();
+					g_console->printf(COLOR_SYS_OK, "Music Volume: %d", vol );
+					break;
+				case KEY_MINUS_PAD:
+					vol = FS_DecMusicVolume();
+					g_console->printf(COLOR_SYS_OK, "Music Volume: %d", vol );
 					break;
 				case KEY_F1:
 					help( HELP_ENDGAME );
@@ -1565,10 +1690,11 @@ void gameloop()
 							map->center(sel_man);
 					}
 					break;
-//              case KEY_ASTERISK:   // ?? ToDo: Sound on/off
-//                  soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
-//                  FS_MusicPlay(NULL); 
-//                  break;
+                case KEY_ASTERISK:   // ?? ToDo: Sound+Music on/off
+                    //soundSystem::getInstance()->play(SS_WINDOW_OPEN_2);
+                    FS_MusicPlay(NULL);
+                    g_console->printf(COLOR_SYS_OK, "Music off" );
+                    break;
 				case KEY_PLUS_PAD:
 					vol = FS_IncMusicVolume();
 					g_console->printf(COLOR_SYS_OK, "Music Volume: %d", vol );
