@@ -281,21 +281,24 @@ static int d_slider_pro2(int msg, DIALOG *d, int c)
 	return v;
 }
 
-// ?? gettext
+static char label_text[5][32];
+static char buttontext[2][16];
+
 static DIALOG config_dlg[] = {
-	{ d_shadow_box_proc, 0, 0, 320, 200, FG, BG, 0, 0, 0, 0, NULL, NULL, NULL },
-    { d_text_proc,      72,   8, 144,  16, FG, BG, 0, 0, 0, 0, (void *)_("Configuration"), NULL, NULL },
+    //                   x    y   w    h   fg  bg  ...
+    { d_shadow_box_proc, 0,   0, 388, 200, FG, BG, 0, 0, 0, 0, NULL, NULL, NULL },
+    { d_text_proc,      72,   8, 144,  16, FG, BG, 0, 0, 0, 0, (void *)label_text[0], NULL, NULL },
     { d_slider_pro2,    24,  40, 136,  16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
     { d_slider_pro2,    24,  64, 136,  16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
     { d_slider_pro2,    24,  88, 136,  16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
     { d_slider_pro2,    24, 112, 136,  16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
-    { d_button_proc,   160, 168,  64,  16, FG, BG, 0, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL },
-    { d_button_proc,   232, 168,  64,  16, FG, BG, 0, D_EXIT | D_GOTFOCUS, 0, 0, (void *)_("Cancel"), NULL, NULL },
-    { d_text_proc,     176,  44,  88,  16, FG, BG, 0, 0, 0, 0, (void *)_("movement speed"), NULL, NULL },
-    { d_text_proc,     176,  68, 104,  16, FG, BG, 0, 0, 0, 0, (void *)_("fire speed"), NULL, NULL },
-    { d_text_proc,     176,  92, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("scroll speed"), NULL, NULL },
-    { d_text_proc,     176, 116, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("mapscroll points"), NULL, NULL },
-	{ d_yield_proc,           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
+    { d_button_proc,   160, 168,  64,  16, FG, BG, 0, D_EXIT, 0, 0, (void *)buttontext[0], NULL, NULL },
+    { d_button_proc,   232, 168,  64,  16, FG, BG, 0, D_EXIT | D_GOTFOCUS, 0, 0, (void *)buttontext[1], NULL, NULL },
+    { d_text_proc,     176,  44,  88,  16, FG, BG, 0, 0, 0, 0, (void *)label_text[1], NULL, NULL },
+    { d_text_proc,     176,  68, 104,  16, FG, BG, 0, 0, 0, 0, (void *)label_text[2], NULL, NULL },
+    { d_text_proc,     176,  92, 128,  16, FG, BG, 0, 0, 0, 0, (void *)label_text[3], NULL, NULL },
+    { d_text_proc,     176, 116, 128,  16, FG, BG, 0, 0, 0, 0, (void *)label_text[4], NULL, NULL },
+    { d_yield_proc,      0,   0,   0,   0,  0,  0, 0, 0, 0, 0, NULL, NULL, NULL},
 	{ NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL }
 };
 // Todo: Slider for music-volume, 
@@ -304,8 +307,20 @@ static DIALOG config_dlg[] = {
 /**
  * Animation speed and other settings dialog available from battlescape
  */
+// Todo: Access to this dialog in main-menu.
 void configure()
 {
+    // Labels for dialog:
+    sprintf(label_text[0], _("Configuration")    );
+    sprintf(label_text[1], _("movement speed")   );
+    sprintf(label_text[2], _("fire speed")       );
+    sprintf(label_text[3], _("scroll speed")     );
+    sprintf(label_text[4], _("mapscroll points") );
+
+    sprintf(buttontext[0], _("OK")     );
+    sprintf(buttontext[1], _("Cancel") );
+
+    // Start-values for sliders:
     config_dlg[SPEED_UNIT].d2      = speed_unit;
     config_dlg[SPEED_BULLET].d2    = speed_bullet;
     config_dlg[SPEED_MAPSCROLL].d2 = speed_mapscroll;
