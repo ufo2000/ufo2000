@@ -89,10 +89,10 @@ void Skin::initpck()
     char fname[100];
     for (int n = 0; n < SKIN_NUMBER; n++) {
         sprintf(fname, "$(xcom)/units/%s", skin_fname[n]);
-        m_pck[n] = new PCK(fname);
+        m_pck[n] = new PCK(fname, false, 32, 40);
     }
 
-    m_add1 = new PCK("$(ufo2000)/newunits/add1.pck");
+    m_add1 = new PCK("$(ufo2000)/newunits/add1.pck", false, 32, 40);
 
     for (int ar = 0; ar < 2; ar++)
         for (int se = 0; se < 2; se++)

@@ -42,6 +42,19 @@ BITMAP *pck_image(const char *filename, int index)
 }
 
 /**
+ * Load image from pck file
+ */
+BITMAP *pck_image_ex(bool tftd_flag, int width, int height, const char *filename, int index)
+{
+	std::string fullname = F(filename);
+	if (g_pck_cache.find(fullname) == g_pck_cache.end())
+		g_pck_cache[fullname] = new PCK(fullname.c_str(), tftd_flag, width, height);
+	PCK *pck = g_pck_cache[fullname];
+	ASSERT(pck->m_tftd_flag == tftd_flag && width == pck->m_width && height == pck->m_height);
+	return pck->get_image(index);
+}
+
+/**
  * Free all loaded pck files (used at exit)
  */
 void free_pck_cache()
@@ -57,7 +70,20 @@ PCK::PCK(const char *pckfname, int tftd_flag, int width, int height)
 {
 	m_tftd_flag = tftd_flag;
 	m_imgnum = 0;
+	m_width = width;
+	m_height = height;
 	loadpck(pckfname, width, height);
+    if (FLAGS & F_CONVERT_XCOM_DATA) {
+		std::string filename = get_filename(pckfname);
+		std::string dir = F("$(home)/converted_xcom_data");
+#ifdef LINUX
+        mkdir(dir.c_str(), 0755);
+#else
+        mkdir(dir.c_str());
+#endif
+        std::string bmp_name = dir + "/" + filename + ".bmp";
+        save_as_bmp(bmp_name.c_str());
+    }
 }
 
 PCK::~PCK()
@@ -93,6 +119,7 @@ BITMAP *PCK::pckdat2bmp(const unsigned char *data, int size, int width, int heig
 			case 0x00: 
 				ofs++; break;
 			default:
+				ASSERT(ofs / width < height);
 				putpixel(bmp, ofs % width, ofs / width, 
 					tftd_flag ? tftd_color(data[j]) : xcom1_color(data[j]));
 				ofs++;
@@ -192,10 +219,7 @@ void PCK::drawpck(int num, BITMAP *dest, int y)
 
 /* Parameters for saving data in BMP format */
 
-#define SIZE 16
-
-#define OUT_WIDTH  32 // 64
-#define OUT_HEIGHT 48 // 118
+#define SIZE 8
 
 /**
  * Function for debugging and dumping .pck files only
@@ -205,17 +229,14 @@ void PCK::drawpck(int num, BITMAP *dest, int y)
 void PCK::save_as_bmp(const char *fname)
 {
 	int rows = ((m_imgnum + SIZE - 1) / SIZE);
-	BITMAP *bmp = create_bitmap(32 * SIZE, 48 * rows);
+	BITMAP *bmp = create_bitmap(m_width * SIZE + SIZE + 1, m_height * rows + rows + 1);
 	clear_to_color(bmp, xcom_color(0));
+    for (int x = 0; x < bmp->w; x += m_width + 1) vline(bmp, x, 0, bmp->h - 1, makecol(0, 0, 0));
+    for (int y = 0; y < bmp->h; y += m_height + 1) hline(bmp, 0, y, bmp->w - 1, makecol(0, 0, 0));
 
 	for (int i = 0; i < m_imgnum; i++)
-		draw_sprite(bmp, m_bmp[i], (i % SIZE) * 32, (i / SIZE) * 48);
+		draw_sprite(bmp, m_bmp[i], (i % SIZE) * (m_width + 1) + 1, (i / SIZE) * (m_height + 1) + 1);
 
-	BITMAP *bmp2 = create_bitmap(OUT_WIDTH * SIZE, OUT_HEIGHT * rows);
-	stretch_blit(bmp, bmp2, 0, 0, 32 * SIZE, 48 * rows, 0, 0, OUT_WIDTH * SIZE, OUT_HEIGHT * rows);
-
-	save_bitmap(fname, bmp2, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
-
-	destroy_bitmap(bmp2);
+	save_bitmap(fname, bmp, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
 	destroy_bitmap(bmp);
 }

@@ -99,7 +99,7 @@ void TerraPCK::add(const char *mcd_name, int tftd_flag)
         if (m_mcd[oldcount + i].Die_MCD)
             m_mcd[oldcount + i].Die_MCD += oldcount;
         for (int j = 0; j < 8; j++) {
-            BITMAP *bmp = pck_image(pck_name.c_str(), m_mcd[oldcount + i].Frame[j]);
+            BITMAP *bmp = pck_image_ex(tftd_flag, 32, 40, pck_name.c_str(), m_mcd[oldcount + i].Frame[j]);
             m_mcd[oldcount + i].FrameBitmap[j] = bmp;
             if (m_black_bmp.find(bmp) != m_black_bmp.end()) {
                 m_mcd[oldcount + i].FrameBlackBitmap[j] = m_black_bmp[bmp];

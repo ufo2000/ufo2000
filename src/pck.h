@@ -24,6 +24,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "global.h"
 
 BITMAP *pck_image(const char *filename, int index);
+BITMAP *pck_image_ex(bool tftd_flag, int width, int height, const char *filename, int index);
 
 void free_pck_cache();
 
@@ -32,17 +33,21 @@ void free_pck_cache();
  */
 class PCK
 {
-protected:
-	std::vector<BITMAP *> m_bmp;
+private:
+    friend BITMAP *pck_image_ex(bool tftd_flag, int width, int height, const char *filename, int index);
+	
+    std::vector<BITMAP *> m_bmp;
 
     char m_fname[0x100];
+    int  m_width;
+    int  m_height;
 
-	BITMAP *pckdat2bmp(const unsigned char *data, int size, int width, int height, int tftd_flag);
+    BITMAP *pckdat2bmp(const unsigned char *data, int size, int width, int height, int tftd_flag);
 
-	bool m_tftd_flag;
+    bool m_tftd_flag;
 
 public:
-	int m_imgnum;
+    int m_imgnum;
 
 	PCK(const char *pckfname, int tftd_flag = 0, int width = 32, int height = 48);
 	~PCK();
