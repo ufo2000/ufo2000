@@ -171,9 +171,6 @@ static void ufo2k_set_gfx_mode(int gfx_driver, int min_color_depth)
 		}
 
 		set_color_depth(color_depth);
-		if (color_depth > 8) {
-			set_color_conversion(COLORCONV_TOTAL | COLORCONV_KEEP_TRANS);
-		}
 
 	//	Try both selected in ini-file and 640x480 video modes
 		int exit_code = set_gfx_mode(gfx_driver, cfg_get_screen_x_res(), cfg_get_screen_y_res(), 0, 0);
@@ -334,4 +331,25 @@ int askmenu(char *mess)
 	set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
 	int sel = alert(mess, "", "", "OK", "Cancel", 0, 0);
 	return (sel == 1);
+}
+
+/**
+ * Function for background image loading. Can load JPG, 
+ * BMP, LBM, SPK, SCR formats
+ *
+ * @param filename  name of the file with the image to be loaded
+ */
+BITMAP *load_back_image(const char *filename)
+{
+	BITMAP *tmp = NULL;
+	tmp = load_jpg(filename, NULL);
+	if (tmp != NULL) return tmp;
+	tmp = load_bitmap(filename, NULL);
+	if (tmp != NULL) return tmp;
+	SPK *spk = new SPK(filename);
+	tmp = create_bitmap(320, 200);
+	clear(tmp);
+	spk->show(tmp, 0, 0);
+	delete spk;
+	return tmp;
 }

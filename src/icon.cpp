@@ -438,5 +438,7 @@ int Icon::inside(int mx, int my)
 
 void Icon::show_eot()
 {
-	tac00->show_strech(screen, 0, 0, SCREEN_W, SCREEN_H);
+	BITMAP *eot_back = load_back_image(cfg_get_endturn_image_file_name());
+	stretch_blit(eot_back, screen, 0, 0, eot_back->w, eot_back->h, 0, 0, SCREEN_W, SCREEN_H);
+	destroy_bitmap(eot_back);
 }

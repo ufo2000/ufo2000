@@ -62,6 +62,8 @@ inline int mouse_inside(int x1, int y1, int x2, int y2)
 	return ((mouse_x >= x1) && (mouse_x <= x2) && (mouse_y >= y1) && (mouse_y <= y2));
 }
 
+BITMAP *load_back_image(const char *filename);
+
 void savescreen();
 void resize_screen2(int vw, int vh);
 int askmenu(char *mess);

@@ -51,6 +51,12 @@ static std::string lose_midi_file_name;
 static std::string net1_midi_file_name;
 static std::string net2_midi_file_name;
 
+static std::string loading_image_file_name;
+static std::string menu_image_file_name;
+static std::string endturn_image_file_name;
+static std::string win_image_file_name;
+static std::string lose_image_file_name;
+
 static std::string server_host;
 
 std::string g_server_login;
@@ -141,6 +147,12 @@ const char *cfg_get_net2_music_file_name()
 	return net2_midi_file_name.c_str();
 }
 
+const char *cfg_get_loading_image_file_name() { return loading_image_file_name.c_str(); }
+const char *cfg_get_menu_image_file_name() { return menu_image_file_name.c_str(); }
+const char *cfg_get_endturn_image_file_name() { return endturn_image_file_name.c_str(); }
+const char *cfg_get_win_image_file_name() { return win_image_file_name.c_str(); }
+const char *cfg_get_lose_image_file_name() { return lose_image_file_name.c_str(); }
+
 void loadini()
 {
 	set_config_file("ufo2000.ini");
@@ -184,6 +196,12 @@ void loadini()
 	lose_midi_file_name = get_config_string(gen, "lose_music", "sound/gmlose.mid");
 	net1_midi_file_name = get_config_string(gen, "net_music1", "sound/gmgeo1.mid");
 	net2_midi_file_name = get_config_string(gen, "net_music2", "sound/gmgeo2.mid");
+
+	loading_image_file_name = get_config_string(gen, "loading_image", "ufo2000.dat#TEXT_BACK_JPG");
+	menu_image_file_name = get_config_string(gen, "menu_image", "ufointro/pict2.lbm");
+	endturn_image_file_name = get_config_string(gen, "endturn_image", "ufograph/tac00.scr");
+	win_image_file_name = get_config_string(gen, "win_image", "geograph/back01.scr");
+	lose_image_file_name = get_config_string(gen, "lose_image", "geograph/back02.scr");
 
 	server_host = get_config_string("Server", "host", "127.0.0.1");
 

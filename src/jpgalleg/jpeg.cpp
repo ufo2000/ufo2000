@@ -635,14 +635,17 @@ BITMAP *load_memory_jpg(void *data, RGB *pal)
    DECODER_DATA dec;
    BITMAP *bmp;
    PALETTE tmppal;
+   int want_palette = TRUE;
    int y1[64], y2[64], y3[64], y4[64], cb[64], cr[64];
    int dc_y, dc_cb, dc_cr;
    int i, j, x, y, dest_depth, hue;
 
    memset(&dec, 0, sizeof(dec));
 
-   if (!pal)
+   if (!pal) {
+      want_palette = FALSE;
       pal = tmppal;
+   }
 
    dec.data_start = (unsigned char *)data;
    dec.data = dec.data_start;
@@ -873,7 +876,7 @@ BITMAP *load_memory_jpg(void *data, RGB *pal)
 
    generate_332_palette(pal);
    if (dest_depth != 24)
-      bmp = _fixup_loaded_bitmap(bmp, pal, dest_depth);
+      bmp = _fixup_loaded_bitmap(bmp, want_palette ? pal : NULL, dest_depth);
 
    return bmp;
 }

@@ -24,24 +24,17 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "global.h"
 #include "video.h"
-//#include "word.h"
 #include "../ufo2000.h"
 #include "mainmenu.h"
 #include "version.h"
 #include "pfxopen.h"
+#include "config.h"
 
 #include "sound.h"
 
 static int old_mouse_x = -1, old_mouse_y = -1;
 
-static PALLETE menupal;
 static BITMAP *menuback;
-
-
-void initmainmenu()
-{
-	menuback = LOADBITMAP_ORIG("ufointro/pict2.lbm", menupal);
-}
 
 /** Event handler for main menu buttons. */
 /*
@@ -185,13 +178,14 @@ int do_mainmenu()
     BS_SELECTED.font    = large;
     BS_GOTFOCUS.font    = large;
 
-	RGB *menupal = (RGB *)datafile[DAT_MENUPAL_BMP].dat;
 	BITMAP *mouser2 = (BITMAP*)datafile[DAT_MOUSE2_BMP].dat;
 
 	set_mouse_sprite(mouser2);
-	set_palette(menupal);
+	set_palette((RGB *)datafile[DAT_MENUPAL_BMP].dat);
 	set_mouse_speed(1, 1);
 	set_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
+
+	menuback = load_back_image(cfg_get_menu_image_file_name());
 	
 	if (old_mouse_x != -1)
 		position_mouse(old_mouse_x, old_mouse_y);
@@ -202,6 +196,8 @@ int do_mainmenu()
 	soundSystem::getInstance()->play(SS_WINDOW_OPEN_1);
 
 	int v = do_dialog(the_dialog, -1);
+
+	destroy_bitmap(menuback);
 
 	play_midi(NULL, 1);
 	soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);

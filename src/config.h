@@ -45,6 +45,11 @@ const char *cfg_get_win_music_file_name();
 const char *cfg_get_lose_music_file_name();
 const char *cfg_get_net1_music_file_name();
 const char *cfg_get_net2_music_file_name();
+const char *cfg_get_loading_image_file_name();
+const char *cfg_get_menu_image_file_name();
+const char *cfg_get_endturn_image_file_name();
+const char *cfg_get_win_image_file_name();
+const char *cfg_get_lose_image_file_name();
 
 extern MIDI                  *g_menu_midi_music;
 extern MIDI                  *g_setup_midi_music;

@@ -407,7 +407,7 @@ void initmain(int argc, char *argv[])
 	set_uformat(U_UTF8);
 	allegro_init();
 	register_bitmap_file_type("jpg", load_jpg, NULL);
-	set_color_conversion(COLORCONV_REDUCE_TO_256);
+	set_color_conversion(COLORCONV_TOTAL | COLORCONV_DITHER);
 
     FLAGS = 0;
 	push_config_state();
@@ -486,14 +486,10 @@ void initmain(int argc, char *argv[])
 	set_window_close_button(0);
 
 	set_video_mode();
-	set_palette(black_palette);
+	set_palette((RGB *)datafile[DAT_GAMEPAL_BMP].dat);
 
-	PALETTE pal;
-	BITMAP *text_back = load_memory_jpg(datafile[DAT_TEXT_BACK_JPG].dat, pal);
-
+	BITMAP *text_back = load_back_image(cfg_get_loading_image_file_name());
 	stretch_blit(text_back, screen, 0, 0, text_back->w, text_back->h, 0, 0, SCREEN_W, SCREEN_H);
-    fade_from(black_palette, pal, (64 - FADE_SPEED)/3 + FADE_SPEED);
-
 	print_win = new Wind(text_back, 15, 300, 625, 390, 255);
 
     /* to use the init console as an ostream -very handy. */
@@ -512,7 +508,6 @@ void initmain(int argc, char *argv[])
         bool VERBOSE_SOUNDCHECK = false;
         
         console<<"Initializing sound..."<<std::endl;
-//        rest(1500);
         std::string xml;
         soundSystem *ss = soundSystem::getInstance();
         std::ifstream ifs_xml("soundmap.xml");
@@ -536,9 +531,6 @@ void initmain(int argc, char *argv[])
     }
 	console<<"initvideo"<<std::endl;
 	initvideo();
-
-	console<<"initmainmenu"<<std::endl;
-	initmainmenu();
 
 	LOCK_VARIABLE(CHANGE); LOCK_FUNCTION(mouser_proc);
 	LOCK_VARIABLE(MOVEIT); LOCK_FUNCTION(timer_handler);
@@ -923,7 +915,7 @@ bool loadgame_stream(std::iostream &stream)
 
 void endgame_stats()
 {
-	SPK *back;
+	BITMAP *back;
 	BITMAP *scr = create_bitmap(320, 200);
 	BITMAP *newscr = create_bitmap(SCREEN_W, SCREEN_H);
 	clear(scr);
@@ -989,18 +981,21 @@ void endgame_stats()
 
 	DONE = 0;
 
+	BITMAP *back_win = load_back_image(cfg_get_win_image_file_name());
+	BITMAP *back_lose = load_back_image(cfg_get_lose_image_file_name());
+
 	if (net->gametype == HOTSEAT)
  	{
 		if (win == loss)
  		{
 			play_midi(g_lose_midi_music, 1);
-			back = new SPK("geograph/back02.scr");
+			back = back_lose;
 			strcpy(winner, "DRAW!");
  		}
  		else
  		{
 			play_midi(g_win_midi_music, 1);
-			back = new SPK("geograph/back01.scr");
+			back = back_win;
  			if (win)
  			{
 				if (turn % 2 == 0) strcpy(winner, "PLAYER 2 WINS!");
@@ -1019,20 +1014,19 @@ void endgame_stats()
 		if ((win && (!loss)))
 		{
 			play_midi(g_win_midi_music, 1);
-			back = new SPK("geograph/back01.scr");
+			back = back_win;
 			strcpy(winner, "YOU WIN!");
 		}
 		else
 		{
 			play_midi(g_lose_midi_music, 1);
-			back = new SPK("geograph/back02.scr");
+			back = back_lose;
 			if (!win) strcpy(winner, "YOU LOSE!");
 			else strcpy(winner, "DRAW!");
 		}
  	}
 
-	back->show(scr, 0, 0);
-	stretch_blit(scr, newscr, 0, 0, 320, 200, 0, 0, SCREEN_W, SCREEN_H);
+	stretch_blit(back, newscr, 0, 0, back->w, back->h, 0, 0, SCREEN_W, SCREEN_H);
 
 	textprintf_centre(newscr, large, 320, 24, xcom1_color(1), "%s", winner);
 
