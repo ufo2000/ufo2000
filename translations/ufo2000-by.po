@@ -6,13 +6,43 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: UFO2000\n"
-"POT-Creation-Date: 2004-11-07 18:33+0100\n"
+"POT-Creation-Date: 2004-11-08 02:38+0100\n"
 "PO-Revision-Date: unknown\n"
 "Last-Translator: Serge Semashko\n"
 "Language-Team: Belarusian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: src/config.cpp:285
+msgid "Configuration"
+msgstr ""
+
+#: src/config.cpp:290 src/connect.cpp:260 src/editor.cpp:644 src/main.cpp:1791
+#: src/main.cpp:1936 src/video.cpp:360 src/server_gui.cpp:310
+msgid "OK"
+msgstr ""
+
+#: src/config.cpp:291 src/icon.cpp:647 src/video.cpp:360
+#: src/server_gui.cpp:311
+msgid "Cancel"
+msgstr ""
+
+#: src/config.cpp:292
+msgid "movement speed"
+msgstr ""
+
+#: src/config.cpp:293
+msgid "fire speed"
+msgstr ""
+
+#: src/config.cpp:294
+msgid "scroll speed"
+msgstr ""
+
+#: src/config.cpp:295
+msgid "mapscroll points"
+msgstr ""
 
 #: src/connect.cpp:80
 msgid "Comparing local and remote UFO2000 versions...\n"
@@ -34,11 +64,6 @@ msgstr ""
 
 #: src/connect.cpp:259
 msgid "Remote player does not have any of your maps"
-msgstr ""
-
-#: src/connect.cpp:260 src/editor.cpp:639 src/main.cpp:1791 src/main.cpp:1936
-#: src/video.cpp:360 src/server_gui.cpp:310
-msgid "OK"
 msgstr ""
 
 #: src/connect.cpp:295
@@ -99,19 +124,22 @@ msgstr ""
 msgid "F1 Help   F2 Save Team   F3 Load Team   F4 Edit Attributes"
 msgstr ""
 
-#: src/editor.cpp:348 src/editor.cpp:356
+#: src/editor.cpp:348 src/editor.cpp:356 src/inventory.cpp:94
+#: src/inventory.cpp:105
 msgid "AMMO:"
 msgstr ""
 
-#: src/editor.cpp:349 src/editor.cpp:357
+#: src/editor.cpp:349 src/editor.cpp:357 src/inventory.cpp:95
+#: src/inventory.cpp:106
 msgid "ROUNDS"
 msgstr ""
 
-#: src/editor.cpp:350 src/editor.cpp:358
+#: src/editor.cpp:350 src/editor.cpp:358 src/inventory.cpp:85
+#: src/inventory.cpp:96 src/inventory.cpp:107
 msgid "LEFT="
 msgstr ""
 
-#: src/editor.cpp:379
+#: src/editor.cpp:379 src/soldier.cpp:823
 #, c-format
 msgid "Equipment weight: %d/%2d"
 msgstr ""
@@ -120,68 +148,68 @@ msgstr ""
 msgid "Equipment cost"
 msgstr ""
 
-#: src/editor.cpp:620
+#: src/editor.cpp:625
 msgid "Select unit race"
 msgstr ""
 
-#: src/editor.cpp:625
+#: src/editor.cpp:630
 msgid "Select unit armour"
 msgstr ""
 
-#: src/editor.cpp:630
+#: src/editor.cpp:635
 msgid "Select unit appearance"
 msgstr ""
 
-#: src/editor.cpp:640
+#: src/editor.cpp:645
 msgid "Name:"
 msgstr ""
 
-#: src/editor.cpp:644
+#: src/editor.cpp:649
 msgid "Race:"
 msgstr ""
 
-#: src/editor.cpp:647
+#: src/editor.cpp:652
 msgid "Armour:"
 msgstr ""
 
-#: src/editor.cpp:650
+#: src/editor.cpp:655
 msgid "Appearance:"
 msgstr ""
 
-#: src/editor.cpp:718 src/editor.cpp:793
+#: src/editor.cpp:723 src/editor.cpp:798
 #, c-format
 msgid "points remain: %d  "
 msgstr ""
 
-#: src/editor.cpp:768
+#: src/editor.cpp:773
 msgid "Time Units"
 msgstr ""
 
-#: src/editor.cpp:769
+#: src/editor.cpp:774
 msgid "Stamina"
 msgstr ""
 
-#: src/editor.cpp:770
+#: src/editor.cpp:775
 msgid "Health"
 msgstr ""
 
-#: src/editor.cpp:771
+#: src/editor.cpp:776
 msgid "Bravery"
 msgstr ""
 
-#: src/editor.cpp:772
+#: src/editor.cpp:777
 msgid "Reactions"
 msgstr ""
 
-#: src/editor.cpp:773
+#: src/editor.cpp:778
 msgid "Firing"
 msgstr ""
 
-#: src/editor.cpp:774
+#: src/editor.cpp:779
 msgid "Throwing"
 msgstr ""
 
-#: src/editor.cpp:775
+#: src/editor.cpp:780
 msgid "Strength"
 msgstr ""
 
@@ -234,8 +262,12 @@ msgstr ""
 msgid "AIMED SHOT  ACC>%02d%% TUs>%02d"
 msgstr ""
 
-#: src/icon.cpp:647 src/video.cpp:360 src/server_gui.cpp:311
-msgid "Cancel"
+#: src/inventory.cpp:83
+msgid "DELAY"
+msgstr ""
+
+#: src/inventory.cpp:84
+msgid "TIME:"
 msgstr ""
 
 #: src/main.cpp:82
@@ -836,7 +868,7 @@ msgid "Map-Display: Invoke the map-viewer for a small overhead-view."
 msgstr ""
 
 #: src/text.cpp:492
-msgid "Stand up / Kneel.  Kneeling improves aiming (10%)."
+msgid "Stand up / Kneel:  Kneeling improves aiming (10%)."
 msgstr ""
 
 #: src/text.cpp:496
@@ -1302,11 +1334,6 @@ msgstr ""
 msgid "(to be continued)"
 msgstr ""
 
-#: src/soldier.cpp:823
-#, c-format
-msgid "Equipment weight: %d/%d"
-msgstr ""
-
 #: src/soldier.cpp:832
 msgid "TUs>"
 msgstr ""
@@ -1733,6 +1760,10 @@ msgstr ""
 
 #: src/scenario.cpp:184
 msgid "edge if \"surrounded\" deployment is selected.     "
+msgstr ""
+
+#: src/scenario.cpp:194
+msgid "Capture"
 msgstr ""
 
 #: src/scenario.cpp:196

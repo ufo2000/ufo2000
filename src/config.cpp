@@ -181,48 +181,48 @@ void loadini()
 {
 	set_config_file(F("$(home)/ufo2000.ini"));
 
-	SCREEN2W = get_config_int(gen, "width", 430);
-	SCREEN2H = get_config_int(gen, "height", 280);
+    SCREEN2W             = get_config_int(gen, "width", 430);
+    SCREEN2H             = get_config_int(gen, "height", 280);
 
-	MAP_WIDTH = get_config_int(gen, "map_width", 4);
-	MAP_HEIGHT = get_config_int(gen, "map_height", 4);
-	speed_unit = get_config_int(gen, "speed_unit", 30);
-	speed_bullet = get_config_int(gen, "speed_bullet", 30);
-	speed_mapscroll = get_config_int(gen, "speed_mapscroll", 30);
-	mapscroll = get_config_int(gen, "mapscroll", 10);
+    MAP_WIDTH            = get_config_int(gen, "map_width", 4);
+    MAP_HEIGHT           = get_config_int(gen, "map_height", 4);
+    speed_unit           = get_config_int(gen, "speed_unit", 30);
+    speed_bullet         = get_config_int(gen, "speed_bullet", 30);
+    speed_mapscroll      = get_config_int(gen, "speed_mapscroll", 30);
+    mapscroll            = get_config_int(gen, "mapscroll", 10);
 
-	local_platoon_size = get_config_int(edit, "platoon_size", 1);
-	strcpy(last_map_name, get_config_string(edit, "last_map_name", ""));
-	strcpy(last_unit_name, get_config_string(edit, "last_unit_name", ""));
+    local_platoon_size   = get_config_int(edit, "platoon_size", 1);
+    strcpy(last_map_name,  get_config_string(edit, "last_map_name", ""));
+    strcpy(last_unit_name, get_config_string(edit, "last_unit_name", ""));
 
-	g_time_limit = get_config_int(gen, "time_limit", -1);
+    g_time_limit = get_config_int(gen, "time_limit", -1);
 
-//	base_accuracy = get_config_int(gen, "accuracy", 75);
-	preferred_screen_xres = get_config_int(gen, "screen_x_res", 640);
-	preferred_screen_yres = get_config_int(gen, "screen_y_res", 400);
-	min_color_depth = get_config_int(gen, "color_depth", 8);
-	menu_midi_file_name = get_config_string(gen, "menu_music", "$(xcom)/sound/gmstory.mid");
-	setup_midi_file_name = get_config_string(gen, "setup_music", "$(xcom)/sound/gmenbase.mid");
-	editor_midi_file_name = get_config_string(gen, "editor_music", "$(xcom)/sound/gmdefend.mid");
-	combat1_midi_file_name = get_config_string(gen, "combat_music1", "$(xcom)/sound/gmtactic.mid");
-	combat2_midi_file_name = get_config_string(gen, "combat_music2", "$(xcom)/sound/gmtactic.mid");
-	win_midi_file_name = get_config_string(gen, "win_music", "$(xcom)/sound/gmwin.mid");
-	lose_midi_file_name = get_config_string(gen, "lose_music", "$(xcom)/sound/gmlose.mid");
-	net1_midi_file_name = get_config_string(gen, "net_music1", "$(xcom)/sound/gmgeo1.mid");
-	net2_midi_file_name = get_config_string(gen, "net_music2", "$(xcom)/sound/gmgeo2.mid");
+// base_accuracy = get_config_int(gen, "accuracy", 75);
+    preferred_screen_xres  = get_config_int(gen, "screen_x_res", 640);
+    preferred_screen_yres  = get_config_int(gen, "screen_y_res", 400);
+    min_color_depth        = get_config_int(gen, "color_depth", 8);
+    menu_midi_file_name    = get_config_string(gen, "menu_music", "$(xcom)/sound/gmstory.mid");
+    setup_midi_file_name   = get_config_string(gen, "setup_music", "$(xcom)/sound/gmenbase.mid");
+    editor_midi_file_name  = get_config_string(gen, "editor_music", "$(xcom)/sound/gmdefend.mid");
+    combat1_midi_file_name = get_config_string(gen, "combat_music1", "$(xcom)/sound/gmtactic.mid");
+    combat2_midi_file_name = get_config_string(gen, "combat_music2", "$(xcom)/sound/gmtactic.mid");
+    win_midi_file_name     = get_config_string(gen, "win_music", "$(xcom)/sound/gmwin.mid");
+    lose_midi_file_name    = get_config_string(gen, "lose_music", "$(xcom)/sound/gmlose.mid");
+    net1_midi_file_name    = get_config_string(gen, "net_music1", "$(xcom)/sound/gmgeo1.mid");
+    net2_midi_file_name    = get_config_string(gen, "net_music2", "$(xcom)/sound/gmgeo2.mid");
 
-	loading_image_file_name = get_config_string(gen, "loading_image", "$(ufo2000)/arts/text_back.jpg");
-	menu_image_file_name = get_config_string(gen, "menu_image", "$(xcom)/ufointro/pict2.lbm");
-	endturn_image_file_name = get_config_string(gen, "endturn_image", "$(xcom)/ufograph/tac00.scr");
-	win_image_file_name = get_config_string(gen, "win_image", "$(xcom)/geograph/back01.scr");
-	lose_image_file_name = get_config_string(gen, "lose_image", "$(xcom)/geograph/back02.scr");
+    loading_image_file_name = get_config_string(gen, "loading_image", "$(ufo2000)/arts/text_back.jpg");
+    menu_image_file_name    = get_config_string(gen, "menu_image", "$(xcom)/ufointro/pict2.lbm");
+    endturn_image_file_name = get_config_string(gen, "endturn_image", "$(xcom)/ufograph/tac00.scr");
+    win_image_file_name     = get_config_string(gen, "win_image", "$(xcom)/geograph/back01.scr");
+    lose_image_file_name    = get_config_string(gen, "lose_image", "$(xcom)/geograph/back02.scr");
 
-	consolefont = get_config_string(gen, "consolefont", "xcom_small");
-	music_volume = get_config_int(gen, "music_volume", 255);
+    consolefont        = get_config_string(gen, "consolefont", "xcom_small");
+    music_volume       = get_config_int(gen, "music_volume", 255);
 
-	g_server_host = get_config_string("Server", "host", "127.0.0.1");
-	g_server_proxy = get_config_string("Server", "http_proxy", "auto");
-	g_server_autologin = get_config_int("Server", "autologin", 0);
+    g_server_host      = get_config_string("Server", "host", "127.0.0.1");
+    g_server_proxy     = get_config_string("Server", "http_proxy", "auto");
+    g_server_autologin = get_config_int("Server", "autologin", 0);
 }
 
 void saveini()
@@ -283,30 +283,32 @@ static int d_slider_pro2(int msg, DIALOG *d, int c)
 // ?? gettext
 static DIALOG config_dlg[] = {
 	{ d_shadow_box_proc, 0, 0, 320, 200, FG, BG, 0, 0, 0, 0, NULL, NULL, NULL },
-    { d_text_proc,      72,   8, 144,  16, FG, BG, 0, 0, 0, 0, (void *) ("Configuration"), NULL, NULL },
+    { d_text_proc,      72,   8, 144,  16, FG, BG, 0, 0, 0, 0, (void *)_("Configuration"), NULL, NULL },
     { d_slider_pro2,    24,  40, 136,  16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
     { d_slider_pro2,    24,  64, 136,  16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
     { d_slider_pro2,    24,  88, 136,  16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
     { d_slider_pro2,    24, 112, 136,  16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
-    { d_button_proc,   160, 168,  64,  16, FG, BG, 0, D_EXIT, 0, 0, (void *) ("OK"), NULL, NULL },
-    { d_button_proc,   232, 168,  64,  16, FG, BG, 0, D_EXIT | D_GOTFOCUS, 0, 0, (void *) ("Cancel"), NULL, NULL },
-    { d_text_proc,     176,  44,  88,  16, FG, BG, 0, 0, 0, 0, (void *) ("movement speed"), NULL, NULL },
-    { d_text_proc,     176,  68, 104,  16, FG, BG, 0, 0, 0, 0, (void *) ("fire speed"), NULL, NULL },
-    { d_text_proc,     176,  92, 128,  16, FG, BG, 0, 0, 0, 0, (void *) ("scroll speed"), NULL, NULL },
-    { d_text_proc,     176, 116, 128,  16, FG, BG, 0, 0, 0, 0, (void *) ("mapscroll points"), NULL, NULL },
+    { d_button_proc,   160, 168,  64,  16, FG, BG, 0, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL },
+    { d_button_proc,   232, 168,  64,  16, FG, BG, 0, D_EXIT | D_GOTFOCUS, 0, 0, (void *)_("Cancel"), NULL, NULL },
+    { d_text_proc,     176,  44,  88,  16, FG, BG, 0, 0, 0, 0, (void *)_("movement speed"), NULL, NULL },
+    { d_text_proc,     176,  68, 104,  16, FG, BG, 0, 0, 0, 0, (void *)_("fire speed"), NULL, NULL },
+    { d_text_proc,     176,  92, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("scroll speed"), NULL, NULL },
+    { d_text_proc,     176, 116, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("mapscroll points"), NULL, NULL },
 	{ d_yield_proc,           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
 	{ NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL }
 };
+// Todo: Slider for music-volume, 
+//   Buttons/Checkboxes for Sound, Tooltips, etc.
 
 /**
  * Animation speed and other settings dialog available from battlescape
  */
 void configure()
 {
-	config_dlg[SPEED_UNIT].d2 = speed_unit;
-	config_dlg[SPEED_BULLET].d2 = speed_bullet;
-	config_dlg[SPEED_MAPSCROLL].d2 = speed_mapscroll;
-	config_dlg[MAPSCROLL].d2 = mapscroll;
+    config_dlg[SPEED_UNIT].d2      = speed_unit;
+    config_dlg[SPEED_BULLET].d2    = speed_bullet;
+    config_dlg[SPEED_MAPSCROLL].d2 = speed_mapscroll;
+    config_dlg[MAPSCROLL].d2       = mapscroll;
 
 	centre_dialog(config_dlg);
 	set_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
@@ -326,3 +328,4 @@ void configure()
 		install_timers(speed_unit, speed_bullet, speed_mapscroll);
 	}
 }
+

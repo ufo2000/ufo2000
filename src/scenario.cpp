@@ -191,7 +191,7 @@ void Scenario::init_break ()
 
 void Scenario::init_capture ()
 {
-    name[SC_CAPTURE] = "Capture";
+    name[SC_CAPTURE] = _("Capture");
 
     briefing_left[SC_CAPTURE][0]  = _("You must capture enemy leader (first selected    ");
     briefing_left[SC_CAPTURE][1]  = _("soldier). To do this you must stun him and bring ");

@@ -28,6 +28,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "multiplay.h"
 #include "soldier.h"
 #include "colors.h"
+#include "text.h"
 
 /**
  * Manage soldiers inventory
@@ -79,10 +80,10 @@ void Inventory::draw()
 		textprintf(screen2, g_small_font, 128, 140, COLOR_GREEN, "%s", sel_item->name().c_str());
 		if (sel_item->is_grenade()) {
 			if (sel_item->delay_time()) {
-				textout(screen2, g_small_font, "DELAY", 272, 64, COLOR_LT_OLIVE);
-				textout(screen2, g_small_font, "TIME:", 272, 72, COLOR_LT_OLIVE);
-				textout(screen2, g_small_font, "LEFT=", 272, 80, COLOR_LT_OLIVE);
-				textprintf(screen2, g_small_font, 299, 80, COLOR_ORANGE, "%d", sel_item->delay_time() - 1);
+                textout(screen2, g_small_font, _("DELAY"), 272, 64, COLOR_LT_OLIVE);
+                textout(screen2, g_small_font, _("TIME:"), 272, 72, COLOR_LT_OLIVE);
+                textout(screen2, g_small_font, _("LEFT="), 272, 80, COLOR_LT_OLIVE);
+                textprintf(screen2, g_small_font,          299, 80, COLOR_ORANGE, "%d", sel_item->delay_time() - 1);
 				//textprintf(screen2, font, 272, 80, color, "%d", sel_item->rounds);
 				rect(screen2, 272, 88, 303, 135, COLOR_GRAY08);      //clip
 				PCK::showpck(sel_item->obdata_pInv(), 272, 88 + 8);
@@ -90,10 +91,10 @@ void Inventory::draw()
 		}
 
 		if (sel_item->haveclip()) {
-			textout(screen2, g_small_font, "AMMO:",  272, 64, COLOR_LT_OLIVE);
-			textout(screen2, g_small_font, "ROUNDS", 272, 72, COLOR_LT_OLIVE);
-			textout(screen2, g_small_font, "LEFT=",  272, 80, COLOR_LT_OLIVE);
-			textprintf(screen2, g_small_font, 299, 80, COLOR_ORANGE, "%d", sel_item->roundsremain());
+            textout(screen2, g_small_font, _("AMMO:"),  272, 64, COLOR_LT_OLIVE);
+            textout(screen2, g_small_font, _("ROUNDS"), 272, 72, COLOR_LT_OLIVE);
+            textout(screen2, g_small_font, _("LEFT="),  272, 80, COLOR_LT_OLIVE);
+            textprintf(screen2, g_small_font,           299, 80, COLOR_ORANGE, "%d", sel_item->roundsremain());
 
 			printsmall( 312, 58, COLOR_WHITE, 8); // 8=Time to unload weapon
 			rect(screen2, 272, 88, 303, 135, COLOR_GRAY08);      //clip
@@ -101,10 +102,10 @@ void Inventory::draw()
 		} else if (sel_item->obdata_isAmmo()) {
 			printsmall( 34, 85, COLOR_WHITE, 15); // 15=Time to load weapon
 
-			textout(screen2, g_small_font, "AMMO:",  272, 64, COLOR_LT_OLIVE);
-			textout(screen2, g_small_font, "ROUNDS", 272, 72, COLOR_LT_OLIVE);
-			textout(screen2, g_small_font, "LEFT=",  272, 80, COLOR_LT_OLIVE);
-			textprintf(screen2, g_small_font, 299, 80, COLOR_ORANGE, "%d", sel_item->m_rounds);
+            textout(screen2, g_small_font, _("AMMO:"),  272, 64, COLOR_LT_OLIVE);
+            textout(screen2, g_small_font, _("ROUNDS"), 272, 72, COLOR_LT_OLIVE);
+            textout(screen2, g_small_font, _("LEFT="),  272, 80, COLOR_LT_OLIVE);
+            textprintf(screen2, g_small_font,           299, 80, COLOR_ORANGE, "%d", sel_item->m_rounds);
 			rect(screen2, 272, 88, 303, 135, COLOR_GRAY08);      //clip
 			PCK::showpck(sel_item->obdata_pInv(), 272, 88 + 8);
 		}

@@ -506,19 +506,24 @@ int Editor::load_clip()
 	return 0;
 }
 
-#define D_WIDTH 320
+//#define D_WIDTH 320
+#define D_WIDTH 360
 #define D_HEIGHT 340
 
 #define DX  0
 #define DY  0
 #define FG  -1
 #define BG  -1
-#define SSX 105
+//#define SSX 105
+//#define STX 35
+#define SSX 145
 #define STX 35
 #define SSY 40
 #define STY SSY+4
+//#define SSW 170
+//#define STW 65
 #define SSW 170
-#define STW 65
+#define STW 105
 #define SH  20
 
 #define D_NAME         3 
@@ -536,7 +541,7 @@ int Editor::load_clip()
 #define D_STRENGTH     D_TIME+14
 
 static int d_agup_slider_pro2(int msg, DIALOG *d, int c);
-static char slider_text[8][14];
+static char slider_text[8][20];
 
 static int points;
 static char points_str[100];

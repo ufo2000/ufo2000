@@ -489,7 +489,7 @@ void help( const int helppage )
         case HELP_BATTLESCAPE + 9 :
             b1 = alert3( _("Control-panel:  Buttons in column 3:"),
                          _("Map-Display: Invoke the map-viewer for a small overhead-view."),
-                         _("Stand up / Kneel.  Kneeling improves aiming (10%)."),
+                         _("Stand up / Kneel:  Kneeling improves aiming (10%)."),
                          prev, ok, next, kp_prev, kp_ok, kp_next);
             break;
         case HELP_BATTLESCAPE + 10 :
