@@ -357,6 +357,8 @@ class Scenario;
 //! Display-Modes
 enum Mode { MAP2D, MAP3D, MAN, WATCH, UNIT_INFO, PLANNER };
 
+enum DeployType {DEP_LEFT, DEP_RIGHT, DEP_CENTER, DEP_SURROUND};
+
 //! possible Stati for reserve-time - buttons
 // extern int ReserveTimeMode;
  #define RESERVE_FREE 0

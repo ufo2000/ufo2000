@@ -57,7 +57,7 @@ Platoon::Platoon(int PID, int num)
 	m_visibility_changed = 1;
 }
 
-Platoon::Platoon(int PID, PLAYERDATA * pd)
+Platoon::Platoon(int PID, PLAYERDATA * pd, DeployType dep_type)
 {
 	StatEntry *current;
 	ID = PID;
@@ -68,8 +68,9 @@ Platoon::Platoon(int PID, PLAYERDATA * pd)
 	current = m_stats->getfirst();
 
 	Soldier *s1 = NULL, *s2;
-	for (int i = 0; i < size; i++) {
-		s2 = new Soldier(this, i+PID, pd->lev[i], pd->col[i], pd->row[i], &pd->md[i], &pd->id[i]);
+	int i;
+	for (i = 0; i < size; i++) {
+		s2 = new Soldier(this, i+PID, pd->lev[i], pd->col[i], pd->row[i], &pd->md[i], &pd->id[i], dep_type);
 		current->set_name(pd->md[i].Name);
 		current->set_SID(i+PID);
 		current = current->getnext();

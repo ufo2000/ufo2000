@@ -197,8 +197,8 @@ void restartgame()
 	loss = 0;
 
 	map = new Map(mapdata);
-	p1  = new Platoon(1000, &pd1);
-	p2  = new Platoon(2000, &pd2);
+	p1  = new Platoon(1000, &pd1, scenario->deploy_type[0]);
+	p2  = new Platoon(2000, &pd2, scenario->deploy_type[1]);
 
 	bool map_saved = Map::save_GEODATA("$(home)/cur_map.lua", &mapdata);
 	ASSERT(map_saved);
@@ -1895,8 +1895,8 @@ void faststart()
 
 	map = new Map(mapdata);
 	elist = new Explosive();
-	p1 = new Platoon(1111, &pd1);
-	p2 = new Platoon(2222, &pd2);
+	p1 = new Platoon(1111, &pd1, scenario->deploy_type[0]);
+	p2 = new Platoon(2222, &pd2, scenario->deploy_type[1]);
 
 	//map->place(0, 0, 0)->put(new Item(KASTET));
 	//map->place(0, 0, 0)->put(new Item(KNIFE));

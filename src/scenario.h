@@ -39,8 +39,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 enum OptionType {OPT_NONE, OPT_SWITCH, OPT_NUMBER, OPT_HIDDEN};
 
-enum DeployType {DEP_LEFT, DEP_RIGHT, DEP_CENTER, DEP_SURROUND};
-
 class Option 
 {
 public:

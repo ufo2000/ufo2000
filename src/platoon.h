@@ -48,7 +48,7 @@ private:
 public:
 	Platoon() { memset(m_seen, 0, sizeof(m_seen)); }
 	Platoon(int PID, int num);
-	Platoon(int PID, PLAYERDATA *pd);
+	Platoon(int PID, PLAYERDATA *pd, DeployType dep_type);
 	virtual ~Platoon();
 	void destroy();
 

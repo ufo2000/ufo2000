@@ -143,7 +143,7 @@ public:
 	static void freepck();
 
 	Soldier(Platoon *platoon, int _NID);
-	Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *sdat, ITEMDATA *idat);
+	Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *sdat, ITEMDATA *idat, DeployType dep_type);
 	virtual ~Soldier();
 
 	void initialize();

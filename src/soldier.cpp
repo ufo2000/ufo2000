@@ -316,23 +316,54 @@ Soldier::Soldier(Platoon *platoon, int _NID)
 	memset(&ud, 0, sizeof(ud));
 }
 
-Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *mdat, ITEMDATA *idat)
+Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *mdat, ITEMDATA *idat, DeployType dep_type)
 {
 	NID = _NID; z = _z; x = _x; y = _y;
 	dir = 0;
 
-	//face to center of map
-	int dest_col = map->width * 10 / 2;
-	int dest_row = map->height * 10 / 2;
-	fixed ox = itofix(dest_col - x);
-	fixed oy = itofix(dest_row - y);
-	if ((!ox) && (!oy)) {
-		dir = 0;
-	} else {
-		int ang = fixtoi(fatan2(oy, ox));
-		if (ang < 0) ang = 256 + ang;
-		ang = (ang + 16) % 256;
-		dir = ang >> 5;
+	//	Face the enemy depending on what the deployment is
+	int ang, dest_col, dest_row;
+	fixed ox, oy;
+	switch (dep_type) {
+		case DEP_LEFT:
+		    //	Face right on the minimap
+		    dir = 0;
+			break;
+		case DEP_RIGHT:
+		    //	Face left on the minimap
+		    dir = 4;
+			break;
+		case DEP_CENTER:
+			//	Face from the center of the map
+			dest_col = map->width * 10 - 1;
+			dest_row = map->height * 10 - 1;
+			ox = itofix(dest_col - x * 2);
+			oy = itofix(dest_row - y * 2);
+			if ((!ox) && (!oy)) {
+				dir = 0;
+			} else {
+				ang = fixtoi(fatan2(oy, ox));
+				if (ang < 0) ang = 256 + ang;
+				ang = (ang + 16) % 256;
+				dir = ang >> 5;
+			}
+			dir = DIR_REVERSE (dir);
+			break;
+		case DEP_SURROUND:
+			//	Face to the center of the map
+			dest_col = map->width * 10 - 1;
+			dest_row = map->height * 10 - 1;
+			ox = itofix(dest_col - x * 2);
+			oy = itofix(dest_row - y * 2);
+			if ((!ox) && (!oy)) {
+				dir = 0;
+			} else {
+				ang = fixtoi(fatan2(oy, ox));
+				if (ang < 0) ang = 256 + ang;
+				ang = (ang + 16) % 256;
+				dir = ang >> 5;
+			}
+			break;
 	}
 
 	phase = 0; m_state = STAND;
