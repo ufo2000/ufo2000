@@ -110,13 +110,13 @@ FilesTable = {
 	["$(xcom)/units/xcom_2.pck"] = { Crc32 = X("0xC49CCBE5") },
 	["$(xcom)/units/xcom_2.tab"] = { Crc32 = X("0x528354F7") },
 
-	["$(xcom)/units/muton.pck"] = { Crc32 = X("0xD7E169A3"), 
+	["$(xcom)/units/muton.pck"] = { Crc32 = X("0x00000000"), 
 		Fallback = "$(xcom)/units/xcom_1.pck" },
-	["$(xcom)/units/muton.tab"] = { Crc32 = X("0x91FC80DE"), 
+	["$(xcom)/units/muton.tab"] = { Crc32 = X("0x00000000"), 
 		Fallback = "$(xcom)/units/xcom_1.tab" },
-	["$(xcom)/units/sectoid.pck"] = { Crc32 = X("0xF60F22DC"), 
+	["$(xcom)/units/sectoid.pck"] = { Crc32 = X("0x00000000"), 
 		Fallback = "$(xcom)/units/xcom_1.pck" },
-	["$(xcom)/units/sectoid.tab"] = { Crc32 = X("0x6831E47A"), 
+	["$(xcom)/units/sectoid.tab"] = { Crc32 = X("0x00000000"), 
 		Fallback = "$(xcom)/units/xcom_1.tab" },
 
 	["$(xcom)/ufograph/cursor.pck"]  = { Crc32 = X("0x69DE75D6") },
@@ -135,7 +135,7 @@ FilesTable = {
 	["$(xcom)/units/bigobs.tab"]     = { Crc32 = X("0x422CC4A5") },
 
 	["$(xcom)/ufograph/tac00.scr"]   = { Crc32 = X("0x226E61A0") },
-	["$(xcom)/ufograph/tac01.scr"]   = { Crc32 = X("0xBBB1E67F") },
+	["$(xcom)/ufograph/tac01.scr"]   = { Crc32 = X("0x00000000") },
 }
 
 ------------------------------------------------------------------------------

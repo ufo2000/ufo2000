@@ -371,6 +371,15 @@ const char *F(const char *fileid)
 	return fname.c_str();
 }
 
+void find_lua_files_callback(const char *filename, int attrib, int param)
+{
+	lua_dofile(L, filename);
+	// $$$ Fixme: lua_dofile sets errno variable in some mysterious way,
+    // so allegro for_each_file function stops searching files if we do not 
+    // reset this back to 0
+	*allegro_errno = 0; 
+}
+
 void initmain(int argc, char *argv[])
 {
 	register_assert_handler(assert_handler);
@@ -428,7 +437,8 @@ void initmain(int argc, char *argv[])
 	lua_dofile(L, DATA_DIR "/init-scripts/main.lua");
 	lua_dofile(L, DATA_DIR "/init-scripts/filecheck.lua");
 	lua_dofile(L, DATA_DIR "/init-scripts/standard-maps.lua");
-	lua_dofile(L, DATA_DIR "/init-scripts/user-maps.lua");
+
+	for_each_file(DATA_DIR "/newmaps/*.lua", FA_RDONLY | FA_ARCH, find_lua_files_callback, 0);
 
     FLAGS = 0;
 	push_config_state();
@@ -1556,8 +1566,18 @@ void start_loadgame()
 	closegame();
 }
 
+std::string g_version_id;
+
 int main(int argc, char *argv[])
 {
+	char version_id[128];
+	if (strcmp(UFO_SVNVERSION, "unknown") == 0 || strcmp(UFO_SVNVERSION, "exported") == 0 || strcmp(UFO_SVNVERSION, "") == 0) {
+		sprintf(version_id, "%s (revision >=%d)", UFO_VERSION_STRING, UFO_REVISION_NUMBER);
+	} else {
+		sprintf(version_id, "%s.%s", UFO_VERSION_STRING, UFO_SVNVERSION);
+	}
+	g_version_id = version_id;
+
 	initmain(argc, argv);
 
 	if (FLAGS & F_FASTSTART) {

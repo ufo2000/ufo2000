@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 -- A place for standard x-com maps initialization.                          --
--- Editing this file is not recommended, edit 'user-maps.lua' to add        --
--- extra maps                                                               --
+-- Editing this file is not recommended, better add new *.lua map init      --
+-- files into 'newmaps' subdirectory along with your *.map files            --
 ------------------------------------------------------------------------------
 
 AddXcomTerrain {

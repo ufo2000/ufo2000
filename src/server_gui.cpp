@@ -410,6 +410,7 @@ int connect_internet_server()
 	net->gametype = GAME_TYPE_INTERNET_SERVER;
 	net->m_internet_server = server.get();
 	net->send_debug_message("system:%s", get_os_type_string());
+	net->send_debug_message("version:%s", g_version_id.c_str());
 
 	while (true)
 	{

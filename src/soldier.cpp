@@ -637,11 +637,12 @@ void Soldier::draw()
 		arm1 = 1;
 	}
 
-//	Aliens do not crouch
 	State state = m_state;
+/*
+	// Aliens do not crouch
 	if (state == SIT && (md.SkinType == S_SECTOID || md.SkinType == S_MUTON))
 		state = STAND;
-
+*/
 	if (state == SIT) handob_y += 4;
 	if (md.SkinType == S_SECTOID) handob_y += 6; // $$$
 
