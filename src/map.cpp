@@ -776,11 +776,20 @@ void Map::rebuild_visi(int z, int x, int y)
 	}
 }
 
+/**
+ * Can a soldier walk through part "part" of cell (ox,oy,oz)?
+ */
 int Map::stopLOS(int oz, int ox, int oy, int part)
 {
 	if ((oz < 0) || (oz >= level) || (ox < 0) || (ox >= width * 10) || (oy < 0) || (oy >= height * 10))
 		return 1;
 
+    //A "big" diagonal ufo's wall acts like it consists of inner object (part 3)
+    //and 2 "normal" walls (parts 1 and 2)
+    int central_part_type = cell(oz, ox, oy)->type[3];
+    if(part && m_terrain->m_mcd[central_part_type].Big_Wall)
+        return 1;
+        
 	int ct = cell(oz, ox, oy)->type[part];
 	return m_terrain->m_mcd[ct].Stop_LOS;
 }
@@ -843,6 +852,12 @@ int Map::stopWALK(int oz, int ox, int oy, int part)
 {
 	if ((oz < 0) || (oz >= level) || (ox < 0) || (ox >= width * 10) || (oy < 0) || (oy >= height * 10))
 		return 1;
+
+    //A "big" diagonal ufo's wall acts like it consists of inner object (part 3)
+    //and 2 "normal" walls (parts 1 and 2)
+    int central_part_type = cell(oz, ox, oy)->type[3];
+    if(part && m_terrain->m_mcd[central_part_type].Big_Wall)
+        return 1;
 
 	int ct = cell(oz, ox, oy)->type[part];
 
