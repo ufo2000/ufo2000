@@ -1,12 +1,12 @@
-CC = g++
+CC = g++ 
 LD = g++
 CFLAGS = -funsigned-char -Wall
 CFLAGS += -pipe -DLINUX
 CFLAGS += -mcpu=i386 
 CFLAGS += -g -pg
-INCLUDES = ${shell /tmp/al402/bin/allegro-config --cflags profile}
+INCLUDES = ${shell allegro-config --cflags profile}
 CFLAGS += $(INCLUDES)
-LIBS = $(addprefix -l,$(LIBRARIES)) ${shell /tmp/al402/bin/allegro-config --static --libs profile }
+LIBS = $(addprefix -l,$(LIBRARIES)) ${shell allegro-config --static --libs profile }
 
 OBJS = about.o bullet.o cell.o config.o connect.o dirty.o editor.o explo.o \
        font.o icon.o inventory.o item.o keys.o main.o mainmenu.o \
