@@ -1213,51 +1213,56 @@ void gameloop()
 						MODE = MAP3D;
 					break;
 				case MAP3D:
+					// Center to one of seen enemies if appropriate bar with a digit 
+					// in the right bottom corner was clicked
 					if (sel_man != NULL && sel_man->center_enemy_seen()) break;
 
+                    // Wait for opponent to finish reaction fire (avoid dodging 
+                    // reaction fire bullets)
+					if (!platoon_remote->nomoves()) break;
+
+                    // Handle buttons the control panel
+					if (icon->inside(mouse_x, mouse_y)) {
+						icon->execute(mouse_x, mouse_y);
+						break;
+					}
+
+                    // Try to shoot if currently in targeting mode
 					if (TARGET) {
-						if (icon->inside(mouse_x, mouse_y)) {
-							//TARGET=0;
-							icon->execute(mouse_x, mouse_y);
-							break;
-						}
-
 						if (sel_man != NULL) sel_man->try_shoot();
-					} else
-						if (!icon->inside(mouse_x, mouse_y)) {
-							if (sel_man != NULL) {
-								Soldier * ssman = map->sel_man();
-								if (ssman == NULL) {
-									if (!sel_man->ismoving()) {
-										sel_man->wayto(map->sel_lev, map->sel_col, map->sel_row);
-									}
-								} else {
-									if (!platoon_local->belong(ssman)) {
-										if (!sel_man->ismoving()) {
-											sel_man->wayto(map->sel_lev, map->sel_col, map->sel_row);
-										}
-									}
-
-									if (!sel_man->ismoving()) {
-										if (platoon_local->belong(ssman))
-											sel_man = ssman;
-									}
-									if (FLAGS & F_SEL_ANY_MAN)
-										sel_man = ssman;
-								}
-							} else {
-								Soldier *ss = map->sel_man();
-								if ((ss != NULL) && (platoon_local->belong(ss)))
-									sel_man = ss;
-								//net_send("_sel_man");
-								if (FLAGS & F_SEL_ANY_MAN) {
-									if (ss != NULL)
-										sel_man = ss;
-								}
+						break;
+					} 
+					
+					if (sel_man != NULL) {
+						Soldier *ssman = map->sel_man();
+						if (ssman == NULL) {
+							if (!sel_man->ismoving()) {
+								sel_man->wayto(map->sel_lev, map->sel_col, map->sel_row);
 							}
 						} else {
-							icon->execute(mouse_x, mouse_y);
+							if (!platoon_local->belong(ssman)) {
+								if (!sel_man->ismoving()) {
+									sel_man->wayto(map->sel_lev, map->sel_col, map->sel_row);
+								}
+							}
+
+							if (!sel_man->ismoving()) {
+								if (platoon_local->belong(ssman))
+									sel_man = ssman;
+							}
+							if (FLAGS & F_SEL_ANY_MAN)
+								sel_man = ssman;
 						}
+					} else {
+						Soldier *ss = map->sel_man();
+						if ((ss != NULL) && (platoon_local->belong(ss)))
+							sel_man = ss;
+						//net_send("_sel_man");
+						if (FLAGS & F_SEL_ANY_MAN) {
+							if (ss != NULL)
+								sel_man = ss;
+						}
+					}
 					break;
 				case MAN:
 					inventory->execute();
