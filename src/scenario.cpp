@@ -721,7 +721,7 @@ bool Scenario::minimap_capture (int lev, int col, int row, Map *m_map)
 	return false;
 }
 
-bool Scenario::is_correct_platoon (long points, Platoon *platoon, char *first_soldier, PanPos pos, char buf[10000], int len, int num_of_men_sel)
+bool Scenario::is_correct_platoon (long points, Platoon *platoon, Soldier *first_soldier, PanPos pos, char buf[10000], int len, int num_of_men_sel)
 {
 	bool n = true;
 
@@ -804,29 +804,16 @@ bool Scenario::platoon_common (long points, Platoon *platoon, PanPos pos, char b
 	return true;
 }
 
-bool Scenario::platoon_escape (Platoon *platoon, PanPos pos, char *first_soldier)
+bool Scenario::platoon_escape (Platoon *platoon, PanPos pos, Soldier *first_soldier)
 {
-	if (!options[SC_ESCAPE][0]->value && pos == POS_LEFT) {
-    	char buf[10000]; memset(buf, 0, sizeof(buf));
-		int len = 0;
-		extern int weapon[];
+    if (!options[SC_ESCAPE][0]->value && pos == POS_LEFT) {
+		if (first_soldier && first_soldier->has_twohanded_weapon()) {
+            g_console->printf(COLOR_RED04, _("Soldier #1 can't have two-handed weapons!") );
+            return false;
+        }
+    }
 
-		platoon->findman(first_soldier)->build_items_stats (buf, len);
-  
-		for (int w = 0; w < 40; w++) {
-			int num = 0;
-			for (int i = 0; i < len; i++) {
-				if (weapon[w] == buf[i])
-					num++;
-			}
-			if ((Item::obdata_twoHanded(weapon[w]) > 0) && (num > 0)) {
-                g_console->printf(COLOR_RED04, _("Soldier #1 can't have two-handed weapons!") );
-				return false;
-			}
-		}
-	}
-
-	return true;
+    return true;
 }
 
 bool Scenario::platoon_sabotage (PanPos pos, char buf[10000], int len)
@@ -848,26 +835,13 @@ bool Scenario::platoon_sabotage (PanPos pos, char buf[10000], int len)
 	return true;
 }
 
-bool Scenario::platoon_assassin (Platoon *platoon, PanPos pos, char *first_soldier)
+bool Scenario::platoon_assassin (Platoon *platoon, PanPos pos, Soldier *first_soldier)
 {
 	if (!options[SC_ASSASSIN][0]->value && pos == POS_RIGHT) {
-    	char buf[10000]; memset(buf, 0, sizeof(buf));
-		int len = 0;
-		extern int weapon[];
-
-		platoon->findman(first_soldier)->build_items_stats (buf, len);
-
-		for (int w = 0; w < 40; w++) {
-			int num = 0;
-			for (int i = 0; i < len; i++) {
-				if (weapon[w] == buf[i])
-					num++;
-			}
-			if ((Item::obdata_twoHanded(weapon[w]) > 0) && (num > 0)) {
-                g_console->printf(COLOR_RED04, _("Soldier #1 can't have two-handed weapons!") );
-				return false;
-			}
-		}
+		if (first_soldier && first_soldier->has_twohanded_weapon()) {
+            g_console->printf(COLOR_RED04, _("Soldier #1 can't have two-handed weapons!"));
+            return false;
+        }
 	}
 
 	return true;
@@ -893,7 +867,7 @@ bool Scenario::platoon_break (PanPos pos, int num_of_men_sel)
 	return true;
 }
 
-bool Scenario::platoon_capture (Platoon *platoon, char *first_soldier, PanPos pos, char buf[10000], int len)
+bool Scenario::platoon_capture (Platoon *platoon, Soldier *first_soldier, PanPos pos, char buf[10000], int len)
 {
 	if (pos == POS_LEFT) {
 		bool stun_rod = false, stun_gun = false, stun_bomb = false;
@@ -913,23 +887,10 @@ bool Scenario::platoon_capture (Platoon *platoon, char *first_soldier, PanPos po
 		}
 	} else {
 		if (!options[SC_CAPTURE][0]->value) {
-	    	char buf2[10000]; memset(buf2, 0, sizeof(buf2));
-			int len2 = 0;
-			extern int weapon[];
-
-			platoon->findman(first_soldier)->build_items_stats (buf2, len2);
- 
-			for (int w = 0; w < 40; w++) {
-				int num = 0;
-				for (int i = 0; i < len2; i++) {
-					if (weapon[w] == buf2[i])
-						num++;
-				}
-				if ((Item::obdata_twoHanded(weapon[w]) > 0) && (num > 0)) {
-                    g_console->printf(COLOR_RED04, _("Soldier #1 can't have two-handed weapons!") );
-					return false;
-				}
-			}
+    		if (first_soldier && first_soldier->has_twohanded_weapon()) {
+                g_console->printf(COLOR_RED04, _("Soldier #1 can't have two-handed weapons!"));
+                return false;
+            }
 		}
 	}
 

@@ -536,35 +536,37 @@ void Units::build_items_stats(ITEMDATA *id, char *buf, int &len)
 	}
 }
 
-extern int weapon[];
-
 /**
  * Show summary of equipment for the platoon:
  * list of type and number of weapons to go on the mission.
  */
 int Units::draw_items_stats(int gx, int gy, char *buf, int len)
 {
-	int aa = 0;
+    #undef map
+    std::map<std::string, int> tbl;
 	int damage_points = 0;
-	for (int w = 0; w < 40; w++) {
-		int num = 0;
-		for (int i = 0; i < len; i++) {
-			if (weapon[w] == buf[i])
-				num++;
-		}
-		// Count damage for platoon costs.
-		if ((Item::obdata_cost(weapon[w]) > 0) && (num > 0))
-			damage_points += (Item::obdata_cost(weapon[w]) * num);
-		if (Item::obdata_isAmmo(weapon[w])) continue;
-		if (num != 0) {
-			textprintf(screen2, g_small_font, gx + (aa / 72) * 90, gy + (aa % 72),
-			           COLOR_WHITE, "%s=%d", Item::obdata_name(weapon[w]).c_str(), num);
-			aa += 9;
-			
-		}
-	}
-
-	return damage_points;
+    for (int i = 0; i < size; i++) if (is_selected(i)) {
+        Soldier *ss = editor->platoon()->findman(name[i]);
+        ASSERT(ss != NULL);
+        if (ss != NULL) {
+            std::vector<Item *> items;
+            ss->get_inventory_list(items);
+            for (int i = 0; i < (int)items.size(); i++) {
+                damage_points += items[i]->get_cost();
+                if (!items[i]->obdata_isAmmo()) tbl[items[i]->name()]++;
+            }
+        }
+    }
+    
+    std::map<std::string, int>::iterator it = tbl.begin();
+	int aa = 0;
+    while (it != tbl.end()) {
+        textprintf(screen2, g_small_font, gx + (aa / 72) * 90, gy + (aa % 72),
+            COLOR_WHITE, "%s=%d", it->first.c_str(), it->second);
+        aa += 9;
+        it++;
+    }
+    return damage_points;
 }
 
 
@@ -619,9 +621,6 @@ void Units::print_simple(int gcol)
 	}
 
 	int yy = gy + size * 15 - 3;
-	/*if (pos == POS_LEFT)
-		draw_items_stats(0, 160+10, buf, len);
-	else*/
 	points += draw_items_stats(gx, yy + 10, buf, len);
 
     textprintf_centre(screen2, g_small_font, gx + 10 * 8, yy, COLOR_GREEN, _("Total points=%d"), points);
@@ -782,7 +781,7 @@ void Units::execute_main(Map *map, int map_change_allowed)
 	if (mouse_inside(gx + 15 * 8 - 20, SCREEN2H - 20, gx + 15 * 8 + 20, SCREEN2H - 5)) {
 		//"SEND"
 		if (SEND == 1) return; // Already sent the unit data.
-		int index_of_first = -1;
+		Soldier *first_ss = NULL;
 		int num_of_men_sel = 0;
 		
 		for (i = 0; i < editor->platoon()->num_of_men(); i++) {
@@ -794,12 +793,11 @@ void Units::execute_main(Map *map, int map_change_allowed)
 					return;
 				}
 				num_of_men_sel++;
-				if (index_of_first == -1)
-			    	index_of_first = i;
+				if (!first_ss) first_ss = ss;
 			}
 		}
 		
-		if (scenario->is_correct_platoon(points + damage_points, editor->platoon(), name[index_of_first], pos, buf, len, num_of_men_sel))
+		if (scenario->is_correct_platoon(points + damage_points, editor->platoon(), first_ss, pos, buf, len, num_of_men_sel))
 			editor->send_Units(*this);
 		return ;
 	}

@@ -142,12 +142,12 @@ private:
 	bool			minimap_capture (int lev, int col, int row, Map *m_map);
 	
 	bool            platoon_common (long points, Platoon *platoon, PanPos pos, char buf[10000], int len);
-	bool            platoon_escape (Platoon *platoon, PanPos pos, char *first_soldier);
+	bool            platoon_escape (Platoon *platoon, PanPos pos, Soldier *first_soldier);
 	bool            platoon_sabotage (PanPos pos, char buf[10000], int len);
-	bool            platoon_assassin (Platoon *platoon, PanPos pos, char *first_soldier);
+	bool            platoon_assassin (Platoon *platoon, PanPos pos, Soldier *first_soldier);
 	bool            platoon_hold (PanPos pos, int num_of_men_sel);
 	bool			platoon_break (PanPos pos, int num_of_men_sel);
-	bool			platoon_capture (Platoon *platoon, char *first_soldier, PanPos pos, char buf[10000], int len);
+	bool			platoon_capture (Platoon *platoon, Soldier *first_soldier, PanPos pos, char buf[10000], int len);
 	
 	bool			is_deploy_zone (DeployType dep, int x, int y);
 	bool			use_escape (Soldier *sld, Item *it);
@@ -173,7 +173,7 @@ public:
 	int             check_conditions ();
 	bool            is_target_on_minimap (int lev, int col, int row, Map *m_map);
 	void			draw_minimap_rectangle (BITMAP *bmp, int x, int y);
-	bool		    is_correct_platoon (long points, Platoon *platoon, char *first_soldier, PanPos pos, char buf[10000], int len, int num_of_men_sel);
+	bool		    is_correct_platoon (long points, Platoon *platoon, Soldier *first_soldier, PanPos pos, char buf[10000], int len, int num_of_men_sel);
 	bool            is_correct_place (PanPos pos, int x, int y);
 	void			draw_deploy_zone (PanPos pos, int x, int y, int color);
 	void			update_deploy_type ();

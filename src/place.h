@@ -90,6 +90,7 @@ public:
 
 	void build_ITEMDATA(int ip, ITEMDATA *id);
 	void build_items_stats(char *buf, int &len);
+	int  get_items_list(std::vector<Item *> &items);
 
 	void destroy_all_items();
 	void damage_items(int dam);

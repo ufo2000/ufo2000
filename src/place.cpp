@@ -514,6 +514,21 @@ void Place::build_items_stats(char *buf, int &len)
 	}
 }
 
+int Place::get_items_list(std::vector<Item *> &items)
+{
+    int count = 0;
+    Item *it = m_item;
+    while (it != NULL) {
+	    items.push_back(it);
+        count++;
+        if (it->haveclip()) {
+            items.push_back(it->clip());
+            count++;
+        }
+        it = it->m_next;
+    }
+    return count;
+}
 
 int Place::save_items(char *fs, int _z, int _x, int _y, char *txt)
 {

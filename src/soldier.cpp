@@ -479,24 +479,13 @@ int Soldier::calc_mandata_cost(MANDATA _md)
 int Soldier::calc_full_ammunition_cost()
 {
     int p = calc_mandata_cost(md);
-            
-    // Equipment points
-    char buf[10000]; memset(buf, 0, sizeof(buf));
-    int len = 0;
-    extern int weapon[];
     
-    build_items_stats (buf, len);
+    std::vector<Item *> items;
+    get_inventory_list(items);
     
-    for (int w = 0; w < 40; w++) {
-        int num = 0;
-        for (int i = 0; i < len; i++) {
-            if (weapon[w] == buf[i])
-                num++;
-        }
-        if ((Item::obdata_cost(weapon[w]) > 0) && (num > 0))
-            p += (Item::obdata_cost(weapon[w]) * num);
+    for (int i = 0; i < (int)items.size(); i++) {
+        p += items[i]->get_cost();
     }
-
     return p;
 }
 
@@ -505,6 +494,18 @@ void Soldier::build_items_stats(char *buf, int &len)
     for (int i = 0; i < NUMBER_OF_PLACES; i++) {
         m_place[i]->build_items_stats(buf, len);
     }
+}
+
+/**
+ * Get list of pointer to all the items owned by this soldier
+ */
+int Soldier::get_inventory_list(std::vector<Item *> &items)
+{
+    items.clear();
+    for (int i = 0; i < NUMBER_OF_PLACES; i++) {
+        m_place[i]->get_items_list(items);
+    }
+    return items.size();
 }
 
 /**
@@ -2842,6 +2843,16 @@ int Soldier::has_forbidden_equipment()
         if (m_place[i]->has_forbidden_equipment())
             return 1;
     return 0;
+}
+
+int Soldier::has_twohanded_weapon()
+{
+    std::vector<Item *> items;
+    get_inventory_list(items);
+    for (int i = 0; i < (int)items.size(); i++) {
+        if (items[i]->obdata_twoHanded()) return 1;
+	}
+	return 0;
 }
 
 bool Soldier::Write(persist::Engine &archive) const

@@ -30,40 +30,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "text.h"
 #include "mouse.h"
 
-char last_unit_name[1000];
-
-int weapon[] = {
-    PISTOL , PISTOL_CLIP ,
-    RIFLE , RIFLE_CLIP ,
-    LASER_PISTOL , LASER_GUN , HEAVY_LASER ,
-    Plasma_Pistol , Plasma_Pistol_Clip ,
-    Plasma_Rifle , Plasma_Rifle_Clip ,
-    Heavy_Plasma , Heavy_Plasma_Clip ,
-    HEAVY_CANNON , CANNON_AP_AMMO , CANNON_HE_AMMO , CANNON_I_AMMO ,
-    AUTO_CANNON , AUTO_CANNON_AP_AMMO, AUTO_CANNON_HE_AMMO, AUTO_CANNON_I_AMMO ,
-    ROCKET_LAUNCHER , SMALL_ROCKET , LARGE_ROCKET , INCENDIARY_ROCKET ,
-    GRENADE , ALIEN_GRENADE , PROXIMITY_GRENADE , SMOKE_GRENADE ,
-    HIGH_EXPLOSIVE ,
-    Flare , MOTION_SCANNER , MEDI_KIT ,
-    BLASTER_LAUNCHER , BLASTER_BOMB ,
-    STUN_ROD , SMALL_LAUNCHER , STUN_MISSILE ,
-    MIND_PROBE , PSI_AMP
-};
-
-static char weapon_in_use[] = {
-    PISTOL , PISTOL_CLIP ,
-    RIFLE , RIFLE_CLIP ,
-    Plasma_Pistol , Plasma_Pistol_Clip ,
-    Plasma_Rifle , Plasma_Rifle_Clip ,
-    Heavy_Plasma , Heavy_Plasma_Clip ,
-    LASER_PISTOL , LASER_GUN , HEAVY_LASER ,
-    HEAVY_CANNON , CANNON_AP_AMMO , CANNON_HE_AMMO, CANNON_I_AMMO ,
-    AUTO_CANNON , AUTO_CANNON_AP_AMMO , AUTO_CANNON_HE_AMMO, AUTO_CANNON_I_AMMO ,
-    ROCKET_LAUNCHER , SMALL_ROCKET , LARGE_ROCKET , INCENDIARY_ROCKET ,
-    GRENADE , ALIEN_GRENADE , HIGH_EXPLOSIVE , PROXIMITY_GRENADE , SMOKE_GRENADE ,
-    STUN_ROD , SMALL_LAUNCHER , STUN_MISSILE
-};
-
 /**
  * Returns true if the weapon can be used. The weapon will be colored darkgray
  * and not allowed to select if this function returns false (this function
@@ -78,7 +44,7 @@ bool is_item_allowed(int type)
     lua_safe_call(L, 1, 1);
     bool result = lua_toboolean(L, -1) != 0;
     lua_settop(L, stack_top);
-    return result && memchr(weapon_in_use, type, sizeof(weapon_in_use)) != NULL;
+    return result;
 }
 
 Editor::Editor()
@@ -133,7 +99,6 @@ void Editor::load()
     }
     
     m_plt->load_FULLDATA(filename.c_str());
-    strcpy(last_unit_name, filename.c_str());
     lua_message(std::string("Squad loaded: ") + filename);
 }
 

@@ -341,7 +341,7 @@ int Item::is_grenade()
 int Item::is_cold_weapon()
 {
 	// Stun rod hack, so it can be used to stun!
-	if ((m_type == KASTET) || (m_type == KNIFE) || (m_type == STUN_ROD))
+	if (/*(m_type == KASTET) || (m_type == KNIFE) ||*/ (m_type == STUN_ROD))
 		return 1;
 	return 0;
 }
@@ -352,14 +352,14 @@ int Item::is_stun_rod()
 		return 1;
 	return 0;
 }
-
+/*
 int Item::is_knife()
 {
 	if ((m_type == KNIFE))
 		return 1;
 	return 0;
 }
-
+*/
 int Item::inside(int _x, int _y)
 {
 	if ((m_x <= _x) && (_x < m_x + obdata_width()) && (m_y <= _y) && (_y < m_y + obdata_height()))
@@ -430,4 +430,3 @@ bool Item::Read(persist::Engine &archive)
 
     return true;
 }
-

@@ -145,6 +145,8 @@ public:
 	int obdata_importance() { return obdata_get_int(m_type, "importance"); }
 	int obdata_weight() { return obdata_weight(m_type); }
 	int obdata_disappear() { return obdata_disappear(m_type); }
+	
+    int get_cost() { return obdata_cost(m_type); }
 
 	bool can_use_ammo_type(const std::string &ammo_type)
 	{
@@ -201,8 +203,8 @@ struct Target
 	int    place;
 };
 
-#define KASTET              0x50
-#define KNIFE               0x51
+//#define KASTET              0x50
+//#define KNIFE               0x51
 //#define NEW_ITEMS_NUM       2
 
 #define PISTOL              0x00
@@ -228,11 +230,11 @@ struct Target
 #define SMOKE_GRENADE       0x14
 #define PROXIMITY_GRENADE   0x15
 #define HIGH_EXPLOSIVE      0x16
-#define MOTION_SCANNER      0x17
-#define MEDI_KIT            0x18
-#define PSI_AMP             0x19
+//#define MOTION_SCANNER      0x17
+//#define MEDI_KIT            0x18
+//#define PSI_AMP             0x19
 #define STUN_ROD            0x1a
-#define Flare               0x1b 
+//#define Flare               0x1b 
 //#define empty               0x1c
 //#define empty               0x1d
 //#define empty               0x1e
@@ -245,13 +247,13 @@ struct Target
 #define Plasma_Rifle_Clip   0x25
 #define Plasma_Pistol       0x26
 #define Plasma_Pistol_Clip  0x27
-#define BLASTER_LAUNCHER    0x28
+//#define BLASTER_LAUNCHER    0x28
 #define BLASTER_BOMB        0x29
 #define SMALL_LAUNCHER      0x2a
 #define STUN_MISSILE        0x2b
 #define ALIEN_GRENADE       0x2c
-#define ELERIUM_115         0x2d
-#define MIND_PROBE          0x2e 
+//#define ELERIUM_115         0x2d
+//#define MIND_PROBE          0x2e 
 //#define >>UNDEFINED_<<      0x2f
 //#define >>_empty_<<         0x30
 //#define >>_empty_<<         0x31

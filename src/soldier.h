@@ -184,6 +184,9 @@ public:
 	bool set_skin_info(int skin_type, int female, int appearance);
 	// get pointer to body part by name
 	Place *find_place(const char *place_name);
+	
+	// get number of items in equipment and a list of pointers
+	int get_inventory_list(std::vector<Item *> &items);
 
     static void initpck();
 	static void freepck() { Skin::freepck(); }
@@ -332,6 +335,7 @@ public:
 
 	int count_weight();
 	int has_forbidden_equipment();
+    int has_twohanded_weapon();
 
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	static int calc_mandata_cost(MANDATA _md);

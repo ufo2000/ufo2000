@@ -563,6 +563,7 @@ void Icon::firemenu(int iplace)
 				waction[i] = PUNCH;
 				i++;
 			}
+/*            
 			if (it->is_knife()) {
 				waccur[i] = sel_man->TAccuracy(it->obdata_accuracy(ATHROW));
 				wtime[i] = sel_man->required(50);
@@ -573,6 +574,7 @@ void Icon::firemenu(int iplace)
 					i++;
 				}
 			}
+*/            
 		} else
 			if (it->is_grenade()) {
 				wtime[i] = sel_man->required(24);
@@ -995,4 +997,3 @@ void Icon::draw_item(int itm, Item *it, int rounds, int prime, bool primed)
 	else if (primed)
 		item[itm].DrawPrimed(iconsbmp);
 }
-

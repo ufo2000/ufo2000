@@ -129,7 +129,6 @@ void loadini()
     set_console_font_size(get_config_int(gen, "console_font_size", 9));
 
     local_platoon_size   = get_config_int(edit,      "platoon_size",     1);
-    strcpy(last_unit_name, get_config_string(edit,   "last_unit_name",  ""));
 
     g_setup_f5           = get_config_string(edit,   "quick_setup_f5", "Rifleman");
     g_setup_f6           = get_config_string(edit,   "quick_setup_f6", "Scout");
@@ -182,7 +181,6 @@ void saveini()
     set_config_int(gen,     "console_font_size", get_console_font_size());
 	
     set_config_int(edit,    "platoon_size",    local_platoon_size);
-    set_config_string(edit, "last_unit_name",  last_unit_name);
 
     set_config_string(edit, "quick_setup_f5",  g_setup_f5.c_str() );
     set_config_string(edit, "quick_setup_f6",  g_setup_f6.c_str() );
