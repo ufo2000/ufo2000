@@ -32,6 +32,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "text.h"
 #include "mouse.h"
 
+#ifdef HAVE_FREETYPE
+extern "C" {
+#include "jinete/ji_font.h"
+}
+#endif
+
 unsigned long FLAGS = 0;
 
 DATAFILE *datafile;
@@ -79,7 +85,9 @@ void initvideo()
 
     screen2 = create_bitmap(SCREEN2W, SCREEN2H);
     clear(screen2);
-
+#ifdef HAVE_FREETYPE
+    ji_font_init();
+#endif	
     font = (FONT*)datafile[DAT_UNIFONT_8X8].dat;
     create_small_font();
     create_large_font();
@@ -98,7 +106,9 @@ void closevideo()
 {
     free_large_font();
     free_small_font();
-
+#ifdef HAVE_FREETYPE	
+	ji_font_exit();
+#endif
     destroy_bitmap(screen2);
 }
 

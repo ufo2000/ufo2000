@@ -21,6 +21,11 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "stdafx.h"
 
+#ifdef HAVE_FREETYPE
+extern "C" {
+#include "jinete/ji_font.h"
+}
+#endif
 
 #include "global.h"
 #include "font.h"
@@ -690,9 +695,18 @@ FONT *large;
 FONT *g_small_font;
 
 /** constructs a 'small' font */
-void create_small_font() {
+void create_small_font() 
+{
+#ifdef HAVE_FREETYPE	
+	g_small_font = ji_font_load_ttf(F("$(ufo2000)/fonts/DejaVuSansMono-Roman.ttf"));
+	ji_font_set_aa_mode(g_small_font, makecol(92, 92, 92));
+	ji_font_set_size(g_small_font, 12);
+
+	if (!g_small_font)
+		g_small_font = font;
+#else
 	int fl, fh;
-	
+
 	fh = open(F("$(xcom)/geodata/smallset.dat"), O_RDONLY | O_BINARY);
 	ASSERT(fh != -1);
 	fl = filelength(fh);
@@ -702,12 +716,21 @@ void create_small_font() {
 	close(fh);
 	g_small_font = create_font(dat_lat, dat_cyr, 8, 9, 1);
 	delete []dat_lat;
+#endif
 }
 
 /** constructs a 'large' font */
-void create_large_font() {
+void create_large_font() 
+{
 	int fl, fh;
-	
+#ifdef HAVE_FREETYPE
+	large = ji_font_load_ttf(F("$(ufo2000)/fonts/DejaVuSansMono-Roman.ttf"));
+	if (large) {
+		ji_font_set_aa_mode(large, makecol(92, 92, 92));
+		ji_font_set_size(large, 20);
+	}
+	if (!large) large = font;
+#else
 	fh = open(F("$(xcom)/geodata/biglets.dat"), O_RDONLY | O_BINARY);
 	ASSERT(fh != -1);
 	fl = filelength(fh);
@@ -717,20 +740,24 @@ void create_large_font() {
 	close(fh);
 	large = create_font(dat_lat, dat_cyr, 16, 16, 1);
 	delete []dat_lat;
+#endif
 }
 
 /** Destroys a 'small' font.
  *  Uses allegro function to reach destructor in the vtable. 
  */
-void free_small_font() {
-	destroy_font(g_small_font);
+void free_small_font() 
+{
+	if (g_small_font != font)
+		destroy_font(g_small_font);
 }
 
 /** Destroys a 'large' font. 
  * Uses allegro function to reach destructor in the vtable.
  */
 void free_large_font(){
-	destroy_font(large);
+	if (large != font)
+		destroy_font(large);
 }
 
 

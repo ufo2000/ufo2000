@@ -279,10 +279,10 @@ void Place::drawgrid(int PLACE_NUM)
 {
 	ASSERT((PLACE_NUM >= 0) && (PLACE_NUM <= NUMBER_OF_PLACES));
 
-    if (PLACE_NUM==P_ARMOURY)
-        textout(screen2, large,        place_name[PLACE_NUM], gx, gy -16, COLOR_LT_OLIVE);
+    if (PLACE_NUM == P_ARMOURY)
+        textout(screen2, large,        place_name[PLACE_NUM], gx, gy + 1 - text_height(large), COLOR_LT_OLIVE);
 	else
-        textout(screen2, g_small_font, place_name[PLACE_NUM], gx, gy - 8, COLOR_LT_OLIVE);
+        textout(screen2, g_small_font, place_name[PLACE_NUM], gx, gy + 1 - text_height(g_small_font), COLOR_LT_OLIVE);
 
 	if (!ishand()) {
 		int dx = 0, dy = 0;

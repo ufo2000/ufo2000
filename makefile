@@ -70,11 +70,15 @@ ifdef xmingw
     win32 = 1
 endif
 
+ifdef profile
+	CFLAGS += -pg
+endif
+
 ifdef valgrind
 	debug = 1
 endif
 
-VPATH = src src/jpgalleg src/dumbogg src/exchndl src/agup src/lua
+VPATH = src src/jpgalleg src/dumbogg src/exchndl src/agup src/lua src/jinete
 
 SRCS_LUA = lapi.c lauxlib.c lbaselib.c lcode.c ldblib.c ldebug.c      \
            ldo.c ldump.c lfunc.c lgc.c liolib.c llex.c lmathlib.c     \
@@ -113,6 +117,17 @@ else
 endif
 
 LIBS = -lexpat
+
+ifdef ttf
+ifdef win32
+	LIBS += -lft
+else
+	CFLAGS += ${shell freetype-config --cflags}
+	LIBS += ${shell freetype-config --libs}
+	SRCS += ji_font.c
+endif
+	CFLAGS += -DHAVE_FREETYPE
+endif
 
 ifdef dumbogg
 	LIBS += -lvorbisfile -lvorbis -logg -laldmb -ldumb

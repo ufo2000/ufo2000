@@ -540,16 +540,9 @@ void Soldier::draw_inventory()
  */
 void Soldier::draw_unibord(int gx, int gy)
 {
-    //m_unibord->show_pck(screen2, 0, 0);
-    //int gx = SCREEN2W/2 - 160;
-    //int gy = SCREEN2H/2 - 100;
     draw_sprite(screen2, m_unibord, gx, gy);
 
-    //BITMAP *ui = create_bitmap(320, 200);
-    //draw_sprite(ui, m_unibord, 0, 0);
-
-    //textout_centre(screen2, font, md.Name, gx+160, gy+7, 66);
-    textout_centre(screen2, large, md.Name, gx + 160, gy + 4, COLOR_LT_OLIVE);
+    textout_centre(screen2, large, md.Name, gx + 160, gy + 11 - (text_height(large) / 2), COLOR_LT_OLIVE);
 
     int fw = ud.HeadWound + ud.TorsoWound + ud.RArmWound +
              ud.LArmWound + ud.RLegWound  + ud.LLegWound;   // Fatal Wounds
@@ -582,11 +575,8 @@ void Soldier::draw_unibord(int gx, int gy)
 
     for (int i = 0; i < 17; i++) {
         if (param[i].str != NULL) {
-            //textout(screen2, font, param[i].str, gx+8, gy+31+i*10, 50);
-            textout(screen2, g_small_font, param[i].str, gx + 8, gy + 31 + i * 10, COLOR_GREEN);
-            //textprintf(ui, font, 150, 31+i*10, 146, "%d", param[i].val);
-            //printsmall(gx+154, gy+32+i*10, 146, param[i].cur);
-            textprintf(screen2, g_small_font, gx + 151, gy + 31 + i * 10, COLOR_YELLOW02, "%d", param[i].cur);
+            textout(screen2, g_small_font, param[i].str, gx + 8, gy + 30 + (5 - text_height(g_small_font) / 2) + i * 10, COLOR_GREEN);
+            textprintf(screen2, g_small_font, gx + 151, gy + 30 + (5 - text_height(g_small_font) / 2) + i * 10, COLOR_YELLOW02, "%d", param[i].cur);
 
             rect(screen2, gx + 170, gy + 32 + i * 10, gx + 170 + param[i].max, gy + 36 + i * 10, xcom1_color(param[i].col));
             if (param[i].cur)
@@ -603,10 +593,6 @@ void Soldier::draw_unibord(int gx, int gy)
                 }
         }
     }
-
-    //draw_sprite(screen2, ui, gx, gy);
-    //destroy_bitmap(ui);
-    //readkey();
 }
 
 /**
