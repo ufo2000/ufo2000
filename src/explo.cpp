@@ -140,15 +140,13 @@ int Explosive::detonate(int SID, Item *it)
 	ASSERT(iplace != -1);
 
 	type = it->itemtype();
-	damage = it->obdata_damage();
-	range = it->explo_range();
 
 	remove(it);
 	int v = ip->destroy(it);
 	ASSERT(v);
   
     //Explosions now take small coords. Explosive lies on center of floor.
-	map->explode(SID, lev * 12, col * 16 + 8, row * 16 + 8, type, range, damage);
+	map->explode(SID, lev * 12, col * 16 + 8, row * 16 + 8, type);
 
 	return 1;
 }

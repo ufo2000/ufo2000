@@ -392,8 +392,6 @@ char* Item::get_damage_name()
     return damage_names[7];
 }
 
-int Item::explo_range(int type) { return 1; } //dummy, to be deleted
-
 int Item::health_max(int _type)
 {
 	int val = 5;

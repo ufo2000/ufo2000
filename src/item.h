@@ -68,7 +68,6 @@ private:
 	SoundSym_e_t m_sound;
 
 public:
-	static int explo_range(int type);
 	static void od_info(int type, int gx, int gy, int gcol);
 
 	static int obdata_get_int(int item_index, const char *property_name);
@@ -78,6 +77,7 @@ public:
 
 	static int obdata_damage(int index) { return obdata_get_int(index, "damage"); }
 	static int obdata_dDeviation(int index) { return obdata_get_int(index, "dDeviation"); }
+	static int obdata_exploRange(int index) { return obdata_get_int(index, "exploRange"); }
 	static int obdata_cost(int index) { return obdata_get_int(index, "cost"); }
 	static int obdata_isAmmo(int index) { return obdata_get_int(index, "isAmmo"); }
 	static std::string obdata_name(int index) { return obdata_get_string(index, "name"); }
@@ -128,6 +128,7 @@ public:
 	int obdata_twoHanded() { return obdata_twoHanded(m_type); }
 	int obdata_damage() { return obdata_damage(m_type); }
 	int obdata_dDeviation() { return obdata_dDeviation(m_type); }
+	int obdata_exploRange() { return obdata_exploRange(m_type); }
 	int obdata_accuracy(int n) { return obdata_get_array_int(m_type, "accuracy", n); }
 	int obdata_time(int n) { return obdata_get_array_int(m_type, "time", n); }
 	int obdata_importance() { return obdata_get_int(m_type, "importance"); }
@@ -147,7 +148,6 @@ public:
 	int itemtype() { return m_type; }
 	int roundsremain() { return m_ammo ? m_ammo->m_rounds : 0; }
 	void setpos(int _x, int _y) { m_x = _x; m_y = _y; }
-	int explo_range() { return explo_range(m_type); }
 	void set_delay_time(int dt) { m_delay_time = dt; }
 	int delay_time() { return m_delay_time; }
 	int is_explo();

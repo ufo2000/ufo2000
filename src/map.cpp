@@ -1209,7 +1209,7 @@ void Map::destroy_cell_part(int lev, int col, int row, int _part)
 		}
 					
 		if (m_terrain->m_mcd[ct].HE_Strength > 0)
-			explode(-1, lev * 12 - 6, col * 16 , row * 16, HIGH_EXPLOSIVE, 3, m_terrain->m_mcd[ct].HE_Strength);
+			explode(lev * 12 - 6, col * 16 + 8, row * 16 + 8, m_terrain->m_mcd[ct].HE_Strength);
 
 		rebuild_visi(lev, col, row);
 	}
@@ -1403,13 +1403,47 @@ int calculate_hitdir(double dz, double dx, double dy)
     return dir;
 }
 
-int Map::explode(int sniper, int z, int x, int y, int type, int max_range, int max_damage)
+//map object explosion
+int Map::explode(int z, int x, int y, int max_damage)
 {
-    // max range is unused, max_damage is not realy needed, as it can be get from item type
-
-    // TODO probably there should be damage_type instead of type
-    int damage_type = Item::obdata_damageType(type);
+    int damage_type = 2;	//HE damage type
     int damage, hit_dir = 0;
+    
+    double EXPL_BORDER_DAMAGE = 0.5; // how much damage does explosion on its border
+    double HEIGHT_RATIO = 2; // how high is one level in squares
+    
+    soundSystem::getInstance()->play(SS_CV_GRENADE_BANG);
+    
+    // convert to coords relative to center of a cell
+    double lev = double(z)/12 - 0.5;
+    double col = double(x)/16 - 0.5;
+    double row = double(y)/16 - 0.5;
+    
+    double range = (double(max_damage) / 10);
+    for (int l = 0; l <= level; l++)
+        for (int r = int(floor(row - range)); r <= int(ceil(row + range)); r++)
+            for (int c = int(floor(col - range)); c <= int(ceil(col + range)); c++) {
+                double distance = distance_3d(row - double(r), col - double(c), (lev - double(l)) * HEIGHT_RATIO);
+                if (distance <= range) {
+                    damage = int ( ( EXPL_BORDER_DAMAGE + (1 - EXPL_BORDER_DAMAGE)*(range - distance)/range )*double(max_damage) );
+                    if (damage > 0 && cell_inside(l, c, r)) {
+                        if (man(l, c, r) != NULL) {
+                            hit_dir = calculate_hitdir((lev - double(l)) * HEIGHT_RATIO, double(c) - col, double(r) - row);
+                        }
+                        explocell(-1, l, c, r, damage, damage_type, hit_dir);
+                    }
+                }
+            }
+    return 1;
+} 
+  
+//weapon explosion
+int Map::explode(int sniper, int z, int x, int y, int type)
+{
+    int damage, hit_dir = 0;
+    int max_damage = Item::obdata_damage(type);
+    int damage_type = Item::obdata_damageType(type);
+    double range = Item::obdata_exploRange(type);
     
     // move to rules.h
     double EXPL_BORDER_DAMAGE = 0.5; // how much damage does explosion on its border
@@ -1423,19 +1457,14 @@ int Map::explode(int sniper, int z, int x, int y, int type, int max_range, int m
     double col = double(x)/16 - 0.5;
     double row = double(y)/16 - 0.5;
     
-    //printf("z, x, y        : %d, %d, %d \n", z, x, y);
-    //printf("lev, col, row  : %f, %f, %f \n", lev, col, row);
-    
-    double range = (double(max_damage) / 10) - 2;
     for (int l = 0; l <= level; l++)
         for (int r = int(floor(row - range)); r <= int(ceil(row + range)); r++)
             for (int c = int(floor(col - range)); c <= int(ceil(col + range)); c++) {
                 double distance = distance_3d(row - double(r), col - double(c), (lev - double(l)) * HEIGHT_RATIO);
                 if (distance <= range) {
                     damage = int ( ( EXPL_BORDER_DAMAGE + (1 - EXPL_BORDER_DAMAGE)*(range - distance)/range )*double(max_damage) );
-                    if (damage > 0 && cell_inside(l, c, r)) {
+                    if (damage >= 0 && cell_inside(l, c, r)) {
                         if (man(l, c, r) != NULL) {
-                            //printf("l, c, r        : %i, %i, %i \n", l, c, r);
                             hit_dir = calculate_hitdir((lev - double(l)) * HEIGHT_RATIO, double(c) - col, double(r) - row);
                         }
                         explocell(sniper, l, c, r, damage, damage_type, hit_dir);
