@@ -216,3 +216,12 @@ int ClientServer::recv_packet(NLulong &id, std::string &packet)
 
 	return decode_packet(m_stream, id, packet) == 1;
 }
+
+int ClientServer::wait_packet(NLulong &id, std::string buffer)
+{
+    while (true) {
+    	int res = recv_packet(id, buffer);
+		if (res != 0) return res;
+        usleep(1);
+    }
+}

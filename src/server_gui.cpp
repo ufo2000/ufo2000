@@ -201,6 +201,15 @@ public:
 		if (my < m_y || my >= m_y + m_height) return "";
 		return m_users[(my - m_y) / text_height(m_font)].name;
 	}
+
+	USER_STATUS get_user_status(const std::string &name)
+	{
+    	for (unsigned int i = 0; i < m_users.size(); i++) {
+    		if (m_users[i].name == name)
+    			return m_users[i].status;
+    	}
+    	return USER_STATUS_OFFLINE;
+	}
 };
 
 void lobby_init_mouse()
@@ -292,14 +301,16 @@ int connect_internet_server()
 			{
 				case SRV_USER_ONLINE: users->update_user_info(packet.c_str(), USER_STATUS_READY); break;
 				case SRV_USER_OFFLINE: users->update_user_info(packet.c_str(), USER_STATUS_OFFLINE); break;
-				case SRV_MESSAGE: chat->printf("%s", packet.c_str()); break;
+				case SRV_USER_CHALLENGE_IN: users->update_user_info(packet.c_str(), USER_STATUS_CHALLENGE_IN); break;
+				case SRV_USER_CHALLENGE_OUT: users->update_user_info(packet.c_str(), USER_STATUS_CHALLENGE_OUT); break;
+				case SRV_MESSAGE: chat->printf(COLOR_YELLOW, "%s", packet.c_str()); break;
 			}
 
-				users_border->resize(-1, -1);
-				users_border->resize(users_border->get_width(), SCREEN_H);
-				chat_border->resize(SCREEN_W - users_border->get_width(), SCREEN_H);
-				chat_border->set_full_redraw();
-				users_border->set_full_redraw();
+			users_border->resize(-1, -1);
+			users_border->resize(users_border->get_width(), SCREEN_H);
+			chat_border->resize(SCREEN_W - users_border->get_width(), SCREEN_H);
+			chat_border->set_full_redraw();
+			users_border->set_full_redraw();
 		}
 
 		chat_border->redraw(screen, 0, 0);
@@ -311,8 +322,23 @@ int connect_internet_server()
 		if ((mouse_b & 1) && (mouse_leftr)) {
 			mouse_leftr = 0;
 			std::string name = users->mouse_click(mouse_x, mouse_y);
-			if (name != "")
-				chat->printf("%s clicked\n", name.c_str());
+			if (name != "") {
+				switch (users->get_user_status(name)) {
+					case USER_STATUS_READY:
+						if (server->challenge(name)) {
+							users->update_user_info(name, USER_STATUS_CHALLENGE_OUT);
+						}
+					default:
+						chat->printf("%s clicked\n", name.c_str());
+						break;
+				}
+
+				users_border->resize(-1, -1);
+				users_border->resize(users_border->get_width(), SCREEN_H);
+				chat_border->resize(SCREEN_W - users_border->get_width(), SCREEN_H);
+				chat_border->set_full_redraw();
+				users_border->set_full_redraw();
+			}
 		}
 		if ((mouse_b & 1) && (mouse_leftr)) {
 			mouse_rightr = 0;

@@ -50,6 +50,7 @@ ifdef win32
 	NAME := ${addsuffix .exe,$(NAME)}
 	SERVER_NAME := ${addsuffix .exe,$(SERVER_NAME)}
 	CFLAGS += -DWIN32
+	SUBSYSTEM := -Wl,--subsystem=windows
 	LIBS = -lexpat -lNL -lalleg -lws2_32
 else
 	CFLAGS += -DLINUX
@@ -74,7 +75,7 @@ $(OBJDIR)/%.o: %.cpp
 	$(CC) -MMD $(CFLAGS) -c $< -o $@
 
 $(NAME): $(OBJS)
-	$(LD) $(CFLAGS) -o $@ $^ $(LIBS)
+	$(LD) $(CFLAGS) -o $@ $^ $(LIBS) $(SUBSYSTEM)
 
 $(SERVER_NAME): $(OBJS_SERVER)
 	$(LD) $(CFLAGS) -o $@ $^ $(LIBS)
@@ -84,13 +85,11 @@ clean:
 	$(RM) $(OBJDIR)/*.d
 	$(RM) $(NAME)
 
-ifdef win32
 source-zip:
 # create zip archive with ufo2000 sources, requires 7-zip archiver
 	-$(RM) ufo2000-r$(UFO_SVNVERSION)-src.zip
 	svn export . ufo2000-r$(UFO_SVNVERSION)-src
-	7z a -tzip -r -mx ufo2000-r$(UFO_SVNVERSION)-src.zip ufo2000-r$(UFO_SVNVERSION)-src/*
+	7z a -tzip -r -mx ufo2000-r$(UFO_SVNVERSION)-src.zip "ufo2000-r$(UFO_SVNVERSION)-src/*"
 	svn delete --force ufo2000-r$(UFO_SVNVERSION)-src
-endif
 
 -include $(DEPS)

@@ -17,6 +17,7 @@ public:
 	bool connect(const std::string &host, int port);
 	bool send_packet(NLulong id, const std::string &packet);
 	int recv_packet(NLulong &id, std::string &packet);
+	int wait_packet(NLulong &id, std::string buffer);
 };
 
 /**
