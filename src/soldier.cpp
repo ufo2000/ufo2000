@@ -518,7 +518,7 @@ void Soldier::draw()
 	int yofs;
 
 	image = create_bitmap(32, 32);
-	clear(image);
+	clear_to_color(image, xcom1_color(0));
 
 	arm1 = 0; arm2 = 0; army = 5;
 	if (dir < 4) {

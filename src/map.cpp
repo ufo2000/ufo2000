@@ -1055,7 +1055,7 @@ BITMAP *Map::create_lof_bitmap(int lev, int col, int row)
 	build_lof_cell(lev, col, row, lof_cell);
 
 	BITMAP *bmp = create_bitmap(20 * 4, 20 * 3);
-	clear(bmp);
+	clear_to_color(bmp, xcom1_color(0));
 
 	int dir = -1, s = 0;     //, tl = 0;
 	if (visible(lev, col, row))
@@ -1115,7 +1115,7 @@ void Map::show_lof_cell()
 	blit(bmp, screen, 0, 0, SCREEN2W, SCREEN2H - 70, bmp->w, bmp->h);
 	destroy_bitmap(bmp);
 
-	bmp = create_bitmap(30, 90); clear(bmp);
+	bmp = create_bitmap(30, 90); clear_to_color(bmp, xcom1_color(0));
 	for (int k = 0; k < 3; k++) {
 		for (int i = 0; i < 3; i++) {
 			textprintf(bmp, font, 0, 80 - (k * 30 + i * 8), 1,

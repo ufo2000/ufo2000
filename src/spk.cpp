@@ -57,8 +57,6 @@ void SPK::load(const char *fname)
 	m_dat = new unsigned char[m_datlen];
 	m_datlen = read(fh, m_dat, m_datlen);
 	close(fh);
-	//printf("\n%s %d %d", fname, fh, m_datlen); fflush(NULL);
-	//readkey();
 }
 
 void SPK::show(BITMAP *_dest, int _x, int _y)
@@ -106,7 +104,10 @@ BITMAP *SPK::spk2bmp()
 //	Process .scr files
 	if (m_datlen == 64000 && (*(unsigned short *)m_dat & 0xFFF0) != 0xFFF0) {
 		long size = 64000;
-		while (size--) spr_set(bmp, j++, m_dat[i++]);
+		while (size--) {
+			putpixel(bmp, j % 320, j / 320, xcom1_color(m_dat[i++]));
+			j++;
+		}
 		return bmp;
 	}
 
@@ -127,7 +128,10 @@ BITMAP *SPK::spk2bmp()
 				long size = (long)(*(unsigned short *)(m_dat + i + 2)) * 2;
 				i += 4;
 				assert(i + size <= m_datlen && j + size <= 64000);
-				while (size--) spr_set(bmp, j++, m_dat[i++]);
+				while (size--) {
+					putpixel(bmp, j % 320, j / 320, xcom1_color(m_dat[i++]));
+					j++;
+				}
 				break;
 			}
 			case 0xFFFD:

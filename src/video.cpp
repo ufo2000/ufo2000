@@ -159,7 +159,13 @@ void change_screen_mode()
 
 void set_video_mode()
 {
+#ifdef USE_HICOLOR
+	set_color_depth(16);
+	set_color_conversion(COLORCONV_TOTAL | COLORCONV_KEEP_TRANS);
+#else
 	set_color_depth(8);
+#endif
+
 #ifdef DJGPP
 	set_gfx_mode(GFX_AUTODETECT, 640, 400, 0, 0);
 #elif WIN32

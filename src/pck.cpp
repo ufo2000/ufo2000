@@ -49,40 +49,46 @@ PCK::~PCK()
 /**
  * $$$ Hack, used only to add knife and kastet
  *
- * @param bmp - pointer to bitmap that is added as a new frame
- * @return    - index of added frame
+ * @param bmp pointer to bitmap that is added as a new frame
+ * @return    index of added frame
  */
 int PCK::add_image(BITMAP *bmp)
 {
 	m_bmp.resize(m_imgnum + 1);
-	m_bmp[m_imgnum] = create_bitmap(32, 48); clear(m_bmp[m_imgnum]);
-	blit(bmp, m_bmp[m_imgnum], 0, 0, 1, 3, bmp->w, bmp->h);
+	m_bmp[m_imgnum] = create_bitmap(32, 48); 
+	clear_to_color(m_bmp[m_imgnum], xcom1_color(0));
+	masked_blit(bmp, m_bmp[m_imgnum], 0, 0, 1, 3, bmp->w, bmp->h);
 	return m_imgnum++;
 }
 
 /**
  * Decode single frame from PCK file and store it in bitmap
  *
- * @param data - pointer to data buffer for a frame from PCK file
- * @param size - size of frame data
- * @return     - bitmap with a frame image
+ * @param data pointer to data buffer for a frame from PCK file
+ * @param size size of frame data
+ * @return     bitmap with a frame image
  */
 BITMAP *PCK::pckdat2bmp(const unsigned char *data, int size)
 {
-	BITMAP *bmp = create_bitmap(32, 48); clear(bmp);
+	BITMAP *bmp = create_bitmap(32, 48);
+	clear_to_color(bmp, xcom1_color(0));
 
-	unsigned char *ofs = (unsigned char *)bmp->dat + ((int)*data * 32);
+	long ofs = ((int)*data * 32);
 
 	if (data[--size] != 0xFF) assert(false);
 
 	for (int j = 1; j < size; j++) {
-		if (data[j] != 0xFE)
-			*ofs++ = data[j];
-		else
-			ofs += data[++j];
+		switch (data[j]) {
+			case 0xFE: 
+				ofs += data[++j]; break;
+			case 0x00: 
+				ofs++; break;
+			default:
+				putpixel(bmp, ofs % 32, ofs / 32, xcom1_color(data[j]));
+				ofs++;
+				break;
+		}
 	}
-
-//	assert((ofs - (unsigned char *)bmp->dat + 31) / 32 + shift <= 48);
 
 	return bmp;
 }
@@ -90,8 +96,8 @@ BITMAP *PCK::pckdat2bmp(const unsigned char *data, int size)
 /**
  * Load all frames from .pck file and append them to already loaded set
  *
- * @param pckfname - name of PCK file to be loaded
- * @return         - number of frames loaded
+ * @param pckfname name of PCK file to be loaded
+ * @return         number of frames loaded
  */
 int PCK::loadpck(const char *pckfname)
 {
@@ -172,7 +178,7 @@ void PCK::drawpck(int num, BITMAP *dest, int y)
 /**
  * Function for debugging and dumping .pck files only
  *
- * @param fname - name of the file to which this PCK file is saved in BMP format
+ * @param fname name of the file to which this PCK file is saved in BMP format
  */
 void PCK::save_as_bmp(const char *fname)
 {

@@ -318,12 +318,12 @@ static uaf_fontcache * uaf_make_cacheentry(AL_CONST FONT *f, int tmode, int fgco
 			origval = *(idat->origU00 + x + y * idat->max_w);
 			if (origval == 0) {
 				if (tmode > 0) {
-					newcache->U00->line[y][x] =  tmode;
+					putpixel(newcache->U00, x, y, xcom1_color(tmode));
 				} else {
-					newcache->U00->line[y][x] =  0;
+					putpixel(newcache->U00, x, y, xcom1_color(0));
 				}
 			} else {
-				newcache->U00->line[y][x] =  fgcol + origval;
+				putpixel(newcache->U00, x, y, xcom1_color(fgcol + origval * 2));
 			}
 		}
 	}
@@ -335,12 +335,12 @@ static uaf_fontcache * uaf_make_cacheentry(AL_CONST FONT *f, int tmode, int fgco
                                 origval = *(idat->origU04 + x + y * idat->max_w);
                                 if (origval == 0) {
                                         if (tmode > 0) {
-                                                newcache->U04->line[y][x] =  tmode;
+                                                putpixel(newcache->U04, x, y, xcom1_color(tmode));
                                         } else {
-                                                newcache->U04->line[y][x] =  0;
+                                                putpixel(newcache->U04, x, y, xcom1_color(0));
                                         }
                                 } else {
-                                        newcache->U04->line[y][x] =  fgcol + origval;
+                                        putpixel(newcache->U04, x, y, xcom1_color(fgcol + origval * 2));
                                 }
                         }
                 }
@@ -625,7 +625,7 @@ static FONT *create_font(unsigned char *data00, unsigned char *data04, int w, in
         }
 	
 	idata->cachecount = 0;
-	idata->space_width = (2 * w) / 3;
+	idata->space_width = w / 2;
 	
 	idata->max_w = w;
 	idata->max_h = h;
@@ -670,7 +670,7 @@ static FONT *create_font(unsigned char *data00, unsigned char *data04, int w, in
 				maxcolw = curw;
 			}
 		}
-		curw = maxcolw < w ? maxcolw + 1 : w;
+		curw = maxcolw < w ? maxcolw - 1 : w - 1;
 		/* figure out where to put it. */
 		Ul = U & 0xFF;
 		Uh = U >> 8;
@@ -705,7 +705,7 @@ static FONT *create_font(unsigned char *data00, unsigned char *data04, int w, in
                                         maxcolw = curw;
                                 }
                         }
-                        curw = maxcolw < w ? maxcolw + 1 : w;
+                        curw = maxcolw < w ? maxcolw - 1 : w - 1;
                         /* figure out where to put it. */
                         Ul = U & 0xFF;
                         Uh = U >> 8;

@@ -106,10 +106,10 @@ void TerraPCK::create_blackbmp(int start, int size)
 	m_blackbmp.resize(start + size);
 	for (int num = start; num < start + size; num++) {
 		m_blackbmp[num] = create_bitmap(32, 48);
-		clear(m_blackbmp[num]);
+		clear_to_color(m_blackbmp[num], xcom1_color(0));
 		for (int i = 0; i < 32 * 48; i++)
-			if (((char*)m_bmp[num]->dat)[i] != 0)
-				((char*)m_blackbmp[num]->dat)[i] = 15;
+			if (getpixel(m_bmp[num], i % 32, i / 32) != bitmap_mask_color(m_bmp[num]))
+				putpixel(m_blackbmp[num], i % 32, i / 32, xcom1_color(15));
 	}
 }
 

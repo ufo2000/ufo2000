@@ -45,6 +45,26 @@ void reset_video();
 void initpal(char *fname);
 void setpal(RGB pal[PAL_SIZE], int pofs);
 
+/**
+ * Function that converts color from xcom1 game palette to current
+ * representation
+ *
+ * @param c  xcom1 color
+ * @return   allegro color
+ *
+ * @todo make conversion faster (use precalculated table for conversion)
+ */
+#ifdef USE_HICOLOR
+inline int xcom1_color(int c)
+{
+	if (c == 0) return makecol(255, 0, 255);
+	const RGB & rgb = ((RGB *)datafile[DAT_GAMEPAL].dat)[c];
+	return makecol(rgb.r << 2, rgb.g << 2, rgb.b << 2);
+}
+#else
+inline int xcom1_color(int c) { return c; }
+#endif
+
 inline void spr_set(BITMAP *dest, int ofs, char val)
 {
 	*((char *)dest->dat + ofs) = val;
