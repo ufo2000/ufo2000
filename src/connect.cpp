@@ -303,9 +303,9 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 			//map->show2d(0, 0);
 			blit(map2d, screen2, 0, 0, map2d_x, 0, map2d->w, map2d->h);
 
+            remote.print_simple(xcom1_color(1));
 			local.print(xcom1_color(1));
 			//remote.print(1);
-			remote.print_simple(xcom1_color(1));
 
 			//if (local.SEND)
 			// draw_pd_info(editor->pd_local, local.gx, 170);

@@ -94,6 +94,7 @@ private:
 	int recv_terrain_crc32();
 	int recv_scenario();
 	int recv_rules();
+	int recv_options();
 public:
 	ClientServerUfo *m_internet_server;
 	GameType gametype;
@@ -151,6 +152,7 @@ public:
 	void send_terrain_crc32(const std::string &name, uint32 crc32);
 	void send_scenario();
 	void send_rules(int index, int value);
+	void send_options(int scenario_type, int index, int value);
 
 	void send_finish_planner();
 	int recv_finish_planner();

@@ -587,9 +587,12 @@ void initmain(int argc, char *argv[])
 
 	console<<"new net"<<std::endl;
 	net = new Net();
-
+	
 	console<<"new terrain_set"<<std::endl;
 	terrain_set = new TerrainSet();
+	
+	console<<"new scenario"<<std::endl;
+	scenario = new Scenario(SC_DEATHMATCH);
 
 	mouse_callback = mouser_proc;
 	//keyboard_callback = keyboard_proc;
@@ -598,9 +601,7 @@ void initmain(int argc, char *argv[])
 	clear(screen);
 
 	if (!Map::load_GEODATA("$(home)/geodata.lua", &mapdata) || !Map::valid_GEODATA(&mapdata))
-		Map::new_GEODATA(&mapdata);
-		
-	scenario = new Scenario(SC_DEATHMATCH);
+		Map::new_GEODATA(&mapdata);	
 
 	delete print_win;
 }

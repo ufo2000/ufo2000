@@ -32,12 +32,14 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "wind.h"
 #include "scenario.h"
 
-#define CAPTION     8
-#define COMMENT    	3
-#define BUTTON      5
-#define SELECTED    48
-#define SWITCH_ON   55
-#define SWITCH_OFF  40
+#define CAPTION			8
+#define COMMENT			3
+#define BUTTON			5
+#define SELECTED		52
+#define SWITCH_ON		55
+#define SWITCH_OFF		40
+#define LOCAL_COLOR		48
+#define REMOTE_COLOR	32
 
 char buf[10000];
 int len = 0;
@@ -146,10 +148,10 @@ void Units::print(int gcol)
 				         xcom1_color(144));      //yellow
 				if (pos == POS_LEFT) {
 					line(screen2, gx + 20 * 8 + 4, gy + i * 15 + 3, x[i], y[i], gcol);
-					textprintf(screen2, font, gx - 60, gy + i * 15, gcol, "(%d,%d)", col[i], row[i]);
+					//textprintf(screen2, font, gx - 60, gy + i * 15, gcol, "(%d,%d)", col[i], row[i]);
 				} else {
 					line(screen2, gx - 4, gy + i * 15 + 3, x[i], y[i], gcol);
-					textprintf(screen2, font, gx + 20 * 8 + 5, gy + i * 15, gcol, "(%d,%d)", col[i], row[i]);
+					//textprintf(screen2, font, gx + 20 * 8 + 5, gy + i * 15, gcol, "(%d,%d)", col[i], row[i]);
 				}
 				color = xcom1_color(53);
 			} else {
@@ -174,8 +176,11 @@ void Units::print(int gcol)
 	textout_centre(screen2, font, "MATCH SETTINGS", gmx + gmw / 2, SCREEN2H - 65, xcom1_color(CAPTION));
 	textout_centre(screen2, font, scenario->name[scenario->type], gmx + gmw / 2, SCREEN2H - 53, xcom1_color(BUTTON));
 	textout_centre(screen2, font, terrain_set->get_terrain_name(mapdata.terrain).c_str(), gmx + gmw / 2, SCREEN2H - 41, xcom1_color(BUTTON));
+	
+	int tmp;
+	g_time_limit == -1 ? tmp = 0 : tmp = g_time_limit;
 	textout_centre(screen2, font, "Game rules:", gmx + gmw / 2, SCREEN2H - 28, xcom1_color(BUTTON));
-	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 16, xcom1_color(BUTTON), "%d; %dk; %d; %d; %d", scenario->rules[0], scenario->rules[1], scenario->rules[2], g_time_limit, scenario->rules[3]);
+	textprintf_centre(screen2, font, gmx + gmw / 2, SCREEN2H - 16, xcom1_color(BUTTON), "%d; %dk; %d; %d; %d", scenario->rules[0], scenario->rules[1], scenario->rules[2], tmp, scenario->rules[3]);
 	
 	for (int i = 0; i < len; i++) buf[i] = 0;
 	len = 0;
@@ -210,6 +215,8 @@ void Units::print(int gcol)
 	damage_points = draw_items_stats(gx, 160 + 10, buf, len);
 
 	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, xcom1_color(50), "Total points=%d", points + damage_points);
+		
+	scenario->draw_deploy_zone(pos, gmx, 0, xcom1_color(LOCAL_COLOR));
 	
 	switch(state) {
 		case PS_SCEN:
@@ -251,14 +258,44 @@ void Units::print(int gcol)
 
 void Units::draw_scenario_window()
 {
-    rect(screen2, gmx + gmw / 2 - 150, SCREEN2H - 120, gmx + gmw / 2 + 150, SCREEN2H - 37, xcom1_color(1));
-    rectfill(screen2, gmx + gmw / 2 - 150 + 1, SCREEN2H - 120 + 1, gmx + gmw / 2 + 150 - 1, SCREEN2H - 37 - 1, xcom1_color(14));
+    rect(screen2, gmx + gmw / 2 - 200, SCREEN2H - 320, gmx + gmw / 2 + 200, SCREEN2H - 37, xcom1_color(1));
+    rectfill(screen2, gmx + gmw / 2 - 200 + 1, SCREEN2H - 320 + 1, gmx + gmw / 2 + 200 - 1, SCREEN2H - 37 - 1, xcom1_color(14));
     
-    textout_centre(screen2, font, scenario->name[scenario->type], gmx + gmw / 2, SCREEN2H - 110, xcom1_color(SELECTED));
-    textout_centre(screen2, font, "<", gmx + gmw / 2 - 150 + 50, SCREEN2H - 110, xcom1_color(BUTTON));
-    textout_centre(screen2, font, ">", gmx + gmw / 2 + 150 - 50, SCREEN2H - 110, xcom1_color(BUTTON));
-	for (int i = 0; i < 5; i++)
-    	textprintf(screen2, font, gmx + gmw / 2 - 150 + 3, SCREEN2H - 90 + i * 9, xcom1_color(COMMENT), "%s", pos == POS_LEFT ? scenario->briefing_left[scenario->type][i] : scenario->briefing_right[scenario->type][i]);
+    textout_centre(screen2, font, scenario->name[scenario->type], gmx + gmw / 2, SCREEN2H - 310, xcom1_color(SELECTED));
+    textout_centre(screen2, font, "<", gmx + gmw / 2 - 150 + 50, SCREEN2H - 310, xcom1_color(BUTTON));
+    textout_centre(screen2, font, ">", gmx + gmw / 2 + 150 - 50, SCREEN2H - 310, xcom1_color(BUTTON));
+    
+    textout_centre(screen2, font, "Player 1", gmx + gmw / 2, SCREEN2H - 285, xcom1_color(CAPTION));
+	for (int i = 0; i < 8; i++)
+    	textprintf(screen2, font, gmx + gmw / 2 - 200 + 5, SCREEN2H - 270 + i * 9, xcom1_color(COMMENT), scenario->briefing_left[scenario->type][i]);
+	if (pos == POS_LEFT)
+		rect(screen2, gmx + gmw / 2 - 200 + 3, SCREEN2H - 272, gmx + gmw / 2 + 200 - 3, SCREEN2H - 198, xcom1_color(LOCAL_COLOR));    	
+    	
+    textout_centre(screen2, font, "Player 2", gmx + gmw / 2, SCREEN2H - 185, xcom1_color(CAPTION));
+	for (int i = 0; i < 8; i++)
+    	textprintf(screen2, font, gmx + gmw / 2 - 200 + 5, SCREEN2H - 170 + i * 9, xcom1_color(COMMENT), scenario->briefing_right[scenario->type][i]);
+   	if (pos == POS_RIGHT)
+		rect(screen2, gmx + gmw / 2 - 200 + 3, SCREEN2H - 172, gmx + gmw / 2 + 200 - 3, SCREEN2H - 98, xcom1_color(LOCAL_COLOR));    	
+
+    	
+	textout_centre(screen2, font, "Options", gmx + gmw / 2, SCREEN2H - 85, xcom1_color(CAPTION));
+	for (int i = 0; i < 3; i++) {
+		switch(scenario->options[scenario->type][i]->type) {
+			case OPT_NONE:
+			break;
+			
+			case OPT_NUMBER:
+			textprintf(screen2, font, gmx + gmw / 2 - 200 + 5, SCREEN2H - 70 + i * 9, xcom1_color(COMMENT), scenario->options[scenario->type][i]->caption);
+			textout_centre(screen2, font, "<", gmx + gmw / 2 + 150, SCREEN2H - 70 + i * 9, xcom1_color(BUTTON));
+			textprintf_centre(screen2, font, gmx + gmw / 2 + 170, SCREEN2H - 70 + i * 9, xcom1_color(SELECTED), "%d", scenario->options[scenario->type][i]->value);
+			textout_centre(screen2, font, ">", gmx + gmw / 2 + 190, SCREEN2H - 70 + i * 9, xcom1_color(BUTTON));
+			break;
+			
+			case OPT_SWITCH:
+			textprintf(screen2, font, gmx + gmw / 2 - 200 + 5, SCREEN2H - 70 + i * 9, scenario->options[scenario->type][i]->value ? xcom1_color(SWITCH_ON) : xcom1_color(SWITCH_OFF), scenario->options[scenario->type][i]->value ? scenario->options[scenario->type][i]->caption_on : scenario->options[scenario->type][i]->caption_off);
+			break;
+		}
+	}
 }
 
 void Units::draw_map_window()
@@ -385,7 +422,7 @@ int Units::draw_items_stats(int gx, int gy, char *buf, int len)
 
 void Units::print_simple(int gcol)
 {
-	text_mode( -1);
+	text_mode( -1);	
 	int i, x1, y1, x2, y2, color = xcom1_color(60);
 	for (i = 0; i < size; i++) {
 		if (x[i] != 0) {
@@ -413,6 +450,8 @@ void Units::print_simple(int gcol)
 		}*/
 	}
 	draw_text();
+	
+	scenario->draw_deploy_zone(pos, gmx, 0, xcom1_color(REMOTE_COLOR));
 
 	if (!SEND)
 		return ;
@@ -643,12 +682,12 @@ void Units::execute_main(Map *map, int map_change_allowed)
 
 void Units::execute_scenario(Map *map, int map_change_allowed)
 {
-    if (!mouse_inside(gmx + gmw / 2 - 150, SCREEN2H - 120, gmx + gmw / 2 + 150, SCREEN2H - 37))
+    if (!mouse_inside(gmx + gmw / 2 - 200, SCREEN2H - 320, gmx + gmw / 2 + 200, SCREEN2H - 37))
 		state = PS_MAIN;
 
     if (!map_change_allowed) return;
 
-	if (mouse_inside(gmx + gmw / 2 - 105, SCREEN2H - 114, gmx + gmw / 2 - 95, SCREEN2H - 101)) {
+	if (mouse_inside(gmx + gmw / 2 - 105, SCREEN2H - 314, gmx + gmw / 2 - 95, SCREEN2H - 301)) {
 	    //"<"
 	    scenario->new_scenario(scenario->type - 1);
 
@@ -662,7 +701,7 @@ void Units::execute_scenario(Map *map, int map_change_allowed)
 		mapdata.load_game = 77;
 	}
 
-	if (mouse_inside(gmx + gmw / 2 + 95, SCREEN2H - 114, gmx + gmw / 2 + 105, SCREEN2H - 101)) {
+	if (mouse_inside(gmx + gmw / 2 + 95, SCREEN2H - 314, gmx + gmw / 2 + 105, SCREEN2H - 301)) {
 	    //">"
 	    scenario->new_scenario(scenario->type + 1);
 
@@ -674,6 +713,49 @@ void Units::execute_scenario(Map *map, int map_change_allowed)
 
 		net->send_scenario();
 		mapdata.load_game = 77;
+	}
+	
+	for (int i = 0; i < 3; i++) {
+		if (mouse_inside(gmx + gmw / 2 - 200 + 2, SCREEN2H - 71 + i * 10, gmx + gmw / 2 + 200 - 2, SCREEN2H - 62 + i * 10)) {
+			//options
+			switch(scenario->options[scenario->type][i]->type) {                                                    
+				case OPT_NONE:                                                                                      
+				return;                                                                                             
+				break;
+				
+				case OPT_NUMBER:
+				if (mouse_inside(gmx + gmw / 2 + 145, SCREEN2H - 71 + i * 10, gmx + gmw / 2 + 155, SCREEN2H - 62 + i * 10)) {
+				    //"<"
+				    scenario->options[scenario->type][i]->value -= scenario->options[scenario->type][i]->step;
+
+		  			if (scenario->options[scenario->type][i]->value < scenario->options[scenario->type][i]->min) {
+  			 			scenario->options[scenario->type][i]->value = scenario->options[scenario->type][i]->min;
+  		 				return;
+  		 			}
+				}
+				if (mouse_inside(gmx + gmw / 2 + 185, SCREEN2H - 71 + i * 10, gmx + gmw / 2 + 195, SCREEN2H - 61 + i * 10)) {
+				    //">"
+				    scenario->options[scenario->type][i]->value += scenario->options[scenario->type][i]->step;
+   	
+		  			if (scenario->options[scenario->type][i]->value > scenario->options[scenario->type][i]->max) {
+  			 			scenario->options[scenario->type][i]->value = scenario->options[scenario->type][i]->max;
+  		 				return;
+					}
+				}
+				break;
+			
+				case OPT_SWITCH:
+				if (scenario->options[scenario->type][i]->value)
+					scenario->options[scenario->type][i]->value = 0;
+				else
+					scenario->options[scenario->type][i]->value = 1;
+				break;
+			}
+		
+			net->send_options(scenario->type, i, scenario->options[scenario->type][i]->value);
+			if (scenario->options[scenario->type][i]->reset_deploy)
+				mapdata.load_game = 77;
+		}
 	}
 }
 

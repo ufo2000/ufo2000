@@ -40,113 +40,149 @@ Scenario::Scenario (int sc_type)
 {
 	//we need to clear briefing strings in case we won't use all of them
 	for (int i = 0; i < SCENARIO_NUMBER; i++) {
-	    for (int j = 0; j < 5; j++) {
+	    for (int j = 0; j < 8; j++) {
 	        briefing_left[i][j] = "";
 	        briefing_right[i][j] = "";
 		}
 	}
 
-
-	name[SC_DEATHMATCH] = "Deathmatch";
-	
-	briefing_left[SC_DEATHMATCH][0] = "Kill 'em all!";
-	
-	briefing_right[SC_DEATHMATCH][0] = "Kill 'em all!";
-
-
-	name[SC_ESCAPE] = "Escape";
-	
-	briefing_left[SC_ESCAPE][0] = "You must get your leader (soldier #1)";
-	briefing_left[SC_ESCAPE][1] = "to the opposite edge of the map or   ";
-	briefing_left[SC_ESCAPE][2] = "kill enemy leader before he gets to  ";
-	briefing_left[SC_ESCAPE][3] = "your edge.                           ";
-	briefing_left[SC_ESCAPE][4] = "Leader can't have two-handed weapons.";
-	
-    briefing_right[SC_ESCAPE][0] = "You must get your leader (soldier #1)";
-	briefing_right[SC_ESCAPE][1] = "to the opposite edge of the map or   ";
-	briefing_right[SC_ESCAPE][2] = "kill enemy leader before he gets to  ";
-	briefing_right[SC_ESCAPE][3] = "your edge.                           ";
-	briefing_right[SC_ESCAPE][4] = "Leader can't have two-handed weapons.";
-
-
-	name[SC_SABOTAGE] = "Sabotage";
-
-	briefing_left[SC_SABOTAGE][0] = "You must place high explosives at    ";
-	briefing_left[SC_SABOTAGE][1] = "indicated places.                    ";
-	
-	briefing_right[SC_SABOTAGE][0] = "You must kill all enemy soldiers     ";
-	briefing_right[SC_SABOTAGE][1] = "before they place explosives.        ";
-	
-	
-	name[SC_CONTROL] = "Control";
-
-	briefing_left[SC_CONTROL][0] = "You must control the 10x10 area in   ";
-	briefing_left[SC_CONTROL][1] = "the centre of the map for 3 turns.   ";
-	briefing_left[SC_CONTROL][2] = "To control an area you must keep in  ";
-	briefing_left[SC_CONTROL][3] = "it more soldiers than your opponent. ";
-	
-    briefing_right[SC_CONTROL][0] = "You must control the 10x10 area in   ";
-	briefing_right[SC_CONTROL][1] = "the centre of the map for 3 turns.   ";
-	briefing_right[SC_CONTROL][2] = "To control an area you must keep in  ";
-	briefing_right[SC_CONTROL][3] = "it more soldiers than your opponent. ";
-	
-	
-	name[SC_ASSASSIN] = "Assassination";
-
-	briefing_left[SC_ASSASSIN][0] = "You must kill enemy leader (first    ";
-	briefing_left[SC_ASSASSIN][1] = "soldier).                            ";
-	briefing_left[SC_ASSASSIN][2] = "Player 1 can deploy near all edges of";
-	briefing_left[SC_ASSASSIN][3] = "the map (max. 5 tiles from an edge). ";
-	briefing_left[SC_ASSASSIN][4] = "Player 2 deploys in centre (20x20).  ";
-	
-	briefing_right[SC_ASSASSIN][0] = "You must save your leader (first     ";
-	briefing_right[SC_ASSASSIN][1] = "soldier).                            ";
-	briefing_right[SC_ASSASSIN][2] = "Player 1 can deploy near all edges of";
-	briefing_right[SC_ASSASSIN][3] = "the map (max. 5 tiles from an edge). ";
-	briefing_right[SC_ASSASSIN][4] = "Player 2 deploys in centre (20x20).  ";
-	
-	
-	name[SC_HOLD] = "Hold";
-
-	briefing_left[SC_HOLD][0] = "You must save at least half of your  ";
-	briefing_left[SC_HOLD][1] = "squad until the end of the match (5  ";
-	briefing_left[SC_HOLD][2] = "turns if turns limit is not set).    ";
-	briefing_left[SC_HOLD][3] = "Player 1 deploys in centre (20x20),  ";
-	briefing_left[SC_HOLD][4] = "Player 2 near edges (max. 5 tiles).  ";
-	
-	briefing_right[SC_HOLD][0] = "You must kill more than half of enemy";
-	briefing_right[SC_HOLD][1] = "squad until the end of the match (5  ";
-	briefing_right[SC_HOLD][2] = "turns if turns limit is not set).    ";
-	briefing_right[SC_HOLD][3] = "Player 1 deploys in centre (20x20),  ";
-	briefing_right[SC_HOLD][4] = "Player 2 near edges (max. 5 tiles).  ";
-
-
-	name[SC_BREAK] = "Breakthrough";
-	                              
-	briefing_left[SC_BREAK][0] = "You must bring at least half of your ";
-	briefing_left[SC_BREAK][1] = "platoon to the opposite edge of the  ";
-	briefing_left[SC_BREAK][2] = "map.                                 ";
-	
-	briefing_right[SC_BREAK][0] = "You must kill more than half of enemy";
-	briefing_right[SC_BREAK][1] = "platoon before they get to your edge ";
-	briefing_right[SC_BREAK][2] = "of the map.                          ";
-		
+	init_deathmatch();
+	init_escape();	
+	init_sabotage();	
+	init_control();
+	init_assassin();
+	init_hold();
+	init_break();       
 	
 	rules[0] = 3;	//all explosives allowed
 	rules[1] = 10;	//10k points limit
 	rules[2] = 0;	//no turn limit
-	rules[3] = 0;   //all map isn't explored
-	
+	rules[3] = 0;   //all map isn't explored	
 	
 	new_scenario(sc_type);
 }
 
+void Scenario::init_deathmatch ()
+{
+	name[SC_DEATHMATCH] = "Deathmatch";
+	
+	briefing_left[SC_DEATHMATCH][0] = briefing_right[SC_DEATHMATCH][0] = "Kill 'em all!";
+	
+	options[SC_DEATHMATCH][0] = new Option(OPT_NONE);
+	options[SC_DEATHMATCH][1] = new Option(OPT_NONE);
+	options[SC_DEATHMATCH][2] = new Option(OPT_NONE);
+}
+            
+void Scenario::init_escape ()
+{
+	name[SC_ESCAPE] = "Escape";
+
+	briefing_left[SC_ESCAPE][0] = "You must get your leader (first selected soldier)";
+	briefing_left[SC_ESCAPE][1] = "to the opposite edge of the map to win.          ";
+	briefing_left[SC_ESCAPE][2] = "Your leader is always visible on your opponent's ";
+	briefing_left[SC_ESCAPE][3] = "minimap.";
+	
+    briefing_right[SC_ESCAPE][0] = "You must kill enemy leader (first selected       ";
+	briefing_right[SC_ESCAPE][1] = "soldier) before he gets to your edge of the map. ";
+	briefing_right[SC_ESCAPE][2] = "Leader is always visible on your minimap.        ";
+	
+	options[SC_ESCAPE][0] = new Option(OPT_SWITCH, 0, "Leader can have two-handed weapons", "Leader can't have two-handed weapons", false);	
+	options[SC_ESCAPE][1] = new Option(OPT_NONE);
+	options[SC_ESCAPE][2] = new Option(OPT_NONE);
+}
+            
+void Scenario::init_sabotage ()
+{
+	name[SC_SABOTAGE] = "Sabotage";
+                                     
+	briefing_left[SC_SABOTAGE][0] = "You must place high explosives at places which   ";
+	briefing_left[SC_SABOTAGE][1] = "are indicated on your minimap. You can have high ";
+	briefing_left[SC_SABOTAGE][2] = "explosives even if they aren't allowed by rules  ";
+	briefing_left[SC_SABOTAGE][3] = "of the match.                                    ";   
+	
+	briefing_right[SC_SABOTAGE][0] = "You must kill all enemy soldiers before they     ";
+	briefing_right[SC_SABOTAGE][1] = "plant explosives at places which are indicated on";
+	briefing_right[SC_SABOTAGE][2] = "the minimap.                                     ";
+		
+	options[SC_SABOTAGE][0] = new Option(OPT_NONE);
+	options[SC_SABOTAGE][1] = new Option(OPT_NONE);
+	options[SC_SABOTAGE][2] = new Option(OPT_NONE);
+}
+	
+void Scenario::init_control ()
+{
+	name[SC_CONTROL] = "Control";
+                                    
+	briefing_left[SC_CONTROL][0] = briefing_right[SC_CONTROL][0] = "You must control the 10x10 area in the centre of ";
+	briefing_left[SC_CONTROL][1] = briefing_right[SC_CONTROL][1] = "the map for number of half-turns set in the      ";
+	briefing_left[SC_CONTROL][2] = briefing_right[SC_CONTROL][2] = "\"Options\" section.                               ";
+	briefing_left[SC_CONTROL][3] = briefing_right[SC_CONTROL][3] = "To control an area you have to have in it more   ";
+	briefing_left[SC_CONTROL][4] = briefing_right[SC_CONTROL][4] = "soldiers than your opponent.                     ";
+
+	options[SC_CONTROL][0] = new Option(OPT_NUMBER, 3, 1, 2, 20, 0, "Half-turns to control the area", false);
+	options[SC_CONTROL][1] = new Option(OPT_NONE);
+	options[SC_CONTROL][2] = new Option(OPT_NONE);
+}
+
+void Scenario::init_assassin ()
+{
+	name[SC_ASSASSIN] = "Assassination";
+                                     
+	briefing_left[SC_ASSASSIN][0] = "You must kill enemy leader (first selected       ";
+	briefing_left[SC_ASSASSIN][1] = "soldier). Enemy leader is always visible on your ";
+	briefing_left[SC_ASSASSIN][2] = "minimap.                                         ";
+	                                  
+	briefing_right[SC_ASSASSIN][0] = "You must save your leader (first selected        ";
+	briefing_right[SC_ASSASSIN][1] = "soldier). He is always visible for your opponent ";
+	briefing_right[SC_ASSASSIN][2] = "on the minimap.                                  ";
+			
+	options[SC_ASSASSIN][0] = new Option(OPT_SWITCH, 0, "Leader can have two-handed weapons", "Leader can't have two-handed weapons", false);	
+	options[SC_ASSASSIN][1] = new Option(OPT_NONE);
+	options[SC_ASSASSIN][2] = new Option(OPT_NONE);
+}
+
+void Scenario::init_hold ()
+{
+	name[SC_HOLD] = "Hold";
+                                 
+	briefing_left[SC_HOLD][0] = "You must save at least half of your squad        ";
+	briefing_left[SC_HOLD][1] = "(rounded down) until the end of the match (number";
+	briefing_left[SC_HOLD][2] = "of turns is set in the \"Options\" section).       ";
+	
+	briefing_right[SC_HOLD][0] = "You must kill more than half of enemy squad      ";
+	briefing_right[SC_HOLD][1] = "(rounded down) until the end of the match (number";
+	briefing_right[SC_HOLD][2] = "of turns is set in the \"Options\" section).       ";
+			
+	options[SC_HOLD][0] = new Option(OPT_NUMBER, 5, 1, 1, 20, 0, "Turns to hold (match length)", false);
+	options[SC_HOLD][1] = new Option(OPT_SWITCH, 1, "\"Surrounded\" deployment", "Standart deployment", true);
+	options[SC_HOLD][2] = new Option(OPT_NONE);
+}
+
+void Scenario::init_break ()
+{
+	name[SC_BREAK] = "Breakthrough";
+	
+	briefing_left[SC_BREAK][0] = "You must bring at least half of your squad       ";
+	briefing_left[SC_BREAK][1] = "(rounded up) to the opposite edge of the map if  ";
+	briefing_left[SC_BREAK][2] = "standart deployment is selected or to any edge if";
+	briefing_left[SC_BREAK][3] = "\"surrounded\" deployment is selected.             ";
+	
+	briefing_right[SC_BREAK][0] = "You must kill more than half of enemy squad      ";
+	briefing_right[SC_BREAK][1] = "(rounded up) before they get to your edge of the ";
+	briefing_right[SC_BREAK][2] = "map if standart deployment is selected or to any ";
+	briefing_right[SC_BREAK][3] = "edge if \"surrounded\" deployment is selected.     ";
+				
+	options[SC_BREAK][0] = new Option(OPT_SWITCH, 0, "\"Surrounded\" deployment", "Standart deployment", true);
+	options[SC_BREAK][1] = new Option(OPT_NONE);
+	options[SC_BREAK][2] = new Option(OPT_NONE);
+}              
+
 void Scenario::new_scenario (int sc_type)
 {
-	if (sc_type == -1)
+	if (sc_type <= -1)
 	    sc_type = SCENARIO_NUMBER - 1;
 	    
-	if (sc_type == SCENARIO_NUMBER)
+	if (sc_type >= SCENARIO_NUMBER)
 		sc_type = SC_DEATHMATCH;
 
 	type = sc_type;
@@ -286,35 +322,21 @@ int Scenario::conditions_escape ()
     int x;
 	Soldier *vip;
 	
-	if (platoon_remote->findman(1000) == NULL && platoon_remote->findman(2000) == NULL) {
-		win = 2;
-	}
-	
-	if (platoon_local->findman(1000) == NULL && platoon_local->findman(2000) == NULL) {
-		loss = 1;
-	}
-	
-  	if (p1->findman(1000) != NULL) {
+	if (p1->findman(1000) == NULL) {
+		if (p1 == platoon_local)
+			loss = 1;
+		else
+			win = 2;
+	} else {
 		vip = p1->findman(1000);
 		x = vip->x;
 		if (x == (mapdata.x_size * 10) - 1) {
-	    	if (platoon_local->belong(vip))
-	        	win = 2;
+			if (platoon_local->belong(vip))
+				win = 2;
 			else
-		    	loss = 1;
+				loss = 1;
 		}
-	}
-	
-	if (p2->findman(2000) != NULL) {
-		vip = p2->findman(2000);
-		x = vip->x;
-		if (x == 0) {
-	    	if (platoon_local->belong(vip))
-	        	win = 2;
-			else
-		    	loss = 1;
-		}
-	}
+	}	
 	
 	return win + loss;
 }
@@ -323,14 +345,14 @@ int Scenario::conditions_sabotage ()
 {
 	int win = 0, loss = 0;
 	
-    bool temp1b = false, temp2b = false;
+    bool target1 = false, target2 = false;
 	char buf[10000]; memset(buf, 0, sizeof(buf));
 	int len = 0;
 	
 	map->cell(0, x1, y1)->get_place()->build_items_stats(buf, len);
 	for (int i = 0; i < len; i++) {
 	    if (buf[i] == HIGH_EXPLOSIVE) {
-	    	temp1b = true;
+	    	target1 = true;
 	    	break;
 		}
 	}
@@ -341,12 +363,12 @@ int Scenario::conditions_sabotage ()
 	map->cell(0, x2, y2)->get_place()->build_items_stats(buf, len);
 	for (int i = 0; i < len; i++) {
 	    if (buf[i] == HIGH_EXPLOSIVE) {
-	    	temp2b = true;
+	    	target2 = true;
 	    	break;
 		}
 	}
 
-	if (temp1b && temp2b) {
+	if (target1 && target2) {
 	    if (p1 == platoon_local)
 	        win = 2;
 		else
@@ -392,13 +414,13 @@ int Scenario::conditions_control ()
 	    turn_hold[1] = -1;
 		g_console->printf("Noone is controlling the target area.");
     }
-	if (turn_hold[0] == 4 && p1 == platoon_local)
+	if (turn_hold[0] == (options[SC_CONTROL][0]->value - 1) / 2 && p1 == platoon_local)
 	    win = 2;
-	if (turn_hold[0] == 4 && p1 == platoon_remote)
+	if (turn_hold[0] == (options[SC_CONTROL][0]->value - 1) / 2 && p1 == platoon_remote)
 	    loss = 1;
-	if (turn_hold[1] == 4 && p2 == platoon_local)
+	if (turn_hold[1] == (options[SC_CONTROL][0]->value - 1) / 2 && p2 == platoon_local)
 	    win = 2;
-	if (turn_hold[1] == 4 && p2 == platoon_remote)
+	if (turn_hold[1] == (options[SC_CONTROL][0]->value - 1) / 2 && p2 == platoon_remote)
 	    loss = 1;
 	    
     return win + loss;
@@ -422,16 +444,13 @@ int Scenario::conditions_hold ()
 {
 	int win = 0, loss = 0;
 	
-	int last_turn;
-	rules[2] == 0 ? last_turn = 5 : last_turn = rules[2];
-	
 	if (p1->num_of_men() < (num_of_men / 2) + (num_of_men % 2)) {
 	    if (p1 == platoon_local)
 	        loss = 1;
 		else
 		    win = 2;
 	} else {
-		if ((turn / 2) + 1 > last_turn) {
+		if ((turn / 2) + 1 > (options[SC_HOLD][0]->value - 1) / 2) {
 			if (p1 == platoon_local)
 				win = 2;
 			else
@@ -447,7 +466,7 @@ int Scenario::conditions_break ()
 	int win = 0, loss = 0;
 	
 	int escaped = 0;
-	Soldier *sld;
+	Soldier *sld;                                 
 	
 	if (p1->num_of_men() < (num_of_men / 2) + (num_of_men % 2)) {
 		if (p1 == platoon_local)
@@ -481,11 +500,11 @@ bool Scenario::is_target_on_minimap (int lev, int col, int row, Map *m_map)
 	    break;
 	    
     	case SC_ESCAPE:
-		return minimap_escape(lev, col, row, m_map);
+    	return minimap_escape(lev, col, row, m_map);
 		break;
 	
 		case SC_SABOTAGE:
-        return minimap_sabotage(col, row);
+        return minimap_sabotage(lev, col, row);
 		break;
 		
 		case SC_CONTROL:
@@ -534,21 +553,21 @@ void Scenario::draw_minimap_rectangle (BITMAP *bmp, int x, int y)
 
 bool Scenario::minimap_escape (int lev, int col, int row, Map *m_map)
 {
-    if (m_map->man(lev, col, row) != NULL) {
-		if (m_map->man(lev, col, row)->get_NID() == 1000 && platoon_remote->belong(m_map->man(lev, col, row)))
+	if (m_map->man(lev, col, row) != NULL) {
+		if (m_map->man(lev, col, row)->get_NID() == 1000 && p1->belong(m_map->man(lev, col, row)) && p1 == platoon_remote)
 			return true;
-		if (m_map->man(lev, col, row)->get_NID() == 2000 && platoon_remote->belong(m_map->man(lev, col, row)))
+		if (m_map->man(lev, col, row)->get_NID() == 2000 && p1->belong(m_map->man(lev, col, row)) && p1 == platoon_remote)
 		    return true;
 	}
-	
+
 	return false;
 }
 
-bool Scenario::minimap_sabotage (int col, int row)
+bool Scenario::minimap_sabotage (int lev, int col, int row)
 {
-    if (col == x1 && row == x1)
+    if (lev == 0 && col == x1 && row == x1)
   		return true;
-	if (col == x2 && row == y2)
+	if (lev == 0 && col == x2 && row == y2)
 	    return true;
 	    
 	return false;
@@ -580,7 +599,7 @@ bool Scenario::is_correct_platoon (long points, Platoon *platoon, char *first_so
 	    break;
 	    
 	    case SC_ESCAPE:
-	    n = platoon_escape(platoon, first_soldier);
+	    n = platoon_escape(platoon, pos, first_soldier);
 	    break;
 	    
 	    case SC_SABOTAGE:
@@ -605,13 +624,13 @@ bool Scenario::is_correct_platoon (long points, Platoon *platoon, char *first_so
 	
 	if (n == false) return n;
 	
-	n = platoon_common(points, buf, len);
+	n = platoon_common(points, pos, buf, len);
 	if (n == false) return n;
 	
 	return true;
 }
 
-bool Scenario::platoon_common (long points, char buf[10000], int len)
+bool Scenario::platoon_common (long points, PanPos pos, char buf[10000], int len)
 {
 	if (points > rules[1] * 1000) {
 	    g_console->printf("%d points limit exceeded!", rules[1] * 1000);
@@ -622,7 +641,7 @@ bool Scenario::platoon_common (long points, char buf[10000], int len)
 			for (int j = rules[0]; j < 3; j++) {
 			    for (int k = 0; k < 8; k++) {
 			        if (buf[i] == explosives[j][k]) {
-			            if (type != SC_SABOTAGE || explosives[j][k] != HIGH_EXPLOSIVE) {
+			            if (type != SC_SABOTAGE || explosives[j][k] != HIGH_EXPLOSIVE || pos != POS_LEFT) {
 							g_console->printf("%s isn't allowed.", Item::obdata_name(explosives[j][k]).c_str());
 			            	return false;
 						}
@@ -635,22 +654,43 @@ bool Scenario::platoon_common (long points, char buf[10000], int len)
 	return true;
 }
 
-bool Scenario::platoon_escape (Platoon *platoon, char *first_soldier)
+bool Scenario::platoon_escape (Platoon *platoon, PanPos pos, char *first_soldier)
 {
-    char buf[10000]; memset(buf, 0, sizeof(buf));
-	int len = 0;
-	extern int weapon[];
+	if (!options[SC_ESCAPE][0]->value && pos == POS_LEFT) {
+    	char buf[10000]; memset(buf, 0, sizeof(buf));
+		int len = 0;
+		extern int weapon[];
 
-    platoon->findman(first_soldier)->build_items_stats (buf, len);
-
-	for (int w = 0; w < 40; w++) {
-		int num = 0;
-		for (int i = 0; i < len; i++) {
-			if (weapon[w] == buf[i])
-				num++;
+		platoon->findman(first_soldier)->build_items_stats (buf, len);
+    	
+		for (int w = 0; w < 40; w++) {
+			int num = 0;
+			for (int i = 0; i < len; i++) {
+				if (weapon[w] == buf[i])
+					num++;
+			}
+			if ((Item::obdata_twoHanded(weapon[w]) > 0) && (num > 0)) {
+				g_console->printf("Soldier #1 can't have two-handed weapons!");
+				return false;
+			}
 		}
-		if ((Item::obdata_twoHanded(weapon[w]) > 0) && (num > 0)) {
-			g_console->printf("Soldier #1 can't have two-handed weapons!");
+	}
+
+	return true;
+}
+
+bool Scenario::platoon_sabotage (PanPos pos, char buf[10000], int len)
+{
+	if (pos == POS_LEFT) {
+		int he_num = 0;
+		
+		for (int i = 0; i < len; i++) {
+			if (buf[i] == HIGH_EXPLOSIVE)
+				he_num++;
+		}
+
+		if (he_num < 2) {
+		    g_console->printf("You must have at least 2 high explosives.");
 			return false;
 		}
 	}
@@ -658,29 +698,13 @@ bool Scenario::platoon_escape (Platoon *platoon, char *first_soldier)
 	return true;
 }
 
-bool Scenario::platoon_sabotage (PanPos pos, char buf[10000], int len)
-{
-	int he_num = 0;
-	
-	for (int i = 0; i < len; i++) {
-		if (buf[i] == HIGH_EXPLOSIVE)
-			he_num++;
-	}
-
-	if (he_num < 2 && pos == POS_LEFT) {
-	    g_console->printf("You must have at least 2 high explosives.");
-		return false;
-	} else
-		return true;
-}
-
 bool Scenario::platoon_assassin (Platoon *platoon, PanPos pos, char *first_soldier)
 {
-    char buf[10000]; memset(buf, 0, sizeof(buf));
-	int len = 0;
-	extern int weapon[];
+	if (!options[SC_ASSASSIN][0]->value && pos == POS_RIGHT) {
+    	char buf[10000]; memset(buf, 0, sizeof(buf));
+		int len = 0;
+		extern int weapon[];
 
-	if (pos == POS_RIGHT) {
 		platoon->findman(first_soldier)->build_items_stats (buf, len);
 
 		for (int w = 0; w < 40; w++) {
@@ -739,6 +763,7 @@ bool Scenario::is_correct_place (PanPos pos, int x, int y)
 		break;
 		
 		case SC_BREAK:
+		return place_break(pos, x, y);
 		break;
 	}
 
@@ -773,13 +798,109 @@ bool Scenario::place_assassin (PanPos pos, int x, int y)
 
 bool Scenario::place_hold (PanPos pos, int x, int y)
 {
-	if (pos == POS_LEFT) {
-        if (x > (mapdata.x_size - 2) * 10 / 2 && x < (mapdata.x_size - 2) * 10 / 2 + 20 && y > (mapdata.y_size - 2) * 10 / 2 && y < (mapdata.y_size - 2) * 10 / 2 + 20)
-	        return true;
-	} else {
-	    if (x < 5 || x > mapdata.x_size * 10 - 6 || y < 5 || y > mapdata.y_size * 10 - 6)
-	        return true;
-	}
+	if (options[SC_HOLD][1]->value) {
+		if (pos == POS_LEFT) {
+    	    if (x > (mapdata.x_size - 2) * 10 / 2 && x < (mapdata.x_size - 2) * 10 / 2 + 20 && y > (mapdata.y_size - 2) * 10 / 2 && y < (mapdata.y_size - 2) * 10 / 2 + 20)
+		        return true;
+		} else {
+		    if (x < 5 || x > mapdata.x_size * 10 - 6 || y < 5 || y > mapdata.y_size * 10 - 6)
+		        return true;
+		}
+	} else
+		return place_common(pos, x, y);
 
 	return false;
+}
+
+bool Scenario::place_break (PanPos pos, int x, int y)
+{
+	if (options[SC_BREAK][0]->value) {
+		if (pos == POS_LEFT) {
+    	    if (x > (mapdata.x_size - 2) * 10 / 2 && x < (mapdata.x_size - 2) * 10 / 2 + 20 && y > (mapdata.y_size - 2) * 10 / 2 && y < (mapdata.y_size - 2) * 10 / 2 + 20)
+		        return true;
+		} else {
+		    if (x < 5 || x > mapdata.x_size * 10 - 6 || y < 5 || y > mapdata.y_size * 10 - 6)
+		        return true;
+		}
+	} else
+		return place_common(pos, x, y);
+
+	return false;
+}
+
+void Scenario::draw_deploy_zone (PanPos pos, int x, int y, int color)
+{
+	switch (type) {
+	    case SC_DEATHMATCH:
+	    break;
+
+	    case SC_ESCAPE:
+	    break;
+
+	    case SC_SABOTAGE:
+	    break;
+
+	    case SC_CONTROL:
+	    break;
+
+	    case SC_ASSASSIN:
+	    deploy_assassin(pos, x, y, color);
+	    return;
+	    break;
+	    
+	    case SC_HOLD:
+		deploy_hold(pos, x, y, color);
+		return;
+		break;
+		
+		case SC_BREAK:
+		deploy_break(pos, x, y, color);
+		return;
+		break;
+	}
+	
+	deploy_common(pos, x, y, color);
+}
+
+void Scenario::deploy_common (PanPos pos, int x, int y, int color)
+{
+	if (pos == POS_LEFT) 
+		rect(screen2, x, y, x + 10 * 4, y + mapdata.y_size * 10 * 4 - 1, color);
+	else
+		rect(screen2, x + (mapdata.x_size - 1) * 10 * 4, y, x + mapdata.x_size * 10 * 4 - 1, y + mapdata.y_size * 10 * 4 - 1, color);
+}
+
+void Scenario::deploy_assassin (PanPos pos, int x, int y, int color)
+{
+	if (pos == POS_LEFT) {
+		rect(screen2, x, y, x + mapdata.x_size * 10 * 4 - 1, y + mapdata.y_size * 10 * 4 - 1, color);
+		rect(screen2, x + 5 * 4, y + 5 * 4, x + mapdata.x_size * 10 * 4 - 5 * 4, y + mapdata.y_size * 10 * 4 - 5 * 4, color);
+	} else
+		rect(screen2, x + (mapdata.x_size - 2) * 10 / 2 * 4, y + (mapdata.y_size - 2) * 10 / 2 * 4, x + (mapdata.x_size - 2) * 10 / 2 * 4 + 20 * 4, y + (mapdata.y_size - 2) * 10 / 2 * 4 + 20 * 4, color);
+}
+
+void Scenario::deploy_hold (PanPos pos, int x, int y, int color)
+{
+	if (options[SC_HOLD][1]->value) {
+		if (pos == POS_LEFT)
+			rect(screen2, x + (mapdata.x_size - 2) * 10 / 2 * 4, y + (mapdata.y_size - 2) * 10 / 2 * 4, x + (mapdata.x_size - 2) * 10 / 2 * 4 + 20 * 4, y + (mapdata.y_size - 2) * 10 / 2 * 4 + 20 * 4, color);
+		else {
+			rect(screen2, x, y, x + mapdata.x_size * 10 * 4 - 1, y + mapdata.y_size * 10 * 4 - 1, color);
+			rect(screen2, x + 5 * 4, y + 5 * 4, x + mapdata.x_size * 10 * 4 - 5 * 4, y + mapdata.y_size * 10 * 4 - 5 * 4, color);
+		}  	
+	} else 
+		deploy_common(pos, x, y, color);
+}
+
+void Scenario::deploy_break (PanPos pos, int x, int y, int color)
+{
+	if (options[SC_BREAK][0]->value) {
+		if (pos == POS_LEFT)
+			rect(screen2, x + (mapdata.x_size - 2) * 10 / 2 * 4, y + (mapdata.y_size - 2) * 10 / 2 * 4, x + (mapdata.x_size - 2) * 10 / 2 * 4 + 20 * 4, y + (mapdata.y_size - 2) * 10 / 2 * 4 + 20 * 4, color);
+		else {
+			rect(screen2, x, y, x + mapdata.x_size * 10 * 4, y + mapdata.y_size * 10 * 4 - 1, color);
+			rect(screen2, x + 5 * 4, y + 5 * 4, x + mapdata.x_size * 10 * 4 - 5 * 4, y + mapdata.y_size * 10 * 4 - 5 * 4, color);
+		}  	
+	} else 
+		deploy_common(pos, x, y, color);
 }

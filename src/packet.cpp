@@ -27,7 +27,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 char *Packet::strCommand[COMMAND_NUM] = {
 	"NOTE", "QUIT", "TURN", "DOOR", "POSE", "PRIM", "UNLO", "LOAD", "TAKE", "DROP", 
 	"MOVE", "FACE", "THRU", "BEAM", "FIRE", "ADUN", "PDSZ", "PDAT", "SEUN", "DEUN", 
-	"MDAT", "STRT", "REST", "PNCH", "AMTR", "TLIM", "TCRC", "ELEV", "SCEN", "RULE"
+	"MDAT", "STRT", "REST", "PNCH", "AMTR", "TLIM", "TCRC", "ELEV", "SCEN", "RULE",
+	"OPTN"
 };
 
 Packet::Packet()

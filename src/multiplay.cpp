@@ -334,6 +334,9 @@ void Net::check()
 		case CMD_RULES:
 		    recv_rules();
 		    break;
+		case CMD_OPTIONS:
+			recv_options();
+			break;
 		case CMD_FINISH_PLANNER:
 			recv_finish_planner();
 			break;
@@ -1368,6 +1371,39 @@ int Net::recv_rules()
 
 	local.START = 0;
 	remote.START = 0;
+
+	return 1;
+}
+
+void Net::send_options(int scenario_type, int index, int value)
+{
+	if (!SEND) return ;
+
+	pkt.create(CMD_OPTIONS);
+	pkt << scenario_type;
+	pkt << index;
+	pkt << value;
+	
+	send(pkt.str(), pkt.str_len());
+	
+	local.START = 0;
+	remote.START = 0;
+}
+
+int Net::recv_options()
+{
+	int scenario_type;
+	int index;
+	
+	pkt >> scenario_type;
+	pkt >> index;
+	pkt >> scenario->options[scenario_type][index]->value;
+
+	local.START = 0;
+	remote.START = 0;
+	
+	if (scenario->options[scenario_type][index]->reset_deploy)
+		mapdata.load_game = 77;
 
 	return 1;
 }
