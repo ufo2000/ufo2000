@@ -500,7 +500,7 @@ void Bullet::showline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 		        (!map->pass_lof_cell(zd, xd, yd)))
 			break;
 		if (platoon_remote->check_for_hit(zd, xd, yd) ||
-		        platoon_local->check_for_hit(zd, xd, yd))
+		        platoon_local->check_for_hit(zd, xd, y, sel_man)) //self hit-test? remove sel_man from hit-test list
 			break;
 	}
 

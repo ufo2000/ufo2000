@@ -342,13 +342,14 @@ Place *Platoon::find_item(Item *it, int &lev, int &col, int &row)
 }
 
 
-int Platoon::check_for_hit(int z, int x, int y)
+int Platoon::check_for_hit(int z, int x, int y, Soldier* no_test)
 {
 	Soldier *ss = man;
 
 	int v = 0;
 	while (ss != NULL) {
-		v |= ss->check_for_hit(z, x, y);
+		if(no_test != ss)
+			v |= ss->check_for_hit(z, x, y);
 		ss = ss->next();
 	}
 	return v;

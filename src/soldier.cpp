@@ -2713,7 +2713,7 @@ int Soldier::fire(int z0, int x0, int y0, REAL fi, REAL te, int iplace, int req_
 
 void Soldier::draw_bullet_way()
 {
-	if (target.action == THROW)
+	if (TARGET && target.action == THROW)
 		m_bullet->showthrow(z, x, y, map->sel_lev, map->sel_col, map->sel_row);
 	else
 		m_bullet->showline(z, x, y, map->sel_lev, map->sel_col, map->sel_row);
@@ -2817,7 +2817,7 @@ int Soldier::check_reaction_fire(Soldier *the_target)
 		if (tu_ratio < 1) total_reactions *= tu_ratio;
 
 		if(FLAGS & F_REACTINFO)
-			g_console->printf(COLOR_SYS_INFO1,"ToReact=%5.4f (%5.4f, %5.4f) TU: %5.4f", total_reactions, r1, r2, tu_ratio);
+			g_console->printf(COLOR_SYS_INFO1, "ToReact = %5.4f (%5.4f, %5.4f) TU: %5.4f", total_reactions, r1, r2, tu_ratio);
 		
 		if (randval(0, 1) < total_reactions)
 		{
@@ -2858,7 +2858,7 @@ int Soldier::check_reaction_fire(Soldier *the_target)
 int Soldier::do_reaction_fire(Soldier *the_target, int place, int shot_type)
 {
 	Item *it = item(place);
-	char *type_str=NULL;
+	char *type_str = NULL;
 	if (it == NULL) return 0; // no item in hand
 	if (!it->obdata_isGun() && !it->is_laser()) return 0; // item is not a gun or laser
 	if (!it->is_laser()     && !it->haveclip()) return 0; // gun with no clip
@@ -2879,15 +2879,15 @@ int Soldier::do_reaction_fire(Soldier *the_target, int place, int shot_type)
 		switch (shot_type) {
 			case AIMED:
 				target.action = AIMEDSHOT;
-				type_str="AIMED shot";
+				type_str = "AIMED shot";
 				break;
 			case AUTO:
 				target.action = AUTOSHOT;
-				type_str="AUTO shot";
+				type_str = "AUTO shot";
 				break;
 			case SNAP:
 				target.action = SNAPSHOT;
-				type_str="SNAP shot";
+				type_str = "SNAP shot";
 				break;
 		}
 		target.item = it;

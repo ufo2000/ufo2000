@@ -916,11 +916,17 @@ void build_screen(int & select_y)
 			map->set_sel(mouse_x, mouse_y);
 			map->draw();
 
-			if (key[KEY_LCONTROL] && sel_man != NULL && !sel_man->ismoving()) {
-				if (TARGET)
-					sel_man->draw_bullet_way();
-				else
+//			if (key[KEY_LCONTROL] && sel_man != NULL && !sel_man->ismoving()) {
+//				if (TARGET)
+//					sel_man->draw_bullet_way();
+//				else
+//					map->draw_path_from(sel_man);
+//			}
+			if(sel_man && !sel_man->ismoving()) {
+				if(key[KEY_LCONTROL])
 					map->draw_path_from(sel_man);
+				else if(key[KEY_ALT])
+					sel_man->draw_bullet_way();
 			}
 
 			p1->bulldraw();
