@@ -2455,7 +2455,7 @@ int Soldier::assign_target(Action action, int iplace)
             break;
         case AUTOSHOT:
             target.accur = FAccuracy(it->obdata_accuracy(AUTO), it->obdata_twoHanded());
-            target.time = required(it->obdata_time(AUTO)) * it->obdata_autoShots();
+            target.time = required(it->obdata_time(AUTO));
             break;
         case PUNCH:
             target.accur = 100;
