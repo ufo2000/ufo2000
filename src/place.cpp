@@ -457,6 +457,24 @@ void Place::build_ITEMDATA(int ip, ITEMDATA * id) //don't save clip rounds
 	}
 }
 
+void Place::save_to_string(std::string &str)
+{
+	str.clear();
+
+	Item *it = m_item;
+	while (it != NULL) {
+		char line[512];
+		if (!it->haveclip()) {
+			sprintf(line, "{%d, %d, \"%s\"},\n", it->m_x, it->m_y, it->name().c_str());
+		} else {
+			sprintf(line, "{%d, %d, \"%s\", \"%s\"},\n", it->m_x, it->m_y, it->name().c_str(), 
+				Item::obdata_name(it->cliptype()).c_str());
+		}
+		str += line;
+		it = it->m_next;
+	}
+}
+
 void Place::build_items_stats(char *buf, int &len)
 {
 	Item *it = m_item;

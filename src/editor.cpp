@@ -948,6 +948,13 @@ void Editor::show()
     }
 
     m_plt->save_FULLDATA(F("$(home)/squad.dat"));
+	
+	std::string str;
+	m_plt->save_to_string(str);
+	FILE *f = fopen(F("$(home)/squad.lua"), "wt");
+	std::string x = "return {\n" + indent(str) + "}\n";
+	fprintf(f, "%s", x.c_str());
+	fclose(f);
 
     destroy_bitmap(editor_bg);
     destroy_bitmap(screen2);

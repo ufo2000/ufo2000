@@ -344,6 +344,8 @@ public:
 	void change_morale(int delta);
 
 	void set_start_sit() {m_state=SIT;};
+	
+	void save_to_string(std::string &str);
 
 	virtual bool Write(persist::Engine &archive) const;
 	virtual bool Read(persist::Engine &archive);

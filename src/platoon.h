@@ -109,6 +109,7 @@ public:
 	int get_seen_item_index(int lev, int col, int row) { return m_seen_item_index[lev][col][row]; }
 
 	void sit_on_start();
+	void save_to_string(std::string &str);
 
 	virtual bool Write(persist::Engine &archive) const;
 	virtual bool Read(persist::Engine &archive);

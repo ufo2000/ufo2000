@@ -330,6 +330,56 @@ void Soldier::build_ITEMDATA()
     }
 }
 
+static char *place_name_id[11] = {
+    "RIGHT SHOULDER",
+    "LEFT SHOULDER",
+    "RIGHT HAND",
+    "LEFT HAND",
+    "RIGHT LEG",
+    "LEFT LEG",
+    "BACK PACK",
+    "BELT",
+    "GROUND",
+    "ARMOURY",
+    "COMMON POOL"
+};
+
+void Soldier::save_to_string(std::string &str)
+{
+	str.clear();
+	
+	std::string inv;
+	
+    for (int i = 0; i < NUMBER_OF_PLACES; i++) {
+		inv += "[\"" + std::string(place_name_id[i]) + "\"] = {\n";
+		std::string place_str;
+        m_place[i]->save_to_string(place_str);
+		inv += indent(place_str);
+		inv += "},\n";
+	}
+    
+    char tmp[512];
+	str += "Name = \"" + std::string(md.Name) + "\",\n";
+
+    sprintf(tmp, "SkinType = %d,\n", md.SkinType); str += tmp;
+    sprintf(tmp, "fFemale = %d,\n", md.fFemale); str += tmp;
+    sprintf(tmp, "Appearance = %d,\n", md.Appearance); str += tmp;
+
+	str += "Attributes = {\n";
+    sprintf(tmp, "\tTimeUnits = %d,\n", md.TimeUnits); str += tmp;
+    sprintf(tmp, "\tHealth = %d,\n", md.Health); str += tmp;
+    sprintf(tmp, "\tStamina = %d,\n", md.Stamina); str += tmp;
+    sprintf(tmp, "\tReactions = %d,\n", md.Reactions); str += tmp;
+    sprintf(tmp, "\tStrength = %d,\n", md.Strength); str += tmp;
+    sprintf(tmp, "\tFiring = %d,\n", md.Firing); str += tmp;
+    sprintf(tmp, "\tThrowing = %d,\n", md.Throwing); str += tmp;
+	str += "},\n";
+
+	str += "Inventory = {\n";
+	str += indent(inv);
+	str += "},\n";
+}
+
 void Soldier::destroy_all_items()
 {
     for (int i = 0; i < NUMBER_OF_PLACES; i++) {

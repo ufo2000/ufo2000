@@ -324,7 +324,7 @@ struct ITEMDATA
     char  name[26];
     int32 num;
     char  type[100];
-    unsigned char  place[100]; //if (id.place[i] == 0xFF)  - must be unsigned check!
+    uint8 place[100];
     char  x[100];
     char  y[100];
 };
@@ -461,6 +461,8 @@ void closegame();
 extern lua_State *L;
 
 const char *F(const char *fileid);
+
+std::string indent(const std::string &);
 
 #define CELL_SCR_X 16
 #define CELL_SCR_Y 8

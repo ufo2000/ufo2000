@@ -340,6 +340,23 @@ void closegame()
 int print_y = 0;
 Wind *print_win = NULL;
 
+std::string indent(const std::string &str)
+{
+	bool newline = true;
+	std::string tmp;
+	for (int i = 0; i < (int)str.size(); i++) {
+		if (newline) {
+			tmp += "\t";
+			newline = false;
+		}
+		if (str[i] == '\n') {
+			newline = true;
+		}
+		tmp += str[i];
+	}
+	return tmp;
+}
+
 class consoleBuf : public std::streambuf {
     std::string curline;
     bool doCout;

@@ -66,6 +66,7 @@ public:
 	void add_item(int x, int y, const char *item_name);
 
 	void save_to_file(const char *filename, const char *prefix);
+	void save_to_string(std::string &str);
 
 	int save_items(char *fs, int _z, int _x, int _y, char *txt);
 	int eot_save(int ip, char *txt);

@@ -490,6 +490,23 @@ void Platoon::save_FULLDATA(const char *fn)
 	close(fh);
 }
 
+void Platoon::save_to_string(std::string &str)
+{
+	str.clear();
+
+	Soldier *ss = man;
+	while (ss != NULL) {
+		char tmp[512];
+		sprintf(tmp, "[%d] = {\n", ss->get_NID());
+		str += tmp;
+		std::string soldier_str;
+		ss->save_to_string(soldier_str);
+		str += indent(soldier_str);
+		ss = ss->next();
+		str += "},\n";
+	}
+}
+
 /**
  * Load full team information (soldiers, their stats, equipment) from a binary file
  */
