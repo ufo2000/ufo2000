@@ -234,7 +234,7 @@ bool ConsoleWindow::process_keyboard_input(int keycode, int scancode)
  */
 const char *ConsoleWindow::get_text()
 {
-	assert(!m_lines_text.empty());
+	ASSERT(!m_lines_text.empty());
 	return m_lines_text.back().c_str();
 }
 
@@ -466,7 +466,7 @@ void Wind::hidecursor()
 void Wind::dump()
 {
 	FILE *f = fopen(F("$(home)/m_txt.dump"), "wt");
-	assert(f != NULL);
+	ASSERT(f != NULL);
 	for (int i = 0; i < m_txth; i++)
 		fprintf(f, "%d:[%s]\n", i, m_txt[i]);
 	fflush(f);

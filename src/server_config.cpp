@@ -236,10 +236,11 @@ void server_log(const char *fmt, ...)
 	va_start(arglist, fmt);
 
 	FILE *flog = fopen("ufo2000-srv.log", "at");
-	assert(flog != NULL);
-	fprintf(flog, "%s ", timebuf);
-	vfprintf(flog, fmt, arglist);
-	fclose(flog);
+	if (flog != NULL) {
+		fprintf(flog, "%s ", timebuf);
+		vfprintf(flog, fmt, arglist);
+		fclose(flog);
+	}
 
 	va_end(arglist);
 }

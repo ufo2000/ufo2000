@@ -457,7 +457,7 @@ int soundFile::loadFile(const char *fname, std::ostream& log, bool verbose) {
 }
 
 SAMPLE * soundFile::fetchSample(int idx) {
-    assert(idx >= 0 && idx < static_cast<int>(samples.size()));
+    ASSERT(idx >= 0 && idx < static_cast<int>(samples.size()));
     return samples[idx];
 }
 

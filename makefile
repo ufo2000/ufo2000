@@ -24,7 +24,7 @@ endif
 CC = g++
 LD = g++
 CFLAGS = -funsigned-char -Wall
-CFLAGS += -pipe
+CFLAGS += -pipe -DDEBUGMODE
 OBJDIR = obj
 NAME = ufo2000
 SERVER_NAME = ufo2000-srv

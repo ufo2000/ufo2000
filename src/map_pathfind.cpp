@@ -118,7 +118,7 @@ int Map::findneibo(int & _dz, int & _dx, int & _dy, int value)
 			}
 		}
 	}
-	assert(good_dir != -1);
+	ASSERT(good_dir != -1);
 	return good_dir;
 }
 

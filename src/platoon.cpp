@@ -404,7 +404,7 @@ int Platoon::check_reaction_fire(Soldier *target)
 void Platoon::save_FULLDATA(char *fn)
 {
 	int fh = open(F(fn), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	Soldier *ss = man;
 	while (ss != NULL) {
 		write(fh, &ss->md, sizeof(ss->md));
@@ -421,7 +421,7 @@ void Platoon::load_FULLDATA(char *fn)
 	unsigned int buf_size;
 
 	int fh = open(F(fn), O_RDONLY | O_BINARY);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	buf_size = filelength(fh);
 	buf = new char[buf_size];
 	buf_size = read(fh, buf, buf_size);
@@ -450,7 +450,7 @@ void Platoon::load_FULLDATA(char *fn)
 void Platoon::save_MANDATA(const char *fn)
 {
 	int fh = open(F(fn), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	Soldier *ss = man;
 	while (ss != NULL) {
 		write(fh, &ss->md, sizeof(ss->md));
@@ -466,7 +466,7 @@ void Platoon::load_MANDATA(const char *fn)
 	unsigned int buf_size;
 
 	int fh = open(F(fn), O_RDONLY | O_BINARY);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	buf_size = filelength(fh);
 	buf = new char[buf_size];
 	buf_size = read(fh, buf, buf_size);
@@ -489,7 +489,7 @@ void Platoon::load_MANDATA(const char *fn)
 void Platoon::save_ITEMDATA(const char *fn)
 {
 	int fh = open(F(fn), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	Soldier *ss = man;
 	while (ss != NULL) {
 		ss->build_ITEMDATA();
@@ -506,7 +506,7 @@ void Platoon::load_ITEMDATA(const char *fn)
 	unsigned int buf_size;
 
 	int fh = open(F(fn), O_RDONLY | O_BINARY);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	buf_size = filelength(fh);
 	buf = new char[buf_size];
 	buf_size = read(fh, buf, buf_size);

@@ -316,7 +316,7 @@ static uaf_fontcache * uaf_make_cacheentry(AL_CONST FONT *f, int tmode, int fgco
 	*/
 	newcache->U00 = create_bitmap(idat->max_w, idat->max_h * 128);
 	newcache->U04 = create_bitmap(idat->max_w, idat->max_h * 128);
-	assert(newcache->U00 != NULL && newcache->U04 != NULL);
+	ASSERT(newcache->U00 != NULL && newcache->U04 != NULL);
 	if (tmode > 0) {
 		clear_to_color(newcache->U00, tmode);
 		clear_to_color(newcache->U04, tmode);
@@ -565,23 +565,23 @@ static FONT *create_font(unsigned char *data00, unsigned char *data04, int w, in
 	FONT *f;
 	
 	f = (FONT *) malloc(sizeof(FONT));
-	assert(f != NULL);
+	ASSERT(f != NULL);
 	f->vtable = (FONT_VTABLE *) malloc(sizeof(FONT_VTABLE));
-	assert(f->vtable != NULL);
+	ASSERT(f->vtable != NULL);
 	
 	idata = (uaf_internal_data *) malloc(sizeof(uaf_internal_data));
-	assert(idata != NULL);
+	ASSERT(idata != NULL);
 	
 	f->height = h;
 	f->data = idata;
 	
 	idata->origU00 = (unsigned char *) malloc(w*h*128);
-	assert(idata->origU00 != NULL);
+	ASSERT(idata->origU00 != NULL);
         memmove(idata->origU00, data00, w*h*128);
         
         if (data04 != NULL) {
                 idata->origU04 = (unsigned char *) malloc(w*h*128);
-                assert(idata->origU04 != NULL);
+                ASSERT(idata->origU04 != NULL);
                 memmove(idata->origU04, data04, w*h*128);
         } else {
                 idata->origU04 = NULL;
@@ -703,7 +703,7 @@ void create_small_font() {
 	int fl, fh;
 	
 	fh = open(F("$(xcom)/geodata/smallset.dat"), O_RDONLY | O_BINARY);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	fl = filelength(fh);
 	unsigned char *dat_lat = new unsigned char[fl];
 	unsigned char *dat_cyr = (unsigned char *)datafile[DAT_SMALLSET_CYR].dat;
@@ -718,7 +718,7 @@ void create_large_font() {
 	int fl, fh;
 	
 	fh = open(F("$(xcom)/geodata/biglets.dat"), O_RDONLY | O_BINARY);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	fl = filelength(fh);
 	unsigned char *dat_lat = new unsigned char[fl];
 	unsigned char *dat_cyr = (unsigned char *)datafile[DAT_BIGLETS_CYR].dat;

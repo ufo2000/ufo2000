@@ -171,12 +171,12 @@ static int xcom1_darken_color_8bpp(int c, int level) { return c + level * 2; }
 
 static int xcom1_color_high_bpp(int c)
 {
-	assert(c >= 0 && c < 256);
+	ASSERT(c >= 0 && c < 256);
 	return xcom1_color_table[c]; 
 }
 static int xcom1_menu_color_high_bpp(int c)
 { 
-	assert(c >= 0 && c < 256);
+	ASSERT(c >= 0 && c < 256);
 	return xcom1_menu_color_table[c]; 
 }
 static int xcom1_darken_color_high_bpp(int c, int level)
@@ -188,13 +188,13 @@ static int xcom1_darken_color_high_bpp(int c, int level)
 }
 int tftd_color(int c)
 {
-	assert(c >= 0 && c < 256);
+	ASSERT(c >= 0 && c < 256);
 	return tftd_color_table[c];
 }
 
 static void ufo2k_set_gfx_mode(int gfx_driver, int min_color_depth)
 {
-	assert(min_color_depth % 8 == 0);
+	ASSERT(min_color_depth % 8 == 0);
 	int color_depth = min_color_depth;
 
 	while (true) {
@@ -250,7 +250,7 @@ void set_video_mode()
 	else
 		ufo2k_set_gfx_mode(GFX_AUTODETECT_WINDOWED, cfg_get_min_color_depth());
 
-	set_display_switch_mode(SWITCH_AMNESIA);
+	set_display_switch_mode(SWITCH_BACKAMNESIA);
 	set_display_switch_callback(SWITCH_IN, switch_in_callback);
 }
 

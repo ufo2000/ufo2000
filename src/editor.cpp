@@ -85,7 +85,7 @@ Editor::Editor()
 	}*/
 
 	if (local_platoon_size > 10) local_platoon_size = 10;      //!!!!!!!!!!!
-	assert(local_platoon_size > 0);
+	ASSERT(local_platoon_size > 0);
 	m_plt = new Platoon(2001, local_platoon_size);
 	m_plt->load_MANDATA("$(home)/soldier.dat");
 	m_plt->load_ITEMDATA("$(home)/items.dat");
@@ -333,7 +333,7 @@ void Editor::show(int NEXTPREV)
 					} else {
 						if (m_armoury->mdeselect(sel_item)) {
 							Item *del = m_armoury->get(sel_item->m_x, sel_item->m_y);
-							assert(del != NULL);
+							ASSERT(del != NULL);
 							delete del;
 							sel_item = NULL;
 						}
@@ -851,7 +851,7 @@ void Editor::load_map()
 	if (file_select("LOAD MAP", path, "DAT")) {
 		//m_map->load(path);
 		int fh = open(path, O_RDONLY | O_BINARY); // got  path from fileselector - don't do pfxopen.
-		assert(fh != -1);
+		ASSERT(fh != -1);
 		read(fh, &mapdata, sizeof(mapdata));
 		close(fh);
 

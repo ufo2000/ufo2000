@@ -32,7 +32,7 @@ unsigned short TerraPCK::m_tbs[0xFFF];
 
 TerraPCK::TerraPCK(const char *pckfname, int tftd_flag) : PCK(pckfname, tftd_flag)
 {
-	assert(m_imgnum > 0);
+	ASSERT(m_imgnum > 0);
 	create_blackbmp(0, m_imgnum);
 	strcpy(m_fname, pckfname);
 	loadmcd(0, m_imgnum);
@@ -43,7 +43,7 @@ TerraPCK::TerraPCK(const char *pckfname, int tftd_flag) : PCK(pckfname, tftd_fla
 TerraPCK::~TerraPCK()
 {
 	for (unsigned int i = 0; i < m_blackbmp.size(); i++) {
-		assert(m_blackbmp[i] != NULL);
+		ASSERT(m_blackbmp[i] != NULL);
 		if (m_blackbmp[i] != NULL)
 			destroy_bitmap(m_blackbmp[i]);
 	}
@@ -54,20 +54,20 @@ void TerraPCK::add(const char *pckfname, int tftd_flag)
 	strcpy(m_fname, pckfname);
 
 	int fh = open(F(m_fname), O_RDONLY | O_BINARY);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	int fsize = filelength(fh);
-	assert(fsize < 0xFFFF);
+	ASSERT(fsize < 0xFFFF);
 	int newlen = read(fh, m_tbb, fsize);
-	assert(newlen > 0);
+	ASSERT(newlen > 0);
 	close(fh);
 
 	strcpy(strrchr(m_fname, '.') + 1, "tab");
 	fh = open(F(m_fname), O_RDONLY | O_BINARY);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	fsize = filelength(fh);
-	assert(fsize < 0xFFF);
+	ASSERT(fsize < 0xFFF);
 	int newnum = read(fh, (char *)m_tbs, fsize) >> 1;
-	assert(newnum > 0);
+	ASSERT(newnum > 0);
 	close(fh);
 	m_tbs[newnum] = newlen;
 	m_bmp.resize(m_imgnum + newnum);
@@ -83,15 +83,15 @@ void TerraPCK::loadmcd(int pck_base, int size)
 {
 	strcpy(strrchr(m_fname, '.') + 1, "mcd");
 	int fh = open(F(m_fname), O_RDONLY | O_BINARY);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	long fsize = filelength(fh);
-	assert(fsize % 62 == 0);
+	ASSERT(fsize % 62 == 0);
 	long oldcount = m_mcd.size();
 	long newcount = fsize / 62;
 	m_mcd.resize(oldcount + newcount);
 	for (int i = 0; i < newcount; i++) {
 		read(fh, &m_mcd[oldcount + i], 62);
-		assert(offsetof(MCD, pck_base) == 62);
+		ASSERT(offsetof(MCD, pck_base) == 62);
 		m_mcd[oldcount + i].Alt_MCD += oldcount;
 		m_mcd[oldcount + i].Die_MCD += oldcount;
 		m_mcd[oldcount + i].pck_base = pck_base;

@@ -264,7 +264,7 @@ static char *place_name[10] = {
 
 void Place::drawgrid(int PLACE_NUM)
 {
-	assert((PLACE_NUM >= 0) && (PLACE_NUM < 10));
+	ASSERT((PLACE_NUM >= 0) && (PLACE_NUM < 10));
 
 	textout(screen2, g_small_font, place_name[PLACE_NUM], gx, gy - 8, xcom1_color(66));
 
@@ -330,12 +330,12 @@ int Place::isthere(Item *it)
 	t = m_item;
 	while (t != NULL) {
 		if (t == it) {
-			assert(it->m_place == this);
+			ASSERT(it->m_place == this);
 			return 1;
 		}
 		t = t->m_next;
 	}
-	assert(it->m_place != this);
+	ASSERT(it->m_place != this);
 	return 0;
 }
 
@@ -353,7 +353,7 @@ void Place::save_bin(char *fn)
 	}
 
 	int fh = open(F(fn), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, 0644);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	write(fh, buf, buf_size);
 	close(fh);
 }
@@ -364,7 +364,7 @@ void Place::load_bin(const char *fn)
 	int buf_size;
 
 	int fh = open(F(fn), O_RDONLY | O_BINARY);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	buf_size = read(fh, buf, sizeof(buf));
 	close(fh);
 
@@ -381,7 +381,7 @@ void Place::build_ITEMDATA(int ip, ITEMDATA * id) //don't save clip rounds
 	Item * it = m_item;
 	while (it != NULL)
 	{
-		assert(id->num < 100);
+		ASSERT(id->num < 100);
 		id->place[id->num] = ip;
 		id->type[id->num] = it->m_type;
 		id->x[id->num] = it->m_x;

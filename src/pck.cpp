@@ -40,7 +40,7 @@ PCK::PCK(const char *pckfname, int tftd_flag)
 PCK::~PCK()
 {
 	for (unsigned int i = 0; i < m_bmp.size(); i++) {
-		assert(m_bmp[i] != NULL);
+		ASSERT(m_bmp[i] != NULL);
 		if (m_bmp[i] != NULL)
 			destroy_bitmap(m_bmp[i]);
 	}
@@ -75,7 +75,7 @@ BITMAP *PCK::pckdat2bmp(const unsigned char *data, int size, int tftd_flag)
 
 	long ofs = ((int)*data * 32);
 
-	if (data[--size] != 0xFF) assert(false);
+	if (data[--size] != 0xFF) ASSERT(false);
 
 	for (int j = 1; j < size; j++) {
 		switch (data[j]) {
@@ -103,7 +103,7 @@ BITMAP *PCK::pckdat2bmp(const unsigned char *data, int size, int tftd_flag)
 int PCK::loadpck(const char *pckfname)
 {
 	int fh = open(F(pckfname), O_RDONLY | O_BINARY);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	long pcksize = filelength(fh);
 	unsigned char *pck = new unsigned char[pcksize];
 	read(fh, pck, pcksize);
@@ -164,13 +164,13 @@ void PCK::showpck(int num)
 	if (num >= m_imgnum) {
 		return;
 	}
-	assert(num < m_imgnum);
+	ASSERT(num < m_imgnum);
 	showpck(num, 0, 0);
 }
 
 void PCK::drawpck(int num, BITMAP *dest, int y)
 {
-	assert(num < m_imgnum);
+	ASSERT(num < m_imgnum);
 	draw_sprite(dest, m_bmp[num], 0, y - 6);
 }
 

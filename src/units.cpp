@@ -168,7 +168,7 @@ void Units::print(int gcol)
 	for (int n = 0; n < size; n++) {
 		if (x[n] != 0) {
 			Soldier * ss = editor->platoon()->findman(name[n]);
-			assert(ss != NULL);
+			ASSERT(ss != NULL);
 			points += ss->calc_ammunition_cost();
 		}
 	}
@@ -184,7 +184,7 @@ void Units::print(int gcol)
 		if (x[i] == 0)
 			continue;
 		Soldier *ss = editor->platoon()->findman(name[i]);
-		assert(ss != NULL);
+		ASSERT(ss != NULL);
 		if (ss != NULL) {
 			//ss->build_items_stats(buf, len);
 			build_items_stats(&ss->id, buf, len);
@@ -444,7 +444,7 @@ void Units::execute(Map *map, int map_change_allowed)
 			memset(&gd, 0, sizeof(gd));
 
 			int fh = open(path, O_RDONLY | O_BINARY); 
-			assert(fh != -1);
+			ASSERT(fh != -1);
 			read(fh, &gd, sizeof(gd));
 			close(fh);
 

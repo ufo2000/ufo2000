@@ -60,7 +60,7 @@ enum DIRECTION
 //! check if the specified direction is diagonal
 inline int DIR_DIAGONAL(int dir)
 {
-	assert(dir >= 0 && dir < 8);
+	ASSERT(dir >= 0 && dir < 8);
 	return dir % 2;
 }
 
@@ -186,7 +186,7 @@ public:
 
 	MCD *mcd(int lev, int col, int row, int type)
 	{
-		assert((lev >= 0) && (lev < level) &&
+		ASSERT((lev >= 0) && (lev < level) &&
 		       (col >= 0) && (col < width * 10) &&
 		       (row >= 0) && (row < height * 10) &&
 		       (type >= 0) && (type < 4));
@@ -199,7 +199,7 @@ public:
 
 	Cell *cell(int lev, int col, int row)
 	{
-		assert((lev >= 0) && (lev < level) &&
+		ASSERT((lev >= 0) && (lev < level) &&
 		       (col >= 0) && (col < width * 10) &&
 		       (row >= 0) && (row < height * 10));
 
@@ -208,7 +208,7 @@ public:
 
 	Place *place(int lev, int col, int row)
 	{
-		assert((lev >= 0) && (lev < level) &&
+		ASSERT((lev >= 0) && (lev < level) &&
 		       (col >= 0) && (col < width * 10) &&
 		       (row >= 0) && (row < height * 10));
 
@@ -217,7 +217,7 @@ public:
 
 	Soldier *man(int lev, int col, int row)
 	{
-		assert((lev >= 0) && (lev < level) &&
+		ASSERT((lev >= 0) && (lev < level) &&
 		       (col >= 0) && (col < width * 10) &&
 		       (row >= 0) && (row < height * 10));
 
@@ -232,7 +232,7 @@ public:
 
 	inline void set_man(int lev, int col, int row, Soldier *man)
 	{
-		assert((lev >= 0) && (lev < level) &&
+		ASSERT((lev >= 0) && (lev < level) &&
 		       (col >= 0) && (col < width * 10) &&
 		       (row >= 0) && (row < height * 10));
 		m_cell[lev][col][row]->set_soldier(man);
@@ -332,7 +332,7 @@ public:
 
 	void center(Soldier *s)
 	{
-		assert(s != NULL);
+		ASSERT(s != NULL);
 		sel_lev = s->z;
 		center(s->z, s->x, s->y);
 	}

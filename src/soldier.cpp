@@ -93,7 +93,7 @@ void Soldier::initpck()
         "zombie.pck"
     };
 
-	assert(sizeof(skin_fname) / sizeof(skin_fname[0]) >= SKIN_NUMBER);
+	ASSERT(sizeof(skin_fname) / sizeof(skin_fname[0]) >= SKIN_NUMBER);
 
 	m_pck = new PCK *[SKIN_NUMBER];
 	char fname[100];
@@ -461,15 +461,15 @@ void Soldier::process_ITEMDATA()
 	for (int i = 0; i < id.num; i++) {
 		if (id.place[i] == 0xFF) //clip
 		{
-			assert(it != NULL);
+			ASSERT(it != NULL);
 			int v = it->loadclip(new Item(id.type[i]));
-			assert(v);
+			ASSERT(v);
 		} else {
 			Place *pp = place(id.place[i]);
-			assert(pp != NULL);
+			ASSERT(pp != NULL);
 			it = new Item(id.type[i]);
 			int v = pp->put(it, id.x[i], id.y[i]);
-			assert(v);
+			ASSERT(v);
 		}
 	}
 }
@@ -1753,7 +1753,7 @@ int Soldier::calctime(int src, int dst)
 	if (src == dst)
 		return 0;
 
-	assert((src >= 0) && (src < 9) &&
+	ASSERT((src >= 0) && (src < 9) &&
 	       (dst >= 0) && (dst < 9));
 
 	if (((src == 2) && (dst == 3)) || ((src == 3) && (dst == 2)))
@@ -1865,7 +1865,7 @@ int Soldier::open_door()
 
 int Soldier::change_pose()
 {
-	assert((m_state == SIT) || (m_state == STAND));
+	ASSERT((m_state == SIT) || (m_state == STAND));
 
 	if (m_state == SIT) {
 		if (!havetime(8)) return 0;
@@ -1883,11 +1883,11 @@ int Soldier::change_pose()
 
 int Soldier::prime_grenade(int iplace, int delay_time, int req_time)
 {
-	assert((iplace == P_ARM_RIGHT) || (iplace == P_ARM_LEFT));
+	ASSERT((iplace == P_ARM_RIGHT) || (iplace == P_ARM_LEFT));
 
 	if (havetime(req_time)) {
 		Item * it = item(iplace);
-		assert(it != NULL);
+		ASSERT(it != NULL);
 
 		elist->add(this, it, delay_time);
 
@@ -1947,10 +1947,10 @@ int Soldier::load_ammo(int iplace, Item * it)
  */
 void Soldier::spend_time(int tm, int use_energy)
 {
-	assert(ud.CurTU >= tm);
+	ASSERT(ud.CurTU >= tm);
 	ud.CurTU -= tm;
 	if (use_energy) {
-		assert(ud.CurEnergy >= (tm / 2));
+		ASSERT(ud.CurEnergy >= (tm / 2));
 		ud.CurEnergy -= (tm / 2);
 	}
 
@@ -2263,8 +2263,8 @@ void Soldier::try_reaction_shot(Soldier *the_target)
 
 void Soldier::shoot(int zd, int xd, int yd, int ISLOCAL)
 {
-	assert(target.action != NONE);
-	assert(target.item != NULL);
+	ASSERT(target.action != NONE);
+	ASSERT(target.item != NULL);
 
 	int z0 = z * 12 + 8; if (m_state == SIT) z0 -= 4;
 	int x0 = x * 16 + 8;
@@ -2530,7 +2530,7 @@ int Soldier::check_reaction_fire(Soldier *the_target)
 		if (the_target->ud.CurTU > 0) tu_ratio = ud.CurTU / the_target->ud.CurTU;
 		else tu_ratio = 999;
 
-		assert(the_target->ud.CurReactions > 0); // Shouldn't happen, but...
+		ASSERT(the_target->ud.CurReactions > 0); // Shouldn't happen, but...
 		
 		if (((float)ud.CurReactions / (float)the_target->ud.CurReactions) < total_reactions)
 			total_reactions = ((float)ud.CurReactions / (float)the_target->ud.CurReactions);

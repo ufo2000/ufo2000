@@ -51,7 +51,7 @@ void Packet::str2pkt(char *str)
 void Packet::create(char *header)
 {
 	reset();
-	assert(strchr(header, '_') == NULL);
+	ASSERT(strchr(header, '_') == NULL);
 	int len = sprintf(data + size, "%s_", header);
 	size += len;
 }
@@ -129,7 +129,7 @@ void Packet::pop(char *buf, int buf_size)
 
 Packet &Packet::operator<<(char *i)
 {
-	assert(strchr(i, '_') == NULL);
+	ASSERT(strchr(i, '_') == NULL);
 	int n = 0;
 	while (i[n])
 		data[size++] = i[n++];
@@ -167,7 +167,7 @@ Packet &Packet::operator>>(int &i)
 
 Packet &Packet::operator<<(REAL i)
 {
-	assert(sizeof(i) == sizeof(long));
+	ASSERT(sizeof(i) == sizeof(long));
 	int len = sprintf(data + size, "%lx(%f)_", *(long *) & i, i);
 	size += len;
 	return *this;
@@ -175,7 +175,7 @@ Packet &Packet::operator<<(REAL i)
 
 Packet &Packet::operator>>(REAL &i)
 {
-	assert(sizeof(i) == sizeof(long));
+	ASSERT(sizeof(i) == sizeof(long));
 	sscanf(data + cur, "%lx", (long *) & i);
 	int len = 0;
 	while (data[cur + len] != '_')

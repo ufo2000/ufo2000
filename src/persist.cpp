@@ -87,13 +87,13 @@ void TypeManager::Add(const char* name, NewBaseObjectFunction construction)
 	{
 		theInstantiationFunctions = new StringFunctionMap;
 	}
-	assert(_internal_GetMap().find(std::string(name)) == _internal_GetMap().end());
+	ASSERT(_internal_GetMap().find(std::string(name)) == _internal_GetMap().end());
 	_internal_GetMap()[std::string(name)] = construction;
 }
 
 void TypeManager::Remove(const char* name)
 {
-	assert(_internal_GetMap().find(std::string(name)) != _internal_GetMap().end());
+	ASSERT(_internal_GetMap().find(std::string(name)) != _internal_GetMap().end());
 	_internal_GetMap().erase(_internal_GetMap().find(std::string(name)));
 	if (--refCount == 0)
 	{
@@ -104,8 +104,8 @@ void TypeManager::Remove(const char* name)
 
 BaseObject* TypeManager::CreateInstanceOf(const char* name)
 {
-	assert(refCount);
-	assert(_internal_GetMap().find(std::string(name)) != _internal_GetMap().end());
+	ASSERT(refCount);
+	ASSERT(_internal_GetMap().find(std::string(name)) != _internal_GetMap().end());
 	return (_internal_GetMap()[std::string(name)])();
 }
 
@@ -133,13 +133,13 @@ Engine::~Engine()
 void Engine::WriteBinary(const uint8* data, const uint32 size) 
 	THROWS (Engine::Exception)
 {
-	assert(myOperationalMode == modeWrite);
+	ASSERT(myOperationalMode == modeWrite);
 	myUnderlyingStream.write((const char *)data,size);
 }
 
 void Engine::ReadBinary(uint8* data, uint32 size) THROWS (Engine::Exception)
 {
-	assert(myOperationalMode == modeRead);
+	ASSERT(myOperationalMode == modeRead);
 	myUnderlyingStream.read((char *)data,size);
 }
 
@@ -149,7 +149,7 @@ void Engine::ReadBinary(uint8* data, uint32 size) THROWS (Engine::Exception)
 */
 void Engine::Write(const BaseObject *object) THROWS (Engine::Exception)
 {
-	assert(myOperationalMode == modeWrite);
+	ASSERT(myOperationalMode == modeWrite);
 	
 	// Pre-step, if object is NULL, then don't serialise it - serialise a
 	// marker to say that it is null.
@@ -197,7 +197,7 @@ void Engine::Write(const BaseObject *object) THROWS (Engine::Exception)
 
 void Engine::Read(BaseObject *&object) THROWS (Engine::Exception)
 {
-	assert(myOperationalMode == modeRead);
+	ASSERT(myOperationalMode == modeRead);
 	uint32 id = 0;
 	Read(id);
 	// Is the ID a NULL object?
@@ -237,10 +237,10 @@ void Engine::Read(BaseObject *&object) THROWS (Engine::Exception)
 		myArchiveVector.push_back(object);
 		std::string majik;
 		Read(majik);
-		assert(majik == std::string("OBST"));
+		ASSERT(majik == std::string("OBST"));
 		object->Read(*this);
 		Read(majik);
-		assert(majik == std::string("OBEN"));
+		ASSERT(majik == std::string("OBEN"));
 	}
 	else
 		THROW (Exception((std::string("Unable to instantiate object of class ")+className).c_str()));
@@ -252,7 +252,7 @@ void Engine::Read(BaseObject *&object) THROWS (Engine::Exception)
 */
 void Engine::Write(const std::string& str) THROWS (Engine::Exception)
 {
-	assert(myOperationalMode == modeWrite);
+	ASSERT(myOperationalMode == modeWrite);
 	uint32 len = str.length();
 	Write(len);
 	WriteBinary((uint8*)str.c_str(),len);
@@ -260,7 +260,7 @@ void Engine::Write(const std::string& str) THROWS (Engine::Exception)
 
 void Engine::Read(std::string& str) THROWS (Engine::Exception)
 {
-	assert(myOperationalMode == modeRead);
+	ASSERT(myOperationalMode == modeRead);
 	uint32 len = 0;
 	Read(len);
 	uint8 *buffer = new uint8[len+1];

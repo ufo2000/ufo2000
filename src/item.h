@@ -133,7 +133,7 @@ public:
 
 	void od_info(int gx, int gy, int gcol)
 	{
-		assert((m_type >= 0) && (m_type < obdata_num));
+		ASSERT((m_type >= 0) && (m_type < obdata_num));
 		od_info(m_type, gx, gy, gcol);
 	}
 

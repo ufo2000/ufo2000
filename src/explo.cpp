@@ -87,10 +87,10 @@ int Explosive::on_hand(Item *it)
 		ip = platoon_local->find_item(it, lev, col, row);
 	if (ip == NULL)
 		ip = platoon_remote->find_item(it, lev, col, row);
-	assert(ip != NULL);
+	ASSERT(ip != NULL);
 
 	iplace = map->find_place_num(ip, lev, col, row);
-	assert(iplace != -1);
+	ASSERT(iplace != -1);
 
 	return ((iplace == P_ARM_RIGHT) || (iplace == P_ARM_LEFT));
 }
@@ -136,10 +136,10 @@ int Explosive::detonate(int SID, Item *it)
 		ip = platoon_local->find_item(it, lev, col, row);
 	if (ip == NULL)
 		ip = platoon_remote->find_item(it, lev, col, row);
-	assert(ip != NULL);
+	ASSERT(ip != NULL);
 
 	iplace = map->find_place_num(ip, lev, col, row);
-	assert(iplace != -1);
+	ASSERT(iplace != -1);
 
 	type = it->m_type;
 	damage = it->data()->damage;
@@ -147,7 +147,7 @@ int Explosive::detonate(int SID, Item *it)
 
 	remove(it);
 	int v = ip->destroy(it);
-	assert(v);
+	ASSERT(v);
 
 	map->explode(SID, lev, col, row, type, range, damage);
 
@@ -157,14 +157,14 @@ int Explosive::detonate(int SID, Item *it)
 int Explosive::detonate(int SID, int lev, int col, int row, int iplace, int ix, int iy)
 {
 	Item * it;
-	assert((iplace >= 0) && (iplace <= P_MAP));
+	ASSERT((iplace >= 0) && (iplace <= P_MAP));
 
 	if (iplace == P_MAP)
 		it = map->place(lev, col, row)->item(ix, iy);
 	else
 		it = map->man(lev, col, row)->item(iplace, ix, iy);
 
-	assert(it != NULL);
+	ASSERT(it != NULL);
 	return detonate(SID, it);
 }
 

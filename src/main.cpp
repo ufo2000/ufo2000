@@ -176,17 +176,17 @@ void restartgame()
 	p2 = new Platoon(2000, &pd2);
 
 	int fh = open(F("$(home)/cur_map.dat"), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, 0644);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	write(fh, &mapdata, sizeof(mapdata));
 	close(fh);
 
 	fh = open(F("$(home)/cur_p1.dat"), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, 0644);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	write(fh, &pd1, sizeof(pd1));
 	close(fh);
 
 	fh = open(F("$(home)/cur_p2.dat"), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, 0644);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	write(fh, &pd2, sizeof(pd2));
 	close(fh);
 
@@ -317,31 +317,13 @@ void display_error_message(const std::string &error_text)
 	exit(1);
 }
 
-/** Function to check if all necessary files exist and are OK
-*/
-/*
-void check_data_files()
+static int assert_handler(const char *msg)
 {
-	// Checking data files integrity
-	std::vector<std::string> bad_files;
-	if (get_corrupted_or_missing_files(bad_files)) {
-		std::string error_text;
-		std::vector<std::string>::size_type i;
-		error_text += "The following data files are bad or missing:\n";
-		for (i = 0; i < bad_files.size() && i <= 8; i++) {
-			error_text += bad_files[i];
-			error_text += '\n';
-		}
-		if (i < bad_files.size()) error_text += "...\n";
-		error_text += '\n';
-		error_text += "Please check that you have copied directories with data files from ";
-		error_text += "'UFO: Enemy Unknown' by Microprose to ufo2000 directory ";
-		error_text += "(for more instructions look at 'install' file)\n";
-
-		display_error_message(error_text);
-	}
+	net->send_debug_message("assert:%s", msg);
+	display_error_message(msg);
+	return 0;
 }
-*/
+
 lua_State *L;
 
 static int lua_UpdateCrc32(lua_State *L)
@@ -390,6 +372,7 @@ const char *F(const char *fileid)
 
 void initmain(int argc, char *argv[])
 {
+	register_assert_handler(assert_handler);
 	srand(time(NULL));
 	set_uformat(U_UTF8);
 	allegro_init();
@@ -722,7 +705,7 @@ void switch_turn()
  */
 void send_turn()
 {
-	assert(MODE == MAP3D);
+	ASSERT(MODE == MAP3D);
 	switch_turn();
 	elist->step(-1);
 	int crc = build_crc();
@@ -766,7 +749,7 @@ void send_turn()
  */
 void recv_turn(int crc)
 {
-	assert(MODE == WATCH);
+	ASSERT(MODE == WATCH);
 	switch_turn();
 	elist->step(0);
 	check_crc(crc);
@@ -844,7 +827,7 @@ void build_screen(int & select_y)
 			}
 			break;
 		default:
-			assert(false);
+			ASSERT(false);
 	}
 
 	draw_sprite(screen2, mouser, mouse_x, mouse_y);
@@ -1310,7 +1293,7 @@ void gameloop()
 					inventory->execute();
 					break;
 				default:
-					assert(false);
+					ASSERT(false);
 			}
 		}
 
@@ -1350,7 +1333,7 @@ void gameloop()
 					inventory->close();
 					break;
 				default:
-					assert(false);
+					ASSERT(false);
 			}
 		}
 
@@ -1505,17 +1488,17 @@ void faststart()
 	//restartgame();
 
 	int fh = open(F("$(home)/cur_map.dat"), O_RDONLY | O_BINARY);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	read(fh, &mapdata, sizeof(mapdata));
 	close(fh);
 
 	fh = open(F("$(home)/cur_p1.dat"), O_RDONLY | O_BINARY);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	read(fh, &pd1, sizeof(pd1));
 	close(fh);
 
 	fh = open(F("$(home)/cur_p2.dat"), O_RDONLY | O_BINARY);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	read(fh, &pd2, sizeof(pd2));
 	close(fh);
 

@@ -40,11 +40,11 @@ IMPLEMENT_PERSISTENCE(Item, "Item");
 void Item::initobdata()
 {
 	int fh = open(F("$(xcom)/geodata/obdata.dat"), O_RDONLY | O_BINARY);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	int buflen = filelength(fh);
 	char *buf = new char[buflen];
 	buflen = read(fh, buf, buflen);
-	assert(buflen > 0);
+	ASSERT(buflen > 0);
 	close(fh);
 	//#define NEW_ITEMS_NUM       0
 
@@ -225,8 +225,8 @@ Item::Item(int _type)
 Item::~Item()
 {
 	if (m_ammo != NULL) {
-		assert(m_ammo->m_next == NULL);
-		assert(m_ammo->m_prev == NULL);
+		ASSERT(m_ammo->m_next == NULL);
+		ASSERT(m_ammo->m_prev == NULL);
 		delete m_ammo;
 	}
 }
@@ -241,7 +241,7 @@ void Item::unlink()
 
 int Item::loadclip(Item *clip)
 {
-	assert(clip != NULL);
+	ASSERT(clip != NULL);
 	//if (data()->isGun && clip->data()->isAmmo) {
 	if ((m_ammo == NULL) &&
 	        (memchr(data()->ammo, clip->m_type, 3) != NULL)) {

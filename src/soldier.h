@@ -280,38 +280,38 @@ public:
 
 	Item *item(int ip)
 	{
-		assert((ip >= 0) && (ip < NUMBER_OF_PLACES));
+		ASSERT((ip >= 0) && (ip < NUMBER_OF_PLACES));
 		return m_place[ip]->item();
 	}
 
 	Item *item(int ip, int ix, int iy)
 	{
-		assert((ip >= 0) && (ip < NUMBER_OF_PLACES));
+		ASSERT((ip >= 0) && (ip < NUMBER_OF_PLACES));
 		return m_place[ip]->item(ix, iy);
 	}
 
 	Item *getitem(int ip, int ix, int iy)
 	{
-		assert((ip >= 0) && (ip < NUMBER_OF_PLACES));
+		ASSERT((ip >= 0) && (ip < NUMBER_OF_PLACES));
 		return m_place[ip]->get(ix, iy);
 	}
 
 	int putitem(Item *it, int ip, int ix, int iy)
 	{
-		assert((ip >= 0) && (ip < NUMBER_OF_PLACES));
+		ASSERT((ip >= 0) && (ip < NUMBER_OF_PLACES));
 		return m_place[ip]->put(it, ix, iy);
 	}
 
 	int putitem(Item *it, int ip)
 	{
-		assert((ip >= 0) && (ip < NUMBER_OF_PLACES));
+		ASSERT((ip >= 0) && (ip < NUMBER_OF_PLACES));
 		return m_place[ip]->put(it);
 	}
 
 	int place(Place *place);
 	Place *place(int ip)
 	{
-		assert((ip >= 0) && (ip < NUMBER_OF_PLACES));
+		ASSERT((ip >= 0) && (ip < NUMBER_OF_PLACES));
 		return m_place[ip];
 	}
 

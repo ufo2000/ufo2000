@@ -59,20 +59,20 @@ void load_terrain_pck(int tid, TerraPCK *&terrain_pck)
     // Enter 'TerrainTable' table
 	lua_pushstring(L, "TerrainTable");
 	lua_gettable(L, LUA_GLOBALSINDEX);
-	assert(lua_istable(L, -1)); 
+	ASSERT(lua_istable(L, -1)); 
     // Enter [tid] table
 	lua_pushnumber(L, tid);
 	lua_gettable(L, -2);
-	assert(lua_istable(L, -1));
+	ASSERT(lua_istable(L, -1));
     // Enter 'Tiles' table
 	lua_pushstring(L, "Tiles");
 	lua_gettable(L, -2);
-	assert(lua_istable(L, -1));
+	ASSERT(lua_istable(L, -1));
 	int tiles_table = lua_gettop(L);
     // Enter 'Palettes' table
 	lua_pushstring(L, "Palettes");
 	lua_gettable(L, -3);
-	assert(lua_istable(L, -1));
+	ASSERT(lua_istable(L, -1));
 	int palettes_table = lua_gettop(L);
 
     // Load all tiles from 'Tiles' table
@@ -85,7 +85,7 @@ void load_terrain_pck(int tid, TerraPCK *&terrain_pck)
 
 		lua_pushnumber(L, index);
 		lua_gettable(L, palettes_table);
-		assert(lua_isnumber(L, -1));
+		ASSERT(lua_isnumber(L, -1));
 		int tftd_flag = (int)lua_tonumber(L, -1);
 
 		if (terrain_pck == NULL)
@@ -109,7 +109,7 @@ void Map::initpck()
 	smoke	 = new PCK("$(xcom)/ufograph/smoke.pck");
 
 	int fh = open(F("$(xcom)/geodata/scang.dat"), O_RDONLY | O_BINARY);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	int fl = filelength(fh);
 	m_scang_xcom = new char[fl];
 	read(fh, m_scang_xcom, fl);
@@ -124,7 +124,7 @@ void Map::initpck()
 	}
 
 	fh = open(F("$(xcom)/geodata/loftemps.dat"), O_RDONLY | O_BINARY);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	fl = filelength(fh);
 	m_loftemp = new unsigned short[fl / 2];
 	read(fh, m_loftemp, fl);
@@ -228,13 +228,13 @@ void Map::loadmaps(unsigned char *_map)
 	int stack_top = lua_gettop(L);
 	lua_pushstring(L, "TerrainTable");
 	lua_gettable(L, LUA_GLOBALSINDEX);
-	assert(lua_istable(L, -1));
+	ASSERT(lua_istable(L, -1));
 	lua_pushnumber(L, m_terrain_set);
 	lua_gettable(L, -2);
-	assert(lua_istable(L, -1));
+	ASSERT(lua_istable(L, -1));
 	lua_pushstring(L, "Maps");
 	lua_gettable(L, -2);
-	assert(lua_istable(L, -1));
+	ASSERT(lua_istable(L, -1));
 
 	int i = 0;
 	for (int col = width - 1; col >= 0; col--) {
@@ -243,7 +243,7 @@ void Map::loadmaps(unsigned char *_map)
 				
 				lua_pushnumber(L, _map[i]);
 				lua_gettable(L, -2);
-				assert(lua_isstring(L, -1));
+				ASSERT(lua_isstring(L, -1));
 				loadmap(lua_tostring(L, -1), row * 10, col * 10);
 				lua_pop(L, 1);
 			}
@@ -292,7 +292,7 @@ void Map::drawitem(int itype, int gx, int gy)
 void Map::draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type, int _seen)
 {
 	int i = m_cell[_lev][_col][_row]->type[_type];
-	assert(i < (int)m_terrain->m_mcd.size());
+	ASSERT(i < (int)m_terrain->m_mcd.size());
 
 	int frame;
 	
@@ -303,7 +303,7 @@ void Map::draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type,
 
 	_y -= m_terrain->m_mcd[i].P_Level;
 
-	assert(frame < m_terrain->m_imgnum);
+	ASSERT(frame < m_terrain->m_imgnum);
 
 	if (frame && frame < m_terrain->m_imgnum) {
 		if (_seen)
@@ -520,7 +520,7 @@ void Map::draw2d()
 
 	int tftd_flag = m_terrain->is_tftd();
 	char *scang = tftd_flag ? m_scang_tftd : m_scang_xcom;
-	assert(scang);
+	ASSERT(scang);
 
 	set_sel(cx, cy);
 
@@ -581,7 +581,7 @@ BITMAP *Map::create_bitmap_of_map()
 
 	int tftd_flag = m_terrain->is_tftd();
 	char *scang = tftd_flag ? m_scang_tftd : m_scang_xcom;
-	assert(scang);
+	ASSERT(scang);
 
 	for (int lev = 0; lev <= sel_lev; lev++) {
 		for (int row = 0; row < height*10; row++) {
@@ -999,7 +999,7 @@ int Map::open_door(int z, int x, int y, int dir)
 
 		int ct = cell(doorz, doorx, doory)->type[door];
 		int mcd = m_terrain->m_mcd[ct].Alt_MCD;
-		assert(mcd < (int)m_terrain->m_mcd.size());
+		ASSERT(mcd < (int)m_terrain->m_mcd.size());
 
 		m_cell[doorz][doorx][doory]->type[door] = 0;
 		if (door == 2) {
@@ -1182,7 +1182,7 @@ void Map::destroy_cell_part(int lev, int col, int row, int _part)
 	int ct = m_cell[lev][col][row]->type[_part];
 	if (ct > 0) {
 		int mcd = m_terrain->m_mcd[ct].Die_MCD;
-		assert(mcd < (int)m_terrain->m_mcd.size());
+		ASSERT(mcd < (int)m_terrain->m_mcd.size());
 
 		if ((_part == 0) && (lev > 0)) {
 			m_cell[lev][col][row]->type[_part] = 0;
@@ -1518,7 +1518,7 @@ void Map::new_GEODATA(GEODATA *md)
 	int terrain_id = terrain_set->get_random_terrain_id();
 
 	if (net->is_network_game()) {
-	    assert(g_net_allowed_terrains.size() > 1);
+	    ASSERT(g_net_allowed_terrains.size() > 1);
 		while (g_net_allowed_terrains.find(terrain_id) == g_net_allowed_terrains.end()) {
 			terrain_id = terrain_set->get_random_terrain_id();
 		}
@@ -1555,7 +1555,7 @@ void Map::set_map_data(int c, int r, char ter)
 void Map::save(char *fname)
 {
 	int fh = open(fname, O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	write(fh, &gd, sizeof(gd));
 	close(fh);
 }
@@ -1563,7 +1563,7 @@ void Map::save(char *fname)
 void Map::load(char *fname)
 {
 	int fh = open(fname, O_RDONLY | O_BINARY);
-	assert(fh != -1);
+	ASSERT(fh != -1);
 	read(fh, &gd, sizeof(gd));
 	close(fh);
 
@@ -1618,27 +1618,27 @@ Terrain::Terrain(int terrain_id)
     // Enter 'TerrainTable' table
 	lua_pushstring(L, "TerrainTable");
 	lua_gettable(L, LUA_GLOBALSINDEX);
-	assert(lua_istable(L, -1)); 
+	ASSERT(lua_istable(L, -1)); 
 	// Enter [terrain_id] table
 	lua_pushnumber(L, terrain_id);
 	lua_gettable(L, -2);
-	assert(lua_istable(L, -1)); 
+	ASSERT(lua_istable(L, -1)); 
     // Extract terrain crc32
 	lua_pushstring(L, "Crc32");
 	lua_gettable(L, -2);
-	assert(lua_isnumber(L, -1)); 
+	ASSERT(lua_isnumber(L, -1)); 
 	m_crc32 = (unsigned long)lua_tonumber(L, -1);
 	lua_pop(L, 1);
     // Extract terrain name
 	lua_pushstring(L, "Name");
 	lua_gettable(L, -2);
-	assert(lua_isstring(L, -1)); 
+	ASSERT(lua_isstring(L, -1)); 
 	m_name = lua_tostring(L, -1);
 	lua_pop(L, 1);
 	// Enter 'Maps' table
 	lua_pushstring(L, "Maps");
 	lua_gettable(L, -2);
-	assert(lua_istable(L, -1)); 
+	ASSERT(lua_istable(L, -1)); 
 	m_rand_weight = 1;
 
 	m_blocks.resize(MAP_BLOCKS_LIMIT);
@@ -1665,8 +1665,8 @@ Terrain::Terrain(int terrain_id)
 		read(fh, buffer, 3);
 		close(fh);
 
-		assert(buffer[0] % 10 == 0);
-		assert(buffer[1] % 10 == 0);
+		ASSERT(buffer[0] % 10 == 0);
+		ASSERT(buffer[1] % 10 == 0);
 		m_blocks[index].x_size      = buffer[0] / 10;
 		m_blocks[index].y_size      = buffer[1] / 10;
 		m_blocks[index].z_size      = buffer[2];
@@ -1690,7 +1690,7 @@ int Terrain::get_random_block()
 	for (i = 0; i < m_blocks.size(); i++)
 		randmax += m_blocks[i].rand_weight;
 
-	assert(randmax > 0);
+	ASSERT(randmax > 0);
 
     int randval = rand() % randmax;
 
@@ -1698,7 +1698,7 @@ int Terrain::get_random_block()
 		randval -= m_blocks[i].rand_weight;
 		if (randval < 0) return i;
 	}
-	assert(false);
+	ASSERT(false);
 	return -1;
 }
 
@@ -1742,11 +1742,11 @@ TerrainSet::TerrainSet()
 	int stack_top = lua_gettop(L);
 	lua_pushstring(L, "TerrainTable");
 	lua_gettable(L, LUA_GLOBALSINDEX);
-	assert(lua_istable(L, -1)); 
+	ASSERT(lua_istable(L, -1)); 
 
 	lua_pushnil(L);
 	while (lua_next(L, -2) != 0) {
-		assert(lua_isnumber(L, -2));
+		ASSERT(lua_isnumber(L, -2));
 		int terrain_id = (int)lua_tonumber(L, -2);
 
 		terrain[terrain_id] = new Terrain(terrain_id);
@@ -1798,7 +1798,7 @@ int TerrainSet::get_random_terrain_id()
 		randval -= it->second->get_rand_weight();
 		if (randval < 0) return it->first;
 	}
-	assert(false);
+	ASSERT(false);
 	return -1;
 }
 

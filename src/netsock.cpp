@@ -82,7 +82,7 @@ static int sock, hostsock;
 const char *_inet_ntoa(const struct in_addr in)
 {
 	static char tmpbuf[24];
-	assert(sizeof(in_addr) == 4);
+	ASSERT(sizeof(in_addr) == 4);
 	char a[4];
 	memcpy(a, &in, 4);
 	sprintf(tmpbuf, "%d.%d.%d.%d", a[0], a[1], a[2], a[3]);
@@ -300,7 +300,7 @@ try_select:
 	int pkt_size;
 	if (recvbuf_size >= sizeof(pkt_size)) {
 		memcpy(&pkt_size, recvbuf, sizeof(pkt_size));
-		//assert( (pkt_size > 0)&&(pkt_size < 0xFFFF) );
+		//ASSERT( (pkt_size > 0)&&(pkt_size < 0xFFFF) );
 
 		if (recvbuf_size >= sizeof(pkt_size) + pkt_size) {
 			memcpy(pkt, recvbuf + sizeof(pkt_size), pkt_size);
@@ -367,7 +367,7 @@ void packet_send_socket(char *pkt, int size)
 
 		if (FD_ISSET(sock, &writefd)) {
 			int rv = send(sock, sendbuf + snum, size - snum, 0);
-			//assert( rv>0 );
+			//ASSERT( rv>0 );
 			if (rv > 0) {
 				snum += rv;
 			} else {

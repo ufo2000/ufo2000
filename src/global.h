@@ -91,7 +91,7 @@ template<class TYPE> void PersistReadObject(persist::Engine &archive, TYPE &obje
  */
 template<class TYPE> void PersistWriteBinary(persist::Engine &archive, TYPE &object)
 {
-	assert(static_cast<const persist::BaseObject *>(&object));
+	ASSERT(static_cast<const persist::BaseObject *>(&object));
 	archive.WriteBinary((const uint8 *)&object + 4, sizeof(object) - 4);
 }
 
@@ -106,7 +106,7 @@ template<class TYPE> void PersistWriteBinary(persist::Engine &archive, TYPE &obj
  */
 template<class TYPE> void PersistReadBinary(persist::Engine &archive, TYPE &object)
 {
-	assert(static_cast<persist::BaseObject *>(&object));
+	ASSERT(static_cast<persist::BaseObject *>(&object));
 	archive.ReadBinary((uint8 *)&object + 4, sizeof(object) - 4);
 }
 

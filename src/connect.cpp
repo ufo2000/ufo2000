@@ -98,7 +98,7 @@ int Connect::do_chat()
 		case GAME_TYPE_INTERNET_SERVER:
 			break;
 		default:
-			assert(false);
+			ASSERT(false);
 			break;
 	}
 

@@ -115,21 +115,21 @@ BITMAP *SPK::spk2bmp()
 
 //	Process .spk files
 	while (true) {
-		assert(i + 2 <= m_datlen);
+		ASSERT(i + 2 <= m_datlen);
 		switch (*(unsigned short *)(m_dat + i)) {
 			case 0xFFFF: {
-				assert(i + 4 <= m_datlen);
+				ASSERT(i + 4 <= m_datlen);
 				long size = (long)(*(unsigned short *)(m_dat + i + 2)) * 2;
 				i += 4;
-				assert(j + size <= 64000);
+				ASSERT(j + size <= 64000);
 				j += size;
 				break;
 			}
 			case 0xFFFE: {
-				assert(i + 4 <= m_datlen);
+				ASSERT(i + 4 <= m_datlen);
 				long size = (long)(*(unsigned short *)(m_dat + i + 2)) * 2;
 				i += 4;
-				assert(i + size <= m_datlen && j + size <= 64000);
+				ASSERT(i + size <= m_datlen && j + size <= 64000);
 				while (size--) {
 					putpixel(bmp, j % 320, j / 320, xcom1_color(m_dat[i++]));
 					j++;
@@ -139,7 +139,7 @@ BITMAP *SPK::spk2bmp()
 			case 0xFFFD:
 				return bmp;
 			default:
-				assert(false);
+				ASSERT(false);
 		}
 	}
 }

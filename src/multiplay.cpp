@@ -77,7 +77,7 @@ Net::Net()
 	queue = new BQ(1000);
 	connect = new Connect();
 	flog = fopen(F("$(home)/ufo2000.log"), "wt");
-	assert(flog != NULL);
+	ASSERT(flog != NULL);
 	log("%s\n", "_____________Net()");
 	gametype = HOTSEAT;
 }
@@ -172,7 +172,7 @@ void Net::send_message(const std::string &msg)
 
 void Net::send()
 {
-	assert(pkt.str_len() > 0);
+	ASSERT(pkt.str_len() > 0);
 	send(pkt.str());
 }
 
@@ -194,7 +194,7 @@ void Net::send(const std::string &pkt)
 			m_internet_server->send_packet(SRV_GAME_PACKET, pkt);
 			break;
 		default:
-			assert(false);
+			ASSERT(false);
 	}
 }
 
@@ -221,7 +221,7 @@ int Net::recv(std::string &pkt)
 				return pkt.size();
 			}
 		default:
-			assert(false);
+			ASSERT(false);
 			break;
 	}
 	return 0;
@@ -350,7 +350,7 @@ void Net::check()
 			g_console->print(pkt.str(), xcom1_color(32));
 			break;
 		case CMD_NONE:
-			assert(false);
+			ASSERT(false);
 			break;
 	};
 }
