@@ -1,5 +1,5 @@
 # http://ufo2000.lxnt.info/pmwiki/index.php/Main/TipOfTheDayDE
-# 2004-11-09
+# 2004-11-10
 
 Deutsche Version der "Tips des Tages". [[<<]]
 Achtung: zur Verwendung in UFO2000 muss UTF8-Kodierung verwendet werden, d.h. [[<<]]
@@ -8,26 +8,38 @@ ae: ä oe: ö ue: ü
 !! Allgemeine, grundlegende Bedienung
 * Mit den Tasten Seite-Auf und Seite-Ab kann man die Anzeige der Ebenen wechseln.
 * Mit der TAB-Taste kann man zum nächsten Soldaten springen.
-* Türen öffnen: erst mit Rechts-klick den Soldaten zur Tür drehen, einem weiterer Rechts-Klick hinter die Tür öffnet diese.
-* Die Pfeil-Tasten ändern die Grösse von Battlescape-Anzeige, Chat-Fenster und der Statistik nach Spielende. 
+* Türen öffnen: erst mit Rechts-klick den Soldaten zur Tür drehen, ein weiterer Rechts-Klick hinter die Tür öffnet diese.
+* Die Pfeil-Tasten (ggf. zusammen mit Shift) ändern die Grösse von Battlescape-Anzeige, Chat-Fenster und der Statistik nach Spielende. 
+
 
 !! Fortgeschrittene Bedienung
 * Mit der CTRL-Taste kann man auf der Karte die Bewegungskosten vom aktiven Soldaten zum Cursor einblenden.
-* Mit der ALT-Taste kann man die Visierlinie vom aktiven Soldaten zum Cursor einblenden.
-* Mit Rechts-Klick kann man die Bewegung einer Einheit stoppen.
+* Mit der ALT-Taste kann man die Visierlinie bzw. Wurfbahn vom aktiven Soldaten zum Cursor einblenden.
+* Mit einem Rechts-Klick kann man die Bewegung einer Einheit stoppen.
+* Schiessen mit gedrückter Shift-Taste ermöglicht präziseres Zielen.
+
 
 !! Waffen, Ausr�stung, Einheiten
 * Alle Waffen im Missionsplaner mit passender Munition laden, ggf. zusätzliche Munition mitnehmen.
+* Aliens tragen keine Rüstung.
+* Solange eine Granate sich in einer Hand befindet, läuft der Zünder nicht weiter.
+* Der Zünder einer Sprengladung lässt sich nicht stoppen.
+* Der Annäherungszünder einer Proxy-Granate erfasst ein Feld rundum.
+* Power-Rüstung schützt (teilweise) vor Stun-Granaten.
 
 
 !! Gel�nde
-* Stets auf Deckung achten !
+* Stets auf Deckung achten - sie hält zumindest einen Schuss auf !
+* Rauch bietet Sichtschutz - aber auch dem Gegner !
 
 
 !! Taktik und Strategie
 * Menschliche Gegner sind schlauer als die Computergegner aus XCOM oder TFTD.
 
+
 !! Diverses
 * Viel Spass !
+
+[=...=]
 
 #.

@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFO2000\n"
 "POT-Creation-Date: 2004-11-08 17:33+0100\n"
-"PO-Revision-Date: 2004-11-09 18:18+0100\n"
+"PO-Revision-Date: 2004-11-09 19:19+0100\n"
 "Last-Translator: HaJo Gurt <gurt@gmx.de>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -1242,7 +1242,7 @@ msgstr "klicken sie seinen/ihren Namen in der Spieler-Liste rechts an."
 
 #: src/text.cpp:787
 msgid "Colors of the playernames:"
-msgstr "Farben der Spielernamen:"
+msgstr "Die Farben der Spielernamen:"
 
 #: src/text.cpp:788
 msgid "White: You.                             "
@@ -1262,7 +1262,7 @@ msgstr "Gelb  - Sie haben diesem Spieler eine Herausforderung gesendet.       "
 
 #: src/text.cpp:795
 msgid "Green : You can accept a challenge from him/her.  "
-msgstr "Grün  - Sie können eine Heraufforderung von diesem Spieler annehmen."
+msgstr "Grün  - Sie können eine Herausforderung von diesem Spieler annehmen.  "
 
 #: src/text.cpp:804
 msgid "Mission-Planner: here you can select a map and a scenario,"
