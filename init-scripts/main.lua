@@ -287,14 +287,52 @@ function MapGenerator(name, size_x, size_y)
 	return TerrainTable[name].MapGenerator(CreateMapTemplate(size_x, size_y))
 end
 
--- %% Test - Prototype 1:
-function gettext( t1 )
-    if ( t1 == "quit")       then return( "QUIT" ) end
-    if ( t1 == "WATCH")      then return( "watch" ) end
-    if ( t1 == "START")      then return( "start" ) end
---  if ( t1 == "Deathmatch") then return( "DeathMatch" ) end
---  if ( t1 == "Hold")       then return( "HOLD" ) end
-    return( "" )
+------------------------------------------------------------------------------
+-- Loads translated messages from po-file info a table in the form
+-- "English message" -> "Translated message"
+------------------------------------------------------------------------------
+
+-- global table which stores messages translated to current language
+TranslatedMessages = {}
+
+local function load_translated_messages(tbl, filename)
+	local mode
+	local key
+	local str
+
+	for l in io.lines(filename) do
+		if string.find(l, "^%s*msgid") then
+			assert(mode == nil or mode == "msgstr")
+			if mode == "msgstr" and key ~= "" and str ~= "" then 
+				tbl[key] = str 
+			end
+			mode = "msgid"
+			str = ""
+		elseif string.find(l, "^%s*msgstr") then
+			assert(mode == "msgid")
+			mode = "msgstr"
+			key = str
+			str = ""
+		end
+	
+		local _, _, string_data = string.find(l, "^[^#]*\"(.*)\"$")
+		if string_data then
+			str = str .. string_data
+		end
+	end
+
+	return tbl
+end
+
+------------------------------------------------------------------------------
+-- Try to set language for game messages
+------------------------------------------------------------------------------
+function SetLanguage(lng)
+	if lng and lng ~= "en" and string.find(lng, "^[a-z][a-z]$") then
+		load_translated_messages(TranslatedMessages, 
+			ufo2000_dir .. "/translations/ufo2000-" .. lng .. ".po")
+		Message("Language set to %s\n", lng)
+	end
 end
 
 Message("#\n# UFO2000 started: %s\n#", os.date())

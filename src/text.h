@@ -51,7 +51,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 void lua_message( const std::string &str1 );
 
 //! Interface to LUA-gettext()
-const char *gettext( char *str1 );
+const char *gettext(const char *str);
 
 //! Tooltips for the control-panel
 const char *icontext( const int icon_nr );

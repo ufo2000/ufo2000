@@ -525,9 +525,11 @@ void initmain(int argc, char *argv[])
 #define DATA_DIR "."
 #endif
 
+    // Initialize lua environment
 	lua_safe_dofile(L, DATA_DIR "/init-scripts/main.lua");
-	lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-maps.lua");
 
+    // Load standard and custom maps
+	lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-maps.lua");
 	for_each_file(DATA_DIR "/newmaps/*.lua", FA_RDONLY | FA_ARCH, find_lua_files_callback, 0);
 
     FLAGS = 0;
@@ -535,8 +537,17 @@ void initmain(int argc, char *argv[])
 	set_config_file(F("$(home)/ufo2000.ini"));
 	
 	install_keyboard();
-    // Todo: init gettext
 
+    // initialize language settings
+	lua_pushstring(L, "SetLanguage");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	if (lua_isfunction(L, -1)) {
+		lua_pushstring(L, get_config_string("System", "language", "en"));
+		lua_safe_call(L, 1, 0);
+	} else {
+		lua_pop(L, 1);
+	}
+	
 	if (get_config_int("Flags", "F_CLEARSEEN", 0)) FLAGS |= F_CLEARSEEN;      // clear seen every time
 	if (get_config_int("Flags", "F_SHOWROUTE", 0)) FLAGS |= F_SHOWROUTE;      // show pathfinder matrix
 	if (get_config_int("Flags", "F_SHOWLOFCELL", 0)) FLAGS |= F_SHOWLOFCELL;  // show cell's LOF & BOF

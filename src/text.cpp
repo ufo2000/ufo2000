@@ -61,37 +61,29 @@ void lua_message( const std::string &str1 )
  * Instead of the full gnu-gettext-package, a simple LUA-script is used.
  * Todo: investigate performance, cache translated messages ...
  */
-const char *gettext( char *str1 )
-// !! Note: lua-scripts can be called only after initmain() with lua_open() !!
+const char *gettext(const char *str)
 { 
-    static std::string str2;
-  //strcpy(str2, "" );
-    str2 = "";
+	if (L == NULL) return str;
 
-  //lua_message( std::string("gettext: '") + str1 + std::string("'") );
-/*
-    FILE *f1 = fopen( "gettext.log", "at");
-    fprintf(f1, "#: '%s'\n", str1);
-    fclose(f1);
-*/
     int stack_top = lua_gettop(L);
-    lua_pushstring(L, "gettext");
-    lua_gettable(L, LUA_GLOBALSINDEX);
-    if (!lua_isfunction(L, -1))
-        display_error_message( "Fatal: no 'gettext' function registered" );
-    lua_pushstring(L, str1);
-    lua_safe_call(L, 1, 1);
-    str2 = lua_tostring(L, -1);
+	lua_pushstring(L, "TranslatedMessages");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	if (!lua_istable(L, -1)) {
+	    lua_settop(L, stack_top);
+		return str;
+	}
+	lua_pushstring(L, str);
+	lua_gettable(L, -2);
+	if (!lua_isstring(L, -1)) {
+	    lua_settop(L, stack_top);
+		return str;
+	}
+
+    // Let's hope that the translated strings are never deleted from
+    // the 'TranslatedMessages' table
+	const char *translated_str = lua_tostring(L, -1);
     lua_settop(L, stack_top);
-/*
-    FILE *f2 = fopen( "gettext.log", "at");
-    fprintf(f2, "#= '%s'\n", str2.c_str() );
-    fclose(f2);
-*/
-    if (str2 == "")    // if lua-script did not return a translation
-        return str1;   // give back original string
-    else
-        return str2.c_str();
+    return translated_str;
 };
 
 /**
