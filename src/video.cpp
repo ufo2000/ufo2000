@@ -322,7 +322,7 @@ extern BITMAP *logo;
 
 void resize_screen2(int vw, int vh)
 {
-	//	проверка, если экран на максимуме/минимуме, функция не выполняется (экран не мигает-обновляется)
+	// shortcut to avoid screen flicker when at maximum/minimum size.
 	if (((SCREEN2W <= 320) && (vw < 0)) || ((SCREEN2H <= 200) && (vh < 0)))
 		return ;
 
@@ -343,11 +343,10 @@ void resize_screen2(int vw, int vh)
 		screen_text = create_bitmap(640, 400 - 10 - SCREEN2H);
 		clear(screen_text);
 	}
-	/*	зачем нужны эти три верхние строки? Без них всё работает. Оставлено на всякий случай
-		и заключено в IF, иначе при >390 происходит crash */
+	/*	What are those three lines for?  It crashes if SCREEN2H > 390 without them. */
 
 	clear(info_background);
-	draw_sprite(info_background, logo, 640 - logo->w, SCREEN2H);     	//месторасположение logo.pcx
+	draw_sprite(info_background, logo, 640 - logo->w, SCREEN2H);
 	blit(info_background, screen, 0, 0, 0, 0, 640, 400);
 	delete(info);
 	info = new Wind(info_background, 0, SCREEN2H, 640, 400, 1);

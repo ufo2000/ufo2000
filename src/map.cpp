@@ -147,7 +147,7 @@ void Map::destroy()
 	for (i = 0; i < level; i++) {
 		for (j = 0; j < 10 * width; j++) {
 			for (k = 0; k < 10 * width; k++) {
-				delete m_cell[i][j][k]; 
+				delete m_cell[i][j][k];
 			}
 			delete [] m_cell[i][j];
 		}
@@ -1477,7 +1477,7 @@ void Map::explocell(int lev, int col, int row, int damage, int type)
  					set_fire_time(lev, col, row, mcd(lev, col, row, i)->Fuel);
  					set_fire_state(lev, col, row, 4);
  				}
- 			}	
+ 			}
  		} else {
  			set_smog_time(lev,col,row,2);
  		}
@@ -1615,7 +1615,7 @@ bool Map::Read(persist::Engine &archive)
 			m_cell[i][j] = new Cell * [10 * height];
 		}
 	}
-	
+
 	for (int lev = 0; lev < level; lev++)
 		for (int col = 0; col < 10 * width; col++)
 			for (int row = 0; row < 10 * height; row++)
@@ -1631,7 +1631,8 @@ bool Map::Read(persist::Engine &archive)
 #undef map
 
 Terrain::Terrain(const char *fileprefix, const char *name, int rand_weight):
-	m_name(name), m_rand_weight(rand_weight), m_blocks_count(0){
+	m_name(name), m_rand_weight(rand_weight), m_blocks_count(0)
+{
 	while (true) {
 		assert(m_blocks_count < 100);
 		char fname[256];
@@ -1660,10 +1661,10 @@ Terrain::~Terrain()
 int Terrain::get_random_block()
 {
 	int randmax = 0, i;
-	
+
 	for (i = 0; i < m_blocks_count; i++)
 		randmax += m_blocks[i].rand_weight;
-    
+
     int randval = rand() % randmax;
 
 	for (i = 0; i < m_blocks_count; i++) {
@@ -1734,7 +1735,7 @@ TerrainSet::~TerrainSet()
 bool TerrainSet::create_geodata(int terrain_index, int x_size, int y_size, GEODATA &gd)
 {
 	if (terrain.find(terrain_index) == terrain.end()) return false;
-	
+
 	memset(&gd, 0, sizeof(gd));
 	gd.terrain = terrain_index;
 	gd.x_size  = x_size;
@@ -1763,3 +1764,4 @@ int TerrainSet::get_random_terrain_id()
 }
 
 #define map ufo2000_map
+

@@ -48,7 +48,7 @@ void loadini()
 	SCREEN2W = get_config_int(gen, "width", 430);
 	SCREEN2H = get_config_int(gen, "height", 280);
 
-	// проверка на случай завышенных/заниженных показателей размера экрана в .ini
+	// check screen dimensions as set in .ini for too low or too high settings
 
 	if (SCREEN2W > 640) SCREEN2W = 640;
 	if (SCREEN2H > 380) SCREEN2H = 380;
