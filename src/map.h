@@ -137,7 +137,7 @@ public:
 	int viewable(int oz, int ox, int oy, int dir);
 	int viewable_further(int vz, int vx, int vy);
 
-	int calc_visible_cells(int z, int x, int y, int dir, char *visicells, int *ez, int *ex, int *ey);
+	int calc_visible_cells(Soldier *watcher, int z, int x, int y, int dir, char *visicells, int *ez, int *ex, int *ey);
 	void build_visi();
 	void rebuild_visi(int z, int x, int y);
 	void build_visi_cell(int lev, int col, int row);

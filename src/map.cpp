@@ -1254,15 +1254,11 @@ int Map::find_ground(int lev, int col, int row)
 
 static char field[8 * 6*10 * 6*10];
 
-int Map::calc_visible_cells(int z, int x, int y, int dir, char *visicells, int *ez, int *ex, int *ey)
+int Map::calc_visible_cells(Soldier *watcher, int z, int x, int y, int dir, char *visicells, int *ez, int *ex, int *ey)
 {
-	//fixed 3d
-//	set_seen(z, x, y, 1);
-
 	visicells[z * width * 10 * height * 10 + x * width * 10 + y] = 1;
 	if (z > 0) {
 		if (isStairs(z - 1, x, y)) {
-//			set_seen(z - 1, x, y, 1);
 			visicells[(z - 1) * width * 10 * height * 10 + x * width * 10 + y] = 1;
 		}
 	}
@@ -1298,11 +1294,10 @@ int Map::calc_visible_cells(int z, int x, int y, int dir, char *visicells, int *
 				if (!m_cell[oz][ox][oy]->visi[vz - oz + 1][vx - ox + 1][vy - oy + 1]) break;
 
 				visicells[vz * width * 10 * height * 10 + vx * width * 10 + vy] = 1;
-//				set_seen(vz, vx, vy, 1);
 
 				if (field[vz * width * 10 * height * 10 + vx * width * 10 + vy] == 0)
 					if (man(vz, vx, vy) != NULL) {
-						if (!platoon_local->belong(man(vz, vx, vy))) {
+						if (!watcher->get_platoon()->belong(man(vz, vx, vy))) {
 							ez[en] = vz;
 							ex[en] = vx;
 							ey[en] = vy;

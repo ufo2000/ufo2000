@@ -115,8 +115,6 @@ void Platoon::move(int ISLOCAL)
 				if (ss == man)
 					man = man->nextman();      //!!ret this if no other
 				if (ss == man) {
-					//if (ISLOCAL)
-					// net->send_message("\n...\n...\nall soldier are dead\n...\n...\n");
 					man = NULL;
 				}
 			}
@@ -581,7 +579,7 @@ int Platoon::eot_save(char *buf, int &buf_size)
 
 	Soldier *ss = man;
 	while (ss != NULL) {
-		buf_size += ss->eot_save(buf + buf_size);
+			buf_size += ss->eot_save(buf + buf_size);
 		ss = ss->next();
 	}
 

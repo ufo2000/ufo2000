@@ -986,9 +986,9 @@ void Soldier::calc_visible_cells()
 		}
 	}
 
-	if (is_marching()) {
-		enemy_num = map->calc_visible_cells(z, x, y, dir, m_visible_cells, enemy_z, enemy_x, enemy_y);
+	enemy_num = map->calc_visible_cells(this, z, x, y, dir, m_visible_cells, enemy_z, enemy_x, enemy_y);
 
+	if (is_marching()) {
 		for (i = 0; i < enemy_num; i++) {
 			int seen = 0;
 			for (j = 0; j < seen_enemy_num; j++) {
@@ -1004,8 +1004,6 @@ void Soldier::calc_visible_cells()
 				return ;
 			}
 		}
-	} else {
-		enemy_num = map->calc_visible_cells(z, x, y, dir, m_visible_cells, enemy_z, enemy_x, enemy_y);
 	}
 }
 
