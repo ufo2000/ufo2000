@@ -183,6 +183,18 @@ else
 endif
 	svn delete --force $(DISTNAME)
 
+win32-installer: all server
+# create windows installer using NSIS
+	svn delete --force $(DISTNAME)
+	svn export . $(DISTNAME)
+	rm $(DISTNAME)/makefile* $(DISTNAME)/Seccast* $(DISTNAME)/*.dsp
+	rm $(DISTNAME)/*.dsw $(DISTNAME)/*.rc $(DISTNAME)/*.ebuild $(DISTNAME)/*.h
+	cp ufo2000.exe ufo2000-srv.exe $(DISTNAME)
+	sed 's,%VERSION_ID%,$(UFO_VERSION).$(UFO_SVNVERSION),g' < ufo2000.nsi > $(DISTNAME)/ufo2000.nsi
+	makensis.exe $(DISTNAME)/ufo2000.nsi
+	cp $(DISTNAME)/$(DISTNAME).exe $(DISTNAME).exe
+	svn delete --force $(DISTNAME)
+
 source-bz2: 
 # create tar.bz2 archive with ufo2000 sources (on *nix systems)
 	-$(RM) $(DISTNAME)-src.tar.bz2

@@ -28,6 +28,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "server.h"
 #include "server_config.h"
 
+#ifdef WIN32
+#include <windows.h>
+#endif
+
 #ifndef CONFIG_FILE_NAME
 #define CONFIG_FILE_NAME "ufo2000-srv.conf"
 #endif
@@ -290,6 +294,13 @@ static std::string *find_config_file(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
+#ifdef WIN32
+	// Win32-version has all data files in a single directory where it was installed
+	char ufo2000_dir[MAX_PATH];
+	GetModuleFileName(NULL, ufo2000_dir, sizeof(ufo2000_dir));
+	if (strrchr(ufo2000_dir, '\\')) *strrchr(ufo2000_dir, '\\') = '\0';
+	SetCurrentDirectory(ufo2000_dir);
+#endif
 
 	NLsocket serversock;
 	NLenum   type = NL_IP;/* default network type */
