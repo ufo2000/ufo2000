@@ -158,7 +158,7 @@ static void ufo2k_set_gfx_mode(int gfx_driver, int min_color_depth)
 
 		if (color_depth > 32) {
         //	Still did not manage to set video mode
-			fprintf(stderr, "Error: set_gfx_mode() failed.\n");
+			fprintf(stderr, "Error: set_gfx_mode() failed (%s).\n", allegro_error);
 			exit(1);
 		}
 
