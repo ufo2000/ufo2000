@@ -263,7 +263,7 @@ public:
 	void apply_hit(int sniper, int _z, int _x, int _y, int _type, int _hitdir);
 	int do_armour_check(int &pierce, int damdir);
 	void apply_wound(int hitloc);
-	void hit(int sniper, int pierce, int type, int hitdir, int dam_dev = 0);
+	void hit(int sniper, int pierce, int type, int hitdir, int dam_dev = 50);
 	void explo_hit(int sniper, int pierce, int type, int hitdir);      //silent
 
 	int ismoving();
@@ -338,12 +338,9 @@ public:
 	int calc_ammunition_cost() { return calc_mandata_cost(md); }
 	int calc_full_ammunition_cost();
 	Item *item_under_mouse(int ipl, int scr_x, int scr_y);
-	//Item *item_under_mouse(int ipl) { return item_under_mouse(ipl, 0, 0); }
 	int calctime(int src, int dst);
 	Item *select_item(int &pn, int scr_x, int scr_y);
-	//Item *select_item(int &pn) { return select_item(pn, 0, 0); }
 	int deselect_item(Item *&it, int it_place, int &req_time, int scr_x, int scr_y);
-	//int deselect_item(Item *&it, int it_place, int &req_time) { return deselect_item(it, it_place, req_time, 0, 0); }
 	Place *find_item(Item *it, int &lev, int &col, int &row);
 	int haveitem(Item *it);
 

@@ -1927,19 +1927,31 @@ int Soldier::unload_ammo(Item * it)
 {
     if ((it == NULL) || (!it->haveclip()))
         return 0;
-    if ((rhand_item() != NULL) || (lhand_item() != NULL))
+    if ((rhand_item() != NULL && rhand_item() != it) || 
+		(lhand_item() != NULL && lhand_item() != it))
         return 0;
 
     int ISLOCAL = platoon_local->belong(this);
-    if (time_reserve(8, ISLOCAL, false) == OK) {
-        putitem(it, P_ARM_RIGHT);
-        putitem(it->unload(), P_ARM_LEFT);
-
-        spend_time(8);
-        net->send_unload_ammo(NID);
-        return 1;
+    if (it->roundsremain() > 0) {
+        if (time_reserve(8, ISLOCAL, false) == OK) {
+        	putitem(it, P_ARM_RIGHT);
+        	putitem(it->unload(), P_ARM_LEFT);
+        	spend_time(8);
+        		
+       		net->send_unload_ammo(NID);
+       		return 1;
+       	} else return 0;
+    } else {
+       	if (time_reserve(10, ISLOCAL, false) == OK) {
+       		putitem(it, P_ARM_RIGHT);
+       		putitem(it->unload(), P_MAP);
+       		spend_time(10);           
+			platoon_local->set_visibility_changed();      
+				
+			net->send_unload_ammo(NID);
+       		return 1;
+		} else return 0;
     }
-    return 0;
 }
 
 /**

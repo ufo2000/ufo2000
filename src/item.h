@@ -61,6 +61,8 @@ private:
 	int  m_rounds;
 	int  m_delay_time;
 	Item *m_ammo;
+	
+	int m_health;
 
 	BITMAP *m_pMap;
 	BITMAP *m_pInv;
@@ -75,10 +77,12 @@ public:
 	static BITMAP *obdata_get_bitmap(int item_index, const char *property_name);
 	static std::string obdata_get_string(int item_index, const char *property_name);
 
+	static int obdata_maxHealth(int index) { return obdata_get_int(index, "health"); }
 	static int obdata_damage(int index) { return obdata_get_int(index, "damage"); }
 	static int obdata_dDeviation(int index) { return obdata_get_int(index, "dDeviation"); }
 	static int obdata_exploRange(int index) { return obdata_get_int(index, "exploRange"); }
 	static int obdata_smokeRange(int index) { return obdata_get_int(index, "smokeRange"); }
+	static int obdata_smokeTime(int index) { return obdata_get_int(index, "smokeTime"); }
 	static int obdata_cost(int index) { return obdata_get_int(index, "cost"); }
 	static int obdata_isAmmo(int index) { return obdata_get_int(index, "isAmmo"); }
 	static std::string obdata_name(int index) { return obdata_get_string(index, "name"); }
@@ -101,8 +105,6 @@ public:
 	Item(int _type);
 	virtual ~Item();
 
-	static int health_max(int _type);
-	int health_max() { return health_max(m_type); }
 	int is_laser() { return ((obdata_damageType(m_type) == DT_LAS) && obdata_isGun(m_type)); };
 	int is_grenade();
 	int is_cold_weapon();
@@ -127,10 +129,12 @@ public:
 	int obdata_isAmmo() { return obdata_isAmmo(m_type); }
 	int obdata_isGun() { return obdata_isGun(m_type); }
 	int obdata_twoHanded() { return obdata_twoHanded(m_type); }
+	int obdata_maxHealth() { return obdata_maxHealth(m_type); }
 	int obdata_damage() { return obdata_damage(m_type); }
 	int obdata_dDeviation() { return obdata_dDeviation(m_type); }
 	int obdata_exploRange() { return obdata_exploRange(m_type); }
 	int obdata_smokeRange() { return obdata_smokeRange(m_type); }
+	int obdata_smokeTime() { return obdata_smokeRange(m_type); }
 	int obdata_accuracy(int n) { return obdata_get_array_int(m_type, "accuracy", n); }
 	int obdata_time(int n) { return obdata_get_array_int(m_type, "time", n); }
 	int obdata_importance() { return obdata_get_int(m_type, "importance"); }
@@ -170,8 +174,10 @@ public:
 	friend class Map;
 	friend class Editor;
 
-	int m_health;
-	int health();
+	int health()
+	{
+		return m_health;
+	}
 	void draw_health(BITMAP *dest, int GRAPH, int gx, int gy);
 	int damage(int dam);
 

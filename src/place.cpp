@@ -361,7 +361,7 @@ void Place::drawgrid(BITMAP *dest, int PLACE_NUM)
 				} 
 				if (t->is_grenade() ) {  // see also: icon.h : DrawPrimed 
 				    if (t->delay_time() > 0)
-					textprintf(dest, g_small_font, gx+23, gy+36, COLOR_RED, "%d", t->delay_time() - 1);
+					printsmall_x(dest, gx + 23, gy + 39, COLOR_RED, t->delay_time() - 1);
 				    else if (t->itemtype() == PROXIMITY_GRENADE && t->delay_time() < 0)
 					textout(dest, g_small_font, "*", gx + 23, gy + 36, COLOR_RED); 
 				}

@@ -22,6 +22,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define INVENTORY_H
 #include "spk.h"
 #include "item.h"
+#include "mouse.h"
 
 /**
  * Inventory management in the battlecape. 
@@ -42,6 +43,8 @@ private:
 
 	SPK    *tac01;
 	BITMAP *b123, *b4, *b5;
+	
+	MouseRange *m_mouse_range;
 
 public:
 	Inventory();

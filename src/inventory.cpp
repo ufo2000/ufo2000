@@ -67,6 +67,8 @@ void Inventory::draw(int _x, int _y)
 { // handle killing in MAN mode
 	x = _x; y = _y;        
 	
+	m_mouse_range = new MouseRange(x, y, x + 320, y + 200);
+	
 	BITMAP *temp = create_bitmap(321, 200);
 	clear_bitmap(temp);
 
@@ -124,6 +126,8 @@ void Inventory::draw(int _x, int _y)
     
     if (sel_item != NULL && key[KEY_LCONTROL])
 		sel_item->od_info(mouse_x, mouse_y, COLOR_WHITE);
+		
+	delete m_mouse_range;
 }
 
 /**
@@ -212,10 +216,10 @@ void Inventory::backput()
 
 void Inventory::close()
 {
-	if (sel_item == NULL)
+	if (sel_item == NULL) {
 		MODE = MAP3D;
-	else
+		platoon_local->set_visibility_changed();
+	} else                                             
         backput();      //return item to original place
-    platoon_local->set_visibility_changed();
 }
 

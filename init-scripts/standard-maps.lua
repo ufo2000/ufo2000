@@ -628,11 +628,19 @@ AddXcomTerrain {
 	MapGenerator = function(map)
 		map.SizeX = 6
 		map.SizeY = 3
-		map.Mapdata = {
-			{ 00, -1, -1, -1, -1, -1 },
-			{ -1, -1, -1, -1, -1, -1 },
-			{ -1, -1, -1, -1, -1, -1 },
-		}
+		if (math.random(1, 2) ~= 2) then
+			map.Mapdata = {
+				{ 00, -1, -1, -1, -1, -1 },
+				{ -1, -1, -1, -1, -1, -1 },
+				{ -1, -1, -1, -1, -1, -1 },
+			}
+		else
+			map.Mapdata = {
+				{ 02, -1, 01, -1, -1, -1 },
+				{ -1, -1, -1, -1, -1, -1 },
+				{ -1, -1, -1, -1, -1, -1 },
+			}
+		end
 		return map
 	end
 }

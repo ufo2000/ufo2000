@@ -1414,6 +1414,7 @@ int Map::explode(int z, int x, int y, int max_damage)
     
     double EXPL_BORDER_DAMAGE = 0.5; // how much damage does explosion on its border
     double HEIGHT_RATIO = 2; // how high is one level in squares
+    int DEFAULT_SMOKE_TIME = 2; // how many half-turns will the smoke cloud exist
     
     soundSystem::getInstance()->play(SS_CV_GRENADE_BANG);
     
@@ -1434,7 +1435,7 @@ int Map::explode(int z, int x, int y, int max_damage)
                             hit_dir = calculate_hitdir((lev - double(l)) * HEIGHT_RATIO, double(c) - col, double(r) - row);
                         }
                         explocell(-1, l, c, r, damage, damage_type, hit_dir);
-                        smokecell(l, c, r);
+                        smokecell(l, c, r, DEFAULT_SMOKE_TIME);
                     }
                 }
             }
@@ -1449,6 +1450,7 @@ int Map::explode(int sniper, int z, int x, int y, int type)
     int damage_type = Item::obdata_damageType(type);
     double explo_range = Item::obdata_exploRange(type);
     double smoke_range = Item::obdata_smokeRange(type);
+    int smoke_time = Item::obdata_smokeTime(type);
     double range = explo_range < smoke_range ? smoke_range : explo_range;
     
     // move to rules.h
@@ -1477,7 +1479,7 @@ int Map::explode(int sniper, int z, int x, int y, int type)
                         if (distance <= explo_range)
                         	explocell(sniper, l, c, r, damage, damage_type, hit_dir);
                         if (distance <= smoke_range)
-                        	smokecell(l, c, r);
+                        	smokecell(l, c, r, smoke_time);
                     }
                 }
             }
@@ -1496,10 +1498,8 @@ bool Map::check_mine(int lev, int col, int row)
 	return false;
 }
 
-void Map::smokecell(int lev, int col, int row)
-{
-    int DEFAULT_SMOKE_TIME = 2; // move to rules.h
-  
+void Map::smokecell(int lev, int col, int row, int time)
+{ 
 	set_smog_state(lev, col, row, 8);
 	set_smog_time(lev, col, row, 0);
 
@@ -1507,7 +1507,7 @@ void Map::smokecell(int lev, int col, int row)
  		if (mcd(lev, col, row, i)->Fuel > smog_time(lev, col, row))
  			set_smog_time(lev, col, row, mcd(lev, col, row, i)->Fuel);
  		else
- 			set_smog_time(lev, col, row, DEFAULT_SMOKE_TIME);              
+ 			set_smog_time(lev, col, row, time);              
 }
 
 void Map::explocell(int sniper, int lev, int col, int row, int damage, int damage_type, int hitdir)
