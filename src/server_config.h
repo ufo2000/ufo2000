@@ -35,8 +35,10 @@ extern unsigned long g_srv_login_time_limit;
 extern unsigned long g_srv_username_size_limit;
 extern unsigned long g_srv_packet_size_limit;
 extern unsigned long g_srv_keep_log_time;
+extern unsigned long g_srv_daemonize;
 
 void load_config();
+void load_config(const std::string &pathname);
 bool split_loginpass(const std::string &str, std::string &login, std::string &pass);
 bool validate_ip(const std::string &ip);
 int validate_user(const std::string &username, const std::string &password);

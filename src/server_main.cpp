@@ -23,10 +23,23 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
 #include <stdio.h>
+#include <allegro.h>
 #include <nl.h>
 #include <signal.h>
 #include "server.h"
 #include "server_config.h"
+
+#ifndef CONFIG_FILE_NAME
+#define CONFIG_FILE_NAME "ufo2000-srv.conf"
+#endif
+
+#ifndef CONFIG_FILE_LOCATION
+#define CONFIG_FILE_LOCATION "/etc/"
+#endif
+
+#ifndef PID_FILE_PATHNAME
+#define PID_FILE_PATHNAME "./ufo2000-srv.pid"
+#endif
 
 #ifndef WIN32
 #include <unistd.h>
@@ -38,7 +51,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * Must be called before doing anything else,
  * because it closes file descriptors left and right.
  */
-void daemonize()
+static void daemonize()
 {
     int ern;
     int pid = fork();
@@ -52,7 +65,7 @@ void daemonize()
     /* Exit in parent. */
     if (pid > 0)
     {
-        server_log("Parent: forked child %d, exiting.\n", pid);
+        server_log("Parent: forked child pid %d, exiting.\n", pid);
         exit(0);
     }
     /* Become process group leader (If someone pathologically waits on us,
@@ -139,8 +152,58 @@ void daemonize()
     }
 }
 
-#endif
+static void write_pid_file()
+{
+    FILE *fp = fopen(PID_FILE_PATHNAME, "w");
+    if (fp)
+    {
+        fprintf(fp, "%d\n", getpid());
+        fclose(fp);
+    }
+}
 
+static void remove_pid_file()
+{
+    unlink(PID_FILE_PATHNAME);
+}
+
+/** signal handler for SIGHUP */
+static void reload_config(int s)
+{
+	g_server_reload_config_flag = 1;
+    server_log("Reloading configuration.\n");
+}
+
+/** signal handler for unexpected signals, like SIGPIPE */
+static void unexpected_signal(int s)
+{
+    server_log("Received unexpected signal %d, aborting.\n", s);
+    remove_pid_file();
+    exit(1);
+}
+
+/** signal handler for SIGTERM and SIGINT : attempt to exit cleanly.
+We probably should try to send abort packets to current clients.
+At the very least we remove the pid file to signal that we
+exited cleanly  (not crashed, that is)
+*/
+static void clean_shutdown(int s)
+{
+    server_log("Got signal %d, shutting down.\n", s);
+	remove_pid_file();
+    exit(0);
+}
+
+static void set_signal_handlers()
+{
+	signal(SIGHUP, reload_config);
+    signal(SIGTERM, clean_shutdown);
+    signal(SIGINT, clean_shutdown);
+    signal(SIGPIPE, unexpected_signal);
+    signal(SIGALRM, unexpected_signal);
+}
+
+#endif
 
 void printErrorExit(void)
 {
@@ -155,23 +218,92 @@ void printErrorExit(void)
 	exit(1);
 }
 
-void reload_config(int s)
+/** test if we can read and write a file with stdio functions */
+static bool test_file_rw(const std::string *pn, std::string *err)
 {
-	g_server_reload_config_flag = 1;
+    FILE *fp;
+    int the_errno;
+
+    /* 0. Test if file exists by trying to open for reading. */
+    fp = fopen(pn->c_str(), "r");
+    if (fp == NULL)
+    {
+        the_errno = errno;
+        err->assign(strerror(the_errno));
+        return false;
+    }
+    fclose(fp);
+
+    /* 1. Test if file is writable by trying to open for appending. */
+    fp = fopen(pn->c_str(), "a");
+    if (fp == NULL)
+    {
+        the_errno = errno;
+        err->assign(strerror(the_errno));
+        return false;
+    }
+    fclose(fp);
+
+    return true;
 }
 
-int main()
+static std::string *find_config_file(int argc, char *argv[])
 {
-    server_log("server started\n");
+    std::string *pn = new std::string;
+    std::string *pn_e = new std::string;
+    /* 0. Check parameters */
 
-#ifndef WIN32
-	daemonize();
-#endif
+    if (argc == 2)
+    {
+        pn->assign(argv[1]);
+        if (test_file_rw(pn, pn_e))
+        {  /* FIXME: we don't really need write access here */
+            pn->assign(argv[1]);
+            return pn;
+        }
+        else
+        {
+            fprintf(stderr, "No access to '%s': %s.\n",
+                    pn->c_str(), pn_e->c_str());
+            exit(1);
+        }
+    }
+
+    /* 1. look in hardcoded location */
+    std::string *hpn = new std::string(CONFIG_FILE_LOCATION);
+    std::string *hpn_e = new std::string;
+    hpn->append(CONFIG_FILE_NAME);
+    if (test_file_rw(hpn, hpn_e))
+        return hpn;
+
+    /* 2. look in current directory */
+    pn->assign("./");
+    pn->append(CONFIG_FILE_NAME);
+    if (test_file_rw(pn, pn_e))
+        return pn;
+
+    fprintf(stderr, "Can not access neither\n'%s': %s\n"
+            " nor\n'%s': %s\n, aborting.\n",
+            hpn->c_str(), hpn_e->c_str(), pn->c_str(), pn_e->c_str() );
+
+    exit(1);
+}
+
+int main(int argc, char *argv[])
+{
 
 	NLsocket serversock;
 	NLenum   type = NL_IP;/* default network type */
 
-	load_config();
+    std::string *cfg_pathname = find_config_file(argc, argv);
+
+	load_config(*cfg_pathname);
+
+#ifndef WIN32
+    if (g_srv_daemonize)
+        daemonize();
+    write_pid_file();
+#endif
 
 	if (!nlInit()) printErrorExit();
     if (!nlSelectNetwork(type)) printErrorExit();
@@ -188,13 +320,18 @@ int main()
     }
 
 #ifndef WIN32
-	signal(SIGHUP, reload_config);
+    set_signal_handlers();
 #endif
 
 	ServerDispatch *server = new ServerDispatch();
+    server_log("server started\n");
 	server->Run(serversock);
 	delete server;
 
     nlShutdown();
+#ifndef WIN32
+    remove_pid_file();
+#endif
     return 0;
 }
+END_OF_MAIN()
