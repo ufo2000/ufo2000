@@ -1307,10 +1307,9 @@ bool Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
 		if(error != "")
 			g_console->printf(xcom1_color(40), error.c_str());
 		return false;
-	} else if(use_energy && !havetime(walk_time, 1))
-		return false;
-	else
-		return true;
+	} else {
+		return havetime(walk_time, use_energy);
+	}
 }
 
 
