@@ -546,7 +546,7 @@ int select_name()
 
     if (gui_list.size() > 1)
         result = gui_select_from_list(
-            300, 200, "Select Name", 
+            300, 200, _("Select Name"), 
             gui_list, 0);
     return result;
 };
@@ -1397,14 +1397,18 @@ void Editor::change_equipment()
 	LUA_REGISTER_FUNCTION(L, change_equipment_callback);
 	lua_safe_dostring(L, "for name, data in EquipmentTable do if data.enabled then change_equipment_callback(name) end end");
 
-	int result = gui_select_from_list(
-		300, 200, _("Select equipment set"), 
-		eqsets, 0);
+	if (eqsets.size() > 0) {
+		int result = gui_select_from_list(
+			300, 200, _("Select equipment set"), 
+			eqsets, 0);
 
-	lua_pushstring(L, "SetEquipment");
-	lua_gettable(L, LUA_GLOBALSINDEX);
-	lua_pushstring(L, eqsets[result].c_str());
-	lua_safe_call(L, 1, 0);
+		lua_pushstring(L, "SetEquipment");
+		lua_gettable(L, LUA_GLOBALSINDEX);
+		lua_pushstring(L, eqsets[result].c_str());
+		lua_safe_call(L, 1, 0);
+	} else {
+		alert( "", _("Remote player does not have any of your equipment sets"), "", _("OK"), NULL, 0, 0);
+	}
 }
 
 int Editor::do_mapselect()
