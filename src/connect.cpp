@@ -213,7 +213,6 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 	g_console->set_full_redraw();
 	g_console->redraw(screen, 0, SCREEN2H);
 
-	//g_console->printf( COLOR_ORANGE, "%s", "! Welcome to the mission-planner !");
 	g_console->printf( COLOR_SYS_HEADER, "%s", "Welcome to the mission-planner !");
 
 	Map *map = new Map(mapdata);
@@ -221,12 +220,12 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 	int map2d_x = (640 - map2d->w) / 2;
 
 	if (HOST) {
-		local.set_pos(POS_LEFT, map2d_x - (20 * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
+        local.set_pos(POS_LEFT,   map2d_x - (MAN_NAME_LEN * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
 		remote.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
 		pd_local = &pd1;
 		pd_remote = &pd2;
 	} else {
-		remote.set_pos(POS_LEFT, map2d_x - (20 * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
+        remote.set_pos(POS_LEFT, map2d_x - (MAN_NAME_LEN * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
 		local.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
 		pd_remote = &pd1;
 		pd_local = &pd2;
@@ -315,10 +314,10 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 			remote.reset_selections();
 
 			if (HOST) {
-				local.set_pos(POS_LEFT, map2d_x - (20 * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
+                local.set_pos(POS_LEFT,   map2d_x - (MAN_NAME_LEN * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
 				remote.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
 			} else {
-				remote.set_pos(POS_LEFT, map2d_x - (20 * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
+                remote.set_pos(POS_LEFT,  map2d_x - (MAN_NAME_LEN * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
 				local.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
 			}
 			local.set_mouse_range(639, SCREEN2H - 1, map2d_x, 0, map2d_x + map2d->w - 1, map2d->h - 1);
@@ -386,6 +385,11 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 				case KEY_F1:
 					help( HELP_PLANNER );
 					break;
+                // Todo: Save+Load for teams
+                case KEY_F2: 
+                    break;
+                case KEY_F3: 
+                    break;
 				case KEY_F5:
 					if (FLAGS & F_RAWMESSAGES) {
 						FLAGS &= ~F_RAWMESSAGES;
