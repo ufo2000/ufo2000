@@ -754,6 +754,16 @@ void closemain()
              <<"http://ufo2000.lxnt.info/\n\n";
 }
 
+
+#undef map
+/**
+ * Buffer that stores gamestate information indexed by gamestate crc.
+ * It is used for debugging network synchronization bugs when gamestate
+ * becomes different on local and remote computers.
+ */
+static std::map<int, std::string> g_eot_save;
+#define map ufo2000_map
+
 int build_crc()
 {
 	char buf[200000]; memset(buf, 0, sizeof(buf));
@@ -764,23 +774,14 @@ int build_crc()
 	map->eot_save(buf, buf_size);
 
 	int crc = crc16(buf);
-
-	if (FLAGS & F_DEBUGDUMPS) {
-		char filename[128];
-		sprintf(filename, "$(home)/eot_save_%d.txt", crc);
-		int fh = open(F(filename), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, 0644);
-		if (fh != -1) {
-			buf_size = write(fh, buf, buf_size);
-			close(fh);
-		}
-	}
+    g_eot_save[crc] = std::string(buf, buf_size);
 
 	return crc;
 }
 
 /**
  * Check that no moves are performed on the map, 
- * so that it is save to end turn or do something similar
+ * so that it is safe to end turn or do something similar
  */
 bool nomoves()
 {
@@ -788,8 +789,23 @@ bool nomoves()
 }
 
 /**
- * Function that calculates current gamestate crc 
- * and compares it with the passed in argument value
+ * Function that saves game state information to a text file
+ */
+static void dump_gamestate_on_crc_error(int crc)
+{
+	if (g_eot_save.find(crc) == g_eot_save.end()) return;
+	char filename[128];
+	sprintf(filename, "$(home)/eot_save_%d.txt", crc);
+	int fh = open(F(filename), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, 0644);
+	if (fh != -1) {
+		write(fh, g_eot_save[crc].data(), g_eot_save[crc].size());
+		close(fh);
+	}
+}
+
+/**
+ * Function that calculates current game state crc 
+ * and compares it with the value received from the remote computer (crc argument)
  */
 void check_crc(int crc)
 {
@@ -799,7 +815,12 @@ void check_crc(int crc)
         g_console->printf(COLOR_SYS_INFO, "crc=%d, bcrc=%d", crc, bcrc);
         net->send_debug_message("crc error");
         battle_report( "# %s: crc=%d, bcrc=%d\n", _("wrong wholeCRC"), crc, bcrc );
+		
+		dump_gamestate_on_crc_error(crc);
+		dump_gamestate_on_crc_error(bcrc);
     }
+	
+	g_eot_save.empty();
 }
 
 /**
