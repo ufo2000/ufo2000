@@ -405,7 +405,6 @@ void check_data_files()
 
 void initmain(int argc, char *argv[])
 {
-
 	srand(time(NULL));
 	set_uformat(U_UTF8);
 	allegro_init();
@@ -438,6 +437,8 @@ void initmain(int argc, char *argv[])
 	ownfiles_prefix  = get_config_string("Paths",  "ownfiles",  NULL); // own data files here (ufo2000.dat & bitmaps)
 	gametemp_prefix  = get_config_string("Paths",  "gametemp",  NULL); // game temporary files here (may span launches)
 	runtemp_prefix	 = get_config_string("Paths",  "runtemp",   NULL); // runtime temporary files here (get deleted by the time of exit)
+
+	std::string consolefont = get_config_string("General", "consolefont", "xcom_small");
 
 	if (argc > 1) {
 		g_server_login = argv[1];
@@ -562,7 +563,6 @@ void initmain(int argc, char *argv[])
 	Item::initbigobs();
 
 	console<<"new console window"<<std::endl;
-	std::string consolefont = get_config_string("General", "consolefont", "default");
 	FONT * fnt = font;
 	if (consolefont == "xcom_small") {
 		fnt = g_small_font;

@@ -26,7 +26,8 @@ Programming:
       * Reaction fire
       * Strength and energy statistics
       * Different armor types support
-      * End of game screen
+      * Support for many new weapons including small launcer (stunning)
+      * End of game screen and statistics
 
    Alexander Sabourenkov aka lxnt
       * Bugfixes and code cleanup
@@ -68,6 +69,9 @@ Manual writing and translations:
    Jeremy Walker aka Kuroshi X
       * Update and spellchecking for the English version of game manual
 
+   José Ignacio Rodríguez Fernández
+      * Spanish translation of game manual
+
 Testing the game, bugreports and valuable suggestions:
    Anton (Zerocool), antonio_neo@chat.ru
    Bunie
@@ -82,7 +86,9 @@ Testing the game, bugreports and valuable suggestions:
    Olivier Ripoll
    Photek
    Roman Vil'chenko
+   Skybuck
    Thrawn
+   Twilight Owl
    Павел Саныч aka MapcuaHuH [VMA]
    Александр Чернобровый aka Dream
 
@@ -97,4 +103,7 @@ Other:
    Josh Day <koralt@yahoo.com>
       * UFO data files format information
 
+   Skybuck
+      * UFO2000 Pager (win32-program that notifies when other players
+        log on to ufo2000 game server)
 ==============================================================================
