@@ -74,7 +74,7 @@ void Net::error(char *str)
 Net::Net()
 {
 	SEND = 1;
-	queue = new BQ(1000);
+	queue = NULL;
 	connect = new Connect();
 	flog = fopen(F("$(home)/ufo2000.log"), "wt");
 	ASSERT(flog != NULL);
@@ -111,6 +111,8 @@ int Net::init()
 {
 	log("%s\n", "init()");
 	SEND = 1;
+	
+	queue = new BQ(1000);
 
 	connect->reset_uds();
 	if (gametype == GAME_TYPE_HOTSEAT) {
@@ -153,6 +155,8 @@ void Net::close()
 		default:
 			break;
 	}
+	delete queue;
+	queue = NULL;
 }
 
 Soldier *Net::findman(int NID)
