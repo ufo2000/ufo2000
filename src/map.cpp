@@ -172,7 +172,7 @@ void Map::loadterrain(int tid)
         { "jungle.pck",   NULL,           NULL,         NULL           },
         { "cultivat.pck", "barn.pck",     NULL,         NULL           },
         { "forest.pck",   NULL,           NULL,         NULL           },
-        { "xbase1.pck",   "xbase2.pck",   NULL,         NULL           },
+        { "xbase1.pck",   "xbase2.pck",   "forest.pck", NULL           },
         { "u_base.pck",   "u_wall02.pck", "u_pods.pck", "brain.pck"    },
         { "roads.pck",    "urbits.pck",   "urban.pck",  "frniture.pck" },
         { "desert.pck",   NULL,           NULL,         NULL           },
@@ -181,7 +181,7 @@ void Map::loadterrain(int tid)
         { "mars.pck",     "u_wall02.pck", NULL,         NULL           },
         { "roads.pck",    "urbits.pck",   "urban.pck",  "frniture.pck" }
     };
-	static int pcks_num[11] = { 1, 2, 1, 2, 4, 4, 1, 1, 1, 2, 4 };
+	static int pcks_num[11] = { 1, 2, 1, 3, 4, 4, 1, 1, 1, 2, 4 };
 
 	m_terrain_set = tid;
 	int terrain_num = pcks_num[tid] + 1;
