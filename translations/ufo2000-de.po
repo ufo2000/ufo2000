@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFO2000\n"
 "POT-Creation-Date: 2004-11-03 21:06+0200\n"
-"PO-Revision-Date: 2004-11-04 12:56+0100\n"
+"PO-Revision-Date: 2004-11-04 13:13+0100\n"
 "Last-Translator: HaJo Gurt <gurt@gmx.de>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -76,50 +76,48 @@ msgstr "ABBRUCH"
 #: src/icon.cpp:519
 #, c-format
 msgid "THROW       ACC>%02d%% TUs>%02d"
-msgstr "WERFEN      ACC>%02d%% TUs>%02d"
+msgstr "WERFEN         Gen>%02d%% ZE>%02d"
 
 #: src/icon.cpp:531
 #, c-format
 msgid "STUN        ACC>%02d%% TUs>%02d"
-msgstr "BETÄUBEN    ACC>%02d%% TUs>%02d"
+msgstr "BETÄUBEN      Gen>%02d%% ZE>%02d"
 
 #: src/icon.cpp:533
 #, c-format
 msgid "PUNCH       ACC>%02d%% TUs>%02d"
-msgstr "SCHLAG      ACC>%02d%% TUs>%02d"
+msgstr "SCHLAG         Gen>%02d%% ZE>%02d"
 
 #: src/icon.cpp:542
 #, c-format
 msgid "AIMED THROW ACC>%02d%% TUs>%02d"
-msgstr "GEZIELTER WURF  ACC>%02d%% TUs>%02d"
+msgstr "GEZIELTER WURF Gen>%02d%% ZE>%02d"
 
 #: src/icon.cpp:554
 #, c-format
-# msgstr "S. SCHARFMACHEN     TUs>%02d"
 msgid "PRIME EXPLOSIVE     TUs>%02d"
-msgstr "SPRENGLADUNG SCHARFMACHEN  TUs>%02d"
+msgstr "SPRENGLAD. SCHARFMACHEN ZE>%02d"
 
 #: src/icon.cpp:561
 #, c-format
-# msgstr "G. SCHARFMACHEN     TUs>%02d"
 msgid "PRIME GRENADE       TUs>%02d"
-msgstr "GRANATE SCHARFMACHEN       TUs>%02d"
+msgstr "GRANATE SCHARFMACHEN    ZE>%02d"
 
 #: src/icon.cpp:574
 #, c-format
 msgid "AUTO SHOT   ACC>%02d%% TUs>%02d"
-msgstr "FEUERSTOSS      ACC>%02d%% TUs>%02d"
+msgstr "FEUERSTOSS     Gen>%02d%% ZE>%02d"
 
 #: src/icon.cpp:585
 #, c-format
 msgid "SNAP SHOT   ACC>%02d%% TUs>%02d"
-msgstr "SCHNELLSCHUSS   ACC>%02d%% TUs>%02d"
+msgstr "SCHNELLSCHUSS  Gen>%02d%% ZE>%02d"
 
 #: src/icon.cpp:595
 #, c-format
 # msgstr "GEZIELT S.  ACC>%02d%% TUs>%02d"
 msgid "AIMED SHOT  ACC>%02d%% TUs>%02d"
-msgstr "GEZIELTER SCHUSS ACC>%02d%% TUs>%02d"
+msgstr "ZIELSCHUSS     Gen>%02d%% ZE>%02d"
 
 #: src/icon.cpp:647 src/video.cpp:360 src/server_gui.cpp:311
 msgid "Cancel"
@@ -333,7 +331,7 @@ msgstr "UFO2000 v%s.%s - ein freies und quelloffenes Spiel, im"
 
 #: src/main.cpp:2076
 msgid "inspired by 'X-COM: UFO Defense', see http://ufo2000.sf.net."
-msgstr "Stile von 'X-COM: UFO Defense', siehe http://ufo2000.sf.net."
+msgstr "Stile von 'UFO-Der unbekannte Gegner', siehe http://ufo2000.sf.net."
 
 #: src/main.cpp:2078
 msgid " &MORE "
@@ -421,7 +419,7 @@ msgid "Equipment weight: %d/%2d"
 msgstr "Gewicht der Ausrüstung: %d/%2d"
 
 #: src/soldier.cpp:832
-msgid "TUs>"
+msgid "ZE>"
 msgstr ""
 
 #: src/soldier.cpp:854

@@ -1,4 +1,5 @@
--- Last update: v0.4.1.471
+-- Last update: v0.4.1.525
+-- 2004-11-05 Swapped ResTimeAim and ResTimeSnap, tweaked coordinates
 -- 2004-10-10 new: ResTime* buttons now contain border-color and border-coords (border for selected state);
 --                 comments about used colors are moved to the top of the file
 -- 2004-09-13 new: ResTimeFree, ResTimeAim etc. for reserve-time-buttons
@@ -36,29 +37,29 @@ return {
 		DigitsPrimeColor  = 36
 	},
 
-	ManUp       = { 52,  0,  82, 15},
-	ManDown     = { 52, 16,  82, 31},
+    ManUp       = { 49,  0,  78, 15},
+    ManDown     = { 49, 16,  78, 31},
 
-	ViewUp      = { 83,  0, 113, 15},
-	ViewDown    = { 83, 16, 113, 31},
+    ViewUp      = { 81,  0, 110, 15},
+    ViewDown    = { 81, 16, 110, 31},
 
-	Map         = {114,  0, 144, 15},
-	Crouch      = {114, 16, 144, 31},
+    Map         = {113,  0, 142, 15},
+    Crouch      = {113, 16, 142, 31},
 
-	Inventory   = {145,  0, 175, 15},
-	CenterView  = {145, 16, 175, 31},
+    Inventory   = {145,  0, 174, 15},
+    CenterView  = {145, 16, 174, 31},
 
-	NextMan     = {176,  0, 206, 15},
-	NextMan2    = {176, 16, 206, 31},
+    NextMan     = {177,  0, 206, 15},
+    NextMan2    = {177, 16, 206, 31},
 
-	ToggleRoof  = {207,  0, 237, 15},
-	Options     = {207, 16, 237, 31},
+    ToggleRoof  = {209,  0, 238, 15},
+    Options     = {209, 16, 238, 31},
 
-	Done        = {238,  0, 268, 15},
-	Exit        = {238, 16, 268, 31},
+    Done        = {241,  0, 270, 15},
+    Exit        = {241, 16, 270, 31},
 
-	ManStats    = {106, 32, 134, 56},
-	BarChart    = {135, 32, 268, 56},
+    ManStats    = {106, 32, 132, 56},
+    BarChart    = {134, 32, 270, 56},
 
 	TurnNumber  = {
 		Coords = {112, 41},
@@ -116,15 +117,13 @@ return {
 		BorderColor  = 1
 	},
 
-
-	ResTimeAim = { 
+    ResTimeSnap = { 
 		Button       = {78, 33, 104, 43},
 		BorderCoords = {77, 32, 105, 44},
 		BorderColor  = 1
-	},
+	}, 
 
-
-	ResTimeSnap = { 
+    ResTimeAim = { 
 		Button       = {49, 45,  76, 55},
 		BorderCoords = {48, 44,  77, 56},
 		BorderColor  = 1
