@@ -1027,7 +1027,8 @@ bool Soldier::use_elevator(int dz)
 // Todo: Flying armor
 {
     // Check map borders and available time units
-    if (z + dz >= map->level || z + dz < 0 || (havetime(10) != OK))
+    int ISLOCAL = platoon_local->belong(this);
+    if (z + dz >= map->level || z + dz < 0 || (time_reserve(10, ISLOCAL, false) != OK))
         return false;
     // Check that the soldier is standing on elevator and can use it
     if (!map->mcd(z, x, y, 0)->Gravlift || !map->mcd(z + dz, x, y, 0)->Gravlift)
@@ -1932,7 +1933,7 @@ int Soldier::eff_FAccuracy()
     int penalty_health = (ac * (ud.MaxHealth - ud.CurHealth)) / ud.MaxHealth / 2;
     int penalty_morale = (ac * (100 - ud.Morale)) / 100 / 2;
     return ac - penalty_health - penalty_morale;
-};
+}
 
 /**
  * Calculate firing accuracy.
