@@ -63,16 +63,6 @@ int         g_server_autologin;
 
 static std::string consolefont;
 
-// Music.
-MIDI                  *g_menu_midi_music;
-MIDI                  *g_setup_midi_music;
-MIDI                  *g_editor_midi_music;
-MIDI                  *g_combat_midi_music;
-MIDI                  *g_win_midi_music;
-MIDI                  *g_lose_midi_music;
-MIDI                  *g_net1_midi_music;
-MIDI                  *g_net2_midi_music;
-
 FONT *cfg_get_console_font()
 {
 	FONT *fnt = (SCREEN_W >= 800) ? large : g_small_font;
@@ -227,15 +217,6 @@ void loadini()
 	g_server_host = get_config_string("Server", "host", "127.0.0.1");
 	g_server_proxy = get_config_string("Server", "http_proxy", "auto");
 	g_server_autologin = get_config_int("Server", "autologin", 0);
-
-	g_menu_midi_music = load_midi(F(cfg_get_menu_music_file_name()));
-	g_setup_midi_music = load_midi(F(cfg_get_setup_music_file_name()));
-	g_editor_midi_music = load_midi(F(cfg_get_editor_music_file_name()));
-	g_combat_midi_music = load_midi(F(cfg_get_combat_music_file_name()));
-	g_win_midi_music = load_midi(F(cfg_get_win_music_file_name()));
-	g_lose_midi_music = load_midi(F(cfg_get_lose_music_file_name()));
-	g_net1_midi_music = load_midi(F(cfg_get_net1_music_file_name()));
-	g_net2_midi_music = load_midi(F(cfg_get_net2_music_file_name()));
 }
 
 void saveini()

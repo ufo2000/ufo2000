@@ -53,15 +53,6 @@ const char *cfg_get_lose_image_file_name();
 
 FONT *cfg_get_console_font();
 
-extern MIDI                  *g_menu_midi_music;
-extern MIDI                  *g_setup_midi_music;
-extern MIDI                  *g_editor_midi_music;
-extern MIDI                  *g_combat_midi_music;
-extern MIDI                  *g_win_midi_music;
-extern MIDI                  *g_lose_midi_music;
-extern MIDI                  *g_net1_midi_music;
-extern MIDI                  *g_net2_midi_music;
-
 const std::string &cfg_get_server_host();
 const std::string &cfg_get_server_login();
 const std::string &cfg_get_server_password();

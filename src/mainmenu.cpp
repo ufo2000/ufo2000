@@ -30,6 +30,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "config.h"
 
 #include "sound.h"
+#include "music.h"
 
 static int old_mouse_x = -1, old_mouse_y = -1;
 
@@ -197,14 +198,14 @@ int do_mainmenu()
 	else
 		position_mouse(550, 180);
 
-	play_midi(g_menu_midi_music, 1);
+	FS_MusicPlay(F(cfg_get_menu_music_file_name()));
 	soundSystem::getInstance()->play(SS_WINDOW_OPEN_1);
 
 	int v = do_dialog(the_dialog, -1);
 
 	destroy_bitmap(menuback);
 
-	play_midi(NULL, 1);
+	FS_MusicPlay(NULL);
 	soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
 	
 	old_mouse_x = mouse_x;

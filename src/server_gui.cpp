@@ -28,6 +28,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "wind.h"
 #include "config.h"
 #include "sound.h"
+#include "music.h"
 #include "multiplay.h"
 
 #ifdef WIN32
@@ -353,9 +354,9 @@ const char *get_os_type_string()
 int connect_internet_server()
 {
 	if ((rand() % 2) == 1)
-		play_midi(g_net2_midi_music, 1);
+		FS_MusicPlay(F(cfg_get_net2_music_file_name()));
 	else
-		play_midi(g_net1_midi_music, 1);
+		FS_MusicPlay(F(cfg_get_net1_music_file_name()));
 	lobby_init_mouse();
 
 	if (!g_server_autologin || g_server_login == "anonymous")
@@ -435,7 +436,7 @@ int connect_internet_server()
 				case SRV_GAME_START_HOST:
 					show_mouse(NULL);
 					alert(" ", "  Game should start as host now ", " ", "    OK    ", NULL, 1, 0);
-					play_midi(NULL, 0);
+					FS_MusicPlay(NULL);
 		            HOST = 1;
 
 		            if (initgame()) {
@@ -448,15 +449,15 @@ int connect_internet_server()
 
 					server->send_packet(SRV_ENDGAME, "");
 					if ((rand() % 2) == 1)
-						play_midi(g_net2_midi_music, 1);
+						FS_MusicPlay(F(cfg_get_net2_music_file_name()));
 					else
-						play_midi(g_net1_midi_music, 1);
+						FS_MusicPlay(F(cfg_get_net1_music_file_name()));
 					lobby_init_mouse();
 					break;
 				case SRV_GAME_START_JOIN:
 					show_mouse(NULL);
 					alert(" ", "  Game should start as client now ", " ", "    OK    ", NULL, 1, 0);
-					play_midi(NULL, 0);
+					FS_MusicPlay(NULL);
 		            HOST = 0;
 
 		            if (initgame()) {
@@ -469,9 +470,9 @@ int connect_internet_server()
 
 					server->send_packet(SRV_ENDGAME, "");
 					if ((rand() % 2) == 1)
-						play_midi(g_net2_midi_music, 1);
+						FS_MusicPlay(F(cfg_get_net2_music_file_name()));
 					else
-						play_midi(g_net1_midi_music, 1);
+						FS_MusicPlay(F(cfg_get_net1_music_file_name()));
 					lobby_init_mouse();
 					break;
 			}
@@ -549,6 +550,6 @@ int connect_internet_server()
 	}
 
 	show_mouse(NULL);
-	play_midi(NULL, 0);
+	FS_MusicPlay(NULL);
 	return -1;
 }

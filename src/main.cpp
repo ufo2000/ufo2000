@@ -51,6 +51,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "video.h"
 #include "keys.h"
 #include "crc32.h"
+#include "music.h"
 
 #include "sysworkarounds.h"
 
@@ -228,13 +229,13 @@ void restartgame()
 
 int initgame()
 {
-	play_midi(g_setup_midi_music, 1);
+	FS_MusicPlay(F(cfg_get_setup_music_file_name()));
 	if (!net->init())
 	{
-		play_midi(NULL, 0);
+		FS_MusicPlay(NULL);
 		return 0;
 	}
-	play_midi(NULL, 0);
+	FS_MusicPlay(NULL);
 
 	install_timers(speed_unit, speed_bullet, speed_mapscroll);
 	//mouse_callback = mouser_proc;
@@ -523,6 +524,8 @@ void initmain(int argc, char *argv[])
 	console<<"initvideo"<<std::endl;
 	initvideo();
 
+	FS_MusicInit();
+
 	LOCK_VARIABLE(CHANGE); LOCK_FUNCTION(mouser_proc);
 	LOCK_VARIABLE(MOVEIT); LOCK_VARIABLE(ANIMATION); LOCK_FUNCTION(timer_handler);
 	LOCK_VARIABLE(FLYIT); LOCK_FUNCTION(timer_handler2);
@@ -602,6 +605,8 @@ void closemain()
 	Item::freebigobs();
 	Map::freepck();
 	Soldier::freepck();
+
+	FS_MusicClose();
 
 	soundSystem::getInstance()->shutdown();
 	closevideo();
@@ -992,13 +997,13 @@ void endgame_stats()
  	{
 		if (win == loss)
  		{
-			play_midi(g_lose_midi_music, 1);
+			FS_MusicPlay(F(cfg_get_lose_music_file_name()));
 			back = back_lose;
 			strcpy(winner, "DRAW!");
  		}
  		else
  		{
-			play_midi(g_win_midi_music, 1);
+			FS_MusicPlay(F(cfg_get_win_music_file_name()));
 			back = back_win;
  			if (win)
  			{
@@ -1017,13 +1022,13 @@ void endgame_stats()
 		// Only go to the top case if it's an exclusive win.
 		if ((win && (!loss)))
 		{
-			play_midi(g_win_midi_music, 1);
+			FS_MusicPlay(F(cfg_get_win_music_file_name()));
 			back = back_win;
 			strcpy(winner, "YOU WIN!");
 		}
 		else
 		{
-			play_midi(g_lose_midi_music, 1);
+			FS_MusicPlay(F(cfg_get_lose_music_file_name()));
 			back = back_lose;
 			if (!win) strcpy(winner, "YOU LOSE!");
 			else strcpy(winner, "DRAW!");
@@ -1118,7 +1123,7 @@ void endgame_stats()
 			CHANGE = 1;
 		}
 	}
-	play_midi(NULL, 0);
+	FS_MusicPlay(NULL);
 }
 
 #ifdef WIN32
@@ -1146,7 +1151,7 @@ void gameloop()
 
 	int mouse_leftr = 1, mouse_rightr = 1, select_y = 0;
 
-	play_midi(g_combat_midi_music, 1);
+	FS_MusicPlay(F(cfg_get_combat_music_file_name()));
 
 	clear_keybuf();
 	GAMELOOP = 1;
@@ -1452,7 +1457,7 @@ void gameloop()
 		}
 	}
 
-	play_midi(NULL, 0);
+	FS_MusicPlay(NULL);
 
 	GAMELOOP = 0;
 
@@ -1565,14 +1570,14 @@ int main(int argc, char *argv[])
                     about->show();
                     continue;
                 case MAINMENU_EDITOR:
-					play_midi(g_editor_midi_music, 1);
+					FS_MusicPlay(F(cfg_get_editor_music_file_name()));
 //                  editor->do_mapedit();
 					set_palette((RGB *)datafile[DAT_GAMEPAL_BMP].dat);
 					gui_fg_color = xcom1_color(15);
 					gui_bg_color = xcom1_color(1);
 
 					alert(" ", "Map editor is currently disabled", " ", "    OK    ", NULL, 1, 0);
-					play_midi(NULL, 0);
+					FS_MusicPlay(NULL);
                     continue;
                 case MAINMENU_HOTSEAT:
                     h = sethotseatplay();
