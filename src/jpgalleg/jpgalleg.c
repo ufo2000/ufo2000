@@ -9,7 +9,7 @@
  *                                                                  /\____/
  *                                                                  \_/__/
  *
- *      Version 2.2, by Angelo Mottola, 2000-2003.
+ *      Version 2.5, by Angelo Mottola, 2000-2004
  *
  *      Public library functions.
  *
@@ -22,6 +22,10 @@
 #include "internal.h"
 
 
+HUFFMAN_TABLE _jpeg_huffman_ac_table[4];
+HUFFMAN_TABLE _jpeg_huffman_dc_table[4];
+IO_BUFFER _jpeg_io;
+
 const unsigned char _jpeg_zigzag_scan[64] = {
 	 0, 1, 5, 6,14,15,27,28,
 	 2, 4, 7,13,16,26,29,42,
@@ -33,7 +37,28 @@ const unsigned char _jpeg_zigzag_scan[64] = {
 	35,36,48,49,57,58,62,63
 };
 
+const char *_jpeg_component_name[] = { "Y", "Cb", "Cr" };
+
 int jpgalleg_error = JPG_ERROR_NONE;
+
+
+/* _jpeg_trace:
+ *  Internal debugging routine: prints error to stderr if in debug mode.
+ */
+void
+_jpeg_trace(const char *msg, ...)
+{
+#ifdef DEBUG
+	va_list ap;
+	
+	va_start(ap, msg);
+	vfprintf(stderr, msg, ap);
+	va_end(ap);
+	fprintf(stderr, "\n");
+#else
+	(void)msg;
+#endif
+}
 
 
 /* load_datafile_jpg:
@@ -84,23 +109,64 @@ jpgalleg_init(void)
 
 
 /* load_jpg:
- *  Loads a JPG image from a file into a BITMAP.
+ *  Loads a JPG image from a file into a BITMAP, with no progress callback.
  */
 BITMAP *
 load_jpg(AL_CONST char *filename, RGB *palette)
 {
+	return load_jpg_ex(filename, palette, NULL);
+}
+
+
+/* load_jpg_ex:
+ *  Loads a JPG image from a file into a BITMAP.
+ */
+BITMAP *
+load_jpg_ex(AL_CONST char *filename, RGB *palette, void (*callback)(int progress))
+{
 	PACKFILE *f;
 	BITMAP *bmp;
+	PALETTE pal;
+	int size;
 	
-	f = pack_fopen(filename, F_READ);
-	if (!f)
+	if (!palette)
+		palette = pal;
+	
+	size = file_size(filename);
+	_jpeg_io.buffer = _jpeg_io.buffer_start = (unsigned char *)malloc(size);
+	_jpeg_io.buffer_end = _jpeg_io.buffer_start + size;
+	if (!_jpeg_io.buffer) {
+		TRACE("Out of memory");
+		jpgalleg_error = JPG_ERROR_OUT_OF_MEMORY;
 		return NULL;
-	_jpeg_init_file_io(f);
-	
-	bmp = _jpeg_decode(palette);
-	
+	}
+	f = pack_fopen(filename, F_READ);
+	if (!f) {
+		TRACE("Cannot open %s for reading", filename);
+		jpgalleg_error = JPG_ERROR_READING_FILE;
+		free(_jpeg_io.buffer);
+		return NULL;
+	}
+	pack_fread(_jpeg_io.buffer, size, f);
 	pack_fclose(f);
+	
+	TRACE("Loading JPG from file %s", filename);
+	
+	bmp = _jpeg_decode(palette, callback);
+	
+	free(_jpeg_io.buffer_start);
 	return bmp;
+}
+
+
+/* load_memory_jpg:
+ *  Loads a JPG image from a memory buffer into a BITMAP, with no progress
+ *  callback.
+ */
+BITMAP *
+load_memory_jpg(void *buffer, int size, RGB *palette)
+{
+	return load_memory_jpg_ex(buffer, size, palette, NULL);
 }
 
 
@@ -108,48 +174,73 @@ load_jpg(AL_CONST char *filename, RGB *palette)
  *  Loads a JPG image from a memory buffer into a BITMAP.
  */
 BITMAP *
-load_memory_jpg(void *buffer, int size, RGB *palette)
+load_memory_jpg_ex(void *buffer, int size, RGB *palette, void (*callback)(int progress))
 {
 	BITMAP *bmp;
+	PALETTE pal;
 	
-	_jpeg_init_memory_io(buffer, size);
+	if (!palette)
+		palette = pal;
 	
-	bmp = _jpeg_decode(palette);
+	_jpeg_io.buffer = _jpeg_io.buffer_start = buffer;
+	_jpeg_io.buffer_end = _jpeg_io.buffer_start + size;
+	
+	TRACE("Loading JPG from memory buffer at %p (size = %d)", buffer, size);
+	
+	bmp = _jpeg_decode(palette, callback);
 
 	return bmp;
 }
 
 
 /* save_jpg:
- *  Saves specified BITMAP into a JPG file with quality 75 and no subsampling.
+ *  Saves specified BITMAP into a JPG file with quality 75, no subsampling
+ *  and no progress callback.
  */
 int
 save_jpg(AL_CONST char *filename, BITMAP *bmp, AL_CONST RGB *palette)
 {
-	return save_jpg_ex(filename, bmp, palette, DEFAULT_QUALITY, DEFAULT_FLAGS);
+	return save_jpg_ex(filename, bmp, palette, DEFAULT_QUALITY, DEFAULT_FLAGS, NULL);
 }
 
 
 /* save_jpg_ex:
- *  Saves a BITMAP into a JPG file using given quality and subsampling mode.
+ *  Saves a BITMAP into a JPG file using given quality, subsampling mode and
+ *  progress callback.
  */
 int
-save_jpg_ex(AL_CONST char *filename, BITMAP *bmp, AL_CONST RGB *palette, int quality, int flags)
+save_jpg_ex(AL_CONST char *filename, BITMAP *bmp, AL_CONST RGB *palette, int quality, int flags, void (*callback)(int progress))
 {
 	PACKFILE *f;
 	PALETTE pal;
-	int result;
+	int result, size;
 	
 	if (!palette)
 		palette = pal;
 	
-	f = pack_fopen(filename, F_WRITE);
-	if (!f)
+	size = (bmp->w * bmp->h * 3) + 1000;    /* This extimation should be more than enough in all cases */
+	_jpeg_io.buffer = _jpeg_io.buffer_start = (unsigned char *)malloc(size);
+	_jpeg_io.buffer_end = _jpeg_io.buffer_start + size;
+	if (!_jpeg_io.buffer) {
+		TRACE("Out of memory");
+		jpgalleg_error = JPG_ERROR_OUT_OF_MEMORY;
 		return -1;
-	_jpeg_init_file_io(f);
+	}
+	f = pack_fopen(filename, F_WRITE);
+	if (!f) {
+		TRACE("Cannot open %s for writing", filename);
+		jpgalleg_error = JPG_ERROR_WRITING_FILE;
+		free(_jpeg_io.buffer);
+		return -1;
+	}
 	
-	result = _jpeg_encode(bmp, palette, quality, flags);
+	TRACE("Saving JPG to file %s", filename);
 	
+	result = _jpeg_encode(bmp, palette, quality, flags, callback);
+	if (!result)
+		pack_fwrite(_jpeg_io.buffer_start, _jpeg_io.buffer - _jpeg_io.buffer_start, f);
+	
+	free(_jpeg_io.buffer_start);
 	pack_fclose(f);
 	return result;
 }
@@ -157,12 +248,12 @@ save_jpg_ex(AL_CONST char *filename, BITMAP *bmp, AL_CONST RGB *palette, int qua
 
 /* save_memory_jpg:
  *  Saves a BITMAP in JPG format and stores it into a memory buffer. The JPG
- *  is saved with quality 75 and no subsampling.
+ *  is saved with quality 75, no subsampling and no progress callback.
  */
 int
 save_memory_jpg(void *buffer, int *size, BITMAP *bmp, AL_CONST RGB *palette)
 {
-	return save_memory_jpg_ex(buffer, size, bmp, palette, DEFAULT_QUALITY, DEFAULT_FLAGS);
+	return save_memory_jpg_ex(buffer, size, bmp, palette, DEFAULT_QUALITY, DEFAULT_FLAGS, NULL);
 }
 
 
@@ -171,18 +262,24 @@ save_memory_jpg(void *buffer, int *size, BITMAP *bmp, AL_CONST RGB *palette)
  *  and stores it into a memory buffer.
  */
 int
-save_memory_jpg_ex(void *buffer, int *size, BITMAP *bmp, AL_CONST RGB *palette, int quality, int flags)
+save_memory_jpg_ex(void *buffer, int *size, BITMAP *bmp, AL_CONST RGB *palette, int quality, int flags, void (*callback)(int progress))
 {
 	int result;
 	
-	if (!buffer)
+	if (!buffer) {
+		TRACE("Invalid buffer pointer");
 		return -1;
-	_jpeg_init_memory_io(buffer, *size);
+	}
+	
+	TRACE("Saving JPG to memory buffer at %p (size = %d)", buffer, *size);
+	
+	_jpeg_io.buffer = _jpeg_io.buffer_start = buffer;
+	_jpeg_io.buffer_end = _jpeg_io.buffer_start + *size;
 	*size = 0;
 	
-	result = _jpeg_encode(bmp, palette, quality, flags);
+	result = _jpeg_encode(bmp, palette, quality, flags, callback);
 	
 	if (result == 0)
-		*size = _jpeg_memory_size();
+		*size = _jpeg_io.buffer - _jpeg_io.buffer_start;
 	return result;
 }

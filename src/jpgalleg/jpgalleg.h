@@ -9,7 +9,7 @@
  *                                                                  /\____/
  *                                                                  \_/__/
  *
- *      Version 2.2, by Angelo Mottola, 2000-2003.
+ *      Version 2.5, by Angelo Mottola, 2000-2004
  *
  *      Public header file.
  *
@@ -22,6 +22,11 @@
 
 #include <allegro.h>
 
+/* Library version constat and string */
+#define JPGALLEG_VERSION 0x0205
+#define JPGALLEG_VERSION_STRING			"JPGalleg 2.5, by Angelo Mottola, 2000-2004"
+
+
 /* Subsampling mode */
 #define JPG_SAMPLING_444			0
 #define JPG_SAMPLING_422			1
@@ -29,6 +34,9 @@
 
 /* Force greyscale when saving */
 #define JPG_GREYSCALE				0x10
+
+/* Use optimized encoding */
+#define JPG_OPTIMIZE				0x20
 
 
 /* Error codes */
@@ -38,7 +46,7 @@
 #define JPG_ERROR_INPUT_BUFFER_TOO_SMALL	-3
 #define JPG_ERROR_OUTPUT_BUFFER_TOO_SMALL	-4
 #define JPG_ERROR_HUFFMAN			-5
-#define JPG_ERROR_NOT_JFIF			-6
+#define JPG_ERROR_NOT_JPEG			-6
 #define JPG_ERROR_UNSUPPORTED_ENCODING		-7
 #define JPG_ERROR_UNSUPPORTED_COLOR_SPACE	-8
 #define JPG_ERROR_UNSUPPORTED_DATA_PRECISION	-9
@@ -58,12 +66,14 @@ extern "C" {
 extern int jpgalleg_init(void);
 
 extern BITMAP *load_jpg(AL_CONST char *filename, RGB *palette);
+extern BITMAP *load_jpg_ex(AL_CONST char *filename, RGB *palette, void (*callback)(int progress));
 extern BITMAP *load_memory_jpg(void *buffer, int size, RGB *palette);
+extern BITMAP *load_memory_jpg_ex(void *buffer, int size, RGB *palette, void (*callback)(int progress));
 
 extern int save_jpg(AL_CONST char *filename, BITMAP *image, AL_CONST RGB *palette);
-extern int save_jpg_ex(AL_CONST char *filename, BITMAP *image, AL_CONST RGB *palette, int quality, int flags);
+extern int save_jpg_ex(AL_CONST char *filename, BITMAP *image, AL_CONST RGB *palette, int quality, int flags, void (*callback)(int progress));
 extern int save_memory_jpg(void *buffer, int *size, BITMAP *image, AL_CONST RGB *palette);
-extern int save_memory_jpg_ex(void *buffer, int *size, BITMAP *image, AL_CONST RGB *palette, int quality, int flags);
+extern int save_memory_jpg_ex(void *buffer, int *size, BITMAP *image, AL_CONST RGB *palette, int quality, int flags, void (*callback)(int progress));
 
 extern int jpgalleg_error;
 

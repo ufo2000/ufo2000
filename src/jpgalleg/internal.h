@@ -9,7 +9,7 @@
  *                                                                  /\____/
  *                                                                  \_/__/
  *
- *      Version 2.2, by Angelo Mottola, 2000-2003.
+ *      Version 2.5, by Angelo Mottola, 2000-2004
  *
  *      Internal library definitions.
  *
@@ -28,20 +28,16 @@
 #include <string.h>
 #include <math.h>
 #include "jpgalleg.h"
+#include "dct.h"
 
-
-#define FIX_0_298631336		2446
-#define FIX_0_390180644		3196
-#define FIX_0_541196100		4433
-#define FIX_0_765366865		6270
-#define FIX_0_899976223		7373
-#define FIX_1_175875602		9633
-#define FIX_1_501321110		12299
-#define FIX_1_847759065		15137
-#define FIX_1_961570560		16069
-#define FIX_2_053119869		16819
-#define FIX_2_562915447		20995
-#define FIX_3_072711026		25172
+#ifdef TRACE
+	#undef TRACE
+#endif
+#ifdef DEBUG
+	#define TRACE fprintf(stderr, "[JPGalleg: %s]", __FUNCTION__); _jpeg_trace
+#else
+	#define TRACE 1 ? (void)0 : _jpeg_trace
+#endif
 
 
 #define CHUNK_SOI		0xffd8
@@ -63,6 +59,20 @@
 #define CHUNK_SOF13		0xcd
 #define CHUNK_SOF14		0xce
 #define CHUNK_SOF15		0xcf
+#define CHUNK_APP0		0xe0
+#define CHUNK_APP1		0xe1
+#define CHUNK_APP2		0xe2
+#define CHUNK_APP3		0xe3
+#define CHUNK_APP4		0xe4
+#define CHUNK_APP5		0xe5
+#define CHUNK_APP6		0xe6
+#define CHUNK_APP7		0xe7
+#define CHUNK_APP8		0xe8
+#define CHUNK_APP9		0xe9
+#define CHUNK_APP10		0xea
+#define CHUNK_APP11		0xeb
+#define CHUNK_APP12		0xec
+#define CHUNK_APP13		0xed
 #define CHUNK_APP14		0xee
 #define CHUNK_APP15		0xef
 
@@ -85,7 +95,6 @@
 #define CHUNK_SOS		0xda
 #define CHUNK_DQT		0xdb
 #define CHUNK_DRI		0xdd
-#define CHUNK_APP0		0xe0
 #define CHUNK_COM		0xfe
 
 #define SOF0_DEFINED		0x01
@@ -93,23 +102,26 @@
 #define SOS_DEFINED		0x04
 #define DQT_DEFINED		0x08
 #define APP0_DEFINED		0x10
-#define DRI_DEFINED		0x20
-#define IS_PROGRESSIVE		0x40
+#define APP1_DEFINED		0x20
+#define DRI_DEFINED		0x40
+#define IS_PROGRESSIVE		0x80
 
-#define JFIF_OK			0x1F
+#define JFIF_OK			(SOF0_DEFINED | DHT_DEFINED | SOS_DEFINED | DQT_DEFINED | APP0_DEFINED)
+#define EXIF_OK			(SOF0_DEFINED | DHT_DEFINED | SOS_DEFINED | DQT_DEFINED | APP1_DEFINED)
 
 #define LUMINANCE		0
 #define CHROMINANCE		1
 
+#define PASS_WRITE		0
+#define PASS_COMPUTE_HUFFMAN    1
+
 
 /* This expression is made to return:
- *   Quality = 100 -> Factor = 55
- *   Quality = 50  -> Factor = 10
- *   Quality = 1   -> Factor = 0.05
+ *   Quality = 100 -> Factor = 10
+ *   Quality = 1   -> Factor = 0.1
  * Other values follow a logarithmic curve
  */
-#define QUALITY_FACTOR(q)       ((q) < 50 ? (pow(10.0, ((q) - 28.705189) / 21.294811)) : (pow(10.0, ((q) +17.534468) / 67.534468)))
-
+#define QUALITY_FACTOR(q)       (pow(10.0, ((q) - 50.5) / 49.5))
 
 /* Default quality/flags values for save_jpg() and save_memory_jpg() */
 #define DEFAULT_QUALITY		75
@@ -119,18 +131,37 @@
 
 typedef struct HUFFMAN_ENTRY
 {
-	int value;
 	int encoded_value;
+	int value;
 	int bits_length;
+	int frequency;
 } HUFFMAN_ENTRY;
 
 
 typedef struct HUFFMAN_TABLE
 {
-	HUFFMAN_ENTRY entry[256];
+	HUFFMAN_ENTRY entry[257];
 	HUFFMAN_ENTRY *entry_of_length[16];
 	HUFFMAN_ENTRY *code[256];
 } HUFFMAN_TABLE;
+
+
+typedef struct HUFFMAN_NODE
+{
+	HUFFMAN_ENTRY *entry;
+	int frequency;
+	struct HUFFMAN_NODE *parent;
+	struct HUFFMAN_NODE *left, *right;
+	struct HUFFMAN_NODE *prev, *next;
+} HUFFMAN_NODE;
+
+
+typedef struct HUFFMAN_TREE
+{
+	HUFFMAN_NODE *node;
+	HUFFMAN_NODE *head, *tail;
+	int depth;
+} HUFFMAN_TREE;
 
 
 typedef struct DATA_BUFFER
@@ -139,34 +170,46 @@ typedef struct DATA_BUFFER
 } DATA_BUFFER;
 
 
-extern void _jpeg_init_file_io(PACKFILE *);
-extern void _jpeg_init_memory_io(void *buffer, int size);
-extern int _jpeg_memory_size();
-extern int _jpeg_getc();
+typedef struct IO_BUFFER
+{
+	unsigned char *buffer;
+	unsigned char *buffer_start, *buffer_end;
+	int current_bit;
+} IO_BUFFER;
+
+
+extern int _jpeg_getc(void);
 extern int _jpeg_putc(int);
+extern int _jpeg_getw(void);
 extern int _jpeg_putw(int);
-extern int _jpeg_getw();
-extern int _jpeg_get_bit();
+extern INLINE int _jpeg_get_bit(void);
 extern int _jpeg_put_bit(int);
-extern void _jpeg_flush_bits();
-extern void _jpeg_open_chunk();
-extern void _jpeg_close_chunk();
-extern int _jpeg_eoc();
+extern void _jpeg_flush_bits(void);
+extern void _jpeg_open_chunk(void);
+extern void _jpeg_close_chunk(void);
+extern int _jpeg_eoc(void);
 extern void _jpeg_new_chunk(int);
-extern void _jpeg_write_chunk();
+extern void _jpeg_write_chunk(void);
 extern void _jpeg_chunk_putc(int);
 extern void _jpeg_chunk_putw(int);
+extern void _jpeg_chunk_puts(unsigned char *, int);
 
-extern BITMAP *_jpeg_decode(RGB *);
-extern void _jpeg_mmx_idct(int *, int *, int *, int *);
-extern void _jpeg_mmx_ycbcr2rgb(int, int, int, int, int, int, int);
-extern void _jpeg_mmx_ycbcr2bgr(int, int, int, int, int, int, int);
+extern BITMAP *_jpeg_decode(RGB *, void (*)(int));
+extern void _jpeg_mmx_idct(short *, short *, short *, short *);
+extern void _jpeg_mmx_ycbcr2rgb(int, int, int, int, int, int, int, int, int, int, int, int, int);
+extern void _jpeg_mmx_ycbcr2bgr(int, int, int, int, int, int, int, int, int, int, int, int, int);
 
-extern int _jpeg_encode(BITMAP *, AL_CONST RGB *, int, int);
+extern int _jpeg_encode(BITMAP *, AL_CONST RGB *, int, int, void (*)(int));
 extern void _jpeg_mmx_rgb2ycbcr(int, short *, short *, short *, short *, short *, short *);
 extern void _jpeg_mmx_bgr2ycbcr(int, short *, short *, short *, short *, short *, short *);
 
+extern void _jpeg_trace(const char *, ...);
+
+extern HUFFMAN_TABLE _jpeg_huffman_ac_table[];
+extern HUFFMAN_TABLE _jpeg_huffman_dc_table[];
+extern IO_BUFFER _jpeg_io;
 extern const unsigned char _jpeg_zigzag_scan[];
+extern const char *_jpeg_component_name[];
 
 
 #endif
