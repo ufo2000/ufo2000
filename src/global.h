@@ -298,7 +298,7 @@ extern Target target;
 extern int TARGET;
 extern Soldier *sel_man;
 extern Mode MODE;
-extern int pause;
+extern int g_pause;
 extern int turn;
 extern int CONFIRM_REQUESTED;
 extern DATAFILE *datafile;

@@ -66,7 +66,7 @@ Target target;
 int HOST, DONE, TARGET, turn;
 Mode MODE;                      //!< Display-Mode
 ConsoleWindow *g_console;
-int pause;
+int g_pause;
 
 int g_time_limit;               //!< Limit of time for a single turn in seconds
 volatile int g_time_left;       //!< Current counter for time left for this turn
@@ -1165,7 +1165,7 @@ void build_screen(int & select_y)
     if (MODE == WATCH)
         textprintf(screen2, font, 0, 0, COLOR_WHITE, _("WATCH") );
 
-    if (pause)
+    if (g_pause)
         textprintf_right(screen2, font, SCREEN2W - 1, 0, COLOR_WHITE, _("PAUSE") );
 
     if (FLAGS & F_TOOLTIPS) {
@@ -1841,7 +1841,7 @@ void gameloop()
     if (net->gametype == GAME_TYPE_HOTSEAT)
         savegame(F("$(home)/ufo2000.tmp"));
 
-    pause = 0;
+    g_pause = 0;
 
     while (!DONE) {
 
@@ -1888,14 +1888,14 @@ void gameloop()
             MOVEIT = 0;
         }
 
-        while (FLYIT > 0 && !pause ) {
+        while (FLYIT > 0 && !g_pause ) {
             platoon_local->bullmove();     //!!!! bull of dead?
             platoon_remote->bullmove();
 
             FLYIT--;
         }
 
-        while (MOVEIT > 0 && !pause ) {
+        while (MOVEIT > 0 && !g_pause ) {
             if (FLAGS & F_CLEARSEEN)
                 map->clearseen();
 
@@ -2261,7 +2261,7 @@ void gameloop()
                     }
                     break;
                 case KEY_SPACE:
-                    pause = !pause;
+                    g_pause = !g_pause;
                     break;
                 default:
                     if (g_console->process_keyboard_input(keycode, scancode))
