@@ -373,6 +373,9 @@ void Editor::show(int NEXTPREV)
 					load();
 					//}
 					break;
+				case KEY_F10:
+					change_screen_mode();
+					break;
 				case KEY_ESC:
 					DONE = 1;
 					break;
@@ -416,12 +419,12 @@ int Editor::load_clip()
 	return 0;
 }
 
-#define DX  140
-#define DY  65
+#define DX  0
+#define DY  0
 #define FG  -1
 #define BG  -1
-#define SSX 115
-#define STX 45
+#define SSX 105
+#define STX 35
 #define SSY 40
 #define STY SSY+4
 #define SSW 170
@@ -443,21 +446,53 @@ int Editor::load_clip()
 static int d_agup_slider_pro2(int msg, DIALOG *d, int c);
 static char slider_text[8][14];
 
-static int d_agup_skin_proc(int msg, DIALOG *d, int c);
-
 static int points;
 static char points_str[100];
 
-DIALOG sol_dialog[] = {
-	//(dialog proc)      (x)           (y)                   (w)      (h)  (fg) (bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
-	{ d_agup_shadow_box_proc, DX,           DY,                   360,     280, FG,  BG, 0, 0, 0, 0, NULL, NULL, NULL},
-	{ d_agup_button_proc,     DX + 130,     DY + SSY + SH*10 + 4, 100,     20,  FG,  BG, 0, D_EXIT, 0, 0, (void *)"OK", NULL, NULL},
-	{ d_agup_rtext_proc,      DX + STX,     DY + SSY - SH*1,      STW,     16,  FG,  -1, 0, 0, 0, 0, (void *)"Name:", NULL, NULL},
-	{ d_agup_edit_proc,       DX + SSX,     DY + SSY - SH*1 - 4,      23*8,    16,  FG,  BG, 0, 0, 22, 0, NULL, NULL, NULL},
-	{ d_agup_text_proc,       DX + SSW /*+ 3*/, DY + SSY + SH*9 + 2,  100,     16,  FG,  BG, 0, 0, 0, 0, (void *)points_str, NULL, NULL},
+static const char *skin_select_proc(int index, int *list_size)
+{
+	if (index < 0) {
+		*list_size = g_skins_count;
+		return NULL;
+	}
+	ASSERT(index < g_skins_count);
+	return g_skins[index].Name;
+} 
 
-	{ d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*0 /*- 4*/,  STW,     16 + 4,  FG,  -1, 0, 0, 0, 0, (void *)"Skin:", NULL, NULL},
-	{ d_agup_skin_proc,       DX + SSX /*- 3*/, DY + SSY + SH*0 - 6 /*- 10*/, SSW + 4, 16 + 4,  FG,  BG, 0, 0, 0, 0, NULL, NULL, NULL},
+static DIALOG skin_dialog[] = {
+	//(dialog proc)      (x)           (y)                   (w)      (h)  (fg) (bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
+	{ d_agup_shadow_box_proc, DX,           DY,                   300,     180, FG,  BG, 0, 0, 0, 0, NULL, NULL, NULL},
+	{ d_agup_ctext_proc,    DX,     DY + 8,  300,     16,  FG,  BG, 0, 0, 0, 0, (void *)"Select new skin", NULL, NULL},
+	{ d_agup_list_proc,     DX + 8, DY + 16 + 8, 300 - 16, 180 - 16 - 16,  FG,  BG, 0, D_EXIT, 0, 0, (void *)skin_select_proc, NULL, NULL},
+	{ NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL}
+};
+
+static int skin_change_button_proc(int msg, DIALOG *d, int c)
+{
+	int result = d_button_proc(msg, d, c);
+	if (result == D_CLOSE) {
+		set_dialog_color(skin_dialog, gui_fg_color, gui_bg_color);
+		centre_dialog(skin_dialog);
+		skin_dialog[2].d1 = d->d1;
+		popup_dialog(skin_dialog, -1);
+		d->w = text_length(font, g_skins[skin_dialog[2].d1].Name) + 6;
+		d->dp = (void *)g_skins[skin_dialog[2].d1].Name;
+		d->d1 = skin_dialog[2].d1;
+		return D_REDRAW;
+	}
+	return result;
+}
+
+static DIALOG sol_dialog[] = {
+	//(dialog proc)      (x)           (y)                   (w)      (h)  (fg) (bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
+	{ d_agup_shadow_box_proc, DX,           DY,                   320,     280, FG,  BG, 0, 0, 0, 0, NULL, NULL, NULL},
+	{ d_agup_button_proc,     DX + 200,     DY + SSY + SH*10 + 4, 100,     20,  FG,  BG, 0, D_EXIT, 0, 0, (void *)"OK", NULL, NULL},
+	{ d_agup_rtext_proc,      DX + STX,     DY + SSY - SH*1,      STW,     16,  FG,  BG, 0, 0, 0, 0, (void *)"Name:", NULL, NULL},
+	{ d_agup_edit_proc,       DX + SSX,     DY + SSY - SH*1 - 4, 23*8,     16,  FG,  BG, 0, 0, 22, 0, NULL, NULL, NULL},
+	{ d_agup_text_proc,       DX + 100,     DY + SSY + SH*9 + 2,  100,     16,  FG,  BG, 0, 0, 0, 0, (void *)points_str, NULL, NULL},
+
+	{ d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*0 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)"Skin:", NULL, NULL},
+	{ skin_change_button_proc,DX + SSX,     DY + SSY + SH*0 - 6,    0, 16 + 4,  FG,  BG, 0, D_EXIT, 0, 0, NULL, NULL, NULL},
 
 	{ d_agup_rtext_proc,      DX + STX,     DY + STY + SH*1,      STW,     16,  FG,  BG, 0, 0, 0, 0, (void *)slider_text[0], NULL, NULL},
 	{ d_agup_slider_pro2,     DX + SSX,     DY + SSY + SH*1,      SSW,     16,  FG,  BG, 0, 0, 100, 33, NULL, NULL, NULL},
@@ -475,7 +510,6 @@ DIALOG sol_dialog[] = {
 	{ d_agup_slider_pro2,     DX + SSX,     DY + SSY + SH*7,      SSW,     16,  FG,  BG, 0, 0, 100, 33, NULL, NULL, NULL},
 	{ d_agup_rtext_proc,      DX + STX,     DY + STY + SH*8,      STW,     16,  FG,  BG, 0, 0, 0, 0, (void *)slider_text[7], NULL, NULL},
 	{ d_agup_slider_pro2,     DX + SSX,     DY + SSY + SH*8,      SSW,     16,  FG,  BG, 0, 0, 100, 33, NULL, NULL, NULL},
-
 	{ NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL}
 };
 
@@ -524,7 +558,7 @@ static int d_agup_slider_pro2(int msg, DIALOG * d, int c)
 			scare_mouse();
 
 			SEND_MESSAGE(d, MSG_DRAW, 0);
-			sprintf(points_str, "points remain %3d", MAXPOINTS - points);
+			sprintf(points_str, "points remain: %d  ", MAXPOINTS - points);
 			SEND_MESSAGE(&sol_dialog[D_POINTS], MSG_DRAW, 0);
 
 			unscare_mouse();
@@ -535,29 +569,10 @@ static int d_agup_slider_pro2(int msg, DIALOG * d, int c)
 	return v;
 }
 
-int d_agup_skin_proc(int msg, DIALOG *d, int c)
-{
-	if (d->d1 < 0) {
-		d->d1 = d->d2;
-		rectfill((BITMAP *)d->dp, 0, 0, SSW - 1, 19, gui_bg_color);
-		textout((BITMAP *)d->dp, font, g_skins[d->d1].Name, 2, 6, gui_fg_color);
-	}
-
-	if (msg == MSG_CLICK) {
-		if (++d->d1 >= g_skins_count) d->d1 = 0;
-		rectfill((BITMAP *)d->dp, 0, 0, SSW - 1, 19, gui_bg_color);
-		textout((BITMAP *)d->dp, font, g_skins[d->d1].Name, 2, 6, gui_fg_color);
-	
-		return d_agup_icon_proc(MSG_DRAW, d, c);
-	}
-
-	return d_agup_icon_proc(msg, d, c);
-}
-
 void Editor::edit_soldier()
 {
 //	Attributes
-	sprintf(slider_text[0], "TimeUnits");
+	sprintf(slider_text[0], "Time Units");
 	sprintf(slider_text[1], "Stamina");
 	sprintf(slider_text[2], "Health");
 	sprintf(slider_text[3], "Bravery");
@@ -578,26 +593,24 @@ void Editor::edit_soldier()
 	sol_dialog[D_THRU_ACCUR].d2 = man->md.Throwing;
 	sol_dialog[D_BRAVERY].d2    = man->md.Bravery;
 
-	BITMAP *icon = create_bitmap(SSW, 20);
-	clear_bitmap(icon);
-
-	sol_dialog[D_ICON].dp   = icon;
-	sol_dialog[D_ICON].dp2  = icon;
-	sol_dialog[D_ICON].d1   = -1;
-	sol_dialog[D_ICON].d2   = get_skin_index(man->md.SkinType, man->md.fFemale);
-
 	points = sol_dialog[D_TIME].d2 + sol_dialog[D_HEALTH].d2 +
 	         sol_dialog[D_FIRE_ACCUR].d2 + sol_dialog[D_THRU_ACCUR].d2 +
 			 sol_dialog[D_STAMINA].d2 + (sol_dialog[D_STRENGTH].d2 * 2) +
 			 sol_dialog[D_REACTION].d2;
-	sprintf(points_str, "points remain %3d", MAXPOINTS - points);
+	sprintf(points_str, "points remain: %d  ", MAXPOINTS - points);
+	
+	sol_dialog[D_POINTS].fg = gui_fg_color;
+	sol_dialog[D_POINTS].bg = gui_bg_color;
 
 	while (mouse_b & 3) yield_timeslice();
 
+	sol_dialog[D_ICON].d1 = get_skin_index(man->md.SkinType, man->md.fFemale);
+	sol_dialog[D_ICON].w = text_length(font, g_skins[sol_dialog[D_ICON].d1].Name) + 6;
+	sol_dialog[D_ICON].dp = (void *)g_skins[sol_dialog[D_ICON].d1].Name;
+	
 	set_dialog_color(sol_dialog, gui_fg_color, gui_bg_color);
+	centre_dialog(sol_dialog);
 	do_dialog(sol_dialog, -1);
-
-	destroy_bitmap(icon);
 
 	man->md.Appearance = 0;
 	man->md.SkinType   = g_skins[sol_dialog[D_ICON].d1].SkinType;

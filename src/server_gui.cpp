@@ -302,8 +302,8 @@ static bool asklogin()
 		{ d_agup_edit_proc,       80,  25, 192, 10, 0,  1, 0, 0, 22, 0, (void *)login_buffer, NULL, NULL },
 		{ d_agup_rtext_proc,      10,  40, 70,  10, 0,  1, 0, 0, 0, 0, (void *)"Password:", NULL, NULL },
 		{ d_agup_edit_proc,       80,  40, 192, 10, 0,  1, 0, 0, 22, 0, (void *)password_buffer, NULL, NULL },
-		{ d_agup_button_proc,     140, 55, 60,  18, 0,  1, 13, D_EXIT, 0, 0, (void *)"OK", NULL, NULL },
-		{ d_agup_button_proc,     210, 55, 60,  18, 0,  1, 27, D_EXIT, 0, 0, (void *)"Cancel", NULL, NULL },
+		{ d_agup_button_proc,     140, 56, 60,  18, 0,  1, 13, D_EXIT, 0, 0, (void *)"OK", NULL, NULL },
+		{ d_agup_button_proc,     210, 56, 60,  18, 0,  1, 27, D_EXIT, 0, 0, (void *)"Cancel", NULL, NULL },
 		{ NULL }
 	};
 

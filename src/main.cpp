@@ -57,7 +57,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "sysworkarounds.h"
 
-
 //#define DEBUG
 #define MSCROLL 10
 #define BACKCOLOR xcom1_color(15)
@@ -481,7 +480,7 @@ void initmain(int argc, char *argv[])
     if (get_config_int("Flags", "F_SOUNDCHECK", 0)) FLAGS |= F_SOUNDCHECK;    // perform soundtest.
     if (get_config_int("Flags", "F_LOGTOSTDOUT", 0)) FLAGS |= F_LOGTOSTDOUT;  // Copy all init console output to stdout.
     if (get_config_int("Flags", "F_DEBUGDUMPS", 0)) FLAGS |= F_DEBUGDUMPS;    // Produce a lot of files with the information which can help in debugging
-	const AGUP_THEME *gui_theme = agup_theme_by_name(get_config_string("General", "gui_theme", "Allegro"));
+	const AGUP_THEME *gui_theme = agup_theme_by_name(get_config_string("General", "gui_theme", "BeOS"));
 
 	if (argc > 1) {
 		g_server_login = argv[1];
@@ -521,8 +520,14 @@ void initmain(int argc, char *argv[])
 	console<<"allegro_init"<<std::endl;
 
 	console<<"agup_init"<<std::endl;
-	if (gui_theme == NULL) gui_theme = aalg_theme;
+	if (gui_theme == NULL) gui_theme = abeos_theme;
 	agup_init(gui_theme);
+	gui_shadow_box_proc = d_agup_shadow_box_proc;
+	gui_ctext_proc = d_agup_ctext_proc;
+	gui_button_proc = d_agup_button_proc;
+	gui_edit_proc = d_agup_edit_proc;
+	gui_list_proc = d_agup_list_proc;
+	gui_text_list_proc = d_agup_text_list_proc;
 
 	lua_dofile(L, DATA_DIR "/init-scripts/standard-items.lua");
 	lua_dofile(L, DATA_DIR "/init-scripts/standard-equipment.lua");

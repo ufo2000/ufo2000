@@ -51,6 +51,25 @@ extern "C" {
 #include "agup/agup.h"
 }
 
+#define d_box_proc d_agup_box_proc
+#define d_shadow_box_proc d_agup_shadow_box_proc
+#define d_button_proc d_agup_button_proc
+#define d_push_proc d_agup_push_proc
+#define d_check_proc d_agup_check_proc
+#define d_radio_proc d_agup_radio_proc
+#define d_icon_proc d_agup_icon_proc
+#define d_edit_proc d_agup_edit_proc
+#define d_list_proc d_agup_list_proc
+#define d_text_list_proc d_agup_text_list_proc
+#define d_textbox_proc d_agup_textbox_proc
+#define d_slider_proc d_agup_slider_proc
+#define d_menu_proc d_agup_menu_proc
+#define d_window_proc d_agup_window_proc
+#define d_text_proc d_agup_text_proc
+#define d_ctext_proc d_agup_ctext_proc
+#define d_rtext_proc d_agup_rtext_proc
+#define d_clear_proc d_agup_clear_proc
+
 extern "C" {
 #include "lua.h"
 #include "lualib.h"
