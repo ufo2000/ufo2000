@@ -41,8 +41,6 @@ void printErrorExit(void)
 	exit(1);
 }
 
-int g_server_reload_config_flag = 0;
-
 void reload_config(int s)
 {
 	g_server_reload_config_flag = 1;

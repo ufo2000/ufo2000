@@ -195,3 +195,5 @@ void server_log(const char *fmt, ...)
 
 	va_end(arglist);
 }
+
+int g_server_reload_config_flag = 0;

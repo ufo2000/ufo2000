@@ -143,7 +143,7 @@ void ServerDispatch::HandleSocket(NLsocket socket)
 
 	if (err < 0 || client->m_error)
 	{
-		server_log("connection closed (name='%s' max_ave_traffic=%d ip=%s)\n", 
+		server_log("connection closed (name='%s', max_ave_traffic=%d, ip=%s)\n", 
 			client->m_name.c_str(), client->m_max_ave_traffic, client->m_ip.c_str());
 		delete client;
 	}
