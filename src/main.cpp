@@ -443,6 +443,14 @@ void initmain(int argc, char *argv[])
 	gametemp_prefix  = get_config_string("Paths",  "gametemp",  NULL); // game temporary files here (may span launches)
 	runtemp_prefix	 = get_config_string("Paths",  "runtemp",   NULL); // runtime temporary files here (get deleted by the time of exit)
 
+	if (argc > 1) {
+		g_server_login = argv[1];
+		g_server_password = argc > 2 ? argv[2] : "";
+	} else {
+		g_server_login = get_config_string("Server", "login", "anonymous");
+		g_server_password = get_config_string("Server", "password", "");
+	}
+
 	loadini();
 
 	if (origfiles_prefix != NULL) {
@@ -471,14 +479,6 @@ void initmain(int argc, char *argv[])
 			fprintf(stderr, "Error loading datafile!\n\n");
 			exit(1);
 		}
-	}
-
-	if (argc > 1) {
-		g_server_login = argv[1];
-		g_server_password = argc > 2 ? argv[2] : "";
-	} else {
-		g_server_login = get_config_string("Server", "login", "anonymous");
-		g_server_password = get_config_string("Server", "password", "");
 	}
 
 	memset(&mapdata, 0, sizeof(mapdata));

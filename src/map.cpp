@@ -167,7 +167,7 @@ void Map::destroy()
 
 void Map::loadterrain(int tid)
 {
-	static char *pcksets[10][4] =
+	static char *pcksets[11][4] =
     {
         { "jungle.pck",   NULL,           NULL,         NULL           },
         { "cultivat.pck", "barn.pck",     NULL,         NULL           },
@@ -178,9 +178,10 @@ void Map::loadterrain(int tid)
         { "desert.pck",   NULL,           NULL,         NULL           },
         { "mount.pck",    NULL,           NULL,         NULL           },
         { "polar.pck",    NULL,           NULL,         NULL           },
-        { "mars.pck",     "u_wall02.pck", NULL,         NULL           }
+        { "mars.pck",     "u_wall02.pck", NULL,         NULL           },
+        { "roads.pck",    "urbits.pck",   "urban.pck",  "frniture.pck" }
     };
-	static int pcks_num[10] = { 1, 2, 1, 2, 4, 4, 1, 1, 1, 2 };
+	static int pcks_num[11] = { 1, 2, 1, 2, 4, 4, 1, 1, 1, 2, 4 };
 
 	m_terrain_set = tid;
 	int terrain_num = pcks_num[tid] + 1;
@@ -196,10 +197,11 @@ void Map::loadterrain(int tid)
 
 void Map::loadmaps(unsigned char *_map)
 {
-	static char *bname[10] =
+	static char *bname[11] =
 	{
-		"jungle", "culta",  "forest", "xbase_", "ubase_",
-		"urban",  "desert", "mount",  "polar",  "mars"
+		"maps/jungle", "maps/culta",  "maps/forest", "maps/xbase_", 
+		"maps/ubase_", "maps/urban",  "maps/desert", "maps/mount",  
+		"maps/polar",  "maps/mars",   "newmaps/urban"
 	};
 	char mname[100];
 	int i = 0;
@@ -207,7 +209,7 @@ void Map::loadmaps(unsigned char *_map)
 	for (int col = width - 1; col >= 0; col--) {
 		for (int row = height - 1; row >= 0; row--) {
 			if (_map[i] != 0xFE) {
-				sprintf(mname, "maps/%s%02d.map", bname[m_terrain_set], _map[i]);
+				sprintf(mname, "%s%02d.map", bname[m_terrain_set], _map[i]);
 				loadmap(mname, row * 10, col * 10);
 			}
 			i++;
@@ -1488,26 +1490,13 @@ extern int MAP_WIDTH, MAP_HEIGHT;
 
 void Map::new_GEODATA(GEODATA *md)
 {
-	if (MAP_WIDTH * MAP_HEIGHT > 36) {
+	if (MAP_WIDTH > 6 || MAP_HEIGHT > 6) {
 		MAP_WIDTH = 5;
 		MAP_HEIGHT = 5;
 	}
 
 	terrain_set->create_geodata(
 		terrain_set->get_random_terrain_id(), MAP_WIDTH, MAP_HEIGHT, *md);
-/*
-	memset(md, 0, sizeof(*md));
-	md->x_size = MAP_WIDTH;
-	md->y_size = MAP_HEIGHT;
-	md->z_size = 4;
-	md->terrain = TERRAIN_INDEX;
-	for (int i = 0; i < MAP_WIDTH*MAP_HEIGHT; i++) {
-		if (rand() % 5 == 0)
-			md->mapdata[i] = DEFAULT_TERRAIN;
-		else
-			md->mapdata[i] = rand() % TERRAIN_COUNT;
-	}
-*/
 }
 
 int Map::valid_GEODATA(GEODATA *md)
@@ -1594,11 +1583,12 @@ bool Map::Read(persist::Engine &archive)
 Terrain::Terrain(const char *fileprefix, const char *name, int rand_weight):
 	m_name(name), m_rand_weight(rand_weight)
 {
+	if (m_rand_weight < 0) m_rand_weight = 0;
 	m_blocks.resize(MAP_BLOCKS_LIMIT);
 	std::vector<block_info>::size_type index;
 	for (index = 0; index < m_blocks.size(); index++) {
 		char fname[256];
-		sprintf(fname, "maps/%s%02d.map", fileprefix, index);
+		sprintf(fname, "%s%02d.map", fileprefix, index);
 		int fh = OPEN_ORIG(fname, O_RDONLY | O_BINARY);
 		if (fh == -1)
 		{
@@ -1678,16 +1668,20 @@ bool Terrain::create_geodata(GEODATA &gd)
 
 TerrainSet::TerrainSet()
 {
-	terrain[0] = new Terrain("jungle", "", 100);
-	terrain[1] = new Terrain("culta", "", 200);
-	terrain[2] = new Terrain("forest", "", 100);
-	terrain[3] = new Terrain("xbase_", "", 0);
-	terrain[4] = new Terrain("ubase_", "", 0);
-	terrain[5] = new Terrain("urban", "", 200);
-	terrain[6] = new Terrain("desert", "", 100);
-	terrain[7] = new Terrain("mount", "", 100);
-	terrain[8] = new Terrain("polar", "", 100);
-	terrain[9] = new Terrain("mars", "", 100);
+	push_config_state();
+	set_config_file("ufo2000.ini");
+	terrain[0]  = new Terrain("maps/jungle",  "", get_config_int("Terrain", "jungle",  100));
+	terrain[1]  = new Terrain("maps/culta",   "", get_config_int("Terrain", "culta",   200));
+	terrain[2]  = new Terrain("maps/forest",  "", get_config_int("Terrain", "forest",  100));
+	terrain[3]  = new Terrain("maps/xbase_",  "", get_config_int("Terrain", "xbase",     0));
+	terrain[4]  = new Terrain("maps/ubase_",  "", get_config_int("Terrain", "ubase",     0));
+	terrain[5]  = new Terrain("maps/urban",   "", get_config_int("Terrain", "urban",   200));
+	terrain[6]  = new Terrain("maps/desert",  "", get_config_int("Terrain", "desert",  100));
+	terrain[7]  = new Terrain("maps/mount",   "", get_config_int("Terrain", "mount",   100));
+	terrain[8]  = new Terrain("maps/polar",   "", get_config_int("Terrain", "polar",   100));
+	terrain[9]  = new Terrain("maps/mars",    "", get_config_int("Terrain", "mars",    100));
+	terrain[10] = new Terrain("newmaps/urban","", get_config_int("Terrain", "newurban",200));
+	pop_config_state();
 }
 
 TerrainSet::~TerrainSet()
