@@ -1114,11 +1114,29 @@ void endgame_stats()
 	play_midi(NULL, 0);
 }
 
+#ifdef WIN32
+static LPTOP_LEVEL_EXCEPTION_FILTER prevExceptionFilter = NULL;
+
+static LONG WINAPI TopLevelExceptionFilter(PEXCEPTION_POINTERS pExceptionInfo)
+{
+	net->send_error_report("crash");
+
+	if (prevExceptionFilter)
+		return prevExceptionFilter(pExceptionInfo);
+	else
+		return EXCEPTION_CONTINUE_SEARCH;
+}
+#endif
+
 /**
  * Main loop of the tactical part of the game
  */
 void gameloop()
 {
+#ifdef WIN32
+	prevExceptionFilter = SetUnhandledExceptionFilter(TopLevelExceptionFilter);
+#endif
+
 	int mouse_leftr = 1, mouse_rightr = 1, select_y = 0;
 
 	play_midi(g_combat_midi_music, 1);
@@ -1445,8 +1463,10 @@ void gameloop()
 
 	net->send_quit();
 
-	//readkey();
 	clear(screen);
+#ifdef WIN32
+	SetUnhandledExceptionFilter(prevExceptionFilter);
+#endif
 }
 
 void faststart()
