@@ -41,7 +41,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define BORDER_COLOR xcom1_color(4)
 #define TITLE_COLOR  xcom1_color(2)
 
-void draw_border(BITMAP *bmp, int x, int y, int w, int h, int color)
+static void draw_border(BITMAP *bmp, int x, int y, int w, int h, int color)
 {
 	line(bmp, x + 1, y + 0, x + w - 2, y + 0, color);
 	line(bmp, x + 1, y + h - 2 + 1, x + w - 2, y + h - 2 + 1, color);
@@ -131,9 +131,10 @@ struct UserInfo
 };
 
 #define COLOR_YELLOW   makecol(255, 255, 0)
-#define COLOR_GREEN    xcom1_color(50)
-#define COLOR_GRAY     xcom1_color(3)
-#define COLOR_RED      xcom1_color(32)
+#define COLOR_GREEN    xcom_color(50)
+#define COLOR_GRAY     xcom_color(3)
+#define COLOR_DARKGRAY xcom_color(6)
+#define COLOR_RED      xcom_color(32)
 
 class UsersList: public VisualObject
 {
@@ -426,15 +427,41 @@ int connect_internet_server()
 		{
 			switch (id)
 			{
-				case SRV_USER_ONLINE: users->update_user_info(packet, USER_STATUS_READY); break;
-				case SRV_USER_OFFLINE: users->update_user_info(packet, USER_STATUS_OFFLINE); break;
+				case SRV_USER_ONLINE:
+					if (users->get_user_status(packet) != USER_STATUS_READY) {
+						soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
+						if (users->get_user_status(packet) == USER_STATUS_BUSY)
+							chat->printf(COLOR_DARKGRAY, "%s is back from a game\n", packet.c_str());
+						else
+							chat->printf(COLOR_DARKGRAY, "%s is here\n", packet.c_str());
+					}
+					users->update_user_info(packet, USER_STATUS_READY);
+					break;
+				case SRV_USER_OFFLINE:
+					if (users->get_user_status(packet) != USER_STATUS_OFFLINE) {
+						soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
+						chat->printf(COLOR_DARKGRAY, "%s disconnected\n", packet.c_str());
+					}
+					users->update_user_info(packet, USER_STATUS_OFFLINE);
+					break;
 				case SRV_USER_CHALLENGE_IN:
 					soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
 					users->update_user_info(packet, USER_STATUS_CHALLENGE_IN);
 					break;
-				case SRV_USER_CHALLENGE_OUT: users->update_user_info(packet, USER_STATUS_CHALLENGE_OUT); break;
-				case SRV_USER_BUSY: users->update_user_info(packet, USER_STATUS_BUSY); break;
-				case SRV_MESSAGE: chat->printf(chat_msg_color(packet), "%s", packet.c_str()); break;
+				case SRV_USER_CHALLENGE_OUT:
+					users->update_user_info(packet, USER_STATUS_CHALLENGE_OUT);
+					break;
+				case SRV_USER_BUSY:
+					if (users->get_user_status(packet) != USER_STATUS_BUSY &&
+							users->get_user_status(packet) != USER_STATUS_OFFLINE) {
+						soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
+						chat->printf(COLOR_DARKGRAY, "%s left chat to play a game\n", packet.c_str());
+					}
+					users->update_user_info(packet, USER_STATUS_BUSY);
+					break;
+				case SRV_MESSAGE:
+					chat->printf(chat_msg_color(packet), "%s", packet.c_str());
+					break;
 				case SRV_GAME_START_HOST:
 					show_mouse(NULL);
 					FS_MusicPlay(NULL);
