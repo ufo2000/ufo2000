@@ -35,8 +35,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SKIN_INFO g_skins[] =
 {
-	{ "male",    S_XCOM_0,  0, {  5,  5,  5,  5,  5} },
-	{ "female",  S_XCOM_0,  1, {  5,  5,  5,  5,  5} },
+	{ "male",    S_XCOM_0,  0, { 12,  8,  8,  5,  2} },
+	{ "female",  S_XCOM_0,  1, { 12,  8,  8,  5,  2} },
 	{ "armour_m",S_XCOM_1,  0, { 50, 40, 40, 30, 30} },
 	{ "armour_f",S_XCOM_1,  1, { 50, 40, 40, 30, 30} },
 	{ "power_m", S_XCOM_2,  0, {100, 80, 80, 70, 60} },
