@@ -200,9 +200,39 @@ function AddXcomItem(item)
 	ItemsTable[item.name] = item
 end
 
+------------------------------------------------------------------------------
 -- adds new equipment set
+-- unique crc32 value is calculated for each equipment set, so we can 
+-- compare equipment sets crc32 values of players to check if they have 
+-- compatible equipment sets
+------------------------------------------------------------------------------
 function AddEquipment(x)
+	local function UpdateTableCrc32(initcrc, tbl)
+		local sorted_tbl = {}
+		for k, v in tbl do table.insert(sorted_tbl, {k, v}) end
+		table.sort(sorted_tbl, function(a, b) return a[1] < b[1] end)
+		for _, v in ipairs(sorted_tbl) do
+			initcrc = UpdateCrc32(initcrc, tostring(v[1]))
+			initcrc = UpdateCrc32(initcrc, "=")
+			if type(v[2]) == "table" then
+				initcrc = UpdateTableCrc32(initcrc, v[2])
+			elseif type(v[2]) == "string" or type(v[2]) == "number" then
+				initcrc = UpdateCrc32(initcrc, tostring(v[2]))
+			else
+				-- userdata, function or other types are currently ignored
+			end
+			initcrc = UpdateCrc32(initcrc, "\n")
+		end
+		return initcrc
+	end
+
+	local sorted_tbl = {}
+	for k, v in x.Layout do table.insert(sorted_tbl, {v[3], ItemsTable[v[3]]}) end
+	table.sort(sorted_tbl, function(a, b) return a[1] < b[1] end)
+	x.Crc32 = 0
+	for _, v in ipairs(sorted_tbl) do x.Crc32 = UpdateTableCrc32(x.Crc32, v[2]) end
 	EquipmentTable[x.Name] = x
+	Message("AddEquipment: '%s', crc32 = %08X", x.Name, x.Crc32)
 end
 
 -- fill armoury with the specified equipment set
