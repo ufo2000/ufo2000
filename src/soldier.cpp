@@ -1751,6 +1751,8 @@ void Soldier::die()
 		ctype = Muton_Corpse;
 
 	map->place(z, x, y)->put(new Item(ctype));
+	
+	m_platoon->change_morale(-10);
 
 	g_console->printf(xcom1_color(132), "%s killed.", md.Name);
 }
@@ -1818,6 +1820,17 @@ void Soldier::damage_items(int damage)
 		int def = damage * place_def[i] / 100;
 		m_place[i]->damage_items(damage - def);
 	}
+}
+
+void Soldier::panic()
+{
+	ud.CurTU = 0;
+	m_place[P_ARM_LEFT]->dropall(z, x, y);
+	m_place[P_ARM_RIGHT]->dropall(z, x, y);
+		
+	net->send_panic(NID);
+		
+	g_console->printf(xcom1_color(180), "%s has panicked.", md.Name);
 }
 
 //shl_right 0   //leg_left  5

@@ -834,6 +834,7 @@ void recv_turn(int crc)
 
 	platoon_local->restore();
 	platoon_local->set_visibility_changed();
+	platoon_local->check_morale();
 
 	if (net->gametype == GAME_TYPE_HOTSEAT) {
 		savegame(F("$(home)/ufo2000.tmp"));

@@ -401,6 +401,42 @@ int Platoon::check_reaction_fire(Soldier *target)
 	return 0;
 }
 
+void Platoon::change_morale(int delta)
+{
+	Soldier *ss = man;
+
+	while (ss != NULL) {
+		int new_morale = ss->ud.Morale + delta;
+		if (new_morale > 100)
+			new_morale = 100;
+		if (new_morale < 1)
+			new_morale = 1;
+		ss->ud.Morale = new_morale;
+		
+		ss = ss->next();
+	}
+}
+
+void Platoon::check_morale()
+{
+	int panicked = 0;
+	Soldier *ss = man;
+	
+	while (ss != NULL) {
+		if (rand() % 100 < 100 - ss->ud.Morale) {
+			ss->panic();
+			panicked++;			
+		}
+		ss = ss->next();
+	}
+	
+	if (panicked == 0)
+		change_morale(5);
+	
+	for (int i = panicked; i > 0; i--)
+		change_morale(-20);
+}
+
 void Platoon::save_FULLDATA(char *fn)
 {
 	int fh = open(F(fn), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);

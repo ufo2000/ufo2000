@@ -326,6 +326,8 @@ public:
 	void destroy_all_items();
 	void draw_deselect_times(int sel_item_place);
 	void damage_items(int damage);
+	
+	void panic();
 
 	virtual bool Write(persist::Engine &archive) const;
 	virtual bool Read(persist::Engine &archive);

@@ -337,6 +337,9 @@ void Net::check()
 		case CMD_OPTIONS:
 			recv_options();
 			break;
+		case CMD_PANIC:
+			recv_panic();
+			break;
 		case CMD_FINISH_PLANNER:
 			recv_finish_planner();
 			break;
@@ -1415,6 +1418,34 @@ int Net::recv_options()
 		mapdata.load_game = 77;
 
 	return 1;
+}
+
+void Net::send_panic(int NID)
+{
+	if (!SEND) return ;
+
+	pkt.create(CMD_PANIC);
+	pkt << NID;
+	send();
+}
+
+int Net::recv_panic()
+{
+	int NID;
+
+	pkt >> NID;
+
+	Soldier *ss = findman(NID);
+	if (ss != NULL) {
+		SEND = 0;
+		ss->panic();
+		platoon_remote->change_morale(-20);
+		SEND = 1;
+		return 1;
+	} else {
+		error("NID");
+	}
+	return 0;
 }
 
 void Net::send_debug_message(const char *fmt, ...)

@@ -95,6 +95,8 @@ private:
 	int recv_scenario();
 	int recv_rules();
 	int recv_options();
+	
+	int recv_panic();
 public:
 	ClientServerUfo *m_internet_server;
 	GameType gametype;
@@ -153,6 +155,8 @@ public:
 	void send_scenario();
 	void send_rules(int index, int value);
 	void send_options(int scenario_type, int index, int value);
+	
+	void send_panic(int NID);
 
 	void send_finish_planner();
 	int recv_finish_planner();

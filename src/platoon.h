@@ -80,6 +80,9 @@ public:
 	int num_of_men() { return size; }
 
 	int check_reaction_fire(Soldier *target);
+	
+	void change_morale(int delta);
+	void check_morale();
 
 	void save_MANDATA(const char *fn);
 	void load_MANDATA(const char *fn);
