@@ -426,21 +426,6 @@ const char *F(const char *fileid)
 	if (!lua_isstring(L, -1))
 		display_error_message(std::string("Can't find file name by ") + fileid + " identifier");
 	fname = lua_tostring(L, -1);
-/*
-	lua_pushstring(L, "FilesTable");
-	lua_gettable(L, LUA_GLOBALSINDEX);
-	if (!lua_istable(L, -1))
-		display_error_message("Fatal: no 'FilesTable' found in lua state");
-	assert(lua_istable(L, -1));
-	lua_pushstring(L, fileid);
-	lua_gettable(L, -2);
-	if (!lua_istable(L, -1))
-		display_error_message(std::string("Can't find file name by ") + fileid + " identifier");
-	lua_pushstring(L, "FileName");
-	lua_gettable(L, -2);
-	assert(lua_isstring(L, -1));
-	fname = lua_tostring(L, -1);
-*/
 	lua_settop(L, stack_top);
 
 	return fname.c_str();
@@ -459,18 +444,38 @@ void initmain(int argc, char *argv[])
 	lua_register(L, "_ALERT", lua_ALERT);
 	luaopen_base(L);
 	luaopen_string(L);
-	// $$$ Not a very good idea to allow file operations from scripts,
-    // but it is a first implementation
 	luaopen_io(L);
 
-	lua_dofile(L, "init-scripts/main.lua");
-	lua_dofile(L, "init-scripts/filecheck.lua");
-	lua_dofile(L, "init-scripts/standard-maps.lua");
-	lua_dofile(L, "init-scripts/user-maps.lua");
+#ifdef DATA_DIR
+	// A directory for ufo2000 data files was specified at compile time
+	lua_pushstring(L, "ufo2000_dir");
+	lua_pushstring(L, DATA_DIR);
+	lua_settable(L, LUA_GLOBALSINDEX);
+	
+	char *env_home = getenv("HOME");
+	if (env_home) {
+		std::string home_dir = std::string(env_home) + "/.ufo2000";
+#ifdef LINUX
+		mkdir(home_dir.c_str(), 0755);
+#else
+		mkdir(home_dir.c_str());
+#endif
+		lua_pushstring(L, "home_dir");
+		lua_pushstring(L, home_dir.c_str());
+		lua_settable(L, LUA_GLOBALSINDEX);
+	}
+#else
+#define DATA_DIR "."
+#endif
+
+	lua_dofile(L, DATA_DIR "/init-scripts/main.lua");
+	lua_dofile(L, DATA_DIR "/init-scripts/filecheck.lua");
+	lua_dofile(L, DATA_DIR "/init-scripts/standard-maps.lua");
+	lua_dofile(L, DATA_DIR "/init-scripts/user-maps.lua");
 
     FLAGS = 0;
 	push_config_state();
-	set_config_file("ufo2000.ini");
+	set_config_file(F("$(home)/ufo2000.ini"));
 	if (get_config_int("Flags", "F_CLEARSEEN", 0)) FLAGS |= F_CLEARSEEN;      // clear seen every time
 	if (get_config_int("Flags", "F_SHOWROUTE", 0)) FLAGS |= F_SHOWROUTE;      // show pathfinder matrix
 	if (get_config_int("Flags", "F_SHOWLOFCELL", 0)) FLAGS |= F_SHOWLOFCELL;  // show cell's LOF & BOF
@@ -522,12 +527,9 @@ void initmain(int argc, char *argv[])
 
 	pop_config_state();
 
-//	if (FLAGS & F_FILECHECK) check_data_files();
-//	check_rw_files();
-
 	datafile = load_datafile("#");
 	if (datafile == NULL) {
-		datafile = LOADDATA_OWN("ufo2000.dat");
+		datafile = load_datafile(F("$(ufo2000)/ufo2000.dat"));
 		if (datafile == NULL) {
 			allegro_exit();
 			fprintf(stderr, "Error loading datafile!\n\n");
@@ -639,7 +641,7 @@ void initmain(int argc, char *argv[])
 	clear(screen);
 
 	memset(&mapdata, 0, sizeof(mapdata));
-	int fh = OPEN_GTEMP("geodata.dat", O_RDONLY | O_BINARY);
+	int fh = open(F("$(home)/geodata.dat"), O_RDONLY | O_BINARY);
 	if (fh != -1) {
 		read(fh, &mapdata, sizeof(mapdata));
 		close(fh);

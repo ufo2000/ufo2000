@@ -77,7 +77,7 @@ Net::Net()
 	SEND = 1;
 	queue = new BQ(1000);
 	connect = new Connect();
-	flog = FOPEN_RTEMP("ufo2000.log", "wt");
+	flog = fopen(F("$(home)/ufo2000.log"), "wt");
 	assert(flog != NULL);
 	log("%s\n", "_____________Net()");
 }

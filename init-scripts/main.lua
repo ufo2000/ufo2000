@@ -10,11 +10,11 @@
 TerrainTable = {}
 
 -- directories for data files from the original x-com and ufo2000
-xcomdemo_dir = xcomdemo_dir or "./XCOMDEMO"
-xcom_dir     = xcom_dir or "./XCOM"
-tftddemo_dir = tftddemo_dir or "./TFTDDEMO"
-tftd_dir     = tftd_dir or "./TFTD"
 ufo2000_dir  = ufo2000_dir or "."
+xcomdemo_dir = xcomdemo_dir or (ufo2000_dir .. "/XCOMDEMO")
+xcom_dir     = xcom_dir or (ufo2000_dir .. "/XCOM")
+tftddemo_dir = tftddemo_dir or (ufo2000_dir .. "/TFTDDEMO")
+tftd_dir     = tftd_dir or (ufo2000_dir .. "/TFTD")
 home_dir     = home_dir or "."
 
 -- clear init-scripts.log

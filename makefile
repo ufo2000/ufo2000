@@ -15,14 +15,27 @@
 # client installed                                                           #
 ##############################################################################
 
+ifdef VERSION
+	DISTNAME := ufo2000-$(VERSION)
+else
+	DISTNAME := ufo2000-r${shell svnversion .}
+endif
+
 CC = g++
 LD = g++
-UFO_SVNVERSION := ${shell svnversion .}
 CFLAGS = -funsigned-char -Wall
-CFLAGS += -pipe -DUFO_SVNVERSION=\"$(UFO_SVNVERSION)\"
+CFLAGS += -pipe
 OBJDIR = obj
 NAME = ufo2000
 SERVER_NAME = ufo2000-srv
+
+ifdef DATA_DIR
+	CFLAGS += -DDATA_DIR=\"$(DATA_DIR)\"
+endif
+
+ifndef OPTFLAGS
+	OPTFLAGS = -O2
+endif
 
 ifdef xmingw
     CC = i386-mingw32msvc-g++
@@ -51,7 +64,7 @@ ifdef debug
 	NAME := ${addsuffix -debug,$(NAME)}
 	SERVER_NAME := ${addsuffix -debug,$(SERVER_NAME)}
 else
-	CFLAGS += -O -mcpu=i686
+	CFLAGS += $(OPTFLAGS)
 endif
 
 ifdef win32
@@ -103,19 +116,20 @@ clean:
 	$(RM) $(OBJDIR)/*.d
 	$(RM) $(NAME)
 
-source-zip:
+source-zip: 
 # create zip archive with ufo2000 sources, requires 7-zip archiver
-	-$(RM) ufo2000-r$(UFO_SVNVERSION)-src.zip
-	svn export . ufo2000-r$(UFO_SVNVERSION)-src
-	7z a -tzip -r -mx ufo2000-r$(UFO_SVNVERSION)-src.zip "ufo2000-r$(UFO_SVNVERSION)-src/*"
-	svn delete --force ufo2000-r$(UFO_SVNVERSION)-src
+	-$(RM) $(DISTNAME)-src.zip
+	svn export . $(DISTNAME)
+	7z a -tzip -r -mx $(DISTNAME)-src.zip "$(DISTNAME)/*"
+	svn delete --force $(DISTNAME)
 
-source-bz2:
+source-bz2: 
 # create tar.bz2 archive with ufo2000 sources (on *nix systems)
-	-$(RM) ufo2000-r$(UFO_SVNVERSION)-src.tar.bz2
-	svn export . ufo2000-r$(UFO_SVNVERSION)-src
-	tar -cjf ufo2000-r$(UFO_SVNVERSION)-src.tar.bz2 ufo2000-r$(UFO_SVNVERSION)-src
-	svn delete --force ufo2000-r$(UFO_SVNVERSION)-src
+	-$(RM) $(DISTNAME)-src.tar.bz2
+	svn export . $(DISTNAME)
+	tar -cjf $(DISTNAME)-src.tar.bz2 $(DISTNAME)
+	svn delete --force $(DISTNAME)
+	cp ufo2000.ebuild $(DISTNAME).ebuild
 
 -include $(DEPS)
 -include $(DEPS_SERVER)

@@ -3,6 +3,7 @@ local function X(a) return tonumber(a, 16) end
 FilesTable = {
 	["$(ufo2000)/ufo2000.dat"]  = { Crc32 = X("0x8EA4C104") },
 	["$(ufo2000)/keyboard.dat"] = { Crc32 = X("0xC796755E") },
+	["$(ufo2000)/soundmap.xml"] = { Crc32 = X("0x00000000") },
 
 	["$(home)/geodata.dat"] = {
 		Origin = "$(ufo2000)/geodata.dat" },
@@ -155,8 +156,20 @@ local function CheckSingleDataFile(name, info)
 			if fh == nil then
 				return string.format("CheckDataFiles: can't open '%s' for read/write", name)
 			end
-			fh:close()
-			os.remove(name)
+
+			if info.Origin then
+				local data = ReadFile(LocateFile(info.Origin))
+				if data == nil then
+					return string.format(
+						"CheckDataFiles: can't get original file '%s' for initialization", 
+						info.Origin) 
+				end
+				fh:write(data)
+				fh:close()
+			else
+				fh:close()
+				os.remove(name)
+			end
 		else
 			fh:close()
 		end

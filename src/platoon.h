@@ -81,9 +81,9 @@ public:
 
 	int check_reaction_fire(Soldier *target);
 
-	void save_MANDATA(char *fn);
+	void save_MANDATA(const char *fn);
 	void load_MANDATA(const char *fn);
-	void save_ITEMDATA(char *fn);
+	void save_ITEMDATA(const char *fn);
 	void load_ITEMDATA(const char *fn);
 	void save_FULLDATA(char *fn);
 	void load_FULLDATA(char *fn);

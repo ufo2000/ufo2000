@@ -388,7 +388,7 @@ void Editor::show(int NEXTPREV)
 				case KEY_F1:
 					//edit_soldier();
 					if (askmenu("SAVE ARMOURY")) {
-						m_armoury->save_bin("armoury.set");
+						m_armoury->save_bin("$(home)/armoury.set");
 					}
 					break;
 				case KEY_F2:
@@ -409,22 +409,8 @@ void Editor::show(int NEXTPREV)
 	}
 	//save(); //!!!!!!!!!!!!!!!!!!
 	
-	char fnbuf[1000];
-	if (ownfiles_prefix != NULL) {
-		ustrcpy(fnbuf, ownfiles_prefix);
-		ustrcpy(fnbuf + ustrlen(ownfiles_prefix), "soldier.dat" );
-	} else {
-		ustrcpy(fnbuf, "soldier.dat" );
-	}
-	m_plt->save_MANDATA(fnbuf);
-	if (ownfiles_prefix != NULL) {
-		ustrcpy(fnbuf, ownfiles_prefix);
-		ustrcpy(fnbuf + ustrlen(ownfiles_prefix), "items.dat" );
-	} else {
-		ustrcpy(fnbuf, "items.dat" );
-	}
-		
-	m_plt->save_ITEMDATA(fnbuf);
+	m_plt->save_MANDATA(F("$(home)/soldier.dat"));
+	m_plt->save_ITEMDATA(F("$(home)/items.dat"));
 
 	destroy_bitmap(screen2);
 	screen2 = create_bitmap(SCREEN2W, SCREEN2H); clear(screen2);

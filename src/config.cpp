@@ -153,7 +153,7 @@ const char *cfg_get_lose_image_file_name() { return lose_image_file_name.c_str()
 
 void loadini()
 {
-	set_config_file("ufo2000.ini");
+	set_config_file(F("$(home)/ufo2000.ini"));
 
 	strcpy(PORT, get_config_string(gen, "port", "2000"));
 	strcpy(HOSTNAME, get_config_string(gen, "server", "127.0.0.1"));
@@ -216,7 +216,7 @@ void loadini()
 
 void saveini()
 {
-	set_config_file("ufo2000.ini");
+	set_config_file(F("$(home)/ufo2000.ini"));
 
 	set_config_string(gen, "server", HOSTNAME);
 	set_config_int(gen, "width", SCREEN2W);
