@@ -109,10 +109,7 @@ void Explosive::step(int crc)
 			item[i]->set_delay_time(delaytime[i]);
 
 			if ((delaytime[i] <= 0) && (item[i]->m_type != PROXIMITY_GRENADE)) {
-				if (crc == -1)
-					detonate(owner[i], item[i]);
-				else
-					item[i] = NULL;
+				detonate(owner[i], item[i]);
 			}
 		}
 }
@@ -148,22 +145,11 @@ int Explosive::detonate(int SID, Item *it)
 	damage = it->data()->damage;
 	range = it->explo_range();
 
-//	$$$ Dirty hack for proximity grenades (their explosion is not sent to 
-//	remote player, but remote player's soldier steps on proximity mine during
-//	his movement)
-	if (type != PROXIMITY_GRENADE)
-		net->send_detonate_item(SID, lev, col, row, iplace, it->m_x, it->m_y);
-
 	remove(it);
 	int v = ip->destroy(it);
 	assert(v);
 
-	if (net->SEND) {
-		net->SEND = 0;
-		map->explode(SID, lev, col, row, type, range, damage);
-		net->SEND = 1;
-	} else
-		map->explode(SID, lev, col, row, type, range, damage);
+	map->explode(SID, lev, col, row, type, range, damage);
 
 	return 1;
 }

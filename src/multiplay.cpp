@@ -587,7 +587,7 @@ int Net::recv_load_ammo()
 	return 0;
 }
 
-
+/*
 void Net::send_detonate_item(int owner, int lev, int col, int row, int iplace, int ix, int iy)
 {
 	if (!SEND) return ;
@@ -602,7 +602,7 @@ void Net::send_detonate_item(int owner, int lev, int col, int row, int iplace, i
 	pkt << owner;
 	send();
 }
-
+*/
 
 int Net::recv_detonate_item()
 { // "DETO"
@@ -624,8 +624,7 @@ int Net::recv_detonate_item()
 	return 1;
 }
 
-
-
+/*
 void Net::send_explode(int owner, int lev, int col, int row, int type, int range, int damage)
 {
 	if (!SEND) return ;
@@ -640,6 +639,7 @@ void Net::send_explode(int owner, int lev, int col, int row, int type, int range
 	pkt << owner;
 	send();
 }
+*/
 
 int Net::recv_explode()
 { // "EXPL"

@@ -710,12 +710,7 @@ void Bullet::detonate()
 	int range = Item::explo_range(type);
 	int damage = Item::obdata[type].damage;
 
-	if (net->SEND) {
-		net->SEND = 0;
-		map->explode(owner, lev, col, row, type, range, damage);
-		net->SEND = 1;
-	} else
-		map->explode(owner, lev, col, row, type, range, damage);
+	map->explode(owner, lev, col, row, type, range, damage);
 }
 
 void Bullet::hitman()

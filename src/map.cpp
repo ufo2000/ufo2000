@@ -1385,8 +1385,7 @@ int Map::explode(int sniper, int lev, int col, int row, int type, int maxrange, 
 			}
 		}
 	}
-	delete (field);
-	net->send_explode(sniper, lev, col, row, type, maxrange, damage);
+	delete field;
 	return 1;
 }
 
