@@ -25,6 +25,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <signal.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -395,6 +396,11 @@ void initmain(int argc, char *argv[])
 	luaopen_base(L);
 	luaopen_string(L);
 	luaopen_io(L);
+	
+#ifdef LINUX
+	// Do not silently exit on broken network connection
+	signal(SIGPIPE, SIG_IGN);
+#endif
 
 #ifndef DATA_DIR
 	// Set current directory to the place where ufo2000 executable was started from

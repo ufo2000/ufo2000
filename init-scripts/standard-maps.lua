@@ -344,7 +344,6 @@ AddXcomTerrain {
 		"$(tftd)/terrain/ufobits.*"
 	},
 	Maps = {
-		"$(tftd)/maps/gal00.map",
 		"$(tftd)/maps/gal01.map",
 		"$(tftd)/maps/gal02.map",
 		"$(tftd)/maps/gal03.map",

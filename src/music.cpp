@@ -137,11 +137,11 @@ bool FS_MusicPlay(const char *filename)
 		unload_duh(duh);
 		duh = NULL;
 	}
-	duh = dumb_load_xm(filename);
+	duh = dumb_load_ogg(filename, 1);
+	if (!duh) duh = dumb_load_xm(filename);
 	if (!duh) duh = dumb_load_s3m(filename);
 	if (!duh) duh = dumb_load_mod(filename);
 	if (!duh) duh = dumb_load_it(filename);
-	if (!duh) duh = dumb_load_ogg(filename, 1);
 	if (duh) dp = al_start_duh(duh, 2, 0, (float)music_volume / 255.0, 4096, 44100);
 
 	DUH_SIGRENDERER *sr = al_duh_get_sigrenderer(dp);
