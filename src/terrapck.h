@@ -123,10 +123,10 @@ public:
 	std::vector<MCD> m_mcd;
 	MCD empty;
 
-	TerraPCK(char *pckfname);
+	TerraPCK(const char *pckfname);
 	~TerraPCK();
 
-	void add(char *pckfname);
+	void add(const char *pckfname);
 	void showblackpck(int num, int xx, int yy);
 
 	int mcdstart(int mcd_num);

@@ -24,7 +24,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <vector>
 #include <string>
 
-unsigned long update_crc32(unsigned long InitCrc, void *pInBuff, unsigned long InLen);
+unsigned long update_crc32(unsigned long InitCrc, const void *pInBuff, unsigned long InLen);
 bool check_file_crc32(const char *filename, unsigned long crc32);
 bool get_corrupted_or_missing_files(std::vector<std::string> &result);
 

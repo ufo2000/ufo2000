@@ -59,12 +59,12 @@ ifdef win32
 	NAME := ${addsuffix .exe,$(NAME)}
 	SERVER_NAME := ${addsuffix .exe,$(SERVER_NAME)}
 	CFLAGS += -DWIN32
-	LIBS = -lexpat -lNL -lalleg -lws2_32
+	LIBS = -lexpat -llua -llualib -lNL -lalleg -lws2_32
 else
 	CFLAGS += -DLINUX
 	INCLUDES = ${shell allegro-config --cflags}
 	CFLAGS += $(INCLUDES)
-	LIBS += -lexpat -lNL ${shell allegro-config --libs}
+	LIBS += -lexpat -llua -llualib -lNL ${shell allegro-config --libs}
 endif
 
 OBJS = $(addprefix $(OBJDIR)/,$(SRCS:.cpp=.o))

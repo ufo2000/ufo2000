@@ -46,6 +46,12 @@ inline long filelength(int handle) { struct stat s; fstat(handle, &s); return s.
 #endif
 #include "jpgalleg/jpgalleg.h"
 
+extern "C" {
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
+}
+
 #define TERRAIN_INDEX   1
 
 #include "persist.h"
@@ -393,6 +399,8 @@ extern std::string g_server_password;
 int initgame();
 void gameloop();
 void closegame();
+
+extern lua_State *L;
 
 #define CELL_SCR_X 16
 #define CELL_SCR_Y 8

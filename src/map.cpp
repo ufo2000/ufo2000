@@ -50,6 +50,41 @@ char Map::ofs2dir[3][3] = {{5, 6, 7},
 
 IMPLEMENT_PERSISTENCE(Map, "Map");
 
+void load_terrain_pck(int tid, TerraPCK *&terrain_pck)
+{
+	terrain_pck = NULL;
+
+	int stack_top = lua_gettop(L);
+    // Enter 'TerrainTable' table
+	lua_pushstring(L, "TerrainTable");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	assert(lua_istable(L, -1)); 
+    // Enter [tid] table
+	lua_pushnumber(L, tid);
+	lua_gettable(L, -2);
+	assert(lua_istable(L, -1));
+    // Enter 'Tiles' table
+	lua_pushstring(L, "Tiles");
+	lua_gettable(L, -2);
+	assert(lua_istable(L, -1));
+
+    // Load all tiles from 'Tiles' table
+	int index = 1;
+	while (1) {
+		lua_pushnumber(L, index++);
+		lua_gettable(L, -2);
+		if (!lua_isstring(L, -1)) break;
+		const char *pckname = lua_tostring(L, -1);
+		if (terrain_pck == NULL)
+			terrain_pck = new TerraPCK(pckname);
+		else
+			terrain_pck->add(pckname);
+		lua_pop(L, 1);
+	}
+
+	lua_settop(L, stack_top);
+}
+
 void Map::initpck()
 {
 	floorob  = new PCK("units/floorob.pck");
@@ -93,7 +128,7 @@ Map::Map(GEODATA &mapdata)
 	create(gd.z_size, gd.x_size, gd.y_size);
 
 	//cprintf("gd.terrain=%d ", gd.terrain);
-	loadterrain(gd.terrain);
+	load_terrain_pck(gd.terrain, m_terrain);
 	m_terrain_set = gd.terrain;
 	loadmaps(gd.mapdata);
 
@@ -115,7 +150,7 @@ Map::Map(int l, int c, int r, int _ter, unsigned char *_map)
 
 	create(gd.z_size, gd.x_size, gd.y_size);
 
-	loadterrain(gd.terrain);
+	load_terrain_pck(gd.terrain, m_terrain);
 	m_terrain_set = gd.terrain;
 	loadmaps(gd.mapdata);
 
@@ -163,57 +198,35 @@ void Map::destroy()
 	delete m_minimap_area;
 }
 
-
-void Map::loadterrain(int tid)
-{
-	static char *pcksets[11][4] =
-    {
-        { "jungle.pck",   NULL,           NULL,         NULL           },
-        { "cultivat.pck", "barn.pck",     NULL,         NULL           },
-        { "forest.pck",   NULL,           NULL,         NULL           },
-        { "xbase1.pck",   "xbase2.pck",   "forest.pck", NULL           },
-        { "u_base.pck",   "u_wall02.pck", "u_pods.pck", "brain.pck"    },
-        { "roads.pck",    "urbits.pck",   "urban.pck",  "frniture.pck" },
-        { "desert.pck",   NULL,           NULL,         NULL           },
-        { "mount.pck",    NULL,           NULL,         NULL           },
-        { "polar.pck",    NULL,           NULL,         NULL           },
-        { "mars.pck",     "u_wall02.pck", NULL,         NULL           },
-        { "roads.pck",    "urbits.pck",   "urban.pck",  "frniture.pck" }
-    };
-	static int pcks_num[11] = { 1, 2, 1, 3, 4, 4, 1, 1, 1, 2, 4 };
-
-	m_terrain_set = tid;
-	int terrain_num = pcks_num[tid] + 1;
-
-	char pckname[100];
-	strcpy(pckname, "terrain/blanks.pck");
-	m_terrain = new TerraPCK(pckname);
-	for (int i = 1; i < terrain_num; i++) {
-		sprintf(pckname, "terrain/%s", pcksets[tid][i - 1]);
-		m_terrain->add(pckname);
-	}
-}
-
 void Map::loadmaps(unsigned char *_map)
 {
-	static char *bname[11] =
-	{
-		"maps/jungle", "maps/culta",  "maps/forest", "maps/xbase_", 
-		"maps/ubase_", "maps/urban",  "maps/desert", "maps/mount",  
-		"maps/polar",  "maps/mars",   "newmaps/wareh"
-	};
-	char mname[100];
-	int i = 0;
+	int stack_top = lua_gettop(L);
+	lua_pushstring(L, "TerrainTable");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	assert(lua_istable(L, -1));
+	lua_pushnumber(L, m_terrain_set);
+	lua_gettable(L, -2);
+	assert(lua_istable(L, -1));
+	lua_pushstring(L, "Maps");
+	lua_gettable(L, -2);
+	assert(lua_istable(L, -1));
 
+	int i = 0;
 	for (int col = width - 1; col >= 0; col--) {
 		for (int row = height - 1; row >= 0; row--) {
 			if (_map[i] != 0xFE) {
-				sprintf(mname, "%s%02d.map", bname[m_terrain_set], _map[i]);
-				loadmap(mname, row * 10, col * 10);
+				
+				lua_pushnumber(L, _map[i]);
+				lua_gettable(L, -2);
+				assert(lua_isstring(L, -1));
+				loadmap(lua_tostring(L, -1), row * 10, col * 10);
+				lua_pop(L, 1);
 			}
 			i++;
 		}
 	}
+
+	lua_settop(L, stack_top);
 }
 
 int Map::loadmap(const char *fname, int _r, int _c)
@@ -1482,7 +1495,8 @@ int Map::valid_GEODATA(GEODATA *md)
 {
 	if ((md->x_size > 6) || (md->y_size > 6) ||
 		(md->x_size < 2) || (md->y_size < 2) ||
-        (md->x_size != md->y_size) || (md->z_size != 4)) return 0;
+        (md->x_size != md->y_size) || (md->z_size != 4) ||
+        terrain_set->get_terrain_name(md->terrain) == "") return 0;
 	return 1;
 }
 
@@ -1547,7 +1561,7 @@ bool Map::Read(persist::Engine &archive)
 			for (int row = 0; row < 10 * height; row++)
 				PersistReadObject(archive, m_cell[lev][col][row]);
 
-    loadterrain(m_terrain_set);
+    load_terrain_pck(m_terrain_set, m_terrain);
 
 	m_minimap_area = new MinimapArea(this, SCREEN_W - SCREEN2W, SCREEN2H);
 
@@ -1560,39 +1574,70 @@ bool Map::Read(persist::Engine &archive)
 
 #define MAP_BLOCKS_LIMIT 100
 
-Terrain::Terrain(const char *fileprefix, const char *name, int rand_weight):
-	m_name(name), m_rand_weight(rand_weight)
+Terrain::Terrain(int terrain_id)
 {
-	if (m_name.empty()) m_name = fileprefix;
-	m_crc32 = 0;
+	int stack_top = lua_gettop(L);
+    // Enter 'TerrainTable' table
+	lua_pushstring(L, "TerrainTable");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	assert(lua_istable(L, -1)); 
+	// Enter [terrain_id] table
+	lua_pushnumber(L, terrain_id);
+	lua_gettable(L, -2);
+	assert(lua_istable(L, -1)); 
+    // Extract terrain crc32
+	lua_pushstring(L, "Crc32");
+	lua_gettable(L, -2);
+	assert(lua_isnumber(L, -1)); 
+	m_crc32 = (unsigned long)lua_tonumber(L, -1);
+	lua_pop(L, 1);
+    // Extract terrain name
+	lua_pushstring(L, "Name");
+	lua_gettable(L, -2);
+	assert(lua_isstring(L, -1)); 
+	m_name = lua_tostring(L, -1);
+	lua_pop(L, 1);
+	// Enter 'Maps' table
+	lua_pushstring(L, "Maps");
+	lua_gettable(L, -2);
+	assert(lua_istable(L, -1)); 
+	m_rand_weight = 1;
 
-	if (m_rand_weight < 0) m_rand_weight = 0;
 	m_blocks.resize(MAP_BLOCKS_LIMIT);
 	std::vector<block_info>::size_type index;
 	for (index = 0; index < m_blocks.size(); index++) {
-		char fname[256];
-		sprintf(fname, "%s%02d.map", fileprefix, index);
-		int fh = OPEN_ORIG(fname, O_RDONLY | O_BINARY);
+		lua_pushnumber(L, index);
+		lua_gettable(L, -2);
+		if (!lua_isstring(L, -1)) {
+			m_blocks[index].rand_weight = 0;
+			lua_pop(L, 1);
+			continue;
+		}
+
+		const char *fname = lua_tostring(L, -1);
+		int fh = open(fname, O_RDONLY | O_BINARY);
 		if (fh == -1)
 		{
 			m_blocks[index].rand_weight = 0;
+			lua_pop(L, 1);
 			continue;
 		}
-		long size = filelength(fh);
-		unsigned char *buffer = new unsigned char[size];
-		read(fh, buffer, size);
+
+		unsigned char buffer[3];
+		read(fh, buffer, 3);
+		close(fh);
+
 		assert(buffer[0] % 10 == 0);
 		assert(buffer[1] % 10 == 0);
 		m_blocks[index].x_size      = buffer[0] / 10;
 		m_blocks[index].y_size      = buffer[1] / 10;
 		m_blocks[index].z_size      = buffer[2];
-		m_blocks[index].rand_weight = 100;
-	//	Update terrain crc32 with map block filename and its content
-		m_crc32 = update_crc32(m_crc32, fname, strlen(fname));
-		m_crc32 = update_crc32(m_crc32, buffer, size);
-		delete [] buffer;
-		close(fh);
+		m_blocks[index].rand_weight = 1;
+
+		lua_pop(L, 1);
 	}
+
+	lua_settop(L, stack_top);
 }
 
 Terrain::~Terrain()
@@ -1656,20 +1701,28 @@ bool Terrain::create_geodata(GEODATA &gd)
 
 TerrainSet::TerrainSet()
 {
-	push_config_state();
-	set_config_file("ufo2000.ini");
-	terrain[0]  = new Terrain("maps/jungle",  "", get_config_int("Terrain", "jungle", 100));
-	terrain[1]  = new Terrain("maps/culta",   "", get_config_int("Terrain", "culta",  200));
-	terrain[2]  = new Terrain("maps/forest",  "", get_config_int("Terrain", "forest", 100));
-	terrain[3]  = new Terrain("maps/xbase_",  "", get_config_int("Terrain", "xbase",    0));
-	terrain[4]  = new Terrain("maps/ubase_",  "", get_config_int("Terrain", "ubase",    0));
-	terrain[5]  = new Terrain("maps/urban",   "", get_config_int("Terrain", "urban",  200));
-	terrain[6]  = new Terrain("maps/desert",  "", get_config_int("Terrain", "desert", 100));
-	terrain[7]  = new Terrain("maps/mount",   "", get_config_int("Terrain", "mount",  100));
-	terrain[8]  = new Terrain("maps/polar",   "", get_config_int("Terrain", "polar",  100));
-	terrain[9]  = new Terrain("maps/mars",    "", get_config_int("Terrain", "mars",   100));
-	terrain[10] = new Terrain("newmaps/wareh","", get_config_int("Terrain", "wareh",  200));
-	pop_config_state();
+	int stack_top = lua_gettop(L);
+	lua_pushstring(L, "TerrainTable");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	assert(lua_istable(L, -1)); 
+
+	lua_pushnil(L);
+	while (lua_next(L, -2) != 0) {
+		assert(lua_isnumber(L, -2));
+		int terrain_id = (int)lua_tonumber(L, -2);
+
+		terrain[terrain_id] = new Terrain(terrain_id);
+
+		lua_pop(L, 1);
+	}
+
+	lua_settop(L, stack_top);
+
+	if (terrain.empty()) {
+		display_error_message(
+			"Terrain data initialization failed."
+			"At least one valid terrain required.");
+	}
 }
 
 TerrainSet::~TerrainSet()

@@ -363,7 +363,7 @@ class Terrain
 	int get_random_block();
 
 public:
-	Terrain(const char *fileprefix, const char *name, int rand_weight = 100);
+	Terrain(int terrain_id);
 	virtual ~Terrain();
 
 	int get_rand_weight() { return m_rand_weight; }

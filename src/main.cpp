@@ -385,6 +385,23 @@ void check_data_files()
 	}
 }
 
+lua_State *L;
+
+static int lua_UpdateCrc32(lua_State *L)
+{
+	int n = lua_gettop(L);
+	if (n != 2 || !lua_isnumber(L, 1) || !lua_isstring(L, 2)) {
+		lua_pushstring(L, "incorrect arguments to function `UpdateCrc32'");
+		lua_error(L);
+    }
+
+    unsigned long result = update_crc32(
+    	(unsigned long)lua_tonumber(L, 1), lua_tostring(L, 2), lua_strlen(L, 2));
+
+    lua_pushnumber(L, result);
+    return 1;
+}
+
 void initmain(int argc, char *argv[])
 {
 	srand(time(NULL));
@@ -392,6 +409,18 @@ void initmain(int argc, char *argv[])
 	allegro_init();
 	register_bitmap_file_type("jpg", load_jpg, NULL);
 	set_color_conversion(COLORCONV_TOTAL | COLORCONV_DITHER);
+
+	L = lua_open();
+	lua_register(L, "UpdateCrc32", lua_UpdateCrc32);
+	luaopen_base(L);
+	luaopen_string(L);
+	// $$$ Not a very good idea to allow file operations from scripts,
+    // but it is a first implementation
+	luaopen_io(L);
+
+	lua_dofile(L, "init-scripts/main.lua");
+	lua_dofile(L, "init-scripts/standard-maps.lua");
+	lua_dofile(L, "init-scripts/user-maps.lua");
 
     FLAGS = 0;
 	push_config_state();
@@ -459,12 +488,6 @@ void initmain(int argc, char *argv[])
 			exit(1);
 		}
 	}
-
-	memset(&mapdata, 0, sizeof(mapdata));
-	int fh = OPEN_GTEMP("geodata.dat", O_RDONLY | O_BINARY);
-	assert(fh != -1);
-	read(fh, &mapdata, sizeof(mapdata));
-	close(fh);
 
 	set_window_title("UFO2000");
 	set_window_close_button(0);
@@ -568,6 +591,15 @@ void initmain(int argc, char *argv[])
 
 	fade_out(FADE_SPEED);
 	clear(screen);
+
+	memset(&mapdata, 0, sizeof(mapdata));
+	int fh = OPEN_GTEMP("geodata.dat", O_RDONLY | O_BINARY);
+	if (fh != -1) {
+		read(fh, &mapdata, sizeof(mapdata));
+		close(fh);
+	}
+	if (fh == -1 || !Map::valid_GEODATA(&mapdata))
+		Map::new_GEODATA(&mapdata);
 
 	delete print_win;
 }

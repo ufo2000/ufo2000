@@ -31,7 +31,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 unsigned char TerraPCK::m_tbb[0xFFFF];
 unsigned short TerraPCK::m_tbs[0xFFF];
 
-TerraPCK::TerraPCK(char *pckfname) : PCK(pckfname)
+TerraPCK::TerraPCK(const char *pckfname) : PCK(pckfname)
 {
 	m_mcdnum = 0;
 	m_mcdstart[m_mcdnum] = 0;
@@ -52,7 +52,7 @@ TerraPCK::~TerraPCK()
 	}
 }
 
-void TerraPCK::add(char *pckfname)
+void TerraPCK::add(const char *pckfname)
 {
 	strcpy(m_fname, pckfname);
 
