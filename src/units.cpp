@@ -114,6 +114,8 @@ int Units::add(int num, char *nm, int ct)
 
 void Units::print(int gcol)
 {
+	int color4, color5, color6;
+
 	text_mode( -1);
 	int x1, y1, x2, y2, color = xcom1_color(60);
 	int i;
@@ -155,14 +157,35 @@ void Units::print(int gcol)
 	}
 	draw_text();
 
-	rect(screen2, gmx, SCREEN2H - 35, gmx + gmw, SCREEN2H - 5, xcom1_color(1));
-	textout_centre(screen2, font, "MAP", gmx + gmw / 2, SCREEN2H - 29, xcom1_color(8));
+	rect(screen2, gmx, SCREEN2H - 47, gmx + gmw, SCREEN2H - 5, xcom1_color(1));
+	textout_centre(screen2, font, "MAP", gmx + gmw / 2, SCREEN2H - 41, xcom1_color(8));
 	textout_centre(screen2, font, "NEW", gmx + gmw / 2 - gmw / 4, SCREEN2H - 17, xcom1_color(1));
 	textout_centre(screen2, font, "LOAD", gmx + gmw / 2 + gmw / 4, SCREEN2H - 17, xcom1_color(1));
 
+	switch (MAP_WIDTH) {
 
-	//textout_centre(screen2, large, "START", gmx+gmw/2, SCREEN2H-49, 33);
-	//textout_centre(screen2, large, "CONFIRM", gmx+gmw/2, SCREEN2H-69, 33);
+		case 4:
+		color4 = 55;
+		color5 = color6 = 40;
+		break;
+
+		case 5:
+		color5 = 55;
+		color4 = color6 = 40;
+		break;
+
+		case 6:
+		color6 = 55;
+		color4 = color5 = 40;
+		break;
+
+		default:
+		color4 = color5 = color6 = 40;
+	}
+
+	textout_centre(screen2, font, "4*4", gmx + gmw / 2 - gmw / 4, SCREEN2H - 29, xcom1_color(color4));
+	textout_centre(screen2, font, "5*5", gmx + gmw / 2, SCREEN2H - 29, xcom1_color(color5));
+	textout_centre(screen2, font, "6*6", gmx + gmw / 2 + gmw / 4, SCREEN2H - 29, xcom1_color(color6));
 
 	int points = 0;
 	for (int n = 0; n < size; n++) {
@@ -456,6 +479,23 @@ void Units::execute(Map *map, int map_change_allowed)
 				g_console->printf("%s", "invalid GEODATA file.");
 			}
 		}
+	}
+
+
+
+	if (mouse_inside(gmx + gmw / 2 - gmw / 4 - 20, SCREEN2H - 32, gmx + gmw / 2 - gmw / 4 + 20, SCREEN2H - 21)) {
+		//"4*4"
+		MAP_WIDTH = MAP_HEIGHT = 4;
+	}
+
+	if (mouse_inside(gmx + gmw / 2 - 20, SCREEN2H - 32, gmx + gmw / 2 + 20, SCREEN2H - 21)) {
+		//"5*5"
+		MAP_WIDTH = MAP_HEIGHT = 5;
+	}
+
+	if (mouse_inside(gmx + gmw / 2 + gmw / 4 - 20, SCREEN2H - 32, gmx + gmw / 2 + gmw / 4 + 20, SCREEN2H - 21)) {
+		//"6*6"
+		MAP_WIDTH = MAP_HEIGHT = 6;
 	}
 }
 
