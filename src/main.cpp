@@ -227,17 +227,8 @@ int initgame()
 	resize_screen2(0, 0);
 	//clear_to_color(screen, 58); //!!!!!
 	
-	//it's not the best place for this code, but i didn't find better
-	if (scenario->rules[3]) {
-	    for (int i = 0; i < 4; i++) {
-	        for (int j = 0; j < 10 * mapdata.x_size; j++) {
-	            for (int k = 0; k < 10 * mapdata.y_size; k++) {
-	                platoon_local->set_seen(i, j, k, 1);
-	                platoon_remote->set_seen(i, j, k, 1);
-				}
-			}
-		}
-	}
+	// Set/Clear some scenario specific variables and effects:
+	scenario->start();
 
 	return 1;
 }

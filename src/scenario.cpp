@@ -116,8 +116,8 @@ void Scenario::init_control ()
 	name[SC_CONTROL] = "Control";
                                     
 	briefing_left[SC_CONTROL][0] = briefing_right[SC_CONTROL][0] = "You must control the 10x10 area in the centre of ";
-	briefing_left[SC_CONTROL][1] = briefing_right[SC_CONTROL][1] = "the map for number of half-turns set in the      ";
-	briefing_left[SC_CONTROL][2] = briefing_right[SC_CONTROL][2] = "\"Options\" section.                               ";
+	briefing_left[SC_CONTROL][1] = briefing_right[SC_CONTROL][1] = "the map for number of successive half-turns set  ";
+	briefing_left[SC_CONTROL][2] = briefing_right[SC_CONTROL][2] = "in the \"Options\" section.                      ";
 	briefing_left[SC_CONTROL][3] = briefing_right[SC_CONTROL][3] = "To control an area you have to have in it more   ";
 	briefing_left[SC_CONTROL][4] = briefing_right[SC_CONTROL][4] = "soldiers than your opponent.                     ";
 
@@ -228,6 +228,25 @@ bool Scenario::new_scenario (std::string sc_name)
 	return false;
 }
 
+void Scenario::start ()
+{
+	if (rules[3]) {
+	    // Set the entire map visible:
+	    for (int i = 0; i < 4; i++) {
+	        for (int j = 0; j < 10 * mapdata.x_size; j++) {
+	            for (int k = 0; k < 10 * mapdata.y_size; k++) {
+	                platoon_local->set_seen(i, j, k, 1);
+	                platoon_remote->set_seen(i, j, k, 1);
+				}
+			}
+		}
+	}
+
+	if (type == SC_CONTROL) {
+	    // Reset the control time to zero:
+		turn_hold[0] = turn_hold[1] = -1;
+	}
+}
 
 void Scenario::new_coords ()
 {
@@ -438,13 +457,16 @@ int Scenario::conditions_control ()
 	    turn_hold[1] = -1;
 		g_console->printf(xcom1_color(98), "Nobody is controlling the target area.");
     }
-	if (turn_hold[0] == (options[SC_CONTROL][0]->value - 1) / 2 && p1 == platoon_local)
+	// The "- 2" in the following lines means that there will be no watch
+	// mode in hotseat when one of the players wins - he wins immediately
+	// after his turn.
+	if (turn_hold[0] >= options[SC_CONTROL][0]->value * 2 - 2 && p1 == platoon_local)
 	    win = 2;
-	if (turn_hold[0] == (options[SC_CONTROL][0]->value - 1) / 2 && p1 == platoon_remote)
+	if (turn_hold[0] >= options[SC_CONTROL][0]->value * 2 - 2 && p1 == platoon_remote)
 	    loss = 1;
-	if (turn_hold[1] == (options[SC_CONTROL][0]->value - 1) / 2 && p2 == platoon_local)
+	if (turn_hold[1] >= options[SC_CONTROL][0]->value * 2 - 2 && p2 == platoon_local)
 	    win = 2;
-	if (turn_hold[1] == (options[SC_CONTROL][0]->value - 1) / 2 && p2 == platoon_remote)
+	if (turn_hold[1] >= options[SC_CONTROL][0]->value * 2 - 2 && p2 == platoon_remote)
 	    loss = 1;
 	    
     return win + loss;
@@ -939,7 +961,7 @@ bool Scenario::place_hold (PanPos pos, int x, int y)
 {
 	if (options[SC_HOLD][1]->value) {
 		if (pos == POS_LEFT) {
-    	    if (x > (mapdata.x_size - 2) * 10 / 2 && x < (mapdata.x_size - 2) * 10 / 2 + 20 && y > (mapdata.y_size - 2) * 10 / 2 && y < (mapdata.y_size - 2) * 10 / 2 + 20)
+    	    if (x >= (mapdata.x_size - 2) * 10 / 2 && x < (mapdata.x_size - 2) * 10 / 2 + 20 && y >= (mapdata.y_size - 2) * 10 / 2 && y < (mapdata.y_size - 2) * 10 / 2 + 20)
 		        return true;
 		} else {
 		    if (x < 5 || x > mapdata.x_size * 10 - 6 || y < 5 || y > mapdata.y_size * 10 - 6)
