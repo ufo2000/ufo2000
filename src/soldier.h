@@ -160,6 +160,7 @@ public:
 	void draw_blue_selector();
 	void showspk();
 	void drawinfo(int x, int y);
+	void draw_stats(BITMAP* bitmap, int x, int y);
 	void draw_bullet_way();
 	void draw_enemy_seen(int select_y);
 	int center_enemy_seen();

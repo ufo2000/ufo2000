@@ -2524,6 +2524,19 @@ void Soldier::drawinfo(int x, int y)
     }
 }
 
+void Soldier::draw_stats(BITMAP* bitmap, int x, int y)
+{   
+    int dx = 15;
+    textprintf(bitmap, g_small_font, x, y, COLOR_WHITE, "%s", md.Name); x += 70;
+    textprintf(bitmap, g_small_font, x, y, COLOR_GREEN, "%d", ud.CurTU); x += dx;
+    textprintf(bitmap, g_small_font, x, y, COLOR_RED, "%d", ud.CurHealth); x += dx;
+    textprintf(bitmap, g_small_font, x, y, COLOR_WHITE, "%d", ud.CurFront); x += dx;
+    textprintf(bitmap, g_small_font, x, y, COLOR_WHITE, "%d", ud.CurLeft); x += dx;
+    textprintf(bitmap, g_small_font, x, y, COLOR_WHITE, "%d", ud.CurRight); x += dx;
+    textprintf(bitmap, g_small_font, x, y, COLOR_WHITE, "%d", ud.CurRear); x += dx;
+    textprintf(bitmap, g_small_font, x, y, COLOR_WHITE, "%d", ud.CurUnder); x += dx;
+}
+
 #define AUTO   0
 #define SNAP   1
 #define AIMED  2

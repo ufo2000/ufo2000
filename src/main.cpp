@@ -989,6 +989,27 @@ void recv_turn(int crc)
 
 int GAMELOOP = 0;
 
+
+BITMAP* stat_panel;
+
+
+void draw_stats()
+{ 
+    destroy_bitmap(stat_panel);
+    stat_panel = create_bitmap(200, 200);
+	  clear_to_color(stat_panel, BACKCOLOR);
+    int y = 240;
+    Soldier* man;
+    textprintf(stat_panel, g_small_font, 10, 0, COLOR_GREEN,"Local  %d", platoon_local->num_of_men());
+    textprintf(stat_panel, g_small_font, 100, 0, COLOR_RED,"Remote %d", platoon_remote->num_of_men());
+    for (int i=0;i < 15; i++){
+        man = platoon_local->findnum(i);
+        if (man != NULL)
+            man->draw_stats(stat_panel, 10, 10 * (i+1) );
+    }
+    blit(stat_panel, screen, 0, 0, SCREEN2W, 240, screen->w, screen->h);
+}
+
 /**
  * Redraw battlescape and minimap on the screen
  */
@@ -1034,6 +1055,8 @@ void build_screen(int & select_y)
 
             if (g_time_left > 0) 
                 show_time_left();
+
+            draw_stats();
 
             if (MODE == WATCH)
                 textprintf(screen2, font, 0, 0, COLOR_WHITE, _("WATCH") );
