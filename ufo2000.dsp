@@ -203,6 +203,14 @@ SOURCE=.\src\map_pathfind.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\minimap.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\minimap.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\multiplay.cpp
 # End Source File
 # Begin Source File

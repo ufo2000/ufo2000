@@ -363,6 +363,9 @@ extern int NOTICEremote;
 extern Wind *info_win;
 extern Icon *icon;
 extern int VISIBILITY_CHANGED;
+extern int g_time_limit;
+
+extern volatile int g_time_left;
 
 extern volatile int g_switch_in_counter;
 class ConsoleStatusLine;

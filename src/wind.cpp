@@ -55,6 +55,7 @@ bool ConsoleStatusLine::backspace()
 
 void ConsoleStatusLine::redraw_full(BITMAP *bmp, int x, int y)
 {
+	acquire_bitmap(bmp);
 	BITMAP * temp_bmp = create_bitmap(m_width, m_height);
 	clear_to_color(temp_bmp, xcom1_color(11));
 	text_mode(-1); textout(temp_bmp, m_font, m_text.c_str(), 0, 0, m_color);
@@ -64,6 +65,7 @@ void ConsoleStatusLine::redraw_full(BITMAP *bmp, int x, int y)
 	blit(temp_bmp, bmp, 0, 0, x, y, m_width, m_height);
 	destroy_bitmap(temp_bmp);
 	m_need_redraw = false;
+	release_bitmap(bmp);
 }
 
 void ConsoleStatusLine::redraw_fast(BITMAP *bmp, int x, int y)
@@ -112,6 +114,7 @@ ConsoleWindow::~ConsoleWindow()
 
 void ConsoleWindow::redraw_full(BITMAP *bmp, int x, int y)
 {
+	acquire_bitmap(bmp);
 	BITMAP * temp_bmp = create_bitmap(m_width, m_height);
 	clear_to_color(temp_bmp, xcom1_color(15));
 	int lines_to_show = (m_height - m_status_line->get_height()) / text_height(m_font);
@@ -125,6 +128,7 @@ void ConsoleWindow::redraw_full(BITMAP *bmp, int x, int y)
 	blit(temp_bmp, bmp, 0, 0, x, y, m_width, m_height);
 	destroy_bitmap(temp_bmp);
 	m_need_redraw = false;
+	release_bitmap(bmp);
 }
 
 void ConsoleWindow::redraw_fast(BITMAP *bmp, int x, int y)

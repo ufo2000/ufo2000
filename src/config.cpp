@@ -73,6 +73,8 @@ void loadini()
 	local_platoon_size = get_config_int(edit, "platoon_size", 1);
 	strcpy(last_map_name, get_config_string(edit, "last_map_name", ""));
 	strcpy(last_unit_name, get_config_string(edit, "last_unit_name", ""));
+
+	g_time_limit = get_config_int(gen, "time_limit", -1);
 }
 
 void saveini()

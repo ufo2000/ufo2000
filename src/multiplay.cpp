@@ -399,6 +399,9 @@ void Net::check()
 		case CMD_MAP_DATA:
 			recv_map_data();
 			break;
+		case CMD_TIME_LIMIT:
+			recv_time_limit();
+			break;
 		case CMD_FINISH_PLANNER:
 			recv_finish_planner();
 			break;
@@ -1326,6 +1329,24 @@ int Net::recv_map_data()
 	pkt.pop((char *) & mapdata, sizeof(GEODATA));
 	mapdata.load_game = 77;
 	//info->printstr("\nrecv_map_data\n");
+	return 1;
+}
+
+void Net::send_time_limit(int time_limit)
+{
+	if (!SEND) return ;
+
+	pkt.create(CMD_TIME_LIMIT);
+	pkt << time_limit;
+
+	send(pkt.str(), pkt.str_len());
+}
+
+int Net::recv_time_limit()
+{
+	int time_limit;
+	pkt >> time_limit;
+	g_time_limit = time_limit;
 	return 1;
 }
 

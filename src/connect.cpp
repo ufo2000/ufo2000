@@ -425,10 +425,14 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 		pd_remote = &pd1;
 		pd_local = &pd2;
 	}
+
 	local.set_mouse_range(639, SCREEN2H - 1, map2d_x, 0, map2d_x + map2d->w - 1, map2d->h - 1);
 	editor->build_Units(local);
-	if (HOST)
+
+	if (HOST) {
 		net->send_map_data(&mapdata);
+		net->send_time_limit(g_time_limit);
+	}
 
 	while (!DONE) {
 

@@ -83,6 +83,7 @@ private:
 	int recv_unit_data_size();
 	int recv_unit_data();
 	int recv_map_data();
+	int recv_time_limit();
 public:
 	GameType gametype;
 
@@ -135,6 +136,7 @@ public:
 	void send_unit_data_size(int size);
 	void send_unit_data(int num, int lev, int col, int row, MANDATA *md, ITEMDATA *id);
 	void send_map_data(GEODATA *gd);
+	void send_time_limit(int time_limit);
 
 	void send_finish_planner();
 	int recv_finish_planner();

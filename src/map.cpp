@@ -431,7 +431,7 @@ void Map::set_sel(int mx, int my)
 	if (sel_row < 0) sel_row = 0;
 	if (sel_col >= 10 * width) sel_col = 10 * width - 1;
 	if (sel_row >= 10 * height) sel_row = 10 * height - 1;
-	text_mode(0); textprintf(screen, font, SCREEN2W + 8, 0, xcom1_color(1), "x=%02d, y=%02d", sel_col, sel_row);
+//	text_mode(0); textprintf(screen, font, SCREEN2W + 8, 0, xcom1_color(1), "x=%02d, y=%02d", sel_col, sel_row);
 }
 
 

@@ -59,6 +59,11 @@ int HOST, DONE, TARGET, turn;
 Mode MODE;
 ConsoleWindow *g_console;
 
+//! Limit of time for a single turn in seconds
+int g_time_limit;
+//! Current counter for time left for this turn
+volatile int g_time_left;
+
 Net *net;
 Map *map;
 TerrainSet *terrain_set;
@@ -97,11 +102,12 @@ void timer_handler2()
 }
 END_OF_FUNCTION(timer_handler2);
 
-void timer_handler3()
+void timer_1s()
 {
+	if (g_time_left > 0) g_time_left--;
 	NOTICE++;
 }
-END_OF_FUNCTION(timer_handler3);
+END_OF_FUNCTION(timer_1s);
 
 void timer_handler4()
 {
@@ -118,14 +124,14 @@ void install_timers(int _speed_unit, int _speed_bullet, int _speed_mapscroll)
 {
 	install_int_ex(timer_handler, BPS_TO_TIMER(_speed_unit));     //ticks each second
 	install_int_ex(timer_handler2, BPS_TO_TIMER(_speed_bullet * 2));     //ticks each second
-	install_int_ex(timer_handler3, BPS_TO_TIMER(1));     //ticks each second
 	install_int_ex(timer_handler4, BPS_TO_TIMER(_speed_mapscroll));     //ticks each second
+	install_int_ex(timer_1s, BPS_TO_TIMER(1));     //ticks each second
 }
 
 void uninstall_timers()
 {
 	remove_int(timer_handler4);
-	remove_int(timer_handler3);
+	remove_int(timer_1s);
 	remove_int(timer_handler2);
 	remove_int(timer_handler);
 }
@@ -398,8 +404,9 @@ void initmain(int argc, char *argv[])
 	LOCK_VARIABLE(CHANGE); LOCK_FUNCTION(mouser_proc);
 	LOCK_VARIABLE(MOVEIT); LOCK_FUNCTION(timer_handler);
 	LOCK_VARIABLE(FLYIT); LOCK_FUNCTION(timer_handler2);
-	LOCK_VARIABLE(NOTICE); LOCK_FUNCTION(timer_handler3);
+	LOCK_VARIABLE(NOTICE); LOCK_VARIABLE(g_time_left); LOCK_FUNCTION(timer_1s);
 	LOCK_VARIABLE(MAPSCROLL); LOCK_FUNCTION(timer_handler4);
+
 	LOCK_FUNCTION(keyboard_proc);
 
 	print("initpck units");
@@ -536,10 +543,13 @@ void next_turn(int crc)
 
 	turn++;
 
-	if (MODE == WATCH)
+	if (MODE == WATCH) {
+		g_time_left = g_time_limit;
 		MODE = MAP3D;
-	else
+	} else {
+		g_time_left = 0;
 		MODE = WATCH;
+	}
 
 	if (net->gametype == HOTSEAT) {
 		icon->show_eot();
@@ -555,6 +565,7 @@ void next_turn(int crc)
 			map->center(sel_man);
 //		map->clearseen();
 		MODE = MAP3D;
+		g_time_left = g_time_limit;
 		RECALC_VISIBILITY = 1;      // !!!!!!!!!!!!!!!!!
 	}
 
@@ -723,8 +734,21 @@ void gameloop()
 	GAMELOOP = 1;
 	RECALC_VISIBILITY = 1;
 
+	if (MODE != WATCH) {
+		g_time_left = g_time_limit;
+	} else {
+		g_time_left = 0;
+	}
+
 	while (!DONE) {
 	
+		if (MODE != WATCH && g_time_left == 0) {
+			TARGET = 0;
+			if (platoon_local->nomoves()) {
+				next_turn(-1);
+			}
+		}
+
 		g_console->redraw(screen, 0, SCREEN2H);
 
 		net->check();

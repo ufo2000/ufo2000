@@ -57,9 +57,37 @@ public:
 class MinimapArea : public VisualObject
 {
 	Minimap *m_minimap;
+	int      m_last_time_left;
+
+	void show_time_left(BITMAP *bmp, int x, int y, int full_redraw_mode)
+	{
+		int time_left = g_time_left;
+
+		if (!full_redraw_mode && m_last_time_left == time_left) return;
+
+		rectfill(bmp, 
+			x + m_width - m_minimap->get_width(),
+			y + m_minimap->get_height(),
+			x + m_width - 1,
+			y + m_minimap->get_height() + text_height(font),
+			xcom1_color(11));
+
+		if (time_left > 0) {
+			text_mode(-1);
+			textprintf_centre(bmp, font, 
+				x + m_width - m_minimap->get_width() / 2,
+				y + m_minimap->get_height(), 
+				xcom1_color(1),
+				"Time left: %d", time_left); // $$$
+		}
+
+		m_last_time_left = time_left;
+	}
+
 public:
 	MinimapArea(Map *map, int width, int height)
 	{
+		m_last_time_left = -1;
 		m_minimap = new Minimap(map);
 	}
 	virtual ~MinimapArea()
@@ -69,19 +97,23 @@ public:
 
 	void redraw_full(BITMAP *bmp, int x, int y)
 	{
+		acquire_bitmap(bmp);
 		BITMAP *temp_bmp = create_bitmap(m_width, m_height);
-		clear_to_color(temp_bmp, xcom1_color(15));
+		clear_to_color(temp_bmp, xcom1_color(11));
 
 		m_minimap->set_full_redraw();
-		m_minimap->redraw(temp_bmp, 16, 40);
+		m_minimap->redraw(temp_bmp, m_width - m_minimap->get_width(), 0);
+		show_time_left(temp_bmp, 0, 0, 1);
 
 		blit(temp_bmp, bmp, 0, 0, x, y, m_width, m_height);
 		destroy_bitmap(temp_bmp);
+		release_bitmap(bmp);
 	}
 
 	void redraw_fast(BITMAP *bmp, int x, int y)
 	{
-		m_minimap->redraw(bmp, x + 16, y + 40);
+		m_minimap->redraw(bmp, x + m_width - m_minimap->get_width(), y);
+		show_time_left(bmp, x, y, 0);
 	}
 
 	bool resize(int width, int height)
