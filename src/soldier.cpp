@@ -887,8 +887,6 @@ void Soldier::calc_visible_cells()
 
 int Soldier::move(int ISLOCAL) 
 {
-	map->check_mine(z, x, y);
-
 	if ((z > 0) && map->mcd(z, x, y, 0)->No_Floor) {
 		if (!map->isStairs(z - 1, x, y)) {
 			map->set_man(z, x, y, NULL);
@@ -965,6 +963,12 @@ int Soldier::move(int ISLOCAL)
 				else
 					dir = way[curway];
 			}
+
+			if (map->check_mine(z, x, y))
+			{
+				finish_march(ISLOCAL);
+				if (m_state == DIE) return 0;
+			}
 		}
 	}
 
@@ -1022,7 +1026,8 @@ void Soldier::wayto(int dest_lev, int dest_col, int dest_row)
 
 void Soldier::finish_march(int ISLOCAL)
 {
-	m_state = STAND;
+	if (m_state != DIE)	
+		m_state = STAND;
 	curway = -1;
 	waylen = 0;
 	if (ISLOCAL)

@@ -145,7 +145,11 @@ int Explosive::detonate(Item *it)
 	damage = it->data()->damage;
 	range = it->explo_range();
 
-	net->send_detonate_item(lev, col, row, iplace, it->x, it->y);
+//	$$$ Dirty hack for proximity grenades (their explosion is not sent to 
+//	remote player, but remote player's soldier steps on proximity mine during
+//	his movement)
+	if (type != PROXIMITY_GRENADE)
+		net->send_detonate_item(lev, col, row, iplace, it->x, it->y);
 
 	remove(it);
 	int v = ip->destroy(it);

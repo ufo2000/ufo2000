@@ -81,7 +81,7 @@ public:
 
 	void destroy_all_items();
 	void damage_items(int dam);
-	void check_mine();
+	bool check_mine();
 	void draw_deselect_time(int PLACE_NUM, int time);
 
 	virtual bool Write(persist::Engine &archive) const;

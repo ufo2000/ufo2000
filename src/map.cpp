@@ -1344,7 +1344,6 @@ int Map::explode(int lev, int col, int row, int type, int maxrange, int damage)
 	memset(field, 0, level * width * 10 * height * 10);
 
 	for (int ll = lev - 1; ll <= lev + 1; ll++) {
-		//for(int ll=lev; ll<=lev; ll++) {
 		if ((ll < 0) || (ll >= level))
 			continue;
 		int range = maxrange - abs(lev - ll);
@@ -1357,13 +1356,9 @@ int Map::explode(int lev, int col, int row, int type, int maxrange, int damage)
 			int dam = damage;
 
 			for (int l = 0; l < range; l++) {
-				int nz, nx, ny;
-				//nz = lev + floor(l * cos(fi)+0.5);
-				nz = ll;
-				nx = col + (int)floor(l * cos(te) + 0.5);
-				ny = row + (int)floor(l * sin(te) + 0.5);
-				//nx = col + floor(l * cos(te) * sin(fi)+0.5);
-				//ny = row + floor(l * sin(te) * sin(fi)+0.5);
+				int nz = ll;
+				int nx = col + (int)floor(l * cos(te) + 0.5);
+				int ny = row + (int)floor(l * sin(te) + 0.5);
 
 				if (!cell_inside(nz, nx, ny))
 					break;
@@ -1375,8 +1370,6 @@ int Map::explode(int lev, int col, int row, int type, int maxrange, int damage)
 					continue;
 				field[nz * width * 10 * height * 10 + nx * width * 10 + ny] = 1;
 
-				//dam -= (damage / (range+range/2)) * l;
-				//if (dam < 1) dam = 1;
 				explocell(nz, nx, ny, dam, type);
 			}
 		}
@@ -1386,14 +1379,16 @@ int Map::explode(int lev, int col, int row, int type, int maxrange, int damage)
 	return 1;
 }
 
-void Map::check_mine(int lev, int col, int row) 
+bool Map::check_mine(int lev, int col, int row) 
 {
 	for (int c = col - 1; c <= col + 1; c++) {
 		for (int r = row - 1; r <= row + 1; r++) {
 			if (!cell_inside(lev, c, r)) continue;
-			place(lev, c, r)->check_mine();
+			if (place(lev, c, r)->check_mine())
+				return true;
 		}
 	}
+	return false;
 }
 
 void Map::explocell(int lev, int col, int row, int damage, int type)
