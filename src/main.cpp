@@ -2205,26 +2205,38 @@ void gameloop()
 
     if (win || loss)
     {
+        net->m_replay_file->close();
+    
         if (net->gametype != GAME_TYPE_REPLAY && askmenu(_("Save replay?"))) {
-            net->m_replay_file->close();
-
             char path[1000]; *path = 0;
 
-            if (file_select_mr( _("Save REPLAY.rep file"), path, "rep")) {
-                if (exists(F("$(home)/replay.tmp"))) {
-                    if (rename(F("$(home)/replay.tmp"), path) == 0) {
-                        g_console->printf("Replay saved as %s", path);
-                    } else {
-                        g_console->printf("Unable to save %s!", path);
-                        g_console->printf("%s (%d)", strerror(errno), errno);
+            while (true) {
+                if (file_select_mr( _("Save REPLAY.rep file"), path, "rep")) {
+                    if (exists(path)) {
+                        if (askmenu(_("File exists. Overwrite?")))
+                            remove(path);
+                        else
+                            continue;
                     }
-                }
+                
+                    if (exists(F("$(home)/replay.tmp"))) {
+                        if (rename(F("$(home)/replay.tmp"), path) == 0) {
+                            g_console->printf(_("Replay saved as %s"), path);
+                            break;
+                        } else {
+                            g_console->printf(_("Unable to save %s!"), path);
+                            g_console->printf("%s (%d)", strerror(errno), errno);
+                            break;
+                        }
+                    } else
+                        break;
+                } else break;
             }
         }
 
         if (exists(F("$(home)/replay.tmp"))) {
             if (remove(F("$(home)/replay.tmp")) != -0) {
-                g_console->printf("Unable to delete temporary file %s!", F("$(home)/replay.tmp"));
+                g_console->printf(_("Unable to delete temporary file %s!)", F("$(home)/replay.tmp"));
                 g_console->printf("%s (%d)", strerror(errno), errno);
             }
         }
