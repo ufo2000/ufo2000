@@ -264,22 +264,6 @@ void closegame()
 int print_y = 0;
 Wind *print_win = NULL;
 
-void print(const char *str)
-{
-	//#ifdef WIN32
-	if (print_win != NULL) {
-		print_win->printstr(str);
-		print_win->printstr("\r\n");
-	} else {
-		text_mode( -1);
-		textout(screen, font, str, 0, print_y, xcom1_color(255));
-		print_y += 10;
-	}
-	//#else
-	//	cprintf("%s\r\n", str);
-	//#endif
-}
-
 class consoleBuf : public std::streambuf {
     std::string curline;
     bool doCout;
@@ -294,11 +278,11 @@ protected:
         if (c == 10) {
             if (print_win != NULL) {
                 curline.append("\r\n");
-                print_win->printstr(curline.c_str());
+                print_win->printstr(curline.c_str(), xcom1_color(1));
             } else {
                 curline.append("\n");
                 text_mode( -1);
-                textout(screen, font, curline.c_str(), 0, print_y, xcom1_color(255));
+                textout(screen, font, curline.c_str(), 0, print_y, xcom1_color(1));
                 print_y += 10;
             }
             curline.assign("");

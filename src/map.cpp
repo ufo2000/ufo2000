@@ -1460,20 +1460,19 @@ int Map::saveitems(char *txt)
 	return len;
 }
 
-//void Map::send_GEODATA() {
-//	net->send_map_data(&gd);
-//}
-
-//void Map::recv_GEODATA(GEODATA *gd) {
-//}
 extern int MAP_WIDTH, MAP_HEIGHT;
 
 void Map::new_GEODATA(GEODATA *md)
 {
-	if (MAP_WIDTH > 6 || MAP_HEIGHT > 6) {
-		MAP_WIDTH = 5;
-		MAP_HEIGHT = 5;
-	}
+	// Check map size settings
+	if (MAP_WIDTH < 2) MAP_WIDTH = 2;
+	if (MAP_HEIGHT < 2) MAP_HEIGHT = 2;
+
+	if (MAP_WIDTH > 6) MAP_WIDTH = 6;
+	if (MAP_HEIGHT > 6) MAP_HEIGHT = 6;
+
+    // $$$ Hack - the game currently crashes when using nonsquare map
+	if (MAP_WIDTH != MAP_HEIGHT) MAP_HEIGHT = MAP_WIDTH;
 
 	terrain_set->create_geodata(
 		terrain_set->get_random_terrain_id(), MAP_WIDTH, MAP_HEIGHT, *md);
@@ -1481,8 +1480,9 @@ void Map::new_GEODATA(GEODATA *md)
 
 int Map::valid_GEODATA(GEODATA *md)
 {
-	if ((md->x_size * md->y_size > 36) || (md->x_size > 6) || (md->y_size > 6) ||
-	        (md->z_size != 4) || (md->terrain != TERRAIN_INDEX)) return 0;
+	if ((md->x_size > 6) || (md->y_size > 6) ||
+		(md->x_size < 2) || (md->y_size < 2) ||
+        (md->x_size != md->y_size) || (md->z_size != 4)) return 0;
 	return 1;
 }
 

@@ -28,14 +28,6 @@ private:
 	static DIALOG hostaddr_dialog[];
 	Packet pkt;
 
-	void new_mapdata();
-	void send_mapdata();
-	void recv_mapdata(char *crcpkt);
-
-	void new_mendata();
-	void send_mendata();
-	void recv_mendata(char *str);
-
 public:
 	int do_chat();
 	void reset_uds();

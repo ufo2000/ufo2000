@@ -455,7 +455,7 @@ void Wind::writechr(BITMAP *_bmp, int _x, int _y, int c, int color)
 void Wind::showcursor()
 {
 	rectfill(screen, m_x + m_curx * m_charw, m_y + m_cury * m_charh + m_charh - 2,
-	         m_x + m_curx * m_charw + m_charw - 3, m_y + m_cury * m_charh + m_charh - 1, xcom1_color(m_scrcol));
+	         m_x + m_curx * m_charw + m_charw - 3, m_y + m_cury * m_charh + m_charh - 1, m_scrcol);
 }
 
 void Wind::hidecursor()
