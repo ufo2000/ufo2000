@@ -66,7 +66,7 @@ static char weapon_in_use[] = {
 Editor::Editor()
 {
 	BITMAP *image = create_bitmap(320, 200); clear(image);
-	tac01 = new SPK("ufograph/tac01.scr");
+	tac01 = new SPK("$(xcom)/ufograph/tac01.scr");
 	tac01->show(image, 0, 0);
 	b123 = create_bitmap(83, 22); clear(b123);
 	blit(image, b123, 45, 0, 0, 0, 83, 22);
@@ -77,7 +77,7 @@ Editor::Editor()
 	destroy_bitmap(image);
 
 	m_armoury = new Place(0, 220, 20, 9);
-	m_armoury->load_bin("armoury.set");
+	m_armoury->load_bin("$(home)/armoury.set");
 	//armoury.put(new Item(KASTET));
 	//armoury.put(new Item(KNIFE));
 	/*for(int i=0; i<40; i++) {
@@ -88,22 +88,8 @@ Editor::Editor()
 	if (local_platoon_size > 10) local_platoon_size = 10;      //!!!!!!!!!!!
 	assert(local_platoon_size > 0);
 	m_plt = new Platoon(2001, local_platoon_size);
-	char fnbuf[1000];
-	if (ownfiles_prefix != NULL) {
-		ustrcpy(fnbuf, ownfiles_prefix);
-		ustrcpy(fnbuf + ustrlen(ownfiles_prefix), "soldier.dat" );
-	} else {
-		ustrcpy(fnbuf, "soldier.dat" );
-	}
-	m_plt->load_MANDATA(fnbuf);
-	if (ownfiles_prefix != NULL) {
-		ustrcpy(fnbuf, ownfiles_prefix);
-		ustrcpy(fnbuf + ustrlen(ownfiles_prefix), "items.dat" );
-	} else {
-		ustrcpy(fnbuf, "items.dat" );
-	}
-		
-	m_plt->load_ITEMDATA(fnbuf);
+	m_plt->load_MANDATA("$(home)/soldier.dat");
+	m_plt->load_ITEMDATA("$(home)/items.dat");
 	man = m_plt->captain();
 
 	sel_item = NULL;

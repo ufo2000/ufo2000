@@ -36,7 +36,7 @@
 -->
 
 <soundmap>
-    <file name="sound/sound1.cat" >  <!-- Original UFO file, 55 samples -->
+    <file name="$(xcom)/sound/sound1.cat" >  <!-- Original UFO file, 55 samples -->
 <!-- #00 --> <sample sym="step-snake" /> 
 <!-- #01 --> <sample sym="unused"  /> 
 <!-- #02 --> <sample sym="cv-heavy-cannon-shot"> 
@@ -124,7 +124,7 @@
 <!-- #54 --> <sample sym="stunrod-hit" /> 
     </file>
     
-    <file name="sound/sound2.cat" >  <!-- Original UFO file, 14 samples -->
+    <file name="$(xcom)/sound/sound2.cat" >  <!-- Original UFO file, 14 samples -->
 <!-- #00 --> <sample sym="button-push-1"> 
                  <alias sym="button-push-2" />
              </sample>
@@ -158,7 +158,7 @@
 <!-- #13 --> <sample sym="unknown" /> 
     </file>
     
-    <file name="sound/sample.cat" >  <!-- Collector's Edition file, 14 samples -->
+    <file name="$(xcom)/sound/sample.cat" >  <!-- Collector's Edition file, 14 samples -->
 <!-- #00 --> <sample sym="button-push-1" /> 
 <!-- #01 --> <sample sym="window-open-1" /> 
 <!-- #02 --> <sample sym="window-open-2" /> 
@@ -191,7 +191,7 @@
 
     </file>
     
-    <file name="sound/sample2.cat" >    <!-- Collector's Edition file, 55 samples -->
+    <file name="$(xcom)/sound/sample2.cat" >    <!-- Collector's Edition file, 55 samples -->
 <!-- #00 --> <sample sym="step-snake" /> 
 <!-- #01 --> <sample sym="unused"  /> 
 <!-- #02 --> <sample sym="cv-heavy-cannon-shot"> 
@@ -279,7 +279,7 @@
 <!-- #54 --> <sample sym="stunrod-hit" /> 
     </file>
 
-    <file name="sound/sample3.cat" >  <!-- Collector's Edition file, 32 samples -->
+    <file name="$(xcom)/sound/sample3.cat" >  <!-- Collector's Edition file, 32 samples -->
 <!-- #00 --> <sample sym="unused"  /> 
 <!-- #01 --> <sample sym="unused"  /> 
 <!-- #02 --> <sample sym="unknown" /> 

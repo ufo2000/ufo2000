@@ -359,12 +359,12 @@ void Place::save_bin(char *fn)
 	close(fh);
 }
 
-void Place::load_bin(char *fn)
+void Place::load_bin(const char *fn)
 {
 	char buf[3 * 1000];
 	int buf_size;
 
-	int fh = OPEN_OWN(fn, O_RDONLY | O_BINARY);
+	int fh = open(F(fn), O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	buf_size = read(fh, buf, sizeof(buf));
 	close(fh);

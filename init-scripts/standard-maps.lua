@@ -81,28 +81,28 @@ AddXcomTerrain {
 AddXcomTerrain {
 	Index = 5, Name = "City",
 	Tiles =	{
-		"$(xcomdemo)/terrain/blanks.*",
-		"$(xcomdemo)/terrain/roads.*",
-		"$(xcomdemo)/terrain/urbits.*",
-		"$(xcomdemo)/terrain/urban.*",
-		"$(xcomdemo)/terrain/frniture.*"
+		"$(xcom)/terrain/blanks.*",
+		"$(xcom)/terrain/roads.*",
+		"$(xcom)/terrain/urbits.*",
+		"$(xcom)/terrain/urban.*",
+		"$(xcom)/terrain/frniture.*"
 	},
 	Maps = {
-		"$(xcomdemo)/maps/urban00.map",
-		"$(xcomdemo)/maps/urban01.map",
-		"$(xcomdemo)/maps/urban02.map",
-		"$(xcomdemo)/maps/urban03.map",
-		"$(xcomdemo)/maps/urban04.map",
-		"$(xcomdemo)/maps/urban05.map",
-		"$(xcomdemo)/maps/urban06.map",
-		"$(xcomdemo)/maps/urban07.map",
-		"$(xcomdemo)/maps/urban08.map",
-		"$(xcomdemo)/maps/urban09.map",
-		"$(xcomdemo)/maps/urban14.map",
-		"$(xcomdemo)/maps/urban15.map",
-		"$(xcomdemo)/maps/urban16.map",
-		"$(xcomdemo)/maps/urban17.map",
-		"$(xcomdemo)/maps/urban18.map"
+		"$(xcom)/maps/urban00.map",
+		"$(xcom)/maps/urban01.map",
+		"$(xcom)/maps/urban02.map",
+		"$(xcom)/maps/urban03.map",
+		"$(xcom)/maps/urban04.map",
+		"$(xcom)/maps/urban05.map",
+		"$(xcom)/maps/urban06.map",
+		"$(xcom)/maps/urban07.map",
+		"$(xcom)/maps/urban08.map",
+		"$(xcom)/maps/urban09.map",
+		"$(xcom)/maps/urban14.map",
+		"$(xcom)/maps/urban15.map",
+		"$(xcom)/maps/urban16.map",
+		"$(xcom)/maps/urban17.map",
+		"$(xcom)/maps/urban18.map"
 	}
 }
 
@@ -200,24 +200,24 @@ AddXcomTerrain {
 AddXcomTerrain {
 	Index = 100, Name = "Atlantis",
 	Tiles =	{
-		"$(tftddemo)/terrain/blanks.*",
-		"$(tftddemo)/terrain/sand.*",
-		"$(tftddemo)/terrain/atlantis.*",
-		"$(tftddemo)/terrain/ufobits.*"
+		"$(tftd)/terrain/blanks.*",
+		"$(tftd)/terrain/sand.*",
+		"$(tftd)/terrain/atlantis.*",
+		"$(tftd)/terrain/ufobits.*"
 	},
 	Maps = {
-		"$(tftddemo)/maps/atlan00.map",
-		"$(tftddemo)/maps/atlan01.map",
-		"$(tftddemo)/maps/atlan02.map",
-		"$(tftddemo)/maps/atlan03.map",
-		"$(tftddemo)/maps/atlan04.map",
-		"$(tftddemo)/maps/atlan05.map",
-		"$(tftddemo)/maps/atlan06.map",
-		"$(tftddemo)/maps/atlan07.map",
-		"$(tftddemo)/maps/atlan08.map",
-		"$(tftddemo)/maps/atlan09.map",
-		"$(tftddemo)/maps/atlan10.map",
-		"$(tftddemo)/maps/atlan11.map",
-		"$(tftddemo)/maps/atlan12.map"
+		"$(tftd)/maps/atlan00.map",
+		"$(tftd)/maps/atlan01.map",
+		"$(tftd)/maps/atlan02.map",
+		"$(tftd)/maps/atlan03.map",
+		"$(tftd)/maps/atlan04.map",
+		"$(tftd)/maps/atlan05.map",
+		"$(tftd)/maps/atlan06.map",
+		"$(tftd)/maps/atlan07.map",
+		"$(tftd)/maps/atlan08.map",
+		"$(tftd)/maps/atlan09.map",
+		"$(tftd)/maps/atlan10.map",
+		"$(tftd)/maps/atlan11.map",
+		"$(tftd)/maps/atlan12.map"
 	}
 }

@@ -453,12 +453,12 @@ void Platoon::save_MANDATA(char *fn)
 }
 
 
-void Platoon::load_MANDATA(char *fn)
+void Platoon::load_MANDATA(const char *fn)
 {
 	char *buf;
 	unsigned int buf_size;
 
-	int fh = open(fn, O_RDONLY | O_BINARY);
+	int fh = open(F(fn), O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	buf_size = filelength(fh);
 	buf = new char[buf_size];
@@ -493,12 +493,12 @@ void Platoon::save_ITEMDATA(char *fn)
 }
 
 
-void Platoon::load_ITEMDATA(char *fn)
+void Platoon::load_ITEMDATA(const char *fn)
 {
 	char *buf;
 	unsigned int buf_size;
 
-	int fh = open(fn, O_RDONLY | O_BINARY);
+	int fh = open(F(fn), O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	buf_size = filelength(fh);
 	buf = new char[buf_size];

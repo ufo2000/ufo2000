@@ -186,31 +186,31 @@ void loadini()
 	preferred_screen_xres = get_config_int(gen, "screen_x_res", 640);
 	preferred_screen_yres = get_config_int(gen, "screen_y_res", 400);
 	min_color_depth = get_config_int(gen, "color_depth", 8);
-	menu_midi_file_name = get_config_string(gen, "menu_music", "sound/gmstory.mid");
-	setup_midi_file_name = get_config_string(gen, "setup_music", "sound/gmenbase.mid");
-	editor_midi_file_name = get_config_string(gen, "editor_music", "sound/gmdefend.mid");
-	combat_midi_file_name = get_config_string(gen, "combat_music", "sound/gmtactic.mid");
-	win_midi_file_name = get_config_string(gen, "win_music", "sound/gmwin.mid");
-	lose_midi_file_name = get_config_string(gen, "lose_music", "sound/gmlose.mid");
-	net1_midi_file_name = get_config_string(gen, "net_music1", "sound/gmgeo1.mid");
-	net2_midi_file_name = get_config_string(gen, "net_music2", "sound/gmgeo2.mid");
+	menu_midi_file_name = get_config_string(gen, "menu_music", "$(xcom)/sound/gmstory.mid");
+	setup_midi_file_name = get_config_string(gen, "setup_music", "$(xcom)/sound/gmenbase.mid");
+	editor_midi_file_name = get_config_string(gen, "editor_music", "$(xcom)/sound/gmdefend.mid");
+	combat_midi_file_name = get_config_string(gen, "combat_music", "$(xcom)/sound/gmtactic.mid");
+	win_midi_file_name = get_config_string(gen, "win_music", "$(xcom)/sound/gmwin.mid");
+	lose_midi_file_name = get_config_string(gen, "lose_music", "$(xcom)/sound/gmlose.mid");
+	net1_midi_file_name = get_config_string(gen, "net_music1", "$(xcom)/sound/gmgeo1.mid");
+	net2_midi_file_name = get_config_string(gen, "net_music2", "$(xcom)/sound/gmgeo2.mid");
 
-	loading_image_file_name = get_config_string(gen, "loading_image", "ufo2000.dat#TEXT_BACK_JPG");
-	menu_image_file_name = get_config_string(gen, "menu_image", "ufointro/pict2.lbm");
-	endturn_image_file_name = get_config_string(gen, "endturn_image", "ufograph/tac00.scr");
-	win_image_file_name = get_config_string(gen, "win_image", "geograph/back01.scr");
-	lose_image_file_name = get_config_string(gen, "lose_image", "geograph/back02.scr");
+	loading_image_file_name = get_config_string(gen, "loading_image", "$(ufo2000)/arts/text_back.jpg");
+	menu_image_file_name = get_config_string(gen, "menu_image", "$(xcom)/ufointro/pict2.lbm");
+	endturn_image_file_name = get_config_string(gen, "endturn_image", "$(xcom)/ufograph/tac00.scr");
+	win_image_file_name = get_config_string(gen, "win_image", "$(xcom)/geograph/back01.scr");
+	lose_image_file_name = get_config_string(gen, "lose_image", "$(xcom)/geograph/back02.scr");
 
 	server_host = get_config_string("Server", "host", "127.0.0.1");
 
-	g_menu_midi_music = load_midi(cfg_get_menu_music_file_name());
-	g_setup_midi_music = load_midi(cfg_get_setup_music_file_name());
-	g_editor_midi_music = load_midi(cfg_get_editor_music_file_name());
-	g_combat_midi_music = load_midi(cfg_get_combat_music_file_name());
-	g_win_midi_music = load_midi(cfg_get_win_music_file_name());
-	g_lose_midi_music = load_midi(cfg_get_lose_music_file_name());
-	g_net1_midi_music = load_midi(cfg_get_net1_music_file_name());
-	g_net2_midi_music = load_midi(cfg_get_net2_music_file_name());
+	g_menu_midi_music = load_midi(F(cfg_get_menu_music_file_name()));
+	g_setup_midi_music = load_midi(F(cfg_get_setup_music_file_name()));
+	g_editor_midi_music = load_midi(F(cfg_get_editor_music_file_name()));
+	g_combat_midi_music = load_midi(F(cfg_get_combat_music_file_name()));
+	g_win_midi_music = load_midi(F(cfg_get_win_music_file_name()));
+	g_lose_midi_music = load_midi(F(cfg_get_lose_music_file_name()));
+	g_net1_midi_music = load_midi(F(cfg_get_net1_music_file_name()));
+	g_net2_midi_music = load_midi(F(cfg_get_net2_music_file_name()));
 }
 
 void saveini()

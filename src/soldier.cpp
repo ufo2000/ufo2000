@@ -98,24 +98,24 @@ void Soldier::initpck()
 	m_pck = new PCK *[SKIN_NUMBER];
 	char fname[100];
 	for (int n = 0; n < SKIN_NUMBER; n++) {
-		sprintf(fname, "units/%s", skin_fname[n]);
+		sprintf(fname, "$(xcom)/units/%s", skin_fname[n]);
 		m_pck[n] = new PCK(fname);
 	}
 
 	for (int ar = 0; ar < 2; ar++)
 		for (int se = 0; se < 2; se++)
 			for (int ty = 0; ty < 4; ty++) {
-				sprintf(fname, "ufograph/man_%d%c%d.spk", ar, se == 0 ? 'm' : 'f', ty);
+				sprintf(fname, "$(xcom)/ufograph/man_%d%c%d.spk", ar, se == 0 ? 'm' : 'f', ty);
 				m_spk[ar][se][ty] = new SPK(fname);
 			}
 
-	m_spk[2][0][0] = new SPK("ufograph/man_2.spk");
-	m_spk[3][0][0] = new SPK("ufograph/man_3.spk");
+	m_spk[2][0][0] = new SPK("$(xcom)/ufograph/man_2.spk");
+	m_spk[3][0][0] = new SPK("$(xcom)/ufograph/man_3.spk");
 
-	m_spk[4][0][0] = new SPK("ufo2000.dat#SECTOID_SPK");
-	m_spk[5][0][0] = new SPK("ufo2000.dat#MUTON_SPK");
+	m_spk[4][0][0] = new SPK("$(ufo2000)/ufo2000.dat#SECTOID_SPK");
+	m_spk[5][0][0] = new SPK("$(ufo2000)/ufo2000.dat#MUTON_SPK");
 
-	SPK *unibord = new SPK("ufograph/unibord.pck");
+	SPK *unibord = new SPK("$(xcom)/ufograph/unibord.pck");
 	m_unibord = create_bitmap(320, 200); clear_to_color(m_unibord, xcom1_color(15));
 	unibord->show_pck(m_unibord, 0, 0);
 	delete unibord;

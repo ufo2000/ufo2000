@@ -10,10 +10,10 @@
 TerrainTable = {}
 
 -- directories for data files from the original x-com and ufo2000
-xcomdemo_dir = xcom_dir or xcomdemo_dir or "."
-xcom_dir     = xcom_dir or "."
-tftddemo_dir = tftd_dir or tftddemo_dir or "."
-tftd_dir     = tftd_dir or "."
+xcomdemo_dir = xcomdemo_dir or "./XCOMDEMO"
+xcom_dir     = xcom_dir or "./XCOM"
+tftddemo_dir = tftddemo_dir or "./TFTDDEMO"
+tftd_dir     = tftd_dir or "./TFTD"
 ufo2000_dir  = ufo2000_dir or "."
 home_dir     = home_dir or "."
 
@@ -23,29 +23,35 @@ local fh = io.open(home_dir .. "/init-scripts.log", "wt") fh:close()
 function Error(...)
 	local msg = string.format(unpack(arg))
 	local fh = io.open(home_dir .. "/init-scripts.log", "at")
-	fh:write(msg, "\n")
-	fh:close()
+	if fh then
+		fh:write(msg, "\n")
+		fh:close()
+	end
 	error(msg)
 end
 
 function Warning(...)
 	local msg = string.format(unpack(arg))
 	local fh = io.open(home_dir .. "/init-scripts.log", "at")
-	fh:write(msg, "\n")
-	fh:close()
+	if fh then
+		fh:write(msg, "\n")
+		fh:close()
+	end
 	print(msg)
 end
 
 function Message(...)
 	local msg = string.format(unpack(arg))
 	local fh = io.open(home_dir .. "/init-scripts.log", "at")
-	fh:write(msg, "\n")
-	fh:close()
+	if fh then
+		fh:write(msg, "\n")
+		fh:close()
+	end
 	print(msg)
 end
 
 -- reads the whole file content into a string
-local function ReadFile(filename)
+function ReadFile(filename)
 	local f = io.open(filename, "rb")
 	if f == nil then return nil end
 	local data = f:read("*a")
@@ -53,25 +59,50 @@ local function ReadFile(filename)
 	return data
 end
 
--- finds path to data file expanding prefixes and trying different 
--- file name case
-local function LocateFile(filename)
-	filename = string.gsub(filename, "^%$%(xcom%)", xcom_dir)
-	filename = string.gsub(filename, "^%$%(xcomdemo%)", xcomdemo_dir)
-	filename = string.gsub(filename, "^%$%(tftd%)", tftd_dir)
-	filename = string.gsub(filename, "^%$%(tftddemo%)", tftddemo_dir)
+------------------------------------------------------------------------------
+-- finds path to the required file performing prefixes expansion
+-- and using different file name case if needed
+------------------------------------------------------------------------------
+function LocateFile(filename)
+
+	local function SearchFile(filename)
+		local count = 1
+		while count == 1 do
+			fh = io.open(filename, "rb")
+			if fh then fh:close() return filename end
+			filename, count = string.gsub(filename, "[a-z]+[^a-z]*$",
+				function (a) 
+					return string.upper(a) 
+				end)
+		end
+		return nil
+	end
+
+	if string.find(filename, "^%$%(xcom%)") then
+		local fname = SearchFile(string.gsub(filename, "^%$%(xcom%)", xcomdemo_dir))
+		if fname then return fname end
+		local fname = SearchFile(string.gsub(filename, "^%$%(xcom%)", xcom_dir))
+		if fname then return fname end
+		return string.gsub(filename, "^%$%(xcom%)", xcomdemo_dir)
+	end
+
+	if string.find(filename, "^%$%(tftd%)") then
+		local fname = SearchFile(string.gsub(filename, "^%$%(tftd%)", tftddemo_dir))
+		if fname then return fname end
+		local fname = SearchFile(string.gsub(filename, "^%$%(tftd%)", tftd_dir))
+		if fname then return fname end
+		return string.gsub(filename, "^%$%(xcom%)", tftddemo_dir)
+	end
+
+	local backup_filename = filename
+
 	filename = string.gsub(filename, "^%$%(ufo2000%)", ufo2000_dir)
+	filename = string.gsub(filename, "^%$%(home%)", home_dir)
 
-	local fh = io.open(filename, "rb")
-	if fh then fh:close() return filename end
+	local fname = SearchFile(filename)
+	if fname then return fname end
 
-	local fh = io.open(string.lower(filename), "rb")
-	if fh then fh:close() return string.lower(filename) end
-
-	local fh = io.open(string.upper(filename), "rb")
-	if fh then fh:close() return string.upper(filename) end
-
-	return filename
+	return backup_filename
 end
 
 -- adds a new map file to a terrain record

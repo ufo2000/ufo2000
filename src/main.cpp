@@ -413,6 +413,39 @@ static int lua_ALERT(lua_State *L)
 	return 0;
 }
 
+const char *F(const char *fileid)
+{
+	static std::string fname;
+	int stack_top = lua_gettop(L);
+	lua_pushstring(L, "GetDataFileName");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	if (!lua_isfunction(L, -1))
+		display_error_message("Fatal: no 'GetDataFileName' function registered");
+	lua_pushstring(L, fileid);
+	lua_call(L, 1, 1);
+	if (!lua_isstring(L, -1))
+		display_error_message(std::string("Can't find file name by ") + fileid + " identifier");
+	fname = lua_tostring(L, -1);
+/*
+	lua_pushstring(L, "FilesTable");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	if (!lua_istable(L, -1))
+		display_error_message("Fatal: no 'FilesTable' found in lua state");
+	assert(lua_istable(L, -1));
+	lua_pushstring(L, fileid);
+	lua_gettable(L, -2);
+	if (!lua_istable(L, -1))
+		display_error_message(std::string("Can't find file name by ") + fileid + " identifier");
+	lua_pushstring(L, "FileName");
+	lua_gettable(L, -2);
+	assert(lua_isstring(L, -1));
+	fname = lua_tostring(L, -1);
+*/
+	lua_settop(L, stack_top);
+
+	return fname.c_str();
+}
+
 void initmain(int argc, char *argv[])
 {
 	srand(time(NULL));
@@ -431,6 +464,7 @@ void initmain(int argc, char *argv[])
 	luaopen_io(L);
 
 	lua_dofile(L, "init-scripts/main.lua");
+	lua_dofile(L, "init-scripts/filecheck.lua");
 	lua_dofile(L, "init-scripts/standard-maps.lua");
 	lua_dofile(L, "init-scripts/user-maps.lua");
 
@@ -488,8 +522,8 @@ void initmain(int argc, char *argv[])
 
 	pop_config_state();
 
-	if (FLAGS & F_FILECHECK) check_data_files();
-	check_rw_files();
+//	if (FLAGS & F_FILECHECK) check_data_files();
+//	check_rw_files();
 
 	datafile = load_datafile("#");
 	if (datafile == NULL) {
@@ -529,7 +563,7 @@ void initmain(int argc, char *argv[])
         console<<"Initializing sound..."<<std::endl;
         std::string xml;
         soundSystem *ss = soundSystem::getInstance();
-        std::ifstream ifs_xml("soundmap.xml");
+        std::ifstream ifs_xml(F("$(ufo2000)/soundmap.xml"));
         if (ifs_xml) {
             ISTREAM_TO_STRING(ifs_xml, xml);
 

@@ -703,7 +703,7 @@ FONT *g_small_font;
 void create_small_font() {
 	int fl, fh;
 	
-	fh = OPEN_ORIG("geodata/smallset.dat", O_RDONLY | O_BINARY);
+	fh = open(F("$(xcom)/geodata/smallset.dat"), O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	fl = filelength(fh);
 	unsigned char *dat_lat = new unsigned char[fl];
@@ -718,7 +718,7 @@ void create_small_font() {
 void create_large_font() {
 	int fl, fh;
 	
-	fh = OPEN_ORIG("geodata/biglets.dat", O_RDONLY | O_BINARY);
+	fh = open(F("$(xcom)/geodata/biglets.dat"), O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	fl = filelength(fh);
 	unsigned char *dat_lat = new unsigned char[fl];

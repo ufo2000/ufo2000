@@ -65,7 +65,7 @@ int Connect::do_chat()
 
 	BITMAP *scr = create_bitmap(320, 200); clear(scr);
 	BITMAP *backscr = create_bitmap(640, 400);
-	SPK *back09 = new SPK("geograph/back09.scr");      //gamepal used
+	SPK *back09 = new SPK("$(xcom)/geograph/back09.scr");      //gamepal used
 
 	install_int_ex(drawit_timer, BPS_TO_TIMER(10));      //ticks each second
 

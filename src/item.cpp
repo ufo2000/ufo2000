@@ -40,7 +40,7 @@ IMPLEMENT_PERSISTENCE(Item, "Item");
 
 void Item::initobdata()
 {
-	int fh = OPEN_ORIG("geodata/obdata.dat", O_RDONLY | O_BINARY);
+	int fh = open(F("$(xcom)/geodata/obdata.dat"), O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	int buflen = filelength(fh);
 	char *buf = new char[buflen];
@@ -122,7 +122,7 @@ void Item::initobdata()
 
 void Item::initbigobs()
 {
-	bigobs = new PCK("units/bigobs.pck");
+	bigobs = new PCK("$(xcom)/units/bigobs.pck");
 	obdata[KASTET].pInv = bigobs->add_image((BITMAP *)datafile[DAT_KASTET_BMP].dat);
 	obdata[KNIFE].pInv = bigobs->add_image((BITMAP *)datafile[DAT_KNIFE_BMP].dat);
 }

@@ -56,14 +56,14 @@ void TerraPCK::add(const char *pckfname)
 {
 	strcpy(m_fname, pckfname);
 
-	int fh = OPEN_ORIG(m_fname, O_RDONLY | O_BINARY);
+	int fh = open(F(m_fname), O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	int newlen = read(fh, m_tbb, 0xFFFF);
 	assert(newlen > 0);
 	close(fh);
 
 	strcpy(strrchr(m_fname, '.') + 1, "tab");
-	fh = OPEN_ORIG(m_fname, O_RDONLY | O_BINARY);
+	fh = open(F(m_fname), O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	int newnum = read(fh, (char *)m_tbs, 0xFFF) >> 1;
 	assert(newnum > 0);
@@ -84,7 +84,7 @@ void TerraPCK::add(const char *pckfname)
 void TerraPCK::loadmcd(int pck_base, int size)
 {
 	strcpy(strrchr(m_fname, '.') + 1, "mcd");
-	int fh = OPEN_ORIG(m_fname, O_RDONLY | O_BINARY);
+	int fh = open(F(m_fname), O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	long fsize = filelength(fh);
 	assert(fsize % 62 == 0);

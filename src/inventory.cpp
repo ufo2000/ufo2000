@@ -29,7 +29,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 Inventory::Inventory()
 {
 	BITMAP *image = create_bitmap(320, 200); clear(image);
-	tac01 = new SPK("ufograph/tac01.scr");
+	tac01 = new SPK("$(xcom)/ufograph/tac01.scr");
 	tac01->show(image, 0, 0);
 
 	//b123 = create_bitmap(83, 22);

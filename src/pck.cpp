@@ -101,7 +101,7 @@ BITMAP *PCK::pckdat2bmp(const unsigned char *data, int size)
  */
 int PCK::loadpck(const char *pckfname)
 {
-	int fh = OPEN_ORIG(pckfname, O_RDONLY | O_BINARY);
+	int fh = open(F(pckfname), O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	long pcksize = filelength(fh);
 	unsigned char *pck = new unsigned char[pcksize];
@@ -110,7 +110,7 @@ int PCK::loadpck(const char *pckfname)
 
 	strcpy(m_fname, pckfname);
 	strcpy(strrchr(m_fname, '.') + 1, "tab");
-	fh = OPEN_ORIG(m_fname, O_RDONLY | O_BINARY);
+	fh = open(F(m_fname), O_RDONLY | O_BINARY);
 
 	if (fh == -1) {
     //	Just a single frame from .pck file

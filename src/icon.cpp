@@ -45,9 +45,9 @@ void cprintf(char *str)
 Icon::Icon(int x2, int y2)
 {
 	x = x2; y = y2;
-	tac00 = new SPK("ufograph/tac00.scr");
+	tac00 = new SPK("$(xcom)/ufograph/tac00.scr");
 
-	SPK *spk = new SPK("ufograph/icons.pck");
+	SPK *spk = new SPK("$(xcom)/ufograph/icons.pck");
 	BITMAP *image = create_bitmap(320, 200); clear(image);
 	spk->show(image, 0, 0);
 	delete(spk);

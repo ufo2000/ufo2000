@@ -721,7 +721,7 @@ static void h_StartEl(void *userData,
             return;
         }
         *b->log<<"Loading '"<<fname<<"'"<<std::endl;
-        if (b->current->loadFile(fname, *b->log, b->verbose) != 0) {
+        if (b->current->loadFile(F(fname), *b->log, b->verbose) != 0) {
             b->skipThisFile = true;
             *b->log<<"can not load, skipping."<<std::endl;
             return;

@@ -87,19 +87,19 @@ void load_terrain_pck(int tid, TerraPCK *&terrain_pck)
 
 void Map::initpck()
 {
-	floorob  = new PCK("units/floorob.pck");
-	cursor	 = new PCK("ufograph/cursor.pck");
-	scanbord = new SPK("ufograph/scanbord.pck");
-	smoke	 = new PCK("ufograph/smoke.pck");
+	floorob  = new PCK("$(xcom)/units/floorob.pck");
+	cursor	 = new PCK("$(xcom)/ufograph/cursor.pck");
+	scanbord = new SPK("$(xcom)/ufograph/scanbord.pck");
+	smoke	 = new PCK("$(xcom)/ufograph/smoke.pck");
 
-	int fh = OPEN_ORIG("geodata/scang.dat", O_RDONLY | O_BINARY);
+	int fh = open(F("$(xcom)/geodata/scang.dat"), O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	int fl = filelength(fh);
 	m_scang = new char[fl];
 	read(fh, m_scang, fl);
 	close(fh);
 
-	fh = OPEN_ORIG("geodata/loftemps.dat", O_RDONLY | O_BINARY);
+	fh = open(F("$(xcom)/geodata/loftemps.dat"), O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	fl = filelength(fh);
 	m_loftemp = new unsigned short[fl / 2];

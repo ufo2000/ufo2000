@@ -71,7 +71,7 @@ void About::transinfo()
 	install_int_ex(drawit_timer, BPS_TO_TIMER(20));      //ticks each second
 
 	RGB pal[PAL_SIZE];
-	BITMAP *pict = LOADBITMAP_ORIG("ufointro/pict4.lbm", pal);
+	BITMAP *pict = load_bitmap(F("$(xcom)/ufointro/pict4.lbm"), pal);
 	set_palette(pal);
 	BITMAP *back = create_bitmap(SCREEN_W, SCREEN_H);
 	stretch_blit(pict, back, 0, 0, 320, 200, 0, 0, SCREEN_W, SCREEN_H);

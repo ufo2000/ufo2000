@@ -66,7 +66,7 @@ public:
 	int isthere(Item *it);
 
 	void save_bin(char *fn);
-	void load_bin(char *fn);
+	void load_bin(const char *fn);
 	int save_items(char *fs, int _z, int _x, int _y, char *txt);
 	//int save(char *n1, int NID, char *n2, int ip, char *txt);
 	int eot_save(int ip, char *txt);

@@ -5,11 +5,11 @@
 AddXcomTerrain {
 	Index = 200, Name = "wareh",
 	Tiles =	{
-		"$(xcomdemo)/terrain/blanks.*",
-		"$(xcomdemo)/terrain/roads.*",
-		"$(xcomdemo)/terrain/urbits.*",
-		"$(xcomdemo)/terrain/urban.*",
-		"$(xcomdemo)/terrain/frniture.*"
+		"$(xcom)/terrain/blanks.*",
+		"$(xcom)/terrain/roads.*",
+		"$(xcom)/terrain/urbits.*",
+		"$(xcom)/terrain/urban.*",
+		"$(xcom)/terrain/frniture.*"
 	},
 	Maps = {
 		"$(ufo2000)/newmaps/wareh00.map",

@@ -307,11 +307,11 @@ int askmenu(char *mess)
 BITMAP *load_back_image(const char *filename)
 {
 	BITMAP *tmp = NULL;
-	tmp = load_jpg(filename, NULL);
+	tmp = load_jpg(F(filename), NULL);
 	if (tmp != NULL) return tmp;
-	tmp = load_bitmap(filename, NULL);
+	tmp = load_bitmap(F(filename), NULL);
 	if (tmp != NULL) return tmp;
-	SPK *spk = new SPK(filename);
+	SPK *spk = new SPK(F(filename));
 	tmp = create_bitmap(320, 200);
 	clear(tmp);
 	spk->show(tmp, 0, 0);
