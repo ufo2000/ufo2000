@@ -177,9 +177,6 @@ function process_log(filename, history)
 			-- handle game start
 			local _, _, p1, p2 = string.find(msg, "^game start: '(.-)' vs '(.-)'")
 			if p1 and p2 then
-				if games[p1] ~= nil or games[p2] ~= nil then
-					out:write("error at line ", line_number)
-				end
 				startgame(p1, p2, l)
 			end
 		
@@ -195,8 +192,9 @@ function process_log(filename, history)
 
 			if string.find(msg, "^server started") then
 			-- handle server restart
-				games = {}
 				previous_line = previous_line or l
+				for k, v in games do endgame(k, previous_line) end
+				games = {}
 				for k, v in users do user_offline(k, previous_line) end
 				users = {}
 			end
@@ -206,6 +204,8 @@ function process_log(filename, history)
 			if p then login_name = p end
 
 			if msg == "login ok" and login_name then
+				if games[login_name] then endgame(login_name, l) end
+				if users[login_name] then user_offline(login_name, l) end
 				user_online(login_name, l)
 				login_name = nil
 			end
