@@ -110,7 +110,7 @@ Editor::Editor()
 
     sel_item = NULL;
     dup_item = NULL;    
-    buffer.empty = true;                                   
+    buffer.empty = true;
 }
 
 Editor::~Editor()
@@ -1367,8 +1367,13 @@ void Editor::paste_soldier(Soldier *dest)
 {
     if (buffer.empty) return;
     
+    std::string prev_name = dest->md.Name;
+    
     dest->md = buffer.md;
     dest->id = buffer.id;
+    
+    for (int i = 0; i < 26; i++)
+        dest->md.Name[i] = prev_name[i];
     
     dest->process_MANDATA();
     dest->process_ITEMDATA();
