@@ -6,7 +6,7 @@
               **                English Manual                **
               **************************************************
 
-                                  $Rev$
+                                  $Rev: 646$
 
              Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
              Copyright (C) 2002-2004  ufo2000 development team
@@ -202,6 +202,8 @@ the same controls as the original games with only minor differences:
 * right mouse click can be used to stop movement of a soldier
 * soldiers can't automatically open doors, so you need to use right mouse 
   click behind the door to open it (just like in TFTD)
+* mouse wheel scrolls map levels up and down just like the ladder buttons
+  on the control panel or the PgUp/PgDn keys
 
 You can send and receive messages to/from the other player during the game. 
 Just type your message out on the keyboard, then hit enter.
@@ -213,6 +215,8 @@ F10         Switch Fullscreen/Windowed mode
 ESC         Exit to main menu
 
 Arrows      Scroll the map window
+
+PgUp/PgDn   Switch between map levels
 
 Right CTRL  Fast switching between two keymaps selected as primary_keyboard
  +F9        and secondary_keyboard in ufo2000.ini file.

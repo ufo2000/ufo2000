@@ -989,25 +989,21 @@ void recv_turn(int crc)
 
 int GAMELOOP = 0;
 
-
-BITMAP* stat_panel;
-
-
 void draw_stats()
 { 
-    destroy_bitmap(stat_panel);
-    stat_panel = create_bitmap(200, 200);
-	  clear_to_color(stat_panel, BACKCOLOR);
-    int y = 240;
-    Soldier* man;
-    textprintf(stat_panel, g_small_font, 10, 0, COLOR_GREEN,"Local  %d", platoon_local->num_of_men());
-    textprintf(stat_panel, g_small_font, 100, 0, COLOR_RED,"Remote %d", platoon_remote->num_of_men());
-    for (int i=0;i < 15; i++){
+    BITMAP *stat_panel = create_bitmap(200, 200);
+    clear_to_color(stat_panel, BACKCOLOR);
+    int i = 0;
+    Soldier *man;
+    textprintf(stat_panel, g_small_font, 10, 0, COLOR_GREEN, "Local  %d", platoon_local->num_of_men());
+    textprintf(stat_panel, g_small_font, 100, 0, COLOR_RED, "Remote %d", platoon_remote->num_of_men());
+    for (i = 0; i < SQUAD_LIMIT; i++) {
         man = platoon_local->findnum(i);
         if (man != NULL)
-            man->draw_stats(stat_panel, 10, 10 * (i+1) );
+            man->draw_stats(stat_panel, 10, 10 * (i + 1));
     }
     blit(stat_panel, screen, 0, 0, SCREEN2W, 240, screen->w, screen->h);
+    destroy_bitmap(stat_panel);
 }
 
 /**
@@ -1609,11 +1605,35 @@ static LONG WINAPI TopLevelExceptionFilter(PEXCEPTION_POINTERS pExceptionInfo)
 #endif
 
 /**
+ * @brief  Shift the active map level up by 1.
+ */
+void view_level_up()
+{
+    if (map->sel_lev < map->level - 1) {
+        map->sel_lev++;
+        position_mouse(mouse_x, mouse_y - CELL_SCR_Z);
+    }
+}
+
+/**
+ * @brief  Shift the active map level down by 1.
+ */
+void view_level_down()
+{
+    if (map->sel_lev > 0) {
+        map->sel_lev--;
+        position_mouse(mouse_x, mouse_y + CELL_SCR_Z);
+    }
+}
+
+/**
  * Main loop of the tactical part of the game
  */
 void gameloop()
 {
-    int mouse_leftr = 1, mouse_rightr = 1, select_y = 0;
+    int select_y = 0;
+    int mouse_leftr = 1, mouse_rightr = 1;
+    int old_mouse_z = mouse_z; // mouse wheel status on the previous cycle
     int color1;
     int b1 = 0, k, who;
     char buf[STDBUFSIZE];
@@ -1710,6 +1730,7 @@ void gameloop()
 
         if (CHANGE) {
             build_screen(select_y);
+//          g_console->printf(COLOR_SYS_INFO, "*"); // temp - for debugging
             CHANGE = 0;
         }
 
@@ -1839,14 +1860,26 @@ void gameloop()
             }
         }
 
+        // Handle mouse wheel events
+        if (mouse_z != old_mouse_z) {
+            // Mouse wheel state has changed
+            // Scroll viewport level up and down
+            if(mouse_z > old_mouse_z)
+                view_level_up();
+            else
+                view_level_down();
+            old_mouse_z = mouse_z;
+        }
+
+        // update mouse buttons' states
         if (!(mouse_b & 1)) {
             mouse_leftr = 1;
-            //          CHANGE = 1;
+//          CHANGE = 1;
         }
 
         if (!(mouse_b & 2)) {
             mouse_rightr = 1;
-            //          CHANGE = 1;
+//          CHANGE = 1;
         }
 
         process_keyswitch();
@@ -1858,16 +1891,10 @@ void gameloop()
 
             switch (scancode) {
                 case KEY_PGUP:
-                    if (map->sel_lev < map->level - 1) {
-                        map->sel_lev++;
-                        position_mouse(mouse_x, mouse_y - 24);
-                    }
+                    view_level_up();
                     break;
                 case KEY_PGDN:
-                    if (map->sel_lev > 0) {
-                        map->sel_lev--;
-                        position_mouse(mouse_x, mouse_y + 24);
-                    }
+                    view_level_down();
                     break;
                 case KEY_TAB:   //next soldier
                     TARGET = 0;
