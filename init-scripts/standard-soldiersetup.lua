@@ -4,8 +4,8 @@
 AddSoldierSetup {
     Desc  = "Rifleman0 (A0, Laser)",
     Name  = "Rifleman #",
-   --         TU STA  H   Br, R,  P1,P2, FA,TA, STR, F,App, Skin
-    Attr  = { 80, 57, 52,  0, 50, 00,00, 80,51,  25, 0, 0, S_XCOM_0 },
+   --         TU STA  H   Br, R,  FA,TA, STR, P1,P2, F,App, Skin
+    Attr  = { 80, 57, 52,  0, 50, 80,51,  25, 00,00, 0, 0, S_XCOM_0 },
     Items = { 
         {RHand, "LASER RIFLE"},
         {LHand, ""},
@@ -21,8 +21,8 @@ AddSoldierSetup {
 AddSoldierSetup {
     Desc  = "Rifleman1 (A1, PlasmaRifle)",
     Name  = "Rifleman #",
-   --         TU STA  H   Br, R,  P1,P2, FA,TA, STR, F,App, Skin
-    Attr  = { 80, 57, 52,  0, 50, 00,00, 80,51,  25, 0, 0, S_XCOM_1 },
+   --         TU STA  H   Br, R,  FA,TA, STR, P1,P2, F,App, Skin
+    Attr  = { 80, 57, 52,  0, 50, 80,51,  25, 00,00, 0, 0, S_XCOM_1 },
     Items = { 
         {RHand, "PLASMA RIFLE","PLASMA RIFLE CLIP"},
         {LHand, ""},
@@ -39,8 +39,8 @@ AddSoldierSetup {
          -- "....+....1....+....2....+....3....+"
     Desc  = "Scout0 (A0, LaserPistol, Grenades)",
     Name  = "Scout #",
-   --         TU STA  H   Br, R,  P1,P2, FA,TA, STR, F,App, Skin
-    Attr  = { 80, 75, 51,  0, 50, 00,00, 62,52,  25, 1, 1, S_XCOM_1 },
+   --         TU STA  H   Br, R,  FA,TA, STR, P1,P2, F,App, Skin
+    Attr  = { 80, 75, 51,  0, 50, 62,52,  25, 00,00, 1, 1, S_XCOM_1 },
     Items = { 
         {RHand, "Laser Pistol"},
         {LHand, "GRENADE"},
@@ -57,8 +57,8 @@ AddSoldierSetup {
          -- "....+....1....+....2....+....3....+"
     Desc  = "Scout1 (A1, Pl.Pistol, AlienGrenades)",
     Name  = "Scout #",
-   --         TU STA  H   Br, R,  P1,P2, FA,TA, STR, F,App, Skin
-    Attr  = { 80, 75, 51,  0, 50, 00,00, 62,52,  25, 1, 1, S_XCOM_1 },
+   --         TU STA  H   Br, R,  FA,TA, STR, P1,P2, F,App, Skin
+    Attr  = { 80, 75, 51,  0, 50, 62,52,  25, 00,00, 1, 1, S_XCOM_1 },
     Items = { 
         {RHand, "Plasma Pistol", "Plasma Pistol Clip"},
         {LHand, "GRENADE"},
@@ -74,8 +74,8 @@ AddSoldierSetup {
 AddSoldierSetup {
     Desc  = "Marksman1 (A1, HeavyPlasma)",
     Name  = "Shooter #",
-   --         TU STA  H   Br, R,  P1,P2, FA,TA, STR, F,App, Skin
-    Attr  = { 80, 57, 52,  0, 50, 00,00, 80,51,  25, 0, 2, S_XCOM_1 },
+   --         TU STA  H   Br, R,  FA,TA, STR, P1,P2, F,App, Skin
+    Attr  = { 80, 57, 52,  0, 50, 80,51,  25, 00,00, 0, 2, S_XCOM_1 },
     Items = { 
         {RHand, "Heavy Plasma", "Heavy Plasma Clip"},
         {LHand, ""},
@@ -89,10 +89,27 @@ AddSoldierSetup {
 }
 
 AddSoldierSetup {
+    Desc  = "HeavyWeapon0 (A0, Autocannon)",
+    Name  = "HeavyWeapon #",
+   --         TU STA  H   Br, R,  FA,TA, STR, P1,P2, F,App, Skin
+    Attr  = { 69, 51, 51,  0, 51, 80,51,  34, 00,00, 0, 3, S_XCOM_0 },
+    Items = { 
+        {RHand, "AUTO CANNON", "AUTO CANNON HE AMMO"},
+        {LHand, ""},
+        {RShl,  "AUTO CANNON AP AMMO"},
+        {LShl,  "AUTO CANNON I AMMO"},
+        {RLeg,  ""},
+        {LLeg,  ""},
+        {Belt,  ""},
+        {BPack, ""},
+    }
+}
+
+AddSoldierSetup {
     Desc  = "HeavyWeapon1 (A1, Autocannon)",
     Name  = "HeavyWeapon #",
-   --         TU STA  H   Br, R,  P1,P2, FA,TA, STR, F,App, Skin
-    Attr  = { 59, 51, 51,  0, 51, 00,00, 80,51,  39, 0, 3, S_XCOM_1 },
+   --         TU STA  H   Br, R,  FA,TA, STR, P1,P2, F,App, Skin
+    Attr  = { 59, 51, 51,  0, 51, 80,51,  39, 00,00, 0, 3, S_XCOM_1 },
     Items = { 
         {RHand, "AUTO CANNON", "AUTO CANNON HE AMMO"},
         {LHand, ""},
@@ -106,12 +123,12 @@ AddSoldierSetup {
 }
 
 AddSoldierSetup {
-    Desc  = "HeavyWeapon2 (A1, Rockets)",
+    Desc  = "HeavyWeapon2 (A1, Rockets: S,LLL)",
     Name  = "Rocketman #",
-   --         TU STA  H   Br, R,  P1,P2, FA,TA, STR, F,App, Skin
-    Attr  = { 60, 51, 51,  0, 50, 00,00, 80,50,  40, 0, 3, S_XCOM_1 },
+   --         TU STA  H   Br, R,  FA,TA, STR, P1,P2, F,App, Skin
+    Attr  = { 60, 51, 51,  0, 50, 78,50,  40, 00,00, 0, 3, S_XCOM_1 },
     Items = { 
-        {RHand, "ROCKET_LAUNCHER", "LARGE_ROCKET"},
+        {RHand, "ROCKET_LAUNCHER", "SMALL_ROCKET"},
         {LHand, ""},
         {RShl,  ""},
         {LShl,  ""},

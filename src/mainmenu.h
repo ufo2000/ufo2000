@@ -43,6 +43,7 @@ enum MAINMENU_ITEMS
     // Currently disabled menu items come next
     MAINMENU_EDITOR, // does not support all terrains
     MAINMENU_DEMO,
+    MAINMENU_CONFIG,
     MAINMENU_TOTAL_COUNT
 };
 
