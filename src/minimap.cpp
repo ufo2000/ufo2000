@@ -29,10 +29,10 @@ Minimap::Minimap(Map *map) : m_map(map)
 	m_height_10 = m_map->height * 10;
 	m_width_10 = m_map->width * 10;
 
-	m_minimap_state = new MINIMAP_STATE*[m_height_10];
-	for (i = 0; i < m_height_10; i++) {
-		m_minimap_state[i] = new MINIMAP_STATE[m_width_10];
-		for (j = 0; j < m_width_10; j++) {
+	m_minimap_state = new MINIMAP_STATE*[m_width_10];
+	for (i = 0; i < m_width_10; i++) {
+		m_minimap_state[i] = new MINIMAP_STATE[m_height_10];
+		for (j = 0; j < m_height_10; j++) {
 			m_minimap_state[i][j] = MINIMAP_STATE_UNEXPLORED;
 		}
 	}
@@ -64,7 +64,7 @@ Minimap::Minimap(Map *map) : m_map(map)
 
 Minimap::~Minimap()
 {
-	for (int i = 0; i < m_height_10; i++)
+	for (int i = 0; i < m_width_10; i++)
 		delete [] m_minimap_state[i];
 	delete [] m_minimap_state;
 
