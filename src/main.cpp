@@ -592,6 +592,7 @@ void initmain(int argc, char *argv[])
     LUA_REGISTER_CLASS_METHOD(L, Place, destroy_all_items);
 	
     LUA_REGISTER_FUNCTION(L, pck_image);
+    LUA_REGISTER_FUNCTION(L, png_image);
     
 #ifdef LINUX
     // Do not silently exit on broken network connection
@@ -862,6 +863,7 @@ void closemain()
     net = NULL;
 
     free_pck_cache();
+    free_png_cache();
 
     Map::freepck();
     Soldier::freepck();

@@ -47,6 +47,51 @@ BITMAP *pck_image(const char *filename, int index)
 	return g_pck_cache[fullname]->get_image(index);
 }
 
+//! We cache loaded png files here
+static std::map<std::string, BITMAP *> g_png_cache;
+
+/**
+ * Load bitmap (function which is aware of truecolor transparency formats)
+ */
+static BITMAP *load_bitmap_alpha(const char *filename)
+{
+    // Allow any color conversions except when loaded file 
+    // contains alpha channel
+    int cc = get_color_conversion();
+    set_color_conversion((COLORCONV_TOTAL | COLORCONV_KEEP_TRANS) & 
+        ~(COLORCONV_32A_TO_8 | COLORCONV_32A_TO_15 | COLORCONV_32A_TO_16 | COLORCONV_32A_TO_24));
+    BITMAP *bmp_orig = load_bitmap(filename, NULL);
+    set_color_conversion(cc);
+    if (!bmp_orig) return NULL;
+    
+    // Check color depth, if is 32 bit then we need some more work to do
+    if (bitmap_color_depth(bmp_orig) != 32) return bmp_orig;
+
+    BITMAP *bmp = create_bitmap(bmp_orig->w, bmp_orig->h);
+    clear_to_color(bmp, bitmap_mask_color(bmp));
+    for (int x = 0; x < bmp_orig->w; x++)
+        for (int y = 0; y < bmp_orig->h; y++) {
+            int c = getpixel(bmp_orig, x, y);
+            if (geta32(c) != 0) {
+                putpixel(bmp, x, y, makecol(getr32(c), getg32(c), getb32(c)));
+            }
+        }
+    destroy_bitmap(bmp_orig);
+    return bmp;
+}
+
+/**
+ * Load sprite from PNG image
+ */
+BITMAP *png_image(const char *filename)
+{
+	std::string fullname = F(filename);
+	if (g_png_cache.find(fullname) == g_png_cache.end()) {
+		g_png_cache[fullname] = load_bitmap_alpha(fullname.c_str());
+    }
+	return g_png_cache[fullname];
+}
+
 /**
  * Load image from pck file
  */
@@ -68,6 +113,15 @@ void free_pck_cache()
 	std::map<std::string, PCK *>::iterator it = g_pck_cache.begin();
 	while (it != g_pck_cache.end()) {
 		delete it->second;
+		it++;
+	}
+}
+
+void free_png_cache()
+{
+	std::map<std::string, BITMAP *>::iterator it = g_png_cache.begin();
+	while (it != g_png_cache.end()) {
+		destroy_bitmap(it->second);
 		it++;
 	}
 }

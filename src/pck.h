@@ -25,8 +25,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 BITMAP *pck_image(const char *filename, int index);
 BITMAP *pck_image_ex(bool tftd_flag, int width, int height, const char *filename, int index);
+BITMAP *png_image(const char *filename);
 
 void free_pck_cache();
+void free_png_cache();
 
 /**
  * Class for processing graphics in PCK-format
