@@ -35,15 +35,15 @@ msgstr "Отмена"
 
 #: src/config.cpp:301
 msgid "movement speed"
-msgstr "скор. перемещ."
+msgstr "скорость перемещения"
 
 #: src/config.cpp:302
 msgid "fire speed"
-msgstr "скор. снарядов"
+msgstr "скорость снарядов"
 
 #: src/config.cpp:303
 msgid "scroll speed"
-msgstr "скор. скроллинга"
+msgstr "скорость скроллинга"
 
 #: src/config.cpp:304
 msgid "mapscroll points"
@@ -942,7 +942,7 @@ msgstr "ИИ в игре пока нет."
 
 #: src/text.cpp:515
 msgid "UFO2000 is controlled mainly with the mouse, and these keys:"
-msgstr "Управление в UFO2000 осуществляетђЃя посредством мыши или клавиш:"
+msgstr "Управление в UFO2000 осуществляется посредством мыши или клавиш:"
 
 #: src/text.cpp:516
 msgid "F1: Help, F2+F3: Save+Load, F9: Keymap, F10: Window/Fullscreen"
@@ -1722,11 +1722,11 @@ msgstr "Уровень Разведки: %d"
 
 #: src/units.cpp:382
 msgid "Editor: ground on"
-msgstr "Редактор: земля вкл."
+msgstr "Редактор: земля включена"
 
 #: src/units.cpp:382
 msgid "Editor: ground off"
-msgstr "Редактор: земля выкл."
+msgstr "Редактор: земля выключена"
 
 #: src/units.cpp:400
 msgid "All explosives are prohibited."
