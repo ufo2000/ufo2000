@@ -156,8 +156,6 @@ void loadini()
 	lose_midi_file_name = get_config_string(gen, "lose_music", "sound/gmlose.mid");
 
 	server_host = get_config_string("Server", "host", "127.0.0.1");
-	g_server_login = get_config_string("Server", "login", "anonymous");
-	g_server_password = get_config_string("Server", "password", "");
 
 	g_menu_midi_music = load_midi(cfg_get_menu_music_file_name());
 	g_setup_midi_music = load_midi(cfg_get_setup_music_file_name());

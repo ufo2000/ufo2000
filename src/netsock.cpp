@@ -152,10 +152,11 @@ int initsocketgame()
 				return 0;
 			}
 			sock = accept(hostsock, (struct sockaddr *) & peer_in, &len);
-			if (sock == -1) {
 #ifdef WIN32
+			if (sock == INVALID_SOCKET) {
 				if (WSAGetLastError() == EWOULDBLOCK) {
 #else
+			if (sock == -1) {
 				if ((errno == EWOULDBLOCK) || (errno == 0)) { //success == 0 !!!
 #endif
 					time(&ltime);

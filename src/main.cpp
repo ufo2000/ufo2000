@@ -521,7 +521,7 @@ void initmain(int argc, char *argv[])
         bool VERBOSE_SOUNDCHECK = false;
         
         console<<"Initializing sound..."<<std::endl;
-        rest(1500);
+//        rest(1500);
         std::string xml;
         soundSystem *ss = soundSystem::getInstance();
         std::ifstream ifs_xml("soundmap.xml");

@@ -550,7 +550,6 @@ void Soldier::restore()
 	MOVED = 0;
 	// Percent of TUs: the lesser of 100% or ((strength / weight) * 100%).
 	ud.CurTU = (count_weight() > ud.CurStrength) ? (ud.MaxTU * ud.CurStrength / count_weight()) : ud.MaxTU;
-	if (ud.CurTU < 0) ud.CurTU = 0;
 	//ud.CurHealth = ud.MaxHealth;
 	//ud.CurStrength = ud.MaxStrength;
 	// Regain 33% of energy per turn. Should this be 43%?
@@ -570,7 +569,7 @@ void Soldier::restore()
 				ud.CurStun = 0;
 			if (ud.CurStun < ud.CurHealth) // This means we should wake up, so find the body!
 			{
-				int z0, x0, y0, found = 0;
+				int z0 = -1, x0 = -1, y0 = -1, found = 0;
 				Place *target = m_body->get_place();
 				for (z0 = 0; z0 < map->level; z0++)
 				{
@@ -1079,6 +1078,14 @@ int Soldier::move(int ISLOCAL)
 			x += DIR_DELTA_X(dir);
 			y += DIR_DELTA_Y(dir);
 
+			// If we're moving along a diagonal, use 1.5 times the cost, as in the original game itself.
+			// Please note that walktime( -1 ) returns the time of a horizontal move, whereas
+			// walktime( dir ) factors in the diagonal move multiplier.
+			if (DIR_DIAGONAL(dir))
+				spend_time((walktime(-1) * 3 / 2), 1);
+			else
+				spend_time(walktime(-1), 1);
+
 			map->set_man(z, x, y, this);
 			m_place[P_MAP] = map->place(z, x, y);
 
@@ -1090,13 +1097,6 @@ int Soldier::move(int ISLOCAL)
 
 		if (phase >= 8) {
 			phase = 0;
-			// If we're moving along a diagonal, use 1.5 times the cost, as in the original game itself.
-			// Please note that walktime( -1 ) returns the time of a horizontal move, whereas
-			// walktime( dir ) factors in the diagonal move multiplier.
-			if (DIR_DIAGONAL(dir))
-				spend_time((walktime(-1) * 3 / 2), 1);
-			else
-				spend_time(walktime(-1), 1);
 
 			curway++;
 			if (curway >= waylen) {

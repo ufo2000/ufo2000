@@ -50,7 +50,7 @@ ifdef win32
 	NAME := ${addsuffix .exe,$(NAME)}
 	SERVER_NAME := ${addsuffix .exe,$(SERVER_NAME)}
 	CFLAGS += -DWIN32
-	SUBSYSTEM := -Wl,--subsystem=windows
+	SUBSYSTEM := -Wl,--subsystem=windows -e _WinMainCRTStartup
 	LIBS = -lexpat -lNL -lalleg -lws2_32
 else
 	CFLAGS += -DLINUX

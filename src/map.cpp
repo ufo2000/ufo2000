@@ -820,11 +820,23 @@ int Map::passable(int oz, int ox, int oy)
 {
 	if (stopWALK(oz, ox, oy, 0) || stopWALK(oz, ox, oy, 3))
 		return 0;
-		return 1;
+	return 1;
 }
 
 int Map::passable(int oz, int ox, int oy, int dir)
 {
+//	Check if the destination point is too high
+	int dx = ox + DIR_DELTA_X(dir);
+	int dy = oy + DIR_DELTA_Y(dir);
+
+	if (!cell_inside(oz, ox, oy) || !cell_inside(oz, dx, dy)) return 0;
+
+	int height_o = -mcd(oz, ox, oy, 3)->T_Level;
+	int height_d = -mcd(oz, dx, dy, 3)->T_Level;
+
+	if (height_d - height_o > 10) return 0;
+
+//	Do the rest of checks
 	if (!passable(oz, ox, oy)) return 0;
 
 	switch (dir) {
