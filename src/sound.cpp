@@ -6,10 +6,10 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <cstdio>
-#include <assert.h>
 
 #include <cstring>
+#include <assert.h>
+
 
 #include <expat.h>
 #include "allegro.h"
@@ -263,7 +263,8 @@ static int buf_getc(const std::string& inbuf, unsigned *curp) {
     return rval;
 }
 
-static int buf_fread(void *buf, unsigned len, const std::string& inbuf, unsigned *curp)
+static int buf_fread(void *buf, unsigned len, const std::string& inbuf,
+                     unsigned *curp)
 {
     if (*curp + len > inbuf.size())
         return EOF;
@@ -274,7 +275,8 @@ static int buf_fread(void *buf, unsigned len, const std::string& inbuf, unsigned
 
 /* allegro's loadwav converted to operate on std::string ref. */
 
-static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log, bool verbose = false)
+static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log,
+                          bool verbose = false)
 {
     char buffer[25];
     int i;
@@ -287,7 +289,7 @@ static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log, bool verb
 
     unsigned curp = 0;
 
-    buf_fread(buffer, 12, inbuf, &curp);           /* check RIFF header */
+    buf_fread(buffer, 12, inbuf, &curp);       /* check RIFF header */
 
     log<<std::hex;
     for (i=0; i<12; i++)
@@ -303,14 +305,15 @@ static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log, bool verb
     while (inbuf.size() > curp ) {
         if (buf_fread(buffer, 4, inbuf, &curp) != 4) {
             if (verbose)
-                log<<"Can't read chunk ID at offset 0x"<<std::hex<<curp<<std::endl;
+                log<<"Can't read chunk ID at offset 0x"<<std::hex<<curp
+                   <<std::endl;
             break;
         }
 
-        length = buf_igetl(inbuf, &curp);          /* read chunk length */
+        length = buf_igetl(inbuf, &curp);      /* read chunk length */
 
         if (memcmp(buffer, "fmt ", 4) == 0) {
-            i = buf_igetw(inbuf, &curp);           /* should be 1 for PCM data */
+            i = buf_igetw(inbuf, &curp);       /* should be 1 for PCM data */
             length -= 2;
             if (i != 1) {
                 if (verbose)
@@ -319,7 +322,7 @@ static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log, bool verb
                 break;
             }
 
-            channels = buf_igetw(inbuf, &curp);     /* mono or stereo data */
+            channels = buf_igetw(inbuf, &curp); /* mono or stereo data */
             length -= 2;
             if ((channels != 1) && (channels != 2)) {
                 if (verbose)
@@ -327,14 +330,14 @@ static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log, bool verb
                 break;
             }
 
-            freq = buf_igetl(inbuf, &curp);         /* sample frequency */
+            freq = buf_igetl(inbuf, &curp);     /* sample frequency */
             length -= 4;
 
-            buf_igetl(inbuf, &curp);                /* skip six bytes */
+            buf_igetl(inbuf, &curp);            /* skip six bytes */
             buf_igetw(inbuf, &curp);
             length -= 6;
 
-            bits = buf_igetw(inbuf, &curp);         /* 8 or 16 bit data? */
+            bits = buf_igetw(inbuf, &curp);     /* 8 or 16 bit data? */
             length -= 2;
             if ((bits != 8) && (bits != 16)) {
                 if (verbose)
@@ -346,14 +349,14 @@ static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log, bool verb
                    <<bits<<" bits, "<<freq<<" Hz\n";
         }
         else if (memcmp(buffer, "data", 4) == 0) {
-            /* printf("Data: %d bytes\n", length); */
+            /* log<<"Data: "<<length<<" bytes\n"; */
             len = length / channels;
 
             if (bits == 16)
-            len /= 2;
+                len /= 2;
 
-            spl = create_sample(bits,
-                                ((channels == 2) ? TRUE : FALSE), freq, len);
+            spl = create_sample(bits, ((channels == 2) ? TRUE : FALSE),
+                                freq, len);
 
             if (spl) {
                 *allegro_errno = 0;
@@ -376,7 +379,7 @@ static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log, bool verb
 
                 if (*allegro_errno) {
                     if (verbose)
-                        printf("allegro_errno: %d.\n", *allegro_errno);
+                        log<<"allegro_errno: "<<(*allegro_errno)<<".\n";
                    destroy_sample(spl);
                    spl = NULL;
                 }
@@ -389,7 +392,9 @@ static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log, bool verb
             length--;
         }
     }
-
+    if (verbose)
+        log<<"returning SAMPLE pointer 0x"<<std::hex<<(int)spl
+           <<std::dec<<std::endl;
     return spl;
 }
 /* Original UFO samples have values from 0 to 0x3f.
@@ -483,8 +488,7 @@ int soundFile::loadFile(const char *fname, std::ostream& log, bool verbose) {
 }
 
 SAMPLE * soundFile::fetchSample(int idx) {
-//    return samples.at(idx);
-    assert(idx >= 0 && idx < static_cast<int>(samples.size())); // Check if the index is valid
+    assert(idx >= 0 && idx < static_cast<int>(samples.size()));
     return samples[idx];
 }
 
@@ -496,9 +500,11 @@ cat_file_type_e_t soundFile::getFileType(const std::string& buf) {
     const int head_len = 10;
     char sbuf[head_len];
 
-    buf.copy(reinterpret_cast<char *>(&offs), 4, 0); /* TODO: will break on big-endian arch. */
+    /* TODO: will break on big-endian arch. */
+    buf.copy(reinterpret_cast<char *>(&offs), 4, 0);
     buf.copy(sbuf, head_len, offs);
 
+#if defined(DEBUGMODE)
 {
     std::cerr<<"getFileType(): offset "<<offs<<std::endl;
 
@@ -507,7 +513,7 @@ cat_file_type_e_t soundFile::getFileType(const std::string& buf) {
         std::cerr<<" 0x"<<static_cast<int>(sbuf[i]);
     std::cerr<<std::dec<<std::endl;
 }
-
+#endif
 
 /*
  * Assuming this is CE file, scan first head_len bytes for RIFF sequence.
@@ -523,7 +529,9 @@ cat_file_type_e_t soundFile::getFileType(const std::string& buf) {
 }
 
 /* load Gold Edition .cat file */
-void soundFile::loadCeCat(const std::string& buf, std::ostream& log, bool verbose) {
+void soundFile::loadCeCat(const std::string& buf, std::ostream& log,
+                          bool verbose)
+{
     int i, count, nsamples;
 
     buf.copy((char *)&nsamples, 4, 0);
@@ -601,7 +609,9 @@ void soundFile::loadCeCat(const std::string& buf, std::ostream& log, bool verbos
 static const int ORIG_SAMPLE_DATA_HEADER_LEN = 6;
 
 /** Load original *.cat file */
-void soundFile::loadOrigCat(const std::string& buf, std::ostream& log, bool verbose) {
+void soundFile::loadOrigCat(const std::string& buf, std::ostream& log,
+                            bool verbose)
+{
     int i, count, nsamples;
 
     buf.copy((char *)&nsamples, 4, 0);
@@ -767,8 +777,10 @@ static void h_StartEl(void *userData,
             return;
         }
         soundSym = getSymCode(sym);
-        if ((soundSym == SS_UNKNOWN) || (soundSym == SS_UNUSED))
+        if ((soundSym == SS_UNKNOWN) || (soundSym == SS_UNUSED)) {
+            *b->log<<"SS_UNKNOWN or SS_UNUSED soundSym\n";
             return;
+        }
         if (NULL == (sample = b->current->fetchSample(b->curSampleIndex))) {
             b->errorOccured = true;
             *b->log<<"Extraneous <sample> sym='"<<sym<<"' ";
@@ -777,6 +789,7 @@ static void h_StartEl(void *userData,
         }
         b->zeSys->setSample(soundSym, sample);
         b->curSample = sample;
+        *b->log<<"assigned 0x"<<std::hex<<(int)sample<<std::dec<<" to '"<<sym<<"'\n";
         return;
     }
 
@@ -806,7 +819,6 @@ static void h_StartEl(void *userData,
         b->zeSys->setSample(soundSym, b->curSample);
         return;
     }
-
 
     b->errorOccured = true;
     *b->log<<"Unknown element '"<<name<<"'\n";
@@ -854,7 +866,9 @@ static void h_EndEl(void *userData, const XML_Char *name)
 soundSystem::soundSystem() { }
 //~soundSystem::soundSystem() { }
 
-int soundSystem::initialize(const std::string& xml, std::ostream *log, bool verbose) {
+int soundSystem::initialize(const std::string& xml, std::ostream *log,
+                            bool verbose)
+{
     xmlp_baton_t baton;
     std::stringstream *backup_log = NULL;
 
@@ -865,16 +879,14 @@ int soundSystem::initialize(const std::string& xml, std::ostream *log, bool verb
 
     reserve_voices(4, -1);
 
-    soundInstalled = false;
-
 	if (install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) != 0) {
 		*log<<"Error initialising sound system: "<<allegro_error<<std::endl;
-        //return -1;
+        soundInstalled = false;
+    } else {
+        soundInstalled = true;
+        set_volume_per_voice(0);
+        set_volume(255,255);
     }
-    soundInstalled = true;
-
-    set_volume_per_voice(0);
-    set_volume(255,255);
 
     theSamples.assign(sizeof(KNOWN_SYMS), NULL);
 
@@ -896,15 +908,16 @@ int soundSystem::initialize(const std::string& xml, std::ostream *log, bool verb
     XML_Parse(baton.parser, xml.data(), xml.size(), 1);
 
     if (XML_GetErrorCode(baton.parser) != XML_ERROR_NONE) {
-        *log<<"XML parse error: "<<XML_ErrorString(XML_GetErrorCode(baton.parser))
-           <<" at line "<<XML_GetCurrentLineNumber(baton.parser)
-           <<" col "<<XML_GetCurrentColumnNumber(baton.parser)<<std::endl;
+        *log<<"XML parse error: "
+            <<XML_ErrorString(XML_GetErrorCode(baton.parser))
+            <<" at line "<<XML_GetCurrentLineNumber(baton.parser)
+            <<" col "<<XML_GetCurrentColumnNumber(baton.parser)<<std::endl;
         return -1;
     }
 
     XML_ParserFree(baton.parser);
 
-    if (backup_log!= NULL)
+    if (backup_log != NULL)
         delete backup_log;
 
     return 0;
@@ -949,17 +962,18 @@ void soundSystem::getLoadedSyms(std::ostream *os) {
 }
 
 void soundSystem::playLoadedSamples(std::ostream *os) {
-    if (!soundInstalled)
-        return;
     for (unsigned i = 0; i != theSamples.size(); i++)
         if (theSamples[i] != NULL) {
-            *os<<"Playing '"<<getSymString(static_cast<SoundSym_e_t> (i))<<"' (#"<<i
-            <<", bits "<<(theSamples[i]->bits)
-            <<" stereo "<<(theSamples[i]->stereo)
-            <<" freq "<<(theSamples[i]->freq)
-            <<" pri "<<(theSamples[i]->priority)
-            <<" len "<<(theSamples[i]->len)<<")"<< std::endl;
+            *os<<"Playing '"<<getSymString(static_cast<SoundSym_e_t> (i))
+               <<"' (#"<<i
+               <<", bits "<<(theSamples[i]->bits)
+               <<" stereo "<<(theSamples[i]->stereo)
+               <<" freq "<<(theSamples[i]->freq)
+               <<" pri "<<(theSamples[i]->priority)
+               <<" len "<<(theSamples[i]->len)
+               <<")"<< std::endl;
             play(static_cast<SoundSym_e_t> (i));
-            rest(1500); // sleep 1.5 secs to allow the sample to play.
+            if (soundInstalled)
+                rest(1500); // sleep 1.5 secs to allow the sample to play.
         }
 }
