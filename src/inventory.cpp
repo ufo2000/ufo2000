@@ -65,7 +65,7 @@ void Inventory::draw()
 	//spr_over(screen2, 237, 1, b123);
 	//spr_over(screen2, 288, 32, b4);
 	//spr_over(screen2, 288, 137, b5);
-	draw_sprite_h_flip(screen2, b5, 255, 137);      // b6
+    draw_sprite_vh_flip(screen2, b5, 255, 137);  // b6 - Button: scroll left
 
 	//sel_man->showspk();
 	sel_man->draw_inventory();
@@ -209,5 +209,6 @@ void Inventory::close()
 	if (sel_item == NULL)
 		MODE = MAP3D;
 	else
-		backput();      //return to orig place
+        backput();      //return item to original place
 }
+

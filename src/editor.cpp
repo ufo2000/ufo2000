@@ -284,7 +284,7 @@ bool Editor::handle_mouse_leftclick()
  * Draw soldier's inventory when in mission-planner
  */
 // See also: Inventory::draw(), Soldier::draw_inventory()
-// Called by: Connect::do_planner() via Units::execute_main()  
+// Called by: Connect::do_planner() via Units::execute and execute_main()
 void Editor::show()
 {
 	reset_video();
@@ -297,7 +297,7 @@ void Editor::show()
     BITMAP *editor_bg = create_bitmap(640, 400);
     clear_to_color(editor_bg, COLOR_BLACK1);
     tac01->show(editor_bg, 0, 0); // draw buttons: OK, Next-Man, Prev-Man, Unload-clip, Scroll-right
-    draw_sprite_h_flip(editor_bg, b5, 255, 137); // Button: Scroll-left
+    draw_sprite_vh_flip(editor_bg, b5, 255, 137); // Button: Scroll-left
     text_mode(-1);
     textout(editor_bg, g_small_font, "Click-and-drop weapons from the armory to the soldier, right-click to remove", 8, 364, COLOR_WHITE); 
     textout(editor_bg, large, "F1 Help   F2 Save Team   F3 Load Team   F4 Edit Attributes", 8, 380, COLOR_LT_BLUE);
@@ -749,8 +749,8 @@ static void fixup_unit_info()
 }
 
 /**
- * Shows unit stats edit dialog and allows to edit unit stats, change
- * name, armour and skin
+ * Shows unit-stats edit-dialog and allows to edit unit stats, 
+ * change name, and armour (=skin)
  */
 void Editor::edit_soldier()
 {
@@ -853,6 +853,13 @@ void change_equipment_callback(const char *name)
 	eqsets.push_back(name);
 }
 
+/**
+ * Let the user select a set of equipment available in the armory, 
+ * e.g. standard, no explosives, no alien weapons etc.
+ *
+ * Query which sets are defined in ./init-scripts/standard-equipment.lua,
+ * then present the names of those sets in a popup-box to the user.
+ */
 void Editor::change_equipment()
 {
 	// Get list of available equipment sets
