@@ -1,5 +1,9 @@
 #!/bin/lua
 
+ObjectsTable = {}
+function AddXcomItem(item) ObjectsTable[item.index] = item end
+function pck_image(a, b) return b end
+
 require "obdata.lua"
 
 -- script used for analyzing data structures
@@ -37,4 +41,5 @@ group_items{"_2A"}
 group_items{"_2D"}
 group_items{"_35"}
 group_items{"primeType"}
+group_items{"hitType"}
 group_items{"isAlien", "isWeapon", "isGun", "isShootable"}

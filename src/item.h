@@ -91,8 +91,7 @@ public:
 
 	static int health_max(int _type);
 	int health_max() { return health_max(m_type); }
-	static int is_laser(int _type);
-	int is_laser() { return is_laser(m_type); };
+	int is_laser() { return ((obdata_damageType(m_type) == DT_LAS) && obdata_isGun(m_type)); };
 	int is_grenade();
 	int is_cold_weapon();
 	int is_stun_rod();

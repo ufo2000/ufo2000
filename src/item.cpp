@@ -238,7 +238,7 @@ void Item::od_info(int type, int gx, int gy, int gcol)
 
 	if (obdata_damage(type) > 0) {
 		textprintf(screen2, font, gx, gy, gcol, "Damage: %d  Type: %d", obdata_damage(type),
-		(obdata_hitType(type) > 0 ? obdata_hitType(type) : obdata_damageType(type)));
+			obdata_damageType(type));
 		gy += 10;
 	}
 
@@ -339,13 +339,6 @@ int Item::is_grenade()
 	                    HIGH_EXPLOSIVE, ALIEN_GRENADE};
 
 	if (memchr(grenades, m_type, 5) != NULL)
-		return 1;
-	return 0;
-}
-
-int Item::is_laser(int type)
-{
-	if ((type == LASER_PISTOL) || (type == LASER_GUN) || (type == HEAVY_LASER))
 		return 1;
 	return 0;
 }

@@ -9,11 +9,9 @@ AddXcomItem {
 	height = 2,
 	ammo = {"PISTOL CLIP"},
 	pHeld = 12,
-	damageType = 255,
 	accuracy = {0, 60, 78},
 	time = {0, 18, 30},
 	rounds = 8,
-	hitType = 9,
 	weight = 5,
 	isShootable = 1,
 	isWeapon = 1,
@@ -33,7 +31,6 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 0,
 	rounds = 12,
-	hitType = 9,
 	weight = 3,
 	isAmmo = 1,
 }
@@ -49,11 +46,9 @@ AddXcomItem {
 	height = 3,
 	ammo = {"RIFLE CLIP"},
 	pHeld = 0,
-	damageType = 255,
 	accuracy = {35, 60, 110},
 	time = {35, 25, 80},
 	rounds = 10,
-	hitType = 8,
 	weight = 8,
 	isShootable = 1,
 	isWeapon = 1,
@@ -74,7 +69,6 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 0,
 	rounds = 20,
-	hitType = 8,
 	weight = 3,
 	isAmmo = 1,
 }
@@ -90,11 +84,9 @@ AddXcomItem {
 	height = 3,
 	ammo = {"CANNON AP-AMMO", "CANNON HE-AMMO", "CANNON I-AMMO"},
 	pHeld = 3,
-	damageType = 255,
 	accuracy = {0, 60, 90},
 	time = {0, 33, 80},
 	rounds = 10,
-	hitType = 8,
 	weight = 18,
 	isShootable = 1,
 	isWeapon = 1,
@@ -115,7 +107,6 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 0,
 	rounds = 6,
-	hitType = 8,
 	weight = 6,
 	isAmmo = 1,
 }
@@ -133,7 +124,6 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 2,
 	rounds = 6,
-	hitType = 8,
 	weight = 6,
 	isAmmo = 1,
 }
@@ -151,7 +141,6 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 1,
 	rounds = 6,
-	hitType = 8,
 	weight = 6,
 	isAmmo = 1,
 }
@@ -167,11 +156,9 @@ AddXcomItem {
 	height = 3,
 	ammo = {"AUTO-CANNON AP-AMMO", "AUTO-CANNON HE-AMMO", "AUTO-CANNON I-AMMO"},
 	pHeld = 4,
-	damageType = 255,
 	accuracy = {32, 56, 82},
 	time = {40, 33, 80},
 	rounds = 10,
-	hitType = 8,
 	weight = 19,
 	isShootable = 1,
 	isWeapon = 1,
@@ -192,7 +179,6 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 0,
 	rounds = 14,
-	hitType = 8,
 	weight = 5,
 	isAmmo = 1,
 }
@@ -210,7 +196,6 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 2,
 	rounds = 14,
-	hitType = 8,
 	weight = 5,
 	isAmmo = 1,
 }
@@ -228,7 +213,6 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 1,
 	rounds = 14,
-	hitType = 8,
 	weight = 5,
 	isAmmo = 1,
 }
@@ -244,11 +228,9 @@ AddXcomItem {
 	height = 3,
 	ammo = {"SMALL ROCKET", "LARGE ROCKET", "INCENDIARY ROCKET"},
 	pHeld = 9,
-	damageType = 255,
 	accuracy = {0, 55, 115},
 	time = {0, 45, 75},
 	rounds = 10,
-	hitType = 8,
 	weight = 10,
 	isShootable = 1,
 	isWeapon = 1,
@@ -269,7 +251,6 @@ AddXcomItem {
 	pHeld = 10,
 	damageType = 2,
 	rounds = 1,
-	hitType = 8,
 	weight = 6,
 	isAmmo = 1,
 	twoHanded = 1,
@@ -288,7 +269,6 @@ AddXcomItem {
 	pHeld = 10,
 	damageType = 2,
 	rounds = 1,
-	hitType = 8,
 	weight = 8,
 	isAmmo = 1,
 	twoHanded = 1,
@@ -307,7 +287,6 @@ AddXcomItem {
 	pHeld = 10,
 	damageType = 1,
 	rounds = 1,
-	hitType = 8,
 	weight = 8,
 	isAmmo = 1,
 	twoHanded = 1,
@@ -328,7 +307,6 @@ AddXcomItem {
 	accuracy = {28, 40, 68},
 	time = {25, 20, 55},
 	rounds = 10,
-	hitType = 8,
 	weight = 7,
 	isShootable = 1,
 	isWeapon = 1,
@@ -350,7 +328,6 @@ AddXcomItem {
 	accuracy = {46, 65, 100},
 	time = {34, 25, 50},
 	rounds = 10,
-	hitType = 8,
 	weight = 8,
 	isShootable = 1,
 	isWeapon = 1,
@@ -373,7 +350,6 @@ AddXcomItem {
 	accuracy = {0, 50, 84},
 	time = {0, 33, 75},
 	rounds = 10,
-	hitType = 8,
 	weight = 18,
 	isShootable = 1,
 	isWeapon = 1,
@@ -394,7 +370,6 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 2,
 	rounds = 10,
-	hitType = 8,
 	weight = 3,
 }
 
@@ -410,7 +385,6 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 2,
 	rounds = 10,
-	hitType = 8,
 	weight = 3,
 }
 
@@ -427,7 +401,6 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 2,
 	rounds = 10,
-	hitType = 8,
 	weight = 3,
 }
 
@@ -444,7 +417,6 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 2,
 	rounds = 10,
-	hitType = 8,
 	weight = 6,
 }
 
@@ -458,9 +430,7 @@ AddXcomItem {
 	width = 1,
 	height = 1,
 	pHeld = 15,
-	damageType = 0,
 	rounds = 10,
-	hitType = 8,
 	weight = 3,
 }
 
@@ -474,9 +444,7 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 15,
-	damageType = 0,
 	rounds = 10,
-	hitType = 8,
 	weight = 5,
 }
 
@@ -490,9 +458,7 @@ AddXcomItem {
 	width = 1,
 	height = 3,
 	pHeld = 11,
-	damageType = 0,
 	rounds = 10,
-	hitType = 8,
 	weight = 8,
 	twoHanded = 1,
 }
@@ -510,7 +476,6 @@ AddXcomItem {
 	pHeld = 10,
 	damageType = 5,
 	rounds = 65,
-	hitType = 5,
 	weight = 6,
 	isWeapon = 1,
 	twoHanded = 1,
@@ -526,8 +491,6 @@ AddXcomItem {
 	width = 1,
 	height = 1,
 	pHeld = 15,
-	damageType = 0,
-	hitType = 8,
 	weight = 3,
 }
 
@@ -541,8 +504,6 @@ AddXcomItem {
 	width = 2,
 	height = 3,
 	pHeld = 15,
-	damageType = 3,
-	hitType = 0,
 	weight = 22,
 	twoHanded = 1,
 }
@@ -557,8 +518,6 @@ AddXcomItem {
 	width = 2,
 	height = 3,
 	pHeld = 15,
-	damageType = 3,
-	hitType = 0,
 	weight = 24,
 	twoHanded = 1,
 }
@@ -573,8 +532,6 @@ AddXcomItem {
 	width = 2,
 	height = 3,
 	pHeld = 15,
-	damageType = 3,
-	hitType = 0,
 	weight = 26,
 }
 
@@ -589,11 +546,9 @@ AddXcomItem {
 	height = 3,
 	ammo = {"Heavy Plasma Clip"},
 	pHeld = 5,
-	damageType = 255,
 	accuracy = {50, 75, 110},
 	time = {35, 30, 60},
 	rounds = 10,
-	hitType = 8,
 	weight = 8,
 	isShootable = 1,
 	isWeapon = 1,
@@ -615,7 +570,6 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 4,
 	rounds = 35,
-	hitType = 8,
 	weight = 3,
 	isAmmo = 1,
 	isAlien = 1,
@@ -632,11 +586,9 @@ AddXcomItem {
 	height = 3,
 	ammo = {"Plasma Rifle Clip"},
 	pHeld = 6,
-	damageType = 255,
 	accuracy = {55, 86, 100},
 	time = {36, 30, 60},
 	rounds = 10,
-	hitType = 8,
 	weight = 5,
 	isShootable = 1,
 	isWeapon = 1,
@@ -658,7 +610,6 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 4,
 	rounds = 28,
-	hitType = 8,
 	weight = 3,
 	isAmmo = 1,
 	isAlien = 1,
@@ -675,11 +626,9 @@ AddXcomItem {
 	height = 2,
 	ammo = {"Plasma Pistol Clip"},
 	pHeld = 13,
-	damageType = 255,
 	accuracy = {50, 65, 85},
 	time = {30, 30, 60},
 	rounds = 10,
-	hitType = 8,
 	weight = 3,
 	isShootable = 1,
 	isWeapon = 1,
@@ -700,7 +649,6 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 4,
 	rounds = 26,
-	hitType = 0,
 	weight = 3,
 	isAmmo = 1,
 	isAlien = 1,
@@ -717,11 +665,9 @@ AddXcomItem {
 	height = 3,
 	ammo = {"BLASTER BOMB"},
 	pHeld = 7,
-	damageType = 255,
 	accuracy = {0, 0, 120},
 	time = {0, 0, 80},
 	rounds = 10,
-	hitType = 8,
 	weight = 16,
 	isShootable = 1,
 	isWeapon = 1,
@@ -743,7 +689,6 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 2,
 	rounds = 1,
-	hitType = 8,
 	weight = 3,
 	isAmmo = 1,
 	isAlien = 1,
@@ -760,11 +705,9 @@ AddXcomItem {
 	height = 2,
 	ammo = {"STUN MISSILE"},
 	pHeld = 8,
-	damageType = 255,
 	accuracy = {0, 65, 110},
 	time = {0, 40, 75},
 	rounds = 10,
-	hitType = 8,
 	weight = 10,
 	isShootable = 1,
 	isWeapon = 1,
@@ -786,7 +729,6 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 5,
 	rounds = 1,
-	hitType = 8,
 	weight = 3,
 	isAmmo = 1,
 	isAlien = 1,
@@ -805,7 +747,6 @@ AddXcomItem {
 	pHeld = 15,
 	damageType = 2,
 	rounds = 10,
-	hitType = 8,
 	weight = 3,
 	isAlien = 1,
 }
@@ -820,9 +761,7 @@ AddXcomItem {
 	width = 1,
 	height = 1,
 	pHeld = 15,
-	damageType = 255,
 	rounds = 10,
-	hitType = 8,
 	weight = 3,
 	isAlien = 1,
 }
@@ -837,8 +776,6 @@ AddXcomItem {
 	width = 2,
 	height = 2,
 	pHeld = 15,
-	damageType = 0,
-	hitType = 8,
 	weight = 5,
 	twoHanded = 1,
 	isAlien = 1,
@@ -854,8 +791,6 @@ AddXcomItem {
 	width = 2,
 	height = 3,
 	pHeld = 0,
-	damageType = 0,
-	hitType = 0,
 	weight = 30,
 	twoHanded = 1,
 }
@@ -870,8 +805,6 @@ AddXcomItem {
 	width = 2,
 	height = 3,
 	pHeld = 0,
-	damageType = 0,
-	hitType = 0,
 	weight = 40,
 	twoHanded = 1,
 }
@@ -886,8 +819,6 @@ AddXcomItem {
 	width = 2,
 	height = 3,
 	pHeld = 0,
-	damageType = 0,
-	hitType = 0,
 	weight = 25,
 	twoHanded = 1,
 }
@@ -902,8 +833,6 @@ AddXcomItem {
 	width = 2,
 	height = 3,
 	pHeld = 0,
-	damageType = 0,
-	hitType = 0,
 	weight = 40,
 	twoHanded = 1,
 }
@@ -918,8 +847,6 @@ AddXcomItem {
 	width = 2,
 	height = 3,
 	pHeld = 0,
-	damageType = 0,
-	hitType = 0,
 	weight = 20,
 	twoHanded = 1,
 }
@@ -934,8 +861,6 @@ AddXcomItem {
 	width = 2,
 	height = 3,
 	pHeld = 0,
-	damageType = 0,
-	hitType = 0,
 	weight = 35,
 	twoHanded = 1,
 }
@@ -950,8 +875,6 @@ AddXcomItem {
 	width = 2,
 	height = 3,
 	pHeld = 0,
-	damageType = 0,
-	hitType = 0,
 	weight = 40,
 	twoHanded = 1,
 }
@@ -966,8 +889,6 @@ AddXcomItem {
 	width = 2,
 	height = 3,
 	pHeld = 0,
-	damageType = 0,
-	hitType = 0,
 	weight = 40,
 	twoHanded = 1,
 }
@@ -982,8 +903,6 @@ AddXcomItem {
 	width = 2,
 	height = 3,
 	pHeld = 0,
-	damageType = 0,
-	hitType = 0,
 	weight = 50,
 	twoHanded = 1,
 }
@@ -998,8 +917,6 @@ AddXcomItem {
 	width = 2,
 	height = 3,
 	pHeld = 0,
-	damageType = 0,
-	hitType = 0,
 	weight = 50,
 	twoHanded = 1,
 }
@@ -1014,8 +931,6 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 12,
-	damageType = 255,
-	hitType = 0,
 	weight = 50,
 	twoHanded = 1,
 }
@@ -1030,8 +945,6 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 12,
-	damageType = 255,
-	hitType = 0,
 	weight = 50,
 	twoHanded = 1,
 }
@@ -1046,8 +959,6 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 12,
-	damageType = 255,
-	hitType = 0,
 	weight = 50,
 }
 
@@ -1061,8 +972,6 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 12,
-	damageType = 255,
-	hitType = 0,
 	weight = 50,
 }
 
@@ -1076,8 +985,6 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 12,
-	damageType = 255,
-	hitType = 0,
 	weight = 50,
 }
 
@@ -1091,8 +998,6 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 12,
-	damageType = 255,
-	hitType = 0,
 	weight = 50,
 }
 
@@ -1106,8 +1011,6 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 12,
-	damageType = 255,
-	hitType = 0,
 	weight = 50,
 }
 
@@ -1121,8 +1024,6 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 12,
-	damageType = 255,
-	hitType = 0,
 	weight = 50,
 }
 
@@ -1136,8 +1037,6 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 12,
-	damageType = 255,
-	hitType = 0,
 	weight = 50,
 }
 
@@ -1151,8 +1050,6 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 12,
-	damageType = 255,
-	hitType = 0,
 	weight = 50,
 }
 
@@ -1166,8 +1063,6 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 12,
-	damageType = 255,
-	hitType = 0,
 	weight = 50,
 }
 
@@ -1181,8 +1076,6 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 12,
-	damageType = 255,
-	hitType = 0,
 	weight = 50,
 }
 
@@ -1196,8 +1089,6 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 12,
-	damageType = 255,
-	hitType = 0,
 	weight = 50,
 }
 
@@ -1211,8 +1102,6 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 12,
-	damageType = 255,
-	hitType = 0,
 	weight = 50,
 }
 
@@ -1226,8 +1115,6 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 12,
-	damageType = 255,
-	hitType = 0,
 	weight = 50,
 }
 
@@ -1241,8 +1128,6 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 12,
-	damageType = 255,
-	hitType = 0,
 	weight = 50,
 }
 
@@ -1256,8 +1141,6 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 12,
-	damageType = 255,
-	hitType = 0,
 	weight = 50,
 }
 
@@ -1271,8 +1154,6 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 12,
-	damageType = 255,
-	hitType = 0,
 	weight = 50,
 }
 
@@ -1286,8 +1167,6 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 12,
-	damageType = 255,
-	hitType = 0,
 	weight = 30,
 }
 
@@ -1301,7 +1180,5 @@ AddXcomItem {
 	width = 1,
 	height = 2,
 	pHeld = 15,
-	damageType = 255,
-	hitType = 0,
 	weight = 50,
 }

@@ -1,5 +1,6 @@
 ItemsTable = {}
 function AddXcomItem(item) ItemsTable[item.index] = item end
+function pck_image(a, b) return b end
 
 require "standard-items.lua"
 
@@ -7,6 +8,7 @@ function is_badline(l)
 	if string.find(l, "^%s*_") then return true end
 	if string.find(l, "^%s*throw_accuracy") then return true end
 	if string.find(l, "^%s*primeType") then return true end
+	if string.find(l, "^%s*hitType") then return true end
 	if string.find(l, "^%s*rounds = 0") then return true end
 	if string.find(l, "^%s*isAlien = 0") then return true end
 	if string.find(l, "^%s*damage = 0") then return true end
@@ -16,6 +18,7 @@ function is_badline(l)
 	if string.find(l, "^%s*isAmmo = 0") then return true end
 	if string.find(l, "^%s*isShootable = 0") then return true end
 	if string.find(l, "^%s*wayPoints = 0") then return true end
+	if string.find(l, "^%s*damageType = 255,") then return true end
 	if string.find(l, "^%s*time = {0, 0, 0}") then return true end
 	if string.find(l, "^%s*accuracy = {0, 0, 0}") then return true end
 	if string.find(l, "^%s*ammo = {255, 255, 255}") then return true end
