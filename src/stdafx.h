@@ -39,14 +39,16 @@ extern "C" {
 #include <winalleg.h>
 #endif
 
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+
 #ifdef LINUX
 #include <unistd.h>
 inline long filelength(int handle) { struct stat s; fstat(handle, &s); return s.st_size; }
 #endif
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <stdlib.h>
 
 #include <fcntl.h>
 
