@@ -491,7 +491,7 @@ void initmain(int argc, char *argv[])
 	PALETTE pal;
 	BITMAP *text_back = load_memory_jpg(datafile[DAT_TEXT_BACK_JPG].dat, pal);
 
-	stretch_blit(text_back, screen, 0, 0, text_back->w, text_back->h, 0, 0, screen->w, screen->h);
+	stretch_blit(text_back, screen, 0, 0, text_back->w, text_back->h, 0, 0, SCREEN_W, SCREEN_H);
     fade_from(black_palette, pal, (64 - FADE_SPEED)/3 + FADE_SPEED);
 
 	print_win = new Wind(text_back, 15, 300, 625, 390, 255);
@@ -567,7 +567,7 @@ void initmain(int argc, char *argv[])
 	} else if (consolefont == "xcom_large") {
 		fnt = large;
 	}
-	g_console = new ConsoleWindow(screen->w, screen->h - SCREEN2H, fnt);
+	g_console = new ConsoleWindow(SCREEN_W, SCREEN_H - SCREEN2H, fnt);
 
 	console<<"new icon"<<std::endl;
 	icon = new Icon((SCREEN2W - 320) / 2, SCREEN2H - 56);
@@ -1388,7 +1388,7 @@ void gameloop()
 
 		back->show(scr, 0, 0);
 		stretch_blit(scr, screen, 0, 0, 320, (SCREEN2H/2), 0, 0, 640, (SCREEN2H/2)*2);
-		textprintf_centre(screen, large, screen->w / 2, 24, xcom1_color(1), "%s", winner);
+		textprintf_centre(screen, large, SCREEN_W / 2, 24, xcom1_color(1), "%s", winner);
 
 		g_console->set_full_redraw();
 

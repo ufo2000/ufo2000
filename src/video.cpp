@@ -314,16 +314,16 @@ unsigned short crc16(char *data_p)
 void resize_screen2(int vw, int vh)
 {
 	SCREEN2W += vw; SCREEN2H += vh;
-	if (SCREEN2W > screen->w) SCREEN2W = screen->w;
+	if (SCREEN2W > SCREEN_W) SCREEN2W = SCREEN_W;
 	if (SCREEN2W < 320) SCREEN2W = 320;
-	if (SCREEN2H > screen->h - 40) SCREEN2H = screen->h - 40;
+	if (SCREEN2H > SCREEN_H - 40) SCREEN2H = SCREEN_H - 40;
 	if (SCREEN2H < 200) SCREEN2H = 200;
 
 	destroy_bitmap(screen2);
 	screen2 = create_bitmap(SCREEN2W, SCREEN2H);
 
-	map->m_minimap_area->resize(screen->w - SCREEN2W, SCREEN2H);
-	g_console->resize(screen->w, screen->h - SCREEN2H);
+	map->m_minimap_area->resize(SCREEN_W - SCREEN2W, SCREEN2H);
+	g_console->resize(SCREEN_W, SCREEN_H - SCREEN2H);
 	icon->setxy((SCREEN2W - 320) / 2, SCREEN2H - 56);
 	set_mouse_range(0, 0, SCREEN2W - 1, SCREEN2H - 1);
 	position_mouse(SCREEN2W / 2, SCREEN2H / 2);

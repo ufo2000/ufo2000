@@ -83,8 +83,10 @@ bool ConsoleStatusLine::resize(int width, int height)
  */
 bool ConsoleStatusLine::process_keyboard_input(int keycode, int scancode)
 {
-	if (scancode == KEY_ENTER)
+	if (scancode == KEY_ENTER) {
+		if (m_text == "") return false;
 		return true;
+	}
 
 	if (scancode == KEY_BACKSPACE) {
 		if (backspace()) set_full_redraw();
@@ -217,6 +219,7 @@ void ConsoleWindow::printf(const char *fmt, ...)
 bool ConsoleWindow::process_keyboard_input(int keycode, int scancode)
 {
 	if (scancode == KEY_ENTER) {
+		if (m_status_line->get_text() == "") return false;
 		printf("%s", m_status_line->get_text().c_str());
 		m_status_line->set_text("");
 		return true;

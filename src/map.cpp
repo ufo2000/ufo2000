@@ -101,7 +101,7 @@ Map::Map(GEODATA &mapdata)
 	//textout(screen, font, "Map::Map press key", 0,0, 1); readkey();
 	build_visi();
 
-	m_minimap_area = new MinimapArea(this, screen->w - SCREEN2W, SCREEN2H);
+	m_minimap_area = new MinimapArea(this, SCREEN_W - SCREEN2W, SCREEN2H);
 }
 
 Map::Map(int l, int c, int r, int _ter, unsigned char *_map)
@@ -119,7 +119,7 @@ Map::Map(int l, int c, int r, int _ter, unsigned char *_map)
 	m_terrain_set = gd.terrain;
 	loadmaps(gd.mapdata);
 
-	m_minimap_area = new MinimapArea(this, screen->w - SCREEN2W, SCREEN2H);
+	m_minimap_area = new MinimapArea(this, SCREEN_W - SCREEN2W, SCREEN2H);
 }
 
 Map::~Map()
@@ -1550,7 +1550,7 @@ bool Map::Read(persist::Engine &archive)
 
     loadterrain(m_terrain_set);
 
-	m_minimap_area = new MinimapArea(this, screen->w - SCREEN2W, SCREEN2H);
+	m_minimap_area = new MinimapArea(this, SCREEN_W - SCREEN2W, SCREEN2H);
 
 	return true;
 }

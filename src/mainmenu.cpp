@@ -99,7 +99,7 @@ static void d_draw_baton(BITMAP *bmp, int x, int y, int w, int h, buttonState *s
 static int d_mainmenu_background_proc(int msg, DIALOG *d, int c) 
 {
 	if (msg == MSG_DRAW) {
-		stretch_blit(menuback, screen, 0, 0, menuback->w, menuback->h, 0, 0, screen->w, screen->h);
+		stretch_blit(menuback, screen, 0, 0, menuback->w, menuback->h, 0, 0, SCREEN_W, SCREEN_H);
 		text_mode(-1);
 		textprintf(screen, g_small_font, 0, 0, xcom1_menu_color(220), "UFO2000 %s", UFO_VERSION_STRING);
 	}
@@ -191,7 +191,7 @@ int do_mainmenu()
 	set_mouse_sprite(mouser2);
 	set_palette(menupal);
 	set_mouse_speed(1, 1);
-	set_mouse_range(0, 0, screen->w - 1, screen->h - 1);
+	set_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
 	
 	if (old_mouse_x != -1)
 		position_mouse(old_mouse_x, old_mouse_y);
