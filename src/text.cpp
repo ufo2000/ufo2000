@@ -55,22 +55,24 @@ void lua_message( const std::string &str1 )
 };
 
 /**
- * gettext-prototype:
- * 
- * For translating text to foreign languages.
- * Instead of the full gnu-gettext-package, a simple LUA-script is used.
+ * Translate the input-string to a foreign language.
+ * Instead of the full gnu-gettext-package, a LUA-script is used
+ * to read the texts and translations from a .po - file.
+ * The language-file to use is configured in ufo2000.ini.
+ *
  * Todo: investigate performance, cache translated messages ...
  */
 const char *gettext(const char *str)
 { 
-	if (L == NULL) return str;
+    if (L == NULL)   // lua is not yet working 
+        return str;  // return input-string unchanged
 
     int stack_top = lua_gettop(L);
 	lua_pushstring(L, "TranslatedMessages");
 	lua_gettable(L, LUA_GLOBALSINDEX);
 	if (!lua_istable(L, -1)) {
 	    lua_settop(L, stack_top);
-		return str;
+        return str;   // no translation-table available
 	}
 	lua_pushstring(L, str);
 	lua_gettable(L, -2);
@@ -447,7 +449,7 @@ void help( const int helppage )
         case HELP_INVENTORY + 2 :
             b1 = alert3( "Use the mouse to move items between the slots",
                          "for hands, belt, backpack etc.",
-                         "Note: during battle, each move costs time.",
+                         "Note: during battle, each such move costs time.",
                          prev, ok, next, kp_prev, kp_ok, kp_next);
             break;
         case HELP_INVENTORY + 3 :
@@ -675,8 +677,8 @@ void help( const int helppage )
             break;
         // TODO - Scenario-developers, please help yourself !!!
         case HELP_SCENARIO + 2 :
-            b1 = alert3( "(to be continued)",
-                         "",
+            b1 = alert3( "", 
+                         "(to be continued)",
                          "",
                          prev, ok, NULL, kp_prev, kp_ok, kp_0);  // no "next"-button
             break;

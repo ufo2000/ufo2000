@@ -373,11 +373,16 @@ void Editor::show()
 				}
 			}
 			
-			int wht = man->count_weight();
+            int wht = man->count_weight();
 			int max_wht = man->md.Strength;
 			color       = max_wht < wht ? COLOR_RED03 : COLOR_GRAY02;
-            textprintf(screen2, g_small_font, 0, 20, color, _("Equipment weight: %d/%d"), wht, max_wht);
-            textprintf(screen2, g_small_font, 120, 20, COLOR_GRAY02, _("Equipment cost: %d"), man->calc_full_ammunition_cost());
+            textprintf(screen2, g_small_font, 0, 20, color, _("Equipment weight: %d/%2d"), wht, max_wht);
+            char str1[64]; // to adjust position of translated string
+          //int x1 = 120;
+            int x2 = 236;
+			sprintf(str1, "%s: %4d", _("Equipment cost"), man->calc_full_ammunition_cost() );
+            int w1 = text_length(g_small_font, str1);  // right-justify string
+            textprintf(screen2, g_small_font, x2-w1, 20, COLOR_GRAY02, str1);
 
 			draw_sprite(screen2, mouser, mouse_x, mouse_y);
 			blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);

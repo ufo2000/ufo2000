@@ -158,6 +158,7 @@ void Units::print(int gcol)
     text_mode( -1);
 	int x1, y1, x2, y2, color = COLOR_GREEN12;
 	int i;
+    // Todo: function to calculate position of name-fields
 	for (i = 0; i < size; i++) {
 		if (selected == i) {
 			if (pos == POS_LEFT)
@@ -204,6 +205,7 @@ void Units::print(int gcol)
 	}
 	draw_text();
 	
+    // Todo: easier resizing the settings-box, for longer translated strings
 	rect(screen2, gmx, SCREEN2H - 71, gmx + gmw, SCREEN2H - 5, COLOR_WHITE);
     textout_centre(screen2, font, _("MATCH SETTINGS"), gmx + gmw / 2, SCREEN2H - 65, xcom1_color(CAPTION));
 	textout_centre(screen2, font, scenario->name[scenario->type], gmx + gmw / 2, SCREEN2H - 53, xcom1_color(BUTTON));
@@ -244,9 +246,12 @@ void Units::print(int gcol)
 	/*if (pos == POS_LEFT)
 		draw_items_stats(0, 160+10, buf, len);
 	else*/
-	damage_points = draw_items_stats(gx, 240 + 10, buf, len);
 
-    textprintf_centre(screen2, g_small_font, gx + 10 * 8, 240, COLOR_GREEN,
+  //int yy = 240;
+    int yy = gy + size * 15 - 2;
+    damage_points = draw_items_stats(gx, yy + 10, buf, len);
+
+    textprintf_centre(screen2, g_small_font, gx + 10 * 8, yy, COLOR_GREEN,
             _("Total points=%d (of %d)"), points + damage_points, total_points());
 
 	scenario->draw_deploy_zone(pos, gmx, 0, xcom1_color(LOCAL_COLOR));
@@ -298,6 +303,7 @@ void Units::draw_scenario_window()
 {
     int i;
 
+    // Todo: easier resizing this window, for longer translated strings
 	rect(    screen2, gmx + gmw / 2 - 200,     SCREEN2H - 320,     gmx + gmw / 2 + 200,     SCREEN2H - 37,     COLOR_WHITE);
     rectfill(screen2, gmx + gmw / 2 - 200 + 1, SCREEN2H - 320 + 1, gmx + gmw / 2 + 200 - 1, SCREEN2H - 37 - 1, COLOR_GRAY14);
 
@@ -341,6 +347,7 @@ void Units::draw_scenario_window()
 
 void Units::draw_map_window()
 {
+    // Todo: easier resizing this window, for longer translated strings
 	rect(    screen2, gmx + gmw / 2 - 80,     SCREEN2H - 79,     gmx + gmw / 2 + 80,     SCREEN2H - 37,     COLOR_WHITE);
 	rectfill(screen2, gmx + gmw / 2 - 80 + 1, SCREEN2H - 79 + 1, gmx + gmw / 2 + 80 - 1, SCREEN2H - 37 - 1, COLOR_GRAY14);
 
@@ -357,6 +364,7 @@ void Units::draw_map_window()
 
 void Units::draw_rules_window()
 {
+    // Todo: easier resizing this window, for longer translated strings
 	rect(    screen2, gmx + gmw / 2 - 85,     SCREEN2H - 103,     gmx + gmw / 2 + 85,     SCREEN2H - 25,     COLOR_WHITE);
 	rectfill(screen2, gmx + gmw / 2 - 85 + 1, SCREEN2H - 103 + 1, gmx + gmw / 2 + 85 - 1, SCREEN2H - 25 - 1, COLOR_GRAY14);
 
@@ -373,6 +381,7 @@ void Units::draw_rules_window()
  */
 void Units::draw_rules_0_window()
 {
+    // Todo: easier resizing this window, for longer translated strings
 	rect(    screen2, gmx + gmw / 2 - 130,     SCREEN2H - 139,     gmx + gmw / 2 + 130,     SCREEN2H - 97,     COLOR_WHITE);
 	rectfill(screen2, gmx + gmw / 2 - 130 + 1, SCREEN2H - 139 + 1, gmx + gmw / 2 + 130 - 1, SCREEN2H - 97 - 1, COLOR_GRAY13);
 	
