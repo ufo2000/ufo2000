@@ -1,18 +1,29 @@
 ##############################################################################
-# Compiling ufo2000: make {win32=1} {debug=1}                                #
+# Compiling ufo2000: make {debug=1} {xmingw=1} {dumbogg=1}                   #
 #                                                                            #
-# Define win32=1 when compiling with Mingw gcc compiler for windows          #
 # Define xmingw=1 when compiling win32 binary with Mingw gcc crosscompiler   #
 # Define debug=1 when you want to build debug version of ufo2000             #
 #                                                                            #
 # Just typing 'make' builds the release version of ufo2000 for *nix          #
 # (Linux, FreeBSD, ...)                                                      #
 #                                                                            #
-# The game depends on Allegro (4.0.x), Expat and HawkNL libraries, so you    #
-# need to install them before running make                                   #
+# Type 'make server' to build ufo2000 server                                 #
+#                                                                            #
+# The game depends on Allegro (4.0.x), Expat, HawkNL and Lua libraries,      #
+# so you need to install them before running make                            #
+#                                                                            #
+# DUMB and Ogg Vorbis are optional (they allow to play music in XM, S3M,     #
+# MOD, IT and OGG formats). Use dumbogg=1 in make command line to build      #
+# ufo2000 with these libraries.                                              #
+#                                                                            #
+# When compiling the game with Mingw (either native or a crosscompiler), it  #
+# is possible to use a set of precompiled libraries. Just download zip from  #
+# http://ufo2000.lxnt.info/files/mingw-libs.zip and extract it into ufo2000  #
+# sources directory.                                                         #
 #                                                                            #
 # Also it is highly recommended but not necessery to have subversion         #
-# client installed                                                           #
+# client installed (it is required if you want to make 'source-zip' and      #
+# 'source-bz2' targets)                                                      #
 ##############################################################################
 
 UFO_SVNVERSION := ${shell svnversion .}
@@ -27,10 +38,7 @@ else
 	DISTNAME := ufo2000
 endif
 
-CC = g++
-LD = g++
-CFLAGS = -funsigned-char -Wall -Wno-deprecated-declarations
-CFLAGS += -pipe -DDEBUGMODE
+CFLAGS = -funsigned-char -Wall -Wno-deprecated-declarations -DDEBUGMODE
 OBJDIR = obj
 NAME = ufo2000
 SERVER_NAME = ufo2000-srv
@@ -44,7 +52,7 @@ ifdef DATA_DIR
 endif
 
 ifndef OPTFLAGS
-	OPTFLAGS = -O2
+	OPTFLAGS = -O2 -pipe
 endif
 
 ifdef WINDIR
@@ -57,7 +65,7 @@ ifdef xmingw
     win32 = 1
 endif
 
-VPATH = src src/jpgalleg
+VPATH = src src/jpgalleg src/dumbogg
 
 SRCS = bullet.cpp cell.cpp config.cpp connect.cpp dirty.cpp           \
        editor.cpp explo.cpp font.cpp icon.cpp inventory.cpp item.cpp  \
@@ -67,7 +75,7 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp dirty.cpp           \
        units.cpp video.cpp wind.cpp crc32.cpp persist.cpp             \
        jpgalleg.c decode.c encode.c io.c minimap.cpp about.cpp        \
        stats.cpp server_protocol.cpp server_transport.cpp             \
-       server_gui.cpp server_config.cpp
+       server_gui.cpp server_config.cpp music.cpp
 
 SRCS_SERVER = server_main.cpp server_protocol.cpp \
        server_transport.cpp server_config.cpp
@@ -81,17 +89,26 @@ else
 	CFLAGS += $(OPTFLAGS)
 endif
 
+LIBS = -lexpat -llua -llualib
+
+ifdef dumbogg
+	LIBS += -lvorbisfile -lvorbis -logg -laldmb -ldumb
+	SRCS += dumbogg.c
+	CFLAGS += -DHAVE_DUMBOGG
+endif
+
 ifdef win32
 	OBJDIR := ${addsuffix -win32,$(OBJDIR)}
 	NAME := ${addsuffix .exe,$(NAME)}
 	SERVER_NAME := ${addsuffix .exe,$(SERVER_NAME)}
-	CFLAGS += -DWIN32
-	LIBS = -lexpat -llua -llualib -lNL -lalleg -lws2_32
+	CFLAGS += -DWIN32 -DALLEGRO_STATICLINK -I mingw-libs/include -L mingw-libs/lib
+	LIBS += -lNL_s -lalleg_s -lws2_32 -lkernel32 -luser32 -lgdi32 -lcomdlg32 \
+	        -lole32 -ldinput -lddraw -ldxguid -lwinmm -ldsound
 else
 	CFLAGS += -DLINUX
 	INCLUDES = ${shell allegro-config --cflags}
 	CFLAGS += $(INCLUDES)
-	LIBS += -lexpat -llua -llualib -lNL ${shell allegro-config --libs}
+	LIBS += -lNL ${shell allegro-config --libs}
 endif
 
 OBJS := $(SRCS:.cpp=.o)
@@ -120,16 +137,16 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/%.o: %.cpp
-	$(CC) -MMD $(CFLAGS) -c $< -o $@
+	g++ -MMD $(CFLAGS) -c $< -o $@
 
 $(OBJDIR)/%.o: %.c
-	$(CC) -MMD $(CFLAGS) -c $< -o $@
+	gcc -MMD $(CFLAGS) -c $< -o $@
 
 $(NAME): $(OBJS)
-	$(LD) $(CFLAGS) -o $@ $^ $(LIBS) $(SUBSYSTEM)
+	g++ $(CFLAGS) -o $@ $^ $(LIBS) $(SUBSYSTEM)
 
 $(SERVER_NAME): $(OBJS_SERVER)
-	$(LD) $(CFLAGS) -o $@ $^ $(LIBS)
+	g++ $(CFLAGS) -o $@ $^ -lNL
 
 clean:
 	$(RM) $(OBJDIR)/*.o
@@ -139,13 +156,33 @@ clean:
 source-zip: 
 # create zip archive with ufo2000 sources, requires 7-zip archiver
 	-$(RM) $(DISTNAME)-src.zip
+	svn delete --force $(DISTNAME)
 	svn export . $(DISTNAME)
 	7z a -tzip -r -mx $(DISTNAME)-src.zip "$(DISTNAME)/*"
+	svn delete --force $(DISTNAME)
+
+binary-zip: all server
+# create zip archive with ufo2000 binary distributive, requires 7-zip archiver
+	svn delete --force $(DISTNAME)
+	svn export . $(DISTNAME)
+	rm -R $(DISTNAME)/src
+	rm -R $(DISTNAME)/datfile
+	rm -R $(DISTNAME)/doxygen
+	rm -R $(DISTNAME)/obj
+	rm $(DISTNAME)/makefile* $(DISTNAME)/Seccast* $(DISTNAME)/*.dsp
+	rm $(DISTNAME)/*.dsw $(DISTNAME)/*.rc $(DISTNAME)/*.ebuild $(DISTNAME)/*.h
+	cp ufo2000.exe ufo2000-srv.exe $(DISTNAME)
+ifdef win32
+	7z a -tzip -r -mx $(DISTNAME).zip "$(DISTNAME)/*"
+else
+	zip a $(DISTNAME).zip "$(DISTNAME)/*"
+endif
 	svn delete --force $(DISTNAME)
 
 source-bz2: 
 # create tar.bz2 archive with ufo2000 sources (on *nix systems)
 	-$(RM) $(DISTNAME)-src.tar.bz2
+	svn delete --force $(DISTNAME)
 	svn export . $(DISTNAME)
 	sed 's,unknown,$(UFO_SVNVERSION),g' < src/version.h > $(DISTNAME)/src/version.h
 	tar -cjf $(DISTNAME)-src.tar.bz2 $(DISTNAME)

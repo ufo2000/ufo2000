@@ -1,0 +1,26 @@
+DUMBOGG -- An Ogg Vorbis add-on library for DUMB.
+
+This package is provided as giftware. You can copy it, redistribute
+it, modify it, do whatever you please. The only restriction you have
+on what you can do with it is claim you wrote it. You are encouraged,
+though not required, to include the name of the library in your credits
+page, as well as a web address allowing others to know how they can get
+their copy of the library. This library is built on top of the libOgg,
+libVorbis, libVorbisFile and DUMB libraries. These libraries come with
+additional requirements and restrictions that you must follow in order
+to legally use this software. Please read the COPYING files in the
+Ogg Vorbis downloads, and please read DUMB's licence.txt file, for full
+details on the requirements of those libraries.
+
+
+THIS SOFTWARE IS PROVIDED BY THE CONTRIBUTORS "AS IS" AND ANY EXPRESS
+OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
