@@ -347,19 +347,24 @@ void Units::draw_scenario_window()
 
 void Units::draw_map_window()
 {
-    // Todo: easier resizing this window, for longer translated strings
-	rect(    screen2, gmx + gmw / 2 - 80,     SCREEN2H - 79,     gmx + gmw / 2 + 80,     SCREEN2H - 37,     COLOR_WHITE);
-	rectfill(screen2, gmx + gmw / 2 - 80 + 1, SCREEN2H - 79 + 1, gmx + gmw / 2 + 80 - 1, SCREEN2H - 37 - 1, COLOR_GRAY14);
+// Todo: table of coordinates for all the controls, texts, buttons etc., 
+// to make resizing easier, e.g. for adapting to longer translated strings etc.
+  //int x0 =  80, x1 = 40;
+    int x0 = 112, x1 = 64;
+
+    rect(    screen2, gmx + gmw / 2 - x0,     SCREEN2H - 79,     gmx + gmw / 2 + x0,     SCREEN2H - 37,     COLOR_WHITE);
+    rectfill(screen2, gmx + gmw / 2 - x0 + 1, SCREEN2H - 79 + 1, gmx + gmw / 2 + x0 - 1, SCREEN2H - 37 - 1, COLOR_GRAY14);
 
 	textout_centre(screen2, font, terrain_set->get_terrain_name(mapdata.terrain).c_str(), gmx + gmw / 2, SCREEN2H - 73, xcom1_color(BUTTON));
 
-	textout_centre(screen2, font, "4*4", gmx + gmw / 2 - 40, SCREEN2H - 61, xcom1_color(mapdata.x_size == 4 ? SWITCH_ON : SWITCH_OFF));
-	textout_centre(screen2, font, "5*5", gmx + gmw / 2, SCREEN2H - 61, xcom1_color(mapdata.x_size == 5 ? SWITCH_ON : SWITCH_OFF));
-	textout_centre(screen2, font, "6*6", gmx + gmw / 2 + 40, SCREEN2H - 61, xcom1_color(mapdata.x_size == 6 ? SWITCH_ON : SWITCH_OFF));
-	
-    textout_centre(screen2, font, _("NEW"),  gmx + gmw / 2 - 40, SCREEN2H - 49, xcom1_color(BUTTON));
-    textout_centre(screen2, font, _("LOAD"), gmx + gmw / 2, SCREEN2H - 49, xcom1_color(BUTTON));
-    textout_centre(screen2, font, _("SAVE"), gmx + gmw / 2 + 40, SCREEN2H - 49, xcom1_color(BUTTON));
+    // see also: execute_map
+    textout_centre(screen2, font, "4*4",     gmx + gmw / 2 - x1, SCREEN2H - 61, xcom1_color(mapdata.x_size == 4 ? SWITCH_ON : SWITCH_OFF));
+    textout_centre(screen2, font, "5*5",     gmx + gmw / 2,      SCREEN2H - 61, xcom1_color(mapdata.x_size == 5 ? SWITCH_ON : SWITCH_OFF));
+    textout_centre(screen2, font, "6*6",     gmx + gmw / 2 + x1, SCREEN2H - 61, xcom1_color(mapdata.x_size == 6 ? SWITCH_ON : SWITCH_OFF));
+
+    textout_centre(screen2, font, _("NEW"),  gmx + gmw / 2 - x1, SCREEN2H - 49, xcom1_color(BUTTON));
+    textout_centre(screen2, font, _("LOAD"), gmx + gmw / 2,      SCREEN2H - 49, xcom1_color(BUTTON));
+    textout_centre(screen2, font, _("SAVE"), gmx + gmw / 2 + x1, SCREEN2H - 49, xcom1_color(BUTTON));
 }
 
 void Units::draw_rules_window()
@@ -888,11 +893,13 @@ void Units::execute_scenario(Map *map, int map_change_allowed)
  */
 void Units::execute_map(Map *map, int map_change_allowed)
 {
+
         if (!mouse_inside(gmx + gmw / 2 - 80, SCREEN2H - 79, gmx + gmw / 2 + 80, SCREEN2H - 37))
 		state = PS_MAIN;
 
     if (!map_change_allowed) return;
 
+    // see also: draw_map_window
 	if (mouse_inside(gmx + gmw / 2 - 75, SCREEN2H - 77, gmx + gmw / 2 + 75, SCREEN2H - 64)) {
 		//MAP TYPE
 
@@ -911,7 +918,17 @@ void Units::execute_map(Map *map, int map_change_allowed)
 		}
 	}
 
-	if (mouse_inside(gmx + gmw / 2 - 59, SCREEN2H - 63, gmx + gmw / 2 + 20, SCREEN2H - 50)) {
+    // Todo: adjust button-coordinates for translated strings
+    // see also: draw_map_window
+    int x0 = gmx + gmw / 2;
+  //int x1a = 59, x1b =  20;
+  //int x2a = 19, x2b =  20;
+  //int x3a = 21, x3b =  60;
+  //g_console->printf(COLOR_SYS_DEBUG, "x0=%d mouse_x=%d diff=%d", x0, mouse_x, mouse_x-x0 );
+    int x1a = 84, x1b =  25;
+    int x2a = 20, x2b =  20;
+    int x3a = 25, x3b =  84;
+	if (mouse_inside(gmx + gmw / 2 - x1a, SCREEN2H - 63, gmx + gmw / 2 + x1b, SCREEN2H - 50)) {
 		//"4*4"
   		std::string terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
 		MAP_WIDTH = MAP_HEIGHT = 4;
@@ -921,7 +938,7 @@ void Units::execute_map(Map *map, int map_change_allowed)
 		scenario->new_coords();
 	}
 
-	if (mouse_inside(gmx + gmw / 2 - 19, SCREEN2H - 63, gmx + gmw / 2 + 20, SCREEN2H - 50)) {
+	if (mouse_inside(gmx + gmw / 2 - x2a, SCREEN2H - 63, gmx + gmw / 2 + x2b, SCREEN2H - 50)) {
 		//"5*5"
   		std::string terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
 		MAP_WIDTH = MAP_HEIGHT = 5;
@@ -931,7 +948,7 @@ void Units::execute_map(Map *map, int map_change_allowed)
 		scenario->new_coords();
 	}
 
-	if (mouse_inside(gmx + gmw / 2 + 21, SCREEN2H - 63, gmx + gmw / 2 + 60, SCREEN2H - 50)) {
+	if (mouse_inside(gmx + gmw / 2 + x3a, SCREEN2H - 63, gmx + gmw / 2 + x3b, SCREEN2H - 50)) {
 		//"6*6"
   		std::string terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
 		MAP_WIDTH = MAP_HEIGHT = 6;
@@ -941,7 +958,7 @@ void Units::execute_map(Map *map, int map_change_allowed)
 		scenario->new_coords();
 	}
 
-	if (mouse_inside(gmx + gmw / 2 - 60, SCREEN2H - 49, gmx + gmw / 2 - 20, SCREEN2H - 36)) {
+	if (mouse_inside(gmx + gmw / 2 - x1a, SCREEN2H - 49, gmx + gmw / 2 - x1b, SCREEN2H - 36)) {
 		//"NEW"
   		std::string terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
 		Map::new_GEODATA(&mapdata, terrain_name);
@@ -950,7 +967,7 @@ void Units::execute_map(Map *map, int map_change_allowed)
 		scenario->new_coords();
 	}
 
-	if (mouse_inside(gmx + gmw / 2 - 20, SCREEN2H - 49, gmx + gmw / 2 + 20, SCREEN2H - 36)) {
+	if (mouse_inside(gmx + gmw / 2 - x2a, SCREEN2H - 49, gmx + gmw / 2 + x2b, SCREEN2H - 36)) {
 		//"LOAD"
 		char path[1000]; *path = 0;
 		
@@ -972,7 +989,7 @@ void Units::execute_map(Map *map, int map_change_allowed)
 		::set_mouse_range(0, 0, 639, SCREEN2H);
 	}
 
-	if (mouse_inside(gmx + gmw / 2 + 20, SCREEN2H - 49, gmx + gmw / 2 + 60, SCREEN2H - 36)) {
+	if (mouse_inside(gmx + gmw / 2 + x3a, SCREEN2H - 49, gmx + gmw / 2 + x3b, SCREEN2H - 36)) {
 		//"SAVE"
 		char path[1000]; *path = 0;
 
