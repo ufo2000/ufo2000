@@ -22,6 +22,7 @@
 */
 #include <string>
 #include <vector>
+#include <stdexcept>
 using namespace std;
 
 #include "sqlite3_plus.h"
@@ -33,7 +34,7 @@ namespace sqlite3 {
 		r.con=&this->con;
 
 		int ret=_sqlite3_prepare(this->con.db, this->cmdstr.c_str(), &r.vm);
-//		if(ret!=SQLITE_OK) throw runtime_error(string("executereader: ")+_sqlite3_errmsg(this->con.db));
+		if(ret!=SQLITE_OK) throw runtime_error(string("executereader: ")+_sqlite3_errmsg(this->con.db));
 
 		for(vector<parameter>::size_type i=0; i<this->parameters.size(); i++) {
 			switch(this->parameters[i].type) {
