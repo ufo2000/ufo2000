@@ -372,7 +372,8 @@ void Place::load_bin(const char *fn)
 		int type = buf[i++];
 		int x = buf[i++];
 		int y = buf[i++];
-		put(new Item(type), x, y);
+		if (type > 0 && type < Item::obdata_num)
+			put(new Item(type), x, y);
 	}
 }
 

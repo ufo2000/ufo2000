@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002       ufo2000 development team
+Copyright (C) 2002-2004  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -46,66 +46,14 @@ void Item::initobdata()
 	buflen = read(fh, buf, buflen);
 	ASSERT(buflen > 0);
 	close(fh);
-	//#define NEW_ITEMS_NUM       0
 
-	obdata_num = buflen / sizeof(OBDATA) + NEW_ITEMS_NUM;
+	obdata_num = buflen / sizeof(OBDATA);
 	obdata = new OBDATA[obdata_num];
-	for (int i = 0; i < obdata_num - NEW_ITEMS_NUM; i++)
+	for (int i = 0; i < obdata_num; i++)
 		memcpy(&obdata[i], buf + i * sizeof(OBDATA), sizeof(OBDATA));
 
+	delete []buf;
 
-	memset(&obdata[KASTET], 0, sizeof(OBDATA));
-	strcpy(obdata[KASTET].name, "KASTET");     	//The name of the object; used internally only
-
-	obdata[KASTET].pInv = 0;     		//The image on the inventory screen
-	obdata[KASTET].pMap = 4;     //floorob//The image on the isometric map screen
-	obdata[KASTET].damage = 20;     		//The damage value
-	obdata[KASTET].importance = 0;     	//In a stack of items, the item with the highest importance is shown
-	obdata[KASTET].width = 1;     		//The width on the inventory
-	obdata[KASTET].height = 1;     		//The height on the inventory
-	obdata[KASTET].ammo[0] = 0xFF;     	//The three item numbers that can be ammo, 0xFF=unused
-	obdata[KASTET].ammo[1] = 0xFF;
-	obdata[KASTET].ammo[2] = 0xFF;
-	obdata[KASTET].pHeld = 15;     //handob	//The picture to use on the map while it's being held
-	//obdata[KASTET]._1E;		//Changing this seems to have no effect...
-	//obdata[KASTET].damageType;	//The type of attack; refer to DT_nnnn
-	obdata[KASTET].accuracy[0] = 80;     	//The accuracy for each of the three kinds of shots; 0=can't take this type of shot.  [0]=Auto  [1]=Snap  [2]=Aimed
-	obdata[KASTET].time[0] = 0;     	//The TU% for each of the three kinds of shots.  0=can't take this type of shot.  [0]=Auto  [1]=Snap  [2]=Aimed
-	obdata[KASTET].time[1] = 0;
-	obdata[KASTET].time[2] = 0;
-	//obdata[KASTET].rounds;		//The number of rounds in the clip
-	//obdata[KASTET].hitType;	//The type of damage that hitting with it does.  Only matters on stun rods/thermal tazers.  Refer to DT_nnnn
-	obdata[KASTET].throw_accuracy = 0x64;     		//Always 0x64
-	//obdata[KASTET]._29;		//Always 0x32
-	//obdata[KASTET]._2A;
-	obdata[KASTET].weight = 3;     		//The weight of the object
-	//obdata[KASTET].primeType;	//The way in which the object can be primed.  See PT_nnnn
-	//obdata[KASTET]._2D;
-	//obdata[KASTET].isShootable;	//This item can be shot. (0=no,1=yes)
-	obdata[KASTET].isWeapon = 1;     	//This item is a weapon. (0=no,1=yes)
-	//obdata[KASTET].isGun;		//This is a gun which requires ammo. (0=no,1=yes)
-	//obdata[KASTET].isAmmo;		//This item is a clip. (0=no,1=yes)
-	//obdata[KASTET].twoHanded;	//Is more accurate with two hands (0=no,1=yes)
-	//obdata[KASTET].wayPoints;	//Has a 'launch missile' option  (0=no,1=yes)
-	//obdata[KASTET]._34;		//Scott T. Jones has this marked as 'Research'.  This makes sense, but I can find no evidence to support it...
-	//obdata[KASTET]._35;		//Scott T. Jones has this marked as 'Points'...
-
-
-	memset(&obdata[KNIFE], 0, sizeof(OBDATA));
-	strcpy(obdata[KNIFE].name, "KNIFE");     	//The name of the object; used internally only
-	obdata[KNIFE].pMap = 4;     //floorob//The image on the isometric map screen
-	obdata[KNIFE].pHeld = 15;     //handob	//The picture to use on the map while it's being held
-	obdata[KNIFE].damage = 30;     		//The damage value
-	obdata[KNIFE].accuracy[0] = 80;     	//apunch
-	obdata[KNIFE].accuracy[1] = 50;     	//athrow
-	obdata[KNIFE].throw_accuracy = 0x64;     		//Always 0x64
-	obdata[KNIFE].width = 1;     		//The width on the inventory
-	obdata[KNIFE].height = 2;     		//The height on the inventory
-	obdata[KNIFE].ammo[0] = 0xFF;     	//The three item numbers that can be ammo, 0xFF=unused
-	obdata[KNIFE].ammo[1] = 0xFF;
-	obdata[KNIFE].ammo[2] = 0xFF;
-	obdata[KNIFE].weight = 5;     		//The weight of the object
-	obdata[KNIFE].isWeapon = 1;     	//This item is a weapon. (0=no,1=yes)
 	obdata[SMOKE_GRENADE].damage = 0;
 	obdata[INCENDIARY_ROCKET].damage = 20;
 	obdata[AUTO_CANNON_I_AMMO].damage = 15;
@@ -117,15 +65,11 @@ void Item::initobdata()
 	obdata[STUN_ROD].damage = 100;
 
 	obdata[Heavy_Plasma].accuracy[0] = 0; // Disable auto fire for heavy plasma
-
-	delete []buf;
 }
 
 void Item::initbigobs()
 {
 	bigobs = new PCK("$(xcom)/units/bigobs.pck");
-	obdata[KASTET].pInv = bigobs->add_image((BITMAP *)datafile[DAT_KASTET_BMP].dat);
-	obdata[KNIFE].pInv = bigobs->add_image((BITMAP *)datafile[DAT_KNIFE_BMP].dat);
 }
 
 void Item::freebigobs()

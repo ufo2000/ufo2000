@@ -1195,7 +1195,7 @@ int Net::recv_unit_data_size()
 	} else { //end send
 		//info->printstr("pd recv end\n");
 		pd_remote->size = size;
-		g_console->printf("pd recv end. size %d", pd_remote->size);
+		g_console->printf("pd recv end. size %d", (int)pd_remote->size);
 		remote.SEND = 1;
 	}
 	return 1;

@@ -314,20 +314,20 @@ struct UNITDATA
 
 struct ITEMDATA
 {
-	char name[26];
-	int num;
-	char type[100];
-	char place[100];
-	char x[100];
-	char y[100];
+	char  name[26];
+	int32 num;
+	char  type[100];
+	char  place[100];
+	char  x[100];
+	char  y[100];
 };
 
 struct PLAYERDATA
 {
-	int size;
-	MANDATA md[20];
+	int32    size;
+	MANDATA  md[20];
 	ITEMDATA id[20];
-	int lev[20], col[20], row[20];
+	int32    lev[20], col[20], row[20];
 };
 
 //////////////////////////////////////////////////////////////////////////////

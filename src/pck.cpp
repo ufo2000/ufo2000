@@ -47,21 +47,6 @@ PCK::~PCK()
 }
 
 /**
- * $$$ Hack, used only to add knife and kastet
- *
- * @param bmp pointer to bitmap that is added as a new frame
- * @return    index of added frame
- */
-int PCK::add_image(BITMAP *bmp)
-{
-	m_bmp.resize(m_imgnum + 1);
-	m_bmp[m_imgnum] = create_bitmap(32, 48); 
-	clear_to_color(m_bmp[m_imgnum], xcom1_color(0));
-	masked_blit(bmp, m_bmp[m_imgnum], 0, 0, 1, 3, bmp->w, bmp->h);
-	return m_imgnum++;
-}
-
-/**
  * Decode single frame from PCK file and store it in bitmap
  *
  * @param data pointer to data buffer for a frame from PCK file
