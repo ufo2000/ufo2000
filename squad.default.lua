@@ -5,7 +5,7 @@ return {
 		fFemale = 0,
 		Appearance = 0,
 		Attributes = {
-			TimeUnits = 80,
+			TimeUnits = 50,
 			Health = 51,
 			Stamina = 66,
 			Reactions = 50,
@@ -87,9 +87,9 @@ return {
 		Attributes = {
 			TimeUnits = 70,
 			Health = 51,
-			Stamina = 55,
+			Stamina = 57,
 			Reactions = 52,
-			Strength = 31,
+			Strength = 30,
 			Firing = 80,
 			Throwing = 50,
 		},
@@ -98,7 +98,6 @@ return {
 				{0, 0, "CANNON HE-AMMO"},
 			},
 			["LEFT SHOULDER"] = {
-				{0, 0, "CANNON I-AMMO"},
 			},
 			["RIGHT HAND"] = {
 				{0, 0, "HEAVY CANNON", "CANNON AP-AMMO"},
@@ -177,7 +176,6 @@ return {
 		},
 		Inventory = {
 			["RIGHT SHOULDER"] = {
-				{1, 0, "GRENADE"},
 			},
 			["LEFT SHOULDER"] = {
 				{1, 0, "ALIEN GRENADE"},
@@ -301,10 +299,9 @@ return {
 		},
 		Inventory = {
 			["RIGHT SHOULDER"] = {
-				{0, 0, "AUTO-CANNON I-AMMO"},
+				{0, 0, "AUTO-CANNON HE-AMMO"},
 			},
 			["LEFT SHOULDER"] = {
-				{0, 0, "AUTO-CANNON HE-AMMO"},
 			},
 			["RIGHT HAND"] = {
 				{0, 0, "AUTO-CANNON", "AUTO-CANNON AP-AMMO"},
@@ -382,8 +379,6 @@ return {
 			["RIGHT SHOULDER"] = {
 			},
 			["LEFT SHOULDER"] = {
-				{1, 0, "SMOKE GRENADE"},
-				{0, 0, "GRENADE"},
 			},
 			["RIGHT HAND"] = {
 				{0, 0, "HEAVY LASER"},
@@ -503,7 +498,6 @@ return {
 		},
 		Inventory = {
 			["RIGHT SHOULDER"] = {
-				{0, 0, "SMOKE GRENADE"},
 			},
 			["LEFT SHOULDER"] = {
 				{0, 0, "HIGH EXPLOSIVE"},
@@ -543,6 +537,7 @@ return {
 		},
 		Inventory = {
 			["RIGHT SHOULDER"] = {
+				{1, 0, "SMOKE GRENADE"},
 			},
 			["LEFT SHOULDER"] = {
 				{0, 0, "SMOKE GRENADE"},
@@ -553,11 +548,12 @@ return {
 			["LEFT HAND"] = {
 			},
 			["RIGHT LEG"] = {
+				{1, 0, "SMOKE GRENADE"},
 			},
 			["LEFT LEG"] = {
+				{0, 0, "SMOKE GRENADE"},
 			},
 			["BACK PACK"] = {
-				{0, 0, "HEAVY LASER"},
 			},
 			["BELT"] = {
 			},
