@@ -305,21 +305,9 @@ void Net::check()
 		case CMD_USE_ELEVATOR:
 			recv_use_elevator();
 			break;
-		case CMD_PUNCH:
-			recv_punch();
-			break;
-		case CMD_THROW_ITEM:
-			recv_thru();
-			break;
-		case CMD_AIMEDTHROW:
-			recv_aimedthrow();
-			break;
-		case CMD_BEAM_LASER:
-			recv_beam();
-			break;
-		case CMD_FIRE_GUN:
-			recv_fire();
-			break;
+        case CMD_TARGET_ACTION:
+            recv_target_action();
+            break;
 		case CMD_ADD_UNIT:
 			recv_add_unit();
 			break;
@@ -819,226 +807,51 @@ int Net::recv_use_elevator()
 	return 0;
 }
 	
-void Net::send_thru(int NID, int z0, int x0, int y0, REAL ro, REAL fi, REAL te, REAL zA, int iplace, int req_time)
+void Net::send_target_action(int NID, int z0, int x0, int y0, int zd, int xd, int yd, Action action, int iplace)
 {
-	if (!SEND) return ;
+    if (!SEND) return;
 
-	pkt.create(CMD_THROW_ITEM);
-	pkt << NID;
-	pkt << z0;
-	pkt << x0;
-	pkt << y0;
-	pkt << ro;
-	pkt << fi;
-	pkt << te;
-	pkt << zA;
-	pkt << iplace;
-	pkt << req_time;
-	send();
+    pkt.create(CMD_TARGET_ACTION);
+    pkt << NID;
+    pkt << z0;
+    pkt << x0;
+    pkt << y0;
+    pkt << zd;
+    pkt << xd;
+    pkt << yd;
+    pkt << (int) action;
+    pkt << iplace;
+
+    send();
 }
 
-int Net::recv_thru()
+int Net::recv_target_action()
 {
-	int NID, z0, x0, y0, iplace, req_time;
-	REAL ro, fi, te, zA;
+    int NID, z0, x0, y0, zd, xd, yd, iaction, iplace;
+    Action action;
 
-	pkt >> NID;
-	pkt >> z0;
-	pkt >> x0;
-	pkt >> y0;
-	pkt >> ro;
-	pkt >> fi;
-	pkt >> te;
-	pkt >> zA;
-	pkt >> iplace;
-	pkt >> req_time;
+    pkt >> NID;
+    pkt >> z0;
+    pkt >> x0;
+    pkt >> y0;
+    pkt >> zd;
+    pkt >> xd;
+    pkt >> yd;
+    pkt >> iaction;
+    pkt >> iplace;
+    action = (Action) iaction;
 
-	Soldier *ss = findman(NID);
-	if (ss != NULL) {
-		SEND = 0;
-		if (!ss->thru(z0, x0, y0, ro, fi, te, zA, iplace, req_time)) {
-			error("NID can't throw item");
-		}
-		SEND = 1;
-		return 1;
-	} else
-		error("NID");
-	return 0;
-}
-
-void Net::send_beam(int NID, int z0, int x0, int y0, REAL fi, REAL te, int iplace, int req_time)
-{
-	if (!SEND) return ;
-
-	pkt.create(CMD_BEAM_LASER);
-	pkt << NID;
-	pkt << z0;
-	pkt << x0;
-	pkt << y0;
-	pkt << fi;
-	pkt << te;
-	pkt << iplace;
-	pkt << req_time;
-	send();
-}
-
-int Net::recv_beam()
-{
-	int NID, z0, x0, y0, iplace, req_time;
-	REAL fi, te;
-
-	pkt >> NID;
-	pkt >> z0;
-	pkt >> x0;
-	pkt >> y0;
-	pkt >> fi;
-	pkt >> te;
-	pkt >> iplace;
-	pkt >> req_time;
-
-	Soldier *ss = findman(NID);
-	if (ss != NULL) {
-		SEND = 0;
-		if (!ss->beam(z0, x0, y0, fi, te, iplace, req_time)) {
-			error("NID can't beam laser");
-		}
-		SEND = 1;
-		return 1;
-	} else
-		error("NID");
-	return 0;
-}
-
-
-void Net::send_fire(int NID, int z0, int x0, int y0, REAL fi, REAL te, int iplace, int req_time)
-{
-	if (!SEND) return ;
-
-	pkt.create(CMD_FIRE_GUN);
-	pkt << NID;
-	pkt << z0;
-	pkt << x0;
-	pkt << y0;
-	pkt << fi;
-	pkt << te;
-	pkt << iplace;
-	pkt << req_time;
-	send();
-}
-
-int Net::recv_fire()
-{
-	int NID, z0, x0, y0, iplace, req_time;
-	REAL fi, te;
-
-	pkt >> NID;
-	pkt >> z0;
-	pkt >> x0;
-	pkt >> y0;
-	pkt >> fi;
-	pkt >> te;
-	pkt >> iplace;
-	pkt >> req_time;
-
-	Soldier *ss = findman(NID);
-	if (ss != NULL) {
-		SEND = 0;
-		if (!ss->fire(z0, x0, y0, fi, te, iplace, req_time)) {
-			error("NID can't fire gun");
-		}
-		SEND = 1;
-		return 1;
-	} else
-		error("NID");
-	return 0;
-}
-
-
-void Net::send_punch(int NID, int z0, int x0, int y0, REAL fi, REAL te, int iplace, int req_time)
-{
-	if (!SEND) return ;
-
-	pkt.create(CMD_PUNCH);
-	pkt << NID;
-	pkt << z0;
-	pkt << x0;
-	pkt << y0;
-	pkt << fi;
-	pkt << te;
-	pkt << iplace;
-	pkt << req_time;
-	send();
-}
-
-int Net::recv_punch()
-{
-	int NID, z0, x0, y0, iplace, req_time;
-	REAL fi, te;
-
-	pkt >> NID;
-	pkt >> z0;
-	pkt >> x0;
-	pkt >> y0;
-	pkt >> fi;
-	pkt >> te;
-	pkt >> iplace;
-	pkt >> req_time;
-
-	Soldier *ss = findman(NID);
-	if (ss != NULL) {
-		SEND = 0;
-		if (!ss->punch(z0, x0, y0, fi, te, iplace, req_time)) {
-			error("NID can't punch");
-		}
-		SEND = 1;
-		return 1;
-	} else
-		error("NID");
-	return 0;
-}
-
-
-void Net::send_aimedthrow(int NID, int z0, int x0, int y0, REAL fi, REAL te, int iplace, int req_time)
-{
-	if (!SEND) return ;
-
-	pkt.create(CMD_AIMEDTHROW);
-	pkt << NID;
-	pkt << z0;
-	pkt << x0;
-	pkt << y0;
-	pkt << fi;
-	pkt << te;
-	pkt << iplace;
-	pkt << req_time;
-	send();
-}
-
-int Net::recv_aimedthrow()
-{
-	int NID, z0, x0, y0, iplace, req_time;
-	REAL fi, te;
-
-	pkt >> NID;
-	pkt >> z0;
-	pkt >> x0;
-	pkt >> y0;
-	pkt >> fi;
-	pkt >> te;
-	pkt >> iplace;
-	pkt >> req_time;
-
-	Soldier *ss = findman(NID);
-	if (ss != NULL) {
-		SEND = 0;
-		if (!ss->aimedthrow(z0, x0, y0, fi, te, iplace, req_time)) {
-			error("NID can't aimedthrow");
-		}
-		SEND = 1;
-		return 1;
-	} else
-		error("NID");
-	return 0;
+    Soldier *ss = findman(NID);
+    if (ss != NULL) {
+        SEND = 0;
+        if (ss->do_target_action(z0, x0, y0, zd, xd, yd, action, iplace)) {
+            error("NID can't perform the required target action");
+        }
+        SEND = 1;
+        return 1;
+    } else
+    error("NID");
+    return 0;
 }
 
 extern Units local;

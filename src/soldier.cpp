@@ -1251,9 +1251,9 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir)
     int damagedir = (dir + (hitdir + 4)) % 8; // Becomes DAMAGEDIR_*, except DAMAGEDIR_UNDER...
     int hitloc;
 
-    // Currently just randomizing the damage to be from 0.0 to 2.0 of
-    // the table value, as it was in X-Com.
-    pierce = (int) cur_random->getUniform(0.0, pierce * 2.0);
+    // Currently just randomizing the damage to be from 0.5 to 1.5 of
+    // the table value, NOT 0.0 to 2.0 as it was in X-Com.
+    pierce = (int) cur_random->getUniform(pierce * 0.5, pierce * 1.5);
 
     // Give credit to the sniper for inflicting damage if it's not stun damage.
     if (sniper && (type != DT_STUN))
@@ -1980,8 +1980,8 @@ int Soldier::TAccuracy(int peraccur)
  */
 void Soldier::apply_accuracy(REAL & fi, REAL & te)
 {
-    REAL TE_STEP = (PI /  8. / (double)(cfg_get_base_accuracy()));
-    REAL FI_STEP = (PI / 32. / (double)(cfg_get_base_accuracy()));
+    REAL TE_STEP = (PI * 2.0 / (double)(cfg_get_base_accuracy()));
+    REAL FI_STEP = (PI * 0.5 / (double)(cfg_get_base_accuracy()));
 
 //  double acc = 100. * 100. / (double)(target.accur * target.accur);
     double acc = 100. / (double)(target.accur);
@@ -1990,12 +1990,8 @@ void Soldier::apply_accuracy(REAL & fi, REAL & te)
 //  However, if accuracy is very good, some chance to miss should be left.
     else acc /= 6.0;
 
-//  According to central limit theorem, the sum of many small random values
-//  is normally distributed
-    for (int i = 0; i < 16; i++) {
-        te += TE_STEP * randval(-acc, +acc);
-        fi += FI_STEP * randval(-acc, +acc);
-    }
+    te += cur_random->getNormal(TE_STEP * acc);
+    fi += cur_random->getNormal(FI_STEP * acc);
 }
 
 /**
@@ -2004,16 +2000,17 @@ void Soldier::apply_accuracy(REAL & fi, REAL & te)
  */
 void Soldier::apply_throwing_accuracy(REAL &fi, REAL &te, int weight)
 {
+    ASSERT(weight > 0);
     REAL TE_STEP = (PI /  8 / 30.0);
     REAL FI_STEP = (PI / 32 / 30.0);
 
-    int randmax = 100 - target.accur;
-    if (randmax <= 0) randmax = 1;
-
-    REAL rand_te = (REAL)(rand() % randmax);
-    REAL rand_fi = (REAL)(rand() % randmax);
-    te += TE_STEP * rand_te - TE_STEP * randmax / 2.0;
-    fi += FI_STEP * rand_fi - FI_STEP * randmax / weight;
+    REAL rand_te, rand_fi, rand_range;
+    rand_range = 100.0 - target.accur;
+    if (rand_range < 1.0) rand_range = 1.0;
+    rand_te = cur_random->getUniform(-rand_range * 0.5, rand_range * 0.5);
+    rand_fi = cur_random->getUniform(0, rand_range) - rand_range / weight;
+    te += TE_STEP * rand_te;
+    fi += FI_STEP * rand_fi;
 }
 
 
@@ -2239,7 +2236,7 @@ void Soldier::calc_bullet_start(int xs, int ys, int zs, int* xr, int* yr, int *z
 void Soldier::calc_shot_stat(int zd, int xd, int yd)
 {
     int x0, y0, z0;
-    calc_bullet_start (x, y, z, &x0, &y0, &z0);
+    calc_bullet_start(x, y, z, &x0, &y0, &z0);
 
     REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
 
@@ -2270,156 +2267,199 @@ void Soldier::calc_shot_stat(int zd, int xd, int yd)
 
 void Soldier::shoot(int zd, int xd, int yd, int ISLOCAL)
 {
-    ASSERT(target.action != NONE);
-    ASSERT(target.item != NULL);
-
-    int x0, y0, z0;
-    calc_bullet_start (x, y, z, &x0, &y0, &z0);
-
-    m_reaction_chances += (target.time / 4); // How many chances at a reaction shot do we get? TUs / 4.
-
-    if (target.action == THROW) {
-        zd -= 8;
-        REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
-
-        int ro_real = m_bullet->calc_throw(z0, x0, y0, zd, xd, yd);
-        if (ro_real > 18 * 16) {
-            TARGET = 1; FIRE_num = 0;
-            return ;
-        }
-
-        REAL fi = acos((REAL)(zd - z0) / ro);
-        REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
-        REAL zA = sqrt(ro);
-        apply_throwing_accuracy(fi, te, target.item->obdata_weight());
-
-        thru(z0, x0, y0, ro, fi, te, zA, target.place, target.time);
-    } else if (target.action == AIMEDTHROW) {
-        REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
-        REAL fi = acos((REAL)(zd - z0) / ro);
-        REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
-        apply_accuracy(fi, te);
-
-        aimedthrow(z0, x0, y0, fi, te, target.place, target.time);
-    } else if (target.action == PUNCH) {
-        REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
-        REAL fi = acos((REAL)(zd - z0) / ro);
-        REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
-        apply_accuracy(fi, te);
-
-        punch(z0, x0, y0, fi, te, target.place, target.time);
+    if (key[KEY_LCONTROL] && (FLAGS & F_REACTINFO)) {
+        calc_shot_stat(zd, xd, yd);
     } else {
-        if (target.item->is_laser()) {
-            if(key[KEY_LCONTROL] && (FLAGS & F_REACTINFO)) calc_shot_stat(zd, xd, yd);
-            else
-            {
-                REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
-                REAL fi = acos((REAL)(zd - z0) / ro);
-                REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
-                apply_accuracy(fi, te);
-    
-                beam(z0, x0, y0, fi, te, target.place, target.time);
-            }
-        } else {
-            if(key[KEY_LCONTROL] && (FLAGS & F_REACTINFO)) calc_shot_stat(zd, xd, yd);
-            else
-            {
-                REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
-                REAL fi = acos((REAL)(zd - z0) / ro);
-                REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
-                apply_accuracy(fi, te);
-    
-                fire(z0, x0, y0, fi, te, target.place, target.time);
-            }
-        }
+        if (ISLOCAL)
+            m_reaction_chances += (target.time / 4); // How many chances at a reaction shot do we get? TUs / 4.
+        ASSERT(target.action != NONE);
+        ASSERT(target.item != NULL);
+        int x0, y0, z0;
+        calc_bullet_start(x, y, z, &x0, &y0, &z0);
+        do_target_action(z0, x0, y0, zd, xd, yd, target.action, target.place);
     }
 }
 
-
-int Soldier::punch(int z0, int x0, int y0, REAL fi, REAL te, int iplace, int req_time)
+int Soldier::assign_target(Action action, int iplace)
 {
+    Item * it = item(iplace);
+    if (it == NULL) return -1;
+    switch (action)
+    {
+        case THROW:
+            target.accur = 100;
+            target.time = 25;
+            break;
+        case SNAPSHOT:
+            target.accur = FAccuracy(it->obdata_accuracy(SNAP), it->obdata_twoHanded());
+            target.time = required(it->obdata_time(SNAP));
+            break;
+        case AIMEDSHOT:
+            target.accur = FAccuracy(it->obdata_accuracy(AIMED), it->obdata_twoHanded());
+            target.time = required(it->obdata_time(AIMED));
+            break;
+        case AUTOSHOT:
+            target.accur = FAccuracy(it->obdata_accuracy(AUTO), it->obdata_twoHanded());
+            target.time = required((it->obdata_time(AUTO) + 2) / 3);
+            break;
+        case PUNCH:
+            target.accur = 100;
+            target.time = 25;
+            break;
+        case AIMEDTHROW:
+            target.accur = TAccuracy(it->obdata_accuracy(ATHROW));
+            target.time = 50;
+            break;
+        default: ASSERT(false);
+    }
+    target.item = it;
+    target.place = iplace;
+    target.action = action;
+    return 0;
+}
+
+int Soldier::do_target_action(int z0, int x0, int y0, int zd, int xd, int yd, Action action, int iplace)
+{
+    int chk;
+    chk = assign_target(action, iplace);
+    if (chk != 0) return chk;
+    switch (action)
+    {
+        case THROW:
+            chk = thru(z0, x0, y0, zd, xd, yd, target.place, target.time);
+            break;
+        case SNAPSHOT:
+        case AIMEDSHOT:
+        case AUTOSHOT:
+            if (target.item->is_laser()) {
+                chk = beam(z0, x0, y0, zd, xd, yd, target.place, target.time);
+            } else {
+                chk = fire(z0, x0, y0, zd, xd, yd, target.place, target.time);
+            }
+            break;
+        case PUNCH:
+            chk = punch(z0, x0, y0, zd, xd, yd, target.place, target.time);
+            break;
+        case AIMEDTHROW:
+            chk = aimedthrow(z0, x0, y0, zd, xd, yd, target.place, target.time);
+            break;
+        default: ASSERT(false);
+    }
+    if (chk != 0) return chk;
+    net->send_target_action(NID, z0, x0, y0, zd, xd, yd, action, iplace);
+    return 0;
+}
+
+int Soldier::punch(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time)
+{
+    REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
+    REAL fi = acos((REAL)(zd - z0) / ro);
+    REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
+    apply_accuracy(fi, te);
+
     if (!havetime(req_time))
-        return 0;
+        return -1;
     spend_time(req_time);
 
     Item *it = item(iplace);
     if (it == NULL)
-        return 0;
+        return -2;
 
     m_bullet->punch(z0, x0, y0, fi, te, it->itemtype());
-    net->send_punch(NID, z0, x0, y0, fi, te, iplace, req_time);
-    return 1;
+    return 0;
 }
 
 
-int Soldier::thru(int z0, int x0, int y0, REAL ro, REAL fi, REAL te, REAL zA, int iplace, int req_time)
+int Soldier::thru(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time)
 {
+    zd -= 8;
+    REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
+    int ro_real = m_bullet->calc_throw(z0, x0, y0, zd, xd, yd);
+    if (ro_real > 18 * 16) {
+        TARGET = 1; FIRE_num = 0;
+        return -3;
+    }
+
+    REAL fi = acos((REAL)(zd - z0) / ro);
+    REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
+    REAL zA = sqrt(ro);
+    apply_throwing_accuracy(fi, te, target.item->obdata_weight());
+
     if (!havetime(req_time))
-        return 0;
+        return -1;
     spend_time(req_time);
 
     Item *it = item(iplace);
     if (it == NULL)
-        return 0;
+        return -2;
     m_place[iplace]->set_item(NULL);
 
     m_bullet->thru(z0, x0, y0, ro, fi, te, zA, it);
-    net->send_thru(NID, z0, x0, y0, ro, fi, te, zA, iplace, req_time);
-    return 1;
+    return 0;
 }
 
 
-int Soldier::aimedthrow(int z0, int x0, int y0, REAL fi, REAL te, int iplace, int req_time)
+int Soldier::aimedthrow(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time)
 {
+    REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
+    REAL fi = acos((REAL)(zd - z0) / ro);
+    REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
+    apply_accuracy(fi, te);
+
     if (!havetime(req_time))
-        return 0;
+        return -1;
     spend_time(req_time);
 
     Item *it = item(iplace);
     if (it == NULL)
-        return 0;
+        return -2;
     m_place[iplace]->set_item(NULL);
 
     m_bullet->aimedthrow(z0, x0, y0, fi, te, it);
-    net->send_aimedthrow(NID, z0, x0, y0, fi, te, iplace, req_time);
-    return 1;
+    return 0;
 }
 
 
-int Soldier::beam(int z0, int x0, int y0, REAL fi, REAL te, int iplace, int req_time)
+int Soldier::beam(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time)
 {
+    REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
+    REAL fi = acos((REAL)(zd - z0) / ro);
+    REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
+    apply_accuracy(fi, te);
+
     if (!havetime(req_time))
-        return 0;
+        return -1;
     spend_time(req_time);
 
     Item *it = item(iplace);
     if (it == NULL)
-        return 0;
+        return -2;
 
     soundSystem::getInstance()->play(it->get_sound());
     m_bullet->beam(z0, x0, y0, fi, te, it->itemtype());
-    net->send_beam(NID, z0, x0, y0, fi, te, iplace, req_time);
-    return 1;
+    return 0;
 }
 
 
-int Soldier::fire(int z0, int x0, int y0, REAL fi, REAL te, int iplace, int req_time)
+int Soldier::fire(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time)
 {
+    REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
+    REAL fi = acos((REAL)(zd - z0) / ro);
+    REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
+    apply_accuracy(fi, te);
+
     if (!havetime(req_time))
-        return 0;
+        return -1;
+    spend_time(req_time);
 
     Item *it = item(iplace);
     if ((it == NULL) || (!it->haveclip()) || (it->roundsremain() < 1))
-        return 0;
-
-    spend_time(req_time);
+        return -2;
     
     soundSystem::getInstance()->play(it->get_sound());
     m_bullet->fire(z0, x0, y0, fi, te, it->cliptype());
     it->shot();
-
-    net->send_fire(NID, z0, x0, y0, fi, te, iplace, req_time);
-    return 1;
+    return 0;
 }
 
 
@@ -2698,4 +2738,3 @@ void Soldier::set_reserve_type(int type)
         net->send_reserve_time(NID, type);
     }
 };
-

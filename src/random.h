@@ -20,6 +20,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #ifndef RANDOM_H
 #define RANDOM_H
+#include "stdafx.h"
+#include "global.h"
 
 /**
  * Based on Donald E. Knuth's algorithm using subtractive method.
@@ -33,11 +35,12 @@ class Random: public persist::BaseObject
 private:
     static const long MBIG = 1000000000;
     static const long MSEED = 161803398;
-    static const double FAC = 1.0 / MBIG;
+    static const REAL FAC = 1.0 / MBIG;
     int m_inext, m_inextp;
     long m_a[56];
-    long m_j, m_k, m_iters;
-    bool m_iff;
+    long m_j, m_k, m_init, m_iters;
+    REAL m_normalsaved;
+    bool m_iff, m_normalready;
     void Random::next() {
         ASSERT (m_iff);
         if (++m_inext == 56) m_inext = 1;
@@ -49,9 +52,23 @@ private:
     }
 public:
     long get();
-    double getUniform();
-    double getUniform(double a, double b);
+    REAL getUniform();
+    REAL getUniform(REAL a, REAL b);
+    REAL getNormal();
+    REAL getNormal(REAL varsqrt);
     void init(long init_num, long preiters = 0);
+    void save(long &state_init, long &state_iters, bool &state_normalready, REAL &state_normalsaved) {
+        ASSERT (m_iff);
+        state_init = m_init;
+        state_iters = m_iters;
+        state_normalready = m_normalready;
+        state_normalsaved = m_normalsaved;
+    }
+    void load(long state_init, long state_iters, bool state_normalready, REAL state_normalsaved) {
+        init(state_init, state_iters);
+        m_normalready = state_normalready;
+        m_normalsaved = state_normalsaved;
+    }
     Random();
     Random(long init_num, long preiters = 0);
     ~Random();

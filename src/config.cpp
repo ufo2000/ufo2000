@@ -40,7 +40,7 @@ static char *gen = "General";
 static char *edit = "Editor";
 static char *serv = "Server";
 
-static int base_accuracy = 20;
+static int base_accuracy = 120;
 static int preferred_screen_xres = 640;
 static int preferred_screen_yres = 400;
 static int min_color_depth = 8;

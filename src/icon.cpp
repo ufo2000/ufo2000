@@ -449,14 +449,6 @@ void Icon::draw()
 	info();
 }
 
-
-#define AUTO   0
-#define SNAP   1
-#define AIMED  2
-
-#define APUNCH 0
-#define ATHROW 1
-
 bool firemenu_dialog_proc_exit = 0;
 
 int firemenu_dialog_proc(int msg, DIALOG * d, int c)

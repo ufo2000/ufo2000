@@ -76,12 +76,7 @@ private:
 	int recv_move();
 	int recv_face();
 	int recv_use_elevator();
-
-	int recv_thru();
-	int recv_beam();
-	int recv_fire();
-	int recv_punch();
-	int recv_aimedthrow();
+    int recv_target_action();
 
 	int recv_shoot();
 
@@ -142,12 +137,7 @@ public:
 	void send_move(int NID, int lev, int col, int row);
 	void send_face(int NID, int col, int row);
 	void send_use_elevator(int NID, int dz);
-
-	void send_thru(int NID, int z0, int x0, int y0, REAL ro, REAL fi, REAL te, REAL zA, int iplace, int req_time);
-	void send_beam(int NID, int _z0, int _x0, int _y0, REAL _fi, REAL _te, int iplace, int req_time);
-	void send_fire(int NID, int _z0, int _x0, int _y0, REAL _fi, REAL _te, int iplace, int req_time);
-	void send_aimedthrow(int NID, int _z0, int _x0, int _y0, REAL _fi, REAL _te, int iplace, int req_time);
-	void send_punch(int NID, int _z0, int _x0, int _y0, REAL _fi, REAL _te, int iplace, int req_time);
+    void send_target_action(int NID, int z0, int x0, int y0, int zd, int xd, int yd, Action action, int iplace);
 
 	void send_add_unit(int num, char *name, int cost);
 	void send_select_unit(int num, int lev, int col, int row);

@@ -162,9 +162,6 @@ template<class TYPE> void PersistReadBinary(persist::Engine &archive, TYPE &obje
 	archive.ReadBinary((uint8 *)&object + sizeof(void *), sizeof(object) - sizeof(void *));
 }
 
-
-#include "explo.h"
-
 //////////////////////////////////////////////////////////////////////////////
 //  Data types from original UFO:EU                                         //
 //////////////////////////////////////////////////////////////////////////////
@@ -348,15 +345,21 @@ struct PLAYERDATA
 class Map;
 class TerrainSet;
 class Platoon;
+class Editor;
+struct Target;
+class Icon;
 class Net;
 class Wind;
 class PCK;
 class Soldier;
 class Scenario;
+class Explosive;
 class Random;
 
 //! Display-Modes
 enum Mode { MAP2D, MAP3D, MAN, WATCH, UNIT_INFO, PLANNER };
+
+enum Action { NONE, THROW, PRIME, SNAPSHOT, AIMEDSHOT, AUTOSHOT, PUNCH, AIMEDTHROW };
 
 enum DeployType {DEP_LEFT, DEP_RIGHT, DEP_CENTER, DEP_SURROUND};
 

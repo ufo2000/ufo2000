@@ -46,6 +46,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //! maximum number of points a soldier can have
 #define MAXPOINTS (7*60)
 
+#define AUTO   0
+#define SNAP   1
+#define AIMED  2
+#define APUNCH 0
+#define ATHROW 1
+
 enum State { SIT = 0, STAND, MARCH, FALL, LIE };
 
 /**
@@ -184,11 +190,13 @@ public:
 	void try_shoot();
 	void try_reaction_shot(Soldier *the_target);
 	void shoot(int tlev, int tcol, int trow, int ISLOCAL);
-	int thru(int z0, int x0, int y0, REAL ro, REAL fi, REAL te, REAL zA, int iplace, int req_time);
-	int beam(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int iplace, int req_time);
-	int fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int iplace, int req_time);
-	int punch(int z0, int x0, int y0, REAL fi, REAL te, int iplace, int req_time);
-	int aimedthrow(int z0, int x0, int y0, REAL fi, REAL te, int iplace, int req_time);
+    int assign_target(Action action, int iplace);
+    int do_target_action(int z0, int x0, int y0, int zd, int xd, int yd, Action action, int iplace);
+    int thru(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time);
+    int beam(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time);
+    int fire(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time);
+    int punch(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time);
+    int aimedthrow(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time);
 
 	int check_for_hit(int _z, int _x, int _y);
 	void apply_hit(int sniper, int _z, int _x, int _y, int _type, int _hitdir);
@@ -217,7 +225,7 @@ public:
 	Skin *skin() { return m_skin; }
 
 	void calc_bullet_start(int xs, int ys, int zs, int* xr, int* yr, int *zr); //calculates starting position for a bullet
-	void calc_shot_stat(int zd, int xd, int yd);
+    void calc_shot_stat(int zd, int xd, int yd);
 
 	bool is_active()
 	{

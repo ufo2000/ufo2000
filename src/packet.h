@@ -21,7 +21,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef PACKET_H
 #define PACKET_H
 
-#define COMMAND_NUM 36
+#define COMMAND_NUM 32
 
 enum Command {CMD_MESSAGE = -2, CMD_NONE = -1,
               CMD_NOTICE = 0, CMD_QUITGAME, CMD_ENDTURN,              
@@ -29,19 +29,18 @@ enum Command {CMD_MESSAGE = -2, CMD_NONE = -1,
               CMD_UNLOAD_AMMO, CMD_LOAD_AMMO,
               CMD_TAKE_ITEM, CMD_DROP_ITEM,
               CMD_MOVE, CMD_FACE,                                     
-              CMD_THROW_ITEM, CMD_BEAM_LASER, CMD_FIRE_GUN,           
+              CMD_TARGET_ACTION,
               CMD_ADD_UNIT, CMD_UNIT_DATA_SIZE, CMD_UNIT_DATA,        
               CMD_SELECT_UNIT, CMD_DESELECT_UNIT,                     
               CMD_MAP_DATA,                                           
               CMD_FINISH_PLANNER,                                     
               CMD_RESTARTGAME,                                        
-              CMD_PUNCH, CMD_AIMEDTHROW,                              
               CMD_TIME_LIMIT,                                         
               CMD_TERRAIN_CRC32,                                      
               CMD_USE_ELEVATOR,
               CMD_SCENARIO, CMD_RULES, CMD_OPTIONS,
               CMD_PANIC, CMD_MORALE, CMD_RESTIME, CMD_P2_ISSIT,
-			  CMD_EQUIPMENT
+              CMD_EQUIPMENT
              };
 
 
