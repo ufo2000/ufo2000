@@ -39,6 +39,7 @@ static char *gen = "General";
 static char *edit = "Editor";
 
 static int base_accuracy = 75;
+static int min_color_depth = 8;
 static std::string menu_midi_file_name;
 static std::string setup_midi_file_name;
 static std::string editor_midi_file_name;
@@ -57,6 +58,11 @@ MIDI                  *g_lose_midi_music;
 int cfg_get_base_accuracy()
 {
 	return base_accuracy;
+}
+
+int cfg_get_min_color_depth()
+{
+	return min_color_depth;
 }
 
 const char *cfg_get_menu_music_file_name()
@@ -129,6 +135,7 @@ void loadini()
 	g_time_limit = get_config_int(gen, "time_limit", -1);
 
 //	base_accuracy = get_config_int(gen, "accuracy", 75);
+	min_color_depth = get_config_int(gen, "color_depth", 8);
 	menu_midi_file_name = get_config_string(gen, "menu_music", "sound/gmstory.mid");
 	setup_midi_file_name = get_config_string(gen, "setup_music", "sound/gmenbase.mid");
 	editor_midi_file_name = get_config_string(gen, "editor_music", "sound/gmdefend.mid");

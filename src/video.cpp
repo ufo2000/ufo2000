@@ -31,34 +31,15 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "video.h"
-#ifdef WIN32
-#include <allegro/internal/aintern.h>
-#include <allegro/platform/aintwin.h>
-#endif
 #include "wind.h"
 #include "../ufo2000.h"
 #include "pfxopen.h"
 #include "global.h"
 #include "map.h"
+#include "config.h"
 
 unsigned long FLAGS = 0;
-/*
-extern Wind *info;
-*/
 
-#ifdef DJGPP
-BEGIN_COLOR_DEPTH_LIST
-COLOR_DEPTH_8
-END_COLOR_DEPTH_LIST
-/*
-BEGIN_GFX_DRIVER_LIST
-	GFX_DRIVER_VGA
-	GFX_DRIVER_VESA1
-END_GFX_DRIVER_LIST
-*/
-#endif
-
-//PALLETE gamepal;
 RGB *gamepal;
 DATAFILE *datafile;
 
@@ -133,11 +114,7 @@ void closevideo()
 void change_screen_mode()
 {
 	if (FLAGS & F_SWITCHVIDEO) {
-		if (FLAGS & F_FULLSCREEN) {
-			FLAGS &= ~F_FULLSCREEN;
-		} else {
-			FLAGS |= F_FULLSCREEN;
-		}
+		FLAGS ^= F_FULLSCREEN;
 		set_video_mode();
 		reset_video();
 		g_switch_in_counter++;
@@ -147,118 +124,99 @@ void change_screen_mode()
 int xcom1_color_table[256];
 int xcom1_menu_color_table[256];
 
-static int ufo2k_set_gfx_mode(int gfx_driver)
+/**
+ * Function that converts color from xcom1 game palette to current
+ * representation
+ *
+ * @param c  xcom1 color
+ * @return   allegro color
+ */
+int (*xcom1_color)(int c);
+int (*xcom1_menu_color)(int c);
+int (*xcom1_darken_color)(int c, int level);
+
+static int xcom1_color_8bpp(int c) { return c; }
+static int xcom1_menu_color_8bpp(int c) { return c; }
+static int xcom1_darken_color_8bpp(int c, int level) { return c + level * 2; }
+
+static int xcom1_color_high_bpp(int c)
 {
-	int exit_code = set_gfx_mode(gfx_driver, 640, 400, 0, 0);
-	if (exit_code < 0)
+	assert(c >= 0 && c < 256);
+	return xcom1_color_table[c]; 
+}
+static int xcom1_menu_color_high_bpp(int c)
+{ 
+	assert(c >= 0 && c < 256);
+	return xcom1_menu_color_table[c]; 
+}
+static int xcom1_darken_color_high_bpp(int c, int level)
+{ 
+	return makecol(
+		getr(c) * (8 - level) / 8, 
+		getg(c) * (8 - level) / 8, 
+		getb(c) * (8 - level) / 8);
+}
+
+static void ufo2k_set_gfx_mode(int gfx_driver, int min_color_depth)
+{
+	assert(min_color_depth % 8 == 0);
+	int color_depth = min_color_depth;
+
+	while (true) {
+
+		if (color_depth > 32) {
+        //	Still did not manage to set video mode
+			fprintf(stderr, "Error: set_gfx_mode() failed.\n");
+			exit(1);
+		}
+
+		set_color_depth(color_depth);
+		if (color_depth > 8) {
+			set_color_conversion(COLORCONV_TOTAL | COLORCONV_KEEP_TRANS);
+		}
+
+	//	Try both 640x400 and 640x480 video modes
+		int exit_code = set_gfx_mode(gfx_driver, 640, 400, 0, 0);
+		if (exit_code == 0) break;
 		exit_code = set_gfx_mode(gfx_driver, 640, 480, 0, 0);
-	if (exit_code < 0) {
-		fprintf(stderr, "Error: set_gfx_mode() failed.\n");
-		exit(1);
+		if (exit_code == 0) break;
+	//	Try next color depth
+		color_depth += 8;
 	}
 
-#ifdef USE_HICOLOR
-//	Create tables for translation from xcom1 palette colors to colors
-//	for currently selected video mode
-	xcom1_color_table[0] = makecol(255, 0, 255);
-	xcom1_menu_color_table[0] = makecol(255, 0, 255);
+	if (color_depth == 8) {
+		xcom1_color = xcom1_color_8bpp;
+		xcom1_menu_color = xcom1_menu_color_8bpp;
+		xcom1_darken_color = xcom1_darken_color_8bpp;
+	} else {
+	//	Create tables for translation from xcom1 palette colors to colors
+	//	for currently selected video mode
+		xcom1_color_table[0] = makecol(255, 0, 255);
+		xcom1_menu_color_table[0] = makecol(255, 0, 255);
 
-	for (int c = 1; c < 256; c++)
-	{
-		const RGB & rgb = ((RGB *)datafile[DAT_GAMEPAL].dat)[c];
-		xcom1_color_table[c] = makecol(rgb.r << 2, rgb.g << 2, rgb.b << 2);
-		const RGB & menu_rgb = ((RGB *)datafile[DAT_MENUPAL].dat)[c];
-		xcom1_menu_color_table[c] = makecol(menu_rgb.r << 2, menu_rgb.g << 2, menu_rgb.b << 2);
+		for (int c = 1; c < 256; c++)
+		{
+			const RGB & rgb = ((RGB *)datafile[DAT_GAMEPAL_BMP].dat)[c];
+			xcom1_color_table[c] = makecol(rgb.r << 2, rgb.g << 2, rgb.b << 2);
+			const RGB & menu_rgb = ((RGB *)datafile[DAT_MENUPAL_BMP].dat)[c];
+			xcom1_menu_color_table[c] = makecol(menu_rgb.r << 2, menu_rgb.g << 2, menu_rgb.b << 2);
+		}
+
+		xcom1_color = xcom1_color_high_bpp;
+		xcom1_menu_color = xcom1_menu_color_high_bpp;
+		xcom1_darken_color = xcom1_darken_color_high_bpp;
 	}
-#endif
-
-	return exit_code;
 }
 
 void set_video_mode()
 {
-#ifdef USE_HICOLOR
-	set_color_depth(16);
-	set_color_conversion(COLORCONV_TOTAL | COLORCONV_KEEP_TRANS);
-#else
-	set_color_depth(8);
-#endif
+	if (FLAGS & F_FULLSCREEN)
+		ufo2k_set_gfx_mode(GFX_AUTODETECT_FULLSCREEN, cfg_get_min_color_depth());
+	else
+		ufo2k_set_gfx_mode(GFX_AUTODETECT_WINDOWED, cfg_get_min_color_depth());
 
-#ifdef DJGPP
-	ufo2k_set_gfx_mode(GFX_AUTODETECT);
-#elif WIN32
-	if (FLAGS & F_SAFEVIDEO) {
-		if (FLAGS & F_FULLSCREEN)
-			ufo2k_set_gfx_mode(GFX_DIRECTX_SAFE);
-		else
-			ufo2k_set_gfx_mode(GFX_GDI);
-	} else {
-		if (FLAGS & F_FULLSCREEN)
-			ufo2k_set_gfx_mode(GFX_DIRECTX);
-		else
-			ufo2k_set_gfx_mode(GFX_DIRECTX_WIN);
-	}
 	set_display_switch_mode(SWITCH_AMNESIA);
 	set_display_switch_callback(SWITCH_IN, switch_in_callback);
-#elif LINUX
-	int got_display_env = (NULL != getenv("DISPLAY"));
-
-
-#ifdef GFX_SVGALIB
-	int got_root = (0 == geteuid());
-	int force_svgalib = (NULL != getenv("UFO2000_FORCE_SVGALIB"));
-	// allegro was compiled with svgalib driver
-	if (force_svgalib) {
-		if (got_display_env) {
-			fprintf(stderr, "\nWarning: initializing svgalib while running X11.");
-		}
-		if (got_root) {
-			ufo2k_set_gfx_mode(GFX_SVGALIB);
-			return ;
-		}
-		fprintf(stderr, "\nNeed setuid root to use svgalib, got none.\n");
-		exit(1);
-	}
-#endif
-
-#ifdef GFX_XWINDOWS
-	if (got_display_env) {
-        if (FLAGS & F_FULLSCREEN) {
-            ufo2k_set_gfx_mode(GFX_XWINDOWS_FULLSCREEN);
-        } else {
-            ufo2k_set_gfx_mode(GFX_XWINDOWS);
-        }
-		return ;
-	} else
-#endif
-	{
-#ifdef GFX_SVGALIB
-		if (got_root) {
-			ufo2k_set_gfx_mode(GFX_SVGALIB);
-		} else {
-			fprintf(stderr, "\nNeed setuid root to use svgalib, got none.\n");
-			exit(1);
-		}
-#elif defined GFX_BEOS_FULLSCREEN_SAFE
-		ufo2k_set_gfx_mode(GFX_BEOS_FULLSCREEN_SAFE);
-#else
-	fprintf(stderr, "\nNo $DISPLAY or X11 driver, no svgalib driver... I'm giving up. \n");
-	exit(1);
-#endif
-
-	}
-
-#ifndef GFX_BEOS_FULLSCREEN_SAFE
-#ifndef GFX_XWINDOWS
-#ifndef GFX_SVGALIB
-#error Neither X11 nor svgalib drivers were compiled into allegro.
-#endif
-#endif
-#endif
-
-#else
-#error Use one of -DLINUX -DWIN32 or -DDJGPP in the Makefile.
-#endif
 }
 
 void reset_video()
@@ -346,23 +304,15 @@ unsigned short crc16(char *data_p)
 
 void resize_screen2(int vw, int vh)
 {
-	// shortcut to avoid screen flicker when at maximum/minimum size.
-	if (((SCREEN2W <= 320) && (vw < 0)) || ((SCREEN2H <= 200) && (vh < 0)))
-		return ;
-
-	if (((SCREEN2W >= 640) && (vw > 0)) || ((SCREEN2H >= 360) && (vh > 0)))
-		return ;
-
 	SCREEN2W += vw; SCREEN2H += vh;
-	if (SCREEN2W > 640) SCREEN2W = 640;
+	if (SCREEN2W > screen->w) SCREEN2W = screen->w;
 	if (SCREEN2W < 320) SCREEN2W = 320;
-	if (SCREEN2H > 360) SCREEN2H = 360;
+	if (SCREEN2H > screen->h - 40) SCREEN2H = screen->h - 40;
 	if (SCREEN2H < 200) SCREEN2H = 200;
 
 	destroy_bitmap(screen2);
 	screen2 = create_bitmap(SCREEN2W, SCREEN2H);
 
-//	clear_to_color(screen, xcom1_color(15));
 	map->m_minimap_area->resize(screen->w - SCREEN2W, SCREEN2H);
 	g_console->resize(screen->w, screen->h - SCREEN2H);
 	icon->setxy((SCREEN2W - 320) / 2, SCREEN2H - 56);

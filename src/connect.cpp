@@ -550,12 +550,14 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 							  mapdata.load_game = 77;
 						  }
 						  break;*/
+/*
 				case KEY_F10:
 					if (F10ALLOWED)
 						if ((local.SEND) && askmenu("FINISH"))
 							DONE = 1;
 					break;
-				case KEY_F11:
+*/
+				case KEY_F10:
 					change_screen_mode();
 					break;
 				case KEY_ESC:

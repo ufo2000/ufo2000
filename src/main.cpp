@@ -443,6 +443,8 @@ void initmain(int argc, char *argv[])
 	gametemp_prefix  = get_config_string("Paths",  "gametemp",  NULL); // game temporary files here (may span launches)
 	runtemp_prefix	 = get_config_string("Paths",  "runtemp",   NULL); // runtime temporary files here (get deleted by the time of exit)
 
+	loadini();
+
 	if (origfiles_prefix != NULL) {
 		origfiles_prefix = ustrdup(origfiles_prefix);
 	}
@@ -508,8 +510,6 @@ void initmain(int argc, char *argv[])
 
 	console<<"allegro_init"<<std::endl;
 
-	console<<"loadini"<<std::endl;
-	loadini();
 	console<<"install_timer"<<std::endl;
 	install_timer();
 	console<<"install_mouse"<<std::endl;
@@ -1337,6 +1337,8 @@ void gameloop()
 		{
 			net->check();
 			g_console->redraw(screen, 0, SCREEN2H);
+
+			process_keyswitch();
 
 			if (keypressed()){
 				int scancode;
