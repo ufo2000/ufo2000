@@ -29,6 +29,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 enum GameType {HOTSEAT, SOCK};
 
+void inithotseatgame();
+void closehotseatgame();
+
 class Net
 {
 public:

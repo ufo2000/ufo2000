@@ -695,6 +695,12 @@ void send_turn()
 	platoon_remote->restore();
 
 	if (net->gametype == HOTSEAT) {
+		if (win || loss) {
+		//	!!! Hack - to prevent unnecessery replay while in endgame screen
+			closehotseatgame();			
+			return;
+		}
+    
     //	Load the game state for the start of enemy turn and switch to WATCH mode
 		icon->show_eot();
 		loadgame("ufo2000.tmp");
@@ -1256,44 +1262,19 @@ void gameloop()
 		}
 
 		back->show(scr, 0, 0);
+		stretch_blit(scr, screen, 0, 0, 320, (SCREEN2H/2), 0, 0, 640, (SCREEN2H/2)*2);
+		textprintf_centre(screen, large, screen->w / 2, 24, xcom1_color(1), "%s", winner);
 
 		g_console->set_full_redraw();
 
 		//TODO: Statistics screen
 
+		MODE = MAP3D; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 		while(!DONE)
 		{
 			net->check();
-
-			if (CHANGE)	{
-				back->show(scr, 0, 0);
-				stretch_blit(scr, screen, 0, 0, 320, (SCREEN2H/2), 0, 0, 640, (SCREEN2H/2)*2);
-				textprintf_centre(screen, large, 320, 24, xcom1_color(1), "%s", winner);
-				draw_sprite(screen, mouser, mouse_x, mouse_y);
-				if (mouse_y > (SCREEN2H/2)*2-16) g_console->set_full_redraw(); //!!!!!!!!!!!!!!!!!!!!!
-				CHANGE = 0;
-			}
-
 			g_console->redraw(screen, 0, SCREEN2H);
-
-			if ((mouse_b & 1) && (mouse_leftr)) { //left
-				mouse_leftr = 0;
-				CHANGE = 1;
-			}
-			if ((mouse_b & 2) && (mouse_rightr)) { //right
-				mouse_rightr = 0;
-				CHANGE = 1;
-			}
-
-			if (!(mouse_b & 1)) {
-				mouse_leftr = 1;
-				CHANGE = 1;
-			}
-
-			if (!(mouse_b & 2)) {
-				mouse_rightr = 1;
-				CHANGE = 1;
-			}
 
 			if (keypressed()){
 				int scancode;

@@ -44,6 +44,7 @@ struct { const char *mName; unsigned long mCrc32; } DataFilesCrc32[] =
     { "./geodata/scang.dat", 0x26C1BD1B },
     { "./geodata/smallset.dat", 0x00000000 },
     { "./geograph/back01.scr", 0xD071E645 },
+    { "./geograph/back02.scr", 0xCA501299 },
     { "./geograph/back03.scr", 0x8098231A },
     { "./geograph/back09.scr", 0xF7A94FD1 },
     { "./geograph/back14.scr", 0x7AF63F1D },

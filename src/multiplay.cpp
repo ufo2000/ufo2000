@@ -63,6 +63,7 @@ void inithotseatgame()
 
 void closehotseatgame()
 {
+	while (!g_hotseat_cmd_queue.empty()) g_hotseat_cmd_queue.pop_front();
 }
 
 void Net::error(char *str)

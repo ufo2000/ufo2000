@@ -1595,7 +1595,7 @@ void Soldier::explo_hit(int pierce, int type, int hitdir, int dist) //silent
 
 	// If minimal range, hit under armour. Otherwise, hit armour normally.
 	if ((dist < 2) && ((hitloc = do_armour_check(pierce, DAMAGEDIR_UNDER)) == -1)) return;
-	else if ((hitloc = do_armour_check(pierce, damagedir)) == -1) return;
+	else if ((dist >= 2) && (hitloc = do_armour_check(pierce, damagedir)) == -1) return;
 
 	if (type == DT_STUN) // Did we get stunned?
 	{
