@@ -322,6 +322,9 @@ local function load_translated_messages(tbl, filename)
 				Error("Invalid translation for '%s' in the language file", key)
 			end
 
+			key = string.gsub(key, "\\n", "\n")
+			str = string.gsub(str, "\\n", "\n")
+
 			tbl[key] = str 
 		end
 	end
