@@ -65,6 +65,7 @@ Target target;
 int HOST, DONE, TARGET, turn;
 Mode MODE;                      //!< Display-Mode
 ConsoleWindow *g_console;
+int pause;
 
 int g_time_limit;               //!< Limit of time for a single turn in seconds
 volatile int g_time_left;       //!< Current counter for time left for this turn
@@ -1163,6 +1164,9 @@ void build_screen(int & select_y)
     if (MODE == WATCH)
         textprintf(screen2, font, 0, 0, COLOR_WHITE, _("WATCH") );
 
+    if (pause)
+        textprintf_right(screen2, font, SCREEN2W - 1, 0, COLOR_WHITE, _("PAUSE") );
+
     if (FLAGS & F_TOOLTIPS) {
         // Tooltips for the buttons of the control-panel:
         if (icon->inside(mouse_x, mouse_y)) {
@@ -1823,6 +1827,8 @@ void gameloop()
     if (net->gametype == GAME_TYPE_HOTSEAT)
         savegame(F("$(home)/ufo2000.tmp"));
 
+    pause = 0;
+
     while (!DONE) {
 
         rest(1); // Don't eat all CPU resources
@@ -1843,7 +1849,7 @@ void gameloop()
 				REPLAYIT = 0;
 			}
         } else {
-        	net->check();
+            net->check();
         }
 
     if (g_tie == 3) // Check if both players accepted the draw.
@@ -1868,14 +1874,14 @@ void gameloop()
             MOVEIT = 0;
         }
 
-        while (FLYIT > 0) {
+        while (FLYIT > 0 && !pause ) {
             platoon_local->bullmove();     //!!!! bull of dead?
             platoon_remote->bullmove();
 
             FLYIT--;
         }
 
-        while (MOVEIT > 0) {
+        while (MOVEIT > 0 && !pause ) {
             if (FLAGS & F_CLEARSEEN)
                 map->clearseen();
 
@@ -2239,6 +2245,9 @@ void gameloop()
                	            battle_report("# %s\n", buf);
                    	    }
                     }
+                    break;
+                case KEY_SPACE:
+                    pause = !pause;
                     break;
                 default:
                     if (g_console->process_keyboard_input(keycode, scancode))
