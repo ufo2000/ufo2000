@@ -89,6 +89,8 @@ public:
 	{
 		m_last_time_left = -1;
 		m_minimap = new Minimap(map);
+		m_width = width;
+		m_height = height;
 	}
 	virtual ~MinimapArea()
 	{
@@ -101,9 +103,11 @@ public:
 		BITMAP *temp_bmp = create_bitmap(m_width, m_height);
 		clear_to_color(temp_bmp, xcom1_color(15));
 
-		m_minimap->set_full_redraw();
-		m_minimap->redraw(temp_bmp, m_width - m_minimap->get_width(), 0);
-		show_time_left(temp_bmp, 0, 0, 1);
+		if (m_width >= m_minimap->get_width()) {
+			m_minimap->set_full_redraw();
+			m_minimap->redraw(temp_bmp, m_width - m_minimap->get_width(), 0);
+			show_time_left(temp_bmp, 0, 0, 1);
+		}
 
 		blit(temp_bmp, bmp, 0, 0, x, y, m_width, m_height);
 		destroy_bitmap(temp_bmp);
@@ -112,8 +116,10 @@ public:
 
 	void redraw_fast(BITMAP *bmp, int x, int y)
 	{
-		m_minimap->redraw(bmp, x + m_width - m_minimap->get_width(), y);
-		show_time_left(bmp, x, y, 0);
+		if (m_width >= m_minimap->get_width()) {
+			m_minimap->redraw(bmp, x + m_width - m_minimap->get_width(), y);
+			show_time_left(bmp, x, y, 0);
+		}
 	}
 
 	bool resize(int width, int height)
