@@ -27,6 +27,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "map.h"
 #include "colors.h"
 #include "text.h"
+#include "explo.h"
 
 IMPLEMENT_PERSISTENCE(Place, "Place");
 
@@ -72,10 +73,10 @@ void Place::scroll_right()
 }
 
 
-Item *Place::item_under_mouse()
+Item *Place::item_under_mouse(int scr_x, int scr_y)
 {
-	int xx = (mouse_x - gx) / 16;
-	int yy = (mouse_y - gy) / 15;
+	int xx = (mouse_x - (scr_x + gx)) / 16;
+	int yy = (mouse_y - (scr_y + gy)) / 15;
 
 	if ((xx >= 0) && (xx < width) && (yy >= 0) && (yy < height)) {
 		Item *t = m_item;
@@ -217,23 +218,23 @@ int Place::destroy(Item *it)
 /**
  * Select item with mouse
  */ 
-Item *Place::mselect()
+Item *Place::mselect(int scr_x, int scr_y)
 {
-	if ((mouse_x > gx) && (mouse_x < gx + width * 16))
-		if ((mouse_y > gy) && (mouse_y < gy + height * 15))
-			return get((mouse_x -gx) / 16 + viscol, (mouse_y - gy) / 15);
+	if ((mouse_x > scr_x + gx) && (mouse_x < scr_x + gx + width * 16))
+		if ((mouse_y > scr_y + gy) && (mouse_y < scr_y + gy + height * 15))
+			return get((mouse_x - (scr_x + gx)) / 16 + viscol, (mouse_y - (scr_y + gy)) / 15);
 	return NULL;
 }
 
 /**
  * De-select item with mouse
  */ 
-int Place::mdeselect(Item *it)
+int Place::mdeselect(Item *it, int scr_x, int scr_y)
 {
-	if ((mouse_x > gx) && (mouse_x < gx + width * 16))
-		if ((mouse_y > gy) && (mouse_y < gy + height * 15)) {
-			int x2 = (mouse_x - gx - (it->obdata_width() - 1) * 8) / 16 + viscol;
-			int y2 = (mouse_y - gy - (it->obdata_height() - 1) * 8) / 15;
+	if ((mouse_x > scr_x + gx) && (mouse_x < scr_x + gx + width * 16))
+		if ((mouse_y > scr_y + gy) && (mouse_y < scr_y + gy + height * 15)) {
+			int x2 = (mouse_x - (scr_x + gx) - (it->obdata_width() - 1) * 8) / 16 + viscol;
+			int y2 = (mouse_y - (scr_y + gy) - (it->obdata_height() - 1) * 8) / 15;
 			//text_mode(0);
 			//textprintf(screen, font, 1, 150, 1, "x=%d y=%d", x2, y2);
 
@@ -294,21 +295,21 @@ static char *place_name[11] = {
 /**
  * Draw inventory-grid for belt, backpack, armory etc.
  */
-void Place::drawgrid(int PLACE_NUM)
+void Place::drawgrid(BITMAP *dest, int PLACE_NUM)
 {
 	ASSERT((PLACE_NUM >= 0) && (PLACE_NUM <= NUMBER_OF_PLACES));
 
     if (PLACE_NUM == P_ARMOURY)
-        textout(screen2, large,        place_name[PLACE_NUM], gx, gy + 1 - text_height(large), COLOR_LT_OLIVE);
+        textout(dest, large,        place_name[PLACE_NUM], gx, gy + 1 - text_height(large), COLOR_LT_OLIVE);
 	else
-        textout(screen2, g_small_font, place_name[PLACE_NUM], gx, gy + 1 - text_height(g_small_font), COLOR_LT_OLIVE);
+        textout(dest, g_small_font, place_name[PLACE_NUM], gx, gy + 1 - text_height(g_small_font), COLOR_LT_OLIVE);
 
 	if (!ishand()) {
 		int dx = 0, dy = 0;
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				if (!outside_belt(j, i))
-					rect(screen2, gx + dx, gy + dy, gx + dx + 16, gy + dy + 15, COLOR_GRAY08);      //square
+					rect(dest, gx + dx, gy + dy, gx + dx + 16, gy + dy + 15, COLOR_GRAY08);      //square
 				dx += 16;
 				if (j == 19) break;      // for map cell!!!!!!!!!!!!!!!!!!!
 			}
@@ -316,7 +317,7 @@ void Place::drawgrid(int PLACE_NUM)
 			dy += 15;
 		}
 	} else {
-		rect(screen2, gx, gy, gx + width * 16, gy + height * 15, COLOR_GRAY08);
+		rect(dest, gx, gy, gx + width * 16, gy + height * 15, COLOR_GRAY08);
 	}
 
 	// Draw items in grid:
@@ -335,7 +336,7 @@ void Place::drawgrid(int PLACE_NUM)
 					sx = width * 16;
 					sy = height * 15;
 				}
-				rectfill(screen2, x + 1, y + 1, x + sx - 1, y + sy - 1, COLOR_RED06);
+				rectfill(dest, x + 1, y + 1, x + sx - 1, y + sy - 1, COLOR_RED06);
 			}
 
 			int x = gx + (t->m_x - viscol) * 16;
@@ -348,29 +349,29 @@ void Place::drawgrid(int PLACE_NUM)
 				y = gy + (height - it_height) * 15 / 2 + 5;
 			}
 
-			PCK::showpck(t->obdata_pInv(), x, y);  // Picture of item 
+			PCK::showpck(dest, t->obdata_pInv(), x, y);  // Picture of item 
 
 			if (ishand()) {	// Inventory-view: display ammo-rounds & grenade-delay 
 				if (t->clip() != NULL) {   // see also: Soldier::drawinfo()
-				    printsmall(gx + 23, gy + 39, COLOR_WHITE, t->roundsremain() );
-				    textout(screen2, g_small_font, t->get_damage_name(), gx + 3, gy + 36, COLOR_GREEN);
+				    printsmall_x(dest, gx + 23, gy + 39, COLOR_WHITE, t->roundsremain() );
+				    textout(dest, g_small_font, t->get_damage_name(), gx + 3, gy + 36, COLOR_GREEN);
 				} 
 				if (t->obdata_isAmmo() ) {   // Test
-				    printsmall(gx + 23, gy + 39, COLOR_WHITE, t->m_rounds );
+				    printsmall_x(dest, gx + 23, gy + 39, COLOR_WHITE, t->m_rounds );
 				} 
 				if (t->is_grenade() ) {  // see also: icon.h : DrawPrimed 
 				    if (t->delay_time() > 0)
-					textprintf(screen2, g_small_font, gx+23, gy+36, COLOR_RED, "%d", t->delay_time() - 1);
+					textprintf(dest, g_small_font, gx+23, gy+36, COLOR_RED, "%d", t->delay_time() - 1);
 				    else if (t->itemtype() == PROXIMITY_GRENADE && t->delay_time() < 0)
-					textout(screen2, g_small_font, "*", gx + 23, gy + 36, COLOR_RED); 
+					textout(dest, g_small_font, "*", gx + 23, gy + 36, COLOR_RED); 
 				}
 			}
 
 			if (key[KEY_LCONTROL]) {
-				t->draw_health(1, x + 1, y - 4);
+				t->draw_health(dest, 1, x + 1, y - 4);
 			}
 			if (key[KEY_ALT]) {
-				t->draw_health(0, x + 1, y - 4);
+				t->draw_health(dest, 0, x + 1, y - 4);
 			}
 		}
 		t = t->m_next;
@@ -603,28 +604,31 @@ void Place::destroy_all_items()
 	m_item = NULL;
 }
 
-#include "explo.h"
-
 void Place::damage_items(int dam)
 {
-	/*Item *it;
+	Item *it;
 	it = m_item;
 	while(it != NULL) {
 		if (it->damage(dam)) { //destroyed
 			Item *t2;
-			t2 = it->next;
+			t2 = it->m_next;
 			if (m_item == it)
 				m_item = t2;
 
-			it->unlink();
-			elist.remove(it);
-			delete it; // explodable
+            /*if (it->is_grenade())
+                elist->detonate(-1, it);
+            else*/
+                destroy(it);
+            
+            //it->unlink();
+			//elist->remove(it);
+			//delete it; // explodable
 
 			it = t2;
 			continue;			
 		}
-		it = it->next;
-	}*/
+		it = it->m_next;
+	}
 }
 
 /**
@@ -647,7 +651,7 @@ bool Place::check_mine()
 /**
  * Show TUs needed to move an item to a place like hand, belt, backpack etc.
  */
-void Place::draw_deselect_time(int PLACE_NUM, int time)
+void Place::draw_deselect_time(BITMAP *dest, int PLACE_NUM, int time)
 {
 	int color = COLOR_WHITE;
 	if (time) {
@@ -655,7 +659,7 @@ void Place::draw_deselect_time(int PLACE_NUM, int time)
 		//textout(screen2, small, time, gx, gy-8, 66);
 
 		//if (havetime(time) != OK) { color = COLOR_GRAY; }  // ??
-		printsmall(gx + 1 + text_length(g_small_font, place_name[PLACE_NUM]), gy - 6, color, time);
+		printsmall_x(dest, gx + 1 + text_length(g_small_font, place_name[PLACE_NUM]), gy - 6, color, time);
 	}
 }
 

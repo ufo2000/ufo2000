@@ -225,14 +225,14 @@ bool Editor::handle_mouse_leftclick()
 
     if (sel_item == NULL) {  // Pick up item from soldier
         for (i = 0; i < NUMBER_OF_PLACES; i++) {
-            sel_item = man->place(i)->mselect();
+            sel_item = man->place(i)->mselect(0, 0);
             if (sel_item != NULL) {
                 sel_item_place = i;
                 break;
             }
         }
         if (sel_item == NULL) {  // Pick up item from armory
-            sel_item = m_armoury->mselect();
+            sel_item = m_armoury->mselect(0, 0);
             if (sel_item != NULL) {
                 if (is_item_allowed(sel_item->m_type)) {
                     sel_item_place = P_ARMOURY;
@@ -246,14 +246,14 @@ bool Editor::handle_mouse_leftclick()
     } else {
         if (dup_item != NULL) {
             for (i = 0; i < NUMBER_OF_PLACES; i++) {
-                if (man->place(i)->mdeselect(dup_item)) {
+                if (man->place(i)->mdeselect(dup_item, 0, 0)) {
                     dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
                     break;
                 }
             }
         } else {
             for (i = 0; i < NUMBER_OF_PLACES; i++) {
-                if (man->place(i)->mdeselect(sel_item)) {
+                if (man->place(i)->mdeselect(sel_item, 0, 0)) {
                     sel_item = NULL;
                     break;
                 }
@@ -262,13 +262,13 @@ bool Editor::handle_mouse_leftclick()
 
         if (sel_item != NULL) {
             if (dup_item != NULL) {
-                if (m_armoury->mdeselect(sel_item)) {
+                if (m_armoury->mdeselect(sel_item, 0, 0)) {
                     sel_item = NULL;
                     delete dup_item;
                     dup_item = NULL;
                 }
             } else {
-                if (m_armoury->mdeselect(sel_item)) {
+                if (m_armoury->mdeselect(sel_item, 0, 0)) {
                     Item *del = m_armoury->get(sel_item->m_x, sel_item->m_y);
                     ASSERT(del != NULL);
                     delete del;
@@ -625,7 +625,7 @@ void Editor::show()
 
         if (CHANGE) {
             blit(editor_bg, screen2, 0, 0, 0, 0, editor_bg->w, editor_bg->h);
-            man->showspk(); // Show "bigpicture" of soldier in choosen armor
+            man->showspk(screen2); // Show "bigpicture" of soldier in choosen armor
 
             color = COLOR_DK_GRAY;
             if (man->x != 0)   // ??? This soldier already selected for the mission ?
@@ -634,8 +634,8 @@ void Editor::show()
             textout(screen2, large, man->md.Name, 0, 0, color);
 
             for (i = 0; i < NUMBER_OF_PLACES; i++) //man->drawgrid();
-                man->place(i)->drawgrid(i);
-            m_armoury->drawgrid(P_ARMOURY);
+                man->place(i)->drawgrid(screen2, i);
+            m_armoury->drawgrid(screen2, P_ARMOURY);
 
             man->draw_unibord(320, 0);  // Attribute-Barchart
             if (sel_item != NULL) {
@@ -671,7 +671,7 @@ void Editor::show()
                                 mouse_x - sel_item->obdata_width()  * 16 / 2,
                                 mouse_y - sel_item->obdata_height() * 16 / 2 + 8);
             } else {
-                Item *it = m_armoury->item_under_mouse();
+                Item *it = m_armoury->item_under_mouse(0, 0);
                 if (it != NULL) {
                     if (is_item_allowed(it->m_type))
                         it->od_info(330, 220, COLOR_GRAY05);
@@ -734,7 +734,7 @@ void Editor::show()
                 sel_item = NULL;
             } else {
                 for (i = 0; i < NUMBER_OF_PLACES; i++) {
-                    sel_item = man->place(i)->mselect();
+                    sel_item = man->place(i)->mselect(0, 0);
                     if (sel_item != NULL) {
                         break;
                     }
@@ -967,7 +967,7 @@ int Editor::load_clip()
 
     if (dup_item != NULL) {     // items from armory are duplicated
         for (i = 0; i < NUMBER_OF_PLACES; i++) {
-            it = man->place(i)->item_under_mouse();
+            it = man->place(i)->item_under_mouse(0, 0);
             if ((it != NULL) && it->loadclip(dup_item)) {
                 dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
                 return 1;
@@ -975,7 +975,7 @@ int Editor::load_clip()
         }
     } else {            // other items are moved
         for (i = 0; i < NUMBER_OF_PLACES; i++) {
-            it = man->place(i)->item_under_mouse();
+            it = man->place(i)->item_under_mouse(0, 0);
             if ((it != NULL) && it->loadclip(sel_item)) {
                 sel_item = NULL;
                 return 1;

@@ -51,10 +51,10 @@ public:
 	virtual ~Place();
 
 	void draw(int gx, int gy);
-	void drawgrid(int PLACE_NUM);
+	void drawgrid(BITMAP *dest, int PLACE_NUM);
 
-	Item *mselect();
-	int mdeselect(Item *it);
+	Item *mselect(int scr_x, int scr_y);
+	int mdeselect(Item *it, int scr_x, int scr_y);
 
 	int put(Item *it);
 	int put(Item *it, int xx, int yy);
@@ -66,7 +66,7 @@ public:
 	int isfit(Item *it, int xx, int yy);
 	void dropall(int lev, int col, int row);
 	int outside_belt(int x, int y);
-	Item *item_under_mouse();
+	Item *item_under_mouse(int scr_x, int scr_y);
 	int isthere(Item *it);
 
 	bool add_item(int x, int y, const char *item_name);
@@ -94,7 +94,7 @@ public:
 	void destroy_all_items();
 	void damage_items(int dam);
 	bool check_mine();
-	void draw_deselect_time(int PLACE_NUM, int time);
+	void draw_deselect_time(BITMAP *dest, int PLACE_NUM, int time);
 
 	virtual bool Write(persist::Engine &archive) const;
 	virtual bool Read(persist::Engine &archive);

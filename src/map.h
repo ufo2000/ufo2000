@@ -139,6 +139,7 @@ public:
     void smoker();
     int explode(int z, int x, int y, int max_damage);	//for map objects
     int explode(int SID, int z, int x, int y, int type);		//for weapons
+    void smokecell(int lev, int col, int row);
 	void explocell(int SID, int lev, int col, int row, int damage, int damage_type, int hitdir);
     bool check_mine(int lev, int col, int row);
     int stopWALK(int oz, int ox, int oy, int part);

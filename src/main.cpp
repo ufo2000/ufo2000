@@ -1113,89 +1113,76 @@ void build_screen(int & select_y)
     int icon_nr = -9;
     clear_to_color(screen2, BACKCOLOR);
 
-    switch (MODE) {
-        case MAP2D:
-            map->draw2d();
-            break;
-        case UNIT_INFO:
-        case WATCH:
-        case MAP3D:
-            map->set_sel(mouse_x, mouse_y);
-            map->draw();
+    map->set_sel(mouse_x, mouse_y);
+    map->draw();
 
-            if(sel_man && !sel_man->ismoving()) {
-                if(key[KEY_LCONTROL])
-                    map->draw_path_from(sel_man);
-                else if(key[KEY_ALT])
-                    sel_man->draw_bullet_way();
-            }
-
-            p1->bulldraw();
-            p2->bulldraw();
-
-            platoon_remote->draw_blue_selectors();
-
-            if (sel_man != NULL) {
-                // Todo: adjust select_y for elevation of current tile (e.g. stairs)
-                sel_man->draw_selector(select_y);
-                sel_man->draw_enemy_seen(select_y);
-            }
-
-			if (net->gametype != GAME_TYPE_REPLAY)
-            	icon->draw();
-            else {
-            	char buf[10];
-            	if (replaydelay != -1)
-            		sprintf(buf, "< %d >", 9 - replaydelay);
-            	else
-            		sprintf(buf, "< P >");
-            	rect(screen2, 0, 10, text_length(font, buf) + 2, text_height(font) + 12, COLOR_GRAY01);
-            	rectfill(screen2, 1, 11, text_length(font, buf) + 1, text_height(font) + 11, COLOR_GRAY15);
-            	textout(screen2, font, buf, 2, 12, COLOR_GRAY01);
-            }
-
-            if (g_time_left > 0) 
-                show_time_left();
-
-            draw_stats();
-
-            if (MODE == WATCH)
-                textprintf(screen2, font, 0, 0, COLOR_WHITE, _("WATCH") );
-
-            if (FLAGS & F_TOOLTIPS) {
-                // Tooltips for the buttons of the control-panel:
-                if (icon->inside(mouse_x, mouse_y)) {
-                    icon_nr = icon->identify(mouse_x, mouse_y);
-                    if (icon_nr >= 0 ) {
-                        int prev_tm = text_mode(0);
-                        textprintf(screen2, font,  mouse_x+7, mouse_y-2,
-                                    COLOR_WHITE, "%s", icontext(icon_nr) );
-                        text_mode(prev_tm);
-                    }
-                }
-            }
-            
-            if (MODE == UNIT_INFO) {
-            	if (sel_man != NULL)
-                	sel_man->draw_unibord(SCREEN2W / 2 - 160, SCREEN2H / 2 - 100);
-            	else
-                	MODE = MAP3D;
-            }
-
-            break;
-        case MAN:
-            if (sel_man != NULL) {
-                inventory->draw();
-            } else {
-                MODE = MAP3D;
-                //map->cell[map->sel_col][map->sel_row].place.put(icon->sel_item);
-                //icon->sel_item = NULL;
-            }
-            break;
-        default:
-            ASSERT(false);
+    if(sel_man && !sel_man->ismoving() && (MODE == MAP3D || MODE == WATCH)) {
+        if(key[KEY_LCONTROL])
+            map->draw_path_from(sel_man);
+        else if(key[KEY_ALT])
+            sel_man->draw_bullet_way();
     }
 
+    p1->bulldraw();
+    p2->bulldraw();
+
+    platoon_remote->draw_blue_selectors();
+
+    if (sel_man != NULL) {
+        // Todo: adjust select_y for elevation of current tile (e.g. stairs)
+        sel_man->draw_selector(select_y);
+        sel_man->draw_enemy_seen(select_y);
+    }
+
+	if (net->gametype != GAME_TYPE_REPLAY)
+        icon->draw();
+    else {
+        char buf[10];
+        if (replaydelay != -1)
+            sprintf(buf, "< %d >", 9 - replaydelay);
+        else
+            sprintf(buf, "< P >");
+        rect(screen2, 0, 10, text_length(font, buf) + 2, text_height(font) + 12, COLOR_GRAY01);
+        rectfill(screen2, 1, 11, text_length(font, buf) + 1, text_height(font) + 11, COLOR_GRAY15);
+        textout(screen2, font, buf, 2, 12, COLOR_GRAY01);
+    }
+
+    if (g_time_left > 0) 
+        show_time_left();
+
+    draw_stats();
+
+    if (MODE == WATCH)
+        textprintf(screen2, font, 0, 0, COLOR_WHITE, _("WATCH") );
+
+    if (FLAGS & F_TOOLTIPS && net->gametype != GAME_TYPE_REPLAY) {
+        // Tooltips for the buttons of the control-panel:
+        if (icon->inside(mouse_x, mouse_y)) {
+            icon_nr = icon->identify(mouse_x, mouse_y);
+            if (icon_nr >= 0 ) {
+                int prev_tm = text_mode(0);
+                textprintf(screen2, font,  mouse_x+7, mouse_y-2,
+                            COLOR_WHITE, "%s", icontext(icon_nr) );
+                text_mode(prev_tm);
+            }
+        }
+    }
+            
+    if (MODE == MAP2D) {
+        map->draw2d();
+    } else if (MODE == MAN) {
+        if (sel_man != NULL) {
+            inventory->draw(SCREEN2W / 2 - 160, SCREEN2H / 2 - 100);
+        } else {
+            MODE = MAP3D;
+        }			
+	} else if (MODE == UNIT_INFO) {
+        if (sel_man != NULL)
+            sel_man->draw_unibord(SCREEN2W / 2 - 160, SCREEN2H / 2 - 100);
+        else
+            MODE = MAP3D;
+    }
+    
     draw_sprite(screen2, mouser, mouse_x, mouse_y);
     blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
     map->svga2d();      // Minimap
@@ -1923,15 +1910,15 @@ void gameloop()
                         	break;
                     	}
                     } else {
-                    	if (mouse_x >= 2 && mouse_y >= 12 &&
-                    		mouse_x <= 10 && mouse_y <= 20) {
+                    	if (mouse_inside(2, 12, 10, 20)) {
                     			if (replaydelay != -1)
                     				replaydelay++;
                     			if (replaydelay > 8)
                     				replaydelay = -1;
                     	}
-                    	if (mouse_x >= 34 && mouse_y >= 12 &&
-                    		mouse_x <= 42 && mouse_y <= 20) {
+                    	if (mouse_inside(18, 12, 26, 20))
+                    		replaydelay = -1;
+                    	if (mouse_inside(34, 12, 42, 20)) {
                     			if (replaydelay != -1)
                     				replaydelay--;
                     			else

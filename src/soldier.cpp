@@ -602,18 +602,18 @@ int Soldier::calc_z()
  * Draw soldiers inventory
  */
 // See also: Inventory::draw(), Editor::show()
-void Soldier::draw_inventory()
+void Soldier::draw_inventory(BITMAP *dest)
 {
-    showspk();
+    showspk(dest);
 
     text_mode(-1);
-    textout(screen2, large, md.Name,  0,  0, COLOR_LT_OLIVE);
+    textout(dest, large, md.Name,  0,  0, COLOR_LT_OLIVE);
 
 // New: display weight and health:
     int wht     = count_weight();
     int max_wht = md.Strength;
     int color   = max_wht < wht ? COLOR_RED03 : COLOR_GRAY02; 
-    textprintf(screen2, g_small_font, 0, 20, color, _("Equipment weight: %d/%2d"), wht, max_wht);
+    textprintf(dest, g_small_font, 0, 20, color, _("Equipment weight: %d/%2d"), wht, max_wht);
 
     color = COLOR_ORANGE;
     if (ud.CurTU < 20)              // $$$ Todo: use required(25) and havetime()
@@ -622,8 +622,8 @@ void Soldier::draw_inventory()
         color = COLOR_LT_BLUE;  // low energy - only 3 steps remain
     if (ud.CurEnergy < 2)
         color = COLOR_BLUE;     // not enough energy for a single step
-    textout(screen2,    g_small_font, _("TUs>"), 245, 25, COLOR_LT_OLIVE);
-    textprintf(screen2, g_small_font,            276, 25, color, "%d", ud.CurTU);
+    textout(dest,    g_small_font, _("TUs>"), 245, 25, COLOR_LT_OLIVE);
+    textprintf(dest, g_small_font,            276, 25, color, "%d", ud.CurTU);
 
     color = COLOR_ORANGE;
     if ((ud.CurFront < ud.MaxFront) ||  // Armor damaged
@@ -644,13 +644,13 @@ void Soldier::draw_inventory()
              ud.LArmWound + ud.RLegWound  + ud.LLegWound;   
     if (fw > 0) 
         color = COLOR_RED07;        // Fatal Wounds
-    textout(screen2,    g_small_font, _("Health>"), 245, 34, COLOR_LT_OLIVE);
-    textprintf(screen2, g_small_font,               276, 34, color, "%d", ud.CurHealth); 
+    textout(dest,    g_small_font, _("Health>"), 245, 34, COLOR_LT_OLIVE);
+    textprintf(dest, g_small_font,               276, 34, color, "%d", ud.CurHealth); 
 //
     for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
-        m_place[i]->drawgrid(i);
+        m_place[i]->drawgrid(dest, i);
 
-    map->place(z, x, y)->drawgrid(P_MAP);
+    map->place(z, x, y)->drawgrid(dest, P_MAP);
 }
 
 /**
@@ -1632,11 +1632,11 @@ void Soldier::unlink()
 /**
  * Show TUs needed to move item in hand to a place like belt, backpack etc.
  */ 
-void Soldier::draw_deselect_times(int sel_item_place)
+void Soldier::draw_deselect_times(BITMAP *dest, int sel_item_place)
 {
     for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++) 
-        m_place[i]->draw_deselect_time(i, calctime(sel_item_place, i));
-    map->place(z, x, y)->draw_deselect_time(P_MAP, calctime(sel_item_place, P_MAP));
+        m_place[i]->draw_deselect_time(dest, i, calctime(sel_item_place, i));
+    map->place(z, x, y)->draw_deselect_time(dest, P_MAP, calctime(sel_item_place, P_MAP));
 }
 
 void Soldier::damage_items(int damage)
@@ -1759,10 +1759,10 @@ int Soldier::calctime(int src, int dst)
 }
 
 
-Item *Soldier::select_item(int &i)
+Item *Soldier::select_item(int &i, int scr_x, int scr_y)
 {
     for (i = 0; i < NUMBER_OF_PLACES; i++) {
-        Item *it = m_place[i]->mselect();
+        Item *it = m_place[i]->mselect(scr_x, scr_y);
         if (it != NULL) {
             return it;
         }
@@ -1771,13 +1771,13 @@ Item *Soldier::select_item(int &i)
 }
 
 
-int Soldier::deselect_item(Item *&it, int it_place, int &req_time)
+int Soldier::deselect_item(Item *&it, int it_place, int &req_time, int scr_x, int scr_y)
 {
     for (int i = 0; i < NUMBER_OF_PLACES; i++) {
         req_time = calctime(it_place, i);
         int ISLOCAL = platoon_local->belong(this);
         if (time_reserve(req_time, ISLOCAL, 0) == OK) {
-            if (m_place[i]->mdeselect(it)) {
+            if (m_place[i]->mdeselect(it, scr_x, scr_y)) {
                 spend_time(req_time);
                 return i;
             }
@@ -1809,10 +1809,10 @@ Soldier *Soldier::prevman()
 }
 
 
-Item *Soldier::item_under_mouse(int ipl)
+Item *Soldier::item_under_mouse(int ipl, int scr_x, int scr_y)
 {
     if ((ipl >= 0) && (ipl <= 7))
-        return m_place[ipl]->item_under_mouse();
+        return m_place[ipl]->item_under_mouse(scr_x, scr_y);
     return NULL;
 }
 
@@ -2580,23 +2580,23 @@ void Soldier::draw_bullet_way()
 }
 
 
-void Soldier::showspk()
+void Soldier::showspk(BITMAP *dest)
 {
     // Why did these have "% 4" before? They prevented the flying suit from displaying.
     switch (md.SkinType) {
         case S_XCOM_0:
         case S_XCOM_1:
-            Skin::m_spk[(md.SkinType - 1) % 4][md.fFemale][md.Appearance]->show(screen2, 0, 0);
+            Skin::m_spk[(md.SkinType - 1) % 4][md.fFemale][md.Appearance]->show(dest, 0, 0);
             break;
         case S_XCOM_2:
         case S_XCOM_3:
-            Skin::m_spk[(md.SkinType - 1) % 4][0][0]->show(screen2, 0, 0);
+            Skin::m_spk[(md.SkinType - 1) % 4][0][0]->show(dest, 0, 0);
             break;
         case S_SECTOID:
-            Skin::m_spk[4][0][0]->show(screen2, 0, 0);
+            Skin::m_spk[4][0][0]->show(dest, 0, 0);
             break;
         case S_MUTON:
-            Skin::m_spk[5][0][0]->show(screen2, 0, 0);
+            Skin::m_spk[5][0][0]->show(dest, 0, 0);
             break;
         default:
 			break;

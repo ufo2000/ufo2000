@@ -537,6 +537,9 @@ void Map::draw2d()
 
 	int c1 = sel_col - 27; if (c1 < 0) c1 = 0;
 	int c2 = sel_col + 27; if (c2 >= width * 10) c2 = width * 10 - 1;
+	
+	rectfill(screen2, cx - 160 + 4 + 48, cy - 100 + 12 + 16, 
+			cx - 160 + 4 + 268, cy - 100 + 12 + 163, COLOR_GRAY15);
 
 	for (int lev = 0; lev <= sel_lev; lev++)
 		for (int row = r1; row <= r2; row++)
@@ -1431,6 +1434,7 @@ int Map::explode(int z, int x, int y, int max_damage)
                             hit_dir = calculate_hitdir((lev - double(l)) * HEIGHT_RATIO, double(c) - col, double(r) - row);
                         }
                         explocell(-1, l, c, r, damage, damage_type, hit_dir);
+                        smokecell(l, c, r);
                     }
                 }
             }
@@ -1443,7 +1447,9 @@ int Map::explode(int sniper, int z, int x, int y, int type)
     int damage, hit_dir = 0;
     int max_damage = Item::obdata_damage(type);
     int damage_type = Item::obdata_damageType(type);
-    double range = Item::obdata_exploRange(type);
+    double explo_range = Item::obdata_exploRange(type);
+    double smoke_range = Item::obdata_smokeRange(type);
+    double range = explo_range < smoke_range ? smoke_range : explo_range;
     
     // move to rules.h
     double EXPL_BORDER_DAMAGE = 0.5; // how much damage does explosion on its border
@@ -1467,7 +1473,11 @@ int Map::explode(int sniper, int z, int x, int y, int type)
                         if (man(l, c, r) != NULL) {
                             hit_dir = calculate_hitdir((lev - double(l)) * HEIGHT_RATIO, double(c) - col, double(r) - row);
                         }
-                        explocell(sniper, l, c, r, damage, damage_type, hit_dir);
+                        
+                        if (distance <= explo_range)
+                        	explocell(sniper, l, c, r, damage, damage_type, hit_dir);
+                        if (distance <= smoke_range)
+                        	smokecell(l, c, r);
                     }
                 }
             }
@@ -1486,27 +1496,30 @@ bool Map::check_mine(int lev, int col, int row)
 	return false;
 }
 
-void Map::explocell(int sniper, int lev, int col, int row, int damage, int damage_type, int hitdir)
+void Map::smokecell(int lev, int col, int row)
 {
     int DEFAULT_SMOKE_TIME = 2; // move to rules.h
   
 	set_smog_state(lev, col, row, 8);
 	set_smog_time(lev, col, row, 0);
-  
- 	//for(int i=0; i<4; i++) {
- 	for (int i = 3; i >= 0; i--) {
- 		if (mcd(lev, col, row, i)->Fuel > smog_time(lev, col, row)) {
- 			set_smog_time(lev, col, row, mcd(lev, col, row, i)->Fuel);
- 			if (mcd(lev, col, row, i)->Armour < damage) {
 
- 				if (damage_type == DT_INC) {
- 					set_fire_time(lev, col, row, mcd(lev, col, row, i)->Fuel);
- 					set_fire_state(lev, col, row, 4);
- 				}
+ 	for (int i = 0; i < 4; i++)
+ 		if (mcd(lev, col, row, i)->Fuel > smog_time(lev, col, row))
+ 			set_smog_time(lev, col, row, mcd(lev, col, row, i)->Fuel);
+ 		else
+ 			set_smog_time(lev, col, row, DEFAULT_SMOKE_TIME);              
+}
+
+void Map::explocell(int sniper, int lev, int col, int row, int damage, int damage_type, int hitdir)
+{
+ 	for (int i = 3; i >= 0; i--) {	//reversed order is used to avoid a bug with tile destruction
+ 		if (mcd(lev, col, row, i)->Fuel > smog_time(lev, col, row)) {
+ 			if (mcd(lev, col, row, i)->Armour < damage && damage_type == DT_INC) {
+ 				set_fire_time(lev, col, row, mcd(lev, col, row, i)->Fuel);
+ 				set_fire_state(lev, col, row, 4);
  			}
- 		} else {
- 			set_smog_time(lev, col, row, DEFAULT_SMOKE_TIME);
  		}
+ 		
  		if ((mcd(lev, col, row, i)->Armour < damage) && (damage_type != DT_STUN)) {
  			destroy_cell_part(lev, col, row, i);
  		}
@@ -1514,10 +1527,10 @@ void Map::explocell(int sniper, int lev, int col, int row, int damage, int damag
   
 	place(lev, col, row)->damage_items(damage);
 	if (man(lev, col, row) != NULL) {
-      if (hitdir != DAMAGEDIR_UNDER)
-          hitdir = (man(lev, col, row)->get_dir() + (hitdir + 4)) % 8;
-	 	  man(lev, col, row)->explo_hit(sniper, damage, damage_type, hitdir);
-  }
+		if (hitdir != DAMAGEDIR_UNDER)
+			hitdir = (man(lev, col, row)->get_dir() + (hitdir + 4)) % 8;
+		man(lev, col, row)->explo_hit(sniper, damage, damage_type, hitdir);
+	}
 }
 
 /**

@@ -78,6 +78,7 @@ public:
 	static int obdata_damage(int index) { return obdata_get_int(index, "damage"); }
 	static int obdata_dDeviation(int index) { return obdata_get_int(index, "dDeviation"); }
 	static int obdata_exploRange(int index) { return obdata_get_int(index, "exploRange"); }
+	static int obdata_smokeRange(int index) { return obdata_get_int(index, "smokeRange"); }
 	static int obdata_cost(int index) { return obdata_get_int(index, "cost"); }
 	static int obdata_isAmmo(int index) { return obdata_get_int(index, "isAmmo"); }
 	static std::string obdata_name(int index) { return obdata_get_string(index, "name"); }
@@ -129,6 +130,7 @@ public:
 	int obdata_damage() { return obdata_damage(m_type); }
 	int obdata_dDeviation() { return obdata_dDeviation(m_type); }
 	int obdata_exploRange() { return obdata_exploRange(m_type); }
+	int obdata_smokeRange() { return obdata_smokeRange(m_type); }
 	int obdata_accuracy(int n) { return obdata_get_array_int(m_type, "accuracy", n); }
 	int obdata_time(int n) { return obdata_get_array_int(m_type, "time", n); }
 	int obdata_importance() { return obdata_get_int(m_type, "importance"); }
@@ -170,7 +172,7 @@ public:
 
 	int m_health;
 	int health();
-	void draw_health(int GRAPH, int gx, int gy);
+	void draw_health(BITMAP *dest, int GRAPH, int gx, int gy);
 	int damage(int dam);
 
 	Place *get_place() { return m_place; }

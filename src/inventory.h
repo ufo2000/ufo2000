@@ -35,6 +35,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 class Inventory
 {
 private:
+	int x, y;	
+
 	Item   *sel_item;
 	int    sel_item_place;
 
@@ -45,7 +47,7 @@ public:
 	Inventory();
 	~Inventory();
 
-	void draw();
+	void draw(int _x, int _y);
 	void execute();
 	void close();
 	void backput();

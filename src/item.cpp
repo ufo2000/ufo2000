@@ -361,7 +361,7 @@ int Item::health()
 	return m_health;
 }
 
-void Item::draw_health(int GRAPH, int gx, int gy)
+void Item::draw_health(BITMAP *dest, int GRAPH, int gx, int gy)
 {
 	int color = COLOR_GREEN;		//gr
 	if (m_health < health_max() * 2 / 3)
@@ -371,9 +371,9 @@ void Item::draw_health(int GRAPH, int gx, int gy)
 	if (GRAPH) {
 		int len;     //=m_health;
 		len = 14 * m_health / health_max();
-		hline(screen2, gx, gy, gx + len, color);
+		hline(dest, gx, gy, gx + len, color);
 	} else
-		printsmall(gx, gy + 1, color, m_health);
+		printsmall_x(dest, gx, gy + 1, color, m_health);
 }
 
 int Item::damage(int dam)

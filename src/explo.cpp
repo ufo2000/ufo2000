@@ -125,7 +125,7 @@ void Explosive::check_for_detonation(int isprox, Item *it)
 
 int Explosive::detonate(int SID, Item *it)
 {
-	int lev, col, row, type, range, damage;
+	int lev, col, row, type;
 	Place *ip;
 	int iplace;
 
