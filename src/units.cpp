@@ -997,12 +997,13 @@ void Units::execute_map(Map *map, int map_change_allowed)
 
     if (mouse_inside(x0 - x2a, SCREEN2H - 49, x0 + x2b, SCREEN2H - 36)) {
 		//"LOAD"
-		char path[1000]; *path = 0;
-		
-        if (file_select_mr( _("Load GEODATA.lua file"), path, "lua")) {
+        std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
+            _("Load map"), F("$(home)"), "area");
+        		
+        if (!filename.empty()) {
 			GEODATA gd;
 
-			if (!Map::load_GEODATA(path, &gd) || !Map::valid_GEODATA(&gd)) {
+			if (!Map::load_GEODATA(filename.c_str(), &gd) || !Map::valid_GEODATA(&gd)) {
                 g_console->printf(COLOR_RED02, _("Invalid map file.") );
 			} else {
 				memcpy(&mapdata, &gd, sizeof(mapdata));
@@ -1015,11 +1016,12 @@ void Units::execute_map(Map *map, int map_change_allowed)
 
     if (mouse_inside(x0 + x3a, SCREEN2H - 49, x0 + x3b, SCREEN2H - 36)) {
 		//"SAVE"
-		char path[1000]; *path = 0;
-
-        if (file_select_mr( _("Save GEODATA.lua file"), path, "lua")) {
-			if(!Map::save_GEODATA(path, &mapdata))
-                g_console->printf(COLOR_RED02, _("Can't save geodata.") );
+        std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
+            _("Save map"), F("$(home)"), "area", true);
+        
+        if (!filename.empty()) {
+			if(!Map::save_GEODATA(filename.c_str(), &mapdata))
+                g_console->printf(COLOR_RED02, _("Can't save map file.") );
 		}
 	}
 }

@@ -59,6 +59,13 @@ int gui_select_from_list(
 	const std::vector<std::string> &data,
 	int default_value = 0);
 
+std::string gui_file_select(
+    int width, int height,
+    const std::string &title, 
+    const std::string &dir,
+    const std::string &ext = "*",
+    bool edit_box_enabled = false);
+
 uint16 crc16(const char *data_p);
 
 extern unsigned long FLAGS;
@@ -86,4 +93,3 @@ extern unsigned long FLAGS;
 #define F_SECONDSIT         0x00200000
 #define F_REACTINFO         0x00400000
 #endif
-

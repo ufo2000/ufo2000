@@ -414,7 +414,7 @@ void display_error_message(const std::string &error_text)
 int file_select_mr(const char *message, char *path, const char *ext)
 {
     MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
-    return file_select(message, path, ext);
+    return file_select_ex(message, path, ext, 512, SCREEN_W / 2, SCREEN_H / 2);
 }
 
 static int assert_handler(const char *msg)
@@ -2208,29 +2208,19 @@ void gameloop()
         net->m_replay_file->close();
     
         if (net->gametype != GAME_TYPE_REPLAY && askmenu(_("Save replay?"))) {
-            char path[1000]; *path = 0;
-
-            while (true) {
-                if (file_select_mr( _("Save REPLAY.rep file"), path, "rep")) {
-                    if (exists(path)) {
-                        if (askmenu(_("File exists. Overwrite?")))
-                            remove(path);
-                        else
-                            continue;
-                    }
+            std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
+                _("Save replay (*.replay file)"), F("$(home)"), "replay", true);
                 
-                    if (exists(F("$(home)/replay.tmp"))) {
-                        if (rename(F("$(home)/replay.tmp"), path) == 0) {
-                            g_console->printf(_("Replay saved as %s"), path);
-                            break;
-                        } else {
-                            g_console->printf(_("Unable to save %s!"), path);
-                            g_console->printf("%s (%d)", strerror(errno), errno);
-                            break;
-                        }
-                    } else
-                        break;
-                } else break;
+            if (!filename.empty()) {
+                if (exists(filename.c_str()))
+                    remove(filename.c_str());
+                
+                if (rename(F("$(home)/replay.tmp"), filename.c_str()) == 0) {
+                    g_console->printf(_("Replay saved as %s"), filename.c_str());
+                } else {
+                    g_console->printf(_("Unable to save %s!"), filename.c_str());
+                    g_console->printf("%s (%d)", strerror(errno), errno);
+                }
             }
         }
 
@@ -2356,21 +2346,21 @@ game have been played before. I don't know how to fix it in other way.*/
     reset_video();
     clear_to_color(screen, COLOR_BLACK1);
 
-    /*if (!loadreplay(F("$(home)/replay.sav"))) {
-        alert( "", _("Replay is not available or was saved by incompatible version"), "", _("OK"), NULL, 0, 0);
-        return;
-    }*/
-    
     char path[1000]; *path = 0;
     
-    if (file_select_mr( _("Load REPLAY.rep file"), path, "rep")) {
-        if (!loadreplay(path)) {
-            alert( "", _("Replay is invalid!"), _("(Probably it was saved by incompatible version)."), _("OK"), NULL, 0, 0);
-            return;
-        }
-    } else {
+    std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
+        _("Load replay (*.replay files)"), F("$(home)"), "replay");
+        
+    if (filename.empty()) {
+        alert( "", _("No saved replays found!"), "", _("OK"), NULL, 0, 0);
+        return;
+    }        
+    
+    if (!loadreplay(filename.c_str())) {
+        alert( "", _("Replay is invalid!"), _("(Probably it was saved by incompatible version)."), _("OK"), NULL, 0, 0);
         return;
     }
+    
     battle_report( "# %s: %d\n", _("START REPLAY"), turn );
 
     inithotseatgame();

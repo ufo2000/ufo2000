@@ -442,3 +442,98 @@ int gui_select_from_list(
     current_list = NULL;
     return list_dialog[2].d1;
 }
+
+static char buffer[512];
+
+static int d_custom_list_proc(int msg, DIALOG *d, int c)
+{
+    int result = d_agup_list_proc(msg, d, c);
+    if (d->flags & D_GOTFOCUS) {
+        strcpy(buffer, (*current_list)[d->d1].c_str());
+        if (result == D_O_K) result = D_REDRAW;
+    }
+    return result;
+}
+
+/**
+ * High level function that shows GUI dialog with a choice from a list of variants
+ * @param width          width of dialog in pixels
+ * @param height         height of dialog in pixels
+ * @param title          dialog title message
+ * @param data           std::vector with a number of variants to be suggested to user
+ * @param default_value  value that is active at start of dialog
+ * @returns              user's choice
+ */
+std::string gui_select_from_list_ex(
+    int width, int height,
+    const std::string &title, 
+    const std::vector<std::string> &data,
+    const std::string &default_value)
+{
+    current_list = &data;
+    strcpy(buffer, default_value.c_str());
+    
+    DIALOG list_dialog[] = {
+        //(dialog proc)      (x)           (y)                   (w)      (h)  (fg) (bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
+        { d_agup_shadow_box_proc, 0, 0, width, height, -1,  -1, 0, 0, 0, 0, NULL, NULL, NULL},
+        { d_agup_ctext_proc,      0, 8, width, 16,  -1, -1, 0, 0, 0, 0, (void *)title.c_str(), NULL, NULL},
+        { d_agup_edit_proc,       0 + 8, 8 + 16, width - 16, 16,  -1, -1, 0, D_EXIT, 48, 0, &buffer, NULL, NULL},
+        { d_custom_list_proc,     0 + 8, 0 + 16 + 16 + 8, width - 16, height - 16 - 16 - 16,  -1,  -1, 0, D_EXIT, 0, 0, (void *)gui_select_from_list_proc, NULL, &list_dialog[2]},
+        { d_yield_proc,           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
+        { NULL,                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL}
+    };
+
+    while (mouse_b & 3) yield_timeslice();
+
+    list_dialog[3].d1 = 0;
+    for (int i = 0; i < (int)data.size(); i++) {
+        if (data[i] == default_value) {
+            list_dialog[3].d1 = i;
+            break;
+        }
+    }
+    set_dialog_color(list_dialog, gui_fg_color, gui_bg_color);
+    centre_dialog(list_dialog);
+    popup_dialog(list_dialog, 2);
+    current_list = NULL;
+    return buffer;
+}
+
+/**
+ * Select existing files with some specific extension which
+ * all reside in a single directory
+ * @param width            width of dialog in pixels
+ * @param height           height of dialog in pixels
+ * @param title            dialog title message
+ * @param dir              directory name
+ * @param ext              file extension name
+ * @param edit_box_enabled if set, enables edit box for entering file name
+ * @returns                name of the selected file
+ */
+std::string gui_file_select(
+    int width, int height,
+    const std::string &title, 
+    const std::string &dir,
+    const std::string &ext,
+    bool edit_box_enabled)
+{
+    MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
+    std::vector<std::string> data;
+    al_ffblk info;
+    std::string pattern = dir + "/*." + ext;
+    if (al_findfirst(pattern.c_str(), &info, FA_RDONLY | FA_ARCH) == 0) {
+        do {
+            data.push_back(std::string(info.name, info.name + strlen(info.name) - ext.size() - 1));
+        } while(al_findnext(&info) == 0);
+        al_findclose(&info);
+    }
+    if (data.empty()) return "";
+    std::sort(data.begin(), data.end());
+    if (edit_box_enabled) {
+        std::string result = gui_select_from_list_ex(width, height, title, data, "");
+        return dir + "/" + result + "." + ext;
+    } else {
+        int result = gui_select_from_list(width, height, title, data, 0);
+        return dir + "/" + data[result] + "." + ext;
+    }
+}

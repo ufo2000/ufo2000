@@ -124,13 +124,17 @@ Editor::~Editor()
  */
 void Editor::load()
 {
-    char path[1000];
-    strcpy(path, last_unit_name);
-    if (file_select_mr( _("LOAD UNITS DATA"), path, "lua")) {
-        m_plt->load_FULLDATA(path);
-        strcpy(last_unit_name, path);
-        lua_message( std::string("Team loaded: ") + path );
+    std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
+        _("Load squad (*.squad files)"), F("$(home)"), "squad");
+    
+    if (filename.empty()) {
+        alert( "", _("No saved squads found!"), "", _("OK"), NULL, 0, 0);
+        return;
     }
+    
+    m_plt->load_FULLDATA(filename.c_str());
+    strcpy(last_unit_name, filename.c_str());
+    lua_message(std::string("Squad loaded: ") + filename);
 }
 
 
@@ -139,12 +143,12 @@ void Editor::load()
  */
 void Editor::save()
 {
-    char path[1000];
-    strcpy(path, last_unit_name);
-    if (file_select_mr( _("SAVE UNITS DATA"), path, "UNITS")) {
-        m_plt->save_FULLDATA(path);
-        strcpy(last_unit_name, path);
-        lua_message( std::string("Team saved: ") + path );
+    std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
+        _("Save squad (*.squad file)"), F("$(home)"), "squad", true);
+    
+    if (!filename.empty()) {
+        m_plt->save_FULLDATA(filename.c_str());
+        lua_message(std::string("Squad saved: ") + filename);
     }
 }
 
