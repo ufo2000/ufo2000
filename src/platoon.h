@@ -70,6 +70,7 @@ public:
 	int check_for_hit(int z, int x, int y, Soldier* no_test = NULL);
 	void apply_hit(int sniper, int z, int x, int y, int type, int hitdir);
 	void set_visibility_changed() { m_visibility_changed = true; }
+	void recalc_visibility();
 
 	int nobullfly();
 	int nomoves();

@@ -867,6 +867,8 @@ void send_turn()
 		soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
 
 	platoon_remote->restore();
+	platoon_remote->set_visibility_changed();
+	platoon_remote->recalc_visibility();
 
 	if (net->gametype == GAME_TYPE_HOTSEAT) {
 		if (win || loss) {
@@ -890,6 +892,7 @@ void send_turn()
 		if (sel_man != NULL) map->center(sel_man);
 
 		platoon_local->set_visibility_changed();
+		platoon_local->recalc_visibility();
 
 		set_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
         alert(" ", _("  NEXT TURN  "), " ", 
@@ -912,6 +915,7 @@ void recv_turn(int crc)
 
 	platoon_local->restore();
 	platoon_local->set_visibility_changed();
+	platoon_local->recalc_visibility();
 
 	if (net->gametype == GAME_TYPE_HOTSEAT) {
 		savegame(F("$(home)/ufo2000.tmp"));
@@ -1555,7 +1559,9 @@ void gameloop()
     battle_report( "*\n* %s: %s\n*\n\n", _("Battlereport"), datetime() );
 
 	platoon_local->set_visibility_changed();
+	platoon_local->recalc_visibility();
 	platoon_remote->set_visibility_changed();
+	platoon_remote->recalc_visibility();
 
 	if (MODE != WATCH) {
 		g_time_left = g_time_limit;

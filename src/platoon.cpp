@@ -104,6 +104,30 @@ void Platoon::destroy()
 	delete m_stats;
 }
 
+void Platoon::recalc_visibility()
+{
+	if (!m_visibility_changed) return;
+
+	memset(m_visible, 0, sizeof(m_visible));
+
+	Soldier *ss = man;
+	while (ss != NULL) {
+		if (ss->is_active()) {
+			ss->calc_visible_cells();
+			int n = 0, k, i, j, width_10 = 10 * map->width, height_10 = 10 * map->height;
+			for (k = 0; k < map->level; k++)
+				for (i = 0; i < width_10; i++)
+					for (j = 0; j < height_10; j++) {
+						m_visible[k][i][j] |= ss->m_visible_cells[n++];
+						m_seen[k][i][j] |= m_visible[k][i][j];
+					}
+		}
+		ss = ss->next();
+	}
+
+	m_visibility_changed = 0;
+}
+
 
 void Platoon::move(int ISLOCAL)
 {
@@ -138,27 +162,7 @@ void Platoon::move(int ISLOCAL)
 		}
 	}
 
-	if (m_visibility_changed) {
-		
-		memset(m_visible, 0, sizeof(m_visible));
-
-		ss = man;
-		while (ss != NULL) {
-			if (ss->is_active()) {
-				ss->calc_visible_cells();
-				int n = 0, k, i, j, width_10 = 10 * map->width, height_10 = 10 * map->height;
-				for (k = 0; k < map->level; k++)
-					for (i = 0; i < width_10; i++)
-						for (j = 0; j < height_10; j++) {
-							m_visible[k][i][j] |= ss->m_visible_cells[n++];
-							m_seen[k][i][j] |= m_visible[k][i][j];
-						}
-			}
-			ss = ss->next();
-		}
-
-		m_visibility_changed = 0;
-	}
+	recalc_visibility();
 }
 
 
