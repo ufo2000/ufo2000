@@ -31,18 +31,19 @@ class Explosive: public persist::BaseObject
 private:
 	Item *item[EXPLOITEMS];
 	int delaytime[EXPLOITEMS];
+	int owner[EXPLOITEMS]; // SID of the soldier who threw it - 0 if none
 
 public:
 	Explosive();
 	void reset();
 
-	void add(Item *it, int delay_time);
+	void add(Soldier *man, Item *it, int delay_time);
 	void remove(Item *it);
 
 	void step(int crc);      // -1 if local
-	int detonate(Item *it);
-	int detonate(int lev, int col, int row, int iplace, int ix, int iy);
-	void check_for_detonation(Item *it);
+	int detonate(int SID, Item *it);
+	int detonate(int SID, int lev, int col, int row, int iplace, int ix, int iy);
+	void check_for_detonation(int isprox, Item *it);
 	int on_hand(Item *it);
 
 	virtual bool Write(persist::Engine &archive) const;

@@ -34,13 +34,20 @@ int VISIBILITY_CHANGED = 1;
 
 Platoon::Platoon(int PID, int num)
 {
+	StatEntry *current;
 	ID = PID;
 	size = num;
 	memset(m_seen, 0, sizeof(m_seen));
 
+	m_stats = new Statistics(size);
+	current = m_stats->getfirst();
+
 	Soldier *s1 = NULL, *s2;
 	for (int i = 0; i < size; i++) {
-		s2 = new Soldier(i+PID);
+		s2 = new Soldier(this, i+PID);
+		current->set_name("Soldier"); // This will NEVER be seen.
+		current->set_SID(i+PID);
+		current = current->getnext();
 		if (s1 != NULL) {
 			s1->set_next(s2);
 			s2->set_prev(s1);
@@ -53,13 +60,20 @@ Platoon::Platoon(int PID, int num)
 
 Platoon::Platoon(int PID, PLAYERDATA * pd)
 {
+	StatEntry *current;
 	ID = PID;
 	size = pd->size;
 	memset(m_seen, 0, sizeof(m_seen));
 
+	m_stats = new Statistics(size);
+	current = m_stats->getfirst();
+
 	Soldier *s1 = NULL, *s2;
 	for (int i = 0; i < size; i++) {
-		s2 = new Soldier(i+PID, pd->lev[i], pd->col[i], pd->row[i], &pd->md[i], &pd->id[i]);
+		s2 = new Soldier(this, i+PID, pd->lev[i], pd->col[i], pd->row[i], &pd->md[i], &pd->id[i]);
+		current->set_name(pd->md[i].Name);
+		current->set_SID(i+PID);
+		current = current->getnext();
 		if (s1 != NULL) {
 			s1->set_next(s2);
 			s2->set_prev(s1);
@@ -85,6 +99,8 @@ void Platoon::destroy()
 		delete s;
 		s = tmp;
 	}
+
+	delete m_stats;
 }
 
 
@@ -378,12 +394,12 @@ int Platoon::check_for_hit(int z, int x, int y)
 }
 
 
-void Platoon::apply_hit(int z, int x, int y, int type, int hitdir)
+void Platoon::apply_hit(int sniper, int z, int x, int y, int type, int hitdir)
 {
 	Soldier *ss = man;
 
 	while (ss != NULL) {
-		ss->apply_hit(z, x, y, type, hitdir);
+		ss->apply_hit(sniper, z, x, y, type, hitdir);
 		ss = ss->next();
 	}
 }
@@ -596,6 +612,8 @@ bool Platoon::Write(persist::Engine &archive) const
 
 	PersistWriteObject(archive, man);
 
+	PersistWriteObject(archive, m_stats);
+
 	return true;
 }
 
@@ -604,6 +622,8 @@ bool Platoon::Read(persist::Engine &archive)
 	PersistReadBinary(archive, *this);
 
 	PersistReadObject(archive, man);
+
+	PersistReadObject(archive, m_stats);
 
 	return true;
 }

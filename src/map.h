@@ -126,8 +126,8 @@ public:
 
 	void step();
 	void smoker();
-	int explode(int lev, int col, int row, int type, int range, int damage);
-	void explocell(int lev, int col, int row, int damage, int type, int hitdir, int range);
+	int explode(int SID, int lev, int col, int row, int type, int range, int damage);
+	void explocell(int SID, int lev, int col, int row, int damage, int type, int hitdir, int range);
 	bool check_mine(int lev, int col, int row);
 	int stopWALK(int oz, int ox, int oy, int part);
 	int stopDOOR(int oz, int ox, int oy, int part);

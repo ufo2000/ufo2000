@@ -41,9 +41,11 @@ private:
 	enum State {READY, FLY, BEAM, THROWN, HIT, ST_PUNCH, ST_AIMEDTHROW} state;
 	int type;      //bullet type
 	int phase;
+
+	int owner;
 public:
 
-	Bullet();
+	Bullet(Soldier *man);
 
 	void fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type);
 	void beam(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type);

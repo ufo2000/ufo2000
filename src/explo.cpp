@@ -47,12 +47,13 @@ void Explosive::reset()
 	}
 }
 
-void Explosive::add(Item *it, int delay_time)
+void Explosive::add(Soldier *man, Item *it, int delay_time)
 {
 	int i;
 	for (i = 0; i < EXPLOITEMS; i++)
 		if (item[i] == it) {	  //check for presence
 			delaytime[i] = delay_time;      //re-prime
+			owner[i] = man->get_NID();
 			it->set_delay_time(delay_time);
 			return ;
 		}
@@ -60,6 +61,7 @@ void Explosive::add(Item *it, int delay_time)
 		if (item[i] == NULL) {
 			item[i] = it;
 			delaytime[i] = delay_time;
+			owner[i] = man->get_NID();
 			item[i]->set_delay_time(delay_time);
 			return ;
 		}
@@ -107,7 +109,7 @@ void Explosive::step(int crc)
 
 			if ((delaytime[i] <= 0) && (item[i]->m_type != PROXIMITY_GRENADE)) {
 				if (crc == -1)
-					detonate(item[i]);
+					detonate(owner[i], item[i]);
 				else
 					item[i] = NULL;
 			} else if ((delaytime[i] <= 0) && (item[i]->m_type == PROXIMITY_GRENADE)) {
@@ -117,17 +119,17 @@ void Explosive::step(int crc)
 }
 
 
-void Explosive::check_for_detonation(Item *it)
+void Explosive::check_for_detonation(int isprox, Item *it)
 {
 	for(int i=0;i<EXPLOITEMS;i++)
 		if (item[i] == it) {
-			if ((delaytime[i] == 1) && (item[i]->m_type != PROXIMITY_GRENADE))
-				detonate(it);
+			if (((delaytime[i] == 1) && (item[i]->m_type != PROXIMITY_GRENADE)) || (isprox))
+				detonate(owner[i], it);
 			return;
 		}
 }
 
-int Explosive::detonate(Item *it)
+int Explosive::detonate(int SID, Item *it)
 {
 	int lev, col, row, type, range, damage;
 	Place *ip;
@@ -151,7 +153,7 @@ int Explosive::detonate(Item *it)
 //	remote player, but remote player's soldier steps on proximity mine during
 //	his movement)
 	if (type != PROXIMITY_GRENADE)
-		net->send_detonate_item(lev, col, row, iplace, it->m_x, it->m_y);
+		net->send_detonate_item(SID, lev, col, row, iplace, it->m_x, it->m_y);
 
 	remove(it);
 	int v = ip->destroy(it);
@@ -159,15 +161,15 @@ int Explosive::detonate(Item *it)
 
 	if (net->SEND) {
 		net->SEND = 0;
-		map->explode(lev, col, row, type, range, damage);
+		map->explode(SID, lev, col, row, type, range, damage);
 		net->SEND = 1;
 	} else
-		map->explode(lev, col, row, type, range, damage);
+		map->explode(SID, lev, col, row, type, range, damage);
 
 	return 1;
 }
 
-int Explosive::detonate(int lev, int col, int row, int iplace, int ix, int iy)
+int Explosive::detonate(int SID, int lev, int col, int row, int iplace, int ix, int iy)
 {
 	Item * it;
 	assert((iplace >= 0) && (iplace <= P_MAP));
@@ -178,7 +180,7 @@ int Explosive::detonate(int lev, int col, int row, int iplace, int ix, int iy)
 		it = map->man(lev, col, row)->item(iplace, ix, iy);
 
 	assert(it != NULL);
-	return detonate(it);
+	return detonate(SID, it);
 }
 /*
 	void setdelay(int delay) {

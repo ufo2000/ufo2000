@@ -31,7 +31,7 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp dirty.cpp           \
        multiplay.cpp netsock.cpp packet.cpp pck.cpp place.cpp         \
        platoon.cpp soldier.cpp sound.cpp spk.cpp terrapck.cpp         \
        units.cpp video.cpp wind.cpp word.cpp crc32.cpp persist.cpp    \
-       jpeg.cpp pfxopen.cpp minimap.cpp about.cpp                     \
+       jpeg.cpp pfxopen.cpp minimap.cpp about.cpp stats.cpp           \
        server_protocol.cpp server_transport.cpp server_gui.cpp
 
 SRCS_SERVER = server_main.cpp server_protocol.cpp server_transport.cpp

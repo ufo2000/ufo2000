@@ -24,6 +24,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <string.h>
 #include <nl.h>
 
+#include <assert.h>
+
 #include <string>
 #include <vector>
 #include <map>

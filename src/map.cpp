@@ -388,7 +388,7 @@ void Map::step()
  					for (int h=0; h<4; h++)
  						damage_cell_part(k,i,j,h,PISTOL_CLIP);
  					if (man(k, i, j) != NULL)
- 						man(k, i, j)->hit(10, DT_INC, 8); //DAMAGEDIR_UNDER
+ 						man(k, i, j)->hit(0, 10, DT_INC, 8); //DAMAGEDIR_UNDER
  					if (fire_time(k,i,j) > 1)
  						set_fire_state(k,i,j,1);
  					if (fire_time(k,i,j) == 1)
@@ -1338,7 +1338,7 @@ int Map::calc_visible_cells(int z, int x, int y, int dir, char *visicells, int *
 
 #define TE_STEP (PI / 64.0)
 
-int Map::explode(int lev, int col, int row, int type, int maxrange, int damage)
+int Map::explode(int sniper, int lev, int col, int row, int type, int maxrange, int damage)
 {
 	soundSystem::getInstance()->play(SS_CV_GRENADE_BANG);
 
@@ -1398,12 +1398,12 @@ int Map::explode(int lev, int col, int row, int type, int maxrange, int damage)
 					hitdir = 4;
 
 				// Range gets passed along here so we can see if we need to hit underarmor.
-				explocell(nz, nx, ny, dam, type, hitdir, l);
+				explocell(sniper, nz, nx, ny, dam, type, hitdir, l);
 			}
 		}
 	}
 	delete (field);
-	net->send_explode(lev, col, row, type, maxrange, damage);
+	net->send_explode(sniper, lev, col, row, type, maxrange, damage);
 	return 1;
 }
 
@@ -1419,7 +1419,7 @@ bool Map::check_mine(int lev, int col, int row)
 	return false;
 }
 
-void Map::explocell(int lev, int col, int row, int damage, int type, int hitdir, int range)
+void Map::explocell(int sniper, int lev, int col, int row, int damage, int type, int hitdir, int range)
 {
 	set_smog_state(lev, col, row, 8);
 	set_smog_time(lev, col, row, 0);
@@ -1446,7 +1446,7 @@ void Map::explocell(int lev, int col, int row, int damage, int type, int hitdir,
 
 	// Range gets passed along here so we can see if we need to hit underarmor.
 	if (man(lev, col, row) != NULL)
-		man(lev, col, row)->explo_hit(damage, Item::obdata[type].damageType, hitdir, range);
+		man(lev, col, row)->explo_hit(sniper, damage, Item::obdata[type].damageType, hitdir, range);
 }
 
 

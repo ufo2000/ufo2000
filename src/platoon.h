@@ -22,6 +22,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define PLATOON_H
 #include "soldier.h"
 #include "units.h"
+#include "stats.h"
 #include <vector>
 
 class Platoon: public persist::BaseObject
@@ -35,12 +36,16 @@ private:
 	char m_visible[4][10 * 6][10 * 6];
 	char m_seen[4][10 * 6][10 * 6];
 
+	Statistics *m_stats;
+
 public:
 	Platoon() { memset(m_seen, 0, sizeof(m_seen)); }
 	Platoon(int PID, int num);
 	Platoon(int PID, PLAYERDATA *pd);
 	virtual ~Platoon();
 	void destroy();
+
+	Statistics *get_stats() {return m_stats;}
 
 	void move(int ISLOCAL);
 	void restore();
@@ -56,7 +61,7 @@ public:
 	Soldier *next_not_moved_man(Soldier *sel_man);
 	Place *find_item(Item *it, int &lev, int &col, int &row);
 	int check_for_hit(int z, int x, int y);
-	void apply_hit(int z, int x, int y, int type, int hitdir);
+	void apply_hit(int sniper, int z, int x, int y, int type, int hitdir);
 
 	int nobullfly();
 	int nomoves();

@@ -582,7 +582,7 @@ int Net::recv_load_ammo()
 }
 
 
-void Net::send_detonate_item(int lev, int col, int row, int iplace, int ix, int iy)
+void Net::send_detonate_item(int owner, int lev, int col, int row, int iplace, int ix, int iy)
 {
 	if (!SEND) return ;
 
@@ -593,13 +593,14 @@ void Net::send_detonate_item(int lev, int col, int row, int iplace, int ix, int 
 	pkt << iplace;
 	pkt << ix;
 	pkt << iy;
+	pkt << owner;
 	send();
 }
 
 
 int Net::recv_detonate_item()
 { // "DETO"
-	int lev, col, row, iplace, ix, iy;
+	int lev, col, row, iplace, ix, iy, owner;
 
 	pkt >> lev;
 	pkt >> col;
@@ -607,9 +608,10 @@ int Net::recv_detonate_item()
 	pkt >> iplace;
 	pkt >> ix;
 	pkt >> iy;
+	pkt >> owner;
 
 	SEND = 0;
-	if (!elist->detonate(lev, col, row, iplace, ix, iy)) {
+	if (!elist->detonate(owner, lev, col, row, iplace, ix, iy)) {
 		error("EXPLO can't detonate item");
 	}
 	SEND = 1;
@@ -618,7 +620,7 @@ int Net::recv_detonate_item()
 
 
 
-void Net::send_explode(int lev, int col, int row, int type, int range, int damage)
+void Net::send_explode(int owner, int lev, int col, int row, int type, int range, int damage)
 {
 	if (!SEND) return ;
 
@@ -629,12 +631,13 @@ void Net::send_explode(int lev, int col, int row, int type, int range, int damag
 	pkt << type;
 	pkt << range;
 	pkt << damage;
+	pkt << owner;
 	send();
 }
 
 int Net::recv_explode()
 { // "EXPL"
-	int lev, col, row, type, range, damage;
+	int lev, col, row, type, range, damage, owner;
 
 	pkt >> lev;
 	pkt >> col;
@@ -642,9 +645,10 @@ int Net::recv_explode()
 	pkt >> type;
 	pkt >> range;
 	pkt >> damage;
+	pkt >> owner;
 
 	SEND = 0;
-	if (!map->explode(lev, col, row, type, range, damage)) {
+	if (!map->explode(owner, lev, col, row, type, range, damage)) {
 		error("MAP can't explode");
 	}
 	SEND = 1;

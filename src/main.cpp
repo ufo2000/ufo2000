@@ -1280,8 +1280,65 @@ void gameloop()
 	if (win || loss)
 	{
 		SPK *back;
-		BITMAP *scr = create_bitmap(320, 200); clear(scr);
+		BITMAP *scr;
+		BITMAP *newscr;
+                scr = create_bitmap(320, 200);
+                newscr = create_bitmap(640, 400);
+		clear(scr);
+		clear(newscr);
 		char winner[14];
+
+		StatEntry *temp;
+		Platoon *ptemp;
+
+		if ((net->gametype == HOTSEAT) && (turn % 2 != 0))
+		{
+			ptemp = platoon_remote;
+			platoon_remote = platoon_local; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			platoon_local = ptemp;
+		}
+
+		int local_kills      = platoon_local->get_stats()->total_kills();
+		int remote_kills     = platoon_remote->get_stats()->total_kills();
+		int local_dead       = platoon_local->get_stats()->total_dead();
+		int remote_dead      = platoon_remote->get_stats()->total_dead();
+		int local_inflicted  = platoon_local->get_stats()->total_damage_inflicted();
+		int remote_inflicted = platoon_remote->get_stats()->total_damage_inflicted();
+		int local_taken      = platoon_local->get_stats()->total_damage_taken();
+		int remote_taken     = platoon_remote->get_stats()->total_damage_taken();
+
+		int mvp_remote = 0, devastating_remote = 0, coward_remote = 0;
+		StatEntry *mvp = platoon_local->get_stats()->get_most_kills();
+		temp = platoon_remote->get_stats()->get_most_kills();
+		if (temp->get_kills() > mvp->get_kills())
+		{
+			mvp_remote = 1;
+			mvp = temp;
+		}
+
+		StatEntry *devastating = platoon_local->get_stats()->get_most_inflicted();
+		temp = platoon_remote->get_stats()->get_most_inflicted();
+		if (temp->get_inflicted() > mvp->get_inflicted())
+		{
+			devastating_remote = 1;
+			devastating = temp;
+		}
+
+		StatEntry *coward = platoon_local->get_stats()->get_least_inflicted();
+		temp = platoon_remote->get_stats()->get_least_inflicted();
+		if (temp->get_inflicted() < mvp->get_inflicted())
+		{
+			coward_remote = 0;
+			coward = temp;
+		}
+
+		if ((net->gametype == HOTSEAT) && (turn % 2 != 0))
+		{
+			ptemp = platoon_remote;
+			platoon_remote = platoon_local; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			platoon_local = ptemp;
+		}
+
 
 		fade_out(10);
 		clear(screen);
@@ -1291,38 +1348,86 @@ void gameloop()
 
 		DONE = 0;
 
-		// So, if win and loss are BOTH set, go to the bottom case even if it's a hotseat game.
-		if ((win && !loss) || (net->gametype == HOTSEAT && !(win && loss)))
-		{
-			play_midi(g_win_midi_music, 1);
-			back = new SPK("geograph/back01.scr");
-			if (net->gametype != HOTSEAT)
+		if (net->gametype == HOTSEAT)
+ 		{
+			if (win == loss)
+ 			{
+				play_midi(g_lose_midi_music, 1);
+				back = new SPK("geograph/back02.scr");
+				strcpy(winner, "DRAW!");
+ 			}
+ 			else
+ 			{
+				play_midi(g_win_midi_music, 1);
+				back = new SPK("geograph/back01.scr");
+ 				if (win)
+ 				{
+					if (turn % 2 == 0) strcpy(winner, "PLAYER 2 WINS!");
+					else strcpy(winner, "PLAYER 1 WINS!");
+ 				}
+ 				else
+ 				{
+					if (turn % 2 == 0) strcpy(winner, "PLAYER 1 WINS!");
+					else strcpy(winner, "PLAYER 2 WINS!");
+ 				}
+ 			}
+ 		}
+ 		else
+ 		{
+			// Only go to the top case if it's an exclusive win.
+			if ((win && (!loss)))
 			{
-				if (HOST) strcpy(winner, "SERVER WINS!");
-				else strcpy(winner, "CLIENT WINS!");
+				play_midi(g_win_midi_music, 1);
+				back = new SPK("geograph/back01.scr");
+				strcpy(winner, "YOU WIN!");
 			}
 			else
 			{
-				if (win)
-				{
-					if (turn % 2 == 0) strcpy(winner, "SERVER WINS!");
-					else strcpy(winner, "CLIENT WINS!");
-				}
-				else
-				{
-					if (turn % 2 == 0) strcpy(winner, "CLIENT WINS!");
-					else strcpy(winner, "SERVER WINS!");
-				}
+				play_midi(g_lose_midi_music, 1);
+				back = new SPK("geograph/back02.scr");
+				if (!win) strcpy(winner, "YOU LOSE!");
+				else strcpy(winner, "DRAW!");
 			}
+ 		}
+
+		textprintf_centre(newscr, large, 320, 24, xcom1_color(1), "%s", winner);
+
+		if (net->gametype == HOTSEAT)
+		{
+			textprintf(newscr, g_small_font,   8, 60, xcom1_color(1), "Player 1");
+			textprintf(newscr, g_small_font, 328, 60, xcom1_color(1), "Player 2");
 		}
 		else
 		{
-			play_midi(g_lose_midi_music, 1);
-			back = new SPK("geograph/back02.scr");
-			if (win && loss) strcpy(winner, "DRAW!");
-			else if (HOST) strcpy(winner, "CLIENT WINS!");
-			else strcpy(winner, "SERVER WINS!");
+			textprintf(newscr, g_small_font,   8, 60, xcom1_color(1), "Your Platoon");
+			textprintf(newscr, g_small_font, 328, 60, xcom1_color(1), "Remote Platoon");
 		}
+		textprintf(newscr, g_small_font,  16, 68, xcom1_color(1), "Total Kills: %d", local_kills);
+		textprintf(newscr, g_small_font, 336, 68, xcom1_color(1), "Total Kills: %d", remote_kills);
+		textprintf(newscr, g_small_font,  16, 76, xcom1_color(1), "Deaths: %d", local_dead);
+		textprintf(newscr, g_small_font, 336, 76, xcom1_color(1), "Deaths: %d", remote_dead);
+		textprintf(newscr, g_small_font,  16, 84, xcom1_color(1), "Total Damage Inflicted: %d", local_inflicted);
+		textprintf(newscr, g_small_font, 336, 84, xcom1_color(1), "Total Damage Inflicted: %d", remote_inflicted);
+		textprintf(newscr, g_small_font,  16, 92, xcom1_color(1), "Total Damage Taken: %d", local_taken);
+		textprintf(newscr, g_small_font, 336, 92, xcom1_color(1), "Total Damage Taken: %d", remote_taken);
+
+		textprintf_centre(newscr, large, 320, 108, xcom1_color(1), "Most Valuable Soldier:");
+		textprintf_centre(newscr, g_small_font, 320, 124, xcom1_color(1), "%s (%s, %d kills)",
+			mvp->get_name(), 
+			(mvp_remote) ? ((net->gametype == HOTSEAT) ? "Player 2" : "Remote") : ((net->gametype == HOTSEAT) ? "Player 1" : "Local"),
+			mvp->get_kills());
+
+		textprintf_centre(newscr, large, 320, 140, xcom1_color(1), "Most Devastating Soldier:");
+		textprintf_centre(newscr, g_small_font, 320, 156, xcom1_color(1), "%s (%s, %d damage inflicted)",
+			devastating->get_name(), 
+			(devastating_remote) ? ((net->gametype == HOTSEAT) ? "Player 2" : "Remote") : ((net->gametype == HOTSEAT) ? "Player 1" : "Local"),
+			devastating->get_inflicted());
+
+		textprintf_centre(newscr, large, 320, 172, xcom1_color(1), "Most Cowardly Soldier:");
+		textprintf_centre(newscr, g_small_font, 320, 188, xcom1_color(1), "%s (%s, %d damage inflicted)",
+			coward->get_name(), 
+			(coward_remote) ? ((net->gametype == HOTSEAT) ? "Player 2" : "Remote") : ((net->gametype == HOTSEAT) ? "Player 1" : "Local"),
+			coward->get_inflicted());
 
 		back->show(scr, 0, 0);
 		stretch_blit(scr, screen, 0, 0, 320, (SCREEN2H/2), 0, 0, 640, (SCREEN2H/2)*2);
@@ -1330,13 +1435,22 @@ void gameloop()
 
 		g_console->set_full_redraw();
 
-		//TODO: Statistics screen
-
 		MODE = MAP3D; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		while(!DONE)
 		{
 			net->check();
+
+			// Why was this removed? - Grunt
+			if (CHANGE)	{
+				stretch_blit(scr, screen, 0, 0, 320, (SCREEN2H/2), 0, 0, 640, (SCREEN2H/2)*2);
+				masked_blit(newscr, screen, 0, 0, 0, 0, 640, 400);
+
+				draw_sprite(screen, mouser, mouse_x, mouse_y);
+				if (mouse_y > (SCREEN2H/2)*2-16) g_console->set_full_redraw(); //!!!!!!!!!!!!!!!!!!!!!
+				CHANGE = 0;
+			}
+
 			g_console->redraw(screen, 0, SCREEN2H);
 
 			process_keyswitch();

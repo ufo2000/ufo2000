@@ -94,6 +94,7 @@ private:
 	Soldier *m_next, *m_prev;
 	Bullet *m_bullet;
 	Place  *m_place[NUMBER_OF_PLACES]; //8 - for internal editor use
+	Platoon *m_platoon;
 	bool m_p_map_allocated;
 
 	int NID;
@@ -136,10 +137,10 @@ public:
 	static void initpck();
 	static void freepck();
 
-	Soldier() { }
-	Soldier(int _NID);
-	Soldier(int _NID, int _z, int _x, int _y);
-	Soldier(int _NID, int _z, int _x, int _y, MANDATA *sdat, ITEMDATA *idat);
+	Soldier(Platoon *platoon) {m_platoon = platoon;}
+	Soldier(Platoon *platoon, int _NID);
+	Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y);
+	Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *sdat, ITEMDATA *idat);
 	virtual ~Soldier();
 
 	void initialize();
@@ -150,6 +151,8 @@ public:
 	void build_ITEMDATA();
 	void build_items_stats(char *buf, int &len);
 
+	Platoon *get_platoon() {return m_platoon;}
+	int get_NID() {return NID;}
 
 	void restore();
 	int move(int ISLOCAL);
@@ -198,11 +201,11 @@ public:
 	int aimedthrow(int z0, int x0, int y0, REAL fi, REAL te, int iplace, int req_time);
 
 	int check_for_hit(int _z, int _x, int _y);
-	void apply_hit(int _z, int _x, int _y, int _type, int _hitdir);
+	void apply_hit(int sniper, int _z, int _x, int _y, int _type, int _hitdir);
 	int do_armour_check(int &pierce, int damdir);
 	void apply_wound(int hitloc);
-	void hit(int pierce, int type, int hitdir);
-	void explo_hit(int pierce, int type, int hitdir, int dist);      //silent
+	void hit(int sniper, int pierce, int type, int hitdir);
+	void explo_hit(int sniper, int pierce, int type, int hitdir, int dist);      //silent
 
 	int ismoving();
 	int is_marching() { return (m_state == MARCH); }

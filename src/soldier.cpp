@@ -263,15 +263,16 @@ void Soldier::freepck()
 	delete [] m_bof;
 }
 
-Soldier::Soldier(int _NID)
+Soldier::Soldier(Platoon *platoon, int _NID)
 {
 	NID = _NID;
 	z = -1; x = -1; y = -1;
 	dir = 0; phase = 0; m_state = STAND;
 	m_next = NULL; m_prev = NULL;
 	m_body = NULL;
+	m_platoon = platoon;
 
-	m_bullet = new Bullet;
+	m_bullet = new Bullet(this);
 	m_place[P_SHL_RIGHT] = new Place(16, 40, 2, 1);
 	m_place[P_SHL_LEFT] = new Place(112, 40, 2, 1);
 	m_place[P_ARM_RIGHT] = new Place(0, 64, 2, 3);
@@ -295,15 +296,16 @@ Soldier::Soldier(int _NID)
 }
 
 
-Soldier::Soldier(int _NID, int _z, int _x, int _y)
+Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y)
 {
 	NID = _NID; z = _z; x = _x; y = _y;
 	dir = 0;      //!!face to center of map
 	phase = 0; m_state = STAND;
 	m_next = NULL; m_prev = NULL;
 	m_body = NULL;
+	m_platoon = platoon;
 
-	m_bullet = new Bullet;
+	m_bullet = new Bullet(this);
 	m_place[P_SHL_RIGHT] = new Place(16, 40, 2, 1);
 	m_place[P_SHL_LEFT] = new Place(112, 40, 2, 1);
 	m_place[P_ARM_RIGHT] = new Place(0, 64, 2, 3);
@@ -323,7 +325,7 @@ Soldier::Soldier(int _NID, int _z, int _x, int _y)
 }
 
 
-Soldier::Soldier(int _NID, int _z, int _x, int _y, MANDATA *mdat, ITEMDATA *idat)
+Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *mdat, ITEMDATA *idat)
 {
 	NID = _NID; z = _z; x = _x; y = _y;
 	dir = 0;
@@ -345,8 +347,9 @@ Soldier::Soldier(int _NID, int _z, int _x, int _y, MANDATA *mdat, ITEMDATA *idat
 	phase = 0; m_state = STAND;
 	m_next = NULL; m_prev = NULL;
 	m_body = NULL;
+	m_platoon = platoon;
 
-	m_bullet = new Bullet;
+	m_bullet = new Bullet(this);
 	m_place[P_SHL_RIGHT] = new Place(16, 40, 2, 1);
 	m_place[P_SHL_LEFT] = new Place(112, 40, 2, 1);
 	m_place[P_ARM_RIGHT] = new Place(0, 64, 2, 3);
@@ -1520,10 +1523,21 @@ void Soldier::apply_wound(int hitloc)
 	return;
 }
 
-void Soldier::hit(int pierce, int type, int hitdir)
+void Soldier::hit(int sniper, int pierce, int type, int hitdir)
 {
 	int damagedir = (dir + (hitdir + 4)) % 8; // Becomes DAMAGEDIR_*, except DAMAGEDIR_UNDER...
 	int hitloc;
+
+	// Give credit to the sniper for inflicting damage if it's not stun damage.
+	if (sniper && (type != DT_STUN))
+	{
+		StatEntry *stat = platoon_local->get_stats()->get_stat_for_SID(sniper);
+		if (!stat) stat = platoon_remote->get_stats()->get_stat_for_SID(sniper);
+		if (stat) stat->inc_damage_inflicted(pierce);
+	}
+	
+	// Record that we took damage.
+	this->m_platoon->get_stats()->get_stat_for_SID(NID)->inc_damage_taken(pierce);
 
 	if ((hitloc = do_armour_check(pierce, damagedir)) == -1) return; // Can't pierce the armour.
 
@@ -1540,6 +1554,15 @@ void Soldier::hit(int pierce, int type, int hitdir)
 
 	if (ud.CurHealth <= pierce) // ud.CurHealth is unsigned
 	{
+		// Credit the sniper for getting a kill
+		if (sniper)
+		{
+			StatEntry *stat = platoon_local->get_stats()->get_stat_for_SID(sniper);
+			if (!stat) stat = platoon_remote->get_stats()->get_stat_for_SID(sniper);
+			if (stat) stat->inc_kills();
+		}
+		// Record that we died
+		this->get_platoon()->get_stats()->get_stat_for_SID(NID)->set_dead(1);
 		ud.CurHealth = 0;
 		if (m_state != DIE)
 		{
@@ -1587,10 +1610,21 @@ void Soldier::hit(int pierce, int type, int hitdir)
 	}
 }
 
-void Soldier::explo_hit(int pierce, int type, int hitdir, int dist) //silent
+void Soldier::explo_hit(int sniper, int pierce, int type, int hitdir, int dist) //silent
 {
 	int damagedir = (dir + (hitdir + 4)) % 8; // Becomes DAMAGEDIR_*, except DAMAGEDIR_UNDER...
 	int hitloc;
+
+	// Give credit to the sniper for inflicting damage if it's not stun damage.
+	if (sniper && (type != DT_STUN))
+	{
+		StatEntry *stat = platoon_local->get_stats()->get_stat_for_SID(sniper);
+		if (!stat) stat = platoon_remote->get_stats()->get_stat_for_SID(sniper);
+		if (stat) stat->inc_damage_inflicted(pierce);
+	}
+	
+	// Record that we took damage.
+	this->m_platoon->get_stats()->get_stat_for_SID(NID)->inc_damage_taken(pierce);
 
 	damage_items(pierce); // Items are OUTSIDE the armour, after all.
 
@@ -1611,6 +1645,15 @@ void Soldier::explo_hit(int pierce, int type, int hitdir, int dist) //silent
 
 	if (ud.CurHealth <= pierce) // ud.CurHealth is unsigned
 	{
+		// Credit the sniper for getting a kill
+		if (sniper)
+		{
+			StatEntry *stat = platoon_local->get_stats()->get_stat_for_SID(sniper);
+			if (!stat) stat = platoon_remote->get_stats()->get_stat_for_SID(sniper);
+			if (stat) stat->inc_kills();
+		}
+		// Record that we died
+		this->get_platoon()->get_stats()->get_stat_for_SID(NID)->set_dead(1);
 		ud.CurHealth = 0;
 		if (m_state != DIE)
 		{
@@ -1877,7 +1920,7 @@ int Soldier::prime_grenade(int iplace, int delay_time, int req_time)
 		Item * it = item(iplace);
 		assert(it != NULL);
 
-		elist->add(it, delay_time);
+		elist->add(this, it, delay_time);
 
 		spend_time(req_time);
 		net->send_prime_grenade(NID, iplace, delay_time, req_time);
@@ -2080,10 +2123,10 @@ int Soldier::check_for_hit(int _z, int _x, int _y)
 }
 
 
-void Soldier::apply_hit(int _z, int _x, int _y, int _wtype, int _hitdir)
+void Soldier::apply_hit(int sniper, int _z, int _x, int _y, int _wtype, int _hitdir)
 {
 	if (check_for_hit(_z, _x, _y)) {
-		hit(Item::obdata[_wtype].damage, Item::obdata[_wtype].damageType, _hitdir);
+		hit(sniper, Item::obdata[_wtype].damage, Item::obdata[_wtype].damageType, _hitdir);
 	}
 }
 
@@ -2644,6 +2687,7 @@ bool Soldier::Write(persist::Engine &archive) const
 	PersistWriteObject(archive, m_prev);
 	PersistWriteObject(archive, m_bullet);
 	PersistWriteObject(archive, m_body);
+	PersistWriteObject(archive, m_platoon);
 
 	for (int i = 0; i < NUMBER_OF_PLACES; i++)
 		PersistWriteObject(archive, m_place[i]);
@@ -2659,6 +2703,7 @@ bool Soldier::Read(persist::Engine &archive)
 	PersistReadObject(archive, m_prev);
 	PersistReadObject(archive, m_bullet);
 	PersistReadObject(archive, m_body);
+	PersistReadObject(archive, m_platoon);
 
 	for (int i = 0; i < NUMBER_OF_PLACES; i++)
 		PersistReadObject(archive, m_place[i]);

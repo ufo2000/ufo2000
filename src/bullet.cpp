@@ -32,11 +32,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 IMPLEMENT_PERSISTENCE(Bullet, "Bullet");
 
-Bullet::Bullet()
+Bullet::Bullet(Soldier *man)
 {
 	state = READY;
 	phase = 0;
 	item  = NULL;
+	owner = man->get_NID();
 }
 
 void Bullet::punch(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
@@ -305,7 +306,7 @@ void Bullet::move()
 					lev = map->find_ground(lev, col, row);
 					map->place(lev, col, row)->put(item);
 					if (platoon_local->belong(this))
-						elist->check_for_detonation(item);
+						elist->check_for_detonation(0, item);
 					item = NULL;
 					state = READY;
 					break;
@@ -662,7 +663,7 @@ void Bullet::detonate()
 	int range = Item::explo_range(type);
 	int damage = Item::obdata[type].damage;
 
-	map->explode(lev, col, row, type, range, damage);
+	map->explode(owner, lev, col, row, type, range, damage);
 }
 
 void Bullet::hitman()
@@ -700,8 +701,8 @@ void Bullet::hitman()
 
 
 	map->apply_hit(z, x, y, type);
-	platoon_remote->apply_hit(z, x, y, type, hitdir);
-	platoon_local->apply_hit(z, x, y, type, hitdir);
+	platoon_remote->apply_hit(owner, z, x, y, type, hitdir);
+	platoon_local->apply_hit(owner, z, x, y, type, hitdir);
 }
 
 bool Bullet::Write(persist::Engine &archive) const

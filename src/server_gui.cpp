@@ -22,7 +22,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "global.h"
 #undef map
 #include "server_protocol.h"
-#include "global.h"
 #include <string>
 #include <vector>
 #include <memory>

@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 user32.lib gdi32.lib ole32.lib ddraw.lib dplay.lib dsound.lib dinput.lib winmm.lib dxguid.lib alleg_s.lib wsock32.lib /nologo /subsystem:windows /map /machine:I386
+# ADD LINK32 user32.lib gdi32.lib ole32.lib ddraw.lib dplay.lib dsound.lib dinput.lib winmm.lib dxguid.lib alleg_s.lib wsock32.lib nlstatic.lib /nologo /subsystem:windows /map /machine:I386
 
 !ELSEIF  "$(CFG)" == "ufo2000 - Win32 Debug"
 
@@ -83,7 +83,7 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib dplay.lib dxguid.lib alleg.lib /nologo /subsystem:windows /incremental:no /debug /machine:I386 /pdbtype:sept
 # SUBTRACT BASE LINK32 /pdb:none
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib dplay.lib dxguid.lib alleg.lib wsock32.lib libexpat.lib /nologo /subsystem:windows /map /debug /machine:I386 /out:"ufo2000-debug.exe" /pdbtype:sept
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib dplay.lib dxguid.lib alleg.lib wsock32.lib libexpat.lib hawknl.lib /nologo /subsystem:windows /map /debug /machine:I386 /out:"ufo2000-debug.exe" /pdbtype:sept
 # SUBTRACT LINK32 /pdb:none /incremental:no
 
 !ENDIF 
@@ -157,10 +157,6 @@ SOURCE=.\src\keys.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\netisrv.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\src\main.cpp
 # End Source File
 # Begin Source File
@@ -178,10 +174,6 @@ SOURCE=.\src\map_pathfind.cpp
 # Begin Source File
 
 SOURCE=.\src\minimap.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\src\minimap.h
 # End Source File
 # Begin Source File
 
@@ -217,6 +209,18 @@ SOURCE=.\src\platoon.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\server_gui.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\server_protocol.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\server_transport.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\soldier.cpp
 # End Source File
 # Begin Source File
@@ -226,6 +230,10 @@ SOURCE=.\src\sound.cpp
 # Begin Source File
 
 SOURCE=.\src\spk.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\stats.cpp
 # End Source File
 # Begin Source File
 
@@ -329,6 +337,10 @@ SOURCE=.\src\map.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\minimap.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\multiplay.h
 # End Source File
 # Begin Source File
@@ -361,6 +373,14 @@ SOURCE=.\src\platoon.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\server.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\server_protocol.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\soldier.h
 # End Source File
 # Begin Source File
@@ -370,6 +390,10 @@ SOURCE=.\src\sound.h
 # Begin Source File
 
 SOURCE=.\src\spk.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\stats.h
 # End Source File
 # Begin Source File
 

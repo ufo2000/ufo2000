@@ -115,8 +115,8 @@ public:
 	void send_unload_ammo(int NID);
 	void send_load_ammo(int NID, int iplace);
 
-	void send_detonate_item(int lev, int col, int row, int iplace, int ix, int iy);
-	void send_explode(int lev, int col, int row, int type, int range, int damage);
+	void send_detonate_item(int owner, int lev, int col, int row, int iplace, int ix, int iy);
+	void send_explode(int owner, int lev, int col, int row, int type, int range, int damage);
 
 	void send_select_item(int NID, int iplace, int ix, int iy);
 	void send_deselect_item(int NID, int iplace, int ix, int iy, int req_time);

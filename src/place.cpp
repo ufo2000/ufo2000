@@ -507,7 +507,7 @@ bool Place::check_mine()
 
 	while (it != NULL) {
 		if ((it->is_grenade()) && (it->m_type == PROXIMITY_GRENADE) && (it->delay_time() < 0)) {
-			elist->detonate(it);
+			elist->check_for_detonation(1, it);
 			return true;
 		}
 		it = it->m_next;
