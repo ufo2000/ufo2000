@@ -67,7 +67,7 @@ ifdef xmingw
     win32 = 1
 endif
 
-VPATH = src src/jpgalleg src/dumbogg
+VPATH = src src/jpgalleg src/dumbogg src/exchndl
 
 SRCS = bullet.cpp cell.cpp config.cpp connect.cpp dirty.cpp           \
        editor.cpp explo.cpp font.cpp icon.cpp inventory.cpp item.cpp  \
@@ -105,8 +105,9 @@ ifdef win32
 	SERVER_NAME := ${addsuffix .exe,$(SERVER_NAME)}
 	CFLAGS += -DWIN32 -DALLEGRO_STATICLINK -I mingw-libs/include -L mingw-libs/lib
 	LIBS += -lNL_s -lalleg_s -lws2_32 -lkernel32 -luser32 -lgdi32 -lcomdlg32 \
-	        -lole32 -ldinput -lddraw -ldxguid -lwinmm -ldsound
+	        -lole32 -ldinput -lddraw -ldxguid -lwinmm -ldsound -lbfd -liberty
 	SERVER_LIBS = -lNL_s -lws2_32
+	SRCS += exchndl.c
 else
 	CFLAGS += -DLINUX
 	INCLUDES = ${shell allegro-config --cflags}
@@ -132,7 +133,6 @@ ifdef win32
 	OBJS := $(OBJS) Seccast.o 
 ifndef debug
 	SUBSYSTEM := -Wl,--subsystem=windows -e _WinMainCRTStartup
-	CFLAGS += -s
 endif
 endif
 

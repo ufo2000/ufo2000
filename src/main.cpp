@@ -1144,11 +1144,22 @@ void endgame_stats()
 }
 
 #ifdef WIN32
+
+#include "exchndl/exchndl.h"
+
 static LPTOP_LEVEL_EXCEPTION_FILTER prevExceptionFilter = NULL;
 
 static LONG WINAPI TopLevelExceptionFilter(PEXCEPTION_POINTERS pExceptionInfo)
 {
-	net->send_debug_message("crash");
+	char *exception_report = GenerateExceptionReport(pExceptionInfo);
+	if (net) {
+		net->send_debug_message("crash:%s", exception_report);
+		net->flush();
+	}
+
+	FILE *f = fopen(F("$(home)/ufo2000-crash.log"), "at");
+	fprintf(f, "%s\n", exception_report);
+	fclose(f);
 
 	if (prevExceptionFilter)
 		return prevExceptionFilter(pExceptionInfo);
@@ -1162,10 +1173,6 @@ static LONG WINAPI TopLevelExceptionFilter(PEXCEPTION_POINTERS pExceptionInfo)
  */
 void gameloop()
 {
-#ifdef WIN32
-	prevExceptionFilter = SetUnhandledExceptionFilter(TopLevelExceptionFilter);
-#endif
-
 	int mouse_leftr = 1, mouse_rightr = 1, select_y = 0;
 
 	FS_MusicPlay(F(cfg_get_combat_music_file_name()));
@@ -1468,9 +1475,6 @@ void gameloop()
 	net->send_quit();
 
 	clear(screen);
-#ifdef WIN32
-	SetUnhandledExceptionFilter(prevExceptionFilter);
-#endif
 }
 
 void faststart()
@@ -1566,6 +1570,10 @@ int main(int argc, char *argv[])
 
 	initmain(argc, argv);
 
+#ifdef WIN32
+	prevExceptionFilter = SetUnhandledExceptionFilter(TopLevelExceptionFilter);
+#endif
+
 	if (FLAGS & F_FASTSTART) {
 		faststart();
 	} else if (argc >= 3) {
@@ -1622,6 +1630,10 @@ int main(int argc, char *argv[])
             }
         }
     }
+
+#ifdef WIN32
+	SetUnhandledExceptionFilter(prevExceptionFilter);
+#endif
 
 	closemain();
 	return 0;

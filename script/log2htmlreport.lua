@@ -150,9 +150,6 @@ function process_log(filename, history)
 			if packet_data == "crc error" then
 				-- handle crc error
 				if games[p] then games[p].crc_error = true end
-			elseif packet_data == "crash" then
-				-- handle crash
-				if games[p] then games[p].crash_error = true end
 			else
 		    	local _, _, id, value = string.find(packet_data, "^(.-)%:(.*)")
 				
@@ -160,6 +157,9 @@ function process_log(filename, history)
 					-- handle operating system information
 					if not os_table[value] then os_table[value] = {} end
 					os_table[value][p] = 1
+				elseif id == "crash" then
+					-- handle crash
+					if games[p] then games[p].crash_error = value end
 				elseif id == "terrain" then
 					-- handle terrain type
 					if games[p] then games[p].terrain = value end
@@ -298,10 +298,10 @@ for k, game_info in ipairs(games_history) do
 	local attrib = ""
 	if game_info.version_error then attrib = attrib .. "ver<br>" end
 	if game_info.crc_error then attrib = attrib .. "crc problems<br>" end
-	if game_info.crash_error then attrib = attrib .. "game crashed<br>" end
+	if game_info.crash_error then attrib = attrib .. game_info.crash_error end
 	if game_info.assert_error then attrib = attrib .. game_info.assert_error .. "<br>" end
 	if game_info.connection_error then attrib = attrib .. "connection lost<br>" end
-	if not string.find(attrib, "ver") then
+	if not string.find(attrib, "^ver") then
 		out:write(string.format(
 			"<tr><td>%d<td>%s<td>%s<td>%s<td>%s<td>%s<td>%s\n", 
 			game_info.version, 

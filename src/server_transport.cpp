@@ -413,6 +413,15 @@ bool ClientServer::send_delayed_packet()
 	return stream_to_socket(m_socket, m_stream_out);
 }
 
+bool ClientServer::flush_sent_packets()
+{
+	while (!m_stream_out.empty()) {
+		if (!stream_to_socket(m_socket, m_stream_out))
+			return false;
+	}
+	return true;
+}
+
 int ClientServer::recv_packet(NLulong &id, std::string &packet)
 {
     int readlen;

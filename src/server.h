@@ -45,6 +45,7 @@ public:
 		std::string &error_message);
 	bool send_packet(NLulong id, const std::string &packet);
 	bool send_delayed_packet();
+	bool flush_sent_packets();
 	int recv_packet(NLulong &id, std::string &packet);
 	int wait_packet(NLulong &id, std::string &buffer);
 };

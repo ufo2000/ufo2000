@@ -1291,7 +1291,7 @@ void Net::send_debug_message(const char *fmt, ...)
 {
 	if (gametype != GAME_TYPE_INTERNET_SERVER) return;
 
-	char buffer[1024];
+	char buffer[2048];
 	memset(buffer, 0, sizeof(buffer));
 
 	va_list arglist;
@@ -1302,4 +1302,10 @@ void Net::send_debug_message(const char *fmt, ...)
 	va_end(arglist);
 
 	m_internet_server->send_packet(SRV_DEBUG_MESSAGE, buffer);
+}
+
+void Net::flush()
+{
+	if (gametype != GAME_TYPE_INTERNET_SERVER) return;
+	m_internet_server->flush_sent_packets();
 }

@@ -65,12 +65,14 @@ void ServerDispatch::MakeHtmlReport(std::string &html_body)
 	html_body = "<html><head><title>UFO2000 Matchmaker</title></head><body>";
     html_body += "<h3>UFO2000 matchmaking server.</h3><blockquote>";
     html_body += "Useful links:<br>";
-    html_body += "<a href='http://ufo2000.sourceforge.net/'>English site (Sourceforge)</a>.<br>";
-    html_body += "<a href='http://sourceforge.net/projects/ufo2000'>Sourceforge project info</a>.<br>";
-    html_body += "<a href='http://sourceforge.net/project/showfiles.php?group_id=23295'>Sourceforge download page</a>.<br>";
+    html_body += "<a href='http://ufo2000.sf.net/'>UFO2000 home page</a>.<br>";
+    html_body += "<a href='http://ufo2000.lxnt.info/pmwiki/index.php/Main/NewMaps'>UFO2000 extra maps</a>.<br>";
+    html_body += "<a href='http://ufo2000.lxnt.info/results.php'>Server statistics</a>.<br>";
+//  html_body += "<a href='http://sourceforge.net/projects/ufo2000'>Sourceforge project info</a>.<br>";
+//  html_body += "<a href='http://sourceforge.net/project/showfiles.php?group_id=23295'>Sourceforge download page</a>.<br>";
     html_body += "<a href='http://lxnt.info/mailman/listinfo/ufo2000'>Mailing list</a>.<br>";
-    html_body += "<a href='http://lxnt.info/ff/'>Forum (maillist gateway)</a>.<br>";
-    html_body += "<a href='http://ufo2000.lxnt.info/'>Russian site</a>.<br></blockquote><hr>";
+    html_body += "<a href='http://www.xcomufo.com/forums/index.php?showforum=12'>Forum</a>.<br>";
+//  html_body += "<a href='http://ufo2000.lxnt.info/'>Russian site</a>.<br></blockquote><hr>";
 	html_body += "<table border=1>";
 	html_body += "<tr><td>user name<td>bytes from<td>bytes to<td>max average traffic<td>time online<td>status";
 
@@ -125,7 +127,7 @@ void ServerDispatch::MakeHtmlReport(std::string &html_body)
 	html_body += num_to_string(m_http_traffic_in) + "<br>";
 	html_body += "total outcoming HTTP traffic = ";
 	html_body += num_to_string(m_http_traffic_out) + "<br>";
-	html_body += "</body><html>";
+	html_body += "</body></html>";
 }
 
 ServerClient *ServerDispatch::CreateServerClient(NLsocket socket)
