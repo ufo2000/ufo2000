@@ -1,16 +1,4 @@
 ==============================================================================
-== The following people are currently working on UFO2000
-==============================================================================
-
-Current project leader:
-   Serge Semashko
-
-Programming:
-   Steven Melenchuk
-   Alexander Sabourenkov
-   Serge Semashko
-
-==============================================================================
 == The following people have contributed to UFO2000 development
 ==============================================================================
 
@@ -56,7 +44,8 @@ Artwork and other game related data files:
         2 additional maps for 'Modified City' tileset)
 
    Twilight Owl
-      * New maps (4 additional maps for 'Modified City' tileset)
+      * New maps ('Airfield' tileset, 4 additional maps 
+        for 'Modified City' tileset)
 
    Bagirov
       * New maps ('Industrial' tileset)
