@@ -21,7 +21,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "crc32.h"
 
-unsigned long Crc32Table[256] =
+uint32 Crc32Table[256] =
 {
     0x00000000, 0x77073096, 0xee0e612c, 0x990951ba,
     0x076dc419, 0x706af48f, 0xe963a535, 0x9e6495a3,
@@ -89,7 +89,7 @@ unsigned long Crc32Table[256] =
     0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 };
 
-unsigned long update_crc32(unsigned long InitCrc, const void *pInBuff, unsigned long InLen)
+uint32 update_crc32(uint32 InitCrc, const void *pInBuff, uint32 InLen)
 {
 	unsigned char *_InBuff = (unsigned char *)pInBuff;
 	if (InLen != 0) {

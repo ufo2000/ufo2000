@@ -21,6 +21,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef CRC32_H
 #define CRC32_H
 
-unsigned long update_crc32(unsigned long InitCrc, const void *pInBuff, unsigned long InLen);
+#include "stdafx.h"
+#include "global.h"
+
+uint32 update_crc32(uint32 InitCrc, const void *pInBuff, uint32 InLen);
 
 #endif

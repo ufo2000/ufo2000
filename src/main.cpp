@@ -446,9 +446,8 @@ static int lua_UpdateCrc32(lua_State *L)
         lua_error(L);
     }
 
-    unsigned long result = update_crc32(
-        (unsigned long)lua_tonumber(L, 1), lua_tostring(L, 2), lua_strlen(L, 2));
-
+    uint32 result = update_crc32(lua_tonumber(L, 1), lua_tostring(L, 2), lua_strlen(L, 2));
+    
     lua_pushnumber(L, result);
     return 1;
 }

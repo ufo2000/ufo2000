@@ -83,13 +83,20 @@ int lua_safe_dofile(lua_State *L, const char *name, const char *env_name = NULL)
 int lua_safe_dobuffer(lua_State *L, const char *buff, size_t size, const char *name);
 int lua_safe_dostring(lua_State *L, const char *str);
 
-// We rely on HawkNL in defining data types of proper system independent size
-typedef NLbyte int8;
-typedef NLshort int16;
-typedef NLlong int32;
-typedef NLubyte uint8;
-typedef NLushort uint16;
-typedef NLulong uint32;
+typedef signed char int8;
+typedef unsigned char uint8;
+typedef signed short int16;
+typedef unsigned short uint16;
+
+#if UINT_MAX == 0xFFFFFFFFUL
+typedef signed int int32;
+typedef unsigned int uint32;
+#elif ULONG_MAX == 0xFFFFFFFFUL
+typedef signed long int32;
+typedef unsigned long uint32;
+#else
+#error Can't define int32 type
+#endif
 
 inline uint16 intel_uint16(uint16 x)
 {
