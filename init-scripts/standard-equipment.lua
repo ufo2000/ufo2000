@@ -45,7 +45,7 @@ AddEquipment {
 }
 
 AddEquipment {
-	Name = "Explosives forbidden",
+	Name = "Standard (no explosives)",
 	Layout = {
 		{00, 00, "PISTOL CLIP"},
 		{00, 01, "PISTOL"},
@@ -53,8 +53,8 @@ AddEquipment {
 		{01, 00, "RIFLE CLIP"},
 		{01, 01, "RIFLE"},
 		{02, 01, "LASER PISTOL"},
-		{02, 06, "AUTO-CANNON HE-AMMO"},
-		{02, 07, "AUTO-CANNON I-AMMO"},
+--		{02, 06, "AUTO-CANNON HE-AMMO"},
+--		{02, 07, "AUTO-CANNON I-AMMO"},
 		{02, 08, "AUTO-CANNON AP-AMMO"},
 		{03, 01, "LASER GUN"},
 		{04, 01, "HEAVY LASER"},
@@ -91,7 +91,7 @@ AddEquipment {
 }
 
 AddEquipment {
-	Name = "Human technology",
+	Name = "Standard (no alien weapons)",
 	Layout = {
 		{00, 00, "PISTOL CLIP"},
 		{00, 01, "PISTOL"},

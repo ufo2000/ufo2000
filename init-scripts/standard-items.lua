@@ -266,7 +266,6 @@ AddXcomItem {
 	rounds = 1,
 	weight = 6,
 	isAmmo = 1,
-	twoHanded = 1,
 	sound = "small-rocket-hit",
 }
 
@@ -285,7 +284,6 @@ AddXcomItem {
 	rounds = 1,
 	weight = 8,
 	isAmmo = 1,
-	twoHanded = 1,
 	sound = "HE-rocket-hit",
 }
 
@@ -304,7 +302,6 @@ AddXcomItem {
 	rounds = 1,
 	weight = 8,
 	isAmmo = 1,
-	twoHanded = 1,
 	sound = "IN-rocket-hit",
 }
 
@@ -479,7 +476,6 @@ AddXcomItem {
 	pHeld = 11,
 	rounds = 10,
 	weight = 8,
-	twoHanded = 1,
 }
 
 AddXcomItem {
@@ -524,7 +520,6 @@ AddXcomItem {
 	height = 3,
 	pHeld = 15,
 	weight = 22,
-	twoHanded = 1,
 }
 
 AddXcomItem {
@@ -538,7 +533,6 @@ AddXcomItem {
 	height = 3,
 	pHeld = 15,
 	weight = 24,
-	twoHanded = 1,
 }
 
 AddXcomItem {
@@ -800,7 +794,6 @@ AddXcomItem {
 	height = 2,
 	pHeld = 15,
 	weight = 5,
-	twoHanded = 1,
 	isAlien = 1,
 }
 
@@ -815,7 +808,6 @@ AddXcomItem {
 	height = 3,
 	pHeld = 0,
 	weight = 30,
-	twoHanded = 1,
 }
 
 AddXcomItem {
@@ -829,7 +821,6 @@ AddXcomItem {
 	height = 3,
 	pHeld = 0,
 	weight = 40,
-	twoHanded = 1,
 }
 
 AddXcomItem {
@@ -843,7 +834,6 @@ AddXcomItem {
 	height = 3,
 	pHeld = 0,
 	weight = 25,
-	twoHanded = 1,
 }
 
 AddXcomItem {
@@ -857,7 +847,6 @@ AddXcomItem {
 	height = 3,
 	pHeld = 0,
 	weight = 40,
-	twoHanded = 1,
 }
 
 AddXcomItem {
@@ -871,7 +860,6 @@ AddXcomItem {
 	height = 3,
 	pHeld = 0,
 	weight = 20,
-	twoHanded = 1,
 }
 
 AddXcomItem {
@@ -885,7 +873,6 @@ AddXcomItem {
 	height = 3,
 	pHeld = 0,
 	weight = 35,
-	twoHanded = 1,
 }
 
 AddXcomItem {
@@ -899,7 +886,6 @@ AddXcomItem {
 	height = 3,
 	pHeld = 0,
 	weight = 40,
-	twoHanded = 1,
 }
 
 AddXcomItem {
@@ -913,7 +899,6 @@ AddXcomItem {
 	height = 3,
 	pHeld = 0,
 	weight = 40,
-	twoHanded = 1,
 }
 
 AddXcomItem {
@@ -927,7 +912,6 @@ AddXcomItem {
 	height = 3,
 	pHeld = 0,
 	weight = 50,
-	twoHanded = 1,
 }
 
 AddXcomItem {
@@ -941,7 +925,6 @@ AddXcomItem {
 	height = 3,
 	pHeld = 0,
 	weight = 50,
-	twoHanded = 1,
 }
 
 AddXcomItem {
@@ -955,7 +938,6 @@ AddXcomItem {
 	height = 2,
 	pHeld = 12,
 	weight = 50,
-	twoHanded = 1,
 }
 
 AddXcomItem {
@@ -969,7 +951,6 @@ AddXcomItem {
 	height = 2,
 	pHeld = 12,
 	weight = 50,
-	twoHanded = 1,
 }
 
 AddXcomItem {
