@@ -289,6 +289,7 @@ Soldier::Soldier(Platoon *platoon, int _NID)
 	enemy_num = 0;
 	seen_enemy_num = 0;
 	MOVED = 0;
+	m_reaction_chances = 0;
 
 	memset(&md, 0, sizeof(md));
 	memset(&id, 0, sizeof(id));
@@ -916,11 +917,15 @@ void Soldier::turnto(int destdir)
 	}
 }
 
-
 int Soldier::ismoving()
 {
-	return ((m_state == MARCH) || (m_state == FALL) || (!m_bullet->ready()) ||
-	        (curway != -1) || (waylen != 0));
+	if ((m_state == MARCH) || (m_state == FALL) || (!m_bullet->ready()))
+		return true;
+
+	if ((z != -1) && ((FIRE_num > 0) || (m_reaction_chances > 0) || (curway != -1) || (waylen != 0)))
+		return true;
+
+	return false;
 }
 
 void Soldier::calc_visible_cells()
@@ -1083,6 +1088,19 @@ int Soldier::move(int ISLOCAL)
 	}
 
 	if ((m_state == STAND) || (m_state == SIT)) {
+		// If we performed some action befores, let give enemy a chance for reaction fire
+		int reaction_chances = m_reaction_chances;
+		m_reaction_chances = 0;
+		if (!ISLOCAL) reaction_chances = 0;
+
+		while (reaction_chances > 0 && nomoves()) {
+			reaction_chances--;
+			if (platoon_remote->check_reaction_fire(this))
+				break;
+		}
+
+		m_reaction_chances = reaction_chances;
+
 		if (curway != -1) {
 			if (dir == way[curway]) {
 				if (waylen == 0) {
@@ -1689,6 +1707,13 @@ void Soldier::stun()
 	y = -1;
 	z = -1;
 
+	curway = -1; waylen = 0;
+	FIRE_num = 0;
+	enemy_num = 0;
+	seen_enemy_num = 0;
+	MOVED = 0;
+	m_reaction_chances = 0;
+
 	g_console->printf(xcom1_color(132), "%s stunned.", md.Name);
 }
 
@@ -2134,8 +2159,6 @@ void Soldier::precise_aiming()
 
 void Soldier::try_shoot()
 {
-	REACTION = 0; // Very important!
-
 	// Moving soldier cannot shoot
 	if (ismoving()) return ;
 
@@ -2189,7 +2212,7 @@ void Soldier::try_shoot()
 // So instead of using map->sel_*, we use the_target->*.
 void Soldier::try_reaction_shot(Soldier *the_target)
 {
-	REACTION = 1; // Also very important - reaction shots don't provoke reaction shots.
+	TARGET = 0;
  
 	// Moving soldier cannot shoot
 	if (ismoving()) return;
@@ -2246,7 +2269,7 @@ void Soldier::shoot(int zd, int xd, int yd, int ISLOCAL)
 	int x0 = x * 16 + 8;
 	int y0 = y * 16 + 8;
 
-	int chances = (target.time / 4); // How many chances at a reaction shot do we get? TUs / 4.
+	m_reaction_chances += (target.time / 4); // How many chances at a reaction shot do we get? TUs / 4.
 
 	if (target.action == THROW) {
 		zd -= 8;
@@ -2264,8 +2287,6 @@ void Soldier::shoot(int zd, int xd, int yd, int ISLOCAL)
 		apply_throwing_accuracy(fi, te, target.item->data()->weight);
 
 		thru(z0, x0, y0, ro, fi, te, zA, target.place, target.time);
-		// !!! Hack - reaction temporarily disabled to prevent grenades bug
-		chances = 0;
 	} else if (target.action == AIMEDTHROW) {
 		REAL ro = sqrt((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0));
 		REAL fi = acos((REAL)(zd - z0) / ro);
@@ -2273,8 +2294,6 @@ void Soldier::shoot(int zd, int xd, int yd, int ISLOCAL)
 		apply_accuracy(fi, te);
 
 		aimedthrow(z0, x0, y0, fi, te, target.place, target.time);
-		// !!! Hack - reaction temporarily disabled to prevent grenades bug
-		chances = 0;
 	} else if (target.action == PUNCH) {
 		REAL ro = sqrt((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0));
 		REAL fi = acos((REAL)(zd - z0) / ro);
@@ -2299,13 +2318,6 @@ void Soldier::shoot(int zd, int xd, int yd, int ISLOCAL)
 			fire(z0, x0, y0, fi, te, target.place, target.time);
 		}
 	}
-
-	if (!REACTION)            // If this shot isn't a reaction shot,
-		while (chances-- > 0) // then give a chance at a reaction shot for every four TUs used.
-		{
-			if (ISLOCAL) platoon_remote->check_reaction_fire(this);
-			else platoon_local->check_reaction_fire(this);
-		}
 }
 
 
@@ -2532,12 +2544,10 @@ int Soldier::check_reaction_fire(Soldier *the_target)
 			// Try the weapon in right hand first
 			if (do_reaction_fire(the_target, P_ARM_RIGHT, AIMED)) return 1;
 			if (do_reaction_fire(the_target, P_ARM_RIGHT, SNAP)) return 1;
-			if (do_reaction_fire(the_target, P_ARM_RIGHT, AUTO)) return 1;
 
 			// No luck with right arm, go to left arm.
 			if (do_reaction_fire(the_target, P_ARM_LEFT, AIMED)) return 1;
 			if (do_reaction_fire(the_target, P_ARM_LEFT, SNAP)) return 1;
-			if (do_reaction_fire(the_target, P_ARM_LEFT, AUTO)) return 1;
 
 			// No luck whatsoever. Fuhgeddabouddit.
 			return 0;
@@ -2589,24 +2599,6 @@ int Soldier::do_reaction_fire(Soldier *the_target, int place, int shot_type)
 	return 0;
 }
 
-/*
-void Soldier::show_MANDATA(int gx, int gy, int gcol)
-{
-	text_mode( -1);
-	textprintf(screen2, font, gx, gy, gcol,
-	           "ArmorType=%d Name=%s",
-	           md.ArmorType, md.Name);
-	textprintf(screen2, font, gx, gy + 10, gcol,
-	           "TimeUnits=%d Health=%d Stamina=%d",
-	           md.TimeUnits, md.Health, md.Stamina);
-	textprintf(screen2, font, gx, gy + 20, gcol,
-	           "Strength=%d Reactions=%d Kills=%d",
-	           md.Strength, md.Reactions, md.Kills);
-	textprintf(screen2, font, gx, gy + 30, gcol,
-	           "Firing=%d Throwing=%d Close=%d",
-	           md.Firing, md.Throwing, md.Close);
-}
-*/
 int Soldier::eot_save(char *txt)
 {
 	int len = 0;

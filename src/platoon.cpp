@@ -382,16 +382,23 @@ void Platoon::apply_hit(int sniper, int z, int x, int y, int type, int hitdir)
 
 int Platoon::check_reaction_fire(Soldier *target)
 {
+	std::vector<Soldier *> soldiers;
 	Soldier *ss = man;
-	int total = 0;
-	while (ss != NULL)
-	{
-		if (ss->is_active() && ss->check_reaction_fire(target))
-			total++;
-		// Of course, it helps if you check everyone in the platoon....
+	while (ss != NULL) {
+		if (ss->is_active()) soldiers.push_back(ss);
 		ss = ss->next();
 	}
-	return total;
+
+	std::random_shuffle(soldiers.begin(), soldiers.end());
+	
+	std::vector<Soldier *>::iterator it = soldiers.begin();
+	while (it != soldiers.end())
+	{
+		if ((*it)->check_reaction_fire(target))
+			return 1;
+		it++;
+	}
+	return 0;
 }
 
 void Platoon::save_FULLDATA(char *fn)

@@ -106,9 +106,6 @@ private:
 //!	switch to next soldier button
 	int MOVED;
 
-//!	Determines if a shot being fired is a reaction shot or not.
-	int REACTION;
-
 //!	If we get stunned, this points to the corpse.
 	Item *m_body;
 
@@ -116,6 +113,9 @@ private:
 //!	before all shots have been processed
 	int FIRE_num;
 	int FIRE_z, FIRE_x, FIRE_y;
+
+//! Number of chances for reaction fire enemy soldiers get
+	int m_reaction_chances; 
 
 //!	Information for pathfinding It does not need to be saved and can be built
 //!	by calling wayto function. If waylen != 0 this soldier is currently moving

@@ -194,7 +194,18 @@ local function CheckDataFiles()
 			errmsg = CheckSingleDataFile(name, FilesTable[info.Fallback])
 		end
 
-		if errmsg then Error(errmsg) end
+		if errmsg then
+			Error(
+				errmsg ..
+				"\n\n" ..
+				"The source of this problem may be just incorrect installation " ..
+				"of the game (you probably forgot to copy original X-COM data files to the " ..
+				"place where the game can locate them)." ..
+				"\n" ..
+				"Please check that you followed the instructions from 'INSTALL'" ..
+				"file before reporting bugs.") 
+		end
+
 		info.FileName = name
 	end
 end

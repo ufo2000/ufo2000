@@ -38,7 +38,14 @@ available in this case.
      http://ufo2000.lxnt.info/files/mingw-hawknl.zip
      http://ufo2000.lxnt.info/files/mingw-lua.zip
 
-2) Unpack ufo2000 binary and a it into a separate directory
+   After you have all the libraries installed, unpack archive with
+   the sources of the game, enter the directory that will be created 
+   and just type 'make win32=1' from the command line.
+   To compile game server, run 'make win32=1 server'
+
+2) Unpack archive with ufo2000 binary into any directory of your choice
+   ('c:\games\ufo2000' for example). If you compiled the game yourself,
+   you can just use the same directory that you used for compilation.
 
 3) If you own a full version of X-COM, you can just copy all the files
    from the installed X-COM directory into 'XCOM' subdirectory of ufo2000
