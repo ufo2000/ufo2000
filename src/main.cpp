@@ -296,8 +296,10 @@ void initmain(int argc, char *argv[])
 	set_uformat(U_ASCII);
 	allegro_init();
 	register_bitmap_file_type("jpg", load_jpg, NULL);
-        set_color_conversion(COLORCONV_NONE); // or in debug mode allegro bombs out. God knows what happens in release mode. 
-	FLAGS = 0;
+    //set_color_conversion(COLORCONV_NONE); // or in debug mode allegro bombs out. God knows what happens in release mode. 
+	set_color_conversion(COLORCONV_REDUCE_TO_256);
+    
+    FLAGS = 0;
 	push_config_state();
 	set_config_file("ufo2000.ini");
 	if (get_config_int("Flags", "F_CLEARSEEN", 0)) FLAGS |= F_CLEARSEEN;      // clear seen every time
@@ -371,13 +373,9 @@ void initmain(int argc, char *argv[])
 	set_video_mode();
 	set_palette(black_palette);
 	PALETTE pal;
-//	BITMAP *text_back = load_bitmap("text_back.jpg", pal);
-
 	BITMAP *text_back = load_memory_jpg(datafile[DAT_TEXT_BACK].dat, pal);
-
-	//set_palette(pal);
 	blit(text_back, screen, 0, 0, 0, 0, text_back->w, text_back->h);
-	fade_in(pal, FADE_SPEED);
+    fade_from(black_palette, pal, (64 - FADE_SPEED)/3 + FADE_SPEED);
 	//destroy_bitmap(text_back);
 	print_win = new Wind(text_back, 15, 300, 625, 390, 255);
 	print("allegro_init");

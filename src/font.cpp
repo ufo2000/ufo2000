@@ -254,14 +254,14 @@ struct uaf_fontcache {
  * rect pointers, fontcache root and miscellaneous data.
  */
 struct uaf_internal_data {
-	unsigned char  *origU00, *origU04; // origdata point to copies of loaded original data.
+	unsigned char  *origU00, *origU04; /* origdata point to copies of loaded original data. */
 	uaf_glyph_rect rectU00[256], rectU04[256];
 	int cachecount;
 	uaf_fontcache *cache;
 	
 	int max_w, max_h;
-	int space_width; // width of U0020 character. say, 2/3 of maxwidth (16 or 8)
-	int base_color; // color to use if blitting with fg color <0.
+	int space_width; /* width of U0020 character. say, 2/3 of maxwidth (16 or 8) */
+	int base_color; /* color to use if blitting with fg color <0. */
 };
 
 static void dump_font_info(AL_CONST FONT *f) {
@@ -372,7 +372,7 @@ static int uaf_char_length(AL_CONST FONT *f, int ch) {
 	}
 	
 	switch (ch >> 8) {
-		case 0: // basic latin & latin-1
+		case 0: /* basic latin & latin-1 */
 			if ( idat->rectU00[ch & 0xFF].w > 0 ) {
 				return idat->rectU00[ch & 0xFF].w;
 			} else {
@@ -382,7 +382,7 @@ static int uaf_char_length(AL_CONST FONT *f, int ch) {
 					return 0;
 				}
 			}
-		case 4: // cyrillic
+		case 4: /* cyrillic */
 			if ( idat->rectU04[ch & 0xFF].w > 0 ) {
 				return idat->rectU04[ch & 0xFF].w;
 			} else {
@@ -392,7 +392,7 @@ static int uaf_char_length(AL_CONST FONT *f, int ch) {
 					return 0;
 				}
 			}
-		default: // unicode section not implemented.
+		default: /* unicode section not implemented. */
 			if (ch != allegro_404_char) {
 				return idat->rectU00[allegro_404_char].w;
 			} else {
@@ -424,8 +424,8 @@ static int uaf_text_length(AL_CONST FONT *f, AL_CONST char *text) {
  *
  * @param f The 'this' pointer.
  * @param ch The character.
- * @param fg.
- * @param bg.
+ * @param fg. Foreground color. Currently five color indexes starting with this one are used to draw the glyph.
+ * @param bg. Background color, AKA textmode.
  * @param bmp Destination bitmap.
  * @param  x  X coordinate of top left corner of glyph bounding box.
  * @param  y  Y coordinate of top left corner of glyph bounding box.
@@ -437,9 +437,9 @@ static int uaf_render_char(AL_CONST FONT *f, int ch, int fg, int bg, BITMAP *bmp
 	int i, gotcache = 0, srcy, srcw, srch;
 	BITMAP *srcbmp;
 	
-    //dump_font_info(f);
+    /* dump_font_info(f); */
     
-	if (ch == 0x0020) { // skip space.
+	if (ch == 0x0020) { /* skip space. */
 		return idat->space_width;
 	}
 	
@@ -466,7 +466,7 @@ static int uaf_render_char(AL_CONST FONT *f, int ch, int fg, int bg, BITMAP *bmp
 	srch = f->height;
 	
 	switch (ch >> 8) {
-		case 0: // basic latin & latin-1
+		case 0: /* basic latin & latin-1 */
 			if (idat->rectU00[ch & 0xFF].w >= 0) {
 				srcbmp = thecache->U00;
 				srcw = idat->rectU00[ch & 0xFF].w;
@@ -480,7 +480,7 @@ static int uaf_render_char(AL_CONST FONT *f, int ch, int fg, int bg, BITMAP *bmp
 				}
 			}
 			
-		case 4: // cyrillic
+		case 4: /* cyrillic */
 			if (idat->rectU04[ch & 0xFF].w >= 0) {
 				srcbmp = thecache->U04;
 				srcw = idat->rectU04[ch & 0xFF].w;
@@ -493,7 +493,7 @@ static int uaf_render_char(AL_CONST FONT *f, int ch, int fg, int bg, BITMAP *bmp
 					return 0; /* prevent loop */
 				}
 			}
-		default: // unicode section not implemented.
+		default: /* unicode section not implemented. */
 			if (ch != allegro_404_char) {
 				return f->vtable->render_char(f, allegro_404_char, fg, bg, bmp, x, y);
 			} else {
@@ -531,41 +531,59 @@ static void uaf_render(AL_CONST FONT *f, AL_CONST char *text, int fg, int bg, BI
  * @param f The 'this' pointer.
  */
 static void uaf_destroy(FONT *f) {
+#if defined (DEBUGMODE)    
     printf("\nDefault font is %p (small %p large %p)\n",font, small, large);
     printf("Killing %s font\n",f == small ? "small" : "large");
+#endif
 	uaf_internal_data *idat = (uaf_internal_data *) (f->data);
 	free(idat->origU00);
+#if defined (DEBUGMODE)    
     printf("Freed idat->origU00\n");
+#endif
 	if (idat->origU04 != NULL) { 
         free(idat->origU04);
+#if defined (DEBUGMODE)    
         printf("Freed idat->origU04\n");
     } else {
         printf("Skipped idat->origU04 (%p)\n",idat->origU04);
+#endif
     }
 	if (idat->cachecount > 0) {
 		for(int i=0; i < idat->cachecount; i++) {
 			if (idat->cache[i].U00 != NULL) {
 				destroy_bitmap(idat->cache[i].U00);
+#if defined (DEBUGMODE)    
                 printf("\nDestroyed idat->cache[%d].U00 bitmap",i);
 			} else {
                 printf("\nSkipped idat->cache[%d].U00 bitmap",i);
+#endif
             }
 			if (idat->cache[i].U04 != NULL) {
 				destroy_bitmap(idat->cache[i].U04);
+#if defined (DEBUGMODE)    
                 printf("\nDestroyed idat->cache[%d].U04 bitmap",i);
 			} else {
                 printf("\nSkipped idat->cache[%d].U04 bitmap",i);
+#endif
             }
 		}
 		free(idat->cache);
+#if defined (DEBUGMODE)    
         printf("\nFreed idat->cache");
+#endif
 	}
 	free(f->data);
+#if defined (DEBUGMODE)    
     printf("\nFreed f->data");
+#endif
     free(f->vtable);
+#if defined (DEBUGMODE)    
     printf("\nFreed f->vtable");
+#endif
 	free(f);
+#if defined (DEBUGMODE)    
     printf("\nFreed %s font\n",f == small ? "small" : "large");
+#endif
 }
 
 /** Creates a FONT structure to be ready for use. 
@@ -669,10 +687,10 @@ static FONT *create_font(unsigned char *data00, unsigned char *data04, int w, in
 		/* hmm. unsupported section. skip.*/
 		continue; 
 	}
-	if (data04 != NULL) { // if we have the cyr data ...
-                for(i=0; i<128; i++) { // unofcyr font
+	if (data04 != NULL) { /* if we have the cyr data ... */
+                for(i=0; i<128; i++) { /* unofcyr font */
                         U = uni_xlate_tab[i + 128];
-                        if (U == 0x10000) { // unused glyph. skip.
+                        if (U == 0x10000) { /* unused glyph. skip. */
                                 continue;
                         }
                         maxcolw = 0;
@@ -785,13 +803,14 @@ void free_large_font(){
 }
 
 
-/** Prints a number in a 3x5 font onto a given position on the screem.
+/** Prints a number in a 3x5 font onto a given position on the bitmap.
+ * @param bmp Destination bitmap
  * @param x X coordinate
  * @param y Y coordiante
  * @param col Foreground color
  * @param value Value to print
 */
-void printsmall(int x, int y, int col, int value)
+void printsmall_x(BITMAP *bmp, int x, int y, int col, int value)
 {
 	static char digit[10][5][4] = {
 	                                  {"000",      //0
@@ -863,13 +882,13 @@ void printsmall(int x, int y, int col, int value)
 		for (int yy = 0; yy < 5; yy++)
 			for (int xx = 0; xx < 3; xx++)
 				if (digit[buf[i] - '0'][yy][xx] != ' ')
-					putpixel(screen2, x + i * 4 + xx, y + yy, col);
+					putpixel(bmp, x + i * 4 + xx, y + yy, col);
 
 }
 /** Prints a number with center alignment. @see printsmall. */
-void printsmall_center(int x, int y, int col, int value)
+void printsmall_center_x(BITMAP *bmp, int x, int y, int col, int value)
 {
 	char buf[100];
 	sprintf(buf, "%d", value);
-	printsmall(x - strlen(buf) * 4 / 2, y, col, value);
+	printsmall_x(bmp, x - strlen(buf) * 4 / 2, y, col, value);
 }

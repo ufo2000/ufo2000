@@ -30,7 +30,10 @@ void create_large_font();
 void free_small_font();
 void free_large_font();
 
-void printsmall(int x, int y, int col, int value);
-void printsmall_center(int x, int y, int col, int value);
+void printsmall_x(BITMAP *bmp, int x, int y, int col, int value);
+void printsmall_center_x(BITMAP *bmp, int x, int y, int col, int value);
+
+#define printsmall(x, y, col, val) printsmall_x(screen2, (x), (y), (col), (val) )
+#define printsmall_center(x, y, col, val) printsmall_center_x(screen2, (x), (y), (col), (val) )
 
 #endif

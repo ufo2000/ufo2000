@@ -26,6 +26,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #endif
 
 #ifdef WIN32
+#define MAINMENU_COUNT    7
+
 #define MAINMENU_LOADGAME 6
 #define MAINMENU_DPLAY    5
 #define MAINMENU_TCPIP    4
@@ -34,6 +36,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define MAINMENU_ABOUT    1
 #define MAINMENU_QUIT     0
 #else
+#define MAINMENU_COUNT    6
 #define MAINMENU_LOADGAME 5
 #define MAINMENU_TCPIP    4
 #define MAINMENU_HOTSEAT  3
