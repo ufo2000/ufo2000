@@ -125,10 +125,12 @@ void Platoon::move(int ISLOCAL)
 				s->die();
 				size--;
 				delete s;
-				m_visibility_changed = 1;
+				platoon_local->set_visibility_changed();
+				platoon_remote->set_visibility_changed();
 			} else if (s->x != -1) {
 				s->stun();
-				m_visibility_changed = 1;
+				platoon_local->set_visibility_changed();
+				platoon_remote->set_visibility_changed();
 			}
 			
 		} else {

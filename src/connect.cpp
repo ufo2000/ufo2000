@@ -117,7 +117,7 @@ int Connect::do_chat()
 			int remote_revision;
 			if (sscanf(buf.c_str(), "UFO2000 REVISION OF YOUR OPPONENT: %d", &remote_revision) == 1) {
 				if (UFO_REVISION_NUMBER == remote_revision) {
-					net->send("START\r\n");
+					net->send("START");
 					version_check_passed = true;
 				} else {
 					if (remote_revision < UFO_REVISION_NUMBER) {
@@ -134,7 +134,7 @@ int Connect::do_chat()
 						remote_win->printstr("and upgrade your UFO2000 version\n");
 						remote_win->printstr(tmp);
 				    }
-					net->send("QUIT\r\n");
+					net->send("QUIT");
 					net->SEND = 0;
 					DONE = 1;
 				}
@@ -149,7 +149,7 @@ int Connect::do_chat()
 					remote_win->printstr("\nUnfortunately your opponent has an\n");
 					remote_win->printstr("outdated UFO2000 version and you will be\n");
 					remote_win->printstr("unable to play until he upgrades\n");
-					net->send("QUIT\r\n");
+					net->send("QUIT");
 					net->SEND = 0;
 				}
 				DONE = 1;
@@ -174,7 +174,7 @@ int Connect::do_chat()
 					remote_win->redraw();
 					break;
 				case KEY_ESC:
-					net->send("QUIT\r\n");
+					net->send("QUIT");
 					net->SEND = 0;
 					DONE = 1;
 					break;

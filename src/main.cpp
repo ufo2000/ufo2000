@@ -705,7 +705,7 @@ void switch_turn()
  */
 void send_turn()
 {
-	ASSERT(MODE == MAP3D);
+	ASSERT(MODE != WATCH);
 	switch_turn();
 	elist->step(-1);
 	int crc = build_crc();

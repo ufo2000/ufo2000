@@ -134,7 +134,7 @@ function process_log(filename, history)
 			else
 				-- handle version number
 				local _, _, version_number = string.find(packet_data, "^UFO2000 REVISION OF YOUR OPPONENT: (%d+)")
-				if version_number then
+				if version_number and games[p] then
 					if games[p].version and games[p].version ~= version_number then
 						-- handle version check error
 						games[p].version_error = true
@@ -172,7 +172,7 @@ function process_log(filename, history)
 
 		elseif not packet_id then
 
-			local _, _, msg = string.find(l, "^%S+%s+%S+%s+(.*)")
+			local _, _, msg = string.find(l, "^%A+(.*)")
 			if not msg then msg = "" end
 
 			-- handle game start
