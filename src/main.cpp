@@ -1719,25 +1719,25 @@ void gameloop()
 					break;
 				case KEY_LEFT:
 					if (key[KEY_LSHIFT])
-						map->move(10, 0);
+						map->move(mapscroll, 0);
 					else
 						resize_screen2(-10, 0);
 					break;
 				case KEY_UP:
 					if (key[KEY_LSHIFT])
-						map->move(0, 10);
+						map->move(0, mapscroll);
 					else
 						resize_screen2(0, -10);
 					break;
 				case KEY_RIGHT:
 					if (key[KEY_LSHIFT])
-						map->move(-10, 0);
+						map->move(-mapscroll, 0);
 					else
 						resize_screen2(10, 0);
 					break;
 				case KEY_DOWN:
 					if (key[KEY_LSHIFT])
-						map->move(0, -10);
+						map->move(0, -mapscroll);
 					else
 						resize_screen2(0, 10);
 					break;

@@ -350,7 +350,8 @@ void Units::draw_map_window()
 	textout_centre(screen2, font, "6*6", gmx + gmw / 2 + 40, SCREEN2H - 61, xcom1_color(mapdata.x_size == 6 ? SWITCH_ON : SWITCH_OFF));
 	
 	textout_centre(screen2, font, "NEW", gmx + gmw / 2 - 40, SCREEN2H - 49, xcom1_color(BUTTON));
-	textout_centre(screen2, font, "LOAD", gmx + gmw / 2 + 40, SCREEN2H - 49, xcom1_color(BUTTON));
+	textout_centre(screen2, font, "LOAD", gmx + gmw / 2, SCREEN2H - 49, xcom1_color(BUTTON));
+	textout_centre(screen2, font, "SAVE", gmx + gmw / 2 + 40, SCREEN2H - 49, xcom1_color(BUTTON));
 }
 
 void Units::draw_rules_window()
@@ -745,17 +746,14 @@ void Units::execute_main(Map *map, int map_change_allowed)
 	if (mouse_inside(gx + 15 * 8 - 20, SCREEN2H - 20, gx + 15 * 8 + 20, SCREEN2H - 5)) {
 		//"SEND"
 		int index_of_first = -1;
-		for (i = 0; i < 10; i++) {
-			if (x[i] != 0 && y[i] != 0) {
-			    index_of_first = i;
-				break;
-			}
-		}
-		
 		int num_of_men_sel = 0;
-		for (i = 0; i < 10; i++) {
-			if (x[i] != 0 && y[i] != 0)
+		
+		for (i = 0; i < editor->platoon()->num_of_men(); i++) {
+			if (x[i] != 0 && y[i] != 0) {
 				num_of_men_sel++;
+				if (index_of_first == -1)
+			    	index_of_first = i;
+			}
 		}
 		
 		if (scenario->is_correct_platoon(points + damage_points, editor->platoon(), name[index_of_first], pos, buf, len, num_of_men_sel))
@@ -942,23 +940,37 @@ void Units::execute_map(Map *map, int map_change_allowed)
 		scenario->new_coords();
 	}
 
-	if (mouse_inside(gmx + gmw / 2 + 20, SCREEN2H - 49, gmx + gmw / 2 + 60, SCREEN2H - 36)) {
+	if (mouse_inside(gmx + gmw / 2 - 20, SCREEN2H - 49, gmx + gmw / 2 + 20, SCREEN2H - 36)) {
 		//"LOAD"
 		char path[1000]; *path = 0;
 		
 		::set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
 		
-		if (file_select("GEODATA file", path, "lua")) {
+		if (file_select("load GEODATA.lua file", path, "lua")) {
 			GEODATA gd;
 
 			if (!Map::load_GEODATA(path, &gd) || !Map::valid_GEODATA(&gd)) {
-				g_console->printf("%s", "invalid map file.");
+				g_console->printf(xcom1_color(34), "invalid map file.");
 			} else {
 				memcpy(&mapdata, &gd, sizeof(mapdata));
 				net->send_map_data(&mapdata);
 				mapdata.load_game = 77;
 				net->send_scenario();
 			}
+		}
+		
+		::set_mouse_range(0, 0, 639, SCREEN2H);
+	}
+	
+	if (mouse_inside(gmx + gmw / 2 + 20, SCREEN2H - 49, gmx + gmw / 2 + 60, SCREEN2H - 36)) {
+		//"SAVE"
+		char path[1000]; *path = 0;
+		
+		::set_mouse_range(0, 0, SCREEN_W, SCREEN_H);	
+		
+		if (file_select("save GEODATA.lua file", path, "lua")) {
+			if(!Map::save_GEODATA(path, &mapdata))
+				g_console->printf(xcom1_color(34), "can't save geodata.");
 		}
 		
 		::set_mouse_range(0, 0, 639, SCREEN2H);
