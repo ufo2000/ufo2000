@@ -62,6 +62,7 @@ std::string g_server_proxy;
 int         g_server_autologin;
 
 static std::string consolefont;
+static int music_volume;
 
 FONT *cfg_get_console_font()
 {
@@ -74,6 +75,11 @@ FONT *cfg_get_console_font()
 	}
 
 	return fnt;
+}
+
+int cfg_get_music_volume()
+{
+	return music_volume;
 }
 
 int cfg_get_base_accuracy()
@@ -213,6 +219,7 @@ void loadini()
 	lose_image_file_name = get_config_string(gen, "lose_image", "$(xcom)/geograph/back02.scr");
 
 	consolefont = get_config_string(gen, "consolefont", "xcom_small");
+	music_volume = get_config_int(gen, "music_volume", 255);
 
 	g_server_host = get_config_string("Server", "host", "127.0.0.1");
 	g_server_proxy = get_config_string("Server", "http_proxy", "auto");

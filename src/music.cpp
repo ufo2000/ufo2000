@@ -37,6 +37,7 @@ extern "C" {
 #endif
 
 static MIDI *allegro_midi = NULL;
+static int music_volume = 255;
 
 #ifdef HAVE_DUMBOGG
 static DUH *duh = NULL;
@@ -141,7 +142,7 @@ bool FS_MusicPlay(const char *filename)
 	if (!duh) duh = dumb_load_mod(filename);
 	if (!duh) duh = dumb_load_it(filename);
 	if (!duh) duh = dumb_load_ogg(filename, 1);
-	if (duh) dp = al_start_duh(duh, 2, 0, 1.0f, 4096, 44100);
+	if (duh) dp = al_start_duh(duh, 2, 0, (float)music_volume / 255.0, 4096, 44100);
 
 	DUH_SIGRENDERER *sr = al_duh_get_sigrenderer(dp);
 	DUMB_IT_SIGRENDERER *itsr = duh_get_it_sigrenderer(sr);
@@ -153,10 +154,31 @@ bool FS_MusicPlay(const char *filename)
 	return true;
 }
 
-void FS_SetVolume(int volume)
+int FS_GetMusicVolume()
 {
+	return music_volume;
+}
+
+int FS_IncMusicVolume()
+{
+	FS_SetMusicVolume(music_volume + 16);
+	return music_volume;
+}
+
+int FS_DecMusicVolume()
+{
+	FS_SetMusicVolume(music_volume - 16);
+	return music_volume;
+}
+
+void FS_SetMusicVolume(int volume)
+{
+	if (volume < 0) volume = 0;
+	if (volume > 255) volume = 255;
 #ifdef HAVE_DUMBOGG
 	nlMutexLock(&mutex);
+	music_volume = volume;
+	if (dp) al_duh_set_volume(dp, (float)music_volume / 255.0);
 	nlMutexUnlock(&mutex);
 #endif
 	set_volume(-1, volume);

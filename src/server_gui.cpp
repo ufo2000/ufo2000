@@ -523,6 +523,12 @@ int connect_internet_server()
 			int scancode; int keycode = ureadkey(&scancode);
 
 			switch (scancode) {
+				case KEY_PLUS_PAD:
+					FS_IncMusicVolume();
+					break;
+				case KEY_MINUS_PAD:
+					FS_DecMusicVolume();
+					break;
 				case KEY_F9:
 					keyswitch(0);
 					break;

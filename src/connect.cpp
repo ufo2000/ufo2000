@@ -32,6 +32,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "platoon.h"
 #include "units.h"
 #include "version.h"
+#include "music.h"
 
 int MAP_WIDTH = 5, MAP_HEIGHT = 5;
 
@@ -397,6 +398,12 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 					break;
 				case KEY_F9:
 					keyswitch(0);
+					break;
+				case KEY_PLUS_PAD:
+					FS_IncMusicVolume();
+					break;
+				case KEY_MINUS_PAD:
+					FS_DecMusicVolume();
 					break;
 				case KEY_F10:
 					change_screen_mode();

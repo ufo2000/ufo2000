@@ -525,6 +525,7 @@ void initmain(int argc, char *argv[])
 	initvideo();
 
 	FS_MusicInit();
+	FS_SetMusicVolume(cfg_get_music_volume());
 
 	LOCK_VARIABLE(CHANGE); LOCK_FUNCTION(mouser_proc);
 	LOCK_VARIABLE(MOVEIT); LOCK_VARIABLE(ANIMATION); LOCK_FUNCTION(timer_handler);
@@ -1374,10 +1375,10 @@ void gameloop()
 					}
 					break;
 				case KEY_PLUS_PAD:
-					resize_screen2(10, 10);
+					FS_IncMusicVolume();
 					break;
 				case KEY_MINUS_PAD:
-					resize_screen2(-10, -10);
+					FS_DecMusicVolume();
 					break;
 				case KEY_LEFT:
 					resize_screen2(-10, 0);

@@ -52,6 +52,7 @@ const char *cfg_get_win_image_file_name();
 const char *cfg_get_lose_image_file_name();
 
 FONT *cfg_get_console_font();
+int cfg_get_music_volume();
 
 const std::string &cfg_get_server_host();
 const std::string &cfg_get_server_login();
