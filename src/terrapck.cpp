@@ -26,7 +26,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <string.h>
 #include "video.h"
 #include "terrapck.h"
-#include "pfxopen.h"
 
 unsigned char TerraPCK::m_tbb[0xFFFF];
 unsigned short TerraPCK::m_tbs[0xFFF];

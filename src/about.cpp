@@ -27,7 +27,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "video.h"
 #include "dirty.h"
 #include "about.h"
-#include "pfxopen.h"
 
 char About::aboutstr[100][80] = {
 	"UFO 2000",
@@ -48,9 +47,9 @@ About::About()
 }
 
 
-int About::load(char *fname)
+int About::load(const char *fname)
 {
-	FILE * f = FOPEN_OWN(fname, "rt");
+	FILE * f = fopen(fname, "rt");
 	if (f == NULL) return 0;
 	aboutstr_size = 0;
 	while (fscanf(f, "%[^\n]\n", aboutstr[aboutstr_size]) == 1) {
@@ -209,7 +208,7 @@ void About::show()
 	old_dirty = new DirtyList(1000);
 	//sword = new Sword("HellO");
 
-	load("about.txt");
+	load(F("$(home)/about.txt"));
 
 	mouser2 = create_bitmap(mouser->w * 2, mouser->h * 2);
 	stretch_blit(mouser, mouser2, 0, 0, mouser->w, mouser->h,

@@ -51,7 +51,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "video.h"
 #include "keys.h"
 #include "crc32.h"
-#include "pfxopen.h"
 
 #include "sysworkarounds.h"
 
@@ -174,17 +173,17 @@ void restartgame()
 	p1 = new Platoon(1000, &pd1);
 	p2 = new Platoon(2000, &pd2);
 
-	int fh = OPEN_GTEMP("cur_map.dat", O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
+	int fh = open(F("$(home)/cur_map.dat"), O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
 	assert(fh != -1);
 	write(fh, &mapdata, sizeof(mapdata));
 	close(fh);
 
-	fh = OPEN_GTEMP("cur_p1.dat", O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
+	fh = open(F("$(home)/cur_p1.dat"), O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
 	assert(fh != -1);
 	write(fh, &pd1, sizeof(pd1));
 	close(fh);
 
-	fh = OPEN_GTEMP("cur_p2.dat", O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
+	fh = open(F("$(home)/cur_p2.dat"), O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
 	assert(fh != -1);
 	write(fh, &pd2, sizeof(pd2));
 	close(fh);
@@ -316,53 +315,9 @@ void display_error_message(const std::string &error_text)
 	exit(1);
 }
 
-/**
- * Check for the files that should be accessible for write
- */
-void check_rw_files()
-{
-	const char *list[] =
-	{
-	    "./geodata.dat",
-		"./soldier.dat",
-		"./armoury.set",
-		"./items.dat",
-		"./ufo2000.ini",
-		"./ufo2000.log",
-		"./ufo2000.tmp",
-		"./cur_map.dat",
-		"./cur_p1.dat",
-		"./cur_p2.dat"
-	};
-
-	for (unsigned int i = 0; i < sizeof(list) / sizeof(list[0]); i++) {
-		FILE *f = FOPEN_OWN(list[i], "rb");
-		if (f == NULL) {
-			f = fopen(list[i], "w+");
-			if (f == NULL) {
-				display_error_message(std::string("Can't create ") + 
-					list[i] + " file.\n"
-					"Please check the permissions set for ufo2000 directory.");
-				return;
-			}
-			fclose(f);
-			remove(list[i]);
-		} else {
-			fclose(f);
-			f = FOPEN_OWN(list[i], "r+");
-			if (f == NULL) {
-				display_error_message(std::string("Can't open ") + 
-					list[i] + " file in read/write mode.\n"
-					"Please check the permissions set for this file.");
-				return;
-			}
-			fclose(f);
-		}
-	}
-}
-
 /** Function to check if all necessary files exist and are OK
 */
+/*
 void check_data_files()
 {
 	// Checking data files integrity
@@ -384,7 +339,7 @@ void check_data_files()
 		display_error_message(error_text);
 	}
 }
-
+*/
 lua_State *L;
 
 static int lua_UpdateCrc32(lua_State *L)
@@ -495,11 +450,12 @@ void initmain(int argc, char *argv[])
     if (get_config_int("Flags", "F_SOUNDCHECK", 0)) FLAGS |= F_SOUNDCHECK;    // perform soundtest.
     if (get_config_int("Flags", "F_LOGTOSTDOUT", 0)) FLAGS |= F_LOGTOSTDOUT;  // Copy all init console output to stdout.
     if (get_config_int("Flags", "F_DEBUGDUMPS", 0)) FLAGS |= F_DEBUGDUMPS;    // Produce a lot of files with the information which can help in debugging
+/*
 	origfiles_prefix = get_config_string("Paths",  "origfiles", NULL); // original ufo files here
 	ownfiles_prefix  = get_config_string("Paths",  "ownfiles",  NULL); // own data files here (ufo2000.dat & bitmaps)
 	gametemp_prefix  = get_config_string("Paths",  "gametemp",  NULL); // game temporary files here (may span launches)
 	runtemp_prefix	 = get_config_string("Paths",  "runtemp",   NULL); // runtime temporary files here (get deleted by the time of exit)
-
+*/
 	std::string consolefont = get_config_string("General", "consolefont", "xcom_small");
 
 	if (argc > 1) {
@@ -511,7 +467,7 @@ void initmain(int argc, char *argv[])
 	}
 
 	loadini();
-
+/*
 	if (origfiles_prefix != NULL) {
 		origfiles_prefix = ustrdup(origfiles_prefix);
 	}
@@ -524,7 +480,7 @@ void initmain(int argc, char *argv[])
 	if (runtemp_prefix != NULL) {
 		runtemp_prefix = ustrdup(runtemp_prefix);
 	}
-
+*/
 	pop_config_state();
 
 	datafile = load_datafile("#");
@@ -706,8 +662,8 @@ int build_crc()
 
 	if (FLAGS & F_DEBUGDUMPS) {
 		char filename[128];
-		sprintf(filename, "eot_save_%d.txt", crc);
-		int fh = OPEN_GTEMP(filename, O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
+		sprintf(filename, "$(home)/eot_save_%d.txt", crc);
+		int fh = open(F(filename), O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
 		if (fh != -1) {
 			buf_size = write(fh, buf, buf_size);
 			close(fh);
@@ -782,7 +738,7 @@ void send_turn()
     
     //	Load the game state for the start of enemy turn and switch to WATCH mode
 		icon->show_eot();
-		loadgame("ufo2000.tmp");
+		loadgame(F("$(home)/ufo2000.tmp"));
 
 		map->m_minimap_area->set_full_redraw();
 		g_console->set_full_redraw();
@@ -817,7 +773,7 @@ void recv_turn(int crc)
 	platoon_local->restore();
 
 	if (net->gametype == HOTSEAT) {
-		savegame("ufo2000.tmp");
+		savegame(F("$(home)/ufo2000.tmp"));
 		map->m_minimap_area->set_full_redraw();
 	}
 
@@ -1218,7 +1174,7 @@ void gameloop()
 	}
 
 	if (net->gametype == HOTSEAT)
-		savegame("ufo2000.tmp");
+		savegame(F("$(home)/ufo2000.tmp"));
 
 	while (!DONE) {
 
@@ -1456,16 +1412,16 @@ void gameloop()
 					break;
 				case KEY_F2:
 					if (askmenu("SAVE GAME"))
-						savegame("ufo2000.sav");
+						savegame(F("$(home)/ufo2000.sav"));
 					break;
 				case KEY_F3:
 					if (askmenu("LOAD GAME")) {
-						if (!loadgame("ufo2000.sav")) {
+						if (!loadgame(F("$(home)/ufo2000.sav"))) {
 							alert("saved game not found", "", "", "OK", NULL, 0, 0);
 						}
 						inithotseatgame();
 						if (net->gametype == HOTSEAT)
-							savegame("ufo2000.tmp");
+							savegame(F("$(home)/ufo2000.tmp"));
 					}
 					break;
 				case KEY_F5:
@@ -1544,17 +1500,17 @@ void faststart()
 
 	//restartgame();
 
-	int fh = OPEN_GTEMP("cur_map.dat", O_RDONLY | O_BINARY);
+	int fh = open(F("$(home)/cur_map.dat"), O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	read(fh, &mapdata, sizeof(mapdata));
 	close(fh);
 
-	fh = OPEN_GTEMP("cur_p1.dat", O_RDONLY | O_BINARY);
+	fh = open(F("$(home)/cur_p1.dat"), O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	read(fh, &pd1, sizeof(pd1));
 	close(fh);
 
-	fh = OPEN_GTEMP("cur_p2.dat", O_RDONLY | O_BINARY);
+	fh = open(F("$(home)/cur_p2.dat"), O_RDONLY | O_BINARY);
 	assert(fh != -1);
 	read(fh, &pd2, sizeof(pd2));
 	close(fh);
@@ -1596,7 +1552,7 @@ void start_loadgame()
 
 	reset_video();
 
-   	if (!loadgame("ufo2000.sav"))
+   	if (!loadgame(F("$(home)/ufo2000.sav")))
    	{
    		alert("saved game not found", "", "", "OK", NULL, 0, 0);
    		return;

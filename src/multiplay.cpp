@@ -35,7 +35,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "netsock.h"
 #include "packet.h"
 #include "units.h"
-#include "pfxopen.h"
 
 static std::list<std::string> g_hotseat_cmd_queue;
 

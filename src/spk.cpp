@@ -26,7 +26,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <fcntl.h>
 #include "video.h"
 #include "spk.h"
-#include "pfxopen.h"
 
 SPK::SPK()
 {

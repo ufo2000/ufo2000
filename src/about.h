@@ -30,7 +30,7 @@ private:
 	static char aboutstr[100][80];
 	int aboutstr_size;
 
-	int load(char *fname);
+	int load(const char *fname);
 	void transinfo();
 
 public:

@@ -30,7 +30,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "map.h"
 #include "multiplay.h"
 #include "platoon.h"
-#include "pfxopen.h"
 #include "crc32.h"
 
 #define SCANGSIZE 4
@@ -232,7 +231,7 @@ void Map::loadmaps(unsigned char *_map)
 int Map::loadmap(const char *fname, int _r, int _c)
 {
 	char mbuf[10000];
-	int fh = OPEN_ORIG(fname, O_RDONLY | O_BINARY);
+	int fh = open(fname, O_RDONLY | O_BINARY);
 	if (fh == -1) return 0;
 	read(fh, mbuf, 10000);
 	close(fh);

@@ -33,7 +33,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "video.h"
 #include "wind.h"
 #include "../ufo2000.h"
-#include "pfxopen.h"
 #include "global.h"
 #include "map.h"
 #include "config.h"

@@ -23,7 +23,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <allegro.h>
 #include <string.h>
 #include "wind.h"
-#include "pfxopen.h"
 
 ConsoleStatusLine::ConsoleStatusLine(int width, FONT *font, int color)
 {
@@ -466,7 +465,7 @@ void Wind::hidecursor()
 
 void Wind::dump()
 {
-	FILE *f = FOPEN_RTEMP("m_txt.dump", "wt");
+	FILE *f = fopen(F("$(home)/m_txt.dump"), "wt");
 	assert(f != NULL);
 	for (int i = 0; i < m_txth; i++)
 		fprintf(f, "%d:[%s]\n", i, m_txt[i]);

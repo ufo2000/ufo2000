@@ -26,7 +26,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "video.h"
 #include "place.h"
 #include "map.h"
-#include "pfxopen.h"
 
 IMPLEMENT_PERSISTENCE(Place, "Place");
 
@@ -353,7 +352,7 @@ void Place::save_bin(char *fn)
 		it = it->m_next;
 	}
 
-	int fh = OPEN_OWN(fn, O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
+	int fh = open(F(fn), O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
 	assert(fh != -1);
 	write(fh, buf, buf_size);
 	close(fh);

@@ -24,7 +24,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <string.h>
 #include "video.h"
 #include "editor.h"
-#include "pfxopen.h"
 
 char last_unit_name[1000];
 char last_map_name[1000];

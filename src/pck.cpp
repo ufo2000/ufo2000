@@ -26,7 +26,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <fcntl.h>
 #include "video.h"
 #include "pck.h"
-#include "pfxopen.h"
 #include "../ufo2000.h"
 
 char PCK::m_fname[0x100];

@@ -30,7 +30,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "map.h"
 #include "multiplay.h"
 #include "sound.h"
-#include "pfxopen.h"
 
 PCK *bigobs;
 OBDATA *Item::obdata = NULL;
