@@ -290,7 +290,7 @@ bool ClientServerUfo::login(const std::string &name, const std::string &pass,
 	}
 
 	NLulong id;
-	if (!wait_packet(id, error_message)) {
+	if (wait_packet(id, error_message) == -1) {
 		error_message = "Failed to connect";
 		return false;
 	}

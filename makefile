@@ -52,7 +52,6 @@ ifdef win32
 	NAME := ${addsuffix .exe,$(NAME)}
 	SERVER_NAME := ${addsuffix .exe,$(SERVER_NAME)}
 	CFLAGS += -DWIN32
-	SUBSYSTEM := -Wl,--subsystem=windows -e _WinMainCRTStartup
 	LIBS = -lexpat -lNL -lalleg -lws2_32
 else
 	CFLAGS += -DLINUX
@@ -65,6 +64,11 @@ OBJS = $(addprefix $(OBJDIR)/,$(SRCS:.cpp=.o))
 DEPS = $(addprefix $(OBJDIR)/,$(SRCS:.cpp=.d))
 OBJS_SERVER = $(addprefix $(OBJDIR)/,$(SRCS_SERVER:.cpp=.o))
 DEPS_SERVER = $(addprefix $(OBJDIR)/,$(SRCS_SERVER:.cpp=.d))
+
+ifdef win32
+	OBJS := $(OBJS) Seccast.o 
+	SUBSYSTEM := -Wl,--subsystem=windows -e _WinMainCRTStartup
+endif
 
 ##############################################################################
 

@@ -349,6 +349,7 @@ int ClientServer::recv_packet(NLulong &id, std::string &packet)
 int ClientServer::wait_packet(NLulong &id, std::string &buffer)
 {
     while (true) {
+    	if (!send_delayed_packet()) return -1;
     	int res = recv_packet(id, buffer);
 		if (res != 0) return res;
         usleep(1);

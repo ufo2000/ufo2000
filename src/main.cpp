@@ -52,10 +52,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "keys.h"
 #include "crc32.h"
 #include "pfxopen.h"
-#ifdef WIN32
-//#include <allegro/platform/aintwin.h>
-#include "../resource.h"
-#endif
 
 #include "sysworkarounds.h"
 
@@ -489,10 +485,6 @@ void initmain(int argc, char *argv[])
 
 	set_window_title("UFO2000");
 	set_window_close_button(0);
-#ifdef WIN32
-	HICON hi = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON));
-	SetClassLong(win_get_window(), GCL_HICON, (LPARAM)hi);
-#endif
 
 	set_video_mode();
 	set_palette(black_palette);
