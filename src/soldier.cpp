@@ -1891,20 +1891,70 @@ void Soldier::damage_items(int damage)
 }
 
 /**
- * When soldier panics: he gets no TU, and drops items in hand.
- * (no running around or wild shooting yet)
+ * When soldier panics: 
+ * action == 0 - run randomly;
+ *        == 1 - "berserk" mode.
  */
-void Soldier::panic()
-{
-	ud.CurTU = 0;
-	m_place[P_ARM_LEFT]->dropall(z, x, y);
-	m_place[P_ARM_RIGHT]->dropall(z, x, y);
-	change_morale(20);
+void Soldier::panic(int action)
+{   
+	switch(action) {
+		case 0:
+		m_place[P_ARM_LEFT]->dropall(z, x, y);
+		m_place[P_ARM_RIGHT]->dropall(z, x, y);
+		/*run for you life! - not implemented yet*/
+		g_console->printf(COLOR_ROSE, "%s has panicked.", md.Name);
+		break;
 		
-	net->send_panic(NID);
-
-	g_console->printf(COLOR_ROSE, "%s has panicked.", md.Name);
+		case 1:
+		if(platoon_local->belong(this))		//shots will be sent to the remote player - so don't double them
+			berserk_fire();
+		g_console->printf(COLOR_ROSE, "%s has gone berserk.", md.Name);
+		break;
+	}
+	
+	ud.CurTU = 0;
+	change_morale(20);
+                                         
     battle_report( "%s: %s\n", _("Panicked"), md.Name);
+}
+
+void Soldier::berserk_fire()
+{
+	Item *it = rhand_item();
+	int iplace = P_ARM_RIGHT;
+	
+	//no item in right hand or it cannot fire - use item in left hand
+	if(!it || (!it->obdata_accuracy(0) && !it->obdata_accuracy(1) && !it->obdata_accuracy(2))) {
+		it = lhand_item();
+		iplace = P_ARM_LEFT;
+	}
+	
+	//no item in both hands or neither of them can fire - do nothing	
+	if(!it || (!it->obdata_accuracy(0) && !it->obdata_accuracy(1) && !it->obdata_accuracy(2)))
+		return;
+	
+	target.item = it;
+	target.place = iplace;
+	
+	FIRE_z = z * 12 + 6;
+	FIRE_x = (x + (DIR_DELTA_X(dir) * 10)) * 16 + 8;
+	FIRE_y = (y + (DIR_DELTA_Y(dir) * 10)) * 16 + 8;    
+	
+	if(it->obdata_accuracy(0)) {
+		target.accur = FAccuracy(it->obdata_accuracy(0), it->obdata_twoHanded()) / 2;
+		target.time = (required(it->obdata_time(0)) + 2) / 3;
+		target.action = AUTOSHOT;
+	} else if(it->obdata_accuracy(1)) {
+		target.accur = FAccuracy(it->obdata_accuracy(1), it->obdata_twoHanded()) / 2;
+		target.time = required(it->obdata_time(1));
+		target.action = SNAPSHOT;
+	} else if(it->obdata_accuracy(2)) {
+		target.accur = FAccuracy(it->obdata_accuracy(2), it->obdata_twoHanded()) / 2;
+		target.time = required(it->obdata_time(2));
+		target.action = AIMEDSHOT;
+	}
+	
+	FIRE_num = ud.CurTU / target.time;
 }
 
 /**

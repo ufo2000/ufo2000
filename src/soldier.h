@@ -142,6 +142,7 @@ private:
 	static void initbof();
 	
 	bool time_reserve(int walk_time, int ISLOCAL, int use_energy = 1);
+	void berserk_fire();
 
 public:
 
@@ -345,7 +346,7 @@ public:
 	void draw_deselect_times(int sel_item_place);
 	void damage_items(int damage);
 	
-	void panic();
+	void panic(int action);
 	void change_morale(int delta);
 
 	void set_start_sit() {m_state=SIT;};

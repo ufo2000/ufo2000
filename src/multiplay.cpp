@@ -1493,25 +1493,27 @@ int Net::recv_options()
 	return 1;
 }
 
-void Net::send_panic(int NID)
+void Net::send_panic(int NID, int action)
 {
 	if (!SEND) return ;
 
 	pkt.create(CMD_PANIC);
 	pkt << NID;
+	pkt << action;
 	send();
 }
 
 int Net::recv_panic()
 {
-	int NID;
+	int NID, action;
 
 	pkt >> NID;
+	pkt >> action;
 
 	Soldier *ss = findman(NID);
 	if (ss != NULL) {
 		SEND = 0;
-		ss->panic();
+		ss->panic(action);
 		SEND = 1;
 		return 1;
 	} else {

@@ -160,7 +160,7 @@ public:
 	void send_rules(int index, int value);
 	void send_options(int scenario_type, int index, int value);
 	
-	void send_panic(int NID);
+	void send_panic(int NID, int action);
 	void send_morale_change(int delta);
 
 	void send_finish_planner();
