@@ -74,7 +74,7 @@ void Net::error(char *str)
 Net::Net()
 {
 	SEND = 1;
-	queue = NULL;
+	queue = new BQ(1000);
 	connect = new Connect();
 	flog = fopen(F("$(home)/ufo2000.log"), "wt");
 	ASSERT(flog != NULL);
@@ -112,6 +112,7 @@ int Net::init()
 	log("%s\n", "init()");
 	SEND = 1;
 	
+	if (queue != NULL) delete queue;
 	queue = new BQ(1000);
 
 	connect->reset_uds();

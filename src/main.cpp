@@ -1208,7 +1208,7 @@ static LONG WINAPI TopLevelExceptionFilter(PEXCEPTION_POINTERS pExceptionInfo)
 		net->flush();
 	}
 
-	FILE *f = fopen(F("$(home)/ufo2000-crash.log"), "at");
+	FILE *f = fopen(F("$(home)/ufo2000-crash.html"), "at");
 	fprintf(f, "%s\n", exception_report);
 	fclose(f);
 
