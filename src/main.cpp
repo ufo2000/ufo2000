@@ -173,17 +173,17 @@ void restartgame()
 	p1 = new Platoon(1000, &pd1);
 	p2 = new Platoon(2000, &pd2);
 
-	int fh = open(F("$(home)/cur_map.dat"), O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
+	int fh = open(F("$(home)/cur_map.dat"), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, 0644);
 	assert(fh != -1);
 	write(fh, &mapdata, sizeof(mapdata));
 	close(fh);
 
-	fh = open(F("$(home)/cur_p1.dat"), O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
+	fh = open(F("$(home)/cur_p1.dat"), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, 0644);
 	assert(fh != -1);
 	write(fh, &pd1, sizeof(pd1));
 	close(fh);
 
-	fh = open(F("$(home)/cur_p2.dat"), O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
+	fh = open(F("$(home)/cur_p2.dat"), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, 0644);
 	assert(fh != -1);
 	write(fh, &pd2, sizeof(pd2));
 	close(fh);
@@ -663,7 +663,7 @@ int build_crc()
 	if (FLAGS & F_DEBUGDUMPS) {
 		char filename[128];
 		sprintf(filename, "$(home)/eot_save_%d.txt", crc);
-		int fh = open(F(filename), O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
+		int fh = open(F(filename), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, 0644);
 		if (fh != -1) {
 			buf_size = write(fh, buf, buf_size);
 			close(fh);

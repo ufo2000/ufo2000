@@ -352,7 +352,7 @@ void Place::save_bin(char *fn)
 		it = it->m_next;
 	}
 
-	int fh = open(F(fn), O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
+	int fh = open(F(fn), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, 0644);
 	assert(fh != -1);
 	write(fh, buf, buf_size);
 	close(fh);
