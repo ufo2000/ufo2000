@@ -2,6 +2,7 @@
 # Copyright (C) 2001-2004 ufo2000 development team
 # This file is distributed under the same license as the UFO2000 package.
 # FIRST AUTHOR: Nail <black_nail@newmail.ru>, 2004.
+# BUG FIXES: DiversanT <xt_diversant@front.ru>, 2004.
 # ##
 # !! Comments for an entry have to be placed before its "msgid"-line, 
 # !! and must start with "# ".
@@ -164,11 +165,11 @@ msgstr "ЗАРЯДОВ"
 #: src/editor.cpp:655 src/editor.cpp:663 src/inventory.cpp:86
 #: src/inventory.cpp:97 src/inventory.cpp:108
 msgid "LEFT="
-msgstr "ОСТАТОК="
+msgstr " "
 
 #: src/editor.cpp:680
 msgid "Use keys with shift to configure them:"
-msgstr "Использовать кнопки + Shift для настройки:"
+msgstr "Используйте кнопки+Shift для настройки:"
 
 #: src/editor.cpp:687
 msgid "Name-generator"
@@ -184,20 +185,20 @@ msgstr "Выбор брони солдата"
 
 #: src/editor.cpp:692
 msgid "Delete Equipment of current man"
-msgstr "Очистить экиперовку текущего бойца"
+msgstr "Очистить экипировку текущего бойца"
 
 #: src/editor.cpp:693
 msgid "Next soldier"
-msgstr "След. боец"
+msgstr "Следующий боец"
 
 #: src/editor.cpp:700 src/soldier.cpp:875
 #, c-format
 msgid "Equipment weight: %d/%2d"
-msgstr "Вес экиперовки: %d/%2d"
+msgstr "Вес снаряжения: %d/%2d"
 
 #: src/editor.cpp:704
 msgid "Equipment cost"
-msgstr "Стоимость экиперовки"
+msgstr "Стоимость снаряжения"
 
 #: src/editor.cpp:783
 msgid "Select setup for F5"
@@ -561,7 +562,7 @@ msgstr "Нажать F1 для помощи."
 
 #: src/main.cpp:1568
 msgid "Battlereport"
-msgstr ""
+msgstr "Статистика боя"
 
 #: src/main.cpp:1864
 msgid "SAVE GAME"
@@ -749,7 +750,7 @@ msgstr "Командир врага всегда виден на миникар�
 #: src/scenario.cpp:98 src/scenario.cpp:148
 #, fuzzy
 msgid "Leader can use two-handed weapons"
-msgstr "Командир не может использовать двуручное оружие."
+msgstr "Командир может использовать двуручное оружие."
 
 #: src/scenario.cpp:98 src/scenario.cpp:148
 #, fuzzy
@@ -806,7 +807,7 @@ msgstr "чем там имеет противник."
 
 #: src/scenario.cpp:131
 msgid "Half-turns to control the area"
-msgstr ""
+msgstr "полуходов для контроля территории"
 
 #: src/scenario.cpp:141
 msgid "soldier). Enemy leader is always visible on your "
@@ -846,16 +847,16 @@ msgstr "Уничтожить больше половины бойцов враг
 
 #: src/scenario.cpp:165
 msgid "Half-turns to hold (match length)"
-msgstr ""
+msgstr "полуходов для удержания (время матча)"
 
 #: src/scenario.cpp:166 src/scenario.cpp:184
 #, fuzzy
 msgid "\"Surrounded\" deployment"
-msgstr "карты если выбран тип высадки в окружении."
+msgstr "тип высадки \"в окружении\""
 
 #: src/scenario.cpp:166 src/scenario.cpp:184
 msgid "Standard deployment"
-msgstr ""
+msgstr "стандартный тип высадки"
 
 #: src/scenario.cpp:174
 msgid "You must bring at least half of your squad       "
@@ -916,7 +917,7 @@ msgstr "на миникарте противника."
 #: src/scenario.cpp:202
 #, fuzzy
 msgid "Leader can have two-handed weapons"
-msgstr "Командир не может использовать двуручное оружие."
+msgstr "Командир может использовать двуручное оружие."
 
 #: src/scenario.cpp:202
 #, fuzzy
@@ -1039,7 +1040,7 @@ msgstr "Соединение с сервером..."
 
 #: src/server_gui.cpp:435
 msgid "as user"
-msgstr ""
+msgstr "Пользователь"
 
 #: src/server_gui.cpp:443 src/server_gui.cpp:444
 msgid "  Connection lost  "
@@ -1067,11 +1068,11 @@ msgstr "%s покинул чат для игры"
 
 #: src/server_gui.cpp:495
 msgid "Start networkgame with"
-msgstr ""
+msgstr "Старт сетевой игры с"
 
 #: src/server_gui.cpp:520
 msgid "Join networkgame with"
-msgstr ""
+msgstr "Подключение к сетевой игре с"
 
 #: src/server_gui.cpp:609 src/server_gui.cpp:611 src/server_gui.cpp:634
 msgid "DISCONNECT FROM SERVER"

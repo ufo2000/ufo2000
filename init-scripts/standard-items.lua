@@ -79,7 +79,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 4,
-	cost = 80,
+	cost = 100,
 	name = "HEAVY CANNON",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 11),
 	pMap = pck_image("$(xcom)/units/floorob.pck", 11),
@@ -101,11 +101,11 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 5,
-	cost = 40,
+	cost = 60,
 	name = "CANNON AP-AMMO",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 12),
 	pMap = pck_image("$(xcom)/units/floorob.pck", 8),
-	damage = 56,
+	damage = 72,
 	importance = 4,
 	width = 2,
 	height = 1,
@@ -155,7 +155,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 8,
-	cost = 100,
+	cost = 120,
 	name = "AUTO-CANNON",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 7),
 	pMap = pck_image("$(xcom)/units/floorob.pck", 7),
@@ -177,11 +177,11 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 9,
-	cost = 50,
+	cost = 80,
 	name = "AUTO-CANNON AP-AMMO",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 8),
 	pMap = pck_image("$(xcom)/units/floorob.pck", 12),
-	damage = 42,
+	damage = 60,
 	importance = 4,
 	width = 2,
 	height = 1,
@@ -352,18 +352,18 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 18,
-	cost = 360,
+	cost = 350,
 	name = "HEAVY LASER",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 6),
 	pMap = pck_image("$(xcom)/units/floorob.pck", 6),
-	damage = 85,
+	damage = 75,
 	importance = 12,
 	width = 2,
 	height = 3,
 	pHeld = 2,
 	damageType = 3,
-	accuracy = {0, 75, 120},
-	time = {0, 33, 75},
+	accuracy = {0, 50, 120},
+	time = {0, 33, 66},
 	rounds = 10,
 	weight = 15,
 	isShootable = 1,
@@ -559,8 +559,8 @@ AddXcomItem {
 	height = 3,
 	ammo = {"Heavy Plasma Clip"},
 	pHeld = 5,
-	accuracy = {0, 75, 110},
-	time = {0, 30, 60},
+	accuracy = {0, 55, 110},
+	time = {0, 30, 55},
 	rounds = 10,
 	weight = 8,
 	isShootable = 1,
@@ -583,7 +583,7 @@ AddXcomItem {
 	height = 1,
 	pHeld = 15,
 	damageType = 4,
-	rounds = 16,
+	rounds = 10,
 	weight = 3,
 	isAmmo = 1,
 	isAlien = 1,
