@@ -164,8 +164,8 @@ AddXcomItem {
 	height = 3,
 	ammo = {"AUTO-CANNON AP-AMMO", "AUTO-CANNON HE-AMMO", "AUTO-CANNON I-AMMO"},
 	pHeld = 4,
-	accuracy = {32, 56, 82},
-	time = {40, 33, 80},
+	accuracy = {32, 56, 0},
+	time = {40, 33, 0},
 	rounds = 10,
 	weight = 15,
 	isShootable = 1,
@@ -573,7 +573,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 35,
-	cost = 150,
+	cost = 100,
 	name = "Heavy Plasma Clip",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 25),
 	pMap = pck_image("$(xcom)/units/floorob.pck", 33),
