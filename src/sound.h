@@ -119,8 +119,8 @@ enum SoundSym_e_t {
     SS_CHRYSSALID_DEATH,
     SS_ETHEREAL_WOUND,
     SS_ETHEREAL_DEATH,
-    
-    
+
+
     SS_TRAILER__SYM // just so we need not worry about commas when adding above
 };
 
@@ -129,10 +129,10 @@ class soundSystem {
     static soundSystem *theInstance;
     std::vector<SAMPLE *> theSamples;
     bool soundInstalled;
-    
+
 protected:
     soundSystem();
-    
+
 public:
 
     static soundSystem *getInstance();
@@ -142,9 +142,23 @@ public:
     void play(SoundSym_e_t sndSym, int vol = 255, int pan = 127, int freq = 1000);
 
     void setSample(SoundSym_e_t sndSym, SAMPLE * sample);
-    
+
     void getLoadedSyms(std::ostream *os);
     void playLoadedSamples(std::ostream *os);
+
+/* positioning support */
+
+    /** sets the position and orientation of listener.
+     *  The position is expressed in some abstract coordinates.
+     */
+    void setOrigin(float x, float y, float z, float dx, float dy, float dz);
+
+    /** sets cutoff distance, at which a maximal vol sound won't be heard. */
+    void setCutoff(float cd);
+
+    /** play sound at the given point in some abstract coordinates. */
+    void play(float x, float y, float z, int vol);
+
 };
 
 
