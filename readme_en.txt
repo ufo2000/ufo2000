@@ -37,17 +37,24 @@ About
 UFO2000 is a multiplayer remake of the tactical part of Microprose's 
 game, X-COM: UFO Defense (UFO: Enemy Unknown).
 
-You need data files from the original X-COM to play UFO2000. The game will 
-also work with data files from the X-COM demo, but you will only be able 
-to play on 'City' map and use a limited set of units in this case. Having a 
-full version of X-COM is highly recommended.
-
 The game compiles and works in Windows, Linux and FreeBSD operating systems.
 Probably the game will also work in other UNIX-like systems. If you managed 
 to successfully compile and run UFO2000 in one of them, please let us know.
 
 Detailed information about installing UFO2000 can be found in the INSTALL
 file from UFO2000 directory.
+
+===============
+***Important***
+===============
+
+You need data files from the original X-COM: UFO Defense to play UFO2000. 
+The game will also work with data files from the X-COM demo (which can be 
+downloaded), but you will only be able to play on 'City' map and use a 
+limited set of units in this case. Having a full version of X-COM: UFO Defense 
+is highly recommended in order to be able to play in all the original terrains.
+Having only TFTD is not sufficient: you will still need UFO, either the full 
+game or the demo. 
 
 =========
 Main Menu

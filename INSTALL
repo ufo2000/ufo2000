@@ -14,7 +14,8 @@ DOS support, you are welcome.
 In order to successfully run ufo2000, you need a set of data files from 
 'UFO: Enemy Unknown' by Microprose. UFO2000 can also use data files from 
 demo-version of this game, but you will only have a limited set of features 
-available in this case.
+available in this case. If you have TFTD you will be able to use its maps but 
+you will still need UFO (full game or demo) to play UFO2000.
 
 Important: if the game fails to start and suggests you to read this file,
 most likely you have problems with the data files from X-COM (you may have
