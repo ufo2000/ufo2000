@@ -282,6 +282,7 @@ void Units::draw_scenario_window()
 	for (int i = 0; i < 3; i++) {
 		switch(scenario->options[scenario->type][i]->type) {
 			case OPT_NONE:
+			case OPT_HIDDEN:
 			break;
 			
 			case OPT_NUMBER:
@@ -720,7 +721,8 @@ void Units::execute_scenario(Map *map, int map_change_allowed)
 		if (mouse_inside(gmx + gmw / 2 - 200 + 2, SCREEN2H - 71 + i * 10, gmx + gmw / 2 + 200 - 2, SCREEN2H - 62 + i * 10)) {
 			//options
 			switch(scenario->options[scenario->type][i]->type) {                                                    
-				case OPT_NONE:                                                                                      
+				case OPT_NONE:                               
+				case OPT_HIDDEN:                                                       
 				return;                                                                                             
 				break;
 				

@@ -157,7 +157,7 @@ void Scenario::init_hold ()
 			
 	options[SC_HOLD][0] = new Option(OPT_NUMBER, 5, 1, 1, 20, 0, "Turns to hold (match length)", false);
 	options[SC_HOLD][1] = new Option(OPT_SWITCH, 1, "\"Surrounded\" deployment", "Standart deployment", true);
-	options[SC_HOLD][2] = new Option(OPT_NONE);
+	options[SC_HOLD][2] = new Option(OPT_HIDDEN, 0);
 }
 
 void Scenario::init_break ()
@@ -175,7 +175,7 @@ void Scenario::init_break ()
 	briefing_right[SC_BREAK][3] = "edge if \"surrounded\" deployment is selected.     ";
 				
 	options[SC_BREAK][0] = new Option(OPT_SWITCH, 0, "\"Surrounded\" deployment", "Standart deployment", true);
-	options[SC_BREAK][1] = new Option(OPT_NONE);
+	options[SC_BREAK][1] = new Option(OPT_HIDDEN, 0);
 	options[SC_BREAK][2] = new Option(OPT_NONE);
 }              
 
@@ -468,6 +468,8 @@ int Scenario::conditions_hold ()
 {
 	int win = 0, loss = 0;
 	
+	int num_of_men = options[SC_HOLD][2]->value;
+	
 	if (p1->num_of_men() < (num_of_men / 2) + (num_of_men % 2)) {
 	    if (p1 == platoon_local)
 	        loss = 1;
@@ -488,6 +490,8 @@ int Scenario::conditions_hold ()
 int Scenario::conditions_break ()
 {
 	int win = 0, loss = 0;
+	
+	int num_of_men = options[SC_BREAK][1]->value;
 	
 	int escaped = 0;
 	Soldier *sld;                                 
@@ -810,16 +814,20 @@ bool Scenario::platoon_assassin (Platoon *platoon, PanPos pos, char *first_soldi
 
 bool Scenario::platoon_hold (PanPos pos, int num_of_men_sel)
 {
-	if (pos == POS_LEFT)
-	    num_of_men = num_of_men_sel;
+	if (pos == POS_LEFT) {
+	    options[SC_HOLD][2]->value = num_of_men_sel;
+	    net->send_options(SC_HOLD, 2, num_of_men_sel);
+	}
 
 	return true;
 }
 
 bool Scenario::platoon_break (PanPos pos, int num_of_men_sel)
 {
-	if (pos == POS_LEFT)
-	    num_of_men = num_of_men_sel;
+	if (pos == POS_LEFT) {
+	    options[SC_BREAK][1]->value = num_of_men_sel;
+	    net->send_options(SC_BREAK, 1, num_of_men_sel);
+	}
 
 	return true;
 }

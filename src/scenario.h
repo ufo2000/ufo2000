@@ -35,7 +35,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define SC_CAPTURE		7
 #define SCENARIO_NUMBER 8
 
-enum OptionType {OPT_NONE, OPT_SWITCH, OPT_NUMBER};
+enum OptionType {OPT_NONE, OPT_SWITCH, OPT_NUMBER, OPT_HIDDEN};
 
 class Option 
 {
@@ -80,6 +80,18 @@ public:
 		}
 	}
 	
+	Option (OptionType new_type, int new_value){
+		if (new_type == OPT_HIDDEN) {
+			type = OPT_HIDDEN;
+			value = new_value;
+			reset_deploy = false;
+		} else {
+			type = OPT_NONE;
+			value = 0;
+			reset_deploy = false;
+		}
+	}
+	
 	//common
 	OptionType type;
 	int value;
@@ -102,7 +114,6 @@ class Scenario: public persist::BaseObject
 	DECLARE_PERSISTENCE(Scenario)
 private:
 	int             turn_hold[2]; //conditions_control
-	int             num_of_men;   //conditions_hold and conditions_break
 	
 	void			init_deathmatch ();
 	void			init_escape ();
