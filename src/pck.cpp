@@ -174,7 +174,7 @@ int PCK::loadpck(const char *pckfname, int width, int height)
 		tab[m_imgnum] = pcksize;
 		m_bmp.resize(m_imgnum);
 		for (i = 0; i < m_imgnum; i++)
-			m_bmp[i] = pckdat2bmp(&pck[tab[i]], tab[i + 1] - tab[i], width, height, 1);
+			m_bmp[i] = pckdat2bmp(&pck[tab[i]], tab[i + 1] - tab[i], width, height, m_tftd_flag);
 	} else {
     //	16-bit records in .tab file (UFO1)
 		uint16 *tab = (uint16 *)tabdata;
@@ -184,7 +184,7 @@ int PCK::loadpck(const char *pckfname, int width, int height)
 		tab[m_imgnum] = pcksize;
 		m_bmp.resize(m_imgnum);
 		for (i = 0; i < m_imgnum; i++)
-			m_bmp[i] = pckdat2bmp(&pck[tab[i]], tab[i + 1] - tab[i], width, height, 0);
+			m_bmp[i] = pckdat2bmp(&pck[tab[i]], tab[i + 1] - tab[i], width, height, m_tftd_flag);
 	}
 
 	delete [] pck;
