@@ -1176,9 +1176,9 @@ void gameloop()
 	int mouse_leftr = 1, mouse_rightr = 1, select_y = 0;
 	
 	if ((rand() % 2) == 1)
-	FS_MusicPlay(F(cfg_get_combat2_music_file_name()));
+		FS_MusicPlay(F(cfg_get_combat2_music_file_name()));
 	else
-	FS_MusicPlay(F(cfg_get_combat1_music_file_name()));
+		FS_MusicPlay(F(cfg_get_combat1_music_file_name()));
 	
 	clear_keybuf();
 	GAMELOOP = 1;
@@ -1453,8 +1453,13 @@ void gameloop()
 					}
 					break;
 				case KEY_ESC:
-					if (askmenu("EXIT GAME"))
+					if (MODE == MAN) {
+						inventory->close();
+					} else if (MODE == UNIT_INFO || MODE == MAP2D) {
+						MODE = MAP3D;
+					} else if (askmenu("EXIT GAME")) {
 						DONE = 1;
+					}
 					break;
 				default:
 					if (g_console->process_keyboard_input(keycode, scancode))
