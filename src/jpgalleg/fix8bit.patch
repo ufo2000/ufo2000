@@ -1,0 +1,248 @@
+diff -u -r I:/jpgalleg-2.2/decode.c ./decode.c
+--- I:/jpgalleg-2.2/decode.c	Sat Jul  5 16:22:56 2003
++++ ./decode.c	Wed Jan  7 18:01:08 2004
+@@ -18,7 +18,7 @@
+  */
+ 
+ 
+-#include <internal.h>
++#include "internal.h"
+ 
+ 
+ static HUFFMAN_TABLE huffman_ac_table[4];
+@@ -179,7 +179,7 @@
+ /* zigzag_reorder:
+  *  Reorders a vector of 64 coefficients by the zigzag scan.
+  */
+-static INLINE void
++static void
+ zigzag_reorder(short *input, short *output)
+ {
+ 	int i;
+@@ -434,7 +434,7 @@
+ /* get_bits:
+  *  Reads a value from the input stream, given its category.
+  */
+-static INLINE int
++static int
+ get_bits(int category)
+ {
+ 	int i, bit, result = 0;
+@@ -455,7 +455,7 @@
+  *  Fetches bits from the input stream until a valid huffman code is found,
+  *  then returns the value associated with that code.
+  */
+-static INLINE int
++static int
+ huffman_decode(HUFFMAN_TABLE *table)
+ {
+ 	HUFFMAN_ENTRY *entry;
+@@ -857,7 +857,14 @@
+ 	int data, flags = 0;
+ 	int restart_count;
+ 	int depth;
++	PALETTE tmppal;
++	int want_palette = 1;
+ 	
++	if (!pal) {
++		want_palette = 0;
++		pal = tmppal;
++	}
++
+ 	jpgalleg_error = JPG_ERROR_NONE;
+ 	
+ #ifdef JPGALLEG_MMX
+@@ -1198,11 +1205,11 @@
+ 	blit(bmp, temp, 0, 0, 0, 0, jpeg_w, jpeg_h);
+ 	destroy_bitmap(bmp);
+ 	bmp = temp;
+-	
++
+    	generate_332_palette(pal);
+ 	depth = _color_load_depth(32, FALSE);
+ 	if (depth != 32)
+-		bmp = _fixup_loaded_bitmap(bmp, pal, depth);
++		bmp = _fixup_loaded_bitmap(bmp, want_palette ? pal : NULL, depth);
+ 	
+ exit_ok:
+ 	for (i = 0; i < jpeg_components; i++) {
+diff -u -r I:/jpgalleg-2.2/encode.c ./encode.c
+--- I:/jpgalleg-2.2/encode.c	Sat Jul  5 16:22:56 2003
++++ ./encode.c	Wed Jan  7 18:01:15 2004
+@@ -18,7 +18,7 @@
+  */
+ 
+ 
+-#include <internal.h>
++#include "internal.h"
+ 
+ 
+ /* Standard quantization tables for luminance and chrominance. Scaled version
+@@ -236,7 +236,7 @@
+ /* zigzag_reorder:
+  *  Reorders a vector of coefficients by the zigzag scan.
+  */
+-static INLINE void
++static void
+ zigzag_reorder(short *input, short *output)
+ {
+ 	int i;
+@@ -410,7 +410,7 @@
+ /* format_number:
+  *  Computes the category and bits of a given number.
+  */
+-static INLINE void
++static void
+ format_number(int num, int *category, int *bits)
+ {
+ 	int abs_num, mask, cat;
+@@ -431,7 +431,7 @@
+ /* put_bits:
+  *   Writes some bits to the output stream.
+  */
+-static INLINE int
++static int
+ put_bits(int value, int num_bits)
+ {
+ 	int i;
+@@ -447,7 +447,7 @@
+ /* huffman_encode:
+  *  Writes the huffman code of a given value.
+  */
+-static INLINE int
++static int
+ huffman_encode(HUFFMAN_TABLE *table, int value)
+ {
+ 	HUFFMAN_ENTRY *entry;
+diff -u -r I:/jpgalleg-2.2/internal.h ./internal.h
+--- I:/jpgalleg-2.2/internal.h	Sat Jul  5 16:22:56 2003
++++ ./internal.h	Wed Jan  7 18:01:21 2004
+@@ -27,8 +27,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <math.h>
+-#include <jpgalleg.h>
+-#include <mmx.h>
++#include "jpgalleg.h"
+ 
+ 
+ #define FIX_0_298631336		2446
+@@ -143,12 +142,12 @@
+ extern void _jpeg_init_file_io(PACKFILE *);
+ extern void _jpeg_init_memory_io(void *buffer, int size);
+ extern int _jpeg_memory_size();
+-extern INLINE int _jpeg_getc();
+-extern INLINE int _jpeg_putc(int);
+-extern INLINE int _jpeg_putw(int);
+-extern INLINE int _jpeg_getw();
+-extern INLINE int _jpeg_get_bit();
+-extern INLINE int _jpeg_put_bit(int);
++extern int _jpeg_getc();
++extern int _jpeg_putc(int);
++extern int _jpeg_putw(int);
++extern int _jpeg_getw();
++extern int _jpeg_get_bit();
++extern int _jpeg_put_bit(int);
+ extern void _jpeg_flush_bits();
+ extern void _jpeg_open_chunk();
+ extern void _jpeg_close_chunk();
+diff -u -r I:/jpgalleg-2.2/io.c ./io.c
+--- I:/jpgalleg-2.2/io.c	Sat Jul  5 16:22:56 2003
++++ ./io.c	Wed Jan  7 18:01:33 2004
+@@ -18,7 +18,7 @@
+  */
+ 
+ 
+-#include <internal.h>
++#include "internal.h"
+ 
+ 
+ static PACKFILE *f = NULL;
+@@ -138,7 +138,7 @@
+ /* _jpeg_getc:
+  *  Reads a byte from the input stream.
+  */
+-INLINE int
++int
+ _jpeg_getc()
+ {
+ 	bytes_read++;
+@@ -150,7 +150,7 @@
+ /* _jpeg_putc:
+  *  Writes a byte to the output stream.
+  */
+-INLINE int
++int
+ _jpeg_putc(int c)
+ {
+ 	return putc_func(c);
+@@ -160,7 +160,7 @@
+ /* _jpeg_getw:
+  *  Reads a word from the input stream.
+  */
+-INLINE int
++int
+ _jpeg_getw()
+ {
+ 	return (_jpeg_getc() << 8) | _jpeg_getc();
+@@ -170,7 +170,7 @@
+ /* _jpeg_putw:
+  *  Writes a word to the output stream.
+  */
+-INLINE int
++int
+ _jpeg_putw(int w)
+ {
+ 	int result;
+@@ -184,7 +184,7 @@
+ /* _jpeg_get_bit:
+  *  Reads a bit from the input stream.
+  */
+-INLINE int
++int
+ _jpeg_get_bit()
+ {
+ 	current_bit--;
+@@ -206,7 +206,7 @@
+ /* _jpeg_put_bit:
+  *  Writes a bit to the output stream.
+  */
+-INLINE int
++int
+ _jpeg_put_bit(int bit)
+ {
+ 	current_byte |= (bit << current_bit);
+diff -u -r I:/jpgalleg-2.2/jpgalleg.c ./jpgalleg.c
+--- I:/jpgalleg-2.2/jpgalleg.c	Sat Jul  5 16:22:56 2003
++++ ./jpgalleg.c	Wed Jan  7 17:08:39 2004
+@@ -19,7 +19,7 @@
+  */
+ 
+ 
+-#include <internal.h>
++#include "internal.h"
+ 
+ 
+ const unsigned char _jpeg_zigzag_scan[64] = {
+@@ -91,10 +91,6 @@
+ {
+ 	PACKFILE *f;
+ 	BITMAP *bmp;
+-	PALETTE pal;
+-	
+-	if (!palette)
+-		palette = pal;
+ 	
+ 	f = pack_fopen(filename, F_READ);
+ 	if (!f)
+@@ -115,10 +111,6 @@
+ load_memory_jpg(void *buffer, int size, RGB *palette)
+ {
+ 	BITMAP *bmp;
+-	PALETTE pal;
+-	
+-	if (!palette)
+-		palette = pal;
+ 	
+ 	_jpeg_init_memory_io(buffer, size);
+ 	

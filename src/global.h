@@ -44,12 +44,13 @@ inline long filelength(int handle) { struct stat s; fstat(handle, &s); return s.
 #ifdef __MINGW32__
 #include <winalleg.h>
 #endif
+
 #include "jpgalleg/jpgalleg.h"
 
 extern "C" {
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
 }
 
 #include "persist.h"

@@ -51,9 +51,9 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp dirty.cpp           \
        multiplay.cpp netsock.cpp packet.cpp pck.cpp place.cpp         \
        platoon.cpp soldier.cpp sound.cpp spk.cpp terrapck.cpp         \
        units.cpp video.cpp wind.cpp crc32.cpp persist.cpp             \
-       jpeg.cpp minimap.cpp about.cpp stats.cpp                       \
-       server_protocol.cpp server_transport.cpp server_gui.cpp        \
-       server_config.cpp
+       jpgalleg.c decode.c encode.c io.c minimap.cpp about.cpp        \
+       stats.cpp server_protocol.cpp server_transport.cpp             \
+       server_gui.cpp server_config.cpp
 
 SRCS_SERVER = server_main.cpp server_protocol.cpp \
        server_transport.cpp server_config.cpp
@@ -80,8 +80,11 @@ else
 	LIBS += -lexpat -llua -llualib -lNL ${shell allegro-config --libs}
 endif
 
-OBJS = $(addprefix $(OBJDIR)/,$(SRCS:.cpp=.o))
-DEPS = $(addprefix $(OBJDIR)/,$(SRCS:.cpp=.d))
+OBJS := $(SRCS:.cpp=.o)
+OBJS := $(OBJS:.c=.o)
+OBJS := $(addprefix $(OBJDIR)/,$(OBJS))
+DEPS = $(OBJS:.o=.d)
+
 OBJS_SERVER = $(addprefix $(OBJDIR)/,$(SRCS_SERVER:.cpp=.o))
 DEPS_SERVER = $(addprefix $(OBJDIR)/,$(SRCS_SERVER:.cpp=.d))
 
@@ -103,6 +106,9 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/%.o: %.cpp
+	$(CC) -MMD $(CFLAGS) -c $< -o $@
+
+$(OBJDIR)/%.o: %.c
 	$(CC) -MMD $(CFLAGS) -c $< -o $@
 
 $(NAME): $(OBJS)

@@ -4,7 +4,7 @@
 
 inherit games
 
-DESCRIPTION="free multiplayer remake of X-COM (UFO: Enemy Unknown)"
+DESCRIPTION="free multiplayer remake of X-COM: UFO Defense"
 HOMEPAGE="http://ufo2000.sourceforge.net/"
 SRC_URI="http://ufo2000.lxnt.info/files/${P}-src.tar.bz2
          ftp://ftp.microprose.com/pub/mps-online/x-com/xcomdemo.zip
@@ -44,18 +44,23 @@ src_install() {
 	cp -R XCOMDEMO XCOM TFTDDEMO TFTD ${D}/${GAMES_DATADIR}/${PN}
 	echo "You can copy data files from X-COM here" > ${D}/${GAMES_DATADIR}/${PN}/XCOM/readme.txt
 	echo "You can copy data files from TFTD here" > ${D}/${GAMES_DATADIR}/${PN}/TFTD/readme.txt
-	cp -R arts newmaps init-scripts ${D}/${GAMES_DATADIR}/${PN}
-	cp ufo2000.dat keyboard.dat geodata.dat soldier.dat armoury.set items.dat ufo2000.ini soundmap.xml ${D}/${GAMES_DATADIR}/${PN}
-	dodoc readme* INSTALL AUTHORS COPYING ChangeLog techinfo.txt
+	cp -R arts newmaps newunits init-scripts ${D}/${GAMES_DATADIR}/${PN}
+	cp *.dat armoury.set ufo2000.ini soundmap.xml ${D}/${GAMES_DATADIR}/${PN}
+	dodoc *.txt INSTALL AUTHORS COPYING ChangeLog
+	dohtml *.html
 	prepgamesdirs
 }
 
 pkg_postinst() {
 	games_pkg_postinst
-	einfo "If you have a full version of X-COM, you can copy all the files"
-	einfo "from the directory where you have it installed into"
+	einfo "Now you have official XCOM and TFTD demos installed in:"
+	einfo "   ${GAMES_DATADIR}/${PN}/XCOMDEMO"
+	einfo "   ${GAMES_DATADIR}/${PN}/TFTDDEMO"
+	einfo "You can play them by rebooting in DOS or using DOS emulators."
+	echo
+	einfo "UFO2000 will use data files from these demos. But they only allow"
+	einfo "you to use a limited set of terrain types and unit skins in game."
+	einfo "If you have a full version of 'XCOM: UFO Defense', you can get"
+	einfo "more features by copying all the files from installed XCOM to"
 	einfo "   ${GAMES_DATADIR}/${PN}/XCOM"
-	echo
-	einfo "This will allow you to use more terrain types and units."
-	echo
 }
