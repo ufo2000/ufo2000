@@ -264,7 +264,7 @@ end
 for name, data in tournament_table do
 	-- calculate score
 	data.score = data.win_count * 10 + (data.games_finished - data.win_count) * 3 + 
-		(data.time_online - data.battle_time) / (30 * 60 * data.games_finished)
+		math.sqrt(data.time_online - data.battle_time) / 20
 	if data.games_finished > 0 then table.insert(tmp, {name, data}) end
 end
 table.sort(tmp, function(a, b) return a[2].score > b[2].score end)

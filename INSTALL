@@ -77,6 +77,13 @@ available in this case.
    utility and place extracted files to ufo2000 directory manually (into
    'XCOMDEMO' subdirectory, which is initially empty).
 
+5) X-COM: Terror From the Deep data files are installed in a similar 
+   way: TFTD subdirectory is used for a full version, TFTDDEMO 
+   subdierectory is used for a demo version of X-COM: Terror From the Deep.
+   This demo version can be downloaded here: 
+
+     ftp://ftp.microprose.com/pub/mps-online/demos/terror.zip
+
 --- Linux/Unix ---
 
 1) Check if you have all the needed libraries installed and install them
@@ -118,14 +125,23 @@ available in this case.
    ufo2000 to work inside of it. Extract them and copy into 'XCOMDEMO' 
    subdirectory of ufo2000.
 
+5) X-COM: Terror From the Deep data files are installed in a similar 
+   way: TFTD subdirectory is used for a full version, TFTDDEMO 
+   subdierectory is used for a demo version of X-COM: Terror From the Deep.
+   This demo version can be downloaded here: 
+
+     ftp://ftp.microprose.com/pub/mps-online/demos/terror.zip
+
 --- Gentoo Linux ---
 
 There is ufo2000 ebuild available which makes installation of the game 
 extremely simple. It automatically downloads XCOM and TFTD demos, compiles
 the game and installs it into system. The game is immediately ready to run
 after install. You may optionally copy data files from a full version of
-X-COM: UFO Defense into '/usr/share/games/ufo2000/XCOM'. This will allow 
-you to play on maps with various terrain types and use more different units.
+X-COM: UFO Defense into '/usr/share/games/ufo2000/XCOM' and data files
+from X-COM: Terror from the Deep to '/usr/share/games/ufo2000/TFTD' 
+respectively. This will allow you to play on maps with various terrain 
+types and use more different units.
 
 ------------------------------------------------------------------------------
 -- 3. Getting the latest unstable sources snapshot (for developers only)
