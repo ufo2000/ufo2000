@@ -25,6 +25,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "video.h"
 #include "pck.h"
 
+#ifdef HAVE_PNG
+#define IMG_FILE_EXT ".png"
+#else
+#define IMG_FILE_EXT ".tga"
+#endif
+
 #undef map
 
 //! We cache loaded pck files here
@@ -74,14 +80,18 @@ PCK::PCK(const char *pckfname, int tftd_flag, int width, int height)
 	m_height = height;
 	loadpck(pckfname, width, height);
     if (FLAGS & F_CONVERT_XCOM_DATA) {
-		std::string filename = get_filename(pckfname);
+        std::string filename;
+        char *p = get_filename(pckfname);
+        while (*p != '.' && *p != 0) {
+            filename += *p++;
+        }
 		std::string dir = F("$(home)/converted_xcom_data");
 #ifdef LINUX
         mkdir(dir.c_str(), 0755);
 #else
         mkdir(dir.c_str());
 #endif
-        std::string bmp_name = dir + "/" + filename + ".bmp";
+        std::string bmp_name = dir + "/" + filename;
         save_as_bmp(bmp_name.c_str());
     }
 }
@@ -229,14 +239,38 @@ void PCK::drawpck(int num, BITMAP *dest, int y)
 void PCK::save_as_bmp(const char *fname)
 {
 	int rows = ((m_imgnum + SIZE - 1) / SIZE);
-	BITMAP *bmp = create_bitmap(m_width * SIZE + SIZE + 1, m_height * rows + rows + 1);
-	clear_to_color(bmp, xcom_color(0));
-    for (int x = 0; x < bmp->w; x += m_width + 1) vline(bmp, x, 0, bmp->h - 1, makecol(0, 0, 0));
-    for (int y = 0; y < bmp->h; y += m_height + 1) hline(bmp, 0, y, bmp->w - 1, makecol(0, 0, 0));
+	BITMAP *bmp = create_bitmap_ex(32, m_width * SIZE + SIZE - 1, m_height * rows + rows - 1);
+	clear_to_color(bmp, makeacol32(0, 0, 0, 0));
+	
+    for (int x = m_width; x < bmp->w; x += m_width + 1) vline(bmp, x, 0, bmp->h - 1, makeacol32(255, 255, 255, 255));
+    for (int y = m_height; y < bmp->h; y += m_height + 1) hline(bmp, 0, y, bmp->w - 1, makeacol32(255, 255, 255, 255));
 
-	for (int i = 0; i < m_imgnum; i++)
-		draw_sprite(bmp, m_bmp[i], (i % SIZE) * (m_width + 1) + 1, (i / SIZE) * (m_height + 1) + 1);
+	for (int i = 0; i < m_imgnum; i++) {
+        
+		for (int x = 0; x < m_width; x++)
+			for (int y = 0; y < m_height; y++) {
+				int c = getpixel(m_bmp[i], x, y);
+				if (c != bitmap_mask_color(m_bmp[i]))
+					putpixel(bmp, 
+						(i % SIZE) * (m_width + 1) + x,
+						(i / SIZE) * (m_height + 1) + y,
+						makeacol32(getr(c), getg(c), getb(c), 255));
+			}
+        
+#ifdef LINUX
+        mkdir(fname, 0755);
+#else
+        mkdir(fname.c_str());
+#endif
+        char suffix[64];
+        sprintf(suffix, "%dx%d-%03d" IMG_FILE_EXT, m_width, m_height, i + 1);
+        std::string smallfname = std::string(fname) + "/" + suffix;
+        BITMAP *tmp = create_bitmap_ex(32, m_width, m_height);
+        blit(bmp, tmp, (i % SIZE) * (m_width + 1), (i / SIZE) * (m_height + 1), 0, 0, m_width, m_height);
+    	save_bitmap(smallfname.c_str(), tmp, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
+        destroy_bitmap(tmp);
+    }
 
-	save_bitmap(fname, bmp, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
+	save_bitmap((std::string(fname) + IMG_FILE_EXT).c_str(), bmp, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
 	destroy_bitmap(bmp);
 }
