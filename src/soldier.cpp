@@ -944,6 +944,7 @@ int Soldier::move(int ISLOCAL)
         }
     }
 
+    // Vertical movements
     if (m_state == MARCH) {
 
         if(move_dir > DIR_NULL) {
@@ -1158,11 +1159,6 @@ int Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
 
 void Soldier::wayto(int dest_lev, int dest_col, int dest_row)
 {
-    //  !!! Hack to fix synchronization problems with stairs
-    //  Should make normal pathfinding code to find paths across stairs
-    //  Pathfinding version 1
-    //  dest_lev = z;
-
     if ((dest_col != x) || (dest_row != y) || (dest_lev != z)) {
 
 
