@@ -246,7 +246,7 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen)
 			_z--;
 
 		int sx = x + 16 * _x + 16 * _y + 16;
-		int sy = y - (_x + 1) * 8 + 8 * _y - 8 - _z * 24;
+		int sy = y - (_x + 1) * 8 + 8 * _y - 8 - _z * CELL_SCR_Z;
 
 		if ((sx > -32) && (sx < SCREEN2W) && (sy >= -34) && (sy < SCREEN2H)) {
 			//circlefill(screen2, sx, sy, 1, 1);

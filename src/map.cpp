@@ -280,8 +280,8 @@ void Map::draw()
 	for (int lev = l1; lev <= l2; lev++) {
 		for (int row = r1; row <= r2; row++) {
 			for (int col = c2; col >= c1; col--) {
-				sx = x + 16 * col + 16 * row;
-				sy = y - (col) * 8 + 8 * row - 26 - lev * 24 - 1;
+				sx = x + CELL_SCR_X * col + CELL_SCR_X * row;
+				sy = y - (col) * CELL_SCR_Y + CELL_SCR_Y * row - 26 - lev * CELL_SCR_Z - 1;
 
 				if ((sx > -32) && (sx < SCREEN2W) && (sy >= -34) && (sy < SCREEN2H)) {
 
@@ -416,10 +416,10 @@ void Map::smoker()
 
 void Map::set_sel(int mx, int my)
 {
-	my += sel_lev * 24;      //!!
+	my += sel_lev * CELL_SCR_Z;      //!!
 	sel_col = mx - x - 2 * (my - 3) + 2 * y - 16 + 2 * Cy - Cx ;
 	sel_row = (my - 3) - y + 8 - Cy + sel_col / 4;
-	sel_row >>= 3; sel_col >>= 5;
+	sel_row /= CELL_SCR_Y; sel_col /= CELL_SCR_X * 2; // 32;
 
 	if (sel_col < 0) sel_col = 0;
 	if (sel_row < 0) sel_row = 0;
@@ -431,20 +431,13 @@ void Map::set_sel(int mx, int my)
 
 void Map::move(int ofs_x, int ofs_y)
 {
-	//int sx = x + 16*sel_col + 16*sel_row;
-	//int sy = y - (sel_col)*8 + 8*sel_row - 26;
-	//text_mode(0); textprintf(screen, font, 1, 1, 1, "x=%d y=%d", sx, sy);
-	//if ( (sx>0)&&(sx<320)&&(sy>=-1)&&(sy<166) ) { //216
 	int sx = x, sy = y;
 	x += ofs_x;
 	y += ofs_y;
-	//}
-	//text_mode(0); textprintf(screen, font, 1, 1, 1, "x=%d y=%d", x, y);
 
 	int mx = SCREEN2W / 2;
 	int my = SCREEN2H / 2;
 
-	//my += sel_lev*24; //!!
 	int center_col = mx - x - 2 * (my - 3) + 2 * y - 16 + 2 * Cy - Cx ;
 	int center_row = (my - 3) - y + 8 - Cy + center_col / 4;
 	center_row >>= 3; center_col >>= 5;
@@ -657,8 +650,8 @@ void Map::unhide()
 void Map::center(int lev, int col, int row)
 {
 	sel_lev = lev;
-	x = SCREEN2W / 2 - 16 - 16 * col - 16 * row;     	  //320	 320/2-20
-	y = SCREEN2H / 2 + 8 * (col + 1) - 8 * row + 24 * lev;     	  //200	 200/2-8
+	x = SCREEN2W / 2 - CELL_SCR_X - CELL_SCR_X * col - CELL_SCR_X * row;     	  //320	 320/2-20
+	y = SCREEN2H / 2 + CELL_SCR_Y * (col + 1) - CELL_SCR_Y * row + CELL_SCR_Z * lev;     	  //200	 200/2-8
 }
 
 int Map::stopLOS_level(int dx, int dy, int lev, int col, int row)

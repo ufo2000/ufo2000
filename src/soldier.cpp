@@ -491,13 +491,10 @@ void Soldier::draw()
 	int head_frame = 32;
 	if (md.fFemale) head_frame = 16 * 16 + 11;
 
-	//int gx = map->x + 16*x + 16*y - MAPX;
-	//int gy = map->y - (x+1)*8 + 8*y + MAPY;
-
-	int gx = map->x + 16 * x + 16 * y;
-	int gy = map->y - (x + 1) * 8 + 8 * y - 18 - z * 24;
+	int gx = map->x + CELL_SCR_X * x + CELL_SCR_X * y;
+	int gy = map->y - (x + 1) * CELL_SCR_Y + CELL_SCR_Y * y - 18 - z * CELL_SCR_Z;
 	if ((z > 0) && map->isStairs(z - 1, x, y)) {
-		gy += 24 + map->mcd(z - 1, x, y, 3)->T_Level;
+		gy += CELL_SCR_Z + map->mcd(z - 1, x, y, 3)->T_Level;
 	} else {
 		gy += map->mcd(z, x, y, 0)->T_Level;
 		gy += map->mcd(z, x, y, 3)->T_Level;
@@ -505,11 +502,7 @@ void Soldier::draw()
 
 
 	if (state == DIE) {
-		//m_pck[skin_type]->showpck(264+phase/3, map->x + 16*x + 16*y - MAPX,
-		//                                     map->y - (x+1)*8 + 8*y + MAPY);
 		m_pck[skin_type]->showpck(264 + phase / 3, gx, gy);
-		//                        map->y - (x+1)*8 + 8*y - 26 - z * 24  -1);
-		//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!^^^^^
 		return ;
 	}
 
@@ -704,8 +697,8 @@ void Soldier::draw_unibord(int gx, int gy)
 void Soldier::draw_selector(int select_y)
 {
 	if (!ismoving()) {
-		int sx = map->x + 16 * x + 16 * y + 12;
-		int sy = map->y - (x + 1) * 8 + 8 * y - 29 - 24 * z;
+		int sx = map->x + CELL_SCR_X * x + CELL_SCR_X * y + 12;
+		int sy = map->y - (x + 1) * CELL_SCR_Y + CELL_SCR_Y * y - 29 - CELL_SCR_Z * z;
 		draw_sprite(screen2, selector, sx, sy - select_y);
 	}
 }
@@ -713,8 +706,8 @@ void Soldier::draw_selector(int select_y)
 void Soldier::draw_blue_selector()
 {
 	if ((FLAGS & F_SELECTENEMY) && map->visible(z, x, y)) {
-		int sx = map->x + 16 * x + 16 * y + 12;
-		int sy = map->y - (x + 1) * 8 + 8 * y - 29 - 24 * z;
+		int sx = map->x + CELL_SCR_X * x + CELL_SCR_X * y + 12;
+		int sy = map->y - (x + 1) * CELL_SCR_Y + CELL_SCR_Y * y - 29 - CELL_SCR_Z * z;
 
 		//	Draw blue triangle with its point at sx, sy and height 5
 		sx += 3; sy += 10; int j;
@@ -745,31 +738,11 @@ void Soldier::draw_enemy_seen(int select_y)
 
 		num[0] = i + '0';
 		textout(screen2, font, num, x1 + 5, y1 + 4, xcom1_color(16));
-		/*
-			//	Draw selectors and numbers above seen enemies
-				if (FLAGS & F_SELECTENEMY)
-				{
-					int sx = map->x + 16 * enemy_x[i] + 16 * enemy_y[i] + 12;
-					int sy = map->y - (enemy_x[i] + 1) * 8 + 8 * enemy_y[i] - 29 - 24 * enemy_z[i];
 
-				//	Draw a number over enemy head
-					if (i < 10)	textout(screen2, font, num, sx, sy - 2, 1);
-
-				//	Draw blue triangle with its point at sx, sy and height 5
-					sx += 3; sy += 10; int j;
-					for (j = 0; j < 5; j++)
-					{
-						line(screen2, sx - j, sy - j, sx + j, sy - j, 256 - 48 + 3);
-						putpixel(screen2, sx - j, sy - j, 15);
-						putpixel(screen2, sx + j, sy - j, 15);
-					}
-					line(screen2, sx - j, sy - j, sx + j, sy - j, 15);
-				}
-		*/
 		//	Draw numbers above seen enemies
 		if (FLAGS & F_SELECTENEMY) {
-			int sx = map->x + 16 * enemy_x[i] + 16 * enemy_y[i] + 12;
-			int sy = map->y - (enemy_x[i] + 1) * 8 + 8 * enemy_y[i] - 29 - 24 * enemy_z[i];
+			int sx = map->x + CELL_SCR_X * enemy_x[i] + CELL_SCR_X * enemy_y[i] + 12;
+			int sy = map->y - (enemy_x[i] + 1) * CELL_SCR_Y + CELL_SCR_Y * enemy_y[i] - 29 - CELL_SCR_Z * enemy_z[i];
 
 			//	Draw a number over enemy head
 			if (i < 10)	textout(screen2, font, num, sx, sy - 2, xcom1_color(1));
