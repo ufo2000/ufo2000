@@ -1,34 +1,48 @@
 local function X(a) return tonumber(a, 16) end
 
+------------------------------------------------------------------------------
+-- Table which contains the list of the files needed by the game (that means 
+-- they must at least exist and at most should pass crc check)
+--
+-- The fields of this table look like this:
+-- [a prefixed name of the] = { additional information about the file }
+--
+-- Additional information:
+--    Crc32    - the file is changed by the game (Note: zero value - a special 
+--               case, only file existence is checked but not crc32)
+--    Origin   - The file can be modified by the game and is initially initialized 
+--               from the file specified by 'Origin' value
+--    Fallback - A special field that can specify replacement file that is 
+--               used if the original file is bad or missing
+--
+-- Note: when file information does not contain Crc32 field, it is considered 
+--       modifiable and write permission availability is checked for it
+------------------------------------------------------------------------------
+
 FilesTable = {
-	["$(ufo2000)/ufo2000.dat"]  = { Crc32 = X("0x8EA4C104") },
-	["$(ufo2000)/keyboard.dat"] = { Crc32 = X("0xC796755E") },
-	["$(ufo2000)/soundmap.xml"] = { Crc32 = X("0x00000000") },
+	["$(ufo2000)/ufo2000.dat"]        = { Crc32 = X("0x8EA4C104") },
+	["$(ufo2000)/keyboard.dat"]       = { Crc32 = X("0xC796755E") },
+	["$(ufo2000)/soundmap.xml"]       = { Crc32 = X("0x00000000") },
 
-	["$(home)/geodata.dat"] = {
-		Origin = "$(ufo2000)/geodata.dat" },
-	["$(home)/soldier.dat"] = {
-		Origin = "$(ufo2000)/soldier.dat" },
-	["$(home)/armoury.set"] = {
-		Origin = "$(ufo2000)/armoury.set" },
-	["$(home)/items.dat"]   = {
-		Origin = "$(ufo2000)/items.dat" },
-	["$(home)/ufo2000.ini"] = {
-		Origin = "$(ufo2000)/ufo2000.ini" },
-	["$(home)/init-scripts.log"] = { },
-	["$(home)/ufo2000.log"] = { },
-	["$(home)/ufo2000.tmp"] = { },
-	["$(home)/ufo2000.sav"] = { },
-	["$(home)/cur_map.dat"] = { },
-	["$(home)/cur_p1.dat"]  = { },
-	["$(home)/cur_p2.dat"]  = { },
+	["$(home)/geodata.dat"]           = { Origin = "$(ufo2000)/geodata.dat" },
+	["$(home)/soldier.dat"]           = { Origin = "$(ufo2000)/soldier.dat" },
+	["$(home)/armoury.set"]           = { Origin = "$(ufo2000)/armoury.set" },
+	["$(home)/items.dat"]             = { Origin = "$(ufo2000)/items.dat" },
+	["$(home)/ufo2000.ini"]           = { Origin = "$(ufo2000)/ufo2000.ini" },
+	["$(home)/init-scripts.log"]      = { },
+	["$(home)/ufo2000.log"]           = { },
+	["$(home)/ufo2000.tmp"]           = { },
+	["$(home)/ufo2000.sav"]           = { },
+	["$(home)/cur_map.dat"]           = { },
+	["$(home)/cur_p1.dat"]            = { },
+	["$(home)/cur_p2.dat"]            = { },
 
-	["$(xcom)/geodata/biglets.dat"] = { Crc32 = X("0xEBC00F20") },
-	["$(xcom)/geodata/smallset.dat"] = { Crc32 = X("0x0402BDDF") },
+	["$(xcom)/geodata/biglets.dat"]   = { Crc32 = X("0x00000000") },
+	["$(xcom)/geodata/smallset.dat"]  = { Crc32 = X("0x00000000") },
 
 	["$(ufo2000)/arts/text_back.jpg"] = { Crc32 = X("0x00000000") },
-	["$(ufo2000)/arts/menu.jpg"] = { Crc32 = X("0x00000000") },
-	["$(ufo2000)/arts/empty.spk"] = { Crc32 = X("0x00000000") },
+	["$(ufo2000)/arts/menu.jpg"]      = { Crc32 = X("0x00000000") },
+	["$(ufo2000)/arts/empty.spk"]     = { Crc32 = X("0x00000000") },
 
 	["$(xcom)/ufointro/pict2.lbm"] = { Crc32 = X("0x783E3C9D"),
 		Fallback = "$(ufo2000)/arts/menu.jpg" },
@@ -65,25 +79,25 @@ FilesTable = {
 	["$(xcom)/ufograph/man_0m3.spk"] = { Crc32 = X("0xBC57FC2E"),
 		Fallback = "$(xcom)/ufograph/man_1m3.spk" },
 
-	["$(xcom)/ufograph/man_1f0.spk"] = { Crc32 = X("0xF87390C0") },
-	["$(xcom)/ufograph/man_1f1.spk"] = { Crc32 = X("0x02CB471C") },
-	["$(xcom)/ufograph/man_1f2.spk"] = { Crc32 = X("0x7E91A5E0") },
-	["$(xcom)/ufograph/man_1f3.spk"] = { Crc32 = X("0xF050BD04") },
-	["$(xcom)/ufograph/man_1m0.spk"] = { Crc32 = X("0xD919B6A5") },
-	["$(xcom)/ufograph/man_1m1.spk"] = { Crc32 = X("0x3AD7592B") },
-	["$(xcom)/ufograph/man_1m2.spk"] = { Crc32 = X("0x2A0840E1") },
-	["$(xcom)/ufograph/man_1m3.spk"] = { Crc32 = X("0x47D7ACCB") },
+	["$(xcom)/ufograph/man_1f0.spk"]  = { Crc32 = X("0xF87390C0") },
+	["$(xcom)/ufograph/man_1f1.spk"]  = { Crc32 = X("0x02CB471C") },
+	["$(xcom)/ufograph/man_1f2.spk"]  = { Crc32 = X("0x7E91A5E0") },
+	["$(xcom)/ufograph/man_1f3.spk"]  = { Crc32 = X("0xF050BD04") },
+	["$(xcom)/ufograph/man_1m0.spk"]  = { Crc32 = X("0xD919B6A5") },
+	["$(xcom)/ufograph/man_1m1.spk"]  = { Crc32 = X("0x3AD7592B") },
+	["$(xcom)/ufograph/man_1m2.spk"]  = { Crc32 = X("0x2A0840E1") },
+	["$(xcom)/ufograph/man_1m3.spk"]  = { Crc32 = X("0x47D7ACCB") },
 
-	["$(xcom)/ufograph/man_2.spk"]   = { Crc32 = X("0x890C3076") },
-	["$(xcom)/ufograph/man_3.spk"]   = { Crc32 = X("0xA8BB9C04") },
+	["$(xcom)/ufograph/man_2.spk"]    = { Crc32 = X("0x890C3076") },
+	["$(xcom)/ufograph/man_3.spk"]    = { Crc32 = X("0xA8BB9C04") },
 
-	["$(xcom)/ufograph/unibord.pck"] = { Crc32 = X("0x94576591") },
+	["$(xcom)/ufograph/unibord.pck"]  = { Crc32 = X("0x94576591") },
 	["$(xcom)/ufograph/scanbord.pck"] = { Crc32 = X("0xE3F32D10") },
 
-	["$(xcom)/units/handob.pck"] = { Crc32 = X("0x3EE61F8E") },
-	["$(xcom)/units/handob.tab"] = { Crc32 = X("0x6EFF9E62") },
-	["$(xcom)/units/floorob.pck"] = { Crc32 = X("0xDF863538") },
-	["$(xcom)/units/floorob.tab"] = { Crc32 = X("0x833AC878") },
+	["$(xcom)/units/handob.pck"]      = { Crc32 = X("0x3EE61F8E") },
+	["$(xcom)/units/handob.tab"]      = { Crc32 = X("0x6EFF9E62") },
+	["$(xcom)/units/floorob.pck"]     = { Crc32 = X("0xDF863538") },
+	["$(xcom)/units/floorob.tab"]     = { Crc32 = X("0x833AC878") },
 
 	["$(xcom)/units/xcom_0.pck"] = { Crc32 = X("0x8681EF39"), 
 		Fallback = "$(xcom)/units/xcom_1.pck" },
@@ -104,38 +118,29 @@ FilesTable = {
 	["$(xcom)/units/sectoid.tab"] = { Crc32 = X("0x6831E47A"), 
 		Fallback = "$(xcom)/units/xcom_1.tab" },
 
-	["$(xcom)/ufograph/cursor.pck"] = { Crc32 = X("0x69DE75D6") },
-	["$(xcom)/ufograph/cursor.tab"] = { Crc32 = X("0xF5FCB568") },
-	["$(xcom)/ufograph/hit.pck"] = { Crc32 = X("0x29C07717") },
-	["$(xcom)/ufograph/hit.tab"] = { Crc32 = X("0x4FF3EE8F") },
-	["$(xcom)/ufograph/smoke.pck"] = { Crc32 = X("0x65CB2E8E") },
-	["$(xcom)/ufograph/smoke.tab"] = { Crc32 = X("0xEE8E1054") },
-	["$(xcom)/ufograph/icons.pck"] = { Crc32 = X("0xD407EF95") },
+	["$(xcom)/ufograph/cursor.pck"]  = { Crc32 = X("0x69DE75D6") },
+	["$(xcom)/ufograph/cursor.tab"]  = { Crc32 = X("0xF5FCB568") },
+	["$(xcom)/ufograph/hit.pck"]     = { Crc32 = X("0x29C07717") },
+	["$(xcom)/ufograph/hit.tab"]     = { Crc32 = X("0x4FF3EE8F") },
+	["$(xcom)/ufograph/smoke.pck"]   = { Crc32 = X("0x65CB2E8E") },
+	["$(xcom)/ufograph/smoke.tab"]   = { Crc32 = X("0xEE8E1054") },
+	["$(xcom)/ufograph/icons.pck"]   = { Crc32 = X("0xD407EF95") },
 
 	["$(xcom)/geodata/loftemps.dat"] = { Crc32 = X("0x7B354479") },
-	["$(xcom)/geodata/obdata.dat"] = { Crc32 = X("0x040A286A") },
-	["$(xcom)/geodata/scang.dat"] = { Crc32 = X("0x26C1BD1B") },
+	["$(xcom)/geodata/obdata.dat"]   = { Crc32 = X("0x040A286A") },
+	["$(xcom)/geodata/scang.dat"]    = { Crc32 = X("0x26C1BD1B") },
 
-	["$(xcom)/units/bigobs.pck"] = { Crc32 = X("0xBB5FB17D") },
-	["$(xcom)/units/bigobs.tab"] = { Crc32 = X("0x422CC4A5") },
+	["$(xcom)/units/bigobs.pck"]     = { Crc32 = X("0xBB5FB17D") },
+	["$(xcom)/units/bigobs.tab"]     = { Crc32 = X("0x422CC4A5") },
 
-	["$(xcom)/ufograph/tac00.scr"] = { Crc32 = X("0x226E61A0") },
-	["$(xcom)/ufograph/tac01.scr"] = { Crc32 = X("0xBBB1E67F") },
-
-	["$(xcom)/sound/gmstory.mid"]  = { Crc32 = X("0x00000000"), Fallback = "" },
-	["$(xcom)/sound/gmenbase.mid"] = { Crc32 = X("0x00000000"), Fallback = "" },
-	["$(xcom)/sound/gmdefend.mid"] = { Crc32 = X("0x00000000"), Fallback = "" },
-	["$(xcom)/sound/gmtactic.mid"] = { Crc32 = X("0x00000000"), Fallback = "" },
-	["$(xcom)/sound/gmwin.mid"]    = { Crc32 = X("0x00000000"), Fallback = "" },
-	["$(xcom)/sound/gmlose.mid"]   = { Crc32 = X("0x00000000"), Fallback = "" },
-	["$(xcom)/sound/gmgeo1.mid"]   = { Crc32 = X("0x00000000"), Fallback = "" },
-	["$(xcom)/sound/gmgeo2.mid"]   = { Crc32 = X("0x00000000"), Fallback = "" },
-	["$(xcom)/sound/sound1.cat"]   = { Crc32 = X("0x00000000"), Fallback = "" },
-	["$(xcom)/sound/sound2.cat"]   = { Crc32 = X("0x00000000"), Fallback = "" },
-	["$(xcom)/sound/sample.cat"]   = { Crc32 = X("0x00000000"), Fallback = "" },
-	["$(xcom)/sound/sample2.cat"]  = { Crc32 = X("0x00000000"), Fallback = "" },
-	["$(xcom)/sound/sample3.cat"]  = { Crc32 = X("0x00000000"), Fallback = "" },
+	["$(xcom)/ufograph/tac00.scr"]   = { Crc32 = X("0x226E61A0") },
+	["$(xcom)/ufograph/tac01.scr"]   = { Crc32 = X("0xBBB1E67F") },
 }
+
+------------------------------------------------------------------------------
+-- Supplementary local function that performs the most of the work needed 
+-- by CheckDataFiles function
+------------------------------------------------------------------------------
 
 local function CheckSingleDataFile(name, info)
 	if info.Crc32 then
@@ -149,7 +154,7 @@ local function CheckSingleDataFile(name, info)
 			return string.format("CheckDataFiles: crc32 error for file '%s'", name)
 		end
 	else
-	-- readwrite data file
+	-- read/write data file
 		local fh = io.open(name, "r+b")
 		if fh == nil then
 			fh = io.open(name, "wb")
@@ -161,8 +166,8 @@ local function CheckSingleDataFile(name, info)
 				local data = ReadFile(LocateFile(info.Origin))
 				if data == nil then
 					return string.format(
-						"CheckDataFiles: can't get original file '%s' for initialization", 
-						info.Origin) 
+						"CheckDataFiles: can't get original file '%s' for initialization of '%s'", 
+						info.Origin, name) 
 				end
 				fh:write(data)
 				fh:close()
@@ -177,28 +182,29 @@ local function CheckSingleDataFile(name, info)
 	return nil
 end
 
+------------------------------------------------------------------------------
+-- The function which performs crc32 or availability check for all files 
+-- from FilesTable.
+------------------------------------------------------------------------------
+
 local function CheckDataFiles()
 	for key, info in FilesTable do
 		local name = LocateFile(key)
 		local errmsg = CheckSingleDataFile(name, info)
-		if errmsg and info.Fallback == "" then
-			errmsg = nil
-			name = ""
-		end
 
 		if errmsg and info.Fallback then
+			errmsg = nil
 			name = LocateFile(info.Fallback)
-			if not FilesTable[info.Fallback] then
-				Error("CheckDataFiles: invalid fallback '%s'", name)
+			if FilesTable[info.Fallback] then
+				errmsg = CheckSingleDataFile(name, FilesTable[info.Fallback])
 			end
-			errmsg = CheckSingleDataFile(name, FilesTable[info.Fallback])
 		end
 
 		if errmsg then
 			Error(
 				errmsg ..
 				"\n\n" ..
-				"The source of this problem may be just incorrect installation " ..
+				"This problem may be caused by incorrect installation " ..
 				"of the game (you probably forgot to copy original X-COM data files to the " ..
 				"place where the game can locate them)." ..
 				"\n" ..
@@ -210,7 +216,15 @@ local function CheckDataFiles()
 	end
 end
 
+-- Perform data files integrity check
 CheckDataFiles()
+
+------------------------------------------------------------------------------
+-- Function which is used from C++ code to perform filename prefixes 
+-- expansion. It also handles fallbacks - ability to return some replacement
+-- file instead of the missing one (there are lots of files missing in X-COM
+-- demo that need to be handled this way)
+------------------------------------------------------------------------------
 
 function GetDataFileName(x)
 	local _, _, p1, p2 = string.find(x, "(.*)(%#[^%#]+)$")
@@ -222,11 +236,12 @@ function GetDataFileName(x)
 	if fh then
 		fh:close()
 		if string.find(x, "^%$") then
-			Warning("Warning: '%s' is not listed in the 'FilesTable'", x)
+			Warning("GetDataFileName: '%s' resolved as '%s' and cached for future use", x, fname)
 			FilesTable[x] = { FileName = fname }
 		end
-		return fname
+	else
+		Warning("GetDataFileName: '%s' resolved as '%s' but not found on disk", x, fname)
 	end
 
-	return nil
+	return fname
 end
