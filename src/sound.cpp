@@ -226,7 +226,7 @@ static short buf_igetw(const std::string& inbuf, unsigned *curp) {
     inbuf.copy((char *)&rval, 2, *curp);
     *curp += 2;
 
-    return rval;
+    return intel_uint16(rval);
 }
 
 static int buf_igetl(const std::string& inbuf, unsigned *curp) {
@@ -238,7 +238,7 @@ static int buf_igetl(const std::string& inbuf, unsigned *curp) {
     inbuf.copy((char *)&rval, 4, *curp);
     *curp += 4;
 
-    return rval;
+    return intel_uint32(rval);
 }
 
 static int buf_getc(const std::string& inbuf, unsigned *curp) {
@@ -427,12 +427,12 @@ int soundFile::loadFile(const char *fname, std::ostream& log, bool verbose) {
 
     switch(getFileType(fdata)) {
         case CT_ORIGINAL:
-            if (verbose) 
+            if (verbose)
                 log<<"Parsing original .cat"<<std::endl;
             loadOrigCat(fdata, log, verbose);
             break;
         case CT_CE:
-            if (verbose) 
+            if (verbose)
                 log<<"Parsing CE .cat"<<std::endl;
             loadCeCat(fdata, log, verbose);
             break;
@@ -493,6 +493,7 @@ void soundFile::loadCeCat(const std::string& buf, std::ostream& log,
 
     buf.copy((char *)&nsamples, 4, 0);
 /* TODO: fixup endianness. */
+    nsamples = intel_uint32(nsamples);
     nsamples /= 8;
 
 	std::vector<int> offsets(nsamples + 1);
@@ -502,6 +503,8 @@ void soundFile::loadCeCat(const std::string& buf, std::ostream& log,
     do {
         buf.copy((char *)&(offsets[count]), 4, 4 * (2 * count ));
         buf.copy((char *)&(lengths[count]), 4, 4 * (2 * count +1));
+        offsets[count] = intel_uint32(offsets[count]);
+        lengths[count] = intel_uint32(lengths[count]);
 /* TODO: fixup endianness. */
         count++;
     } while(count < nsamples);
@@ -576,6 +579,7 @@ void soundFile::loadOrigCat(const std::string& buf, std::ostream& log,
 
     buf.copy((char *)&nsamples, 4, 0);
 /* TODO: fixup endianness. */
+    nsamples = intel_uint32(nsamples);
     nsamples /= 8;
 
 	std::vector<int> offsets(nsamples + 1);
@@ -585,6 +589,8 @@ void soundFile::loadOrigCat(const std::string& buf, std::ostream& log,
     do {
         buf.copy((char *)&(offsets[count]), 4, 4 * (2 * count ));
         buf.copy((char *)&(lengths[count]), 4, 4 * (2 * count +1));
+        offsets[count] = intel_uint32(offsets[count]);
+        lengths[count] = intel_uint32(lengths[count]);
 /* TODO: fixup endianness. */
         count++;
     } while(count < nsamples);
@@ -750,7 +756,7 @@ static void h_StartEl(void *userData,
         }
         b->zeSys->setSample(soundSym, sample);
         b->curSample = sample;
-        if (b->verbose) 
+        if (b->verbose)
             *b->log<<"assigned 0x"<<std::hex<<(int)sample<<std::dec<<" to '"<<sym<<"'\n";
         return;
     }
@@ -825,7 +831,7 @@ static void h_EndEl(void *userData, const XML_Char *name)
 
 /* soundSystem implementation */
 
-soundSystem::soundSystem() { 
+soundSystem::soundSystem() {
     soundInstalled = false;
 }
 //~soundSystem::soundSystem() { }
@@ -835,7 +841,7 @@ int soundSystem::initialize(const std::string& xml, std::ostream *log,
 {
     if (soundInstalled)
         return -1;
-    
+
     xmlp_baton_t baton;
     std::stringstream *backup_log = NULL;
 
@@ -847,11 +853,11 @@ int soundSystem::initialize(const std::string& xml, std::ostream *log,
     reserve_voices(4, -1);
 
     /* On some Linux systems (Mandrake 9.1 for example) MIDI can not be initialized,
-     * so we try to call install_sound() again without MIDI support if the first call 
+     * so we try to call install_sound() again without MIDI support if the first call
      * failed. That is done to at least have sound effects.
      */
-	if (   install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) != 0 
-        && install_sound(DIGI_AUTODETECT, MIDI_NONE, NULL) != 0) 
+	if (   install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) != 0
+        && install_sound(DIGI_AUTODETECT, MIDI_NONE, NULL) != 0)
     {
 		*log<<"Error initialising sound system: "<<allegro_error<<std::endl;
         soundInstalled = false;
@@ -948,7 +954,7 @@ void soundSystem::getLoadedSyms(std::ostream *os) {
 }
 
 /**
- * Test: Play all sounds at start of program, 
+ * Test: Play all sounds at start of program,
  * when flag F_SOUNDCHECK in config-file ufo2000.ini is set.
  */
 void soundSystem::playLoadedSamples(std::ostream *os) {
