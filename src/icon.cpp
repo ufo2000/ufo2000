@@ -106,9 +106,28 @@ Icon::Icon()
 	//image
 	lua_pushstring(L, "Image");
 	lua_gettable(L, -2);
-	custom_icons = lua_isstring(L, -1);
-    if (custom_icons)
-	   filename = (std::string)lua_tostring(L, -1);
+	custom_icons = lua_istable(L, -1);
+    if (custom_icons) {
+        lua_pushstring(L, "File");
+        lua_gettable(L, -2);
+        ASSERT(lua_isstring(L, -1));
+        filename = (std::string)lua_tostring(L, -1);
+        lua_pop(L, 1);
+        
+        lua_pushstring(L, "HighlightFile");
+        lua_gettable(L, -2);
+        if (lua_isstring(L, -1))
+            highl_filename = (std::string)lua_tostring(L, -1);
+        else
+            highl_filename = "";
+        lua_pop(L, 1);
+        
+        lua_pushstring(L, "Transparency");
+        lua_gettable(L, -2);
+        ASSERT(lua_isnumber(L, -1));
+        trans_level = 255 - (int)lua_tonumber(L, -1);
+        lua_pop(L, 1);
+    }
 	lua_pop(L, 1);
 
 	//items
@@ -421,7 +440,21 @@ Icon::Icon()
         iconsbmp = create_bitmap(width, height);
 		blit(image, iconsbmp, 0, 144, 0, 0, iconsbmp->w, iconsbmp->h); 
 		destroy_bitmap(image);
+		
+		trans_level = 255;
 	}
+	
+	if (highl_filename != "") {
+        BITMAP *highl_image;
+        highl_image = load_bitmap(F(highl_filename.c_str()), NULL);
+        ASSERT(highl_image);
+        highlbmp = create_bitmap(highl_image->w, highl_image->h);
+        blit(highl_image, highlbmp, 0, 0, 0, 0, highlbmp->w, highlbmp->h);
+        destroy_bitmap(highl_image);
+    } else highlbmp = NULL;
+	
+	clearbmp = create_bitmap(iconsbmp->w, iconsbmp->h);
+	blit(iconsbmp, clearbmp, 0, 0, 0, 0, iconsbmp->w, iconsbmp->h);
 		
 	x = (SCREEN2W - width) / 2;
 	y = SCREEN2H - height;
@@ -433,6 +466,8 @@ Icon::Icon()
 Icon::~Icon()
 {
 	destroy_bitmap(iconsbmp);
+	destroy_bitmap(clearbmp);
+	if (highlbmp != NULL) destroy_bitmap(highlbmp);
 	delete(tac00);
 }
 
@@ -443,8 +478,11 @@ Icon::~Icon()
 void Icon::draw()
 {
 	//blit(iconsbmp, screen2, 0, 0, x, y, iconsbmp->w, iconsbmp->h);
-	draw_sprite(screen2, iconsbmp, x, y);
-	info();
+	set_trans_blender(0, 0, 0, trans_level);
+    blit(clearbmp, iconsbmp, 0, 0, 0, 0, iconsbmp->w, iconsbmp->h);
+    info();
+	draw_trans_sprite(screen2, iconsbmp, x, y);
+	//draw_sprite(screen2, iconsbmp, x, y);
 }
 
 bool firemenu_dialog_proc_exit = 0;
@@ -844,6 +882,10 @@ void Icon::execute(int mx, int my)
  */
 void Icon::info()
 {
+    for (int i = 0; i < BUTTON_NUMBER; i++)
+        if (button[i].is_inside(mouse_x - x, mouse_y - y))
+            button[i].Draw(iconsbmp, highlbmp);
+
 	text_mode(-1);
 	if (sel_man != NULL) {
 		sel_man->drawinfo(x, y);
@@ -854,22 +896,22 @@ void Icon::info()
 	if(sel_man)
 		switch(sel_man->m_ReserveTimeMode) {
 		case RESERVE_FREE:
-			reserve[R_TIME_FREE].Draw(x, y);  
+			reserve[R_TIME_FREE].Draw(iconsbmp);
 			break;
 		
 		case RESERVE_AIM:
-			reserve[R_TIME_AIM].Draw(x, y);
+			reserve[R_TIME_AIM].Draw(iconsbmp);
 			break;
 		
 		case RESERVE_SNAP:
-			reserve[R_TIME_SNAP].Draw(x, y);
+			reserve[R_TIME_SNAP].Draw(iconsbmp);
 			break;
 		
 		case RESERVE_AUTO:
-			reserve[R_TIME_AUTO].Draw(x, y);
+			reserve[R_TIME_AUTO].Draw(iconsbmp);
 			break;
 		}
-	else reserve[R_TIME_FREE].Draw(x, y);
+	else reserve[R_TIME_FREE].Draw(iconsbmp);
 }
 
 /**
@@ -899,11 +941,11 @@ void Icon::show_eot()
 void Icon::draw_stun_bar(int x, int y, int val, int maxval)
 {
 	if (attribute[A_HEALTH].BarDirection == dir_hor) {
-		hline(screen2, x + attribute[A_HEALTH].BarX, y + attribute[A_HEALTH].BarY + 1, x + attribute[A_HEALTH].BarX + val, xcom1_color(stun_color)); 
-		putpixel(screen2, x + attribute[A_HEALTH].BarX + maxval + 1, y + attribute[A_HEALTH].BarY + 1, xcom1_color(attribute[A_HEALTH].BColor));
+		hline(iconsbmp, attribute[A_HEALTH].BarX, y + attribute[A_HEALTH].BarY + 1, x + attribute[A_HEALTH].BarX + val, xcom1_color(stun_color));
+		putpixel(iconsbmp, attribute[A_HEALTH].BarX + maxval + 1, y + attribute[A_HEALTH].BarY + 1, xcom1_color(attribute[A_HEALTH].BColor));
 	} else {
-		vline(screen2, x + attribute[A_HEALTH].BarX + 1, y + attribute[A_HEALTH].BarY, y + attribute[A_HEALTH].BarY - val, xcom1_color(stun_color)); 
-		putpixel(screen2, x + attribute[A_HEALTH].BarX + 1, y + attribute[A_HEALTH].BarY + maxval + 1, xcom1_color(attribute[A_HEALTH].BColor));
+		vline(iconsbmp, attribute[A_HEALTH].BarX + 1, y + attribute[A_HEALTH].BarY, y + attribute[A_HEALTH].BarY - val, xcom1_color(stun_color));
+		putpixel(iconsbmp, attribute[A_HEALTH].BarX + 1, y + attribute[A_HEALTH].BarY + maxval + 1, xcom1_color(attribute[A_HEALTH].BColor));
 	}
 }
 
@@ -912,7 +954,7 @@ void Icon::draw_stun_bar(int x, int y, int val, int maxval)
  */
 void Icon::draw_attribute(int attr, int val, int maxval)
 {
-	attribute[attr].Draw(x, y, val, maxval);
+	attribute[attr].Draw(iconsbmp, val, maxval);
 }
 
 /**
@@ -920,12 +962,12 @@ void Icon::draw_attribute(int attr, int val, int maxval)
  */
 void Icon::draw_text(int txt, char *val)
 {
-	text[txt].Draw(x, y, val);
+	text[txt].Draw(iconsbmp, val);
 }
 
 void Icon::draw_text(int txt, int val, char *format)
 {
-	text[txt].Draw(x, y, val, format);
+	text[txt].Draw(iconsbmp, val, format);
 }
 
 /**
@@ -934,12 +976,12 @@ void Icon::draw_text(int txt, int val, char *format)
  */
 void Icon::draw_item(int itm, Item *it, int rounds, int prime, bool primed)
 {
-	item[itm].Draw(x, y, it);
+	item[itm].Draw(iconsbmp, it);
 	if (rounds != -1)
-		item[itm].DrawDigits(x, y, rounds, dig_round);
+		item[itm].DrawDigits(iconsbmp, rounds, dig_round);
 	else if (prime != -1)
-		item[itm].DrawDigits(x, y, prime, dig_count);
+		item[itm].DrawDigits(iconsbmp, prime, dig_count);
 	else if (primed)
-		item[itm].DrawPrimed(x, y);
+		item[itm].DrawPrimed(iconsbmp);
 }
 

@@ -56,6 +56,7 @@ public:
 	int loadpck(const char *pckfname);
 	void showpck(int num, int xx, int yy);
 	static void showpck(BITMAP *img, int xx, int yy);
+	static void showpck(BITMAP *dest, BITMAP *img, int xx, int yy);
 	void drawpck(int num, BITMAP *dest, int y);
 	void save_as_bmp(const char *fname);
 };

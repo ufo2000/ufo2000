@@ -73,6 +73,8 @@ class IconButton
 private:
 	int x1, y1, x2, y2;
 public:
+    const char *name;
+
 	void set_coords(int _x1, int _y1, int _x2, int _y2)
 	{
 		x1 = _x1;
@@ -84,7 +86,7 @@ public:
     /**
      * Test if coordinates (of mousepointer) are inside the area of the button.
      */
-	bool is_inside(int x, int y)
+    bool is_inside(int x, int y)
 	{
 		if ((x >= x1) && (x <= x2) && (y >= y1) && (y <= y2))
 			return true;
@@ -92,7 +94,11 @@ public:
 			return false;
 	};
 	
-	const char *name;
+	void Draw(BITMAP *dest, BITMAP *src)
+	{
+        if (src != NULL)
+            blit(src, dest, x1, y1, x1, y1, x2 - x1, y2 - y1);
+    };
 };
 
 class IconItem
@@ -108,25 +114,25 @@ public:
     /**
      * Draw item (weapon) inside one of the hand-boxes of the control-panel.
      */
-	void Draw(int x, int y, Item *it)
+	void Draw(BITMAP *dest, Item *it)
 	{
 		int dx = (2 - it->obdata_width())  * 16 / 2;
 		int dy = (3 - it->obdata_height()) * 15 / 2;
 
-		PCK::showpck(it->obdata_pInv(), x + ImageX + dx, y + ImageY + dy);
+		PCK::showpck(dest, it->obdata_pInv(), ImageX + dx,  ImageY + dy);
 	};
 	
-	void DrawDigits(int x, int y, int val, ItemDigs type)
+	void DrawDigits(BITMAP *dest, int val, ItemDigs type)
 	{
 		if (type == dig_round)
-			printsmall(x + DigitsX, y + DigitsY, xcom1_color(DigitsRoundsColor), val);
+			printsmall_x(dest, DigitsX, DigitsY, xcom1_color(DigitsRoundsColor), val);
 		else
-			printsmall(x + DigitsX, y + DigitsY, xcom1_color(DigitsPrimeColor), val);
+			printsmall_x(dest, DigitsX, DigitsY, xcom1_color(DigitsPrimeColor), val);
 	};	
 	
-	void DrawPrimed(int x, int y)
+	void DrawPrimed(BITMAP *dest)
 	{
-		textout(screen2, g_small_font, "*", x + DigitsX, y + DigitsY - 3, xcom1_color(DigitsPrimeColor));
+		textout(dest, g_small_font, "*", DigitsX, DigitsY - 3, xcom1_color(DigitsPrimeColor));
 	};
 };
 
@@ -144,20 +150,20 @@ public:
     /**
      * Draw value and barchart for attributes, e.g. TU, health etc. in the control-panel.
      */
-	void Draw(int x, int y, int val, int valmax)
+	void Draw(BITMAP *dest, int val, int valmax)
 	{
 		if (BarDirection == dir_hor) {
-			hline(screen2,    x + BarX,              y + BarY,     x + BarX + valmax + 1, xcom1_color(BColor));
-			hline(screen2,    x + BarX,              y + BarY + 1, x + BarX + val, xcom1_color(FColor)); 
-			putpixel(screen2, x + BarX + valmax + 1, y + BarY + 1, xcom1_color(BColor));
-			hline(screen2,    x + BarX,              y + BarY + 2, x + BarX + valmax + 1, xcom1_color(BColor));
+			hline(dest,    BarX,              BarY,     BarX + valmax + 1, xcom1_color(BColor));
+			hline(dest,    BarX,              BarY + 1, BarX + val, xcom1_color(FColor));
+			putpixel(dest, BarX + valmax + 1, BarY + 1, xcom1_color(BColor));
+			hline(dest,    BarX,              BarY + 2, BarX + valmax + 1, xcom1_color(BColor));
 		} else {
-			vline(screen2,    x + BarX,     y + BarY,              y + BarY - valmax - 1, xcom1_color(BColor));
-			vline(screen2,    x + BarX + 1, y + BarY,              y + BarY - val, xcom1_color(FColor)); 
-			putpixel(screen2, x + BarX + 1, y + BarY - valmax - 1, xcom1_color(BColor));
-			vline(screen2,    x + BarX + 2, y + BarY,              y + BarY - valmax - 1, xcom1_color(BColor));
+			vline(dest,    BarX,     BarY,              BarY - valmax - 1, xcom1_color(BColor));
+			vline(dest,    BarX + 1, BarY,              BarY - val, xcom1_color(FColor));
+			putpixel(dest, BarX + 1, BarY - valmax - 1, xcom1_color(BColor));
+			vline(dest,    BarX + 2, BarY,              BarY - valmax - 1, xcom1_color(BColor));
 		}
-		printsmall(x + DigitsX, y + DigitsY, xcom1_color(DigitsColor), val);
+		printsmall_x(dest, DigitsX, DigitsY, xcom1_color(DigitsColor), val);
 	};
 };
 
@@ -170,14 +176,14 @@ public:
 	
 	const char *name;
 	
-	void Draw(int x2, int y2, char *val)
+	void Draw(BITMAP *dest, char *val)
 	{
-		textout(screen2, font, val, x2 + x, y2 + y, xcom1_color(color));
+		textout(dest, font, val, x, y, xcom1_color(color));
 	};
 	
-	void Draw(int x2, int y2, int val, char *format)
+	void Draw(BITMAP *dest, int val, char *format)
 	{
-		textprintf(screen2, font, x2 + x, y2 + y, xcom1_color(color), format, val);
+		textprintf(dest, font, x, y, xcom1_color(color), format, val);
 	};
 };
 
@@ -193,9 +199,9 @@ public:
 	
 	const char *name;
 	
-	void Draw(int x, int y)
+	void Draw(BITMAP *dest)
 	{
-		rect(screen2, x + BorderX1, y + BorderY1, x + BorderX2, y + BorderY2, xcom1_color(BorderColor));
+		rect(dest, BorderX1, BorderY1, BorderX2, BorderY2, xcom1_color(BorderColor));
 	}
 };
 
@@ -213,9 +219,10 @@ private:
 	int    width, height;
 
 	SPK    *tac00;
-	BITMAP *iconsbmp;
+	BITMAP *iconsbmp, *highlbmp, *clearbmp;
 	
-	std::string filename;
+	std::string filename, highl_filename;
+	int trans_level;
 	
 	IconItem item[ITEM_NUMBER];
 	IconButton button[BUTTON_NUMBER];

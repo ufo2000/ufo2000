@@ -1148,10 +1148,11 @@ void build_screen(int & select_y)
                 // Tooltips for the buttons of the control-panel:
                 if (icon->inside(mouse_x, mouse_y)) {
                     icon_nr = icon->identify(mouse_x, mouse_y);
-                    // Todo: solid background for the tooltips,
                     if (icon_nr >= 0 ) {
+                        int prev_tm = text_mode(0);
                         textprintf(screen2, font,  mouse_x+7, mouse_y-2,
                                     COLOR_WHITE, "%s", icontext(icon_nr) );
+                        text_mode(prev_tm);
                     }
                 }
             }

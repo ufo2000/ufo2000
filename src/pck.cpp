@@ -181,6 +181,11 @@ void PCK::showpck(BITMAP *img, int xx, int yy)
 	draw_sprite(screen2, img, xx, yy - 6);
 }
 
+void PCK::showpck(BITMAP *dest, BITMAP *img, int xx, int yy)
+{
+	draw_sprite(dest, img, xx, yy - 6);
+}
+
 void PCK::drawpck(int num, BITMAP *dest, int y)
 {
 	ASSERT(num < m_imgnum);

@@ -1,4 +1,5 @@
--- Last update: v0.4.1.525
+-- Last update: v0.7.686
+-- 2005-02-20 new: "Transparency", "HighlightFile"
 -- 2004-11-05 Swapped ResTimeAim and ResTimeSnap, tweaked coordinates
 -- 2004-10-10 new: ResTime* buttons now contain border-color and border-coords (border for selected state);
 --                 comments about used colors are moved to the top of the file
@@ -21,6 +22,14 @@
 -------------------------
 
 return {
+    --just an example:
+    --
+	--[[Image = {
+		File = "$(ufo2000)/newgfx/icons.bmp",
+		HighlightFile = "$(ufo2000)/newgfx/icons_high.bmp",
+		Transparency = 64
+	},]]
+
 	LeftItem = {
 		Button            = { 8,  4, 39, 52},
 		Image             = { 8, 10},
