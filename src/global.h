@@ -44,7 +44,7 @@ inline long filelength(int handle) { struct stat s; fstat(handle, &s); return s.
 #ifdef __MINGW32__
 #include <winalleg.h>
 #endif
-#include "jpgalleg.h"
+#include "jpgalleg/jpgalleg.h"
 
 #define TERRAIN_INDEX   1
 

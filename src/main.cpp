@@ -425,7 +425,7 @@ void initmain(int argc, char *argv[])
 	set_palette(black_palette);
 
 	PALETTE pal;
-	BITMAP *text_back = load_memory_jpg(datafile[DAT_TEXT_BACK_JPG].dat, datafile[DAT_TEXT_BACK_JPG].size, pal);
+	BITMAP *text_back = load_memory_jpg(datafile[DAT_TEXT_BACK_JPG].dat, pal);
 
 	stretch_blit(text_back, screen, 0, 0, text_back->w, text_back->h, 0, 0, screen->w, screen->h);
     fade_from(black_palette, pal, (64 - FADE_SPEED)/3 + FADE_SPEED);

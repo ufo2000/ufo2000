@@ -40,7 +40,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define GCC_VERSION 0
 #endif
 
-#if !defined(__GNUC__) || (GCC_VERSION > 30200)
+#if (GCC_VERSION > 30200)
 
 /* libstdc++ from pre-3.2.1 GCC has this operator horribly broken. */
 #define ISTREAM_TO_STRING(input_stream, output_string)         \
