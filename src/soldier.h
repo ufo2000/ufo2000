@@ -316,6 +316,8 @@ public:
 		ASSERT((ip >= 0) && (ip < NUMBER_OF_PLACES));
 		return m_place[ip];
 	}
+	
+	Item *body() { return m_body; }
 
 	void destroy_all_items();
 	void draw_deselect_times(int sel_item_place);
