@@ -410,7 +410,7 @@ void Platoon::change_morale(int delta, bool send_to_remote)
 		ss = ss->next();
 	}
 	
-	if (send_to_remote && net->gametype != GAME_TYPE_HOTSEAT)
+	if (send_to_remote)
 		net->send_morale_change(delta);
 }
 

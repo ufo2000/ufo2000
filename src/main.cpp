@@ -834,12 +834,13 @@ void recv_turn(int crc)
 
 	platoon_local->restore();
 	platoon_local->set_visibility_changed();
-	platoon_local->check_morale();
 
 	if (net->gametype == GAME_TYPE_HOTSEAT) {
 		savegame(F("$(home)/ufo2000.tmp"));
 		map->m_minimap_area->set_full_redraw();
 	}
+
+	platoon_local->check_morale();
 
 	g_time_left = g_time_limit;
 	MODE = MAP3D;
