@@ -457,10 +457,12 @@ void Wind::hidecursor()
 
 void Wind::dump()
 {
-	FILE * f = FOPEN_RTEMP("m_txt.dump", "wt");
+	FILE *f = FOPEN_RTEMP("m_txt.dump", "wt");
+	assert(f != NULL);
 	for (int i = 0; i < m_txth; i++)
 		fprintf(f, "%d:[%s]\n", i, m_txt[i]);
 	fflush(f);
+	fclose(f);
 }
 
 void Wind::info(int _x, int _y)

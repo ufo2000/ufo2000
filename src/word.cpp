@@ -245,7 +245,8 @@ int Word::load()
 
 void Word::save()
 {
-	FILE * f = FOPEN_OWN(fname, "wt");
+	FILE *f = FOPEN_OWN(fname, "wt");
+	assert(f != NULL);
 	for (int i = 0; i < size; i++)
 		fprintf(f, "%d %d\n", x[i], y[i]);
 	fclose(f);

@@ -78,6 +78,7 @@ Net::Net()
 	queue = new BQ(1000);
 	connect = new Connect();
 	flog = FOPEN_RTEMP("ufo2000.log", "wt");
+	assert(flog != NULL);
 	log("%s\n", "_____________Net()");
 }
 

@@ -325,6 +325,64 @@ public:
 #define FADE_SPEED 20
 
 
+/**
+ * Display error message
+ */
+void display_error_message(const std::string &error_text)
+{
+#ifdef WIN32
+	MessageBox(NULL, error_text.c_str(), "UFO2000 Error!", MB_OK);
+#else
+	fprintf(stderr, "%s", error_text.c_str());
+#endif
+	exit(1);
+}
+
+/**
+ * Check for the files that should be accessible for write
+ */
+void check_rw_files()
+{
+	const char *list[] =
+	{
+	    "./geodata.dat",
+		"./soldier.dat",
+		"./armoury.set",
+		"./items.dat",
+		"./ufo2000.ini",
+		"./ufo2000.log",
+		"./ufo2000.tmp",
+		"./cur_map.dat",
+		"./cur_p1.dat",
+		"./cur_p2.dat"
+	};
+
+	for (unsigned int i = 0; i < sizeof(list) / sizeof(list[0]); i++) {
+		FILE *f = FOPEN_OWN(list[i], "rb");
+		if (f == NULL) {
+			f = fopen(list[i], "w+");
+			if (f == NULL) {
+				display_error_message(std::string("Can't create ") + 
+					list[i] + " file.\n"
+					"Please check the permissions set for ufo2000 directory.");
+				return;
+			}
+			fclose(f);
+			remove(list[i]);
+		} else {
+			fclose(f);
+			f = FOPEN_OWN(list[i], "r+");
+			if (f == NULL) {
+				display_error_message(std::string("Can't open ") + 
+					list[i] + " file in read/write mode.\n"
+					"Please check the permissions set for this file.");
+				return;
+			}
+			fclose(f);
+		}
+	}
+}
+
 /** Function to check if all necessary files exist and are OK
 */
 void check_data_files()
@@ -345,12 +403,7 @@ void check_data_files()
 		error_text += "'UFO: Enemy Unknown' by Microprose to ufo2000 directory ";
 		error_text += "(for more instructions look at 'install' file)\n";
 
-#ifdef WIN32
-		MessageBox(NULL, error_text.c_str(), "UFO2000 Error!", MB_OK);
-#else
-		fprintf(stderr, "%s", error_text.c_str());
-#endif
-		exit(1);
+		display_error_message(error_text);
 	}
 }
 
@@ -406,6 +459,7 @@ void initmain(int argc, char *argv[])
 	pop_config_state();
 
 	if (FLAGS & F_FILECHECK) check_data_files();
+	check_rw_files();
 
 	datafile = load_datafile("#");
 	if (datafile == NULL) {
@@ -604,9 +658,10 @@ int build_crc()
 		char filename[128];
 		sprintf(filename, "eot_save_%d.txt", crc);
 		int fh = OPEN_GTEMP(filename, O_CREAT | O_TRUNC | O_RDWR | O_BINARY);
-		assert(fh != -1);
-		buf_size = write(fh, buf, buf_size);
-		close(fh);
+		if (fh != -1) {
+			buf_size = write(fh, buf, buf_size);
+			close(fh);
+		}
 	}
 
 	return crc;
