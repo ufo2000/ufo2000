@@ -1902,7 +1902,7 @@ void Soldier::die()
 
 	map->place(z, x, y)->put(new Item(ctype));
 	
-	m_platoon->change_morale(-10, false);
+	m_platoon->change_morale(-(100 / (m_platoon->num_of_men() + 1)), false);
 
 	g_console->printf(COLOR_BLUE, "%s killed.", md.Name);
 }
