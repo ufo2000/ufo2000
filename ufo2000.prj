@@ -187,6 +187,7 @@ module.doc.files=\
 	INSTALL\
 	ChangeLog\
 	COPYING\
+	readme_de.txt\
 	readme_en.txt\
 	readme_es.txt\
 	readme_fi.txt\

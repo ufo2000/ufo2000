@@ -27,7 +27,8 @@
 ##############################################################################
 
 UFO_SVNVERSION := ${shell svnversion .}
-UFO_VERSION := ${shell awk 'BEGIN {FS="\""} /UFO_VERSION_STRING/ { print $$2; }' src/version.h}
+UFO_VERSION := ${shell awk 'BEGIN {FS=sprintf("%c",34)} /UFO_VERSION_STRING/ { print $$2; }' src/version.h}
+
 ifneq ($(UFO_VERSION),)
 ifneq ($(UFO_SVNVERSION),)
 	DISTNAME := ufo2000-$(UFO_VERSION).$(UFO_SVNVERSION)

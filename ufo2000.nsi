@@ -361,6 +361,7 @@ Section "${GAME_NAME} (required)" MainSec
 	File "ChangeLog"
 	File "COPYING"
 	File "INSTALL"
+	File "readme_de.txt"
 	File "readme_en.txt"
 	File "readme_es.txt"
 	File "readme_fi.txt"
@@ -429,6 +430,8 @@ Section "${GAME_NAME} (required)" MainSec
 		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - Spanish.lnk" "$INSTDIR\readme_es.txt" "" "$INSTDIR\readme_es.txt" 0
 		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - Polish.lnk" "$INSTDIR\readme_pl.txt" "" "$INSTDIR\readme_pl.txt" 0
 		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - French.lnk" "$INSTDIR\readme_fr.txt" "" "$INSTDIR\readme_fr.txt" 0
+		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme - German.lnk" "$INSTDIR\readme_de.txt" "" "$INSTDIR\readme_de.txt" 0
+
 		CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Manual - Russian.lnk" "$INSTDIR\readme_ru.html" "" "$INSTDIR\readme_ru.html" 0
   
 	!insertmacro MUI_STARTMENU_WRITE_END
@@ -559,6 +562,9 @@ Section "Uninstall"
 SectionEnd
 
 ; Version History
+;
+; 1.4.2 (13nd Sep 2004)
+; - Added "readme_de.txt"
 ;
 ; 1.4.1 (2nd Sep 2004)
 ;
