@@ -28,10 +28,8 @@ long int Server_Game_UFO::CreateGame(std::string playername1,std::string playern
 {
     sqlite3::connection db_conn(DB_FILENAME);
     try {
-        db_conn.executenonquery("begin transaction;");
         db_conn.executenonquery("update ufo2000_sequences set seq_val=seq_val+1 where name='ufo2000_games';");
         long int game_id = db_conn.executeint32("select seq_val from ufo2000_sequences where name='ufo2000_games';");
-        db_conn.executenonquery("commit;");
         db_conn.executenonquery("\
             insert into ufo2000_games\
             (id, last_received_packed, is_finished, errors, result) \
@@ -63,6 +61,7 @@ void Server_Game_UFO::ActivatePlayer(int game_id,ServerClientUfo* player)
     sqlite3::connection db_conn(DB_FILENAME);
     if (active_games.find(game_id) == active_games.end()) {
         active_games[game_id]=new Server_Game_UFO(game_id);
+        active_games[game_id]->db_conn.executenonquery("begin transaction;");
         server_log("Game %d activated.\n", game_id);
     }
     try {
@@ -84,6 +83,7 @@ void Server_Game_UFO::DeactivatePlayer(ServerClientUfo* player)
     {
         active_games.erase(player->game->game_id);
         server_log("Game %d deactivated.\n",player->game->game_id);
+        player->game->db_conn.executenonquery("commit;");
         delete player->game;
     }
     player->game = NULL;
@@ -106,10 +106,10 @@ void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, c
     }
 
     try {
-        db_conn.executenonquery("begin transaction;");
+//        db_conn.executenonquery("begin transaction;");
         db_conn.executenonquery("update ufo2000_games set last_received_packed=last_received_packed+1 where id=%d;",game_id);
         long int last_received_packed = db_conn.executeint32("select last_received_packed from ufo2000_games where id=%d;",game_id);
-        db_conn.executenonquery("commit;");
+        //db_conn.executenonquery("commit;");
 
         time_t now = time(NULL);
         struct tm * t = localtime(&now);
