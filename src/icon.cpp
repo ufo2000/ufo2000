@@ -105,7 +105,7 @@ void Icon::firemenu(int iplace)
 	static char dstr[5][100];
 
 	static DIALOG the_dialog[] = {
-	//	           dialog proc,  x,   y,   w,  h,  fg,  bg, key,  flags, d1, d2,              dp,  dp2,  dp3
+		//         dialog proc,  x,   y,   w,  h,  fg,  bg, key,  flags, d1, d2,              dp,  dp2,  dp3
 		{ firemenu_dialog_proc, 41, 150, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[0], NULL, NULL},
 		{ firemenu_dialog_proc, 41, 120, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[1], NULL, NULL},
 		{ firemenu_dialog_proc, 41,  90, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[2], NULL, NULL},
@@ -253,7 +253,7 @@ int Icon::doprime(Item *it)
 	int DS = 18;
 
 	static DIALOG dPrime[] = {
-	//	    dialog proc, x                , y                ,  w,  h,  fg,  bg, key,  flags, d1, d2, dp              ,  dp2,  dp3
+		//  dialog proc, x                , y                ,  w,  h,  fg,  bg, key,  flags, d1, d2, dp              ,  dp2,  dp3
 		{ d_button_proc, DX               , DY - 17          , 98, 15, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"Cancel", NULL, NULL},
 		{ d_button_proc, DX               , DY               , DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"0"     , NULL, NULL},
 		{ d_button_proc, DX + (DS + 2) * 1, DY               , DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"1"     , NULL, NULL},
@@ -294,31 +294,38 @@ void Icon::execute(int mx, int my)
 
 	if (mx < 48) {
 		if ((mx >= 8) && (mx <= 39) && (my >= 4) && (my <= 52)) { //cprintf("left");
-			firemenu(P_ARM_LEFT);
+			if (MODE != WATCH)
+				firemenu(P_ARM_LEFT);
 		}
 	} else if (mx > 271) {
 		if ((mx >= 280) && (mx <= 311) && (my >= 4) && (my <= 52)) { //cprintf("right");
-			firemenu(P_ARM_RIGHT);
+			if (MODE != WATCH)
+				firemenu(P_ARM_RIGHT);
 		}
 	} else if (my < 32) {
 		n = (mx - 52) / 31;
 		if (my < 16) {
 			switch (n) {
 				case 0:      //cprintf("0");
-					if (sel_man->use_elevator(+1))
-						map->center(sel_man);
+					if (MODE != WATCH) {
+						if (sel_man->use_elevator(+1))
+							map->center(sel_man);
+					}
 					break;
 				case 1:      //cprintf("1");
 					if (map->sel_lev < map->level - 1)
 						map->sel_lev++;
 					break;
 				case 2:      //cprintf("2"); //map2d
-					MODE = MAP2D;
+					if (MODE != WATCH)
+						MODE = MAP2D;
 					break;
 				case 3:      //cprintf("3"); //soldier manage
-					TARGET = 0;
-					if ((sel_man != NULL) && (!sel_man->ismoving())) {
-						MODE = MAN;
+					if (MODE != WATCH) {
+						TARGET = 0;
+						if ((sel_man != NULL) && (!sel_man->ismoving())) {
+							MODE = MAN;
+						}
 					}
 					break;
 				case 4:      //cprintf("4"); //next
@@ -342,25 +349,31 @@ void Icon::execute(int mx, int my)
 					}
 					break;
 				case 6:      //cprintf("6"); //eot
-					TARGET = 0;
-					if (nomoves()) {
-						send_turn();
+					if (MODE != WATCH) {
+						TARGET = 0;
+						if (nomoves()) {
+							send_turn();
+						}
 					}
 					break;
 			}
 		} else {
 			switch (n) {
 				case 0:      //cprintf("7");
-					if (sel_man->use_elevator(-1))
-						map->center(sel_man);
+					if (MODE != WATCH) {
+						if (sel_man->use_elevator(-1))
+							map->center(sel_man);
+					}
 					break;
 				case 1:      //cprintf("8");
 					if (map->sel_lev > 0)
 						map->sel_lev--;
 					break;
-				case 2:      //cprintf("9");	//sit/stand
-					if ((sel_man != NULL) && (!sel_man->ismoving())) {
-						sel_man->change_pose();
+				case 2:      //cprintf("9");    //sit/stand
+					if (MODE != WATCH) {
+						if ((sel_man != NULL) && (!sel_man->ismoving())) {
+							sel_man->change_pose();
+						}
 					}
 					break;
 				case 3:      //cprintf("a"); //center
@@ -383,7 +396,8 @@ void Icon::execute(int mx, int my)
 					}
 					break;
 				case 5:    //cprintf("c");
-					configure();
+					if (MODE != WATCH)
+						configure();
 					break;
 				case 6:      //cprintf("d");
 					//quitmenu();
@@ -395,8 +409,10 @@ void Icon::execute(int mx, int my)
 	} else {
 		n = (mx - 48) / 29;
 		if (n == 2) {
-			if (sel_man != NULL)
-				MODE = UNIT_INFO;
+			if (sel_man != NULL) {
+				if (MODE != WATCH)
+					MODE = UNIT_INFO;
+			}
 		}
 
 		if (my < 44) {

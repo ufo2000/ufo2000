@@ -1266,6 +1266,10 @@ void gameloop()
 					MODE = MAP3D;
 					break;
 				case WATCH:
+					if (icon->inside(mouse_x, mouse_y)) {
+						icon->execute(mouse_x, mouse_y);
+						break;
+					}
 					break;
 				case MAP2D:
 					if (map->center2d(mouse_x, mouse_y))
