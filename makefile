@@ -43,7 +43,7 @@ endif
 
 CX = g++
 CC = gcc
-CFLAGS = -funsigned-char -Wall -Wno-deprecated-declarations -DDEBUGMODE
+CFLAGS = -funsigned-char -Wall -Wno-deprecated-declarations -I src/lua -DDEBUGMODE
 OBJDIR = obj
 NAME = ufo2000
 SERVER_NAME = ufo2000-srv
@@ -74,7 +74,13 @@ ifdef valgrind
 	debug = 1
 endif
 
-VPATH = src src/jpgalleg src/dumbogg src/exchndl src/agup
+VPATH = src src/jpgalleg src/dumbogg src/exchndl src/agup src/lua
+
+SRCS_LUA = lapi.c lauxlib.c lbaselib.c lcode.c ldblib.c ldebug.c      \
+           ldo.c ldump.c lfunc.c lgc.c liolib.c llex.c lmathlib.c     \
+           lmem.c loadlib.c lobject.c lopcodes.c lparser.c            \
+           lstate.c lstring.c lstrlib.c ltable.c ltablib.c            \
+           ltests.c ltm.c lundump.c lvm.c lzio.c
 
 SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
        editor.cpp explo.cpp font.cpp icon.cpp inventory.cpp item.cpp  \
@@ -85,11 +91,13 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
        server_transport.cpp soldier.cpp sound.cpp spk.cpp stats.cpp   \
        terrapck.cpp text.cpp units.cpp video.cpp wind.cpp             \
                                                                       \
+       $(SRCS_LUA)                                                    \
+                                                                      \
        aalg.c aase.c abeos.c abitmap.c agtk.c agup.c ans.c            \
        aphoton.c awin95.c decode.c encode.c io.c jpgalleg.c
 
 SRCS_SERVER = server_config.cpp server_main.cpp server_protocol.cpp   \
-              server_transport.cpp
+              server_transport.cpp $(SRCS_LUA)
 
 ifdef debug
 	CFLAGS += -g
@@ -103,7 +111,7 @@ else
 	CFLAGS += $(OPTFLAGS)
 endif
 
-LIBS = -lexpat -llua -llualib
+LIBS = -lexpat
 
 ifdef dumbogg
 	LIBS += -lvorbisfile -lvorbis -logg -laldmb -ldumb
@@ -138,8 +146,10 @@ OBJS := $(OBJS:.c=.o)
 OBJS := $(addprefix $(OBJDIR)/,$(OBJS))
 DEPS = $(OBJS:.o=.d)
 
-OBJS_SERVER = $(addprefix $(OBJDIR)/,$(SRCS_SERVER:.cpp=.o))
-DEPS_SERVER = $(addprefix $(OBJDIR)/,$(SRCS_SERVER:.cpp=.d))
+OBJS_SERVER := $(SRCS_SERVER:.cpp=.o)
+OBJS_SERVER := $(OBJS_SERVER:.c=.o)
+OBJS_SERVER := $(addprefix $(OBJDIR)/,$(OBJS_SERVER))
+DEPS_SERVER = $(OBJS_SERVER:.o=.d)
 
 ifdef win32
 	OBJS := $(OBJS) Seccast.o 
