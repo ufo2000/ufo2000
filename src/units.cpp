@@ -459,18 +459,8 @@ void Units::print_simple(int gcol)
 		return ;
 
 	int points = 0;
-	for (i = 0; i < pd_remote->size; i++) {
-/*		points += pd_remote->md[i].TimeUnits +
-		          pd_remote->md[i].Health +
-		          pd_remote->md[i].Firing +
-		          pd_remote->md[i].Throwing; */
-		points += (((pd_remote->md[i].TimeUnits * 2) + pd_remote->md[i].Stamina) / 2) +
-	        pd_remote->md[i].Health +
-			(pd_remote->md[i].Reactions * 2) +
-	        ((pd_remote->md[i].Firing + pd_remote->md[i].Throwing) / 2) +
-			(pd_remote->md[i].Strength * 2) +
-			g_skins[get_skin_index(pd_remote->md[i].SkinType, pd_remote->md[i].fFemale)].armour_values[0];
-	}
+	for (i = 0; i < pd_remote->size; i++)
+		points += Soldier::calc_mandata_cost(pd_remote->md[i]);
 
 	char buf[10000]; memset(buf, 0, sizeof(buf));
 	int len = 0;

@@ -271,7 +271,8 @@ public:
 	int count_weight();
 
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	int calc_ammunition_cost();
+	static int calc_mandata_cost(MANDATA _md);
+	int calc_ammunition_cost() { return calc_mandata_cost(md); }
 	int calc_full_ammunition_cost();
 	Item *item_under_mouse(int ipl);
 	int calctime(int src, int dst);
