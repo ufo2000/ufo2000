@@ -979,7 +979,7 @@ void recv_turn(int crc)
     platoon_local->check_morale();
 
     g_time_left = g_time_limit;
-    last_time_left  = -1;
+    last_time_left = -1;
     MODE = MAP3D;
 
     g_console->printf(

@@ -1086,7 +1086,7 @@ bool Soldier::faceto(int dest_col, int dest_row)
 {
     fixed ox = itofix(dest_col - x);
     fixed oy = itofix(dest_row - y);
-    if ((!ox) && (!oy)) return false;
+    if ((!ox) && (!oy)) return true; // No turning required
     int ang = fixtoi(fatan2(oy, ox));
     if (ang < 0) ang = 256 + ang;
     ang = (ang + 16) % 256;
