@@ -94,7 +94,7 @@ private:
 
 	int NID;
 	int dir, phase;
-	State state;
+	State m_state;
 	int z, x, y;
 
 	// This flag is set after soldier has moved. Needed for correct work of
@@ -192,7 +192,7 @@ public:
 	void explo_hit(int pierce);      //silent
 
 	int ismoving();
-	int is_marching() { return (state == MARCH); }
+	int is_marching() { return (m_state == MARCH); }
 	int havetime(int ntime);
 	void spend_time(int tm);
 	int walktime(int _dir);

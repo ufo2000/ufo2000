@@ -260,7 +260,7 @@ Soldier::Soldier(int _NID)
 {
 	NID = _NID;
 	z = -1; x = -1; y = -1;
-	dir = 0; phase = 0; state = STAND;
+	dir = 0; phase = 0; m_state = STAND;
 	m_next = NULL; m_prev = NULL;
 
 	m_bullet = new Bullet;
@@ -291,7 +291,7 @@ Soldier::Soldier(int _NID, int _z, int _x, int _y)
 {
 	NID = _NID; z = _z; x = _x; y = _y;
 	dir = 0;      //!!face to center of map
-	phase = 0; state = STAND;
+	phase = 0; m_state = STAND;
 	m_next = NULL; m_prev = NULL;
 
 	m_bullet = new Bullet;
@@ -333,7 +333,7 @@ Soldier::Soldier(int _NID, int _z, int _x, int _y, MANDATA *mdat, ITEMDATA *idat
 		dir = ang >> 5;
 	}
 
-	phase = 0; state = STAND;
+	phase = 0; m_state = STAND;
 	m_next = NULL; m_prev = NULL;
 
 	m_bullet = new Bullet;
@@ -536,7 +536,7 @@ void Soldier::draw()
 	}
 
 
-	if (state == DIE) {
+	if (m_state == DIE) {
 		m_pck[md.SkinType]->showpck(264 + phase / 3, gx, gy);
 		return ;
 	}
@@ -554,6 +554,11 @@ void Soldier::draw()
 	} else {
 		arm1 = 1;
 	}
+
+//	Aliens do not crouch
+	State state = m_state;
+	if (state == SIT && (md.SkinType == S_SECTOID || md.SkinType == S_MUTON))
+		state = STAND;
 
 	if (state == SIT) handob_y += 4;
 	if (md.SkinType == S_SECTOID) handob_y += 6; // $$$
@@ -829,7 +834,7 @@ void Soldier::turnto(int destdir)
 
 int Soldier::ismoving()
 {
-	return ((state == MARCH) || (state == DIE) || (!m_bullet->ready()) ||
+	return ((m_state == MARCH) || (m_state == DIE) || (!m_bullet->ready()) ||
 	        (curway != -1) || (waylen != 0));
 }
 
@@ -914,7 +919,7 @@ int Soldier::move(int ISLOCAL)
 	map->set_man(z, x, y, this);      //preventor!!
 	m_place[P_MAP] = map->place(z, x, y);
 
-	if (state == DIE) {
+	if (m_state == DIE) {
 		//textprintf(screen, font, 1, 100, 1, "phase=%d", phase);
 		if (phase < 2 * 3)
 			phase++;
@@ -922,7 +927,7 @@ int Soldier::move(int ISLOCAL)
 			return 0;
 	}
 
-	if (state == MARCH) {
+	if (m_state == MARCH) {
 		phase++;
 
 		//1) time = time_of_src/2 + time_of_dest/2;
@@ -959,13 +964,13 @@ int Soldier::move(int ISLOCAL)
 		}
 	}
 
-	if ((state == STAND) || (state == SIT)) {
+	if ((m_state == STAND) || (m_state == SIT)) {
 		if (curway != -1) {
 			if (dir == way[curway]) {
 				if (waylen == 0) {
 					curway = -1;
 				} else {
-					state = MARCH;
+					m_state = MARCH;
 					phase = 0;
 				}
 			} else {
@@ -1013,7 +1018,7 @@ void Soldier::wayto(int dest_lev, int dest_col, int dest_row)
 
 void Soldier::finish_march(int ISLOCAL)
 {
-	state = STAND;
+	m_state = STAND;
 	curway = -1;
 	waylen = 0;
 	if (ISLOCAL)
@@ -1073,10 +1078,10 @@ void Soldier::hit(int pierce)
 	if (ud.CurHealth <= pierce) // ud.CurHealth is unsigned
 	{
 		ud.CurHealth = 0;
-		if (state != DIE)
+		if (m_state != DIE)
 		{
 			play(S_DIE);
-			state = DIE;
+			m_state = DIE;
 			phase = 0;
 		}
 	}
@@ -1093,9 +1098,9 @@ void Soldier::explo_hit(int pierce) //silent
 	if (ud.CurHealth <= pierce) // ud.CurHealth is unsigned
 	{
 		ud.CurHealth = 0;
-		if (state != DIE)
+		if (m_state != DIE)
 		{
-			state = DIE;
+			m_state = DIE;
 			phase = 0;
 		}
 	}
@@ -1123,8 +1128,10 @@ void Soldier::die()
 		ctype = CORPSE_ARMOUR;
 	else if ((md.SkinType == S_XCOM_2) || (md.SkinType == S_XCOM_3))
 		ctype = CORPSE_POWER_SUIT;
+	else if (md.SkinType == S_SECTOID)
+		ctype = Sectoid_Corpse;
 	else
-		ctype = Sectoid_Corpse;     //skin_type; //////////aliens!!!!!!!!!!!!!!
+		ctype = Muton_Corpse;
 
 	map->place(z, x, y)->put(new Item(ctype));
 
@@ -1277,15 +1284,15 @@ int Soldier::open_door()
 
 int Soldier::change_pose()
 {
-	assert((state == SIT) || (state == STAND));
+	assert((m_state == SIT) || (m_state == STAND));
 
-	if (state == SIT) {
+	if (m_state == SIT) {
 		if (!havetime(8)) return 0;
-		state = STAND;
+		m_state = STAND;
 		spend_time(8);
 	} else {
 		if (!havetime(4)) return 0;
-		state = SIT;
+		m_state = SIT;
 		spend_time(4);
 	}
 	net->send_change_pose(NID);
@@ -1395,7 +1402,7 @@ int Soldier::FAccuracy(int peraccur, int TWOHAND)
 			ac -= ac / 3;
 	}
 
-	if (state == SIT) ac += ac / 20;
+	if (m_state == SIT) ac += ac / 20;
 
 	double weapon_delta = 1. / (double)(peraccur * peraccur);
 	double soldier_delta = 1. / (double)(ac * ac);
@@ -1459,7 +1466,7 @@ int Soldier::check_for_hit(int _z, int _x, int _y)
 		col = _x % 16;
 		row = _y % 16;
 		int s = 0;
-		if (state == SIT)
+		if (m_state == SIT)
 			s = 1;
 
 		//lev -= map->mcd(z, x, y, 0)->T_Level; //!!!
@@ -1594,7 +1601,7 @@ void Soldier::shoot(int zd, int xd, int yd)
 	assert(target.action != NONE);
 	assert(target.item != NULL);
 
-	int z0 = z * 12 + 8; if (state == SIT) z0 -= 4;
+	int z0 = z * 12 + 8; if (m_state == SIT) z0 -= 4;
 	int x0 = x * 16 + 8;
 	int y0 = y * 16 + 8;
 
@@ -1846,7 +1853,7 @@ int Soldier::eot_save(char *txt)
 	int len = 0;
 	len += sprintf(txt + len,
 		"\r\n%s:\r\nNID=%d z=%d x=%d y=%d dir=%d state=%d ud.MaxTU=%d ud.MaxHealth=%d ud.MaxEnergy=%d ud.CurFAccuracy=%d ud.CurTAccuracy=%d ud.CurTU=%d ud.CurHealth=%d ud.CurEnergy=%d ud.Morale=%d\r\n",
-		md.Name, NID, z, x, y, dir, (int)state, ud.MaxTU, ud.MaxHealth, ud.MaxEnergy, ud.CurFAccuracy, ud.CurTAccuracy, ud.CurTU, ud.CurHealth, ud.CurEnergy, ud.Morale);
+		md.Name, NID, z, x, y, dir, (int)m_state, ud.MaxTU, ud.MaxHealth, ud.MaxEnergy, ud.CurFAccuracy, ud.CurTAccuracy, ud.CurTU, ud.CurHealth, ud.CurEnergy, ud.Morale);
 	for (int i = 0; i < 8; i++) {
 		len += m_place[i]->eot_save(i, txt + len);
 	}

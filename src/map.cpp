@@ -1012,7 +1012,7 @@ BITMAP *Map::create_lof_bitmap(int lev, int col, int row)
 	if (visible(lev, col, row))
 		if (man(lev, col, row) != NULL) {
 			dir = man(lev, col, row)->dir;
-			if (man(lev, col, row)->state == SIT)
+			if (man(lev, col, row)->m_state == SIT)
 				s = 1;
 			//tl = mcd(lev, col, row, 0)->T_Level;
 			//tl += mcd(lev, col, row, 3)->T_Level;

@@ -70,7 +70,7 @@ class MinimapArea : public VisualObject
 			y + m_minimap->get_height(),
 			x + m_width - 1,
 			y + m_minimap->get_height() + text_height(font),
-			xcom1_color(11));
+			xcom1_color(15));
 
 		if (time_left > 0) {
 			text_mode(-1);
@@ -99,7 +99,7 @@ public:
 	{
 		acquire_bitmap(bmp);
 		BITMAP *temp_bmp = create_bitmap(m_width, m_height);
-		clear_to_color(temp_bmp, xcom1_color(11));
+		clear_to_color(temp_bmp, xcom1_color(15));
 
 		m_minimap->set_full_redraw();
 		m_minimap->redraw(temp_bmp, m_width - m_minimap->get_width(), 0);

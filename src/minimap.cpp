@@ -41,8 +41,8 @@ Minimap::Minimap(Map *map) : m_map(map)
 	m_minimap_unknown = create_bitmap(m_minimap_visible->w, m_minimap_visible->h);
 	clear_to_color(m_minimap_unknown, xcom1_color(15));
 
-	m_width  = m_minimap_visible->w;
-	m_height = m_minimap_visible->h;
+	m_width  = m_minimap_visible->w + 2;
+	m_height = m_minimap_visible->h + 2;
 
 	for (i = 0; i < m_minimap_seen->w; i++)	{
 		for (j = 0; j < m_minimap_seen->h; j++) {
@@ -68,6 +68,16 @@ Minimap::~Minimap()
 void Minimap::redraw_minimap(BITMAP *bmp, int x, int y, int full_redraw_mode)
 {
 	acquire_bitmap(bmp);
+
+	if (full_redraw_mode) {
+		line(bmp, x + 1, y + 0, x + m_minimap_visible->w, y + 0, xcom1_color(1));
+		line(bmp, x + 1, y + m_minimap_visible->h + 1, x + m_minimap_visible->w, y + m_minimap_visible->h + 1, xcom1_color(1));
+		line(bmp, x + 0, y + 1, x + 0, y + m_minimap_visible->h, xcom1_color(1));
+		line(bmp, x + m_minimap_visible->w + 1, y + 1, x + m_minimap_visible->w + 1, y + m_minimap_visible->h, xcom1_color(1));
+	}
+
+	x += 1; y += 1;
+
 	for (int row = 0; row < m_height_10; row++) {
 		for (int col = 0; col < m_width_10; col++) {
 
