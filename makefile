@@ -160,7 +160,7 @@ ifdef win32
 	CFLAGS += -DWIN32 -DALLEGRO_STATICLINK -I mingw-libs/include -L mingw-libs/lib
 	LIBS += -lNL_s -lalleg_s -lws2_32 -lkernel32 -luser32 -lgdi32 -lcomdlg32 \
 	        -lole32 -ldinput -lddraw -ldxguid -lwinmm -ldsound -lbfd -liberty
-	SERVER_LIBS = -lNL_s -lws2_32
+	SERVER_LIBS += -lNL_s -lws2_32
 	SRCS += exchndl.c
 else
 	CFLAGS += -DLINUX
