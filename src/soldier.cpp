@@ -1770,6 +1770,20 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir)
 				platoon_remote->change_morale(10, false);
 			else if (platoon_remote->belong(this))
 				platoon_local->change_morale(10, false);
+				
+			// Change the morale of the sniper
+			if (m_platoon->findman(sniper) != NULL)
+				m_platoon->findman(sniper)->change_morale(-20);
+			else {
+				Soldier *snp = platoon_local->findman(sniper);
+				if (snp != NULL)
+					snp->change_morale(10);
+				else {
+					snp = platoon_remote->findman(sniper);
+					if (snp != NULL)
+						snp->change_morale(10);
+				}
+			}
 		}
 		// Record that we died
 		this->get_platoon()->get_stats()->get_stat_for_SID(NID)->set_dead(1);
