@@ -549,6 +549,7 @@ void Soldier::draw()
 	}
 
 	if (state == SIT) handob_y += 4;
+	if (md.SkinType == S_SECTOID) handob_y += 6; // $$$
 
 	if ((lhand_item() != NULL) || (rhand_item() != NULL)) {
 		if (state != MARCH) {
@@ -1401,16 +1402,20 @@ int Soldier::TAccuracy(int peraccur)
 
 void Soldier::apply_accuracy(REAL & fi, REAL & te)
 {
-	REAL TE_STEP = (PI / 8 / 100.0);
-	REAL FI_STEP = (PI / 32 / 100.0);
+	REAL TE_STEP = (PI / 8. / 100.0) / 2.0;
+	REAL FI_STEP = (PI / 32. / 100.0) / 2.0;
 
 	int randmax = 100 - target.accur;
 	if (randmax <= 0) randmax = 1;
 
-	REAL rand_te = (REAL)(rand() % randmax);
-	REAL rand_fi = (REAL)(rand() % randmax);
-	te += TE_STEP * rand_te - TE_STEP * randmax / 2.0;
-	fi += FI_STEP * rand_fi - FI_STEP * randmax / 2.0;
+//	According to central limit theorem, the sum of many small random values
+//	is normally distributed
+	for (int i = 0; i < 16; i++) {
+		REAL rand_te = (REAL)(rand() % randmax);
+		REAL rand_fi = (REAL)(rand() % randmax);
+		te += TE_STEP * rand_te - TE_STEP * (randmax - 1) / 2.0;
+		fi += FI_STEP * rand_fi - FI_STEP * (randmax - 1) / 2.0;
+	}
 }
 
 
