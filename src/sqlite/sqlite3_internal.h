@@ -38,6 +38,10 @@
 #define SQLITE_DONE 101
 #endif
 
+#ifdef LINUX
+typedef long long __int64;
+#endif
+
 const char *_sqlite3_errmsg(void *db);
 
 int _sqlite3_open(const char *filename, void **db);

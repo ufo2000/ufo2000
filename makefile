@@ -125,7 +125,8 @@ else
 	CFLAGS += $(OPTFLAGS)
 endif
 
-LIBS = -lexpat
+LIBS = -lexpat -lsqlite3
+SERVER_LIBS = -lsqlite3
 
 ifndef no_ttf
 ifdef win32
@@ -156,9 +157,8 @@ ifdef win32
 	SERVER_NAME := ${addsuffix .exe,$(SERVER_NAME)}
 	CFLAGS += -DWIN32 -DALLEGRO_STATICLINK -I mingw-libs/include -L mingw-libs/lib
 	LIBS += -lNL_s -lalleg_s -lws2_32 -lkernel32 -luser32 -lgdi32 -lcomdlg32 \
-	        -lole32 -ldinput -lddraw -ldxguid -lwinmm -ldsound -lbfd -liberty \
-                -lsqlite3
-	SERVER_LIBS = -lNL_s -lws2_32 -lsqlite3
+	        -lole32 -ldinput -lddraw -ldxguid -lwinmm -ldsound -lbfd -liberty
+	SERVER_LIBS = -lNL_s -lws2_32
 	SRCS += exchndl.c
 else
 	CFLAGS += -DLINUX

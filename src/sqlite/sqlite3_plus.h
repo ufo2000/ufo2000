@@ -28,6 +28,10 @@
 #include <vector>
 #include <cstdarg>
 
+#ifdef LINUX
+typedef long long __int64;
+#endif
+
 namespace sqlite3 {
 	class connection {
 		friend class reader;
