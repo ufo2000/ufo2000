@@ -518,6 +518,8 @@ void initmain(int argc, char *argv[])
 	console<<"install_keyboard"<<std::endl;
 	install_keyboard();
     {
+        bool VERBOSE_SOUNDCHECK = false;
+        
         console<<"Initializing sound..."<<std::endl;
         rest(1500);
         std::string xml;
@@ -527,14 +529,14 @@ void initmain(int argc, char *argv[])
             ISTREAM_TO_STRING(ifs_xml, xml);
 
             if (FLAGS & F_SOUNDCHECK) {
-                if (0 == ss->initialize(xml, &console, true)) {
+                if (0 == ss->initialize(xml, &console, VERBOSE_SOUNDCHECK)) {
                     console<<"  Soundcheck in progress..."<<std::endl;
                     ss->playLoadedSamples(&console);
                 } else {
                     console<<"  soundSystem initialization failed."<<std::endl;
                 }
             } else {
-                if ( 0 > ss->initialize(xml, &console, false))
+                if ( 0 > ss->initialize(xml, &console, VERBOSE_SOUNDCHECK))
                     console<<"  Failed."<<std::endl;
             }
         } else {

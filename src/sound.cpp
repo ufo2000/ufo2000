@@ -439,14 +439,14 @@ int soundFile::loadFile(const char *fname, std::ostream& log, bool verbose) {
 
     switch(getFileType(fdata)) {
         case CT_ORIGINAL:
-            log<<"Parsing original .cat"<<std::endl;
-            //loadOrigCat(t_str, log, verbose);
-            loadOrigCat(fdata, log, false);
+            if (verbose) 
+                log<<"Parsing original .cat"<<std::endl;
+            loadOrigCat(fdata, log, verbose);
             break;
         case CT_CE:
-            log<<"Parsing CE .cat"<<std::endl;
-            //loadCeCat(t_str, log, verbose);
-            loadCeCat(fdata, log, false);
+            if (verbose) 
+                log<<"Parsing CE .cat"<<std::endl;
+            loadCeCat(fdata, log, verbose);
             break;
         default:
             log<<"Unknown file type\n";
@@ -747,7 +747,8 @@ static void h_StartEl(void *userData,
         }
         soundSym = getSymCode(sym);
         if ((soundSym == SS_UNKNOWN) || (soundSym == SS_UNUSED)) {
-            *b->log<<"SS_UNKNOWN or SS_UNUSED soundSym\n";
+            if (b->verbose)
+                *b->log<<"SS_UNKNOWN or SS_UNUSED soundSym\n";
             return;
         }
         if (NULL == (sample = b->current->fetchSample(b->curSampleIndex))) {
@@ -758,7 +759,8 @@ static void h_StartEl(void *userData,
         }
         b->zeSys->setSample(soundSym, sample);
         b->curSample = sample;
-        *b->log<<"assigned 0x"<<std::hex<<(int)sample<<std::dec<<" to '"<<sym<<"'\n";
+        if (b->verbose) 
+            *b->log<<"assigned 0x"<<std::hex<<(int)sample<<std::dec<<" to '"<<sym<<"'\n";
         return;
     }
 
@@ -832,12 +834,17 @@ static void h_EndEl(void *userData, const XML_Char *name)
 
 /* soundSystem implementation */
 
-soundSystem::soundSystem() { }
+soundSystem::soundSystem() { 
+    soundInstalled = false;
+}
 //~soundSystem::soundSystem() { }
 
 int soundSystem::initialize(const std::string& xml, std::ostream *log,
                             bool verbose)
 {
+    if (soundInstalled)
+        return -1;
+    
     xmlp_baton_t baton;
     std::stringstream *backup_log = NULL;
 
@@ -850,11 +857,14 @@ int soundSystem::initialize(const std::string& xml, std::ostream *log,
 
     /* On some Linux systems (Mandrake 9.1 for example) MIDI can not be initialized,
      * so we try to call install_sound() again without MIDI support if the first call 
-     * failed. That is done to have sound effects at least.
+     * failed. That is done to at least have sound effects.
      */
-	if (install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) != 0 && install_sound(DIGI_AUTODETECT, MIDI_NONE, NULL) != 0) {
+	if (   install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) != 0 
+        && install_sound(DIGI_AUTODETECT, MIDI_NONE, NULL) != 0) 
+    {
 		*log<<"Error initialising sound system: "<<allegro_error<<std::endl;
         soundInstalled = false;
+        return -1;
     } else {
         soundInstalled = true;
         set_volume_per_voice(0);
@@ -864,7 +874,7 @@ int soundSystem::initialize(const std::string& xml, std::ostream *log,
          *
          * because on unixen, particularly FreeBSD, this tinkers with
          * system-wide mixer, which can cause unwanted effects.
-         * (i.e. your favourite Ministry track will beat the shit out
+         * (i.e. your favourite Ministry track will beat the shit out of
          *  unsuspecting neighbours)
          */
     }
@@ -912,6 +922,8 @@ void soundSystem::shutdown() {
 }
 
 void soundSystem::setSample(SoundSym_e_t sndSym, SAMPLE * sample) {
+    if (!soundInstalled)
+        return;
     theSamples[sndSym] = sample;
 }
 
@@ -937,12 +949,16 @@ soundSystem *soundSystem::getInstance() {
 }
 
 void soundSystem::getLoadedSyms(std::ostream *os) {
+    if (!soundInstalled)
+        return;
     for (unsigned i = 0; i != theSamples.size(); i++)
         if (theSamples[i] != NULL)
             *os<<i<<": '"<<getSymString(static_cast<SoundSym_e_t> (i))<<"'\n";
 }
 
 void soundSystem::playLoadedSamples(std::ostream *os) {
+    if (!soundInstalled)
+        return;
     for (unsigned i = 0; i != theSamples.size(); i++)
         if (theSamples[i] != NULL) {
             *os<<"Playing '"<<getSymString(static_cast<SoundSym_e_t> (i))
