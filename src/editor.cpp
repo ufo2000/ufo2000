@@ -301,8 +301,8 @@ void Editor::show()
     tac01->show(editor_bg, 0, 0); // draw buttons: OK, Next-Man, Prev-Man, Unload-clip, Scroll-right
     draw_sprite_vh_flip(editor_bg, b5, 255, 137); // Button: Scroll-left
     text_mode(-1);
-    textout(editor_bg, g_small_font, "Click-and-drop weapons from the armory to the soldier, right-click to remove", 8, 364, COLOR_WHITE); 
-    textout(editor_bg, large, "F1 Help   F2 Save Team   F3 Load Team   F4 Edit Attributes", 8, 380, COLOR_LT_BLUE);
+    textout(editor_bg, g_small_font, _("Click-and-drop weapons from the armory to the soldier, right-click to remove"), 8, 364, COLOR_WHITE); 
+    textout(editor_bg, large, _("F1 Help   F2 Save Team   F3 Load Team   F4 Edit Attributes"), 8, 380, COLOR_LT_BLUE);
 
 	position_mouse(320, 200);
 	set_mouse_range(0, 0, 639, 399);
@@ -345,23 +345,23 @@ void Editor::show()
 
 				if (sel_item->haveclip()) {
 					//textprintf(screen2, font, 272, 80, color, "%d", sel_item->roundsremain());
-					textout(screen2, g_small_font, "AMMO:",  272, 64, COLOR_LT_OLIVE);
-					textout(screen2, g_small_font, "ROUNDS", 272, 72, COLOR_LT_OLIVE);
-					textout(screen2, g_small_font, "LEFT=",  272, 80, COLOR_LT_OLIVE);
+                    textout(screen2, g_small_font, _("AMMO:"),  272, 64, COLOR_LT_OLIVE);
+                    textout(screen2, g_small_font, _("ROUNDS"), 272, 72, COLOR_LT_OLIVE);
+                    textout(screen2, g_small_font, _("LEFT="),  272, 80, COLOR_LT_OLIVE);
 					textprintf(screen2, g_small_font, 299, 80, COLOR_ORANGE, "%d", sel_item->roundsremain());
 					rect(screen2, 272, 88, 303, 135, COLOR_DK_GRAY);      //clip
 					PCK::showpck(sel_item->clip()->obdata_pInv(), 272, 88 + 8);
 				} else if (sel_item->obdata_isAmmo()) {
 					//textprintf(screen2, font, 272, 80, color, "%d", sel_item->rounds);
-					textout(screen2, g_small_font, "AMMO:", 272, 64, COLOR_LT_OLIVE);
-					textout(screen2, g_small_font, "ROUNDS", 272, 72, COLOR_LT_OLIVE);
-					textout(screen2, g_small_font, "LEFT=", 272, 80, COLOR_LT_OLIVE);
+                    textout(screen2, g_small_font, _("AMMO:"),  272, 64, COLOR_LT_OLIVE);
+                    textout(screen2, g_small_font, _("ROUNDS"), 272, 72, COLOR_LT_OLIVE);
+                    textout(screen2, g_small_font, _("LEFT="),  272, 80, COLOR_LT_OLIVE);
 					textprintf(screen2, g_small_font, 299, 80, COLOR_ORANGE, "%d", sel_item->m_rounds);
 					rect(screen2, 272, 88, 303, 135, COLOR_DK_GRAY);      //clip
 					PCK::showpck(sel_item->obdata_pInv(), 272, 88 + 8);
 				}
 				PCK::showpck(sel_item->obdata_pInv(),
-				                mouse_x - sel_item->obdata_width() * 16 / 2,
+				                mouse_x - sel_item->obdata_width()  * 16 / 2,
 				                mouse_y - sel_item->obdata_height() * 16 / 2 + 8);
 			} else {
 				Item *it = m_armoury->item_under_mouse();
@@ -376,8 +376,8 @@ void Editor::show()
 			int wht = man->count_weight();
 			int max_wht = man->md.Strength;
 			color       = max_wht < wht ? COLOR_RED03 : COLOR_GRAY02;
-			textprintf(screen2, g_small_font, 0, 20, color, "Equipment weight: %d/%d", wht, max_wht);
-			textprintf(screen2, g_small_font, 120, 20, COLOR_GRAY02, "Equipment cost: %d", man->calc_full_ammunition_cost());
+            textprintf(screen2, g_small_font, 0, 20, color, _("Equipment weight: %d/%d"), wht, max_wht);
+            textprintf(screen2, g_small_font, 120, 20, COLOR_GRAY02, _("Equipment cost: %d"), man->calc_full_ammunition_cost());
 
 			draw_sprite(screen2, mouser, mouse_x, mouse_y);
 			blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
@@ -612,17 +612,17 @@ static int common_change_button_proc(
 
 static int race_change_button_proc(int msg, DIALOG *d, int c)
 {
-	return common_change_button_proc("Select unit race", race_names, msg, d, c);
+    return common_change_button_proc( _("Select unit race"), race_names, msg, d, c);
 }
 
 static int armour_change_button_proc(int msg, DIALOG *d, int c)
 {
-	return common_change_button_proc("Select unit armour", armour_names, msg, d, c);
+    return common_change_button_proc( _("Select unit armour"), armour_names, msg, d, c);
 }
 
 static int appearance_change_button_proc(int msg, DIALOG *d, int c)
 {
-	return common_change_button_proc("Select unit appearance", appearance_names, msg, d, c);
+    return common_change_button_proc( _("Select unit appearance"), appearance_names, msg, d, c);
 }
 
 /**
@@ -630,20 +630,20 @@ static int appearance_change_button_proc(int msg, DIALOG *d, int c)
  */
 static DIALOG sol_dialog[] = {
 	//(dialog proc)      (x)           (y)                   (w)      (h)  (fg) (bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
-	{ d_agup_shadow_box_proc, DX,           DY,                   D_WIDTH,     D_HEIGHT, FG,  BG, 0, 0, 0, 0, NULL, NULL, NULL},
-	{ d_agup_button_proc,     DX + 200,     DY + SSY + SH*13 + 4, 100,     20,  FG,  BG, 0, D_EXIT, 0, 0, (void *)"OK", NULL, NULL},
-	{ d_agup_rtext_proc,      DX + STX,     DY + SSY - SH*1,      STW,     16,  FG,  BG, 0, 0, 0, 0, (void *)"Name:", NULL, NULL},
-	{ d_agup_edit_proc,       DX + SSX,     DY + SSY - SH*1 - 4, 23*8,     16,  FG,  BG, 0, 0, 22, 0, NULL, NULL, NULL},
-	{ d_agup_text_proc,       DX + 100,     DY + SSY + SH*12 + 2,  100,     16,  FG,  BG, 0, 0, 0, 0, (void *)points_str, NULL, NULL},
+    { d_agup_shadow_box_proc, DX,           DY,                   D_WIDTH,     D_HEIGHT, FG,  BG, 0, 0, 0, 0, NULL, NULL, NULL},
+    { d_agup_button_proc,     DX + 200,     DY + SSY + SH*13 + 4, 100,     20,  FG,  BG, 0, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL},
+    { d_agup_rtext_proc,      DX + STX,     DY + SSY - SH*1,      STW,     16,  FG,  BG, 0, 0, 0, 0, (void *)_("Name:"), NULL, NULL},
+    { d_agup_edit_proc,       DX + SSX,     DY + SSY - SH*1 - 4, 23*8,     16,  FG,  BG, 0, 0, 22, 0, NULL, NULL, NULL},
+    { d_agup_text_proc,       DX + 100,     DY + SSY + SH*12 + 2,  100,     16,  FG,  BG, 0, 0, 0, 0, (void *)points_str, NULL, NULL},
 
-	{ d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*0 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)"Race:", NULL, NULL},
-	{ race_change_button_proc,DX + SSX,     DY + SSY + SH*0 - 6,    0, 16 + 4,  FG,  BG, 0, D_EXIT, 0, 0, NULL, NULL, NULL},
+    { d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*0 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)_("Race:"), NULL, NULL},
+    { race_change_button_proc,DX + SSX,     DY + SSY + SH*0 - 6,    0, 16 + 4,  FG,  BG, 0, D_EXIT, 0, 0, NULL, NULL, NULL},
 
-	{ d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*1 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)"Armour:", NULL, NULL},
-	{ armour_change_button_proc,DX + SSX,     DY + SSY + SH*1 - 6,    0, 16 + 4,  FG,  BG, 0, D_EXIT, 0, 0, NULL, NULL, NULL},
+    { d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*1 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)_("Armour:"), NULL, NULL},
+    { armour_change_button_proc,DX + SSX,     DY + SSY + SH*1 - 6,    0, 16 + 4,  FG,  BG, 0, D_EXIT, 0, 0, NULL, NULL, NULL},
 
-	{ d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*2 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)"Appearance:", NULL, NULL},
-	{ appearance_change_button_proc,DX + SSX,     DY + SSY + SH*2 - 6,    0, 16 + 4,  FG,  BG, 0, D_EXIT, 0, 0, NULL, NULL, NULL},
+    { d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*2 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)_("Appearance:"), NULL, NULL},
+    { appearance_change_button_proc,DX + SSX,     DY + SSY + SH*2 - 6,    0, 16 + 4,  FG,  BG, 0, D_EXIT, 0, 0, NULL, NULL, NULL},
 
 	{ d_agup_rtext_proc,  DX + STX, DY + STY + SH*3,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)slider_text[0], NULL, NULL},
 	{ d_agup_slider_pro2, DX + SSX, DY + SSY + SH*3,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
@@ -710,7 +710,7 @@ static int d_agup_slider_pro2(int msg, DIALOG * d, int c)
 			scare_mouse();
 
 			SEND_MESSAGE(d, MSG_DRAW, 0);
-			sprintf(points_str, "points remain: %d  ", MAXPOINTS - points);
+            sprintf(points_str, _("points remain: %d  "), MAXPOINTS - points);
 			SEND_MESSAGE(&sol_dialog[D_POINTS], MSG_DRAW, 0);
 
 			unscare_mouse();
@@ -722,8 +722,8 @@ static int d_agup_slider_pro2(int msg, DIALOG * d, int c)
 }
 
 /**
- * Sets correct value ranges in GUI controls after the user changes
- * information related to skins
+ * Sets correct value ranges in GUI controls 
+ * after the user changes information related to skins
  */
 static void fixup_unit_info()
 {
@@ -760,14 +760,14 @@ void Editor::edit_soldier()
 	set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
 
 	// Attributes
-	sprintf(slider_text[0], "Time Units");
-	sprintf(slider_text[1], "Stamina");
-	sprintf(slider_text[2], "Health");
-	sprintf(slider_text[3], "Bravery");
-	sprintf(slider_text[4], "Reactions");
-	sprintf(slider_text[5], "Firing");
-	sprintf(slider_text[6], "Throwing");
-	sprintf(slider_text[7], "Strength");
+    sprintf(slider_text[0], _("Time Units") );
+    sprintf(slider_text[1], _("Stamina")    );
+    sprintf(slider_text[2], _("Health")     );
+    sprintf(slider_text[3], _("Bravery")    );
+    sprintf(slider_text[4], _("Reactions")  );
+    sprintf(slider_text[5], _("Firing")     );
+    sprintf(slider_text[6], _("Throwing")   );
+    sprintf(slider_text[7], _("Strength")   );
 
 	sol_dialog[D_BRAVERY].flags  |= D_DISABLED;
 
@@ -785,7 +785,7 @@ void Editor::edit_soldier()
 	         sol_dialog[D_FIRE_ACCUR].d2 + sol_dialog[D_THRU_ACCUR].d2 +
 			 sol_dialog[D_STAMINA].d2 + (sol_dialog[D_STRENGTH].d2 * 2) +
 			 sol_dialog[D_REACTION].d2;
-	sprintf(points_str, "points remain: %d  ", MAXPOINTS - points);
+	sprintf(points_str, _("points remain: %d  "), MAXPOINTS - points);
 	
 	sol_dialog[D_POINTS].fg = gui_fg_color;
 	sol_dialog[D_POINTS].bg = gui_bg_color;
@@ -830,8 +830,8 @@ void Editor::edit_soldier()
 	man->md.fFemale = sol_dialog[D_APPEARANCE].d1 >= 4;
 	man->md.Appearance = sol_dialog[D_APPEARANCE].d1 % 4;
 	switch (sol_dialog[D_RACE].d1) {
-		case 0: man->md.SkinType = sol_dialog[D_ARMOUR].d1 + 1; break;
-		case 1: man->md.SkinType = S_SECTOID; break;
+		case  0: man->md.SkinType = sol_dialog[D_ARMOUR].d1 + 1; break;
+		case  1: man->md.SkinType = S_SECTOID; break;
 		default: man->md.SkinType = S_MUTON; break;
 	}
 
@@ -892,7 +892,7 @@ int Editor::do_mapselect()
 	blit(terrain_bmp, screen, 0, 0, x, y, terrain_bmp->w, terrain_bmp->h);
 
 	int mouse_leftr = 0, mouse_rightr = 0;
-	if (!(mouse_b & 1)) mouse_leftr = 1;
+	if (!(mouse_b & 1)) mouse_leftr  = 1;
 	if (!(mouse_b & 2)) mouse_rightr = 1;
 
 	//show_mouse(screen);

@@ -1329,9 +1329,9 @@ void endgame_stats()
     int x  =   0, y  =   0;
     int dead = 0, kills = 0, damage = 0;
 
-    textprintf(newscr, font, x1,    y1, COLOR_WHITE, "%-22s %5s %6s", 
+    textprintf(newscr, font, x1,    y1, COLOR_WHITE, "%-18s %9s %6s", 
                                                      _("Name"), _("Kills"), _("Damage") );
-    textprintf(newscr, font, x1+x2, y1, COLOR_WHITE, "%-22s %5s %6s", 
+    textprintf(newscr, font, x1+x2, y1, COLOR_WHITE, "%-18s %9s %6s", 
                                                      _("Name"), _("Kills"), _("Damage") );
 
     for (int pl = 0; pl < 2; pl++) {

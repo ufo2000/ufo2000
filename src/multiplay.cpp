@@ -1192,7 +1192,8 @@ int Net::recv_unit_data_size()
 
 	pkt >> size;
 
-	if (size == 0) { //begin send
+    // ?? gettext
+    if (size == 0) { //begin send
 		memset(pd_remote, 0, sizeof(PLAYERDATA));
 		g_console->printf("%s", "pd recv begin");
 	} else { //end send
@@ -1341,7 +1342,7 @@ int Net::recv_terrain_crc32()
 	if (map_name.empty()) {
 		// special end of terrain list marker received (empty terrain name)
 		g_console->printf("\n");
-		g_console->printf("Remote player has the following %d maps that can be used for network game:\n",
+        g_console->printf( _("Remote player has the following %d maps that can be used for network game:\n"),
 			g_net_allowed_terrains.size());
 
 		std::string tlist = "";
@@ -1366,7 +1367,7 @@ int Net::recv_terrain_crc32()
 				}
 				it++;
 			}
-			g_console->printf("The following maps can not be used, they are modified or just not installed by remote player:\n");
+            g_console->printf( _("The following maps can not be used, they are modified or just not installed by remote player:\n") );
 			g_console->printf(COLOR_RED00, "%s\n", tlist.c_str());
 		}
 #define map ufo2000_map

@@ -256,9 +256,8 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 		g_net_allowed_terrains.erase("");
 
 		if (g_net_allowed_terrains.size() == 0) {
-
-			alert("remote player does not have any of your maps", "", "", "OK", NULL, 0, 0);
-
+            alert( "", _("Remote player does not have any of your maps"), "",
+                   _("OK"), NULL, 0, 0);
 			delete map;
 
 			destroy_bitmap(screen2);
@@ -361,7 +360,8 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 			//	"START"
 			if (mouse_inside(local.gx + 5 * 8 - 20, SCREEN2H - 20, local.gx + 5 * 8 + 20, SCREEN2H - 5))
 			{
-				if (F10ALLOWED && local.SEND && askmenu("FINISH")) DONE = 1;
+                if (F10ALLOWED && local.SEND && askmenu( _("MISSION-PREPARATIONS FINISHED") ))
+                    DONE = 1;
 			}
 		}
 
@@ -416,7 +416,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 					FS_DecMusicVolume();
 					break;
 				case KEY_ESC:
-					if (askmenu("EXIT GAME")) {
+                    if (askmenu( _("EXIT GAME") )) {
 						net->send_quit();
 						net->SEND = 0;
 						DONE = 1;
@@ -453,7 +453,7 @@ void Connect::draw_pd_info(void *_pd, int gx, int gy)
 {
 	PLAYERDATA *pd = (PLAYERDATA *)_pd;
 
-	textout(screen2, g_small_font, "INFO", gx, gy, COLOR_WHITE);
+    textout(screen2, g_small_font, _("INFO"), gx, gy, COLOR_WHITE);
 	int i;
 	int points = 0;
 	for (i = 0; i < pd->size; i++) {
@@ -462,6 +462,7 @@ void Connect::draw_pd_info(void *_pd, int gx, int gy)
 		          pd->md[i].Firing +
 		          pd->md[i].Throwing;
 	}
-	textprintf(screen2, g_small_font, gx, gy + 10, COLOR_WHITE, "total men points=%d", points);
+    textprintf(screen2, g_small_font, gx, gy + 10, COLOR_WHITE, 
+               _("Total men points=%d"), points);
 }
 

@@ -38,10 +38,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 static void draw_border(BITMAP *bmp, int x, int y, int w, int h, int color)
 {
-	line(bmp, x + 1, y + 0, x + w - 2, y + 0, color);
-	line(bmp, x + 1, y + h - 2 + 1, x + w - 2, y + h - 2 + 1, color);
-	line(bmp, x + 0, y + 1, x + 0, y + h - 2, color);
-	line(bmp, x + w - 2 + 1, y + 1, x + w - 2 + 1, y + h - 2, color);
+	line(bmp, x + 1,         y + 0,         x + w - 2,     y + 0, color);
+	line(bmp, x + 1,         y + h - 2 + 1, x + w - 2,     y + h - 2 + 1, color);
+	line(bmp, x + 0,         y + 1,         x + 0,         y + h - 2, color);
+	line(bmp, x + w - 2 + 1, y + 1,         x + w - 2 + 1, y + h - 2, color);
 }
 
 class WindowBorder: public VisualObject
@@ -99,7 +99,7 @@ public:
 		m_height = height;
 		return true;
 	}
-	virtual int get_width() const { return m_width; }
+	virtual int get_width()  const { return m_width; }
 	virtual int get_height() const { return m_height; }
 };
 
@@ -435,7 +435,7 @@ int connect_internet_server()
 		std::string packet;
 		int res = server->recv_packet(id, packet);
 		if (res == -1) {
-            alert(" ", _("  Connection lost  "), " ", "    OK    ", NULL, 1, 0);
+            alert(" ", _("  Connection lost  "), " ", _("    OK    "), NULL, 1, 0);
 			return -1;
 		}
 		if (res != 0)
@@ -570,10 +570,10 @@ int connect_internet_server()
 					break;
                 case KEY_ASTERISK:
                     FS_MusicPlay(NULL);
-                    g_console->printf(COLOR_SYS_OK, _("Music off") );
+                    g_console->printf(COLOR_SYS_OK, _("Music OFF") );
                     break;
 				case KEY_F1:
-					help( HELP_NET );
+                    help( HELP_NET );
 					break;
 				case KEY_F9:
 					keyswitch(0);
@@ -605,3 +605,4 @@ int connect_internet_server()
 	FS_MusicPlay(NULL);
 	return -1;
 }
+

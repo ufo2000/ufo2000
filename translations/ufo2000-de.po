@@ -1,7 +1,7 @@
 # UFO2000 - Language-File: German
 # Copyright (C) 2001-2004 
 # This file is distributed under the same license as the UFO2000 package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2004.
 #
 msgid ""
 msgstr ""
@@ -20,13 +20,13 @@ msgstr "Versions-Vergleich der beiden UFO2000-Programme...\n"
 
 #: src/connect.cpp:81
 msgid "Press ESC to cancel\n"
-msgstr "ESC drücken für Abbruch"
+msgstr "ESC drücken für Abbruch\n"
 
 #: src/connect.cpp:133
 msgid ""
 "\n"
 "connection closed"
-msgstr ""
+msgstr "Verbindung wurde geschlossen"
 
 #: src/connect.cpp:217
 msgid "Welcome to the mission-planner !"
@@ -42,11 +42,11 @@ msgstr "Die Karte für dieses Spiel wurde bereits festgelegt und kann nicht mehr 
 
 #: src/connect.cpp:299
 msgid "To edit a soldier, CTRL-click on his name."
-msgstr "Mit CTRL-Klick auf einen Namen kann ein Soldaten editiert werden."
+msgstr "Mit CTRL-Klick auf einen Namen kann ein Soldat editiert werden."
 
 #: src/connect.cpp:300
 msgid "Left-click to place a soldier on the map, right-click to remove him."
-msgstr "Links-Klick setzt Soldat auf die Karte, Rechts-Klick entfernt ihn."
+msgstr "Ein Links-Klick setzt einen Soldaten auf die Karte, ein Rechts-Klick entfernt ihn."
 
 #: src/connect.cpp:301
 msgid "When finished, click SEND, then START.  Press ESC to quit, F1 for help."
@@ -120,7 +120,7 @@ msgstr "Abbruch"
 #: src/main.cpp:82
 #, c-format
 msgid "Time left: %d"
-msgstr "Verbleibende Zeit:"
+msgstr "Verbleibende Zeit: %d"
 
 #: src/main.cpp:794
 msgid "wrong wholeCRC"
@@ -142,7 +142,7 @@ msgstr ""
 #: src/main.cpp:902
 #, c-format
 msgid "Next turn. local = %d, remote = %d soldiers"
-msgstr "Nächste Runde. Soldaten hier: %d, andere Seite: %d "
+msgstr "Nächste Runde. Anzahl eigene Soldaten: %d, andere Seite: %d "
 
 #: src/main.cpp:957
 msgid "WATCH"
@@ -209,7 +209,7 @@ msgstr "Erfolgreichster Soldat:"
 #: src/main.cpp:1305
 #, c-format
 msgid "%s (%s, %d kills)"
-msgstr "%s (%s, %d Abschüsse)"
+msgstr "%s (%s, Abschüsse: %d)"
 
 #: src/main.cpp:1307 src/main.cpp:1315 src/main.cpp:1323
 msgid "Remote"
@@ -221,12 +221,12 @@ msgstr "Lokal"
 
 #: src/main.cpp:1312
 msgid "Most Devastating Soldier:"
-msgstr ""
+msgstr "Verheerendster Soldat:"
 
 #: src/main.cpp:1313 src/main.cpp:1321
 #, c-format
 msgid "%s (%s, %d damage inflicted)"
-msgstr "%s (%s, %d Schaden verursacht)"
+msgstr "%s (%s, Schaden verursacht: %d)"
 
 #: src/main.cpp:1320
 msgid "Most Cowardly Soldier:"
@@ -425,19 +425,19 @@ msgstr ""
 
 #: src/soldier.cpp:1298
 msgid "Time units are reserved for snap shot."
-msgstr "Zeit wurde reserviert für einen Schnellschuss."
+msgstr "Zeit ist reserviert für einen Schnellschuss."
 
 #: src/soldier.cpp:1305
 msgid "Time units are reserved for aimed shot."
-msgstr "Zeit wurde reserviert für einen gezielten Schuss."
+msgstr "Zeit ist reserviert für einen gezielten Schuss."
 
 #: src/soldier.cpp:1312
 msgid "Time units are reserved for auto shot."
-msgstr "Zeit wurde reserviert für einen Feuerstoss."
+msgstr "Zeit ist reserviert für einen Feuerstoss."
 
 #: src/soldier.cpp:1319
 msgid "Time units are reserved for grenade throw."
-msgstr "Zeit wurde reserviert für einen Granatwurf."
+msgstr "Zeit ist reserviert für einen Granatwurf."
 
 #: src/units.cpp:208
 msgid "MATCH SETTINGS"
@@ -621,15 +621,15 @@ msgstr "Sie sehen hier zwei Fenster:  links die Chat-Konsole,\n"
 
 #: src/server_gui.cpp:411
 msgid "and the list of online players in the right\n"
-msgstr "und rechts die Liste der anwesenden Spieler.\n"
+msgstr "rechts die Liste der anwesenden Spieler.\n"
 
 #: src/server_gui.cpp:413
 msgid "white player name - that's your own name\n"
-msgstr "Weiss - ihr Spielername\n"
+msgstr "Weiss - Ihr Spielername\n"
 
 #: src/server_gui.cpp:414
 msgid "gray player name - available for chat\n"
-msgstr "Grau  - ein anderer Spieler\n"
+msgstr "Grau  - Ein anderer Spieler\n"
 
 #: src/server_gui.cpp:415
 msgid "yellow player name - you have sent a challenge to this player\n"
@@ -882,12 +882,12 @@ msgstr ""
 #: src/scenario.cpp:495
 #, c-format
 msgid "Player 1 is controlling the target area for %d turn(s)."
-msgstr "Spieler 1 kontrolliert das Zielgebiet für %d Runden."
+msgstr "Spieler 1 hat die Kontrolle über das Zielgebiet für %d Runden."
 
 #: src/scenario.cpp:503
 #, c-format
 msgid "Player 2 is controlling the target area for %d turn(s)."
-msgstr "Spieler 2 kontrolliert das Zielgebiet für %d Runden."
+msgstr "Spieler 2 hat die Kontrolle über das Zielgebiet für %d Runden."
 
 #: src/scenario.cpp:508
 msgid "Nobody is controlling the target area."
@@ -901,7 +901,7 @@ msgstr "%s ist nicht erlaubt."
 #: src/scenario.cpp:797
 #, c-format
 msgid "%d points limit exceeded!"
-msgstr "Punktlimit %d ist überschritten!"
+msgstr "Punktelimit %d ist überschritten!"
 
 #: src/scenario.cpp:810
 #, c-format
