@@ -82,7 +82,7 @@ private:
 
 	static char *****m_bof;
 	static PCK **m_pck;
-	static SPK *m_spk[4][2][4];
+	static SPK *m_spk[6][2][4];
 	static BITMAP *m_unibord;
 	static int dir2ofs[8];
 	static char ofs2dir[3][3];

@@ -59,7 +59,9 @@ int get_skin_index(int SkinType, int fFemale)
 
 char *****Soldier::m_bof = NULL;
 PCK **Soldier::m_pck = NULL;
-SPK *Soldier::m_spk[4][2][4] = {{{NULL, NULL, NULL, NULL}, {NULL, NULL, NULL, NULL}},
+SPK *Soldier::m_spk[6][2][4] = {{{NULL, NULL, NULL, NULL}, {NULL, NULL, NULL, NULL}},
+                                {{NULL, NULL, NULL, NULL}, {NULL, NULL, NULL, NULL}},
+                                {{NULL, NULL, NULL, NULL}, {NULL, NULL, NULL, NULL}},
                                 {{NULL, NULL, NULL, NULL}, {NULL, NULL, NULL, NULL}},
                                 {{NULL, NULL, NULL, NULL}, {NULL, NULL, NULL, NULL}},
                                 {{NULL, NULL, NULL, NULL}, {NULL, NULL, NULL, NULL}}};
@@ -103,8 +105,11 @@ void Soldier::initpck()
 	m_spk[2][0][0] = new SPK("ufograph/man_2.spk");
 	m_spk[3][0][0] = new SPK("ufograph/man_3.spk");
 
+	m_spk[4][0][0] = new SPK("ufo2000.dat#SECTOID_SPK");
+	m_spk[5][0][0] = new SPK("ufo2000.dat#MUTON_SPK");
+
 	SPK *unibord = new SPK("ufograph/unibord.pck");
-	m_unibord = create_bitmap(320, 200); clear(m_unibord);
+	m_unibord = create_bitmap(320, 200); clear_to_color(m_unibord, xcom1_color(15));
 	unibord->show_pck(m_unibord, 0, 0);
 	delete unibord;
 
@@ -233,6 +238,8 @@ void Soldier::freepck()
 
 	delete m_spk[2][0][0];
 	delete m_spk[3][0][0];
+	delete m_spk[4][0][0];
+	delete m_spk[5][0][0];
 
 	int s, d, i, j;
 	for (s = 0; s < 2; s++) {
@@ -1745,6 +1752,12 @@ void Soldier::showspk()
 		case S_XCOM_2:
 		case S_XCOM_3:
 			m_spk[(md.SkinType - 1) % 3][0][0]->show(screen2, 0, 0);
+			break;
+		case S_SECTOID:
+			m_spk[4][0][0]->show(screen2, 0, 0);
+			break;
+		case S_MUTON:
+			m_spk[5][0][0]->show(screen2, 0, 0);
 			break;
 		default:
 			bigobs->showpck(Item::obdata[md.SkinType].pInv, 67, 70);

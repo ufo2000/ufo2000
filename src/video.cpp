@@ -98,15 +98,15 @@ void initvideo()
 	LOCK_VARIABLE(g_switch_in_counter);
 	LOCK_FUNCTION(switch_in_callback);
 
-	selector = (BITMAP*)datafile[DAT_SELECT].dat;
-	mouser = (BITMAP*)datafile[DAT_MOUSE].dat;
+	selector = (BITMAP*)datafile[DAT_SELECT_BMP].dat;
+	mouser = (BITMAP*)datafile[DAT_MOUSE_BMP].dat;
 
 	screen2 = create_bitmap(SCREEN2W, SCREEN2H);
 	clear(screen2);
 
 	initpal("geodata/palettes.dat");
 
-	font = (FONT*)datafile[DAT_UNIFONT_TXT].dat;
+	font = (FONT*)datafile[DAT_UNIFONT_8X8].dat;
 	create_small_font();
 	create_large_font();
 
@@ -283,7 +283,7 @@ void initpal(char *fname)
 	palettes_size = read(fh, palettes, palettes_size);
 	close(fh);
 
-	gamepal = (RGB *)datafile[DAT_GAMEPAL].dat;
+	gamepal = (RGB *)datafile[DAT_GAMEPAL_BMP].dat;
 }
 
 void setpal(RGB pal[PAL_SIZE], int pofs)

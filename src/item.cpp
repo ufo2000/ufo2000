@@ -117,8 +117,8 @@ void Item::initobdata()
 void Item::initbigobs()
 {
 	bigobs = new PCK("units/bigobs.pck");
-	obdata[KASTET].pInv = bigobs->add_image((BITMAP *)datafile[DAT_KASTET].dat);
-	obdata[KNIFE].pInv = bigobs->add_image((BITMAP *)datafile[DAT_KNIFE].dat);
+	obdata[KASTET].pInv = bigobs->add_image((BITMAP *)datafile[DAT_KASTET_BMP].dat);
+	obdata[KNIFE].pInv = bigobs->add_image((BITMAP *)datafile[DAT_KNIFE_BMP].dat);
 }
 
 void Item::freebigobs()

@@ -50,13 +50,26 @@ SPK::~SPK()
 
 void SPK::load(const char *fname)
 {
+//	Load from the ordinary file
 	int fh = OPEN_ORIG(fname, O_RDONLY | O_BINARY);
-	assert(fh != -1);
-	m_datlen = filelength(fh);
+	if (fh != -1) {
+		m_datlen = filelength(fh);
+		if (m_dat != NULL) delete [] m_dat;
+		m_dat = new unsigned char[m_datlen];
+		m_datlen = read(fh, m_dat, m_datlen);
+		close(fh);
+		return;
+	}
+
+//	Load from own directory file
+	std::string fullname = std::string(ownfiles_prefix ? ownfiles_prefix : "") + fname;
+	assert(exists(fullname.c_str()));
+	m_datlen = file_size(fullname.c_str());
 	if (m_dat != NULL) delete [] m_dat;
 	m_dat = new unsigned char[m_datlen];
-	m_datlen = read(fh, m_dat, m_datlen);
-	close(fh);
+	PACKFILE *pfh = pack_fopen(fullname.c_str(), F_READ);
+	m_datlen = pack_fread(m_dat, m_datlen, pfh);
+	pack_fclose(pfh);
 }
 
 void SPK::show(BITMAP *_dest, int _x, int _y)

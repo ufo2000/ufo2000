@@ -192,7 +192,7 @@ void PCK::save_as_bmp(const char *fname)
 	BITMAP *bmp2 = create_bitmap(OUT_WIDTH * SIZE, OUT_HEIGHT * rows);
 	stretch_blit(bmp, bmp2, 0, 0, 32 * SIZE, 48 * rows, 0, 0, OUT_WIDTH * SIZE, OUT_HEIGHT * rows);
 
-	save_bitmap(fname, bmp2, (RGB *)datafile[DAT_GAMEPAL].dat);
+	save_bitmap(fname, bmp2, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
 
 	destroy_bitmap(bmp2);
 	destroy_bitmap(bmp);

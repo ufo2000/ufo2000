@@ -187,8 +187,8 @@ int do_mainmenu()
     BS_SELECTED.font    = large;
     BS_GOTFOCUS.font    = large;
 
-	RGB *menupal = (RGB *)datafile[DAT_MENUPAL].dat;
-	BITMAP *mouser2 = (BITMAP*)datafile[DAT_MOUSE2].dat;
+	RGB *menupal = (RGB *)datafile[DAT_MENUPAL_BMP].dat;
+	BITMAP *mouser2 = (BITMAP*)datafile[DAT_MOUSE2_BMP].dat;
 
 	set_mouse_sprite(mouser2);
 	set_palette(menupal);

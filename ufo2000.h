@@ -1,25 +1,20 @@
 /* Allegro datafile object indexes, produced by dat v4.0.1, MSVC.s */
-/* Datafile: ufo2000.dat */
-/* Date: Mon Mar 31 04:47:31 2003 */
+/* Datafile: ../ufo2000.dat */
+/* Date: Mon May 12 06:52:51 2003 */
 /* Do not hand edit! */
 
-#define BWD_ABOUT                        0        /* BWD  */
-#define BWD_CFG                          1        /* BWD  */
-#define BWD_DOS                          2        /* BWD  */
-#define BWD_INET                         3        /* BWD  */
-#define BWD_IPX                          4        /* BWD  */
-#define BWD_MODEM                        5        /* BWD  */
-#define DAT_BIGLETS_CYR                  6        /* DATA */
-#define DAT_FONT_CYR                     7        /* FONT */
-#define DAT_GAMEPAL                      8        /* PAL  */
-#define DAT_KASTET                       9        /* BMP  */
-#define DAT_KNIFE                        10       /* BMP  */
-#define DAT_LOGO                         11       /* BMP  */
-#define DAT_MENUPAL                      12       /* PAL  */
-#define DAT_MOUSE                        13       /* BMP  */
-#define DAT_MOUSE2                       14       /* BMP  */
-#define DAT_SELECT                       15       /* BMP  */
-#define DAT_SMALLSET_CYR                 16       /* DATA */
-#define DAT_TEXT_BACK                    17       /* DATA */
-#define DAT_UNIFONT_TXT                  18       /* FONT */
+#define DAT_BIGLETS_CYR                  0        /* DATA */
+#define DAT_GAMEPAL_BMP                  1        /* PAL  */
+#define DAT_KASTET_BMP                   2        /* BMP  */
+#define DAT_KNIFE_BMP                    3        /* BMP  */
+#define DAT_MENUPAL_BMP                  4        /* PAL  */
+#define DAT_MOUSE2_BMP                   5        /* BMP  */
+#define DAT_MOUSE_BMP                    6        /* BMP  */
+#define DAT_MUTON_SPK                    7        /* DATA */
+#define DAT_SECTOID_SPK                  8        /* DATA */
+#define DAT_SELECT_BMP                   9        /* BMP  */
+#define DAT_SMALLSET_CYR                 10       /* DATA */
+#define DAT_TEXT_BACK_JPG                11       /* DATA */
+#define DAT_UNIFONT_8X8                  12       /* FONT */
+#define DAT_COUNT                        13
 
