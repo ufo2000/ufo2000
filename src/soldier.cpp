@@ -269,6 +269,7 @@ Soldier::Soldier(int _NID)
 	z = -1; x = -1; y = -1;
 	dir = 0; phase = 0; m_state = STAND;
 	m_next = NULL; m_prev = NULL;
+	m_body = NULL;
 
 	m_bullet = new Bullet;
 	m_place[P_SHL_RIGHT] = new Place(16, 40, 2, 1);
@@ -300,6 +301,7 @@ Soldier::Soldier(int _NID, int _z, int _x, int _y)
 	dir = 0;      //!!face to center of map
 	phase = 0; m_state = STAND;
 	m_next = NULL; m_prev = NULL;
+	m_body = NULL;
 
 	m_bullet = new Bullet;
 	m_place[P_SHL_RIGHT] = new Place(16, 40, 2, 1);
@@ -342,6 +344,7 @@ Soldier::Soldier(int _NID, int _z, int _x, int _y, MANDATA *mdat, ITEMDATA *idat
 
 	phase = 0; m_state = STAND;
 	m_next = NULL; m_prev = NULL;
+	m_body = NULL;
 
 	m_bullet = new Bullet;
 	m_place[P_SHL_RIGHT] = new Place(16, 40, 2, 1);
@@ -419,7 +422,7 @@ void Soldier::process_MANDATA()
 	if (md.Reactions < 50) md.Reactions = 50;
 	if (md.Reactions > 80) md.Reactions = 80;
 
-	if (md.TimeUnits + md.Health + md.Firing + md.Throwing + md.Stamina + (md.Strength * 2) + md.Reactions > 420) {
+	if (md.TimeUnits + md.Health + md.Firing + md.Throwing + md.Stamina + (md.Strength * 2) + md.Reactions > MAXPOINTS) {
 		md.TimeUnits = 50;
 		md.Health    = 50;
 		md.Firing    = 50;
@@ -565,7 +568,7 @@ void Soldier::restore()
 			if (ud.CurStun < ud.CurHealth) // This means we should wake up, so find the body!
 			{
 				int z0, x0, y0, found = 0;
-				Place *target = body->get_place();
+				Place *target = m_body->get_place();
 				for (z0 = 0; z0 < map->level; z0++)
 				{
 					for (x0 = 0; x0 < map->width*10; x0++)
@@ -593,8 +596,9 @@ void Soldier::restore()
 						z = z0;
 						x = x0;
 						y = y0;
-						body->unlink();
-						delete body;
+						m_body->unlink();
+						delete m_body;
+						m_body = NULL;
 						map->set_man(z0, x0, y0, this); // Get back into action.
 						m_state = STAND;
 						phase = 0;
@@ -1086,13 +1090,10 @@ int Soldier::move(int ISLOCAL)
 			// If we're moving along a diagonal, use 1.5 times the cost, as in the original game itself.
 			// Please note that walktime( -1 ) returns the time of a horizontal move, whereas
 			// walktime( dir ) factors in the diagonal move multiplier.
-			if ((dir == 1)
-			 || (dir == 3)
-			 || (dir == 5)
-			 || (dir == 7))
-				spend_time((walktime( -1 ) * 1.5), 1);
+			if (DIR_DIAGONAL(dir))
+				spend_time((walktime(-1) * 1.5), 1);
 			else
-				spend_time(walktime( -1 ), 1);
+				spend_time(walktime(-1), 1);
 
 			curway++;
 			if (curway >= waylen) {
@@ -1695,8 +1696,8 @@ void Soldier::stun()
 	else
 		ctype = Muton_Corpse;
 
-	body = new Item(ctype);
-	map->place(z, x, y)->put(body);
+	m_body = new Item(ctype);
+	map->place(z, x, y)->put(m_body);
 
 	x = -1;
 	y = -1;
@@ -1923,10 +1924,23 @@ int Soldier::load_ammo(int iplace, Item * it)
 	return 1;
 }
 
+/**
+ * Function that decrements soldier time units and energy for some action.
+ * The soldier must have enough time units and energy before calling 
+ * this function,
+ * 
+ * @param tm          time required to perform an action
+ * @param use_energy  flag which shows whether the action requires energy 
+ *                    to perform
+ */
 void Soldier::spend_time(int tm, int use_energy)
 {
+	assert(ud.CurTU >= tm);
 	ud.CurTU -= tm;
-	if (use_energy) ud.CurEnergy -= (tm / 2);
+	if (use_energy) {
+		assert(ud.CurEnergy >= (tm / 2));
+		ud.CurEnergy -= (tm / 2);
+	}
 
 	if (FLAGS & F_ENDLESS_TU) {
 		if (ud.CurTU < 32) ud.CurTU = ud.MaxTU;
@@ -1934,6 +1948,14 @@ void Soldier::spend_time(int tm, int use_energy)
 	}
 }
 
+/**
+ * Function that checks if the soldier has time units and energy required
+ * to do something. For actions that require energy, 
+ *
+ * @param ntime       time required to perform an action
+ * @param use_energy  flag which shows whether the action requires energy 
+ *                    to perform
+ */
 int Soldier::havetime(int ntime, int use_energy)
 {
 	if (use_energy)
@@ -1942,6 +1964,13 @@ int Soldier::havetime(int ntime, int use_energy)
 	return (ud.CurTU >= ntime);
 }
 
+/**
+ * Function that returns the time needed to move from current location to 
+ * specified direction.
+ *
+ * @param _dir  walk direction (-1 in the case when the time to get to the current 
+ *              map location is needed)
+ */
 int Soldier::walktime(int _dir)
 {
 	int dz = z, dx = x, dy = y;
@@ -1952,13 +1981,8 @@ int Soldier::walktime(int _dir)
 	int time_of_dst = map->mcd(dz, dx, dy, 0)->TU_Walk;
 	time_of_dst += map->mcd(dz, dx, dy, 3)->TU_Walk;
 
-	if ((_dir == 1)
-	 || (_dir == 3)
-	 || (_dir == 5)
-	 || (_dir == 7))
-	    time_of_dst *= 1.5; // Diagonal move multiplier.
+	if (_dir != -1 && DIR_DIAGONAL(_dir)) time_of_dst *= 1.5; // Diagonal move multiplier.
 	// Only used with havetime(). Actual movement calls walktime(-1).
-
 
 	return time_of_dst;
 }
@@ -2605,7 +2629,8 @@ int Soldier::eot_save(char *txt)
 int Soldier::count_weight()
 {
 	int weight = 0;
-	for (int i = 0; i < 8; i++) weight += m_place[i]->count_weight();
+	for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
+		weight += m_place[i]->count_weight();
 
 	return weight;
 }
@@ -2617,6 +2642,7 @@ bool Soldier::Write(persist::Engine &archive) const
 	PersistWriteObject(archive, m_next);
 	PersistWriteObject(archive, m_prev);
 	PersistWriteObject(archive, m_bullet);
+	PersistWriteObject(archive, m_body);
 
 	for (int i = 0; i < NUMBER_OF_PLACES; i++)
 		PersistWriteObject(archive, m_place[i]);
@@ -2631,6 +2657,7 @@ bool Soldier::Read(persist::Engine &archive)
 	PersistReadObject(archive, m_next);
 	PersistReadObject(archive, m_prev);
 	PersistReadObject(archive, m_bullet);
+	PersistReadObject(archive, m_body);
 
 	for (int i = 0; i < NUMBER_OF_PLACES; i++)
 		PersistReadObject(archive, m_place[i]);

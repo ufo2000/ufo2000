@@ -32,6 +32,13 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "platoon.h"
 #include "minimap.h"
 
+/**
+ * Direction constant names can be not what you expected (in the whole, the 
+ * game uses a rather strange coordinate system - non right-handed, a thing 
+ * to change?). If you do not like these constant names and would like to 
+ * change their names - be very CAREFUL not to break things in the game in 
+ * the places where they are used
+ */
 enum DIRECTION
 {
 	DIR_EAST      = 0,
@@ -44,9 +51,18 @@ enum DIRECTION
 	DIR_SOUTHEAST = 7
 };
 
-#define DIR_DELTA_X(dir) dir2ofs[dir]
-#define DIR_DELTA_Y(dir) dir2ofs[(dir+6)%8]
-#define DIR_REVERSE(dir) ((dir+4)%8)
+//! x increment when moving specified direction
+#define DIR_DELTA_X(dir)  dir2ofs[dir]
+//! y increment when moving specified direction 
+#define DIR_DELTA_Y(dir)  dir2ofs[((dir)+6)%8]
+//! reverses specified direction
+#define DIR_REVERSE(dir)  (((dir)+4)%8)
+//! check if the specified direction is diagonal
+inline DIR_DIAGONAL(int dir)
+{
+	assert(dir >= 0 && dir < 8);
+	return dir % 2;
+}
 
 class Map: public persist::BaseObject
 {
@@ -331,13 +347,12 @@ public:
 	virtual bool Read(persist::Engine &archive);
 };
 
-//////////////////////////////////////////////////////////////////////////////
-/// Every map is constructed from several blocks which are different for   ///
-/// various terrain types. Each block has size divisible by 10 on X and Y  ///
-/// axes. There may be different number of such preconstructed blocks for 
-/// for different terrain types
-//////////////////////////////////////////////////////////////////////////////
-
+/**
+ * Every map is constructed from several blocks which are different for
+ * various terrain types. Each block has size divisible by 10 on X and Y
+ * axes. There may be different number of such preconstructed blocks for 
+ * for different terrain types
+ */
 class Terrain
 {
 	struct block_info { int x_size; int y_size; int z_size; int rand_weight; };
@@ -358,13 +373,12 @@ public:
 	bool check_geodata(const GEODATA &gd);
 };
 
-//////////////////////////////////////////////////////////////////////////////
-/// Information container and map generator for all the terrains used in   ///
-/// the game                                                               ///
-//////////////////////////////////////////////////////////////////////////////
-
 #undef map
 
+/**
+ * Information container and map generator for all the terrains used in
+ * the game
+ */
 class TerrainSet
 {
 	std::map<int, Terrain *> terrain;

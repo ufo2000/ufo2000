@@ -34,6 +34,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define P_LEG_LEFT        5
 #define P_BACK            6
 #define P_BELT            7
+#define NUMBER_OF_CARRIED_PLACES 8
 #define P_MAP             8
 #define NUMBER_OF_PLACES  9
 #define P_ARMOURY         9
@@ -46,6 +47,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define S_SECTOID         5
 #define S_MUTON           6
 #define SKIN_NUMBER       7
+
+//! maximum number of points a soldier can have
+#define MAXPOINTS (7*60)
 
 struct SKIN_INFO { 
 	const char *Name; 
@@ -61,11 +65,10 @@ int get_skin_index(int skin_type, int female_flag);
 
 enum State { SIT = 0, STAND, MARCH, STUN, DIE };
 
-//////////////////////////////////////////////////////////////////////////////
-/// A class which describes unit with all his equipment, health status and ///
-/// position on map                                                        ///
-//////////////////////////////////////////////////////////////////////////////
-
+/**
+ * A class which describes unit with all his equipment, health status and
+ * position on map
+ */
 class Soldier: public persist::BaseObject
 {
 	DECLARE_PERSISTENCE(Soldier);
@@ -98,28 +101,28 @@ private:
 	State m_state;
 	int z, x, y;
 
-	// This flag is set after soldier has moved. Needed for correct work of
-	// switch to next soldier button
+//!	This flag is set after soldier has moved. Needed for correct work of
+//!	switch to next soldier button
 	int MOVED;
 
-	// Determines if a shot being fired is a reaction shot or not.
+//!	Determines if a shot being fired is a reaction shot or not.
 	int REACTION;
 
-	Item *body; // If we get stunned, this points to the corpse.
+//!	If we get stunned, this points to the corpse.
+	Item *m_body;
 
-	// The number of shots to be done and aiming point. Soldier cannot be saved
-	// before all shots have been processed
+//!	The number of shots to be done and aiming point. Soldier cannot be saved
+//!	before all shots have been processed
 	int FIRE_num;
 	int FIRE_z, FIRE_x, FIRE_y;
 
-	// Information for pathfinding It does not need to be saved and can be built
-	// by calling wayto function. If waylen != 0 this soldier is currently moving
-	// and cannot be saved
+//!	Information for pathfinding It does not need to be saved and can be built
+//!	by calling wayto function. If waylen != 0 this soldier is currently moving
 	char way[100];
 	int curway, waylen;
 
-	// Information about seen enemies. It does not need to be saved and can be
-	// restored by calling calc_visible_cells? function
+//!	Information about seen enemies. It does not need to be saved and can be
+//!	restored by calling calc_visible_cells? function
 	char m_visible_cells[4 * 6 * 10 * 6 * 10];      // do sizeof
 	int enemy_num;
 	int enemy_z[100], enemy_x[100], enemy_y[100];

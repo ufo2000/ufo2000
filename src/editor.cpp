@@ -502,7 +502,6 @@ static char slider_text[8][14];
 
 static int d_skin_proc(int msg, DIALOG *d, int c);
 
-#define MAXPOINTS (7*60)
 static int points;
 static char points_str[100];
 
