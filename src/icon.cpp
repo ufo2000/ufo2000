@@ -914,12 +914,20 @@ void Icon::info()
 	else reserve[R_TIME_FREE].Draw(iconsbmp);
 }
 
+inline bool is_trans(int c)
+{
+    return (getr(c) == 0xFF &&
+            getg(c) == 0x00 &&
+            getb(c) == 0xFF);
+}
+
 /**
  * Test if mouse is inside an icon-button
  */
 int Icon::inside(int mx, int my)
 {
-	if ((mx >= x) && (mx <= x + width) && (my >= y) && (my <= y + height))
+	if ((mx >= x) && (mx <= x + width) && (my >= y) && (my <= y + height) &&
+        !(is_trans(getpixel(iconsbmp, mx - x, my - y))))
 		return 1;
 	else
 		return 0;
@@ -976,7 +984,11 @@ void Icon::draw_text(int txt, int val, char *format)
  */
 void Icon::draw_item(int itm, Item *it, int rounds, int prime, bool primed)
 {
-	item[itm].Draw(iconsbmp, it);
+    if (item[itm].button.is_inside(mouse_x - x, mouse_y - y))
+	   item[itm].Draw(iconsbmp, highlbmp, it);
+    else
+        item[itm].Draw(iconsbmp, it);
+        
 	if (rounds != -1)
 		item[itm].DrawDigits(iconsbmp, rounds, dig_round);
 	else if (prime != -1)

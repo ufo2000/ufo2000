@@ -114,12 +114,18 @@ public:
     /**
      * Draw item (weapon) inside one of the hand-boxes of the control-panel.
      */
-	void Draw(BITMAP *dest, Item *it)
+    void Draw(BITMAP *dest, Item *it)
 	{
 		int dx = (2 - it->obdata_width())  * 16 / 2;
 		int dy = (3 - it->obdata_height()) * 15 / 2;
 
 		PCK::showpck(dest, it->obdata_pInv(), ImageX + dx,  ImageY + dy);
+	};
+     
+	void Draw(BITMAP *dest, BITMAP *src, Item *it)
+	{
+        button.Draw(dest, src);
+        Draw(dest, it);
 	};
 	
 	void DrawDigits(BITMAP *dest, int val, ItemDigs type)
