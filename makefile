@@ -97,6 +97,7 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
        pck.cpp persist.cpp place.cpp platoon.cpp random.cpp           \
        scenario.cpp server_config.cpp server_gui.cpp                  \
        server_protocol.cpp server_transport.cpp skin.cpp soldier.cpp  \
+       server_game.cpp                                                \
        sound.cpp spk.cpp stats.cpp terrapck.cpp text.cpp units.cpp    \
        video.cpp wind.cpp zfstream.cpp                                \
        sqlite3_command.cpp sqlite3_connection.cpp                     \
@@ -108,6 +109,7 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
        aphoton.c awin95.c decode.c encode.c io.c jpgalleg.c
 
 SRCS_SERVER = server_config.cpp server_main.cpp server_protocol.cpp   \
+              server_game.cpp                                         \
               server_transport.cpp $(SRCS_LUA)                        \
               sqlite3_command.cpp sqlite3_connection.cpp              \
               sqlite3_internal.cpp sqlite3_reader.cpp                 \
