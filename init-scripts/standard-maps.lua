@@ -5,7 +5,7 @@
 ------------------------------------------------------------------------------
 
 AddXcomTerrain {
-	Index = 0, Name = "jungle",
+	Index = 0, Name = "Jungle",
 	Tiles =	{
 		"$(xcom)/terrain/blanks.*",
 		"$(xcom)/terrain/jungle.*",
@@ -27,7 +27,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 1, Name = "culta",
+	Index = 1, Name = "Farm",
 	Tiles =	{
 		"$(xcom)/terrain/blanks.*",
 		"$(xcom)/terrain/cultivat.*",
@@ -57,7 +57,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 2, Name = "forest",
+	Index = 2, Name = "Forest",
 	Tiles =	{
 		"$(xcom)/terrain/blanks.*",
 		"$(xcom)/terrain/forest.*"
@@ -79,7 +79,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 5, Name = "urban",
+	Index = 5, Name = "City",
 	Tiles =	{
 		"$(xcomdemo)/terrain/blanks.*",
 		"$(xcomdemo)/terrain/roads.*",
@@ -107,7 +107,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 6, Name = "desert",
+	Index = 6, Name = "Desert",
 	Tiles =	{
 		"$(xcom)/terrain/blanks.*",
 		"$(xcom)/terrain/desert.*"
@@ -129,7 +129,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 7, Name = "mount",
+	Index = 7, Name = "Mountain",
 	Tiles =	{
 		"$(xcom)/terrain/blanks.*",
 		"$(xcom)/terrain/mount.*"
@@ -152,7 +152,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 8, Name = "polar",
+	Index = 8, Name = "Arctic",
 	Tiles =	{
 		"$(xcom)/terrain/blanks.*",
 		"$(xcom)/terrain/polar.*"
@@ -176,7 +176,7 @@ AddXcomTerrain {
 }
 
 AddXcomTerrain {
-	Index = 9, Name = "mars",
+	Index = 9, Name = "Cydonia",
 	Tiles =	{
 		"$(xcom)/terrain/blanks.*",
 		"$(xcom)/terrain/mars.*",
@@ -194,5 +194,30 @@ AddXcomTerrain {
 		"$(xcom)/maps/mars08.map",
 		"$(xcom)/maps/mars09.map",
 		"$(xcom)/maps/mars10.map"
+	}
+}
+
+AddXcomTerrain {
+	Index = 100, Name = "Atlantis",
+	Tiles =	{
+		"$(tftddemo)/terrain/blanks.*",
+		"$(tftddemo)/terrain/sand.*",
+		"$(tftddemo)/terrain/atlantis.*",
+		"$(tftddemo)/terrain/ufobits.*"
+	},
+	Maps = {
+		"$(tftddemo)/maps/atlan00.map",
+		"$(tftddemo)/maps/atlan01.map",
+		"$(tftddemo)/maps/atlan02.map",
+		"$(tftddemo)/maps/atlan03.map",
+		"$(tftddemo)/maps/atlan04.map",
+		"$(tftddemo)/maps/atlan05.map",
+		"$(tftddemo)/maps/atlan06.map",
+		"$(tftddemo)/maps/atlan07.map",
+		"$(tftddemo)/maps/atlan08.map",
+		"$(tftddemo)/maps/atlan09.map",
+		"$(tftddemo)/maps/atlan10.map",
+		"$(tftddemo)/maps/atlan11.map",
+		"$(tftddemo)/maps/atlan12.map"
 	}
 }

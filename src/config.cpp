@@ -33,8 +33,6 @@ extern int speed_bullet;
 extern int speed_mapscroll;
 extern int mapscroll;
 
-static int USETRANS = 1;
-
 static char *gen = "General";
 static char *edit = "Editor";
 
@@ -231,6 +229,8 @@ void saveini()
 	set_config_string(edit, "last_unit_name", last_unit_name);
 }
 /*
+static int USETRANS = 1;
+
 int selectplaymode()
 {
 	SPK * back01 = new SPK("geograph/back01.scr");

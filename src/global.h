@@ -57,6 +57,8 @@ extern "C" {
 #include "persist.h"
 #define map ufo2000_map
 
+#include <set>
+
 inline void PersistWriteBinary(persist::Engine &archive, const void *data, int size)
 {
 	archive.WriteBinary((const uint8 *)data, size);
@@ -333,6 +335,7 @@ enum Mode { MAP2D, MAP3D, MAN, WATCH, UNIT_INFO, PLANNER };
 extern volatile int CHANGE;
 extern Map *map;
 extern TerrainSet *terrain_set;
+extern std::set<int> g_net_allowed_terrains;
 extern Platoon *platoon_local, *platoon_remote;
 extern Explosive *elist;
 extern Net *net;
@@ -352,7 +355,6 @@ extern int local_platoon_size;
 extern char last_map_name[1000];
 extern char last_unit_name[1000];
 
-//extern Wind *info;
 extern Editor *editor;
 
 extern int HOST;

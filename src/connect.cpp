@@ -102,6 +102,8 @@ int Connect::do_chat()
 			break;
 	}
 
+	g_net_allowed_terrains.clear();
+
 	remote_win->printstr("\n");
 	remote_win->printstr("Comparing local and remote UFO2000 versions...\n");
 	remote_win->printstr("Press ESC to cancel\n");
@@ -260,13 +262,29 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 	local.set_mouse_range(639, SCREEN2H - 1, map2d_x, 0, map2d_x + map2d->w - 1, map2d->h - 1);
 	editor->build_Units(local);
 
+    // Synchronize available terrains list
+    if (net->is_network_game()) {
 #undef map
 		std::map<int, Terrain *>::iterator it = terrain_set->terrain.begin();
 		while (it != terrain_set->terrain.end()) {
 			net->send_terrain_crc32(it->first, it->second->get_crc32());
 			it++;
 		}
+		net->send_terrain_crc32(-1, 0);
 #define map ufo2000_map
+
+		// Wait until a complete list of remote terrains is received
+		while (g_net_allowed_terrains.find(-1) == g_net_allowed_terrains.end()) {
+			net->check();
+			yield_timeslice();
+		}
+	}
+
+    // Make sure that we have a valid map
+	if (!Map::valid_GEODATA(&mapdata)) {
+		Map::new_GEODATA(&mapdata);
+		mapdata.load_game = 77;
+	}
 
 	if (HOST) {
 		net->send_map_data(&mapdata);
@@ -279,7 +297,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 
 		net->check();
 		if (mapdata.load_game == 77) { //new	mapdata
-			g_console->printf("%s", "mapdata generated");
+//			g_console->printf("%s", "mapdata generated");
 			mapdata.load_game = 0;
 			delete map;
 			destroy_bitmap(map2d);

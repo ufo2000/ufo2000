@@ -95,6 +95,8 @@ public:
 	ClientServerUfo *m_internet_server;
 	GameType gametype;
 
+	int is_network_game() { return gametype == GAME_TYPE_INTERNET_SERVER || gametype == SOCK; }
+
 	Net();
 	~Net();
 	int init();

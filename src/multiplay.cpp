@@ -1290,6 +1290,8 @@ void Net::send_terrain_crc32(int index, unsigned long crc32)
 	send(pkt.str(), pkt.str_len());
 }
 
+std::set<int> g_net_allowed_terrains;
+
 int Net::recv_terrain_crc32()
 {
 	int index;
@@ -1302,12 +1304,32 @@ int Net::recv_terrain_crc32()
 
 	unsigned long crc32 = ((unsigned long)crc32_hi << 16) | (unsigned long)crc32_lo;
 
-	std::string name = terrain_set->get_terrain_name(index);
+	if (index == -1) {
+		// special end of terrain list marker received
 
-	if (!name.empty() && crc32 != terrain_set->get_terrain_crc32(index)) {
-		g_console->printf("remote player has different maps in '%s' tileset\n", name.c_str());
+		g_console->printf("The following terrain types are available to play (total %d):\n",
+			g_net_allowed_terrains.size());
+
+		std::string tlist = "";
+			
+		std::set<int>::iterator it = g_net_allowed_terrains.begin();
+		while (it != g_net_allowed_terrains.end()) {
+			tlist.append(tlist.empty() ? "   " : ", ");
+			tlist.append(terrain_set->get_terrain_name(*it));
+			it++;
+		}
+
+		g_console->printf("%s\n", tlist.c_str());
+
+		g_net_allowed_terrains.insert(-1);
+
+		return 1;
 	}
-	
+
+	std::string name = terrain_set->get_terrain_name(index);
+	if (!name.empty() && crc32 == terrain_set->get_terrain_crc32(index))
+		g_net_allowed_terrains.insert(index);
+
 	return 1;
 }
 

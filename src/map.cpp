@@ -1487,8 +1487,16 @@ void Map::new_GEODATA(GEODATA *md)
     // $$$ Hack - the game currently crashes when using nonsquare map
 	if (MAP_WIDTH != MAP_HEIGHT) MAP_HEIGHT = MAP_WIDTH;
 
-	terrain_set->create_geodata(
-		terrain_set->get_random_terrain_id(), MAP_WIDTH, MAP_HEIGHT, *md);
+	int terrain_id = terrain_set->get_random_terrain_id();
+
+	if (net->is_network_game()) {
+	    assert(g_net_allowed_terrains.size() > 1);
+		while (g_net_allowed_terrains.find(terrain_id) == g_net_allowed_terrains.end()) {
+			terrain_id = terrain_set->get_random_terrain_id();
+		}
+	}
+
+	terrain_set->create_geodata(terrain_id, MAP_WIDTH, MAP_HEIGHT, *md);
 }
 
 int Map::valid_GEODATA(GEODATA *md)
@@ -1496,7 +1504,9 @@ int Map::valid_GEODATA(GEODATA *md)
 	if ((md->x_size > 6) || (md->y_size > 6) ||
 		(md->x_size < 2) || (md->y_size < 2) ||
         (md->x_size != md->y_size) || (md->z_size != 4) ||
-        terrain_set->get_terrain_name(md->terrain) == "") return 0;
+        terrain_set->get_terrain_name(md->terrain) == "" ||
+        (net->is_network_game() && 
+        g_net_allowed_terrains.find(md->terrain) == g_net_allowed_terrains.end())) return 0;
 	return 1;
 }
 
