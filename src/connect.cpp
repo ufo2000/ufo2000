@@ -459,6 +459,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 				local.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
 			}
 			local.set_mouse_range(639, SCREEN2H - 1, map2d_x, 0, map2d_x + map2d->w - 1, map2d->h - 1);
+			local.deselect();
 
 			CHANGE = 1;
 		}
