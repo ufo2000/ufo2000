@@ -67,6 +67,10 @@ ifdef xmingw
     win32 = 1
 endif
 
+ifdef valgrind
+	debug = 1
+endif
+
 VPATH = src src/jpgalleg src/dumbogg src/exchndl src/agup
 
 SRCS = bullet.cpp cell.cpp config.cpp connect.cpp dirty.cpp           \
@@ -86,6 +90,9 @@ SRCS_SERVER = server_main.cpp server_protocol.cpp \
 
 ifdef debug
 	CFLAGS += -g
+ifdef valgrind
+	CFLAGS += -O1
+endif
 	OBJDIR := ${addsuffix -debug,$(OBJDIR)}
 	NAME := ${addsuffix -debug,$(NAME)}
 	SERVER_NAME := ${addsuffix -debug,$(SERVER_NAME)}

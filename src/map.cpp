@@ -182,7 +182,7 @@ Map::~Map()
 	int i, j, k;
 	for (i = 0; i < level; i++) {
 		for (j = 0; j < 10 * width; j++) {
-			for (k = 0; k < 10 * width; k++) {
+			for (k = 0; k < 10 * height; k++) {
 				delete m_cell[i][j][k];
 			}
 			delete [] m_cell[i][j];
@@ -1513,9 +1513,6 @@ void Map::new_GEODATA(GEODATA *md, const std::string &terrain_name)
 	if (MAP_WIDTH > 6) MAP_WIDTH = 6;
 	if (MAP_HEIGHT > 6) MAP_HEIGHT = 6;
 
-    // $$$ Hack - the game currently crashes when using nonsquare map
-	if (MAP_WIDTH != MAP_HEIGHT) MAP_HEIGHT = MAP_WIDTH;
-
 	// Try to use map generator function defined in terrain description
 	int stack_top = lua_gettop(L);
 	lua_pushstring(L, "MapGenerator");
@@ -1546,8 +1543,7 @@ int Map::valid_GEODATA(GEODATA *md)
 
 	if ((md->x_size > 6) || (md->y_size > 6) ||
 		(md->x_size < 2) || (md->y_size < 2) ||
-        (md->x_size != md->y_size) || (md->z_size != 4) ||
-        terrain_name == "") return 0;
+        (md->z_size != 4) || terrain_name == "") return 0;
         
 	if (net->is_network_game() && 
         g_net_allowed_terrains.find(terrain_name) == g_net_allowed_terrains.end()) return 0;

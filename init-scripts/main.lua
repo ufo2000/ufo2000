@@ -215,22 +215,37 @@ function SetEquipment(name)
 	end
 end
 
+-- return random element from a table 
+function random(a)
+	if type(a) ~= "table" or table.getn(a) < 1 then 
+		Error("Invalid argument to random() function") 
+	end
+	return a[math.random(1, table.getn(a))]
+end
+
 -- global map generator function
 function MapGenerator(name, size_x, size_y)
 	-- check if this particular map has custom map generator function
 	if not (TerrainTable[name] and TerrainTable[name].MapGenerator) then 
 		return nil 
 	end
-	-- initialize empty map template
-	local tmp = {Name = name, SizeX = size_x, SizeY = size_y, Mapdata = {}}
-	for i = 1, size_y do
-		tmp.Mapdata[i] = {}
-		for j = 1, size_x do
-			tmp.Mapdata[i][j] = -1
+	-- map template initialization function
+	local function CreateMapTemplate(size_x, size_y)
+		local tmp = {
+			Name = name, 
+			SizeX = size_x, SizeY = size_y, 
+			Mapdata = {}
+		}
+		for i = 1, size_y do
+			tmp.Mapdata[i] = {}
+			for j = 1, size_x do
+				tmp.Mapdata[i][j] = -1
+			end
 		end
+		return tmp
 	end
 	-- pass map template to appropriate map generator function
-	return TerrainTable[name].MapGenerator(tmp)
+	return TerrainTable[name].MapGenerator(CreateMapTemplate(size_x, size_y))
 end
 
 -- perform data files integrity check before applying security

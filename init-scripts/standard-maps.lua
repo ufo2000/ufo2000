@@ -132,18 +132,14 @@ AddXcomTerrain {
 		end
 
 		local function random_normal()
-			if (math.random(1, 7) > 2) then
-				return math.random(14, 18)
-			else
-				return math.random(3, 4)
-			end
+			return random {03, 04, 14, 15, 16, 17, 18}
 		end	
 
 		local function random_double(x, y, map)
 			local a = x + 1
 			local b = y + 1
 			if (map[x][y] > 2 and map[a][y] > 2 and map[x][b] > 2 and map[a][b] > 2) then
-				map[x][y] = math.random(5,9)
+				map[x][y] = random {05, 06, 07, 08, 09}
 				map[a][y] = -1
 				map[x][b] = -1
 				map[a][b] = -1
@@ -608,12 +604,43 @@ AddXcomTerrain {
 	end
 }
 
---[[  
+------------------------------------------------------------------------------
+-- The cargo must be pre-prepared in order to play in them. Randomisation   --
+-- is impossible. Real map size is 70x30 for cargo ship, but we currently   --
+-- have limitation 60x60, so map is cut to 60x30                            --
+------------------------------------------------------------------------------
+
+AddXcomTerrain {
+	Name = "Cargo Ship",
+	Tiles =	{
+		"$(tftd)/terrain/blanks.*",
+		"$(tftd)/terrain/sea.*",
+		"$(tftd)/terrain/cargo1.*",
+		"$(tftd)/terrain/cargo2.*",
+		"$(tftd)/terrain/xbits.*",
+		"$(tftd)/terrain/cargo3.*"
+	},
+	Maps = {
+		"$(tftd)/maps/cargo00.map",
+		"$(tftd)/maps/cargo01.map",
+		"$(tftd)/maps/cargo02.map"
+	},
+	MapGenerator = function(map)
+		map.SizeX = 6
+		map.SizeY = 3
+		map.Mapdata = {
+			{ 00, -1, -1, -1, -1, -1 },
+			{ -1, -1, -1, -1, -1, -1 },
+			{ -1, -1, -1, -1, -1, -1 },
+		}
+		return map
+	end
+}
 
 ------------------------------------------------------------------------------
 -- Alien Base, impossible to play (no passages)                             --
 ------------------------------------------------------------------------------
-
+--[[  
 AddXcomTerrain {
 	Name = "Grunge",
 	Tiles =	{
@@ -644,26 +671,4 @@ AddXcomTerrain {
 		"$(tftd)/maps/grunge16.map"
 	}
 }
-
-------------------------------------------------------------------------------
--- The cargo must be pre-prepared in order to play in them. Randomisation   --
--- is impossible.                                                           --
-------------------------------------------------------------------------------
-
-AddXcomTerrain {
-	Name = "Cargo",
-	Tiles =	{
-		"$(tftd)/terrain/sea.*",
-		"$(tftd)/terrain/cargo1.*",
-		"$(tftd)/terrain/cargo2.*",
-		"$(tftd)/terrain/xbits.*",
-		"$(tftd)/terrain/cargo3.*"
-	},
-	Maps = {
-		"$(tftd)/maps/cargo00.map",
-		"$(tftd)/maps/cargo01.map",
-		"$(tftd)/maps/cargo02.map"
-	}
-}
-
 --]]
