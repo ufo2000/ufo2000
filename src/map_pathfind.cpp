@@ -188,6 +188,7 @@ static int TU, TU_max, TU_color;
 
 void Map::draw_path_from(Soldier * s)
 {
+    pathfind_mode = PF_DISPLAY;
 	char way[100];
 	int waylen = pathfind(s->z, s->x, s->y, sel_lev, sel_col, sel_row, way);
 	TU = s->ud.CurTU;

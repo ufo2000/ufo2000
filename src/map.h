@@ -48,6 +48,8 @@ enum DIRECTION
     DIR_SOUTHEAST = 7
 };
 
+enum PF_MODE {PF_TRUE, PF_DISPLAY};
+
 //! x increment when moving specified direction
 #define DIR_DELTA_X(dir)  dir2ofs[dir]
 //! y increment when moving specified direction 
@@ -81,6 +83,7 @@ private:
     TerraPCK *m_terrain;
 
     static int m_animation_cycle;
+    PF_MODE pathfind_mode;
 
     void create(int l, int w, int h);
 
@@ -181,6 +184,8 @@ public:
 
     int eot_save(char *buf, int &buf_size);
     int saveitems(char *txt);
+
+    void set_pathfind_mode(PF_MODE new_pathfind_mode) {pathfind_mode = new_pathfind_mode;}
 
     MCD *mcd(int lev, int col, int row, int type)
     {

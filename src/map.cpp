@@ -843,7 +843,14 @@ int Map::stopWALK(int oz, int ox, int oy, int part)
 	if (m_terrain->m_mcd[ct].TU_Walk == 255) return 1;
 
     if (part == 0 || part == 3) {
-        if (man(oz, ox, oy)) return 1;
+        switch (pathfind_mode) {
+            case PF_TRUE:
+                if (man(oz, ox, oy)) return 1;
+                break;
+            case PF_DISPLAY:
+                if (man(oz, ox, oy) && visible(oz, ox, oy)) return 1;
+                break;
+        }
         if (isStairs(oz, ox, oy) && ((oz + 1 >= level) || !passable(oz + 1, ox, oy))) return 1;
         for (int z = oz; z > 0 && mcd(z, ox, oy, 0)->No_Floor && !isStairs(z - 1, ox, oy); z--) {
             if (!passable(z - 1, ox, oy)) return 1;
