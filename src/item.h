@@ -85,6 +85,7 @@ public:
 	static int obdata_smokeTime(int index) { return obdata_get_int(index, "smokeTime"); }
 	static int obdata_cost(int index) { return obdata_get_int(index, "cost"); }
 	static int obdata_isAmmo(int index) { return obdata_get_int(index, "isAmmo"); }
+	static int obdata_reloadTime(int index) { return obdata_get_int(index, "reloadTime"); }
 	static std::string obdata_name(int index) { return obdata_get_string(index, "name"); }
 	static int obdata_damageType(int index) { return obdata_get_int(index, "damageType"); }
 	static int obdata_wayPoints(int index) { return obdata_get_int(index, "wayPoints"); }
@@ -127,6 +128,7 @@ public:
 	int obdata_width() { return obdata_get_int(m_type, "width"); }
 	int obdata_height() { return obdata_get_int(m_type, "height"); }
 	int obdata_isAmmo() { return obdata_isAmmo(m_type); }
+	int obdata_reloadTime() { return obdata_reloadTime(m_type); }
 	int obdata_isGun() { return obdata_isGun(m_type); }
 	int obdata_twoHanded() { return obdata_twoHanded(m_type); }
 	int obdata_maxHealth() { return obdata_maxHealth(m_type); }

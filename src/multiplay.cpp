@@ -622,27 +622,29 @@ int Net::recv_unload_ammo()
 }
 
 
-void Net::send_load_ammo(int NID, int iplace)
+void Net::send_load_ammo(int NID, int iplace, int srcplace)
 {
 	if (!SEND) return ;
 
 	pkt.create(CMD_LOAD_AMMO);
 	pkt << NID;
 	pkt << iplace;
+	pkt << srcplace;
 	send();
 }
 
 int Net::recv_load_ammo()
 { // "LOAD"
-	int NID, iplace;
+	int NID, iplace, srcplace;
 
 	pkt >> NID;
 	pkt >> iplace;
+	pkt >> srcplace;
 
 	Soldier *ss = findman(NID);
 	if (ss != NULL) {
 		SEND = 0;
-		if (!ss->load_ammo(iplace, itaken)) {
+		if (!ss->load_ammo(iplace, srcplace, itaken)) {
 			error("NID can't load ammo");
 			return 1;
 		}

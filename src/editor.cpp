@@ -343,7 +343,7 @@ void prep_soldier( int NID, int s_type )
         ss->putitem(new Item( itemtype ), P_ARM_RIGHT );
         itemtype = Plasma_Rifle_Clip;
         it = new Item( itemtype );
-        ss->load_ammo(P_ARM_RIGHT, it);  // load clip
+        //ss->load_ammo(P_ARM_RIGHT, it);  // load clip
         ss->putitem(new Item( itemtype ), P_LEG_RIGHT );
 
         itemtype = ALIEN_GRENADE;
@@ -411,7 +411,7 @@ void prep_soldier( int NID, int s_type )
       //it = new Item( itemtype );
       //ss->putitem(it, P_ARM_LEFT);
       //it = new Item( itemtype );
-        ss->load_ammo(P_ARM_RIGHT, new Item(itemtype) );  // load clip
+        //ss->load_ammo(P_ARM_RIGHT, new Item(itemtype) );  // load clip
 
         ss->putitem(new Item(itemtype), P_SHL_RIGHT);
         itemtype = AUTO_CANNON_I_AMMO;
@@ -440,7 +440,7 @@ void prep_soldier( int NID, int s_type )
         ss->putitem(new Item( itemtype ), P_ARM_RIGHT );
         itemtype = Heavy_Plasma_Clip;
         it = new Item( itemtype );
-        ss->load_ammo(P_ARM_RIGHT, it);  // load clip
+        //ss->load_ammo(P_ARM_RIGHT, it);  // load clip
         ss->putitem(new Item( itemtype ), P_LEG_RIGHT );
 
         itemtype = ALIEN_GRENADE;

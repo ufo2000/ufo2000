@@ -38,6 +38,7 @@ AddXcomItem {
 	disappear = 0,
 	weight = 1,
 	isAmmo = 1,
+	reloadTime = 20,
 	sound = "cv-bullet-hit",
 }
 
@@ -82,6 +83,7 @@ AddXcomItem {
 	disappear = 0,
 	weight = 2,
 	isAmmo = 1,
+	reloadTime = 15,
 	sound = "cv-bullet-hit",
 }
 
@@ -126,6 +128,7 @@ AddXcomItem {
 	disappear = 0,
 	weight = 6,
 	isAmmo = 1,
+	reloadTime = 15,
 	sound = "cv-cannon-AP-hit",
 }
 
@@ -150,6 +153,7 @@ AddXcomItem {
 	disappear = 0,
 	weight = 6,
 	isAmmo = 1,
+	reloadTime = 15,
 	sound = "cv-cannon-HE-hit",
 }
 
@@ -174,6 +178,7 @@ AddXcomItem {
 	disappear = 0,
 	weight = 6,
 	isAmmo = 1,
+	reloadTime = 15,
 	sound = "cv-cannon-IN-hit",
 }
 
@@ -218,6 +223,7 @@ AddXcomItem {
 	disappear = 0,
 	weight = 5,
 	isAmmo = 1,
+	reloadTime = 15,
 	sound = "cv-cannon-AP-hit",
 }
 
@@ -242,6 +248,7 @@ AddXcomItem {
 	disappear = 0,
 	weight = 5,
 	isAmmo = 1,
+	reloadTime = 15,
 	sound = "cv-cannon-HE-hit",
 }
 
@@ -266,6 +273,7 @@ AddXcomItem {
 	disappear = 0,
 	weight = 5,
 	isAmmo = 1,
+	reloadTime = 15,
 	sound = "cv-cannon-IN-hit",
 }
 
@@ -313,6 +321,7 @@ AddXcomItem {
 	disappear = 1,
 	weight = 6,
 	isAmmo = 1,
+	reloadTime = 15,
 	sound = "small-rocket-hit",
 }
 
@@ -337,6 +346,7 @@ AddXcomItem {
 	disappear = 1,
 	weight = 8,
 	isAmmo = 1,
+	reloadTime = 15,
 	sound = "HE-rocket-hit",
 }
 
@@ -361,6 +371,7 @@ AddXcomItem {
 	disappear = 1,
 	weight = 7,
 	isAmmo = 1,
+	reloadTime = 15,
 	sound = "IN-rocket-hit",
 }
 
@@ -683,6 +694,7 @@ AddXcomItem {
 	disappear = 0,
 	weight = 3,
 	isAmmo = 1,
+	reloadTime = 15,
 	isAlien = 1,
 }
 
@@ -728,6 +740,7 @@ AddXcomItem {
 	disappear = 0,
 	weight = 3,
 	isAmmo = 1,
+	reloadTime = 15,
 	isAlien = 1,
 }
 
@@ -772,6 +785,7 @@ AddXcomItem {
 	disappear = 0,
 	weight = 2,
 	isAmmo = 1,
+	reloadTime = 15,
 	isAlien = 1,
 }
 
@@ -819,6 +833,7 @@ AddXcomItem {
 	disappear = 1,
 	weight = 3,
 	isAmmo = 1,
+	reloadTime = 15,
 	isAlien = 1,
 }
 
@@ -867,6 +882,7 @@ AddXcomItem {
 	disappear = 1,
 	weight = 3,
 	isAmmo = 1,
+	reloadTime = 15,
 	isAlien = 1,
 }
 

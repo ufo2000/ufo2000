@@ -1136,7 +1136,7 @@ void build_screen(int & select_y)
 
     icon->draw();
 	
-    if (net->gametype != GAME_TYPE_REPLAY) {
+    if (net->gametype == GAME_TYPE_REPLAY) {
         char buf[10];
         if (replaydelay != -1)
             sprintf(buf, "< %d >", 9 - replaydelay);
@@ -1909,7 +1909,7 @@ void gameloop()
                        	break;
                    	}
                    	
-                    if (net->gametype != GAME_TYPE_REPLAY) {
+                    if (net->gametype == GAME_TYPE_REPLAY) {
                     	if (mouse_inside(2, 12, 10, 20)) {
                     			if (replaydelay != -1)
                     				replaydelay++;

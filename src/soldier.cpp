@@ -1961,13 +1961,14 @@ int Soldier::unload_ammo(Item * it)
  * test if soldier has enough time, item is ammo of correct type, etc.
  * Return 1 on success, 0 on failure.
  */
-int Soldier::load_ammo(int iplace, Item * it)
+int Soldier::load_ammo(int iplace, int srcplace, Item * it)
 {
     if (it == NULL)
         return 0;
 
+	int time = it->obdata_reloadTime() + calctime(srcplace, iplace);
     int ISLOCAL = platoon_local->belong(this);
-    if (time_reserve(15, ISLOCAL, false) != OK) return 0;
+    if (time_reserve(time, ISLOCAL, false) != OK) return 0;
 
     Item *gun = item(iplace);
     if (gun == NULL)
@@ -1975,8 +1976,8 @@ int Soldier::load_ammo(int iplace, Item * it)
     if (!gun->loadclip(it))
         return 0;
 
-    spend_time(15);
-    net->send_load_ammo(NID, iplace);
+    spend_time(time);
+    net->send_load_ammo(NID, iplace, srcplace);
     return 1;
 }
 

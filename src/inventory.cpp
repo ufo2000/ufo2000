@@ -98,11 +98,14 @@ void Inventory::draw(int _x, int _y)
             textout(temp, g_small_font, _("LEFT="),  272, 80, COLOR_LT_OLIVE);
             textprintf(temp, g_small_font,           299, 80, COLOR_ORANGE, "%d", sel_item->roundsremain());
 
-			printsmall_x(temp, 312, 58, COLOR_WHITE, 8); // 8=Time to unload weapon
+			if (sel_item->roundsremain() > 0)
+				printsmall_x(temp, 312, 58, COLOR_WHITE, 8); // 8=Time to unload weapon
+			else
+				printsmall_x(temp, 312, 58, COLOR_WHITE, 10); // 10=Time to unload weapon and drop the empty clip
 			rect(temp, 272, 88, 303, 135, COLOR_GRAY08);      //clip
 			PCK::showpck(temp, sel_item->clip()->obdata_pInv(), 272, 88 + 8);
 		} else if (sel_item->obdata_isAmmo()) {
-			printsmall_x(temp, 34, 85, COLOR_WHITE, 15); // 15=Time to load weapon
+			printsmall_x(temp, 34, 85, COLOR_WHITE, sel_item->obdata_reloadTime());
 
             textout(temp, g_small_font, _("AMMO:"),  272, 64, COLOR_LT_OLIVE);
             textout(temp, g_small_font, _("ROUNDS"), 272, 72, COLOR_LT_OLIVE);
@@ -178,13 +181,13 @@ void Inventory::execute()
 						net->send_select_item(sel_man->NID, sel_item_place, sel_item->m_x, sel_item->m_y);
 				} else {
 					Item *it = sel_man->item_under_mouse(P_ARM_LEFT, x, y);
-					if ((it != NULL) && sel_man->load_ammo(P_ARM_LEFT, sel_item)) {
+					if ((it != NULL) && sel_man->load_ammo(P_ARM_LEFT, sel_item_place, sel_item)) {
 						sel_item = NULL;
 						return ;
 					}
 
 					it = sel_man->item_under_mouse(P_ARM_RIGHT, x, y);
-					if ((it != NULL) && sel_man->load_ammo(P_ARM_RIGHT, sel_item)) {
+					if ((it != NULL) && sel_man->load_ammo(P_ARM_RIGHT, sel_item_place, sel_item)) {
 						sel_item = NULL;
 						return ;
 					}

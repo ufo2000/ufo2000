@@ -237,7 +237,7 @@ public:
 	int standup();
 	int prime_grenade(int iplace, int delay_time, int req_time);
 	int unload_ammo(Item *it);
-	int load_ammo(int iplace, Item *it);
+	int load_ammo(int iplace, int srcplace, Item *it);
 	void die();
 	void stun();
 

@@ -136,7 +136,7 @@ public:
 	void send_reserve_time(int NID, int res); //change soldiers time reserving
 	void send_prime_grenade(int NID, int iplace, int delay_time, int req_time);
 	void send_unload_ammo(int NID);
-	void send_load_ammo(int NID, int iplace);
+	void send_load_ammo(int NID, int iplace, int srcplace);
 
 	void send_detonate_item(int owner, int lev, int col, int row, int iplace, int ix, int iy);
 	void send_explode(int owner, int lev, int col, int row, int type, int range, int damage);
