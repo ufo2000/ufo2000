@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFO2000\n"
 "POT-Creation-Date: 2004-11-08 17:33+0100\n"
-"PO-Revision-Date: 2004-11-10 13:13+0100\n"
+"PO-Revision-Date: 2004-11-10 14:14+0100\n"
 "Last-Translator: HaJo Gurt <gurt@gmx.de>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -1099,7 +1099,7 @@ msgstr "eines Soldaten verwalten."
 
 #: src/text.cpp:647
 msgid "To leave, press the OK-button, or goto the next/previous man."
-msgstr "Zum verlassen dienen der OK-Knopf und die benachbarten Vor/Rückknöpfe."
+msgstr "Zum verlassen dienen der OK-Knopf und die benachbarten Vor/Rückwärtsknöpfe."
 
 #: src/text.cpp:651
 msgid "In the mission-planner, you can use F2 && F3"
@@ -1257,7 +1257,7 @@ msgstr "oder im Internet aufnehmen (z.B. lxnt.info:2001)."
 
 #: src/text.cpp:775
 msgid "To get a valid login-name at the official server,"
-msgstr "Um einen gültigen login auf dem offiziellen Server zu bekommen,"
+msgstr "Um einen gültigen Login auf dem offiziellen Server zu bekommen,"
 
 #: src/text.cpp:776
 msgid "register at http://ufo2000.lxnt.info/admin.php"

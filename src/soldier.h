@@ -201,6 +201,7 @@ public:
 	void apply_accuracy(REAL &fi, REAL &te);
 	void apply_throwing_accuracy(REAL &fi, REAL &te, int weight);
 	int required(int pertime);
+    int eff_FAccuracy();
 	int FAccuracy(int peraccur, int TWOHAND);
 	int TAccuracy(int peraccur);
 

@@ -909,10 +909,7 @@ void Soldier::draw_unibord(int gx, int gy)
 
 	int fw = ud.HeadWound + ud.TorsoWound + ud.RArmWound +
 	         ud.LArmWound + ud.RLegWound  + ud.LLegWound;	// Fatal Wounds
-// from Soldier::FAccuracy() :
-	int ac = ud.CurFAccuracy;
-	ac -= (ac * (ud.MaxHealth - ud.CurHealth)) / ud.MaxHealth / 2;
-//
+
 	struct {
 		char *str;
 		int cur;
@@ -927,7 +924,7 @@ void Soldier::draw_unibord(int gx, int gy)
         { (char*)_("BRAVERY"),           md.Bravery,      md.Bravery,   196},
         { (char*)_("MORALE"),            ud.Morale,       100,          197},
         { (char*)_("REACTIONS"),         ud.CurReactions, md.Reactions,  20},
-        { (char*)_("FIRING ACCURACY"),   ac,              ud.MaxFA,     132},
+        { (char*)_("FIRING ACCURACY"),   eff_FAccuracy(), ud.MaxFA,     132},
         { (char*)_("THROWING ACCURACY"), TAccuracy(100),  ud.MaxTA,     100},
         { (char*)_("STRENGTH"),          ud.MaxStrength,  md.Strength,   52},
         {NULL, 0, 0, 0},
@@ -1474,6 +1471,9 @@ void Soldier::faceto(int dest_col, int dest_row)
 	}
 }
 
+/**
+ * Calculate a random value between min and max
+ */
 static double randval(double min, double max)
 {
 	double std = (double)rand() / (double)(RAND_MAX - 1);
@@ -1974,6 +1974,7 @@ void Soldier::die()
 
 
 void Soldier::stun()
+// Todo: Make difference between 'real' corpses and stunned soldiers.
 {
 	if (z == -1) return; // already stunned.
 	map->set_man(z, x, y, NULL);
@@ -2045,7 +2046,7 @@ void Soldier::damage_items(int damage)
 
 /**
  * When soldier panics: he gets no TU, and drops items in hand.
- * (no wild shooting yet)
+ * (no running around or wild shooting yet)
  */
 void Soldier::panic()
 {
@@ -2082,7 +2083,8 @@ void Soldier::change_morale(int delta)
 /**
  * Calculate time for moving items between hand, belt, etc.
  */
-// !! Relict from XCOM: loading ammo always uses fixed amount of time
+// !! Relict from XCOM: loading ammo always uses fixed amount of time,
+// !! e.g. opening backpack uses no time.
 int Soldier::calctime(int src, int dst)
 {
 	if (src == dst)
@@ -2157,6 +2159,9 @@ Item *Soldier::item_under_mouse(int ipl)
 	return NULL;
 }
 
+/**
+ * Test if soldier has Item in hand or one of his pockets.
+ */
 int Soldier::haveitem(Item *it)
 {
 	for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
@@ -2186,6 +2191,7 @@ int Soldier::place(Place *pl)
 
 
 int Soldier::open_door()
+// Todo: Different sounds for different types of doors
 {
 	if (havetime(6)) {
 		if (map->open_door(z, x, y, dir)) {
@@ -2200,7 +2206,8 @@ int Soldier::open_door()
 }
 
 /**
- * Change between standing and sittung
+ * Change between standing and sittung/kneeling.
+ * Return 1 on success, 0 on failure.
  */
 int Soldier::change_pose()
 {
@@ -2220,6 +2227,10 @@ int Soldier::change_pose()
 	return 1;
 }
 
+/**
+ * Try to change pose from kneeling to standing.
+ * Return 1 on success, 0 on failure.
+ */
 int Soldier::standup()
 {
 	if (m_state == STAND)
@@ -2267,7 +2278,11 @@ int Soldier::unload_ammo(Item * it)
 	return 0;
 }
 
-
+/**
+ * Try to load item into iplace,
+ * test if soldier has enough time, item is ammo of correct type, etc.
+ * Return 1 on success, 0 on failure.
+ */
 int Soldier::load_ammo(int iplace, Item * it)
 {
 	if (it == NULL)
@@ -2363,16 +2378,25 @@ int Soldier::required(int pertime)
 }
 
 /**
+ * Calculate effective firing accuracy, 
+ * with wound/stun/morale/physical condition modifiers applied.
+ * For displaying in unit-stats-screen, e.g. Soldier::draw_unibord()
+ */
+int Soldier::eff_FAccuracy()
+{
+    int ac = ud.CurFAccuracy;
+    ac -= (ac * (ud.MaxHealth - ud.CurHealth)) / ud.MaxHealth / 2;
+    return ac;
+};
+
+/**
  * Calculate firing accuracy.
- * Accuracy gets better for sitting, 
+ * Accuracy gets better for sitting/kneeling, 
  * and for using a two-handed weapon with an empty free hand.
  */
-// ?? Health has no influence
 int Soldier::FAccuracy(int peraccur, int TWOHAND)
 {
-	int ac = ud.CurFAccuracy;
-	ac -= (ac * (ud.MaxHealth - ud.CurHealth)) / ud.MaxHealth / 2;
-    // see also: Soldier::draw_unibord()
+	int ac = eff_FAccuracy();
 
 	if (TWOHAND) {
 		if ((rhand_item() != NULL) && (lhand_item() != NULL))
