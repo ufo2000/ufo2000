@@ -2235,8 +2235,8 @@ void gameloop()
         }
 
         if (exists(F("$(home)/replay.tmp"))) {
-            if (remove(F("$(home)/replay.tmp")) != -0) {
-                g_console->printf(_("Unable to delete temporary file %s!)", F("$(home)/replay.tmp"));
+            if (remove(F("$(home)/replay.tmp")) != 0) {
+                g_console->printf(_("Unable to delete temporary file %s!"), F("$(home)/replay.tmp"));
                 g_console->printf("%s (%d)", strerror(errno), errno);
             }
         }
@@ -2363,7 +2363,7 @@ game have been played before. I don't know how to fix it in other way.*/
     
     char path[1000]; *path = 0;
     
-    if (file_select_mr( _("Load REPLAY.sav file"), path, "rep")) {
+    if (file_select_mr( _("Load REPLAY.rep file"), path, "rep")) {
         if (!loadreplay(path)) {
             alert( "", _("Replay is invalid!"), _("(Probably it was saved by incompatible version)."), _("OK"), NULL, 0, 0);
             return;
