@@ -407,7 +407,7 @@ Section "${GAME_NAME} (required)" MainSec
 	File "readme_pt.txt"
 	File "readme_ru.html"
 	File "soundmap.xml"
-	File "squad.default.dat"
+	File "squad.default.lua"
 	File "ufo2000.dat"
 	File "keyboard.dat"
 	File "ufo2000.exe"
