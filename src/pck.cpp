@@ -57,7 +57,11 @@ static BITMAP *load_bitmap_alpha(const char *filename)
 {
     // Allow any color conversions except when loaded file 
     // contains alpha channel
+#if ALLEGRO_MAJOR == 0
+    int cc = _color_conv;
+#else
     int cc = get_color_conversion();
+#endif
     set_color_conversion((COLORCONV_TOTAL | COLORCONV_KEEP_TRANS) & 
         ~(COLORCONV_32A_TO_8 | COLORCONV_32A_TO_15 | COLORCONV_32A_TO_16 | COLORCONV_32A_TO_24));
     BITMAP *bmp_orig = load_bitmap(filename, NULL);
