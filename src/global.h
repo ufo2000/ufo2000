@@ -52,8 +52,6 @@ extern "C" {
 #include <lauxlib.h>
 }
 
-#define TERRAIN_INDEX   1
-
 #include "persist.h"
 #define map ufo2000_map
 

@@ -279,29 +279,23 @@ static int chat_msg_color(const std::string &msg)
 	return xcom1_color(colors[sum % (sizeof(colors) / sizeof(colors[0]))] * 16);
 }
 
-#define DX  180
-#define DY  150
-#define DW  280
-#define OKBUT  3
-#define CANBUT 4
-
-static char login_buffer[1024];
-static char password_buffer[1024];
-static char host_buffer[1024];
-
 static bool asklogin()
 {
+	static char login_buffer[1024];
+	static char password_buffer[1024];
+	static char host_buffer[1024];
+
 	static DIALOG login_dialog[] = {
-		//(dialog proc)		 (x)       (y)     (w)  (h) (fg)  (bg)  (key)		 (flags)	(d1)  (d2)							(dp)  (dp2)	(dp3)
-		{ d_shadow_box_proc, DX + 0,   DY + 0,  DW,  80, 0,    1, 0, 0, 0, 0, NULL, NULL, NULL },
-		{ d_rtext_proc,      DX + 10,  DY + 10, 70,  10, 0,    1, 0, 0, 0, 0, (void *)"Server:", NULL, NULL },
-		{ d_edit_proc,       DX + 80,  DY + 10, 192, 10, 0,    1, 0, 0, 22, 0, (void *)host_buffer, NULL, NULL },
-		{ d_rtext_proc,      DX + 10,  DY + 25, 70,  10, 0,    1, 0, 0, 0, 0, (void *)"Login:", NULL, NULL },
-		{ d_edit_proc,       DX + 80,  DY + 25, 192, 10, 0,    1, 0, 0, 22, 0, (void *)login_buffer, NULL, NULL },
-		{ d_rtext_proc,      DX + 10,  DY + 40, 70,  10, 0,    1, 0, 0, 0, 0, (void *)"Password:", NULL, NULL },
-		{ d_edit_proc,       DX + 80,  DY + 40, 192, 10, 0,    1, 0, 0, 22, 0, (void *)password_buffer, NULL, NULL },
-		{ d_button_proc,     DX + 140, DY + 55, 60,  18, 0,    1, 13, D_EXIT, 0, 0, (void *)"OK", NULL, NULL },
-		{ d_button_proc,     DX + 210, DY + 55, 60,  18, 0,    1, 27, D_EXIT, 0, 0, (void *)"Cancel", NULL, NULL },
+		//(dialog proc)		 (x)  (y) (w) (h) (fg) (bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
+		{ d_shadow_box_proc, 0,   0,  280, 80, 0,  1, 0, 0, 0, 0, NULL, NULL, NULL },
+		{ d_rtext_proc,      10,  10, 70,  10, 0,  1, 0, 0, 0, 0, (void *)"Server:", NULL, NULL },
+		{ d_edit_proc,       80,  10, 192, 10, 0,  1, 0, 0, 22, 0, (void *)host_buffer, NULL, NULL },
+		{ d_rtext_proc,      10,  25, 70,  10, 0,  1, 0, 0, 0, 0, (void *)"Login:", NULL, NULL },
+		{ d_edit_proc,       80,  25, 192, 10, 0,  1, 0, 0, 22, 0, (void *)login_buffer, NULL, NULL },
+		{ d_rtext_proc,      10,  40, 70,  10, 0,  1, 0, 0, 0, 0, (void *)"Password:", NULL, NULL },
+		{ d_edit_proc,       80,  40, 192, 10, 0,  1, 0, 0, 22, 0, (void *)password_buffer, NULL, NULL },
+		{ d_button_proc,     140, 55, 60,  18, 0,  1, 13, D_EXIT, 0, 0, (void *)"OK", NULL, NULL },
+		{ d_button_proc,     210, 55, 60,  18, 0,  1, 27, D_EXIT, 0, 0, (void *)"Cancel", NULL, NULL },
 		{ NULL }
 	};
 
@@ -309,10 +303,8 @@ static bool asklogin()
 	strcpy(login_buffer, g_server_login.c_str());
 	strcpy(password_buffer, g_server_password.c_str());
 
-	for (unsigned int i = 0; i < sizeof(login_dialog) / sizeof(login_dialog[0]); i++) {
-		login_dialog[i].fg = xcom1_color(15);
-		login_dialog[i].bg = xcom1_color(1);
-	}
+	centre_dialog(login_dialog);
+	set_dialog_color(login_dialog, xcom1_color(15), xcom1_color(1));
 
 	if (popup_dialog(login_dialog, 2) == 7) {
 		g_server_host = host_buffer;

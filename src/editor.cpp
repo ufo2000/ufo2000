@@ -446,8 +446,8 @@ int Editor::load_clip()
 
 #define DX  140
 #define DY  65
-#define FG  0
-#define BG  1
+#define FG  -1
+#define BG  -1
 #define SSX 115
 #define STX 45
 #define SSY 40
@@ -563,14 +563,14 @@ int d_skin_proc(int msg, DIALOG *d, int c)
 {
 	if (d->d1 < 0) {
 		d->d1 = d->d2;
-		rectfill((BITMAP *)d->dp, 0, 0, SSW - 1, 19, BG);
-		textout((BITMAP *)d->dp, font, g_skins[d->d1].Name, 2, 6, FG);
+		rectfill((BITMAP *)d->dp, 0, 0, SSW - 1, 19, gui_bg_color);
+		textout((BITMAP *)d->dp, font, g_skins[d->d1].Name, 2, 6, gui_fg_color);
 	}
 
 	if (msg == MSG_CLICK) {
 		if (++d->d1 >= g_skins_count) d->d1 = 0;
-		rectfill((BITMAP *)d->dp, 0, 0, SSW - 1, 19, BG);
-		textout((BITMAP *)d->dp, font, g_skins[d->d1].Name, 2, 6, FG);
+		rectfill((BITMAP *)d->dp, 0, 0, SSW - 1, 19, gui_bg_color);
+		textout((BITMAP *)d->dp, font, g_skins[d->d1].Name, 2, 6, gui_fg_color);
 	
 		return d_icon_proc(MSG_DRAW, d, c);
 	}
@@ -590,9 +590,6 @@ void Editor::edit_soldier()
 	sprintf(slider_text[6], "Throwing");
 	sprintf(slider_text[7], "Bravery");
 
-//	sol_dialog[D_STAMINA].flags  |= D_DISABLED;
-//	sol_dialog[D_REACTION].flags |= D_DISABLED;
-//	sol_dialog[D_STRENGTH].flags |= D_DISABLED;
 	sol_dialog[D_BRAVERY].flags  |= D_DISABLED;
 
 	sol_dialog[D_NAME].dp       = man->md.Name;
@@ -619,8 +616,9 @@ void Editor::edit_soldier()
 			 sol_dialog[D_REACTION].d2;
 	sprintf(points_str, "points remain %3d", MAXPOINTS - points);
 
-	position_mouse(320, 200);
+	while (mouse_b & 3) yield_timeslice();
 
+	set_dialog_color(sol_dialog, gui_fg_color, gui_bg_color);
 	do_dialog(sol_dialog, -1);
 
 	destroy_bitmap(icon);
@@ -736,7 +734,7 @@ void Editor::do_mapedit()
 	m_map->center(0, m_map->width * 5, m_map->height * 5);
 	m_map->unhide();
 
-	terrain_bmp = create_terrain_bitmap(TERRAIN_INDEX);
+	terrain_bmp = create_terrain_bitmap(1);
 
 	reset_video();
 	int ow = SCREEN2W, oh = SCREEN2H;

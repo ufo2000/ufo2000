@@ -403,8 +403,8 @@ int sethotseatplay()
 #define SPEED_BULLET     3
 #define SPEED_MAPSCROLL  4
 #define MAPSCROLL        5
-#define OK_BUTTON   6
-#define MAX_VALUE  99
+#define OK_BUTTON        6
+#define MAX_VALUE        99
 
 static int d_slider_pro2(int msg, DIALOG *d, int c)
 {
@@ -425,20 +425,20 @@ static int d_slider_pro2(int msg, DIALOG *d, int c)
 }
 
 static DIALOG config_dlg[] = {
-                                 { d_shadow_box_proc, 0, 0, 320, 200, FG, BG, 0, 0, 0, 0, NULL, NULL, NULL },
-                                 { d_text_proc, 72, 8, 144, 16, FG, BG, 0, 0, 0, 0, (void *)"Configuration", NULL, NULL },
-                                 { d_slider_pro2, 24, 40, 136, 16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
-                                 { d_slider_pro2, 24, 64, 136, 16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
-                                 { d_slider_pro2, 24, 88, 136, 16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
-                                 { d_slider_pro2, 24, 112, 136, 16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
-                                 { d_button_proc, 160, 168, 64, 16, FG, BG, 0, D_EXIT, 0, 0, (void *)"OK", NULL, NULL },
-                                 { d_button_proc, 232, 168, 64, 16, FG, BG, 0, D_EXIT | D_GOTFOCUS, 0, 0, (void *)"Cancel", NULL, NULL },
-                                 { d_text_proc, 176, 44, 88, 16, FG, BG, 0, 0, 0, 0, (void *)"movement speed", NULL, NULL },
-                                 { d_text_proc, 176, 68, 104, 16, FG, BG, 0, 0, 0, 0, (void *)"fire speed", NULL, NULL },
-                                 { d_text_proc, 176, 92, 128, 16, FG, BG, 0, 0, 0, 0, (void *)"scroll speed", NULL, NULL },
-                                 { d_text_proc, 176, 116, 128, 16, FG, BG, 0, 0, 0, 0, (void *)"mapscroll points", NULL, NULL },
-                                 { NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL }
-                             };
+	{ d_shadow_box_proc, 0, 0, 320, 200, FG, BG, 0, 0, 0, 0, NULL, NULL, NULL },
+	{ d_text_proc, 72, 8, 144, 16, FG, BG, 0, 0, 0, 0, (void *)"Configuration", NULL, NULL },
+	{ d_slider_pro2, 24, 40, 136, 16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
+	{ d_slider_pro2, 24, 64, 136, 16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
+	{ d_slider_pro2, 24, 88, 136, 16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
+	{ d_slider_pro2, 24, 112, 136, 16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
+	{ d_button_proc, 160, 168, 64, 16, FG, BG, 0, D_EXIT, 0, 0, (void *)"OK", NULL, NULL },
+	{ d_button_proc, 232, 168, 64, 16, FG, BG, 0, D_EXIT | D_GOTFOCUS, 0, 0, (void *)"Cancel", NULL, NULL },
+	{ d_text_proc, 176, 44, 88, 16, FG, BG, 0, 0, 0, 0, (void *)"movement speed", NULL, NULL },
+	{ d_text_proc, 176, 68, 104, 16, FG, BG, 0, 0, 0, 0, (void *)"fire speed", NULL, NULL },
+	{ d_text_proc, 176, 92, 128, 16, FG, BG, 0, 0, 0, 0, (void *)"scroll speed", NULL, NULL },
+	{ d_text_proc, 176, 116, 128, 16, FG, BG, 0, 0, 0, 0, (void *)"mapscroll points", NULL, NULL },
+	{ NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL }
+};
 
 void configure()
 {
@@ -446,6 +446,10 @@ void configure()
 	config_dlg[SPEED_BULLET].d2 = speed_bullet;
 	config_dlg[SPEED_MAPSCROLL].d2 = speed_mapscroll;
 	config_dlg[MAPSCROLL].d2 = mapscroll;
+
+	centre_dialog(config_dlg);
+	set_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
+	set_dialog_color(config_dlg, xcom1_color(15), xcom1_color(1));
 
 	if (popup_dialog(config_dlg, -1) == OK_BUTTON) {
 		if (config_dlg[SPEED_UNIT].d2)
@@ -460,6 +464,4 @@ void configure()
 		uninstall_timers();
 		install_timers(speed_unit, speed_bullet, speed_mapscroll);
 	}
-
-	return ;
 }
