@@ -276,7 +276,7 @@ void Map::draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type,
 		frame = frames[7];
 
 	ASSERT(frame);
-	m_terrain->showpck(frame, _x, _y);
+	PCK::showpck(frame, _x, _y);
 }
 
 extern volatile unsigned int ANIMATION;

@@ -26,74 +26,45 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "video.h"
 #include "terrapck.h"
 #include "colors.h"
+#include "pck.h"
 
-TerraPCK::TerraPCK(const char *pckfname, int tftd_flag) : PCK(pckfname, tftd_flag)
+TerraPCK::TerraPCK(const char *mcd_name, int tftd_flag)
 {
-	ASSERT(m_imgnum > 0);
-	create_blackbmp(0, m_imgnum);
-	strcpy(m_fname, pckfname);
-	loadmcd(0, m_imgnum);
+	add(mcd_name, tftd_flag);
 }
 
 TerraPCK::~TerraPCK()
 {
-    int i;
-    for (i = 0; i < (int)m_blackbmp.size(); i++) {
-        ASSERT(m_blackbmp[i] != NULL);
-        if (m_blackbmp[i] != NULL)
-            destroy_bitmap(m_blackbmp[i]);
-	}
-    for (i = 0; i < (int)m_mcd.size(); i++) {
+    for (int i = 0; i < (int)m_mcd.size(); i++) {
         destroy_bitmap(m_mcd[i].ScangBitmap);
+    }
+    std::map<BITMAP *, BITMAP *>::iterator it = m_black_bmp.begin();
+    while (it != m_black_bmp.end()) {
+        destroy_bitmap(it->second);
+        it++;
     }
 }
 
-void TerraPCK::add(const char *pckfname, int tftd_flag)
+BITMAP *TerraPCK::create_blackbmp(BITMAP *bmp)
 {
-	int num;
-	static unsigned char m_tbb[0xFFFF];
-	static uint16        m_tbs[0xFFF];
-
-	m_tftd_flag = tftd_flag;
-	strcpy(m_fname, pckfname);
-
-	int fh = open(F(m_fname), O_RDONLY | O_BINARY);
-	ASSERT(fh != -1);
-	int fsize = filelength(fh);
-	ASSERT(fsize < 0xFFFF);
-	int newlen = read(fh, m_tbb, fsize);
-	ASSERT(newlen > 0);
-	close(fh);
-
-	strcpy(strrchr(m_fname, '.') + 1, "tab");
-	fh = open(F(m_fname), O_RDONLY | O_BINARY);
-	ASSERT(fh != -1);
-	fsize = filelength(fh);
-	ASSERT(fsize < 0xFFF);
-	int newnum = read(fh, (char *)m_tbs, fsize) >> 1;
-	ASSERT(newnum > 0);
-	close(fh);
-
-	for (num = 0; num < newnum; num++)
-		m_tbs[num] = intel_uint16(m_tbs[num]);
-
-	m_tbs[newnum] = newlen;
-	m_bmp.resize(m_imgnum + newnum);
-
-	for (num = 0; num < newnum; num++)
-		m_bmp[m_imgnum + num] = pckdat2bmp(&m_tbb[m_tbs[num]], m_tbs[num + 1] - m_tbs[num], 32, 48, tftd_flag);
-
-	create_blackbmp(m_imgnum, newnum);
-	loadmcd(m_imgnum, newnum);
-	m_imgnum += newnum;
+    BITMAP *black_bmp = create_bitmap(bmp->w, bmp->h);
+	clear_to_color(black_bmp, xcom_color(0));
+	
+	for (int i = 0; i < bmp->w; i++)
+		for (int j = 0; j < bmp->h; j++)
+			if (getpixel(bmp, i, j) != bitmap_mask_color(bmp))
+				putpixel(black_bmp, i, j, COLOR_BLACK1);
+				
+	return black_bmp;
 }
 
-void TerraPCK::loadmcd(int pck_base, int size)
+void TerraPCK::add(const char *mcd_name, int tftd_flag)
 {
+    char m_fname[512];
    	int fh;
     
     // read information about displaying this tile on minimap
-    if (m_tftd_flag) 
+    if (tftd_flag) 
         fh = open(F("$(tftd)/geodata/scang.dat"), O_RDONLY | O_BINARY);
     else
         fh = open(F("$(xcom)/geodata/scang.dat"), O_RDONLY | O_BINARY);
@@ -103,8 +74,14 @@ void TerraPCK::loadmcd(int pck_base, int size)
     read(fh, scang_data, scang_size);
     close(fh);
 
+	// get pck name
+	strcpy(m_fname, mcd_name);
+	strcpy(strrchr(m_fname, '.') + 1, "pck");
+	std::string pck_name = m_fname;
+
     // load mcd file itself    
-    strcpy(strrchr(m_fname, '.') + 1, "mcd");
+	strcpy(m_fname, mcd_name);
+	strcpy(strrchr(m_fname, '.') + 1, "mcd");
     fh = open(F(m_fname), O_RDONLY | O_BINARY);
     ASSERT(fh != -1);
     long fsize = filelength(fh);
@@ -122,31 +99,25 @@ void TerraPCK::loadmcd(int pck_base, int size)
         if (m_mcd[oldcount + i].Die_MCD)
             m_mcd[oldcount + i].Die_MCD += oldcount;
         for (int j = 0; j < 8; j++) {
-            m_mcd[oldcount + i].FrameBitmap[j] = m_bmp[pck_base + m_mcd[oldcount + i].Frame[j]];
-            m_mcd[oldcount + i].FrameBlackBitmap[j] = m_blackbmp[pck_base + m_mcd[oldcount + i].Frame[j]];
+            BITMAP *bmp = pck_image(pck_name.c_str(), m_mcd[oldcount + i].Frame[j]);
+            m_mcd[oldcount + i].FrameBitmap[j] = bmp;
+            if (m_black_bmp.find(bmp) != m_black_bmp.end()) {
+                m_mcd[oldcount + i].FrameBlackBitmap[j] = m_black_bmp[bmp];
+            } else {
+                m_mcd[oldcount + i].FrameBlackBitmap[j] = create_blackbmp(bmp);
+                m_black_bmp[bmp] = m_mcd[oldcount + i].FrameBlackBitmap[j];
+            }
         }
         m_mcd[oldcount + i].ScangBitmap = create_bitmap(4, 4);
         int mt = m_mcd[oldcount + i].ScanG + 35;
         ASSERT(scang_size >= mt * 16 + 16);
         for (int k = 0; k < 16; k++) {
             putpixel(m_mcd[oldcount + i].ScangBitmap, 3 - k / 4, k % 4, 
-                m_tftd_flag ? 
+                tftd_flag ? 
                 tftd_color(scang_data[mt * 16 + k]) :
                 xcom_color(scang_data[mt * 16 + k]));
         }
     }
     close(fh);
     delete [] scang_data;
-}
-
-void TerraPCK::create_blackbmp(int start, int size)
-{
-	m_blackbmp.resize(start + size);
-	for (int num = start; num < start + size; num++) {
-		m_blackbmp[num] = create_bitmap(32, 48);
-		clear_to_color(m_blackbmp[num], xcom1_color(0));
-		for (int i = 0; i < 32 * 48; i++)
-			if (getpixel(m_bmp[num], i % 32, i / 32) != bitmap_mask_color(m_bmp[num]))
-				putpixel(m_blackbmp[num], i % 32, i / 32, COLOR_BLACK1);
-	}
 }

@@ -21,7 +21,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef TERRAPCK_H
 #define TERRAPCK_H
 
-#include "pck.h"
+#include "global.h"
 
 /**
  * Map cell description data. Provides information about cell object
@@ -131,21 +131,18 @@ struct MCD
  *
  * @ingroup battlescape
  */
-class TerraPCK : public PCK
+class TerraPCK
 {
-private:
-	std::vector<BITMAP *> m_blackbmp;
-
-	void loadmcd(int start, int size);
-	void create_blackbmp(int start, int size);
-
+    #undef map
+    std::map<BITMAP *, BITMAP *> m_black_bmp;
+    BITMAP *create_blackbmp(BITMAP *bmp);
 public:
 	std::vector<MCD> m_mcd;
 
-	TerraPCK(const char *pckfname, int tftd_flag);
+	TerraPCK(const char *mcd_name, int tftd_flag);
 	~TerraPCK();
 
-	void add(const char *pckfname, int tftd_flag);
+	void add(const char *mcd_name, int tftd_flag);
 };
 
 #endif
