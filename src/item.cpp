@@ -32,6 +32,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "colors.h"
 #include "text.h"
 
+char* damage_names[7] = {"AP", "IN", "HE", "LS", "PL", "ST",""};
+
 IMPLEMENT_PERSISTENCE(Item, "Item");
 
 int Item::obdata_get_int(int item_index, const char *property_name)
@@ -417,6 +419,14 @@ int Item::damage(int dam)
 	if (m_health <= 0)
 		return 1;
 	return 0;
+}
+
+char* Item::get_damage_name()
+{
+    int damage_type = m_ammo->obdata_damageType(m_ammo->m_type);
+    if (haveclip() && damage_type >= 0 && damage_type < 8)
+        return damage_names[damage_type];
+    return damage_names[7];
 }
 
 int Item::health_max(int _type)

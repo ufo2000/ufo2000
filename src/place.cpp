@@ -334,6 +334,7 @@ void Place::drawgrid(int PLACE_NUM)
 			if (ishand()) {	// Inventory-view: display ammo-rounds & grenade-delay 
 				if (t->clip() != NULL) {   // see also: Soldier::drawinfo()
 				    printsmall(gx + 23, gy + 39, COLOR_WHITE, t->roundsremain() );
+				    textout(screen2, g_small_font, t->get_damage_name(), gx + 3, gy + 36, COLOR_GREEN);
 				} 
 				if (t->obdata_isAmmo() ) {   // Test
 				    printsmall(gx + 23, gy + 39, COLOR_WHITE, t->m_rounds );

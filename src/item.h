@@ -85,6 +85,7 @@ public:
 	static int obdata_rounds(int index) { return obdata_get_int(index, "rounds"); }
 	static int obdata_isGun(int index) { return obdata_get_int(index, "isGun"); }
 
+  char* get_damage_name();
     //! Get list of ammo types that can be used with this weapon
 	static bool get_ammo_list(const std::string itemname, std::vector<std::string> &ammo);
 
