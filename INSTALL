@@ -12,32 +12,51 @@ DOS support, you are welcome.
 To successfully run ufo2000 you need the following:
   1) ufo2000 executable itself. 
      You can download precompiled binary from ufo2000 home page or compile 
-     the executable using the sources and instructions at the end of this file.
+     the executable using the sources wich you can get from ufo2000 homepage
+     too.Instructions how to compile are at the end of this file.
 
-  2) ufo2000 data files.
-     These files are free and are included both in source and binary distribution 
-     archive and can be downloaded from ufo2000 home page.
+  2) ufo2000 data-file package.
+     This is free and can be downloaded from ufo2000 home page.
 
   3) Data files from 'UFO: Enemy Unknown' by Microprose.
      These files are proprietary and are not distributed with the game.
      You have to get them from somewhere else. Currently ufo2000 runs well 
      with data files from 'UFO: Enemy Unknown V1.2' and 'UFO: Enemy Unknown V1.4'
      but other versions may work as well or may not.
+     
+After you get all the necessery files do the following:
 
-After you get all the necessery files, create a directory for
-ufo2000 and copy all the files there. All filenames must be converted to
-lowercase to avoid problems in UNIX. You need GEODATA, GEOGRAPH, MAPS, 
-SOUND, TERRAIN, UFOGRAPH, UFOINTRO, and UNITS directories from 
-'UFO: Enemy Unknown'. Non proprietary data files from ufo2000 needed to play 
-are the following: armoury.set, geodata.dat, items.dat, soldier.dat, 
-ufo2000.dat and ufo2000.ini. Anyway if you are missing something, the program 
-will tell you about this.
+  1) create a directory for ufo2000
+
+  2) copy the executable there
+
+  3) unpack the datapackage into that directory
+
+  4) edit ufo2000.ini acording to your setup, be sure to enter the path to where
+     you put the original 'UFO: Enemy Unknown' data files.
+     For example if you have copied the files to the ufo2000 directory write 
+     "./" for UNIX/LINUX or ".\" for WINDOWS behind "origfiles".(the "." means
+     current directory) So the whole line should look something like this:
+     origfiles = ./ # put path to the original data files here.
+     
+All filenames must be converted to lowercase to avoid problems in UNIX. 
+You need GEODATA, GEOGRAPH, MAPS, SOUND, TERRAIN, UFOGRAPH, UFOINTRO, and UNITS 
+directories from 'UFO: Enemy Unknown'. Non proprietary data files from ufo2000 
+needed to play are the following: armoury.set, geodata.dat, items.dat, 
+soldier.dat, ufo2000.dat and ufo2000.ini.
+Anyway if you are missing something, the program will tell you about this.
+
+
 
 2. Compilation.
 
 To compile for UNIX:
   1) install Allegro library
-  2) run make
+  2) unpack the source somewhere
+  3) change into the directory wich was created
+  4) run make
+ 
+You need ONLY the the ufo2000 executable from that directory
 
 To compile for WIN32:
   1) install Allegro library, DirectX SDK >= 6
@@ -46,3 +65,10 @@ To compile for WIN32:
 
 allegro:
 http://www.talula.demon.co.uk/allegro/
+
+3. Troubleshooting.
+
+If you have some obscure or modified copy of the "UFO:Enemy unkown" files you 
+can try to keep ufo2000 from checking for these by setting "F_FILECHECK = 0".
+However doing so is highly discouraged.
+
