@@ -41,7 +41,6 @@ private:
  	int m_fire_time;
  	int m_explo_state;
 
-	int m_pfval;        //!< path finder internal
 	int MOUSE;
 	char visi[3][3][3];
     Soldier *m_soldier; //!< Soldier standing here

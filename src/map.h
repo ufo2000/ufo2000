@@ -194,8 +194,6 @@ public:
     //!Is a step in direction "dir" possible, where does it guide to, and what is the TU cost?
     int step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2, int& y2, int& tu_cost);
 
-    int findneibo(int &dz, int &dx, int &dy, int value);
-    int setneibos(int oz, int ox, int oy, int value);
     int pathfind(int sz, int sx, int sy, int dz, int dx, int dy, int can_fly, char *way, PF_MODE pf_mode = PF_TRUE);
     void path_show(int _z, int _x, int _y, char *way, int waylen, Soldier *sld);
     void draw_path_from(Soldier *s);
@@ -353,20 +351,6 @@ public:
     	m_cell[lev][col][row]->m_explo_state = value;
     }
     
-    int pfval(int lev, int col, int row)
-    {
-        ASSERT((lev >= 0) && (lev < level) &&
-               (col >= 0) && (col < width * 10) &&
-               (row >= 0) && (row < height * 10));
-        return m_cell[lev][col][row]->m_pfval;
-    }
-    void set_pfval(int lev, int col, int row, int value)
-    {
-        ASSERT((lev >= 0) && (lev < level) &&
-               (col >= 0) && (col < width * 10) &&
-               (row >= 0) && (row < height * 10));
-        m_cell[lev][col][row]->m_pfval = value;
-    }
     int isStairs(int lev, int col, int row)
     {
         return (mcd(lev, col, row, 3)->T_Level < -15);
@@ -413,6 +397,10 @@ public:
     bool create_geodata(GEODATA &gd);
 };
 
+
+/**
+ * Data about map cell used in pathfinding.
+ */
 struct pathfinding_info
 {
     int x, y, z;
@@ -425,6 +413,11 @@ struct pathfinding_info
     int prev_dir;
 };
 
+/**
+ * Methods and data structures for pathfinding. It allocates memory when
+ * ::pathfind called first and reallocates when ::pathfind called for a map
+ * with a different size.
+ **/
 class Pathfinding
 {
 private:
@@ -440,8 +433,10 @@ private:
         return m_pf[lev][col][row];
     }
     Map* map;
+    //! Prepate matrix m_pf for using with chosen map.
     void SetMap(Map* _map);
 public:
+    //! Search a path and return it as the list of moving's directions in array "way".
     int pathfind(Map* _map,int sz, int sx, int sy, int dz, int dx, int dy, int can_fly,char *way, PF_MODE pf_mode = PF_TRUE);
     Pathfinding();
     ~Pathfinding();
