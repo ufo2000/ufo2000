@@ -692,7 +692,8 @@ void Units::execute_main(Map *map, int map_change_allowed)
 			    return;
 		}
 
-		if (!map->passable(0, c, r)) return;
+		if (!map->passable(0, c, r) || 
+			(map->mcd(0, c, r, 3)->T_Level == -24 && !map->passable(1, c, r))) return;
 
 		for (int s = 0; s < size; s++) {
 			if (s == selected)
