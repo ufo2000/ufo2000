@@ -98,20 +98,18 @@ Icon::Icon()
 	
 	int stack_top = lua_gettop(L);
 	
-	if (exists(F("$(ufo2000)/init-scripts/icons.lua"))) {
+	if (exists(F("$(ufo2000)/init-scripts/icons.lua")))
 		lua_safe_dofile(L, F("$(ufo2000)/init-scripts/icons.lua"));
-		custom_icons = true;
-	} else 
+	else
 		lua_safe_dofile(L, F("$(ufo2000)/init-scripts/standard-icons.lua"));	
 	
 	//image
-	if (custom_icons) {
-		lua_pushstring(L, "Image");
-		lua_gettable(L, -2);
-		ASSERT(lua_isstring(L, -1));                     
-		filename = (std::string)lua_tostring(L, -1);
-		lua_pop(L, 1);
-    }
+	lua_pushstring(L, "Image");
+	lua_gettable(L, -2);
+	custom_icons = lua_isstring(L, -1);
+    if (custom_icons)
+	   filename = (std::string)lua_tostring(L, -1);
+	lua_pop(L, 1);
 
 	//items
 	for (i = 0; i < ITEM_NUMBER; i++) {
