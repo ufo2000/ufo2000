@@ -203,8 +203,8 @@ void loadini()
 	menu_midi_file_name = get_config_string(gen, "menu_music", "$(xcom)/sound/gmstory.mid");
 	setup_midi_file_name = get_config_string(gen, "setup_music", "$(xcom)/sound/gmenbase.mid");
 	editor_midi_file_name = get_config_string(gen, "editor_music", "$(xcom)/sound/gmdefend.mid");
-	combat1_midi_file_name = get_config_string(gen, "combat1_music", "$(xcom)/sound/gmtactic.mid");
-	combat2_midi_file_name = get_config_string(gen, "combat2_music", "$(xcom)/sound/gmtactic.mid");
+	combat1_midi_file_name = get_config_string(gen, "combat_music1", "$(xcom)/sound/gmtactic.mid");
+	combat2_midi_file_name = get_config_string(gen, "combat_music2", "$(xcom)/sound/gmtactic.mid");
 	win_midi_file_name = get_config_string(gen, "win_music", "$(xcom)/sound/gmwin.mid");
 	lose_midi_file_name = get_config_string(gen, "lose_music", "$(xcom)/sound/gmlose.mid");
 	net1_midi_file_name = get_config_string(gen, "net_music1", "$(xcom)/sound/gmgeo1.mid");
