@@ -871,8 +871,13 @@ void Icon::execute(int mx, int my)
 			FLAGS |= F_SHOWLEVELS;
 	} else
 	if (button[B_OPTIONS].is_inside(mx, my)) {
-		if (MODE != WATCH)
-			configure();
+        int prev_pause = pause;
+		if (MODE == WATCH)
+            pause = 1;
+
+        configure();
+        
+        pause = prev_pause;
 	} else
 	if (button[B_DONE].is_inside(mx, my)) {
 		if (MODE != WATCH) {
