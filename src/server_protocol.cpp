@@ -153,7 +153,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 
 		    if (!validate_user(login, password)) {
 		    	server_log("login failed: invalid name or password\n");
-				send_packet_back(SRV_FAIL, "Authentication failed");
+				send_packet_back(SRV_FAIL, "Authentication failed (you are not registered)");
 				m_error = true;
 				break;
 		    }

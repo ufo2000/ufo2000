@@ -201,7 +201,7 @@ void Map::loadmaps(unsigned char *_map)
 	{
 		"maps/jungle", "maps/culta",  "maps/forest", "maps/xbase_", 
 		"maps/ubase_", "maps/urban",  "maps/desert", "maps/mount",  
-		"maps/polar",  "maps/mars",   "newmaps/urban"
+		"maps/polar",  "maps/mars",   "newmaps/wareh"
 	};
 	char mname[100];
 	int i = 0;
@@ -1682,17 +1682,17 @@ TerrainSet::TerrainSet()
 {
 	push_config_state();
 	set_config_file("ufo2000.ini");
-	terrain[0]  = new Terrain("maps/jungle",  "", get_config_int("Terrain", "jungle",  100));
-	terrain[1]  = new Terrain("maps/culta",   "", get_config_int("Terrain", "culta",   200));
-	terrain[2]  = new Terrain("maps/forest",  "", get_config_int("Terrain", "forest",  100));
-	terrain[3]  = new Terrain("maps/xbase_",  "", get_config_int("Terrain", "xbase",     0));
-	terrain[4]  = new Terrain("maps/ubase_",  "", get_config_int("Terrain", "ubase",     0));
-	terrain[5]  = new Terrain("maps/urban",   "", get_config_int("Terrain", "urban",   200));
-	terrain[6]  = new Terrain("maps/desert",  "", get_config_int("Terrain", "desert",  100));
-	terrain[7]  = new Terrain("maps/mount",   "", get_config_int("Terrain", "mount",   100));
-	terrain[8]  = new Terrain("maps/polar",   "", get_config_int("Terrain", "polar",   100));
-	terrain[9]  = new Terrain("maps/mars",    "", get_config_int("Terrain", "mars",    100));
-	terrain[10] = new Terrain("newmaps/urban","", get_config_int("Terrain", "newurban",200));
+	terrain[0]  = new Terrain("maps/jungle",  "", get_config_int("Terrain", "jungle", 100));
+	terrain[1]  = new Terrain("maps/culta",   "", get_config_int("Terrain", "culta",  200));
+	terrain[2]  = new Terrain("maps/forest",  "", get_config_int("Terrain", "forest", 100));
+	terrain[3]  = new Terrain("maps/xbase_",  "", get_config_int("Terrain", "xbase",    0));
+	terrain[4]  = new Terrain("maps/ubase_",  "", get_config_int("Terrain", "ubase",    0));
+	terrain[5]  = new Terrain("maps/urban",   "", get_config_int("Terrain", "urban",  200));
+	terrain[6]  = new Terrain("maps/desert",  "", get_config_int("Terrain", "desert", 100));
+	terrain[7]  = new Terrain("maps/mount",   "", get_config_int("Terrain", "mount",  100));
+	terrain[8]  = new Terrain("maps/polar",   "", get_config_int("Terrain", "polar",  100));
+	terrain[9]  = new Terrain("maps/mars",    "", get_config_int("Terrain", "mars",   100));
+	terrain[10] = new Terrain("newmaps/wareh","", get_config_int("Terrain", "wareh",  200));
 	pop_config_state();
 }
 
