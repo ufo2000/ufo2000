@@ -1211,7 +1211,7 @@ int Soldier::move(int ISLOCAL)
 				if (curway >= waylen) {
 					finish_march(ISLOCAL);
 				} else {
-					if (!havetime(walktime(way[curway]), 1))
+					if (!time_reserve(walktime(way[curway])))
 						finish_march(ISLOCAL);
 					else
 						dir = way[curway];
@@ -1258,6 +1258,50 @@ int Soldier::move(int ISLOCAL)
 	return 1;
 }
 
+bool Soldier::time_reserve(int walk_time)
+{
+	Item *it = rhand_item();
+	if(!it) it = lhand_item();	//no item in right hand - use item in left hand
+
+	int time = walk_time;
+	std::string error = "";
+
+    if(it) {					//if soldier has got at least one items in hands
+		switch(ReserveTimeMode) {
+			case RESERVE_FREE:
+			break;
+		
+			case RESERVE_SNAP:
+			if (it->obdata_accuracy(1)) {
+				time += required(it->obdata_time(1));
+				error = "Time units are reserved for snap shot.";
+			}
+			break;
+		
+			case RESERVE_AIM:
+			if (it->obdata_accuracy(2)) {
+				time += required(it->obdata_time(2));
+				error = "Time units are reserved for aimed shot.";
+			}
+			break;
+		
+			case RESERVE_AUTO:
+			if (it->obdata_accuracy(0)) {
+				time += (required(it->obdata_time(0)) + 2) / 3 * 3;
+				error = "Time units are reserved for auto shot.";
+			}
+			break;
+		}
+	}
+	
+	if(!havetime(time, 1)) {
+		if(error != "")
+			g_console->printf(xcom1_color(40), error.c_str());
+		return false;
+	} else 
+		return true;
+}
+
 
 void Soldier::wayto(int dest_lev, int dest_col, int dest_row)
 {
@@ -1273,7 +1317,7 @@ void Soldier::wayto(int dest_lev, int dest_col, int dest_row)
 			waylen--;
 		}
 
-		if ((waylen < 2) || (!havetime(walktime(way[1]), 1))) {
+		if ((waylen < 2) || (!time_reserve(walktime(way[1])))) {
 			curway = -1;
 			waylen = 0;
 		} else {
@@ -1359,7 +1403,7 @@ void Soldier::faceto(int dest_col, int dest_row)
 	if (nturns < 0) nturns = -nturns;
 	if (nturns > 4)
 		nturns = 8 - nturns;
-	if (havetime(nturns)) {
+	if (time_reserve(nturns)) {
 		spend_time(nturns);
 		net->send_face(NID, dest_col, dest_row);
 		way[0] = ang >> 5; curway = 0; waylen = 0;

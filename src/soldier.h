@@ -133,6 +133,8 @@ private:
 	int seen_enemy_z[100], seen_enemy_x[100], seen_enemy_y[100];
 
 	static void initbof();
+	
+	bool time_reserve(int walk_time);
 
 public:
 
