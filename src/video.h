@@ -93,4 +93,5 @@ extern unsigned long FLAGS;
 #define F_SECONDSIT         0x00200000
 #define F_REACTINFO         0x00400000
 #define F_CONVERT_XCOM_DATA 0x00800000
+#define F_SHOWNIGHT			0x01000000
 #endif

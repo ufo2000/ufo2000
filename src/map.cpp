@@ -354,7 +354,7 @@ void Map::draw(int show_cursor)
 
 					draw_cell_pck(0, 6, lev, col, row, 3, seen(lev, col, row), cell_bmp);
 
-					if (m_cell[lev][col][row]->m_light != 16) {
+					if (m_cell[lev][col][row]->m_light != 16 && FLAGS & F_SHOWNIGHT) {
 						set_trans_blender(0, 0, 0, 0);
 						draw_lit_sprite(screen2, cell_bmp, sx, sy - 6, 255 * (17 - m_cell[lev][col][row]->m_light) / 16);
 					} else {

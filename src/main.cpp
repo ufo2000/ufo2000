@@ -693,6 +693,7 @@ void initmain(int argc, char *argv[])
     if (get_config_int("Flags", "F_SECONDSIT", 1)) FLAGS |= F_SECONDSIT;      // second player starts in SIT position
     if (get_config_int("Flags", "F_REACTINFO", 0)) FLAGS |= F_REACTINFO;      // show debug info on reaction fire
     if (get_config_int("Flags", "F_CONVERT_XCOM_DATA", 0)) FLAGS |= F_CONVERT_XCOM_DATA; // convert x-com resources to a more conventional and readable format for debugging
+    if (get_config_int("Flags", "F_SHOWNIGHT", 1)) FLAGS |= F_SHOWNIGHT;	  // shade tile using the light level
 
     const AGUP_THEME *gui_theme = NULL;
 
