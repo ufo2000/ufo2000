@@ -49,6 +49,11 @@ FilesTable = {
 	["$(ufo2000)/arts/menu.jpg"]      = { Crc32 = X("0x00000000") },
 	["$(ufo2000)/arts/empty.spk"]     = { Crc32 = X("0x00000000") },
 
+	["$(ufo2000)/newunits/muton.spk"] = { Crc32 = X("0x00000000") },
+	["$(ufo2000)/newunits/sectoid.spk"] = { Crc32 = X("0x00000000") },
+	["$(ufo2000)/newunits/add1.pck"] = { Crc32 = X("0x00000000") },
+	["$(ufo2000)/newunits/add1.tab"] = { Crc32 = X("0x00000000") },
+
 	["$(ufo2000)/newmusic/ATeX_-_BattleScape_Test_v1.0_-_VBR128.ogg"] = { Crc32 = X("0x00000000"),
 		Fallback = "$(xcom)/sound/gmtactic.mid" },
 

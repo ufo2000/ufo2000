@@ -419,6 +419,9 @@ int Editor::load_clip()
 	return 0;
 }
 
+#define D_WIDTH 320
+#define D_HEIGHT 340
+
 #define DX  0
 #define DY  0
 #define FG  -1
@@ -433,8 +436,10 @@ int Editor::load_clip()
 
 #define D_NAME         3 
 #define D_POINTS       4
-#define D_ICON         6
-#define D_TIME         8
+#define D_RACE         6
+#define D_ARMOUR       8
+#define D_APPEARANCE   10
+#define D_TIME         12
 #define D_STAMINA      D_TIME+2
 #define D_HEALTH       D_TIME+4
 #define D_BRAVERY      D_TIME+6
@@ -449,67 +454,124 @@ static char slider_text[8][14];
 static int points;
 static char points_str[100];
 
-static const char *skin_select_proc(int index, int *list_size)
+static int get_list_size(const char **list)
 {
-	if (index < 0) {
-		*list_size = g_skins_count;
-		return NULL;
-	}
-	ASSERT(index < g_skins_count);
-	return g_skins[index].Name;
-} 
+	int i = 0;
+	while (list[i] != NULL) i++;
+	return i;
+}
 
-static DIALOG skin_dialog[] = {
-	//(dialog proc)      (x)           (y)                   (w)      (h)  (fg) (bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
-	{ d_agup_shadow_box_proc, DX,           DY,                   300,     180, FG,  BG, 0, 0, 0, 0, NULL, NULL, NULL},
-	{ d_agup_ctext_proc,    DX,     DY + 8,  300,     16,  FG,  BG, 0, 0, 0, 0, (void *)"Select new skin", NULL, NULL},
-	{ d_agup_list_proc,     DX + 8, DY + 16 + 8, 300 - 16, 180 - 16 - 16,  FG,  BG, 0, D_EXIT, 0, 0, (void *)skin_select_proc, NULL, NULL},
-	{ NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL}
+static void fixup_unit_info();
+
+static const char *race_names[] = { 
+	"human",
+	"sectoid",
+	"muton",
+	NULL
 };
 
-static int skin_change_button_proc(int msg, DIALOG *d, int c)
+static const char *armour_names_human[] = { 
+	"none",
+	"standard",
+	"power",
+	"flying",
+	NULL
+};
+
+static const char *armour_names_alien[] = { 
+	"standard",
+	NULL
+};
+
+static const char **armour_names;
+
+static const char *appearance_names_human[] = { 
+	"blonde guy", 
+	"guy #2", 
+	"guy #3",
+	"guy #4",
+	"blonde girl", 
+	"girl #2", 
+	"girl #3",
+	"girl #4",
+	NULL
+};
+
+static const char *appearance_names_alien[] = { 
+	"standard", 
+	NULL
+};
+
+static const char **appearance_names = NULL;
+
+static int common_change_button_proc(
+	const char *title, 
+	const char **names, 
+	int msg, DIALOG *d, int c)
 {
 	int result = d_button_proc(msg, d, c);
 	if (result == D_CLOSE) {
-		set_dialog_color(skin_dialog, gui_fg_color, gui_bg_color);
-		centre_dialog(skin_dialog);
-		skin_dialog[2].d1 = d->d1;
-		popup_dialog(skin_dialog, -1);
-		d->w = text_length(font, g_skins[skin_dialog[2].d1].Name) + 6;
-		d->dp = (void *)g_skins[skin_dialog[2].d1].Name;
-		d->d1 = skin_dialog[2].d1;
+		
+		std::vector<std::string> gui_list;
+		for (int i = 0; names[i] != NULL; i++)
+			gui_list.push_back(names[i]);
+
+		if (gui_list.size() > 1)
+			d->d1 = gui_select_from_list(D_WIDTH, D_HEIGHT, title, gui_list, d->d1);
+		fixup_unit_info();
 		return D_REDRAW;
 	}
 	return result;
 }
 
+static int race_change_button_proc(int msg, DIALOG *d, int c)
+{
+	return common_change_button_proc("Select unit race", race_names, msg, d, c);
+}
+
+static int armour_change_button_proc(int msg, DIALOG *d, int c)
+{
+	return common_change_button_proc("Select unit armour", armour_names, msg, d, c);
+}
+
+static int appearance_change_button_proc(int msg, DIALOG *d, int c)
+{
+	return common_change_button_proc("Select unit appearance", appearance_names, msg, d, c);
+}
+
 static DIALOG sol_dialog[] = {
 	//(dialog proc)      (x)           (y)                   (w)      (h)  (fg) (bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
-	{ d_agup_shadow_box_proc, DX,           DY,                   320,     280, FG,  BG, 0, 0, 0, 0, NULL, NULL, NULL},
-	{ d_agup_button_proc,     DX + 200,     DY + SSY + SH*10 + 4, 100,     20,  FG,  BG, 0, D_EXIT, 0, 0, (void *)"OK", NULL, NULL},
+	{ d_agup_shadow_box_proc, DX,           DY,                   D_WIDTH,     D_HEIGHT, FG,  BG, 0, 0, 0, 0, NULL, NULL, NULL},
+	{ d_agup_button_proc,     DX + 200,     DY + SSY + SH*13 + 4, 100,     20,  FG,  BG, 0, D_EXIT, 0, 0, (void *)"OK", NULL, NULL},
 	{ d_agup_rtext_proc,      DX + STX,     DY + SSY - SH*1,      STW,     16,  FG,  BG, 0, 0, 0, 0, (void *)"Name:", NULL, NULL},
 	{ d_agup_edit_proc,       DX + SSX,     DY + SSY - SH*1 - 4, 23*8,     16,  FG,  BG, 0, 0, 22, 0, NULL, NULL, NULL},
-	{ d_agup_text_proc,       DX + 100,     DY + SSY + SH*9 + 2,  100,     16,  FG,  BG, 0, 0, 0, 0, (void *)points_str, NULL, NULL},
+	{ d_agup_text_proc,       DX + 100,     DY + SSY + SH*12 + 2,  100,     16,  FG,  BG, 0, 0, 0, 0, (void *)points_str, NULL, NULL},
 
-	{ d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*0 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)"Skin:", NULL, NULL},
-	{ skin_change_button_proc,DX + SSX,     DY + SSY + SH*0 - 6,    0, 16 + 4,  FG,  BG, 0, D_EXIT, 0, 0, NULL, NULL, NULL},
+	{ d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*0 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)"Race:", NULL, NULL},
+	{ race_change_button_proc,DX + SSX,     DY + SSY + SH*0 - 6,    0, 16 + 4,  FG,  BG, 0, D_EXIT, 0, 0, NULL, NULL, NULL},
 
-	{ d_agup_rtext_proc,      DX + STX,     DY + STY + SH*1,      STW,     16,  FG,  BG, 0, 0, 0, 0, (void *)slider_text[0], NULL, NULL},
-	{ d_agup_slider_pro2,     DX + SSX,     DY + SSY + SH*1,      SSW,     16,  FG,  BG, 0, 0, 100, 33, NULL, NULL, NULL},
-	{ d_agup_rtext_proc,      DX + STX,     DY + STY + SH*2,      STW,     16,  FG,  BG, 0, 0, 0, 0, (void *)slider_text[1], NULL, NULL},
-	{ d_agup_slider_pro2,     DX + SSX,     DY + SSY + SH*2,      SSW,     16,  FG,  BG, 0, 0, 100, 33, NULL, NULL, NULL},
-	{ d_agup_rtext_proc,      DX + STX,     DY + STY + SH*3,      STW,     16,  FG,  BG, 0, 0, 0, 0, (void *)slider_text[2], NULL, NULL},
-	{ d_agup_slider_pro2,     DX + SSX,     DY + SSY + SH*3,      SSW,     16,  FG,  BG, 0, 0, 100, 33, NULL, NULL, NULL},
-	{ d_agup_rtext_proc,      DX + STX,     DY + STY + SH*4,      STW,     16,  FG,  BG, 0, 0, 0, 0, (void *)slider_text[3], NULL, NULL},
-	{ d_agup_slider_pro2,     DX + SSX,     DY + SSY + SH*4,      SSW,     16,  FG,  BG, 0, 0, 100, 33, NULL, NULL, NULL},
-	{ d_agup_rtext_proc,      DX + STX,     DY + STY + SH*5,      STW,     16,  FG,  BG, 0, 0, 0, 0, (void *)slider_text[4], NULL, NULL},
-	{ d_agup_slider_pro2,     DX + SSX,     DY + SSY + SH*5,      SSW,     16,  FG,  BG, 0, 0, 100, 33, NULL, NULL, NULL},
-	{ d_agup_rtext_proc,      DX + STX,     DY + STY + SH*6,      STW,     16,  FG,  BG, 0, 0, 0, 0, (void *)slider_text[5], NULL, NULL},
-	{ d_agup_slider_pro2,     DX + SSX,     DY + SSY + SH*6,      SSW,     16,  FG,  BG, 0, 0, 100, 33, NULL, NULL, NULL},
-	{ d_agup_rtext_proc,      DX + STX,     DY + STY + SH*7,      STW,     16,  FG,  BG, 0, 0, 0, 0, (void *)slider_text[6], NULL, NULL},
-	{ d_agup_slider_pro2,     DX + SSX,     DY + SSY + SH*7,      SSW,     16,  FG,  BG, 0, 0, 100, 33, NULL, NULL, NULL},
-	{ d_agup_rtext_proc,      DX + STX,     DY + STY + SH*8,      STW,     16,  FG,  BG, 0, 0, 0, 0, (void *)slider_text[7], NULL, NULL},
-	{ d_agup_slider_pro2,     DX + SSX,     DY + SSY + SH*8,      SSW,     16,  FG,  BG, 0, 0, 100, 33, NULL, NULL, NULL},
+	{ d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*1 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)"Armour:", NULL, NULL},
+	{ armour_change_button_proc,DX + SSX,     DY + SSY + SH*1 - 6,    0, 16 + 4,  FG,  BG, 0, D_EXIT, 0, 0, NULL, NULL, NULL},
+
+	{ d_agup_rtext_proc,      DX + STX,     DY + SSY + SH*2 + 1,  STW, 16 + 4,  FG,  BG, 0, 0, 0, 0, (void *)"Appearance:", NULL, NULL},
+	{ appearance_change_button_proc,DX + SSX,     DY + SSY + SH*2 - 6,    0, 16 + 4,  FG,  BG, 0, D_EXIT, 0, 0, NULL, NULL, NULL},
+
+	{ d_agup_rtext_proc,  DX + STX, DY + STY + SH*3,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)slider_text[0], NULL, NULL},
+	{ d_agup_slider_pro2, DX + SSX, DY + SSY + SH*3,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
+	{ d_agup_rtext_proc,  DX + STX, DY + STY + SH*4,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)slider_text[1], NULL, NULL},
+	{ d_agup_slider_pro2, DX + SSX, DY + SSY + SH*4,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
+	{ d_agup_rtext_proc,  DX + STX, DY + STY + SH*5,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)slider_text[2], NULL, NULL},
+	{ d_agup_slider_pro2, DX + SSX, DY + SSY + SH*5,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
+	{ d_agup_rtext_proc,  DX + STX, DY + STY + SH*6,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)slider_text[3], NULL, NULL},
+	{ d_agup_slider_pro2, DX + SSX, DY + SSY + SH*6,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
+	{ d_agup_rtext_proc,  DX + STX, DY + STY + SH*7,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)slider_text[4], NULL, NULL},
+	{ d_agup_slider_pro2, DX + SSX, DY + SSY + SH*7,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
+	{ d_agup_rtext_proc,  DX + STX, DY + STY + SH*8,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)slider_text[5], NULL, NULL},
+	{ d_agup_slider_pro2, DX + SSX, DY + SSY + SH*8,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
+	{ d_agup_rtext_proc,  DX + STX, DY + STY + SH*9,  STW, 16, FG, BG, 0, 0, 0, 0, (void *)slider_text[6], NULL, NULL},
+	{ d_agup_slider_pro2, DX + SSX, DY + SSY + SH*9,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
+	{ d_agup_rtext_proc,  DX + STX, DY + STY + SH*10, STW, 16, FG, BG, 0, 0, 0, 0, (void *)slider_text[7], NULL, NULL},
+	{ d_agup_slider_pro2, DX + SSX, DY + SSY + SH*10, SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
 	{ NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL}
 };
 
@@ -569,6 +631,32 @@ static int d_agup_slider_pro2(int msg, DIALOG * d, int c)
 	return v;
 }
 
+static void fixup_unit_info()
+{
+	if (sol_dialog[D_RACE].d1 == 0) {
+		armour_names = armour_names_human;
+		appearance_names = appearance_names_human;
+	} else {
+		armour_names = armour_names_alien;
+		appearance_names = appearance_names_alien;
+	}
+	if (sol_dialog[D_ARMOUR].d1 >= get_list_size(armour_names))
+		sol_dialog[D_ARMOUR].d1 = 0;
+	if (sol_dialog[D_APPEARANCE].d1 >= get_list_size(appearance_names))
+		sol_dialog[D_APPEARANCE].d1 = 0;
+	
+	DIALOG *d;
+	d = &sol_dialog[D_RACE];
+	d->w = text_length(font, race_names[d->d1]) + 6;
+	d->dp = (void *)race_names[d->d1];
+	d = &sol_dialog[D_APPEARANCE];
+	d->w = text_length(font, appearance_names[d->d1]) + 6;
+	d->dp = (void *)appearance_names[d->d1];
+	d = &sol_dialog[D_ARMOUR];
+	d->w = text_length(font, armour_names[d->d1]) + 6;
+	d->dp = (void *)armour_names[d->d1];
+}
+
 void Editor::edit_soldier()
 {
 //	Attributes
@@ -604,17 +692,46 @@ void Editor::edit_soldier()
 
 	while (mouse_b & 3) yield_timeslice();
 
-	sol_dialog[D_ICON].d1 = get_skin_index(man->md.SkinType, man->md.fFemale);
-	sol_dialog[D_ICON].w = text_length(font, g_skins[sol_dialog[D_ICON].d1].Name) + 6;
-	sol_dialog[D_ICON].dp = (void *)g_skins[sol_dialog[D_ICON].d1].Name;
+	if (man->md.SkinType == S_XCOM_0 || man->md.SkinType == S_XCOM_1 ||
+			man->md.SkinType == S_XCOM_2 || man->md.SkinType == S_XCOM_3) {
+		appearance_names = appearance_names_human;
+		armour_names = armour_names_human;
+		if (man->md.Appearance >= 4) man->md.Appearance = 0;
+		sol_dialog[D_RACE].d1 = 0;
+	} else {
+		appearance_names = appearance_names_alien;
+		armour_names = armour_names_alien;
+		if (man->md.SkinType == S_SECTOID)
+			sol_dialog[D_RACE].d1 = 1;
+		else
+			sol_dialog[D_RACE].d1 = 2;
+		man->md.Appearance = 0;
+	}
+
+	switch (man->md.SkinType) {
+		case S_XCOM_0: sol_dialog[D_ARMOUR].d1 = 0; break;
+		case S_XCOM_1: sol_dialog[D_ARMOUR].d1 = 1; break;
+		case S_XCOM_2: sol_dialog[D_ARMOUR].d1 = 2; break;
+		case S_XCOM_3: sol_dialog[D_ARMOUR].d1 = 3; break;
+		case S_SECTOID: sol_dialog[D_ARMOUR].d1 = 0; break;
+		default: sol_dialog[D_ARMOUR].d1 = 0; break;
+	}
 	
+	sol_dialog[D_APPEARANCE].d1 = man->md.Appearance + (man->md.fFemale ? 4 : 0);
+	
+	fixup_unit_info();
+
 	set_dialog_color(sol_dialog, gui_fg_color, gui_bg_color);
 	centre_dialog(sol_dialog);
 	do_dialog(sol_dialog, -1);
 
-	man->md.Appearance = 0;
-	man->md.SkinType   = g_skins[sol_dialog[D_ICON].d1].SkinType;
-	man->md.fFemale    = g_skins[sol_dialog[D_ICON].d1].fFemale;
+	man->md.fFemale = sol_dialog[D_APPEARANCE].d1 >= 4;
+	man->md.Appearance = sol_dialog[D_APPEARANCE].d1 % 4;
+	switch (sol_dialog[D_RACE].d1) {
+		case 0: man->md.SkinType = sol_dialog[D_ARMOUR].d1 + 1; break;
+		case 1: man->md.SkinType = S_SECTOID; break;
+		default: man->md.SkinType = S_MUTON; break;
+	}
 
 	man->md.TimeUnits  = sol_dialog[D_TIME].d2;
 	man->md.Health     = sol_dialog[D_HEALTH].d2;
@@ -630,8 +747,6 @@ void Editor::edit_soldier()
 
 int Editor::do_mapselect()
 {
-	//terrain_bmp = create_terrain_bitmap(1);
-
 	int x = mouse_x, y = mouse_y;
 
 	if (x + terrain_bmp->w >= 640)
@@ -640,7 +755,6 @@ int Editor::do_mapselect()
 		y = 400 - terrain_bmp->h;
 
 	blit(terrain_bmp, screen, 0, 0, x, y, terrain_bmp->w, terrain_bmp->h);
-
 
 	int mouse_leftr = 0, mouse_rightr = 0;
 	if (!(mouse_b & 1)) mouse_leftr = 1;

@@ -87,8 +87,10 @@ private:
 
 	static char *****m_bof;
 	static PCK **m_pck;
+	static PCK *m_add1;
 	static SPK *m_spk[6][2][4];
 	static BITMAP *m_unibord;
+	static BITMAP *m_image;
 	static int dir2ofs[8];
 	static char ofs2dir[3][3];
 
@@ -156,6 +158,7 @@ public:
 	int move(int ISLOCAL);
 	void calc_visible_cells();
 
+	void draw_head(int head_frame, int dir, BITMAP *image, int delta);
 	void draw();
 	void draw_inventory();
 	void draw_unibord(int gx, int gy);

@@ -67,6 +67,8 @@ int get_skin_index(int SkinType, int fFemale)
 
 char *****Soldier::m_bof = NULL;
 PCK **Soldier::m_pck = NULL;
+PCK *Soldier::m_add1 = NULL;
+BITMAP *Soldier::m_image = NULL;
 SPK *Soldier::m_spk[6][2][4] = {{{NULL, NULL, NULL, NULL}, {NULL, NULL, NULL, NULL}},
                                 {{NULL, NULL, NULL, NULL}, {NULL, NULL, NULL, NULL}},
                                 {{NULL, NULL, NULL, NULL}, {NULL, NULL, NULL, NULL}},
@@ -102,7 +104,10 @@ void Soldier::initpck()
 		sprintf(fname, "$(xcom)/units/%s", skin_fname[n]);
 		m_pck[n] = new PCK(fname);
 	}
-
+	
+	m_add1 = new PCK("$(ufo2000)/newunits/add1.pck");
+	m_image = create_bitmap(32, 32);
+	
 	for (int ar = 0; ar < 2; ar++)
 		for (int se = 0; se < 2; se++)
 			for (int ty = 0; ty < 4; ty++) {
@@ -238,6 +243,8 @@ void Soldier::freepck()
 	for (int n = 0; n < SKIN_NUMBER; n++)
 		delete m_pck[n];
 	delete [] m_pck;
+	delete m_add1;
+	destroy_bitmap(m_image);
 
 	for (int ar = 0; ar < 2; ar++)
 		for (int se = 0; se < 2; se++)
@@ -627,6 +634,17 @@ void Soldier::restore()
 #define MAPX 0
 #define MAPY (-18)
 
+void Soldier::draw_head(int head_frame, int dir, BITMAP *image, int delta)
+{
+	if (md.SkinType == S_XCOM_0 && (md.Appearance == 1 || md.Appearance == 2)) {
+		m_add1->drawpck(dir + (md.Appearance - 1) * 8 + md.fFemale * 16, image, delta);
+	} else if (md.SkinType == S_XCOM_1 && (md.Appearance == 1 || md.Appearance == 2)) {
+		m_add1->drawpck(dir + 32 + (md.Appearance - 1) * 8 + md.fFemale * 16, image, delta);
+	} else {
+		m_pck[md.SkinType]->drawpck(dir + head_frame, image, delta);      //head
+	}
+}
+
 void Soldier::draw()
 {
 	int head_frame = 32;
@@ -658,11 +676,10 @@ void Soldier::draw()
 		return ;
 	}
 
-	BITMAP *image;
 	int arm1, arm2, army, handob_y = 0;
 	int yofs;
 
-	image = create_bitmap(32, 32);
+	BITMAP *image = m_image;
 	clear_to_color(image, xcom1_color(0));
 
 	arm1 = 0; arm2 = 0; army = 5;
@@ -673,11 +690,6 @@ void Soldier::draw()
 	}
 
 	State state = m_state;
-/*
-	// Aliens do not crouch
-	if (state == SIT && (md.SkinType == S_SECTOID || md.SkinType == S_MUTON))
-		state = STAND;
-*/
 	if (state == SIT) handob_y += 4;
 	if (md.SkinType == S_SECTOID) handob_y += 6; // $$$
 
@@ -698,13 +710,20 @@ void Soldier::draw()
 		case FALL: case LIE: break;      //neverhap
 		case SIT:
 			m_pck[md.SkinType]->drawpck(dir + 8 * arm1, image, Y_SIT);
-			m_pck[md.SkinType]->drawpck(dir + head_frame, image, Y_SIT + 1);      //head
-			m_pck[md.SkinType]->drawpck(dir + 8 * 3, image, 2);
+//			m_pck[md.SkinType]->drawpck(dir + head_frame, image, Y_SIT + 1);      //head
+			draw_head(head_frame, dir, image, Y_SIT + 1);
+			if (md.SkinType == S_SECTOID)
+				m_add1->drawpck(dir + 16 * 4 + 8, image, 2);
+			else if (md.SkinType == S_MUTON)
+				m_add1->drawpck(dir + 16 * 4 + 0, image, 2);
+			else
+				m_pck[md.SkinType]->drawpck(dir + 8 * 3, image, 2);
 			m_pck[md.SkinType]->drawpck(dir + 8 * arm2, image, Y_SIT);
 			break;
 		case STAND:
 			m_pck[md.SkinType]->drawpck(dir + 8 * arm1, image, 0);
-			m_pck[md.SkinType]->drawpck(dir + head_frame, image, 0);      //head
+//			m_pck[md.SkinType]->drawpck(dir + head_frame, image, 0);      //head
+			draw_head(head_frame, dir, image, 0);
 			m_pck[md.SkinType]->drawpck(dir + 8 * 2, image, 0);
 			m_pck[md.SkinType]->drawpck(dir + 8 * arm2, image, 0);
 			break;
@@ -725,7 +744,8 @@ void Soldier::draw()
 				m_pck[md.SkinType]->drawpck(phase + (dir * 3 + 7 - 1 - arm2) * 8, image, yofs);
 			}
 
-			m_pck[md.SkinType]->drawpck(dir + head_frame, image, 0);      //head
+//			m_pck[md.SkinType]->drawpck(dir + head_frame, image, 0);      //head
+			draw_head(head_frame, dir, image, 0);
 			int yo = 0;
 			if (phase % 4 == 0) yo = -1;
 
@@ -770,8 +790,6 @@ void Soldier::draw()
 			draw_sprite(screen2, image, gx + (phase - 8) * 2 * ox, gy - (phase - 8) * oy);
 	} else
 		draw_sprite(screen2, image, gx + phase * 2 * ox, gy - phase * oy);
-
-	destroy_bitmap(image);
 }
 
 

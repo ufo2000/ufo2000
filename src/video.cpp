@@ -292,7 +292,7 @@ void savescreen()
 // bit is always assumed to be set, thus we only use 16 bits to
 // represent the 17 bit value.
 
-uint16 crc16(char *data_p)
+uint16 crc16(const char *data_p)
 {
 	unsigned char i;
 	unsigned int data;
@@ -337,7 +337,11 @@ void resize_screen2(int vw, int vh)
 	position_mouse(SCREEN2W / 2, SCREEN2H / 2);
 }
 
-int askmenu(char *mess)
+/**
+ * Yes/No style messagebox
+ * @param message  question that is asked
+ */
+int askmenu(const char *mess)
 {
 	set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
 	int sel = alert(mess, "", "", "OK", "Cancel", 0, 0);
@@ -363,4 +367,50 @@ BITMAP *load_back_image(const char *filename)
 	spk->show(tmp, 0, 0);
 	delete spk;
 	return tmp;
+}
+
+const static std::vector<std::string> *current_list;
+
+static const char *gui_select_from_list_proc(int index, int *list_size)
+{
+	if (index < 0) {
+		*list_size = current_list->size();
+		return NULL;
+	}
+	ASSERT(index < (int)current_list->size());
+	return (*current_list)[index].c_str();
+}
+
+/**
+ * High level function that shows GUI dialog with a choice from a list of variants
+ * @param width          width of dialog in pixels
+ * @param height         height of dialog in pixels
+ * @param title          dialog title message
+ * @param data           std::vector with a number of variants to be suggested to user
+ * @param default_value  value that is active at start of dialog
+ * @returns              index of user's choice
+ */
+int gui_select_from_list(
+	int width, int height,
+	const std::string &title, 
+	const std::vector<std::string> &data,
+	int default_value)
+{
+	current_list = &data;
+	
+	DIALOG list_dialog[] = {
+		//(dialog proc)      (x)           (y)                   (w)      (h)  (fg) (bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
+		{ d_agup_shadow_box_proc, 0, 0, width, height, -1,  -1, 0, 0, 0, 0, NULL, NULL, NULL},
+		{ d_agup_ctext_proc,      0, 8, width, 16,  -1, -1, 0, 0, 0, 0, (void *)title.c_str(), NULL, NULL},
+		{ d_agup_list_proc,       0 + 8, 0 + 16 + 8, width - 16, height - 16 - 16,  -1,  -1, 0, D_EXIT, 0, 0, (void *)gui_select_from_list_proc, NULL, NULL},
+		{ d_yield_proc,           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
+		{ NULL,                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL}
+	};
+
+	list_dialog[2].d1 = default_value;
+	set_dialog_color(list_dialog, gui_fg_color, gui_bg_color);
+	centre_dialog(list_dialog);
+	popup_dialog(list_dialog, 2);
+	current_list = NULL;
+	return list_dialog[2].d1;
 }

@@ -68,9 +68,15 @@ BITMAP *load_back_image(const char *filename);
 
 void savescreen();
 void resize_screen2(int vw, int vh);
-int askmenu(char *mess);
+int askmenu(const char *mess);
 
-uint16 crc16(char *data_p);
+int gui_select_from_list(
+	int width, int height,
+	const std::string &title, 
+	const std::vector<std::string> &data,
+	int default_value = 0);
+
+uint16 crc16(const char *data_p);
 
 extern unsigned long FLAGS;
 #define F_CLEARSEEN		    0x00000001
