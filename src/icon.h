@@ -20,6 +20,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #ifndef ICON_H
 #define ICON_H
+
+#include "font.h"
 #include "spk.h"
 #include "item.h"
 #include "pck.h"

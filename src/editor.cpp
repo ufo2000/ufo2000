@@ -24,13 +24,13 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "global.h"
 #include "config.h"
 #include "video.h"
+#include "wind.h"
 #include "editor.h"
 #include "colors.h"
 #include "text.h"
 #include "mouse.h"
 
 char last_unit_name[1000];
-char last_map_name[1000];
 
 int weapon[] = {
     PISTOL , PISTOL_CLIP ,
@@ -65,7 +65,7 @@ static char weapon_in_use[] = {
 };
 
 /**
- * Returns true is the weapon can be used. The weapon will be colored darkgray
+ * Returns true if the weapon can be used. The weapon will be colored darkgray
  * and not allowed to select if this function returns false (this function
  * may be useful when points limit is exceeded for example)
  */
@@ -1395,64 +1395,3 @@ void Editor::change_equipment()
         alert( "", _("Remote player does not have any of your equipment sets"), "", _("OK"), NULL, 0, 0);
     }
 }
-
-int Editor::do_mapselect()
-{
-    int x = mouse_x, y = mouse_y;
-
-    if (x + terrain_bmp->w >= 640)
-        x = 640 - terrain_bmp->w;
-    if (y + terrain_bmp->h >= 400)
-        y = 400 - terrain_bmp->h;
-
-    blit(terrain_bmp, screen, 0, 0, x, y, terrain_bmp->w, terrain_bmp->h);
-
-    int mouse_leftr = 0, mouse_rightr = 0;
-    if (!(mouse_b & 1)) mouse_leftr  = 1;
-    if (!(mouse_b & 2)) mouse_rightr = 1;
-
-    //show_mouse(screen);
-    //text_mode(0);
-
-    while (!keypressed()) {
-        if (CHANGE) {
-
-            clear(screen2);
-
-            //m_map->set_sel(mouse_x, mouse_y);
-            m_map->draw();
-            blit(terrain_bmp, screen2, 0, 0, x, y, terrain_bmp->w, terrain_bmp->h);
-            draw_sprite(screen2, mouser, mouse_x, mouse_y);
-            blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
-
-            //int tt = (mouse_y-y) / 40 * 5 + (mouse_x-x) / 40;
-            //textprintf(screen, font, x, y-10, 1, "tt=%02d", tt);
-
-            draw_sprite(screen, mouser, mouse_x, mouse_y);
-
-            CHANGE = 0;
-        }
-
-        if ((mouse_b & 1) && (mouse_leftr)) { //left
-            int tt = (mouse_y - y) / 40 * 5 + (mouse_x - x) / 40;
-            if ((tt >= 0) && (tt < 25))
-                return tt;
-
-            mouse_leftr = 0;
-            break;
-        }
-
-        if ((mouse_b & 2) && (mouse_rightr)) { //right
-            mouse_rightr = 0;
-            break;
-        }
-
-        if (!(mouse_b & 1)) mouse_leftr = 1;
-        if (!(mouse_b & 2)) mouse_rightr = 1;
-
-    }
-    //show_mouse(NULL);
-
-    //destroy_bitmap(terrain_bmp);
-    return -1;
-}                                                                        

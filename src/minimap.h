@@ -23,7 +23,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define MINIMAP_H
 
 #include "wind.h"
-#include "colors.h"
 
 class Minimap : public VisualObject
 {

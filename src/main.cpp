@@ -50,6 +50,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "colors.h"
 #include "text.h"
 #include "random.h"
+#include "stats.h"
 
 #include "sysworkarounds.h"
 
@@ -814,7 +815,7 @@ void closemain()
  * becomes different on local and remote computers.
  */
 static std::map<int, std::string> g_eot_save;
-#define map ufo2000_map
+#define map g_map
 
 int build_crc()
 {

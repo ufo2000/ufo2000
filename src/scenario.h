@@ -19,13 +19,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#define dm g_console->printf
-
 #include "global.h"
-#include "platoon.h"
 #include "units.h"
-#include "soldier.h"
-#include "item.h"
 
 #define SC_DEATHMATCH   0
 #define SC_ESCAPE       1
@@ -36,6 +31,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define SC_BREAK		6
 #define SC_CAPTURE		7
 #define SCENARIO_NUMBER 8
+
+class Platoon;
+class Soldier;
+class Item;
 
 enum OptionType {OPT_NONE, OPT_SWITCH, OPT_NUMBER, OPT_HIDDEN};
 

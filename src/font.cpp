@@ -29,6 +29,7 @@ extern "C" {
 
 #include "global.h"
 #include "font.h"
+#include "video.h"
 
 
 /* 

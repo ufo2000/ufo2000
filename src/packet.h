@@ -21,6 +21,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef PACKET_H
 #define PACKET_H
 
+#include <list>
+
 enum Command {CMD_MESSAGE = -2, CMD_NONE = -1,
               CMD_NOTICE = 0, CMD_QUITGAME, CMD_ENDTURN,              
               CMD_OPENDOOR, CMD_CHANGEPOSE, CMD_PRIMEGRENADE,         

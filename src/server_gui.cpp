@@ -24,12 +24,14 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #undef map
 #include "server_protocol.h"
 #include "wind.h"
+#include "keys.h"
 #include "config.h"
 #include "sound.h"
 #include "music.h"
 #include "multiplay.h"
 #include "colors.h"
 #include "text.h"
+#include "mouse.h"
 
 #define BORDER_COLOR xcom1_color(4)
 #define TITLE_COLOR  xcom1_color(2)

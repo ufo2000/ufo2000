@@ -29,7 +29,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "colors.h"
 #include "text.h"
 
-#include "font.h"
+#include "video.h"
 #include "icon.h"
 
 #include "soldier.h"

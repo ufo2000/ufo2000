@@ -26,13 +26,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "video.h"
 #include "wind.h"
 #include "explo.h"
-#include "soldier.h"
-#include "platoon.h"
 #include "multiplay.h"
 #include "map.h"
 #include "sound.h"
-#include "packet.h"
-#include "units.h"
 #include "scenario.h"
 #include "colors.h"
 #include "text.h"
@@ -1198,7 +1194,7 @@ int Net::recv_terrain_crc32()
             g_console->printf( _("The following maps can not be used, they are modified or just not installed by remote player:\n") );
 			g_console->printf(COLOR_RED00, "%s\n", tlist.c_str());
 		}
-#define map ufo2000_map
+#define map g_map
 		g_console->printf("\n");
 
 		g_net_allowed_terrains.insert("");

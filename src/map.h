@@ -20,12 +20,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #ifndef MAP_H
 #define MAP_H
+
 #include "cell.h"
-#include "pck.h"
-#include "spk.h"
 #include "terrapck.h"
 #include "place.h"
-#include "soldier.h"
 #include "platoon.h"
 #include "minimap.h"
 
@@ -419,6 +417,6 @@ public:
     bool create_geodata(const std::string &terrain_name, int size_x, int size_y, GEODATA &gd);
 };
 
-#define map ufo2000_map
+#define map g_map
 
 #endif

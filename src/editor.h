@@ -22,14 +22,14 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#include "pck.h"
-#include "spk.h"
-#include "item.h"
-#include "place.h"
-#include "soldier.h"
+#include "global.h"
 #include "platoon.h"
-#include "map.h"
-#include "units.h"
+
+class Place;
+class Units;
+class Soldier;
+class SPK;
+class Item;
 
 struct Buffer
 {
@@ -38,13 +38,15 @@ struct Buffer
 	ITEMDATA id;
 }; 
 
+/**
+ * Unit editor.
+ */
 class Editor
 { 
 private:
 	Place   *m_armoury;
 	Soldier *man;
 	Platoon *m_plt;
-	Map     *m_map;
 
 	SPK     *tac01;
 	BITMAP  *b123, *b4, *b5;
@@ -53,12 +55,15 @@ private:
 	Item    *dup_item;
 	int     sel_item_place;
 
-	BITMAP  *terrain_bmp;        
-	
 	Buffer buffer;
 
 	int load_clip();
 	bool handle_mouse_leftclick();
+
+	void copy_soldier(Soldier *src);
+	void paste_soldier(Soldier *dest);
+	
+	void change_equipment();
 
 public:
 	Editor();
@@ -75,16 +80,6 @@ public:
 	Platoon *platoon() { return m_plt; };
 
 	void edit_soldier();
-  //void make_soldier( int NID, int s_type );
-	void change_equipment();
-
-	void do_mapedit();
-	int do_mapselect();
-	void load_map();
-	void save_map();       
-	
-	void copy_soldier(Soldier *src);
-	void paste_soldier(Soldier *dest);
 };
 
 #endif

@@ -28,6 +28,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "multiplay.h"
 #include "colors.h"
 #include "text.h"
+#include "mouse.h"
 
 extern void install_timers(int _speed_unit, int _speed_bullet, int _speed_mapscroll);
 extern void uninstall_timers();
@@ -134,7 +135,6 @@ void loadini()
     mapscroll            = get_config_int(gen,       "mapscroll",       10);
 
     local_platoon_size   = get_config_int(edit,      "platoon_size",     1);
-    strcpy(last_map_name,  get_config_string(edit,   "last_map_name",   ""));
     strcpy(last_unit_name, get_config_string(edit,   "last_unit_name",  ""));
 
     g_setup_f5           = get_config_string(edit,   "quick_setup_f5", "Rifleman");
@@ -185,7 +185,6 @@ void saveini()
     set_config_int(gen,     "mapscroll",       mapscroll);
 
     set_config_int(edit,    "platoon_size",    local_platoon_size);
-    set_config_string(edit, "last_map_name",   last_map_name);
     set_config_string(edit, "last_unit_name",  last_unit_name);
 
     set_config_string(edit, "quick_setup_f5",  g_setup_f5.c_str() );

@@ -20,7 +20,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #ifndef FONT_H
 #define FONT_H
-#include "video.h"
 
 extern FONT *g_small_font;
 extern FONT *large;

@@ -24,7 +24,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "global.h"
 #include "video.h"
 #include "pck.h"
-#include "../ufo2000.h"
 
 #undef map
 
@@ -179,15 +178,6 @@ void PCK::showpck(int num, int xx, int yy)
 void PCK::showpck(BITMAP *img, int xx, int yy)
 {
 	draw_sprite(screen2, img, xx, yy - 6);
-}
-
-void PCK::showpck(int num)
-{
-	if (num >= m_imgnum) {
-		return;
-	}
-	ASSERT(num < m_imgnum);
-	showpck(num, 0, 0);
 }
 
 void PCK::drawpck(int num, BITMAP *dest, int y)

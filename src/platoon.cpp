@@ -23,9 +23,11 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "global.h"
 #include "platoon.h"
+#include "units.h"
 #include "video.h"
 #include "multiplay.h"
 #include "map.h"
+#include "stats.h"
 
 IMPLEMENT_PERSISTENCE(Platoon, "Platoon");
 

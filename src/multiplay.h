@@ -21,14 +21,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef MULTIPLAY_H
 #define MULTIPLAY_H
 
-#include "item.h"
-#include "soldier.h"
 #include "map.h"
 #include "connect.h"
 #include "packet.h"
 #undef map
 #include "server_protocol.h"
-#define map ufo2000_map
+#define map g_map
 
 enum GameType {GAME_TYPE_HOTSEAT, GAME_TYPE_INTERNET_SERVER};
 

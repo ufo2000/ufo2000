@@ -22,9 +22,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define WIND_H
 
 #include "global.h"
-#include "dirty.h"
-#include "keys.h"
-#include "font.h"
+#include "video.h"
 #include "colors.h"
 
 /**
@@ -135,6 +133,8 @@ __attribute__ __format__ for non-static member functions.
 	const char *get_text();
 	virtual bool resize(int width, int height);
 };
+
+class DirtyList;
 
 class Wind
 {

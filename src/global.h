@@ -106,7 +106,7 @@ inline int16 intel_int16(int16 x) { return (int16)intel_uint16((uint16)x); }
 inline int32 intel_int32(int32 x) { return (int32)intel_uint32((uint32)x); }
 
 #include "persist.h"
-#define map ufo2000_map
+#define map g_map
 
 #include <set>
 
@@ -393,7 +393,6 @@ extern char PORT[256];
 extern int MAP_WIDTH, MAP_HEIGHT;
 
 extern int local_platoon_size;
-extern char last_map_name[1000];
 extern char last_unit_name[1000];
 
 // gettext-translation deactivated / active:

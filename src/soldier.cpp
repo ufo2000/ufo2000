@@ -36,6 +36,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "text.h"
 #include "mouse.h"
 #include "random.h"
+#include "stats.h"
 
 //uncomment to view some formulas results (reaction fire)
 #define SHOW_DEBUG_INFO

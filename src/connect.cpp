@@ -259,7 +259,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 			it++;
 		}
 		net->send_terrain_crc32("", 0);
-#define map ufo2000_map
+#define map g_map
 
 		// Wait until a complete list of remote terrains is received
 		while (g_net_allowed_terrains.find("") == g_net_allowed_terrains.end()) {

@@ -20,9 +20,11 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #ifndef PLATOON_H
 #define PLATOON_H
+
 #include "soldier.h"
-#include "units.h"
-#include "stats.h"
+
+class Units;
+class Statistics;
 
 /**
  * Class for handling the squad controlled by one of the opposing sides
