@@ -163,6 +163,9 @@ function process_log(filename, history)
 				elseif id == "result" and value == "victory" then
 					-- detect who is the winner in a battle
 					games[p].winner = p
+				elseif id == "assert" then
+					-- detect who is the winner in a battle
+					games[p].assert_error = value
 				end
 			end
 
@@ -293,6 +296,7 @@ for k, game_info in ipairs(games_history) do
 	if game_info.version_error then attrib = attrib .. "ver<br>" end
 	if game_info.crc_error then attrib = attrib .. "crc problems<br>" end
 	if game_info.crash_error then attrib = attrib .. "game crashed<br>" end
+	if game_info.assert_error then attrib = attrib .. game_info.assert_error .. "<br>" end
 	if game_info.connection_error then attrib = attrib .. "connection lost<br>" end
 	if not string.find(attrib, "ver") then
 		out:write(string.format(
