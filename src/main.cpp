@@ -125,6 +125,7 @@ volatile int MOVEIT = 0;
 volatile int FLYIT = 0;
 volatile int NOTICE = 1;
 volatile int MAPSCROLL = 1;
+volatile int REPLAYIT = 0;
 int NOTICEremote = 0;
 int NOTICEdemon = 0;
 
@@ -160,10 +161,17 @@ void timer_handler4()
 }
 END_OF_FUNCTION(timer_handler4);
 
+void timer_replay()
+{
+	REPLAYIT++;
+}
+END_OF_FUNCTION(timer_replay);
+
 int speed_unit      = 15;
 int speed_bullet    = 30;
 int speed_mapscroll = 30;
 int mapscroll       = 10;
+int replaydelay		= 2;
 
 void install_timers(int _speed_unit, int _speed_bullet, int _speed_mapscroll)
 {
@@ -171,6 +179,7 @@ void install_timers(int _speed_unit, int _speed_bullet, int _speed_mapscroll)
     install_int_ex(timer_handler2, BPS_TO_TIMER(_speed_bullet * 2));     //ticks each second
     install_int_ex(timer_handler4, BPS_TO_TIMER(_speed_mapscroll));     //ticks each second
     install_int_ex(timer_1s, BPS_TO_TIMER(1));     //ticks each second
+    install_int_ex(timer_replay, BPS_TO_TIMER(1));
 }
 
 void uninstall_timers()
@@ -179,6 +188,7 @@ void uninstall_timers()
     remove_int(timer_1s);
     remove_int(timer_handler2);
     remove_int(timer_handler);
+    remove_int(timer_replay);
 }
 
 int keyboard_proc(int key)
@@ -773,6 +783,7 @@ void initmain(int argc, char *argv[])
     LOCK_VARIABLE(FLYIT); LOCK_FUNCTION(timer_handler2);
     LOCK_VARIABLE(NOTICE); LOCK_VARIABLE(g_time_left); LOCK_FUNCTION(timer_1s);
     LOCK_VARIABLE(MAPSCROLL); LOCK_FUNCTION(timer_handler4);
+    LOCK_VARIABLE(REPLAYIT); LOCK_FUNCTION(timer_replay);
 
     LOCK_FUNCTION(keyboard_proc);
 
@@ -1135,7 +1146,18 @@ void build_screen(int & select_y)
                 sel_man->draw_enemy_seen(select_y);
             }
 
-            icon->draw();
+			if (net->gametype != GAME_TYPE_REPLAY)
+            	icon->draw();
+            else {
+            	char buf[10];
+            	if (replaydelay != -1)
+            		sprintf(buf, "< %d >", 9 - replaydelay);
+            	else
+            		sprintf(buf, "< P >");
+            	rect(screen2, 0, 10, text_length(font, buf) + 2, text_height(font) + 12, COLOR_GRAY01);
+            	rectfill(screen2, 1, 11, text_length(font, buf) + 1, text_height(font) + 11, COLOR_GRAY15);
+            	textout(screen2, font, buf, 2, 12, COLOR_GRAY01);
+            }
 
             if (g_time_left > 0) 
                 show_time_left();
@@ -1826,7 +1848,15 @@ void gameloop()
 
         g_console->redraw(screen, 0, SCREEN2H);
 
-        net->check();
+		if (net->gametype == GAME_TYPE_REPLAY) {
+			if (REPLAYIT >= replaydelay) {
+				if (replaydelay != - 1)
+					net->check();
+				REPLAYIT = 0;
+			}
+        } else {
+        	net->check();
+        }
 
     if (g_tie == 3) // Check if both players accepted the draw.
     {
@@ -1893,9 +1923,28 @@ void gameloop()
                     MODE = MAP3D;
                     break;
                 case WATCH:
-                    if (icon->inside(mouse_x, mouse_y)) {
-                        icon->execute(mouse_x, mouse_y);
-                        break;
+                	if (net->gametype != GAME_TYPE_REPLAY) {
+                    	if (icon->inside(mouse_x, mouse_y)) {
+                        	icon->execute(mouse_x, mouse_y);
+                        	break;
+                    	}
+                    } else {
+                    	if (mouse_x >= 2 && mouse_y >= 12 &&
+                    		mouse_x <= 10 && mouse_y <= 20) {
+                    			if (replaydelay != -1)
+                    				replaydelay++;
+                    			if (replaydelay > 8)
+                    				replaydelay = -1;
+                    	}
+                    	if (mouse_x >= 34 && mouse_y >= 12 &&
+                    		mouse_x <= 42 && mouse_y <= 20) {
+                    			if (replaydelay != -1)
+                    				replaydelay--;
+                    			else
+                    				replaydelay = 8;
+                    			if (replaydelay < 0)
+                    				replaydelay = 0;
+                    	}
                     }
                     break;
                 case MAP2D:
@@ -2183,30 +2232,32 @@ void gameloop()
                     } else {
                         temp_mouse_range_ptr = new MouseRange(0, 0, SCREEN_W - 1, SCREEN_H - 1);
                         who = (p1 == platoon_local);
-                        k = (1 << who);
-                        b1 = alert3("", _("ABORT MISSION ?"), "", _("YES=RESIGN"),
-                            (g_tie & k) ? _("RECALL DRAW OFFER") : 
-                            (g_tie & (k ^ 3)) ? _("ACCEPT DRAW OFFER") :
-                            _("OFFER DRAW"), _("NO=CONTINUE"), 0, 0, 1);
-                      //  b1 = alert( "", _("ABORT MISSION ?"), "",
-                      //      _("YES=RESIGN"), _("NO=CONTINUE"), 0,1 );
-                        delete temp_mouse_range_ptr;
-                        if (b1 == 1) {
-                            DONE = 1;
+	                    k = (1 << who);
+	                    if (net->gametype != GAME_TYPE_REPLAY) {
+    	                    b1 = alert3("", _("ABORT MISSION ?"), "", _("YES=RESIGN"),
+        	                    (g_tie & k) ? _("RECALL DRAW OFFER") : 
+            	                (g_tie & (k ^ 3)) ? _("ACCEPT DRAW OFFER") :
+                	            _("OFFER DRAW"), _("NO=CONTINUE"), 0, 0, 1);
+                	    } else {
+                	    	b1 = askmenu(_("EXIT FROM REPLAY?"));
+                	    }
+                   	    delete temp_mouse_range_ptr;
+                       	if (b1 == 1) {
+                           	DONE = 1;
                             battle_report( "# %s\n", _("Game aborted") );
-                        } else if (b1 == 2) {
-                            g_tie ^= k;
-                            net->send_tie(who);
-                            if (g_tie == 3) {
-                                sprintf(buf, "%s", _("You: Draw offer accepted"));
-                            } else if (g_tie & k) {
-                                sprintf(buf, "%s", _("You: Draw offered"));
+   	                    } else if (b1 == 2) {
+       	                    g_tie ^= k;
+           	                net->send_tie(who);
+               	            if (g_tie == 3) {
+                   	            sprintf(buf, "%s", _("You: Draw offer accepted"));
+                       	    } else if (g_tie & k) {
+                           	    sprintf(buf, "%s", _("You: Draw offered"));
                             } else {
-                                sprintf(buf, "%s", _("You: Draw offer recalled"));
-                            }
-                            g_console->printf(COLOR_SYS_PROMPT, buf);
-                            battle_report("# %s\n", buf);
-                        }
+   	                            sprintf(buf, "%s", _("You: Draw offer recalled"));
+       	                    }
+           	                g_console->printf(COLOR_SYS_PROMPT, buf);
+               	            battle_report("# %s\n", buf);
+                   	    }
                     }
                     break;
                 default:
@@ -2231,7 +2282,11 @@ void gameloop()
                 
             if (!filename.empty()) {
                 if (exists(filename.c_str()))
-                    remove(filename.c_str());
+                    if (remove(filename.c_str()) != 0) {
+                    	g_console->printf(_("Unable to delete existing file %s!"), filename.c_str());
+                    	g_console->printf("%s (%d)", strerror(errno), errno);
+                    	filename += "_";
+                    }
                 
                 if (rename(F("$(home)/replay.tmp"), filename.c_str()) == 0) {
                     g_console->printf(_("Replay saved as %s"), filename.c_str());
