@@ -343,6 +343,21 @@ static char *place_name_id[11] = {
     "COMMON POOL"
 };
 
+void Soldier::reset_stats()
+{
+    md.TimeUnits = 0;
+    md.Health = 0;
+    md.Stamina = 0;
+    md.Reactions = 0;
+    md.Strength = 0;
+    md.Firing = 0;
+    md.Throwing = 0;
+	
+    for (int i = 0; i < NUMBER_OF_PLACES; i++) {
+        m_place[i]->destroy_all_items();
+    }
+}
+
 /**
  * Set unit stat attribute
  *

@@ -549,6 +549,7 @@ void initmain(int argc, char *argv[])
     LUA_REGISTER_CLASS_METHOD(L, Platoon, findnum);
 	
     LUA_REGISTER_CLASS(L, Soldier);
+    LUA_REGISTER_CLASS_METHOD(L, Soldier, reset_stats);
     LUA_REGISTER_CLASS_METHOD(L, Soldier, set_attribute);
     LUA_REGISTER_CLASS_METHOD(L, Soldier, set_name);
     LUA_REGISTER_CLASS_METHOD(L, Soldier, set_skin_info);

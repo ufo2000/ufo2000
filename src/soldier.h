@@ -175,7 +175,8 @@ private:
     void precise_aiming(int za, int xa, int ya);
 
 public:
-
+    // set all stats to minimum and remove all inventory
+    void reset_stats();
     // set attribute value (when initializing soldier stats)
     bool set_attribute(const char *attribute_name, int value);
 	// set name for soldier

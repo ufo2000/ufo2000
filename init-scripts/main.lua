@@ -210,6 +210,7 @@ function LoadSquad(squad_data, squad_object)
 	-- 
     for id, soldier_data in ipairs(squad_data) do
     	local soldier = squad_object:findnum(id - 1)
+		soldier:reset_stats()
     	soldier:set_name(soldier_data.Name)
     	soldier:set_skin_info(soldier_data.SkinType, soldier_data.fFemale, soldier_data.Appearance)
     	for attribute_id, attribute_value in soldier_data.Attributes do
