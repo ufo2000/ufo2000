@@ -23,7 +23,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
 #include <stdio.h>
-#include <allegro.h>
 #include <nl.h>
 #include <signal.h>
 #include "server.h"
@@ -196,10 +195,10 @@ static void clean_shutdown(int s)
 
 static void set_signal_handlers()
 {
-	signal(SIGHUP, reload_config);
+    signal(SIGHUP, reload_config);
     signal(SIGTERM, clean_shutdown);
     signal(SIGINT, clean_shutdown);
-    signal(SIGPIPE, unexpected_signal);
+    signal(SIGPIPE, SIG_IGN);
     signal(SIGALRM, unexpected_signal);
 }
 
@@ -297,7 +296,7 @@ int main(int argc, char *argv[])
 
     std::string *cfg_pathname = find_config_file(argc, argv);
 
-	load_config(*cfg_pathname);
+    load_config(*cfg_pathname);
 
 #ifndef WIN32
     if (g_srv_daemonize)
@@ -305,7 +304,7 @@ int main(int argc, char *argv[])
     write_pid_file();
 #endif
 
-	if (!nlInit()) printErrorExit();
+    if (!nlInit()) printErrorExit();
     if (!nlSelectNetwork(type)) printErrorExit();
 
     nlEnable(NL_SOCKET_STATS);
@@ -334,4 +333,3 @@ int main(int argc, char *argv[])
 #endif
     return 0;
 }
-END_OF_MAIN()
