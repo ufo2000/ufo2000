@@ -340,7 +340,10 @@ int connect_internet_server()
 			{
 				case SRV_USER_ONLINE: users->update_user_info(packet, USER_STATUS_READY); break;
 				case SRV_USER_OFFLINE: users->update_user_info(packet, USER_STATUS_OFFLINE); break;
-				case SRV_USER_CHALLENGE_IN: users->update_user_info(packet, USER_STATUS_CHALLENGE_IN); break;
+				case SRV_USER_CHALLENGE_IN:
+					soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
+					users->update_user_info(packet, USER_STATUS_CHALLENGE_IN);
+					break;
 				case SRV_USER_CHALLENGE_OUT: users->update_user_info(packet, USER_STATUS_CHALLENGE_OUT); break;
 				case SRV_USER_BUSY: users->update_user_info(packet, USER_STATUS_BUSY); break;
 				case SRV_MESSAGE: chat->printf(chat_msg_color(packet), "%s", packet.c_str()); break;
