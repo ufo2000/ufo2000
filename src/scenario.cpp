@@ -35,7 +35,7 @@ IMPLEMENT_PERSISTENCE(Scenario, "Scenario");
 int explosives[3][8] = {{GRENADE, SMOKE_GRENADE, PROXIMITY_GRENADE, CANNON_HE_AMMO, CANNON_I_AMMO, AUTO_CANNON_HE_AMMO, AUTO_CANNON_I_AMMO, STUN_MISSILE},
 						{HIGH_EXPLOSIVE, SMALL_ROCKET, INCENDIARY_ROCKET, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe},
 						{ALIEN_GRENADE, LARGE_ROCKET, BLASTER_BOMB, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe}};
-
+						
 Scenario::Scenario (int sc_type)
 {
 	//we need to clear briefing strings in case we won't use all of them
@@ -47,14 +47,14 @@ Scenario::Scenario (int sc_type)
 	}
 
 
-	name[SC_DEATHMATCH] = "DEATHMATCH";
+	name[SC_DEATHMATCH] = "Deathmatch";
 	
 	briefing_left[SC_DEATHMATCH][0] = "Kill 'em all!";
 	
 	briefing_right[SC_DEATHMATCH][0] = "Kill 'em all!";
 
 
-	name[SC_ESCAPE] = "ESCAPE";
+	name[SC_ESCAPE] = "Escape";
 	
 	briefing_left[SC_ESCAPE][0] = "You must get your leader (soldier #1)";
 	briefing_left[SC_ESCAPE][1] = "to the opposite edge of the map or   ";
@@ -69,7 +69,7 @@ Scenario::Scenario (int sc_type)
 	briefing_right[SC_ESCAPE][4] = "Leader can't have two-handed weapons.";
 
 
-	name[SC_SABOTAGE] = "SABOTAGE";
+	name[SC_SABOTAGE] = "Sabotage";
 
 	briefing_left[SC_SABOTAGE][0] = "You must place high explosives at    ";
 	briefing_left[SC_SABOTAGE][1] = "indicated places.                    ";
@@ -78,7 +78,7 @@ Scenario::Scenario (int sc_type)
 	briefing_right[SC_SABOTAGE][1] = "before they place explosives.        ";
 	
 	
-	name[SC_CONTROL] = "CONTROL";
+	name[SC_CONTROL] = "Control";
 
 	briefing_left[SC_CONTROL][0] = "You must control the 10x10 area in   ";
 	briefing_left[SC_CONTROL][1] = "the centre of the map for 3 turns.   ";
@@ -91,7 +91,7 @@ Scenario::Scenario (int sc_type)
 	briefing_right[SC_CONTROL][3] = "it more soldiers than your opponent. ";
 	
 	
-	name[SC_ASSASSIN] = "ASSASSINATION";
+	name[SC_ASSASSIN] = "Assassination";
 
 	briefing_left[SC_ASSASSIN][0] = "You must kill enemy leader (first    ";
 	briefing_left[SC_ASSASSIN][1] = "soldier).                            ";
@@ -106,7 +106,7 @@ Scenario::Scenario (int sc_type)
 	briefing_right[SC_ASSASSIN][4] = "Player 2 deploys in centre (20x20).  ";
 	
 	
-	name[SC_HOLD] = "HOLD";
+	name[SC_HOLD] = "Hold";
 
 	briefing_left[SC_HOLD][0] = "You must save at least half of your  ";
 	briefing_left[SC_HOLD][1] = "squad until the end of the match (5  ";
@@ -121,7 +121,7 @@ Scenario::Scenario (int sc_type)
 	briefing_right[SC_HOLD][4] = "Player 2 near edges (max. 5 tiles).  ";
 
 
-	name[SC_BREAK] = "BREAKTHROUGH";
+	name[SC_BREAK] = "Breakthrough";
 	                              
 	briefing_left[SC_BREAK][0] = "You must bring at least half of your ";
 	briefing_left[SC_BREAK][1] = "platoon to the opposite edge of the  ";
@@ -160,9 +160,23 @@ void Scenario::new_scenario (int sc_type)
 	new_coords();
 }
 
+bool Scenario::new_scenario (std::string sc_name)
+{
+	for (int i = 0; i < SCENARIO_NUMBER; i++) {
+		if (sc_name == name[i]) {
+			new_scenario(i);
+			return true;
+		}
+	}	
+	
+	return false;
+}
+
 
 void Scenario::new_coords ()
 {
+	turn_hold[0] = turn_hold[1] = -1;
+
 	x1 = x2 = y1 = y2 = 0; //in case they won't be used
 	
 	switch (type) {
@@ -313,19 +327,21 @@ int Scenario::conditions_sabotage ()
 	char buf[10000]; memset(buf, 0, sizeof(buf));
 	int len = 0;
 	
-	//i don't know why x2/y2 must go before x1/y1, but it doesn't work otherwise
-	map->cell(0, x2, y2)->get_place()->build_items_stats(buf, len);
-	for (int i = 0; i < len; i++) {
-	    if (buf[i] == HIGH_EXPLOSIVE) {
-	    	temp2b = true;
-	    	break;
-		}
-	}
-	
 	map->cell(0, x1, y1)->get_place()->build_items_stats(buf, len);
 	for (int i = 0; i < len; i++) {
 	    if (buf[i] == HIGH_EXPLOSIVE) {
 	    	temp1b = true;
+	    	break;
+		}
+	}
+	
+	for (int i = 0; i < len; i++) buf[i] = 0;
+	len = 0; 
+	
+	map->cell(0, x2, y2)->get_place()->build_items_stats(buf, len);
+	for (int i = 0; i < len; i++) {
+	    if (buf[i] == HIGH_EXPLOSIVE) {
+	    	temp2b = true;
 	    	break;
 		}
 	}

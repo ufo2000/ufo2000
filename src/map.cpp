@@ -31,6 +31,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "multiplay.h"
 #include "platoon.h"
 #include "crc32.h"
+#include "scenario.h"
 
 #define SCANGSIZE 4
 
@@ -1535,6 +1536,8 @@ bool Map::load_GEODATA(const char *filename, GEODATA *mapdata)
 {
 	memset(mapdata, 0, sizeof(GEODATA));
 	mapdata->z_size = 4; // !!! Hack
+	
+	int mission;
 
 	int stack_top = lua_gettop(L);
 	lua_dofile(L, F(filename));
@@ -1563,6 +1566,44 @@ bool Map::load_GEODATA(const char *filename, GEODATA *mapdata)
 	if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false;	}
 	mapdata->y_size = (uint16)lua_tonumber(L, -1);
 	lua_pop(L, 1);
+	
+	lua_pushstring(L, "Mission");
+	lua_gettable(L, -2);
+	if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false; }
+	mission = (int)lua_tonumber(L, -1);
+	lua_pop(L, 1);
+	
+	if (mission) {
+		lua_pushstring(L, "Scenario");
+		lua_gettable(L, -2);
+		if (!lua_isstring(L, -1)) { lua_settop(L, stack_top); return false; }
+		if (!scenario->new_scenario(lua_tostring(L, -1))) { lua_settop(L, stack_top); return false; }
+		lua_pop(L, 1);
+	
+		lua_pushstring(L, "TargetX1");
+		lua_gettable(L, -2);
+		if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false;	}
+		scenario->x1 = (int)lua_tonumber(L, -1);
+		lua_pop(L, 1);
+		
+		lua_pushstring(L, "TargetY1");
+		lua_gettable(L, -2);
+		if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false;	}
+		scenario->y1 = (int)lua_tonumber(L, -1);
+		lua_pop(L, 1);
+	
+		lua_pushstring(L, "TargetX2");
+		lua_gettable(L, -2);
+		if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false;	}
+		scenario->x2 = (int)lua_tonumber(L, -1);
+		lua_pop(L, 1);
+	
+		lua_pushstring(L, "TargetY2");
+		lua_gettable(L, -2);
+		if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false;	}
+		scenario->y2 = (int)lua_tonumber(L, -1);
+		lua_pop(L, 1);
+	}
 
 	lua_pushstring(L, "Mapdata");
 	lua_gettable(L, -2);
@@ -1602,6 +1643,9 @@ bool Map::save_GEODATA(const char *filename, GEODATA *mapdata)
 	fprintf(fh, "return {\n");
 	fprintf(fh, "\tName = \"%s\",\n", terrain_set->get_terrain_name(mapdata->terrain).c_str());
 	fprintf(fh, "\tWidth = %d, Height = %d,\n", mapdata->x_size, mapdata->y_size);
+	
+	fprintf(fh, "\tMission = 0,\n");
+	
 	fprintf(fh, "\tMapdata = {\n");
 
 	int x = 0;

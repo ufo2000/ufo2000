@@ -69,6 +69,7 @@ private:
 public:
 					Scenario (int sc_type);
 	void            new_scenario (int sc_type);
+	bool			new_scenario (std::string sc_name);
     void            new_coords ();
     
     int             rules[4]; //0 - allowed explosives, 1 - points limit(x1000), 2 - turn limit, 3 - all map explored

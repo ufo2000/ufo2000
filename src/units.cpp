@@ -752,6 +752,7 @@ void Units::execute_map(Map *map, int map_change_allowed)
 				memcpy(&mapdata, &gd, sizeof(mapdata));
 				net->send_map_data(&mapdata);
 				mapdata.load_game = 77;
+				net->send_scenario();
 			}
 		}
 	}
