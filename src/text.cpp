@@ -117,6 +117,11 @@ const char *get_tip( const int tip_nr )
     return tip_str;
 };
 
+//! dialog color for help-index + tip-of-the-day 
+#define _FG COLOR_WHITE
+//! dialog background color
+#define _BG COLOR_BLACK1
+
 /**
  * Show a tip-of-the-day:
  * get a line of text from textfile tips-xx.txt via lua-script, 
@@ -131,21 +136,44 @@ void showtip()
     int lasttip  =   0;    //<! number of last tip shown
 
   //int kp_0     =   0;    //<! Keypress: 0 : default
-    int kp_ok    =  27;    //<! Keypress for ok=close  :  13:ENTER / 27:ESC
-    int kp_rnd   = 114;    //<! Keypress for random tip: 114:"r"
-    int kp_next  = 110;    //<! Keypress for next tip  : 110:"n"
+  //int kp_ok    =  27;    //<! Keypress for ok=close  :  13:ENTER / 27:ESC
+  //int kp_rnd   = 114;    //<! Keypress for random tip: 114:"r"
+  //int kp_next  = 110;    //<! Keypress for next tip  : 110:"n"
 
     char rndtip[32], next[32], ok[32];
     char title[64];
-  //char line1[128];
-  //char line2[128];
+    char line1[256];
 
     maxtips = atoi( get_tip(0) );
 
-// Todo: Calculate keycode from "&R" in button-text
-    sprintf(rndtip, "%s", _("&RANDOM TIP") );
+// Todo: Calculate keycode from "&R" in button-text, 
+// support hotkey in custom dialog.
     sprintf(ok,     "%s", _("  CLOSE  ")   );
+    sprintf(rndtip, "%s", _("&RANDOM TIP") ); // with hotkey-marker
     sprintf(next,   "%s", _("&NEXT TIP")   );
+    sprintf(rndtip, "%s", _("RANDOM TIP")  ); // without hotkey
+    sprintf(next,   "%s", _("NEXT TIP")    );
+
+    int tw =     8, th =     8;  // Textwidth, heigh
+    int xM =  2*tw, yM =    th;  // Margin
+    int x0 =    75, y0 =   150,    w0 =   450,   h0 = 12*th;  // Whole box
+    int x1 = x0+xM, y1 = y0+yM,    w1 = w0-2*xM, h1 =    th;  // Title
+    int x2 = x0+xM, y2 = y1+2*th,  w2 = w1,      h2 =  4*th;  // Textbox
+    int x3 = x0+xM, y3 = y2+h2+th, w3 = w1/3-xM, h3 =  2*th;  // Button1
+    int p1 = x3,    p2 = p1+w3+xM, p3 = x0+w0-xM-w3;          // Buttons
+    p2 = x0 + (w0/2) - w3/2;
+
+    static DIALOG the_dialog[] =
+    {
+        /* (dialog proc)     (x) (y) (w) (h) (fg) (bg) (key) (flags) (d1) (d2) (dp)             (dp2) (dp3) */
+        { d_shadow_box_proc, x0, y0, w0, h0, _FG, _BG,   0,  0,       0,   0,  NULL,            NULL, NULL }, 
+        { d_text_proc,       x1, y1, w1, h1, _FG, _BG,   0,  0,       0,   0,  (void *) title,  NULL, NULL },
+        { d_textbox_proc,    x2, y2, w2, h2, _FG, _BG,   0,  0,       0,   0,  (void *) line1,  NULL, NULL },
+        { d_button_proc,     p1, y3, w3, h3, _FG, _BG,   0,  D_EXIT,  0,   0,  (void *) rndtip, NULL, NULL },
+        { d_button_proc,     p2, y3, w3, h3, _FG, _BG,   0,  D_EXIT,  0,   0,  (void *) ok,     NULL, NULL },
+        { d_button_proc,     p3, y3, w3, h3, _FG, _BG,   0,  D_EXIT,  0,   0,  (void *) next,   NULL, NULL },
+        { NULL,               0,  0,  0,  0, _FG, _BG,   0,  0,       0,   0,  NULL,            NULL, NULL }
+    };
 
 /*
     sprintf(title,  "%50s #%d/%d", _("Tip"), nr, lasttip );
@@ -158,30 +186,36 @@ void showtip()
     lasttip = get_config_int("General", "LastTip", 0);
     nr = lasttip + 1;
 
-    while ( b1 != 2 ) { // ok=close
+  //while ( b1 != 2 ) {  // alert3() : ok=close
+    while ( b1 != 4 ) {  // dialog   : Button 2 is dialog-element #4
 
         if ( nr > maxtips ) 
            nr = 1;
         if ( nr < 1 ) 
            nr = maxtips;
-      //line1 = get_tip(nr); 
-      // Todo: split long tips in 2 lines (e.g. search last space before position 60)
 
-        sprintf(title,  "%50s #%d/%d", _("Tip"), nr, maxtips );
-      //sprintf(line1,  "%s", _("Be nice!") );
+        sprintf(title,  "%s #%d/%d", _("Tip"), nr, maxtips );
       //sprintf(line2,  "%s", _("Have fun!") );
+        sprintf(line1,  "%s", get_tip(nr) );
 
+    b1 = do_dialog(the_dialog, -1);
+  //sprintf(title,  "%s: %d", "Tip-Button", b1 );
+  //lua_message( title );
+/*
+        sprintf(title,  "%50s #%d/%d", _("Tip"), nr, maxtips );
         b1 = alert3( title,
                  get_tip(nr),
                  "",
                //line1, line2,
                  rndtip, ok,    next,
                  kp_rnd, kp_ok, kp_next );
-
-        if ( b1 == 1 ) {  // Random Tip
+*/
+      //if ( b1 == 1 ) {  // Random Tip
+        if ( b1 == 3 ) {  // Random Tip
             nr = rand() % maxtips;
         }
-        if ( b1 == 3 ) {  // Next Tip
+      //if ( b1 == 3 ) {  // Next Tip
+        if ( b1 == 5 ) {  // Next Tip
             nr++;
         }
     }
@@ -246,7 +280,7 @@ const char *icontext( const int icon_nr )
 
 //! Definitions and Procedures for GUI help-index:
 /*
-static const char *chapter_names[] = {
+static const char *help_chapters[] = {
     "Introduction",
     "Battlescape",
     "Mapview",
@@ -260,69 +294,54 @@ static const char *chapter_names[] = {
 };
 */
 
-//! helpmenu foreground color
-#define _FG COLOR_WHITE
-//! helpmenu background color
-#define _BG COLOR_BLACK1
-
-bool helpmenu_dialog_proc_exit = 0;
-
-int helpmenu_dialog_proc(int msg, DIALOG * d, int c)
+/**
+ * Callback function to specify the contents of the listbox,
+ * e.g. the help-chapters
+ */
+const char *help_chapters(int index, int *list_size)
 {
-    if (mouse_b & 2) {
-        while (mouse_b & 2) yield_timeslice();
-        helpmenu_dialog_proc_exit = 1;
-    return D_CLOSE;
+    static char listbox_text[10][32];
+
+    if (index < 0) {
+       sprintf( listbox_text[0], _("Introduction") );
+       sprintf( listbox_text[1], _("Battlescape") );
+       sprintf( listbox_text[2], _("Mapview") );
+       sprintf( listbox_text[3], _("Inventory") );
+       sprintf( listbox_text[4], _("Stats-View") );
+       sprintf( listbox_text[5], _("Endgame-Stats") );
+       sprintf( listbox_text[6], _("Network") );
+       sprintf( listbox_text[7], _("Mission-Planner") );
+       sprintf( listbox_text[8], _("Scenarios") );
+       *list_size = 9;
+       return NULL;
     }
-    return d_button_proc(msg, d, c);
-}
+    else
+       return listbox_text[index];
+};
 
 /**
  * Help-Index: show GUI-dialog to let user choose a help-chapter
  */
-// Prototype / Todo: rewrite as selectbox with frame, title etc.
 int select_help()
 {
-  //return common_select_proc( _("Select help-chapter"), chapter_names, msg, d, c);
-  //int y = 300;
-  //static char dstr[9][100];
-/*
-    static const char *dstr[] = {
-    "Introduction",
-    "Battlescape",
-    "Mapview",
-    "Inventory",
-    "Stats-View",
-    "Endgame-Stats",
-    "Network",
-    "Mission-Planner",
-    "Scenarios",
-    NULL
-};
-*/
-    static DIALOG the_dialog[] = {
-        //         dialog proc,  x,   y,   w,  h,  fg,  bg, key,  flags, d1, d2,              dp,  dp2,  dp3
-        { helpmenu_dialog_proc, 16,  10, 200, 20, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Introduction"), NULL, NULL},
-        { helpmenu_dialog_proc, 16,  30, 200, 20, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Battlescape"), NULL, NULL},
-        { helpmenu_dialog_proc, 16,  50, 200, 20, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Mapview"), NULL, NULL},
-        { helpmenu_dialog_proc, 16,  70, 200, 20, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Inventory"), NULL, NULL},
-        { helpmenu_dialog_proc, 16,  90, 200, 20, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Stats-View"), NULL, NULL},
-        { helpmenu_dialog_proc, 16, 110, 200, 20, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Endgame-Stats"), NULL, NULL},
-        { helpmenu_dialog_proc, 16, 130, 200, 20, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Network"), NULL, NULL},
-        { helpmenu_dialog_proc, 16, 150, 200, 20, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Mission-Planner"), NULL, NULL},
-        { helpmenu_dialog_proc, 16, 170, 200, 20, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Scenarios"), NULL, NULL},
-        { d_yield_proc,          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
-        {                 NULL,  0,   0,   0,  0, _FG, _BG,   0,      0,  0,  0,            NULL, NULL, NULL}
+    int ret, sel;
+    int x0 =    24, y0 =     8, w0 =   280, h0 = 140;
+    int x1 = x0+20, y1 = y0+16, w1 = w0-32, h1 =  16;
+    int x2 = x0+20, y2 = y0+32, w2 = w0-32, h2 =  96;
+    static DIALOG the_dialog[] =
+    {
+        /* (dialog proc)     (x)   (y)   (w)   (h) (fg) (bg) (key) (flags) (d1) (d2) (dp)              (dp2) (dp3) */
+        { d_shadow_box_proc, x0,   y0,   w0,   h0, _FG, _BG,   0,  0,       0,   0,  NULL,              NULL, NULL }, 
+        { d_text_proc,       x1,   y1,   w1,   h1, _FG, _BG,   0,  0,       0,   0,  (void *)_("Select Help-Page"), NULL, NULL },
+        { d_list_proc,       x2,   y2,   w2,   h2, _FG, _BG,   0,  D_EXIT,  0,   0,  (void *)help_chapters, NULL, NULL },
+      //{ d_button_proc,     20,  200,  100,   20, _FG, _BG,   0,  D_EXIT,  0,   0,  (void *)_("OK"),   NULL, NULL },
+      //{ d_button_proc,    180,  200,  100,   20, _FG, _BG,   0,  D_EXIT,  0,   0,  (void *)_("Cancel"), NULL, NULL },
+        { NULL,               0,    0,    0,    0, _FG, _BG,   0,  0,       0,   0,  NULL,              NULL, NULL }
     };
 
-  //for (int d = 0; d < 9; d++) {
-      //the_dialog[d].x = (SCREEN2W - 200) / 2;
-      //the_dialog[d].y = y + 6 - d * 20;
-      //the_dialog[d].proc = helpmenu_dialog_proc;
-      //sprintf(dstr[d], "Help #%d", d );
-      //sprintf(dstr[d], "%s", chapter_names[d] );
-  //}
-    int sel = do_dialog(the_dialog, -1);
+    ret = do_dialog(the_dialog, -1);
+    sel = the_dialog[ 2 ].d1;   // from listbox-entry
+  //return sel;
 
     if (sel == 0) return HELP_INTRO;
     if (sel == 1) return HELP_BATTLESCAPE;
@@ -388,13 +407,12 @@ void help( const int helppage )
  */
     rest(1); // Don't eat all CPU resources
 
-  //char test[64];
     switch (helppage) {
         case HELP_U2K_INDEX + 0 :
             hp = select_help();
-          //sprintf(test,  "Selected: %d", hp );
-          //b1 = alert3( "", test, "",
-          //             NULL, ok, NULL, kp_prev, kp_ok, kp_0);
+          //char test[64];
+          //sprintf( test,  "Selected: %d", hp );
+          //b1 = alert3( "", test, "",  NULL, ok, NULL,  kp_prev, kp_ok, kp_0 );
             help( hp );
             break;
 

@@ -256,6 +256,7 @@ int sethotseatplay()
 #define FG 0
 #define BG 1
 
+// Order of GUI-elements in config_dlg:
 #define SPEED_UNIT       2
 #define SPEED_BULLET     3
 #define SPEED_MAPSCROLL  4

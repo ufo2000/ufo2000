@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFO2000\n"
 "POT-Creation-Date: 2004-11-08 17:33+0100\n"
-"PO-Revision-Date: 2004-11-08 17:44+0100\n"
+"PO-Revision-Date: 2004-11-09 18:18+0100\n"
 "Last-Translator: HaJo Gurt <gurt@gmx.de>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -624,18 +624,25 @@ msgstr "Der andere Spieler hat die folgenden %d benutzbaren Karten:\n"
 msgid "The following maps can not be used, they are modified or just not installed by remote player:\n"
 msgstr "Die folgenden Karten sind nicht benutzbar (nicht vorhanden oder modifiziert):\n"
 
-#: src/text.cpp:146
-msgid "&RANDOM TIP"
-msgstr "&Zufalls-Tip"
-
-#: src/text.cpp:147 src/text.cpp:381
+#: src/text.cpp:151 src/text.cpp:381
 msgid "  CLOSE  "
 msgstr " Schliessen "
 
-# msgstr "&Nächste Seite"
-#: src/text.cpp:148
+#: src/text.cpp:152
+msgid "&RANDOM TIP"
+msgstr "&Zufalls-Tip"
+
+#: src/text.cpp:153
 msgid "&NEXT TIP"
 msgstr "&Nächster Tip"
+
+#: src/text.cpp:154
+msgid "RANDOM TIP"
+msgstr "Zufalls-Tip"
+
+#: src/text.cpp:155
+msgid "NEXT TIP"
+msgstr "Nächster Tip"
 
 #: src/text.cpp:170
 msgid "Tip"
@@ -752,6 +759,10 @@ msgstr "Missions-Planer"
 #: src/text.cpp:313
 msgid "Scenarios"
 msgstr "Szenarien"
+
+#: src/text.cpp:332
+msgid "Select Help-Page"
+msgstr "Hilfe-Kapitel wählen"
 
 #: src/text.cpp:378
 msgid "HELP-&INDEX"
@@ -1105,7 +1116,7 @@ msgstr "Ein Klick auf das Bild des Soldaten führt zur Anzeige von dessen Werten
 
 #: src/text.cpp:687
 msgid "Stats-Display: the current attributes of the soldier."
-msgstr "Einheiten-Daten: Aktuelle Wert eines Soldaten"
+msgstr "Einheiten-Daten: Aktuelle Werte eines Soldaten"
 
 #: src/text.cpp:689
 msgid "To leave, press ESC or click a mousebutton."

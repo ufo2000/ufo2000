@@ -348,7 +348,7 @@ void Editor::show()
                     textout(screen2, g_small_font, _("AMMO:"),  272, 64, COLOR_LT_OLIVE);
                     textout(screen2, g_small_font, _("ROUNDS"), 272, 72, COLOR_LT_OLIVE);
                     textout(screen2, g_small_font, _("LEFT="),  272, 80, COLOR_LT_OLIVE);
-					textprintf(screen2, g_small_font, 299, 80, COLOR_ORANGE, "%d", sel_item->roundsremain());
+                    textprintf(screen2, g_small_font,           299, 80, COLOR_ORANGE, "%d", sel_item->roundsremain());
 					rect(screen2, 272, 88, 303, 135, COLOR_DK_GRAY);      //clip
 					PCK::showpck(sel_item->clip()->obdata_pInv(), 272, 88 + 8);
 				} else if (sel_item->obdata_isAmmo()) {
@@ -356,7 +356,7 @@ void Editor::show()
                     textout(screen2, g_small_font, _("AMMO:"),  272, 64, COLOR_LT_OLIVE);
                     textout(screen2, g_small_font, _("ROUNDS"), 272, 72, COLOR_LT_OLIVE);
                     textout(screen2, g_small_font, _("LEFT="),  272, 80, COLOR_LT_OLIVE);
-					textprintf(screen2, g_small_font, 299, 80, COLOR_ORANGE, "%d", sel_item->m_rounds);
+                    textprintf(screen2, g_small_font,           299, 80, COLOR_ORANGE, "%d", sel_item->m_rounds);
 					rect(screen2, 272, 88, 303, 135, COLOR_DK_GRAY);      //clip
 					PCK::showpck(sel_item->obdata_pInv(), 272, 88 + 8);
 				}
@@ -738,11 +738,11 @@ static int d_agup_slider_pro2(int msg, DIALOG * d, int c)
 static void fixup_unit_info()
 {
 	if (sol_dialog[D_RACE].d1 == 0) {
-		armour_names = armour_names_human;
-		appearance_names = appearance_names_human;
+        armour_names     = armour_names_human;
+        appearance_names = appearance_names_human;
 	} else {
-		armour_names = armour_names_alien;
-		appearance_names = appearance_names_alien;
+        armour_names     = armour_names_alien;
+        appearance_names = appearance_names_alien;
 	}
 	if (sol_dialog[D_ARMOUR].d1 >= get_list_size(armour_names))
 		sol_dialog[D_ARMOUR].d1 = 0;
@@ -807,12 +807,12 @@ void Editor::edit_soldier()
 	    man->md.SkinType == S_XCOM_2 || 
 	    man->md.SkinType == S_XCOM_3) {
 		appearance_names = appearance_names_human;
-		armour_names = armour_names_human;
+		armour_names     = armour_names_human;
 		if (man->md.Appearance >= 4) man->md.Appearance = 0;
 		sol_dialog[D_RACE].d1 = 0;
 	} else {
 		appearance_names = appearance_names_alien;
-		armour_names = armour_names_alien;
+		armour_names     = armour_names_alien;
 		if (man->md.SkinType == S_SECTOID)
 			sol_dialog[D_RACE].d1 = 1;
 		else
@@ -830,7 +830,7 @@ void Editor::edit_soldier()
 	}
 	
 	sol_dialog[D_APPEARANCE].d1 = man->md.Appearance + (man->md.fFemale ? 4 : 0);
-	
+
 	fixup_unit_info();
 
 	set_dialog_color(sol_dialog, gui_fg_color, gui_bg_color);

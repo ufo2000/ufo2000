@@ -54,8 +54,8 @@ volatile int g_switch_in_counter;
 
 /**
  * This function is called when we switch back to ufo2000 from other 
- * task in win32. All the information drawn on screen is lost, so we
- * need some way to detect this situation.
+ * task in win32. All the information drawn on screen is lost, 
+ * so we need some way to detect this situation.
  */
 void switch_in_callback()
 {
@@ -206,7 +206,7 @@ static void ufo2k_set_gfx_mode(int gfx_driver, int min_color_depth)
 
 		set_color_depth(color_depth);
 
-	//	Try both selected in ini-file and 640x480 video modes
+	//	Try both the video modes selected in the ini-file and 640x480.
 		int exit_code = set_gfx_mode(gfx_driver, cfg_get_screen_x_res(), cfg_get_screen_y_res(), 0, 0);
 		if (exit_code == 0) break;
 		exit_code = set_gfx_mode(gfx_driver, 640, 480, 0, 0);
@@ -220,8 +220,8 @@ static void ufo2k_set_gfx_mode(int gfx_driver, int min_color_depth)
 		xcom1_menu_color   = xcom1_menu_color_8bpp;
 		xcom1_darken_color = xcom1_darken_color_8bpp;
 	} else {
-	//	Create tables for translation from xcom1 palette colors to colors
-	//	for currently selected video mode
+    //	Create tables for translation from xcom1 palette colors
+    //	to colors for currently selected video mode
 		xcom1_color_table[0]      = makecol(255, 0, 255);
 		xcom1_menu_color_table[0] = makecol(255, 0, 255);
 		tftd_color_table[0]       = makecol(255, 0, 255);
@@ -300,13 +300,15 @@ void savescreen()
 }
 
 #define POLY 0x8408
+/**
+ * Calculate the CCITT CRC 16 polynomial
+ */
 //												  16	12	5
-// this is the CCITT CRC 16 polynomial X  + X  + X  + 1.
+// This is the CCITT CRC 16 polynomial X  + X  + X  + 1.
 // This works out to be 0x1021, but the way the algorithm works
-// lets us use 0x8408 (the reverse of the bit pattern).  The high
-// bit is always assumed to be set, thus we only use 16 bits to
-// represent the 17 bit value.
-
+// lets us use 0x8408 (the reverse of the bit pattern).  
+// The high bit is always assumed to be set, thus we 
+// only use 16 bits to represent the 17 bit value.
 uint16 crc16(const char *data_p)
 {
 	unsigned char i;
