@@ -158,8 +158,10 @@ int Place::isfit(Item * it, int xx, int yy)
 /**
  * Put item in place like hand, belt, backpack etc.
  */
-int Place::put(Item * it, int xx, int yy)
+int Place::put(Item *it, int xx, int yy)
 {
+    ASSERT(it->m_place == NULL);
+
 	if (isfree(xx, yy) && isfit(it, xx, yy)) {
 		if (m_item != NULL) m_item->m_prev = it;
 		it->m_next = m_item; it->m_prev = NULL; it->m_place = this;
@@ -479,7 +481,11 @@ void Place::save_to_string(std::string &str)
 {
 	str.clear();
 
+    // search for the last item in the list (it was added first)
 	Item *it = m_item;
+	while (it != NULL && it->m_next) it = it->m_next;
+	
+    // save items list in correct order (items added first are listed in the beginning of list)
 	while (it != NULL) {
 		char line[512];
 		if (!it->haveclip()) {
@@ -489,7 +495,7 @@ void Place::save_to_string(std::string &str)
 				Item::obdata_name(it->cliptype()).c_str());
 		}
 		str += line;
-		it = it->m_next;
+		it = it->m_prev;
 	}
 }
 

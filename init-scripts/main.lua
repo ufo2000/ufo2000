@@ -203,6 +203,11 @@ end
 
 -- Loads squad information
 function LoadSquad(squad_data, squad_object)
+    -- sort squad_data by keys
+    local tmp = {} for k, v in squad_data do table.insert(tmp, {k, v}) end
+    table.sort(tmp, function (a, b) return a[1] < b[1] end)
+	squad_data = {}	for _, v in ipairs(tmp) do table.insert(squad_data, v[2]) end
+	-- 
     for id, soldier_data in ipairs(squad_data) do
     	local soldier = squad_object:findnum(id - 1)
     	soldier:set_name(soldier_data.Name)
@@ -213,7 +218,7 @@ function LoadSquad(squad_data, squad_object)
 	    for place_id, place_data in soldier_data.Inventory do
     		local place = soldier:find_place(place_id)
 		    place:destroy_all_items()
-		    for _, v in place_data do
+		    for _, v in ipairs(place_data) do
     			place:add_item(v[1], v[2], v[3])
 				if v[4] then place:add_item(v[1], v[2], v[4]) end
 		    end
