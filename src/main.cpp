@@ -553,6 +553,7 @@ void initmain(int argc, char *argv[])
     if (get_config_int("Flags", "F_SOUNDCHECK", 0)) FLAGS |= F_SOUNDCHECK;    // perform soundtest.
     if (get_config_int("Flags", "F_LOGTOSTDOUT", 0)) FLAGS |= F_LOGTOSTDOUT;  // Copy all init console output to stdout.
     if (get_config_int("Flags", "F_DEBUGDUMPS", 0)) FLAGS |= F_DEBUGDUMPS;    // Produce a lot of files with the information which can help in debugging
+    if (get_config_int("Flags", "F_ENDTURNSND", 1)) FLAGS |= F_ENDTURNSND;	  // sound signal at the end of turn
 	const AGUP_THEME *gui_theme = agup_theme_by_name(get_config_string("General", "gui_theme", "BeOS"));
 
 	if (argc > 1) {
@@ -817,8 +818,9 @@ void send_turn()
 	int crc = build_crc();
 	net->send_endturn(crc);
 
-	g_console->printf(COLOR_SYS_INFO1, "%s", "Turn end");
-	soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
+	g_console->printf(COLOR_VIOLET00, "%s", "Turn end");
+	if(FLAGS & F_ENDTURNSND)
+		soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
 
 	platoon_remote->restore();
 
@@ -882,7 +884,8 @@ void recv_turn(int crc)
 		"Next turn. local = %d, remote = %d soldiers",
 		platoon_local->num_of_men(),
 		platoon_remote->num_of_men());
-	soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
+	if(FLAGS & F_ENDTURNSND)
+		soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
 }
 
 int GAMELOOP = 0;
