@@ -49,4 +49,8 @@ extern MIDI                  *g_combat_midi_music;
 extern MIDI                  *g_win_midi_music;
 extern MIDI                  *g_lose_midi_music;
 
+const std::string &cfg_get_server_host();
+const std::string &cfg_get_server_login();
+const std::string &cfg_get_server_password();
+
 #endif

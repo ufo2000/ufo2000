@@ -10,7 +10,7 @@
 #include "server.h"
 
 ServerClient::ServerClient(ServerDispatch *server, NLsocket socket)
-	:m_server(server), m_socket(socket)
+	:m_socket(socket), m_server(server)
 {
 	printf("%p\n", server);
 	m_error = false;
@@ -65,7 +65,6 @@ static bool send_to_socket(NLsocket socket, const char *buffer, NLint size)
 
 static bool send_packet(NLsocket socket, NLulong id, const std::string &packet)
 {
-	const char *buffer = packet.data();
 	struct packet_header { NLulong size, id; };
 	packet_header header = { nlSwapl(packet.size()), nlSwapl(id) };
 	if (!send_to_socket(socket, (const char *)&header, sizeof(header))) return false;
@@ -87,7 +86,7 @@ void ServerDispatch::HandleSocket(NLsocket socket)
 
 	if (err < 0 || client->m_error)
 	{
-	    printf("SERVER: socket %d closed\n", socket);
+	    printf("SERVER: socket %d closed\n", (int)socket);
         delete client;
 	}
 }
@@ -109,7 +108,7 @@ void ServerDispatch::HandleNewConnections()
     NLbyte string[NL_MAX_STRING_LENGTH];
     
     printf("SERVER: Client %d connected from %s on socket %d\n", 
-    	m_clients_by_socket.size(), nlAddrToString(&addr, string), newsock);
+    	m_clients_by_socket.size(), nlAddrToString(&addr, string), (int)newsock);
 
     ServerClient *client = CreateServerClient(newsock);
     assert(client != NULL);
@@ -181,12 +180,17 @@ bool ClientServer::connect(const std::string &host, int port)
     return true;
 }
 
+ClientServer::~ClientServer()
+{
+	nlClose(m_socket);
+}
+
 bool ClientServer::send_packet(NLulong id, const std::string &packet)
 {
 	return ::send_packet(m_socket, id, packet);
 }
 
-bool ClientServer::recv_packet(NLulong &id, std::string &packet)
+int ClientServer::recv_packet(NLulong &id, std::string &packet)
 {
     int readlen;
     NLbyte buffer[128];
@@ -198,7 +202,7 @@ bool ClientServer::recv_packet(NLulong &id, std::string &packet)
     {
         NLenum err = nlGetError();
         if (err == NL_MESSAGE_END || err == NL_SOCK_DISCONNECT)
-        	return false;
+        	return -1;
     }
 
 	return decode_packet(m_stream, id, packet) == 1;

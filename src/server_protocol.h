@@ -15,6 +15,7 @@ class ServerClientUfo: public ServerClient
 {
 public:
 	ServerClientUfo(ServerDispatch *d, NLsocket s) : ServerClient(d, s) { }
+	virtual ~ServerClientUfo();
 	bool recv_packet(NLulong id, const std::string &packet);
 };
 

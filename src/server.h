@@ -13,9 +13,10 @@ class ClientServer
 	std::string m_stream;
     NLsocket    m_socket;
 public:
+	virtual ~ClientServer();
 	bool connect(const std::string &host, int port);
 	bool send_packet(NLulong id, const std::string &packet);
-	bool recv_packet(NLulong &id, std::string &packet);
+	int recv_packet(NLulong &id, std::string &packet);
 };
 
 /**

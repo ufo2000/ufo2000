@@ -23,7 +23,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "global.h"
 #include <string>
 #include <vector>
+#include <memory>
 #include "wind.h"
+#include "config.h"
 
 void draw_border(BITMAP *bmp, int x, int y, int w, int h, int color)
 {
@@ -213,18 +215,40 @@ void lobby_init_mouse()
 	gui_bg_color = xcom1_color(1);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+
+class initHawkNL
+{
+public:
+	initHawkNL()
+	{ 
+		if (!nlInit() || !nlSelectNetwork(NL_IP)) {
+			display_error_message("HawkNL library failed to init");
+			exit(1);
+		}
+	    nlEnable(NL_SOCKET_STATS);
+	}
+	~initHawkNL()
+	{
+	    nlShutdown();
+	}
+};
+
+//! Automatically init HawkNL on start and close on exit
+static initHawkNL HawkNL;
+
+//////////////////////////////////////////////////////////////////////////////
+
 int connect_internet_server()
 {
-    if (!nlInit()) return -1;
-    if (!nlSelectNetwork(NL_IP)) return -1;
-    nlEnable(NL_SOCKET_STATS);
-
-    ClientServerUfo *server = new ClientServerUfo();
-    if (!server->connect("localhost", 2000))
+    std::auto_ptr<ClientServerUfo> server(new ClientServerUfo());
+    if (!server->connect(cfg_get_server_host(), 2000))
     	return -1;
 
-    char buf[64];
-    server->login(std::string("user") + std::string(itoa(rand(), buf, 10)), "");
+    if (!server->login(cfg_get_server_login(), cfg_get_server_password())) {
+		alert(" ", "  Failed to connect to server  ", " ", "    OK    ", NULL, 1, 0);
+		return -1;
+    }
 
 	lobby_init_mouse();
 
@@ -267,6 +291,7 @@ int connect_internet_server()
 			switch (id)
 			{
 				case SRV_USER_ONLINE: users->update_user_info(packet.c_str(), USER_STATUS_READY); break;
+				case SRV_USER_OFFLINE: users->update_user_info(packet.c_str(), USER_STATUS_OFFLINE); break;
 				case SRV_MESSAGE: chat->printf("%s", packet.c_str()); break;
 			}
 
@@ -330,8 +355,6 @@ int connect_internet_server()
 	delete users_border;
 	delete chat;
 	delete chat_border;
-
-    nlShutdown();
 
 	return -1;
 }

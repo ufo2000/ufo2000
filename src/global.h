@@ -386,6 +386,7 @@ void send_turn();
 
 bool nomoves();
 int connect_internet_server();
+void display_error_message(const std::string &error_text);
 
 #define CELL_SCR_X 16
 #define CELL_SCR_Y 8
