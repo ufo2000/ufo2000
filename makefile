@@ -174,7 +174,7 @@ $(OBJDIR)/%.o: %.c
 	$(CC) -MMD $(CFLAGS) -c $< -o $@
 
 $(NAME): $(OBJS)
-	$(CX) $(CFLAGS) -o $@ $^ $(LIBS) $(SUBSYSTEM)
+	$(CX) $(CFLAGS) -o $@ $^ $(LIBS) $(SUBSYSTEM) -Wl,-Map -Wl,ufo2000.map
 
 $(SERVER_NAME): $(OBJS_SERVER)
 	$(CX) $(CFLAGS) -o $@ $^ $(SERVER_LIBS)

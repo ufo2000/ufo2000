@@ -474,6 +474,7 @@ int Net::recv_open_door()
 
 	Soldier *ss = findman(NID);
 	if (ss != NULL) {
+		ASSERT(ss->is_active());
 		SEND = 0;
 		if (!ss->open_door())
 			error("NID can't open door");
@@ -502,6 +503,7 @@ int Net::recv_change_pose()
 
 	Soldier *ss = findman(NID);
 	if (ss != NULL) {
+		ASSERT(ss->is_active());
 		SEND = 0;
 		if (!ss->change_pose()) {
 			error("NID can't change_pose");
@@ -746,6 +748,7 @@ int Net::recv_move()
 
 	Soldier *ss = findman(NID);
 	if (ss != NULL) {
+		ASSERT(ss->is_active());
 		SEND = 0;
 		ss->wayto(lev, col, row);
 		SEND = 1;
@@ -777,6 +780,7 @@ int Net::recv_face()
 
 	Soldier *ss = findman(NID);
 	if (ss != NULL) {
+		ASSERT(ss->is_active());
 		SEND = 0;
 		ss->faceto(col, row);
 		SEND = 1;
@@ -805,6 +809,7 @@ int Net::recv_use_elevator()
 
 	Soldier *ss = findman(NID);
 	if (ss != NULL) {
+		ASSERT(ss->is_active());
 		SEND = 0;
 		ss->use_elevator(dz);
 		SEND = 1;
