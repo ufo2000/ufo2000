@@ -153,6 +153,10 @@ Section "UFO2000 (required)" MainSec
 	
 	File newmaps\*
 	
+	SetOutPath $INSTDIR\newmusic
+
+	File ..\newmusic\*
+	
 	SetOutPath $INSTDIR\newunits
 	
 	File newunits\*
