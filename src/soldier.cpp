@@ -1267,13 +1267,11 @@ void Soldier::faceto(int dest_col, int dest_row)
 	if (nturns < 0) nturns = -nturns;
 	if (nturns > 4)
 		nturns = 8 - nturns;
-	//text_mode(-1); textprintf(screen, font, 1, 1, 1, "nturns = %d", nturns); readkey();
 	if (havetime(nturns)) {
 		spend_time(nturns);
 		net->send_face(NID, dest_col, dest_row);
 		way[0] = ang >> 5; curway = 0; waylen = 0;
-	} else {
-		//info->printstr("___lack of time___\n");
+		calc_visible_cells();
 	}
 }
 
