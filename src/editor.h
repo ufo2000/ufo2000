@@ -47,13 +47,16 @@ private:
 	BITMAP  *terrain_bmp;
 
 	int load_clip();
+	bool handle_mouse_leftclick();
+
 public:
 	Editor();
 	~Editor();
 
 	void load();
 	void save();
-	void show(int NEXTPREV);
+	void show();
+
 	int set_man(char *name);
 
 	void build_Units(Units &local) { m_plt->build_Units(local);	}
@@ -61,6 +64,7 @@ public:
 	Platoon *platoon() { return m_plt; };
 
 	void edit_soldier();
+	void change_equipment();
 
 	void do_mapedit();
 	int do_mapselect();

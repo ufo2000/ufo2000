@@ -147,8 +147,117 @@ int Editor::set_man(char *name)
 	return 1;
 }
 
+/**
+ * Handle left mouse click in soldier equipment screen
+ * @returns  true if the user decided to exit from equipment screen
+ */
+bool Editor::handle_mouse_leftclick()
+{
+	int i;
 
-void Editor::show(int NEXTPREV)
+	// Mouse click in unit stats area - edit unit stats	
+	if (mouse_inside(320, 0, 639, 200)) {
+		// unibord
+		edit_soldier();
+		return false;
+	}
+	
+	// Mouse click in item info panel (right bottom part of the screen) - 
+	// change equipment dialog
+	if (mouse_inside(320, 200, 639, 400)) {
+		change_equipment();
+		return false;
+	}
+	
+	if ((sel_item == NULL) || (dup_item != NULL)) {
+		if (mouse_inside(237, 1, 271, 22)) {  //ok
+			return true;
+		} else
+			if (mouse_inside(273, 1, 295, 22)) {  // <
+				man = man->prevman();
+			} else
+				if (mouse_inside(297, 1, 319, 22)) {  // >
+					man = man->nextman();
+				}
+	}
+
+	if (mouse_inside(288, 32, 319, 57)) {  // clip
+		//if ((dup_item == NULL) && (man->unload_ammo(sel_item)))
+		//	sel_item = NULL;
+		if ((dup_item == NULL) && (sel_item != NULL) && (sel_item->haveclip()) &&
+				(man->rhand_item() == NULL) && (man->lhand_item() == NULL)) {
+			man->putitem(sel_item, P_ARM_RIGHT);
+			man->putitem(sel_item->unload(), P_ARM_LEFT);
+			sel_item = NULL;
+		}
+	} else
+		if (mouse_inside(288, 137, 319, 151)) {  // -->
+			man->place(P_MAP)->scroll_right();
+		} else
+			if (mouse_inside(255, 137, 286, 151)) {  // <--
+				man->place(P_MAP)->scroll_left();
+			}
+
+	if (sel_item == NULL) {
+		for (i = 0; i < NUMBER_OF_PLACES; i++) {
+			sel_item = man->place(i)->mselect();
+			if (sel_item != NULL) {
+				sel_item_place = i;
+				break;
+			}
+		}
+		if (sel_item == NULL) {
+			sel_item = m_armoury->mselect();
+			if (sel_item != NULL) {
+				if (is_weapon_allowed(sel_item->m_type)) {
+					sel_item_place = 9;
+					dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
+				} else {
+					m_armoury->put(sel_item, sel_item->m_x, sel_item->m_y);
+					sel_item = NULL;
+				}
+			}
+		}
+	} else {
+		if (dup_item != NULL) {
+			for (i = 0; i < NUMBER_OF_PLACES; i++) {
+				if (man->place(i)->mdeselect(dup_item)) {
+					dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
+					break;
+				}
+			}
+		} else {
+			for (i = 0; i < NUMBER_OF_PLACES; i++) {
+				if (man->place(i)->mdeselect(sel_item)) {
+					sel_item = NULL;
+					break;
+				}
+			}
+		}
+
+		if (sel_item != NULL) {
+			if (dup_item != NULL) {
+				if (m_armoury->mdeselect(sel_item)) {
+					sel_item = NULL;
+					delete dup_item;
+					dup_item = NULL;
+				}
+			} else {
+				if (m_armoury->mdeselect(sel_item)) {
+					Item *del = m_armoury->get(sel_item->m_x, sel_item->m_y);
+					ASSERT(del != NULL);
+					delete del;
+					sel_item = NULL;
+				}
+			}
+		}
+	}
+	if (sel_item != NULL)
+		load_clip();
+	return false;
+}
+
+void Editor::show()
 {
 	reset_video();
 	destroy_bitmap(screen2);
@@ -233,96 +342,8 @@ void Editor::show(int NEXTPREV)
 			mouse_leftr = 0;
 			CHANGE = 1;
 
-			if (mouse_inside(320, 0, 639, 200)) // unibord
-				edit_soldier();
-
-			if ((sel_item == NULL) || (dup_item != NULL)) {
-				if (mouse_inside(237, 1, 271, 22)) {  //ok
-					DONE = 1;
-				} else
-					if (mouse_inside(273, 1, 295, 22)) {  // <
-						//if (NEXTPREV)
-						man = man->prevman();
-					} else
-						if (mouse_inside(297, 1, 319, 22)) {  // >
-							//if (NEXTPREV)
-							man = man->nextman();
-						}
-			}
-
-			if (mouse_inside(288, 32, 319, 57)) {  // clip
-				//if ((dup_item == NULL) && (man->unload_ammo(sel_item)))
-				//	sel_item = NULL;
-				if ((dup_item == NULL) && (sel_item != NULL) && (sel_item->haveclip()) &&
-				        (man->rhand_item() == NULL) && (man->lhand_item() == NULL)) {
-					man->putitem(sel_item, P_ARM_RIGHT);
-					man->putitem(sel_item->unload(), P_ARM_LEFT);
-					sel_item = NULL;
-				}
-			} else
-				if (mouse_inside(288, 137, 319, 151)) {  // -->
-					man->place(P_MAP)->scroll_right();
-				} else
-					if (mouse_inside(255, 137, 286, 151)) {  // <--
-						man->place(P_MAP)->scroll_left();
-					}
-
-			if (sel_item == NULL) {
-				for (i = 0; i < NUMBER_OF_PLACES; i++) {
-					sel_item = man->place(i)->mselect();
-					if (sel_item != NULL) {
-						sel_item_place = i;
-						break;
-					}
-				}
-				if (sel_item == NULL) {
-					sel_item = m_armoury->mselect();
-					if (sel_item != NULL) {
-						if (is_weapon_allowed(sel_item->m_type)) {
-							sel_item_place = 9;
-							dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
-						} else {
-							m_armoury->put(sel_item, sel_item->m_x, sel_item->m_y);
-							sel_item = NULL;
-						}
-					}
-				}
-			} else {
-				if (dup_item != NULL) {
-					for (i = 0; i < NUMBER_OF_PLACES; i++) {
-						if (man->place(i)->mdeselect(dup_item)) {
-							dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
-							break;
-						}
-					}
-				} else {
-					for (i = 0; i < NUMBER_OF_PLACES; i++) {
-						if (man->place(i)->mdeselect(sel_item)) {
-							sel_item = NULL;
-							break;
-						}
-					}
-				}
-
-				if (sel_item != NULL) {
-					if (dup_item != NULL) {
-						if (m_armoury->mdeselect(sel_item)) {
-							sel_item = NULL;
-							delete dup_item;
-							dup_item = NULL;
-						}
-					} else {
-						if (m_armoury->mdeselect(sel_item)) {
-							Item *del = m_armoury->get(sel_item->m_x, sel_item->m_y);
-							ASSERT(del != NULL);
-							delete del;
-							sel_item = NULL;
-						}
-					}
-				}
-			}
-			if (sel_item != NULL)
-				load_clip();
+			if (handle_mouse_leftclick())
+				DONE = 1;
 		}
 
 		if ((mouse_b & 2) && (mouse_rightr)) { //right
@@ -462,6 +483,9 @@ static char slider_text[8][14];
 static int points;
 static char points_str[100];
 
+/**
+ * Gets number of elements in C strings array before NULL value
+ */
 static int get_list_size(const char **list)
 {
 	int i = 0;
@@ -495,13 +519,13 @@ static const char **armour_names;
 
 static const char *appearance_names_human[] = { 
 	"blonde guy", 
-	"guy #2", 
-	"guy #3",
-	"guy #4",
+	"hispanic guy", 
+	"oriental guy",
+	"black guy",
 	"blonde girl", 
-	"girl #2", 
-	"girl #3",
-	"girl #4",
+	"brunette girl", 
+	"oriental girl",
+	"black girl",
 	NULL
 };
 
@@ -640,6 +664,10 @@ static int d_agup_slider_pro2(int msg, DIALOG * d, int c)
 	return v;
 }
 
+/**
+ * Sets correct value ranges in GUI controls after the user changes
+ * information related to skins
+ */
 static void fixup_unit_info()
 {
 	if (sol_dialog[D_RACE].d1 == 0) {
@@ -666,11 +694,15 @@ static void fixup_unit_info()
 	d->dp = (void *)armour_names[d->d1];
 }
 
+/**
+ * Shows unit stats edit dialog and allows to edit unit stats, change
+ * name, armour and skin
+ */
 void Editor::edit_soldier()
 {
 	set_mouse_range(0, 0, SCREEN_W, SCREEN_H);
 
-//	Attributes
+	// Attributes
 	sprintf(slider_text[0], "Time Units");
 	sprintf(slider_text[1], "Stamina");
 	sprintf(slider_text[2], "Health");
@@ -756,6 +788,30 @@ void Editor::edit_soldier()
 	man->process_MANDATA();
 	
 	set_mouse_range(0, 0, 639, 399);
+}
+
+static std::vector<std::string> eqsets;
+
+void change_equipment_callback(const char *name)
+{
+	eqsets.push_back(name);
+}
+
+void Editor::change_equipment()
+{
+	// Get list of available equipment sets
+	eqsets.clear();
+	LUA_REGISTER_FUNCTION(L, change_equipment_callback);
+	lua_dostring(L, "for name in EquipmentTable do change_equipment_callback(name) end");
+	
+	int result = gui_select_from_list(
+		300, 200, "Select equipment set", 
+		eqsets, 0);
+
+	lua_pushstring(L, "SetEquipment");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	lua_pushstring(L, eqsets[result].c_str());
+	lua_call(L, 1, 0);
 }
 
 int Editor::do_mapselect()

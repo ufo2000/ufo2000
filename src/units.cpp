@@ -600,7 +600,7 @@ void Units::execute_main(Map *map, int map_change_allowed)
 					fade_out(10);
 					clear(screen);
 
-					editor->show(0);      //!NEXTPREV select
+					editor->show();
 					editor->build_Units(*this);
 					reset_video();
 
