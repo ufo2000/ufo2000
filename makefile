@@ -174,10 +174,10 @@ binary-zip: all server
 	rm $(DISTNAME)/makefile* $(DISTNAME)/Seccast* $(DISTNAME)/*.dsp
 	rm $(DISTNAME)/*.dsw $(DISTNAME)/*.rc $(DISTNAME)/*.ebuild $(DISTNAME)/*.h
 	cp ufo2000.exe ufo2000-srv.exe $(DISTNAME)
-ifdef win32
+ifdef WINDIR
 	7z a -tzip -r -mx $(DISTNAME).zip "$(DISTNAME)/*"
 else
-	zip a $(DISTNAME).zip "$(DISTNAME)/*"
+	zip -r -9 $(DISTNAME).zip $(DISTNAME)
 endif
 	svn delete --force $(DISTNAME)
 
