@@ -105,7 +105,7 @@ void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, c
         server_log("Exception Occured: %s",ex.what());
     }
     // Testing mode: only first 30 games are saved
-    if(game.game_id<=30)
+    if(game_id<=30)
     {
     try {
 //        db_conn.executenonquery("begin transaction;");
