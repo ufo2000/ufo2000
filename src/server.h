@@ -62,6 +62,7 @@ class ServerClient
 {
 protected:
     friend class    ServerDispatch;
+    friend class    Server_Game_UFO;
     std::string     m_name;
     std::string     m_stream;
     std::string     m_stream_out;

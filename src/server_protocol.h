@@ -53,6 +53,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #define DB_FILENAME "ufo2000.db"
 
+class Server_Game_UFO;
+
 class ServerClientUfo: public ServerClient
 {
 	std::set<std::string>  m_challenged_opponents;
@@ -64,13 +66,15 @@ public:
 	static NLtime          m_last_user_disconnect_time;
 	
 	ServerClientUfo(ServerDispatch *d, NLsocket s)
-		: ServerClient(d, s), m_opponent(NULL), m_busy(false), db_conn(DB_FILENAME) { }
+		: ServerClient(d, s), m_opponent(NULL), m_busy(false), game(NULL), db_conn(DB_FILENAME) { }
 	virtual ~ServerClientUfo();
 	bool recv_packet(NLulong id, const std::string &packet);
 
 	ServerClientUfo *get_opponent() { return m_opponent; }
 	bool is_in_server_chat() { return !m_busy; }
-	
+	Server_Game_UFO* game;
+	int position;
+
 private:
     sqlite3::connection db_conn;
     bool add_user(const std::string &username, const std::string &password);

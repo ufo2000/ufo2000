@@ -22,7 +22,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "server_game.h"
 #include "server_config.h"
 
-int Server_Game_UFO::CreateGame(std::string playername1,std::string playername2)
+std::map<long int, Server_Game_UFO *> Server_Game_UFO::active_games;
+
+long int Server_Game_UFO::CreateGame(std::string playername1,std::string playername2)
 {
     sqlite3::connection db_conn(DB_FILENAME);
     try {
@@ -54,17 +56,52 @@ int Server_Game_UFO::CreateGame(std::string playername1,std::string playername2)
 }
 
 
-/*Server_Game_UFO* Server_Game_UFO::ActivatePlayer(int game_id,std::String playername,ServerClientUfo* player)
+void Server_Game_UFO::ActivatePlayer(int game_id,ServerClientUfo* player)
 {
-if (active_games.find(game_id) == active_games.end()) {
-*active_games[game_id]=new Server_Game_UFO;
-            unsigned long old = *config_variables[var];
-else
-new
-
+    if(player->game)
+        DeactivatePlayer(player);
+    sqlite3::connection db_conn(DB_FILENAME);
+    if (active_games.find(game_id) == active_games.end()) {
+        active_games[game_id]=new Server_Game_UFO(game_id);
+        server_log("Game %d activated.\n", game_id);
+    }
+    try {
+        player->position = db_conn.executeint32(
+        "select position from ufo2000_game_players where game=%d and player='%s';",
+        game_id,player->m_name.c_str());
+    }
+    catch(std::exception &ex) {
+        server_log("Exception Occured: %s",ex.what());
+    }
+    player->game=active_games[game_id];
+    player->game->players[player->position - 1] = player;
 }
 
-PacketToServer
-insert
-PacketToClient
-*/
+void Server_Game_UFO::DeactivatePlayer(ServerClientUfo* player)
+{
+    player->game->players[player->position - 1] = NULL;
+    if(!player->game->players[0] && !player->game->players[1])
+    {
+        active_games.erase(player->game->game_id);
+        server_log("Game %d deactivated.\n",player->game->game_id);
+        delete player->game;
+    }
+    player->game = NULL;
+}
+
+
+void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, const std::string &packet) {
+    try {
+        if(packet == "result:victory")
+            if(sender -> position == 1)
+                db_conn.executenonquery("update ufo2000_games set is_finished='Y', result=1 where id=%d;",game_id);
+            else
+                db_conn.executenonquery("update ufo2000_games set is_finished='Y', result=2 where id=%d;",game_id);
+        if(packet == "result:draw")
+            if(sender -> position == 1)
+                db_conn.executenonquery("update ufo2000_games set is_finished='Y', result=3 where id=%d;",game_id);
+    }
+    catch(std::exception &ex) {
+        server_log("Exception Occured: %s",ex.what());
+    }
+}

@@ -137,6 +137,9 @@ ServerClient *ServerDispatch::CreateServerClient(NLsocket socket)
 
 ServerClientUfo::~ServerClientUfo()
 {
+    if(game)
+        Server_Game_UFO::DeactivatePlayer(this);
+        
     if (m_name != "") {
     //  send information that the user is offline to all other users
         send_packet_all(SRV_USER_OFFLINE, m_name);
@@ -166,6 +169,8 @@ ServerClientUfo::~ServerClientUfo()
 
 bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 {
+    if(game)
+        game->PacketToServer(this, id, packet);
     if ((id == SRV_GAME_PACKET) && (strstr(packet.c_str(), "_Xmes_") != NULL))
         server_log("packet from %s {game chat message}\n", m_name.c_str(), (int)id);
     else
@@ -287,7 +292,9 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
         //  Try to find self in the opponent's challenge list
             if (opponent->m_challenged_opponents.find(m_name) != opponent->m_challenged_opponents.end()) {
             //  opponent found in the challenge list
-                Server_Game_UFO::CreateGame(m_name, opponent->m_name);
+                long int game_id = Server_Game_UFO::CreateGame(opponent->m_name, m_name);
+                Server_Game_UFO::ActivatePlayer(game_id, this);
+                Server_Game_UFO::ActivatePlayer(game_id, opponent);
 
                 server_log("game start: '%s' vs '%s'\n", m_name.c_str(), packet.c_str());
                 m_games_started++;
