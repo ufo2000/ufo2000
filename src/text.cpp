@@ -37,6 +37,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 /**
  * Call Message() from main.lua to write a message 
  * into the logfile init-scripts.log
+ * This logfile is mostly for debugging.
  */
 void lua_message( const std::string &str1 )
 {
@@ -56,6 +57,27 @@ void lua_message( const std::string &str1 )
     lua_safe_dostring(L, (std::string("Message([[%s]], [[") + 
         txt1 + str1 + txt2 + std::string("]])")).c_str() );
 };
+
+/** 
+ * Write message into file battlereport.txt.
+ * This logfile is for game-events relevant to the player, and the endgame-stats.
+ */
+void battle_report( const char *format, ... )
+{
+    va_list arglist;
+
+    FILE *logFile;
+    logFile = fopen( "battlereport.txt", "a" );
+
+    va_start( arglist, format );
+  //vfprintf( stderr, format, arglist );
+    vfprintf( logFile, format, arglist );
+    va_end( arglist );
+
+  //fflush( stderr );
+    fclose( logFile );
+}
+
 
 /**
  * Translate the input-string to a foreign language.

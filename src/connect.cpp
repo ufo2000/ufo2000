@@ -77,8 +77,8 @@ int Connect::do_chat()
 	g_net_allowed_terrains.clear();
 
 	remote_win->printstr("\n");
-    remote_win->printstr( _("Comparing local and remote UFO2000 versions...\n") );
-    remote_win->printstr( _("Press ESC to cancel\n") );
+    remote_win->printstr( _("Comparing local and remote UFO2000 versions...") );
+    remote_win->printstr( _("Press ESC to cancel") );
 
 	char version_check_packet[128];
 	sprintf(version_check_packet, "UFO2000 REVISION OF YOUR OPPONENT: %d", UFO_REVISION_NUMBER);
@@ -130,7 +130,7 @@ int Connect::do_chat()
 		}
 
 		if (!net->SEND) {
-            info_win->printstr( _("\nconnection closed") );
+            info_win->printstr( _("connection closed") );
 			readkey();
 			DONE = 1;
 		}
@@ -410,7 +410,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 					} else {
 						FLAGS |= F_RAWMESSAGES;
 					}
-                    g_console->printf( COLOR_SYS_INFO1, "%s: %d", "RAWMESSAGES:", FLAGS & F_RAWMESSAGES );
+                    g_console->printf( COLOR_SYS_INFO1, "%s: %lu", "RAWMESSAGES:", (FLAGS & F_RAWMESSAGES) );
 					break;
 				case KEY_F9:
 					keyswitch(0);

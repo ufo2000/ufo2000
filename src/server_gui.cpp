@@ -429,6 +429,14 @@ int connect_internet_server()
 	net->send_debug_message("system:%s", get_os_type_string());
 	net->send_debug_message("version:%s", g_version_id.c_str());
 
+    lua_message( std::string("Server: ") + cfg_get_server_host() );
+    lua_message( std::string("Login: ")  + g_server_login );
+
+  //FILE *f_br = fopen( "battlereport.txt", "at");
+  //fprintf(f_br, "# %s\n", _("Connected to server") );
+    battle_report( "\n# %s: %s\n", _("Connected to server"), cfg_get_server_host().c_str() );
+    battle_report( "# %s: %s\n", _("as user"), g_server_login.c_str() );
+
 	while (true)
 	{
 		NLulong id;
@@ -436,6 +444,8 @@ int connect_internet_server()
 		int res = server->recv_packet(id, packet);
 		if (res == -1) {
             alert(" ", _("  Connection lost  "), " ", _("    OK    "), NULL, 1, 0);
+            battle_report( "# %s\n", _("  Connection lost  ") );
+			// Todo: Trim blanks
 			return -1;
 		}
 		if (res != 0)
@@ -471,7 +481,7 @@ int connect_internet_server()
 					break;
 				case SRV_USER_BUSY:
 					if (users->get_user_status(packet) != USER_STATUS_BUSY &&
-							users->get_user_status(packet) != USER_STATUS_OFFLINE) {
+                        users->get_user_status(packet) != USER_STATUS_OFFLINE) {
 						soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
                         chat->printf(COLOR_DARKGRAY, _("%s left chat to play a game"), packet.c_str());
 					}
@@ -484,6 +494,10 @@ int connect_internet_server()
 					show_mouse(NULL);
 					FS_MusicPlay(NULL);
 		            HOST = 1;
+
+                    battle_report( "# %s: %s\n", _("Start networkgame with"), packet.c_str() );
+                    lua_message( std::string("Start networkgame with") + packet.c_str() );
+                    // Todo: use this name for endgame-stats
 
 		            if (initgame()) {
 		                gameloop();
@@ -504,6 +518,10 @@ int connect_internet_server()
 					show_mouse(NULL);
 					FS_MusicPlay(NULL);
 		            HOST = 0;
+
+                    lua_message( std::string("Join networkgame with") + packet.c_str() );
+                    battle_report( "# %s: %s\n", _("Join networkgame with"), packet.c_str() );
+                    // Todo: use this name for endgame-stats
 
 		            if (initgame()) {
 		                gameloop();
@@ -591,8 +609,11 @@ int connect_internet_server()
 					lobby_init_mouse();
 					break;
 				case KEY_ESC:
-                    if (askmenu( _("DISCONNECT FROM SERVER") ))
+                    if (askmenu( _("DISCONNECT FROM SERVER") )) {
+                        lua_message( std::string("DISCONNECT FROM SERVER") );
+                        battle_report( "# %s\n\n", _("DISCONNECT FROM SERVER") );
 						return -1;
+                    }
 					break;
 				default:
 					if (chat->process_keyboard_input(keycode, scancode)) {
@@ -611,6 +632,10 @@ int connect_internet_server()
 
 	show_mouse(NULL);
 	FS_MusicPlay(NULL);
+
+    lua_message( std::string("DISCONNECT FROM SERVER") );
+    battle_report( "# %s\n\n", _("DISCONNECT FROM SERVER") );
+
 	return -1;
 }
 

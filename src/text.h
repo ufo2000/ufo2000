@@ -50,6 +50,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //! Write message into init-scripts.log
 void lua_message( const std::string &str1 );
 
+//! Write message into battlereport.txt
+void battle_report( const char *format, ... );
+
 //! Interface to LUA-gettext()
 const char *ufo2k_gettext(const char *str);
 

@@ -798,9 +798,10 @@ void check_crc(int crc)
         g_console->printf(COLOR_SYS_FAIL, _("wrong wholeCRC") );
         g_console->printf(COLOR_SYS_INFO, "crc=%d, bcrc=%d", crc, bcrc);
         net->send_debug_message("crc error");
-        FILE *f_br = fopen( "battlereport.txt", "at");
-        fprintf(f_br, "# %s: crc=%d, bcrc=%d\n", _("wrong wholeCRC"), crc, bcrc );
-        fclose(f_br);  // Battlereport
+      //FILE *f_br = fopen( "battlereport.txt", "at");
+      //fprintf(f_br, "# %s: crc=%d, bcrc=%d\n", _("wrong wholeCRC"), crc, bcrc );
+      //fclose(f_br);  // Battlereport
+        battle_report( "# %s: crc=%d, bcrc=%d\n", _("wrong wholeCRC"), crc, bcrc );
     }
 }
 
@@ -842,9 +843,10 @@ void send_turn()
 	int crc = build_crc();
 	net->send_endturn(crc);
 
-    FILE *f_br = fopen( "battlereport.txt", "at");
-    fprintf(f_br, "# %s: %d\n", _("Turn end"), turn );
-    fclose(f_br);  // Battlereport
+  //FILE *f_br = fopen( "battlereport.txt", "at");
+  //fprintf(f_br, "# %s: %d\n", _("Turn end"), turn );
+  //fclose(f_br);  // Battlereport
+    battle_report("# %s: %d\n", _("Turn end"), turn );
     g_console->printf(COLOR_VIOLET00, "%s", _("Turn end") );
 	if(FLAGS & F_ENDTURNSND)
 		soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
@@ -915,9 +917,10 @@ void recv_turn(int crc)
 	if(FLAGS & F_ENDTURNSND)
 		soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
 
-    FILE *f_br = fopen( "battlereport.txt", "at");
-    fprintf(f_br, "# %s: %d\n", _("Next turn"), turn );
-    fclose(f_br);  // Battlereport
+  //FILE *f_br = fopen( "battlereport.txt", "at");
+  //fprintf(f_br, "# %s: %d\n", _("Next turn"), turn );
+  //fclose(f_br);  // Battlereport
+    battle_report("# %s: %d\n", _("Next turn"), turn );
 }
 
 int GAMELOOP = 0;
@@ -1280,6 +1283,7 @@ void endgame_stats()
 	// Todo: other background-image, or make this one darker
 	stretch_blit(back, newscr, 0, 0, back->w, back->h, 0, 0, SCREEN_W, SCREEN_H);
 
+	// avoid open/closing logfile with many battle_report() - statements:
     FILE *f_br = fopen( "battlereport.txt", "at");
     fprintf(f_br, "\n# %s:\n\n", _("Summary") );
     fprintf(f_br, "%s \n\n", winner);
@@ -1399,10 +1403,10 @@ void endgame_stats()
                 textprintf(newscr, font, x+22*w, y, kills_color(kills  ), "%5d", kills  );
                 textprintf(newscr, font, x+28*w, y, damage_color(damage), "%6d", damage );
                 if (dead)
-                    fprintf(f_br, "%-20s: (%-22s) %5d %6d\n", txt,
+                    fprintf(f_br, "%-20s: -%-22s %5d %6d\n", txt,
                             temp->get_name(), kills, damage);
                 else
-                    fprintf(f_br, "%-20s:  %-22s  %5d %6d\n", txt,
+                    fprintf(f_br, "%-20s:  %-22s %5d %6d\n", txt,
                             temp->get_name(), kills, damage);
 
                 temp = temp->getnext();
@@ -1536,15 +1540,16 @@ void gameloop()
     g_console->printf( COLOR_SYS_INFO1,  _("Press F1 for help.") );  // see KEY_F1
 	color1 = 0;
 
-    FILE *f_br = fopen( "battlereport.txt", "at");
+  //FILE *f_br = fopen( "battlereport.txt", "at");
 	// Todo: general time-function
     time_t now = time(NULL);
     struct tm * t = localtime(&now);
     char timebuf[128];
     strftime(timebuf, 128, "%Y-%m-%d %H:%M:%S", t);
 
-    fprintf(f_br, "*\n* %s: %s\n*\n\n", _("Battlereport"), timebuf );
-    fclose(f_br);  // Battlereport
+  //fprintf(f_br, "*\n* %s: %s\n*\n\n", _("Battlereport"), timebuf );
+  //fclose(f_br);  // Battlereport
+    battle_report( "*\n* %s: %s\n*\n\n", _("Battlereport"), timebuf );
 
 	platoon_local->set_visibility_changed();
 	platoon_remote->set_visibility_changed();
@@ -1843,21 +1848,24 @@ void gameloop()
 						// Todo: test if save was successful
                         g_console->printf(COLOR_SYS_OK, _("Game saved") );
 
-                        FILE *f_br = fopen( "battlereport.txt", "at");
-                        fprintf(f_br, "# %s\n", _("Game saved") );
-                        fclose(f_br);  // Battlereport
+                      //FILE *f_br = fopen( "battlereport.txt", "at");
+                      //fprintf(f_br, "# %s\n", _("Game saved") );
+                      //fclose(f_br);  // Battlereport
+                        battle_report( "# %s\n", _("Game saved") );
 					}
 					break;
 				case KEY_F3:
                     if (askmenu( _("LOAD GAME") )) {
-                        FILE *f_br = fopen( "battlereport.txt", "at");
+                      //FILE *f_br = fopen( "battlereport.txt", "at");
 						if (!loadgame(F("$(home)/ufo2000.sav"))) {
-                            fprintf(f_br, "# %s: %s\n", _("LOAD GAME"), _("failed") );
+                          //fprintf(f_br, "# %s: %s\n", _("LOAD GAME"), _("failed") );
+                            battle_report( "# %s: %s\n", _("LOAD GAME"), _("failed") );
                             alert( _("Saved game not found"), "", "", _("OK"), NULL, 0, 0);
                         } else {
-                            fprintf(f_br, "# %s: %s\n", _("LOAD GAME"), _("success") );
+                          //fprintf(f_br, "# %s: %s\n", _("LOAD GAME"), _("success") );
+                            battle_report( "# %s: %s\n", _("LOAD GAME"), _("success") );
                         }
-                        fclose(f_br);  // Battlereport
+                      //fclose(f_br);  // Battlereport
 						inithotseatgame();
 						if (net->gametype == GAME_TYPE_HOTSEAT)
 							savegame(F("$(home)/ufo2000.tmp"));
@@ -1909,9 +1917,10 @@ void gameloop()
                                      _("YES=RESIGN"), _("NO=CONTINUE"), 0,1 );
                         if (b1 == 1) {
                             DONE = 1;
-                            FILE *f_br = fopen( "battlereport.txt", "at");
-                            fprintf(f_br, "# %s\n", _("Game aborted") );
-                            fclose(f_br);  // Battlereport
+                          //FILE *f_br = fopen( "battlereport.txt", "at");
+                          //fprintf(f_br, "# %s\n", _("Game aborted") );
+                          //fclose(f_br);  // Battlereport
+                            battle_report( "# %s\n", _("Game aborted") );
                         }
                         if (b1 == 2) {
                             // Todo: process draw-button
@@ -2009,9 +2018,10 @@ void start_loadgame()
         alert( "", _("Saved game not available"), "", _("OK"), NULL, 0, 0);
    		return;
    	}
-    FILE *f_br = fopen( "battlereport.txt", "at");
-    fprintf(f_br, "# %s: %d\n", _("LOAD GAME"), turn );
-    fclose(f_br);  // Battlereport
+  //FILE *f_br = fopen( "battlereport.txt", "at");
+  //fprintf(f_br, "# %s: %d\n", _("LOAD GAME"), turn );
+  //fclose(f_br);  // Battlereport
+    battle_report( "# %s: %d\n", _("LOAD GAME"), turn );
 
 	inithotseatgame();
 

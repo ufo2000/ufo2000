@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UFO2000\n"
 "POT-Creation-Date: 2004-11-19 03:15+0100\n"
-"PO-Revision-Date: 2004-11-19 05:05+0100\n"
+"PO-Revision-Date: 2004-11-19 06:06+0100\n"
 "Last-Translator: HaJo Gurt <gurt@gmx.de>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -59,20 +59,16 @@ msgid "mapscroll points"
 msgstr "Scroll-Punkte"
 
 #: src/connect.cpp:80
-msgid "Comparing local and remote UFO2000 versions...\n"
-msgstr "Versions-Vergleich der beiden UFO2000-Programme...\n"
+msgid "Comparing local and remote UFO2000 versions..."
+msgstr "Versions-Vergleich der beiden UFO2000-Programme..."
 
 #: src/connect.cpp:81
-msgid "Press ESC to cancel\n"
-msgstr "ESC drücken für Abbruch\n"
+msgid "Press ESC to cancel"
+msgstr "ESC drücken für Abbruch"
 
 #: src/connect.cpp:133
-msgid ""
-"\n"
-"connection closed"
-msgstr ""
-"\n"
-"Verbindung wurde geschlossen"
+msgid "connection closed"
+msgstr "Verbindung wurde geschlossen"
 
 #: src/connect.cpp:217
 msgid "Welcome to the mission-planner !"

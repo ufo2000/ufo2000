@@ -1980,9 +1980,11 @@ void Soldier::die()
 	m_platoon->change_morale(-(100 / (m_platoon->num_of_men() + 1)), false);
 
 	g_console->printf(COLOR_BLUE, "%s killed.", md.Name);
-    FILE *f_br = fopen( "battlereport.txt", "at");
-    fprintf(f_br, "%s: %s\n", _("killed"), md.Name);
-    fclose(f_br);  // Battlereport
+  //FILE *f_br = fopen( "battlereport.txt", "at");
+  //fprintf(f_br, "%s: %s\n", _("killed"), md.Name);
+  //fclose(f_br);  // Battlereport
+    battle_report( "%s: %s\n", _("killed"), md.Name);
+  // Todo: With-what-weapon, By-whom ?
 }
 
 
@@ -2024,9 +2026,10 @@ void Soldier::stun()
 	m_reaction_chances = 0;
 
 	g_console->printf(COLOR_BLUE, "%s stunned.", md.Name);
-    FILE *f_br = fopen( "battlereport.txt", "at");
-    fprintf(f_br, "%s: %s\n", _("stunned"), md.Name);
-    fclose(f_br);  // Battlereport
+  //FILE *f_br = fopen( "battlereport.txt", "at");
+  //fprintf(f_br, "%s: %s\n", _("stunned"), md.Name);
+  //fclose(f_br);  // Battlereport
+    battle_report( "%s: %s\n", _("stunned"), md.Name);
 }
 
 
@@ -2074,9 +2077,10 @@ void Soldier::panic()
 	net->send_panic(NID);
 
 	g_console->printf(COLOR_ROSE, "%s has panicked.", md.Name);
-    FILE *f_br = fopen( "battlereport.txt", "at");
-    fprintf(f_br, "%s: %s\n", _("Panicked"), md.Name);
-    fclose(f_br);  // Battlereport
+  //FILE *f_br = fopen( "battlereport.txt", "at");
+  //fprintf(f_br, "%s: %s\n", _("Panicked"), md.Name);
+  //fclose(f_br);  // Battlereport
+    battle_report( "%s: %s\n", _("Panicked"), md.Name);
 }
 
 /**
