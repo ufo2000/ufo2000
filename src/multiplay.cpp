@@ -229,6 +229,9 @@ void Net::check()
 {
 	std::string packet;
 
+	if (gametype == GAME_TYPE_INTERNET_SERVER)
+		m_internet_server->send_delayed_packet();
+
 	recv(packet);
 
 	if (!packet.empty()) {

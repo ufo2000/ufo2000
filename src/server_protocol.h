@@ -56,7 +56,9 @@ public:
 		: ServerClient(d, s), m_opponent(NULL), m_busy(false) { }
 	virtual ~ServerClientUfo();
 	bool recv_packet(NLulong id, const std::string &packet);
+
 	ServerClientUfo *get_opponent() { return m_opponent; }
+	bool is_in_server_chat() { return !m_busy; }
 };
 
 class ClientServerUfo: public ClientServer

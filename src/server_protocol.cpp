@@ -50,7 +50,7 @@ void ServerDispatch::MakeHtmlReport(std::string &html_body)
 
 	html_body = "<html><head></head><body>";
 	html_body += "<table border=1>";
-	html_body += "<tr><td>address<td>user name<td>bytes from<td>bytes to<td>max average traffic<td>time online<td>status";
+	html_body += "<tr><td>user name<td>bytes from<td>bytes to<td>max average traffic<td>time online<td>status";
 
 //	Report other players status
 	std::map<std::string, ServerClient *>::iterator it = m_clients_by_name.begin();
@@ -58,8 +58,6 @@ void ServerDispatch::MakeHtmlReport(std::string &html_body)
 		ServerClientUfo *client = dynamic_cast<ServerClientUfo *>(it->second);
 
 		html_body += "<tr><td>";
-		html_body += client->m_ip;
-		html_body += "<td>";
 		html_body += client->m_name;
 		html_body += "<td>";
 		html_body += num_to_string(nlGetSocketStat(client->m_socket, NL_BYTES_RECEIVED));
@@ -73,9 +71,11 @@ void ServerDispatch::MakeHtmlReport(std::string &html_body)
 		html_body += time_to_string(get_time_diff(client->m_connection_time, now));
 		html_body += "<td>";
 		if (client->get_opponent()) {
-			html_body += "playing vs " + client->get_opponent()->m_name;
-		} else {
+			html_body += "fighting vs " + client->get_opponent()->m_name;
+		} else if (client->is_in_server_chat()) {
 			html_body += "in server chat";
+		} else {
+			html_body += "busy";
 		}
 		it++;
 	}

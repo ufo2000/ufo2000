@@ -73,7 +73,7 @@ ServerClient::~ServerClient()
 
 #define PACKET_HEADER_SIZE 8
 
-static int decode_packet(std::string &stream, NLulong &id, std::string &packet)
+static int stream_to_packet(std::string &stream, NLulong &id, std::string &packet)
 {
 	if (stream.size() < PACKET_HEADER_SIZE) return 0;
 
@@ -91,29 +91,28 @@ static int decode_packet(std::string &stream, NLulong &id, std::string &packet)
 	return 1;
 }
 
-static bool send_to_socket(NLsocket socket, const char *buffer, NLint size)
+static bool packet_to_stream(std::string &stream, NLulong id, const std::string &packet)
 {
-	while (size > 0)
-	{
-		NLint size_written = nlWrite(socket, buffer, size);
-		if (size_written == NL_INVALID)
-		{
-	        if (nlGetError() != NL_CON_PENDING) return false;
-            usleep(1);
-            continue;
-		}
-		buffer += size_written;
-		size -= size_written;
-	}
+	NLulong size = nlSwapl(packet.size());
+	id = nlSwapl(id);
+	
+	stream += std::string((const char *)&size, sizeof(size));
+	stream += std::string((const char *)&id, sizeof(id));
+	stream += packet;
+
 	return true;
 }
 
-static bool send_packet(NLsocket socket, NLulong id, const std::string &packet)
+static bool stream_to_socket(NLsocket socket, std::string &stream)
 {
-	struct packet_header { NLulong size, id; };
-	packet_header header = { nlSwapl(packet.size()), nlSwapl(id) };
-	if (!send_to_socket(socket, (const char *)&header, sizeof(header))) return false;
-	if (!send_to_socket(socket, packet.data(), packet.size())) return false;
+	NLint size_written = nlWrite(socket, stream.data(), stream.size());
+
+	if (size_written == NL_INVALID && nlGetError() != NL_CON_PENDING)
+		return false;
+
+	if (size_written != NL_INVALID)
+		stream.erase(stream.begin(), stream.begin() + size_written);
+
 	return true;	
 }
 
@@ -136,13 +135,12 @@ void ServerDispatch::HandleSocket(NLsocket socket)
 		std::string html_body;
 		MakeHtmlReport(html_body);
 		http_reply += html_body;
-		send_to_socket(socket, http_reply.data(), http_reply.size());
+		client->m_stream_out += http_reply;
 	    server_log("http request from %s\n", client->m_ip.c_str());
-        delete client;
         return;
     }
 
-	while ((err = decode_packet(stream, id, packet)) == 1)
+	while ((err = stream_to_packet(stream, id, packet)) == 1)
 		client->recv_packet(id, packet);
 
 	if (err < 0 || client->m_error)
@@ -252,13 +250,32 @@ void ServerDispatch::Run(NLsocket sock)
             HandleSocket(s[i]);
         }
 
+    //	Loop through the clients and write the packets
+    	std::map<NLsocket, ServerClient *>::iterator it = m_clients_by_socket.begin();
+		while (it != m_clients_by_socket.end()) {
+			ServerClient *client = it->second; it++;
+			if (client->m_stream_out.empty()) continue;
+
+			NLint size_written = nlWrite(client->m_socket,
+				client->m_stream_out.data(), client->m_stream_out.size());
+
+			if (size_written != NL_INVALID) {
+				client->m_stream_out.erase(client->m_stream_out.begin(), 
+					client->m_stream_out.begin() + size_written);
+			}
+
+			if (client->m_http && client->m_stream_out.empty())
+				delete client;
+		}
+
         usleep(50000);
     }
 }
 
 bool ServerClient::send_packet_back(NLulong id, const std::string &packet)
 {
-	return ::send_packet(m_socket, id, packet);
+	packet_to_stream(m_stream_out, id, packet);
+	return stream_to_socket(m_socket, m_stream_out);
 }
 
 /**
@@ -269,8 +286,7 @@ bool ServerClient::send_packet_all(NLulong id, const std::string &packet)
 	std::map<std::string, ServerClient *>::iterator it = m_server->m_clients_by_name.begin();
 	while (it != m_server->m_clients_by_name.end()) {
 		if (it->first != "" && it->first != m_name)
-			if (!it->second->send_packet_back(id, packet)) 
-				return false;
+			it->second->send_packet_back(id, packet);
 		it++;
 	}
 	return true;
@@ -301,7 +317,13 @@ ClientServer::~ClientServer()
 
 bool ClientServer::send_packet(NLulong id, const std::string &packet)
 {
-	return ::send_packet(m_socket, id, packet);
+	packet_to_stream(m_stream_out, id, packet);
+	return stream_to_socket(m_socket, m_stream_out);
+}
+
+bool ClientServer::send_delayed_packet()
+{
+	return stream_to_socket(m_socket, m_stream_out);
 }
 
 int ClientServer::recv_packet(NLulong &id, std::string &packet)
@@ -321,7 +343,7 @@ int ClientServer::recv_packet(NLulong &id, std::string &packet)
         	return -1;
     }
 
-	return decode_packet(m_stream, id, packet) == 1;
+	return stream_to_packet(m_stream, id, packet) == 1;
 }
 
 int ClientServer::wait_packet(NLulong &id, std::string &buffer)

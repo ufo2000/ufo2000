@@ -35,11 +35,13 @@ inline long get_time_diff(const NLtime &x, const NLtime &y)
 class ClientServer
 {
 	std::string m_stream;
+	std::string m_stream_out;
     NLsocket    m_socket;
 public:
 	virtual ~ClientServer();
 	bool connect(const std::string &host, int port);
 	bool send_packet(NLulong id, const std::string &packet);
+	bool send_delayed_packet();
 	int recv_packet(NLulong &id, std::string &packet);
 	int wait_packet(NLulong &id, std::string &buffer);
 };
@@ -53,6 +55,7 @@ protected:
 	friend class    ServerDispatch;
 	std::string     m_name;
 	std::string     m_stream;
+	std::string     m_stream_out;
 	NLsocket        m_socket;
 	bool            m_error;
 	ServerDispatch *m_server;
