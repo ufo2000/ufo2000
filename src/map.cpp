@@ -1565,10 +1565,9 @@ bool Map::load_GEODATA(const char *filename, GEODATA *mapdata)
 	mapdata->y_size = (uint16)lua_tonumber(L, -1);
 	lua_pop(L, 1);
 	
-	lua_pushstring(L, "Mission");
+	lua_pushstring(L, "Scenario");
 	lua_gettable(L, -2);
-	if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false; }
-	mission = (int)lua_tonumber(L, -1);
+	mission = lua_isstring(L, -1);
 	lua_pop(L, 1);
 	
 	if (mission) {
@@ -1641,8 +1640,6 @@ bool Map::save_GEODATA(const char *filename, GEODATA *mapdata)
 	fprintf(fh, "return {\n");
 	fprintf(fh, "\tName = \"%s\",\n", terrain_set->get_terrain_name(mapdata->terrain).c_str());
 	fprintf(fh, "\tWidth = %d, Height = %d,\n", mapdata->x_size, mapdata->y_size);
-	
-	fprintf(fh, "\tMission = 0,\n");
 	
 	fprintf(fh, "\tMapdata = {\n");
 
