@@ -86,6 +86,9 @@ public:
     static int obdata_smokeTime(int index) { return obdata_get_int(index, "smokeTime"); }
     static int obdata_cost(int index) { return obdata_get_int(index, "cost"); }
     static int obdata_isAmmo(int index) { return obdata_get_int(index, "isAmmo"); }
+    static int obdata_isGrenade(int index) { return obdata_get_int(index, "isGrenade"); }
+    static int obdata_isHighExplosive(int index) { return obdata_get_int(index, "isHighExplosive"); }
+    static int obdata_isProximityGrenade(int index) { return obdata_get_int(index, "isProximityGrenade"); }
     static int obdata_reloadTime(int index) { return obdata_get_int(index, "reloadTime"); }
     static std::string obdata_name(int index) { return obdata_get_string(index, "name"); }
     static int obdata_damageType(int index) { return obdata_get_int(index, "damageType"); }
@@ -95,8 +98,8 @@ public:
     static int obdata_autoShots(int index) { return obdata_get_int(index, "autoShots"); }
     static int obdata_weight(int index) { return obdata_get_int(index, "weight"); }
     static int obdata_twoHanded(int index) { return obdata_get_int(index, "twoHanded"); }
-//    static int obdata_hitType(int index) { return obdata_get_int(index, "hitType"); }
     static int obdata_rounds(int index) { return obdata_get_int(index, "rounds"); }
+    static int obdata_isHandToHand(int index) { return obdata_get_int(index, "isHandToHand"); }
     static int obdata_disappear(int index) { return obdata_get_int(index, "disappear"); }
     static int obdata_isGun(int index) { return obdata_get_int(index, "isGun"); }
 
@@ -108,11 +111,18 @@ public:
     Item(int _type);
     virtual ~Item();
 
-    int is_laser() { return ((obdata_damageType(m_type) == DT_LAS) && obdata_isGun(m_type)); };
-    int is_grenade();
-    int is_cold_weapon();
-    int is_stun_rod();
-    int is_knife();
+    //! Laser damage
+    int is_laser() { return ((obdata_damageType(m_type) == DT_LAS) && obdata_isGun(m_type)); }
+	//! Hand-to-hand weapon
+    int is_hand_to_hand() { return obdata_isHandToHand(m_type); }
+	//! Stun damage
+    int is_stun_weapon() { return (obdata_damageType(m_type) == DT_STUN); }
+	//! Check if this is a grenade (something explosive that needs to be thrown)
+    int is_grenade() { return obdata_isGrenade(m_type); }
+    //! Check if it is high explosive (explosion triggered by timer)
+    int is_high_explosive() { return obdata_isHighExplosive(m_type); }
+    //! Check if it is proximity grenade (explosion triggered by movement)
+    int is_proximity_grenade() { return obdata_isProximityGrenade(m_type); }
 
     int loadclip(Item *&clip);
     int haveclip();
@@ -209,33 +219,28 @@ struct Target
     int    place;
 };
 
-#define PISTOL_CLIP         0x01
-#define CANNON_HE_AMMO      0x06
-#define CANNON_I_AMMO       0x07
-#define AUTO_CANNON_AP_AMMO 0x09
-#define AUTO_CANNON_HE_AMMO 0x0a
-#define AUTO_CANNON_I_AMMO  0x0b
-#define SMALL_ROCKET        0x0d
-#define LARGE_ROCKET        0x0e
-#define INCENDIARY_ROCKET   0x0f
-#define GRENADE             0x13
-#define SMOKE_GRENADE       0x14
-#define PROXIMITY_GRENADE   0x15
-#define HIGH_EXPLOSIVE      0x16
-#define STUN_ROD            0x1a
+//#define PISTOL_CLIP         0x01
+//#define CANNON_HE_AMMO      0x06
+//#define CANNON_I_AMMO       0x07
+//#define AUTO_CANNON_AP_AMMO 0x09
+//#define AUTO_CANNON_HE_AMMO 0x0a
+//#define AUTO_CANNON_I_AMMO  0x0b
+//#define SMALL_ROCKET        0x0d
+//#define LARGE_ROCKET        0x0e
+//#define INCENDIARY_ROCKET   0x0f
+//#define GRENADE             0x13
+//#define SMOKE_GRENADE       0x14
+//#define PROXIMITY_GRENADE   0x15
+//#define HIGH_EXPLOSIVE      0x16
+//#define STUN_ROD            0x1a
 #define CORPSE              0x1f
 #define CORPSE_ARMOUR       0x20
 #define CORPSE_POWER_SUIT   0x21
-#define SMALL_LAUNCHER      0x2a
-#define STUN_MISSILE        0x2b
-#define ALIEN_GRENADE       0x2c
+//#define SMALL_LAUNCHER      0x2a
+//#define STUN_MISSILE        0x2b
+//#define ALIEN_GRENADE       0x2c
 #define Sectoid_Corpse      0x32
 #define Muton_Corpse        0x35
-
-inline int Item::is_explo() 
-{
-    return (m_type == HIGH_EXPLOSIVE);
-}
 
 bool is_item_allowed(int type);
 

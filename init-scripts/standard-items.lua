@@ -470,6 +470,7 @@ AddXcomItem {
 	height = 1,
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 2,
+	isGrenade = 1,
 	rounds = 10,
 	weight = 2,
 }
@@ -489,6 +490,7 @@ AddXcomItem {
 	height = 1,
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 2,
+	isGrenade = 1,
 	rounds = 10,
 	weight = 2,
 }
@@ -510,6 +512,8 @@ AddXcomItem {
 	height = 1,
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 2,
+	isGrenade = 1,
+	isProximityGrenade = 1,
 	rounds = 10,
 	weight = 3,
 }
@@ -531,6 +535,8 @@ AddXcomItem {
 	height = 1,
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 2,
+	isGrenade = 1,
+	isHighExplosive = 1,
 	rounds = 10,
 	weight = 6,
 }
@@ -597,6 +603,7 @@ AddXcomItem {
 	rounds = 65,
 	weight = 3,
 	isWeapon = 1,
+	isHandToHand = 1,
 	twoHanded = 1,
 }
 
@@ -912,6 +919,7 @@ AddXcomItem {
 	height = 1,
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	damageType = 2,
+	isGrenade = 1,
 	rounds = 10,
 	weight = 3,
 	isAlien = 1,

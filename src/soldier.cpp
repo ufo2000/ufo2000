@@ -2357,7 +2357,7 @@ void Soldier::try_shoot()
         TARGET = 0;
     }
 
-    if (!target.item->is_laser() && !target.item->is_cold_weapon() &&
+    if (!target.item->is_laser() && !target.item->is_hand_to_hand() &&
             (target.item->roundsremain() < FIRE_num + 1)) {
         TARGET = 0;
     }
@@ -2406,7 +2406,7 @@ void Soldier::try_reaction_shot(Soldier *the_target)
         return;
     }
 
-    if (!target.item->is_laser() && !target.item->is_cold_weapon() &&
+    if (!target.item->is_laser() && !target.item->is_hand_to_hand() &&
             (target.item->roundsremain() < FIRE_num)) {
         FIRE_num = 0;
         return;
@@ -2693,7 +2693,7 @@ void Soldier::drawinfo(int x, int y)
             icon->draw_item(I_RIGHT, rhand_item(), rhand_item()->roundsremain(), -1, false);
         else if (rhand_item()->is_grenade() && rhand_item()->delay_time() > 0)
             icon->draw_item(I_RIGHT, rhand_item(), -1, rhand_item()->delay_time() - 1, false);
-        else if (rhand_item()->is_grenade() && rhand_item()->itemtype() == PROXIMITY_GRENADE && rhand_item()->delay_time() < 0)
+        else if (rhand_item()->is_grenade() && rhand_item()->is_proximity_grenade() && rhand_item()->delay_time() < 0)
             icon->draw_item(I_RIGHT, rhand_item(), -1, -1, true);
         else
             icon->draw_item(I_RIGHT, rhand_item(), -1, -1, false);  
@@ -2703,7 +2703,7 @@ void Soldier::drawinfo(int x, int y)
             icon->draw_item(I_LEFT, lhand_item(), lhand_item()->roundsremain(), -1, false);
         else if (lhand_item()->is_grenade() && lhand_item()->delay_time() > 0)
             icon->draw_item(I_LEFT, lhand_item(), -1, lhand_item()->delay_time() - 1, false);
-        else if (lhand_item()->is_grenade() && lhand_item()->itemtype() == PROXIMITY_GRENADE && lhand_item()->delay_time() < 0)
+        else if (lhand_item()->is_grenade() && lhand_item()->is_proximity_grenade() && lhand_item()->delay_time() < 0)
             icon->draw_item(I_LEFT, lhand_item(), -1, -1, true);
         else
             icon->draw_item(I_LEFT, lhand_item(), -1, -1, false);   

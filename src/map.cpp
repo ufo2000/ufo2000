@@ -453,7 +453,7 @@ void Map::step()
  				if (fire_time(k,i,j)>0) {
  					dec_fire_time(k,i,j);
  					for (int h=0; h<4; h++)
- 						damage_cell_part(k,i,j,h,PISTOL_CLIP);
+ 						damage_cell_part(k, i, j, h, 25);
  					if (man(k, i, j) != NULL)
  						man(k, i, j)->hit(0, 10, DT_INC, 8); //DAMAGEDIR_UNDER
  					if (fire_time(k,i,j) > 1)
@@ -1268,9 +1268,8 @@ void Map::destroy_cell_part(int lev, int col, int row, int _part)
 	}
 }
 
-void Map::damage_cell_part(int lev, int col, int row, int _part, int _wtype)
+void Map::damage_cell_part(int lev, int col, int row, int _part, int dam)
 {
-	int dam = Item::obdata_damage(_wtype);
     // Currently just randomizing the damage to be from 0.5 to 1.5 of
     // the table value, NOT 0.0 to 2.0 as it was in X-Com.
     dam = (int) cur_random->getUniform(dam * 0.5, dam * 1.5);
@@ -1288,7 +1287,7 @@ void Map::apply_hit(int _z, int _x, int _y, int _wtype)
 				int lev = _z / 12;
 				int col = _x / 16;
 				int row = _y / 16;
-				damage_cell_part(lev, col, row, i, _wtype);
+				damage_cell_part(lev, col, row, i, Item::obdata_damage(_wtype));
 			}
 	}
 }

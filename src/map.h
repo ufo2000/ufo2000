@@ -193,7 +193,7 @@ public:
 
     int open_door(int z, int x, int y, int part);
     void destroy_cell_part(int lev, int col, int row, int _part);
-    void damage_cell_part(int lev, int col, int row, int _part, int _type);
+    void damage_cell_part(int lev, int col, int row, int _part, int dam);
     void apply_hit(int _z, int _x, int _y, int _type);
 
     //!Is a step in direction "dir" possible, where does it guide to, and what is the TU cost?

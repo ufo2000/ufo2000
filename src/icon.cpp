@@ -550,12 +550,12 @@ void Icon::firemenu(int iplace)
 			i++;
 		}
         
-		if (it->is_cold_weapon()) {
+		if (it->is_hand_to_hand()) {
 			waccur[i] = 100;
 			wtime[i]  = sel_man->required(25);
 			if (sel_man->havetime(wtime[i]) == OK) {
 				// More stun rod hack.
-				if (it->is_stun_rod())
+				if (it->is_stun_weapon())
                     sprintf(dstr[i], _("STUN        ACC>%02d%% TUs>%02d"), waccur[i], wtime[i]);
                 else
                     sprintf(dstr[i], _("PUNCH       ACC>%02d%% TUs>%02d"), waccur[i], wtime[i]);
@@ -563,23 +563,11 @@ void Icon::firemenu(int iplace)
 				waction[i] = PUNCH;
 				i++;
 			}
-/*            
-			if (it->is_knife()) {
-				waccur[i] = sel_man->TAccuracy(it->obdata_accuracy(ATHROW));
-				wtime[i] = sel_man->required(50);
-				if (sel_man->havetime(wtime[i]) == OK) {
-                    sprintf(dstr[i], _("AIMED THROW ACC>%02d%% TUs>%02d"), waccur[i], wtime[i]);
-					the_dialog[i].proc = firemenu_dialog_proc;
-					waction[i] = AIMEDTHROW;
-					i++;
-				}
-			}
-*/            
 		} else
 			if (it->is_grenade()) {
 				wtime[i] = sel_man->required(24);
 				if (sel_man->havetime(wtime[i]) == OK) {
-					if (it->is_explo()) {
+					if (it->is_high_explosive()) {
 						if (it->delay_time() == 0) {
                             sprintf(dstr[i], _("PRIME EXPLOSIVE     TUs>%02d"), wtime[i]);
 							the_dialog[i].proc = firemenu_dialog_proc;
@@ -650,7 +638,7 @@ void Icon::firemenu(int iplace)
 			} else {
 				target.time = wtime[sel];
 
-				if (it->m_type == PROXIMITY_GRENADE) {
+				if (it->is_proximity_grenade()) {
 					sel_man->prime_grenade(iplace, -1, target.time);
 				} else {
 					int delay_time = doprime(it);

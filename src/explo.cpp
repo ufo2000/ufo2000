@@ -106,7 +106,7 @@ void Explosive::step(int crc)
 { // -1 if local
 	for (int i = 0; i < EXPLOITEMS; i++)
 		if (item[i] != NULL) {
-			if (!item[i]->is_explo()) {
+			if (!item[i]->is_high_explosive()) {
 				// Only high explosive can detonate in hand
 				if (on_hand(item[i]))
 					continue;
@@ -115,7 +115,7 @@ void Explosive::step(int crc)
 			delaytime[i]--;
 			item[i]->set_delay_time(delaytime[i]);
 
-			if ((delaytime[i] <= 0) && (item[i]->itemtype() != PROXIMITY_GRENADE)) {
+			if ((delaytime[i] <= 0) && !item[i]->is_proximity_grenade()) {
 				detonate(owner[i], item[i]);
 			}
 		}
@@ -126,7 +126,7 @@ void Explosive::check_for_detonation(int isprox, Item *it)
 {
 	for (int i = 0; i < EXPLOITEMS; i++)
 		if (item[i] == it) {
-			if (((delaytime[i] == 1) && (item[i]->itemtype() != PROXIMITY_GRENADE)) || (isprox))
+			if (((delaytime[i] == 1) && (!item[i]->is_proximity_grenade())) || (isprox))
 				detonate(owner[i], it);
 			return;
 		}

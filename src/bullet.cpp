@@ -652,20 +652,16 @@ int Bullet::calc_throw(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 
 int Bullet::explodable()
 {
-    if ((type == CANNON_HE_AMMO) ||
-            (type == AUTO_CANNON_HE_AMMO) ||
-            (type == SMALL_ROCKET) ||
-            (type == LARGE_ROCKET) ||
-            (type == INCENDIARY_ROCKET) ||
-            (type == STUN_MISSILE))
+    if (Item::obdata_damageType(type) == DT_HE)
+        return 1;
+    if (Item::obdata_damageType(type) == DT_STUN && !Item::obdata_isHandToHand(type))
         return 1;
     return 0;
 }
 
-int Bullet::incendiary() {
-    if ((type == INCENDIARY_ROCKET)||
-        (type == AUTO_CANNON_I_AMMO) ||
-        (type == CANNON_I_AMMO))
+int Bullet::incendiary()
+{
+    if (Item::obdata_damageType(type) == DT_INC)
         return 1;
     return 0;
 }

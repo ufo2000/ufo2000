@@ -403,6 +403,7 @@ Section "${GAME_NAME} (required)" MainSec
 	File "readme_es.txt"
 	File "readme_fr.txt"
 	File "readme_pt.txt"
+	File "newmaps.txt"
 	File "readme_ru.html"
 	File "soundmap.xml"
 	File "squad.default.lua"

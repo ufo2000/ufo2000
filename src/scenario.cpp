@@ -428,7 +428,7 @@ int Scenario::conditions_sabotage ()
 
 	map->cell(0, x1, y1)->get_place()->build_items_stats(buf, len);
 	for (i = 0; i < len; i++) {
-	    if (buf[i] == HIGH_EXPLOSIVE) {
+	    if (Item::obdata_isHighExplosive(buf[i])) {
 	    	target1 = true;
 	    	break;
 		}
@@ -439,7 +439,7 @@ int Scenario::conditions_sabotage ()
 
 	map->cell(0, x2, y2)->get_place()->build_items_stats(buf, len);
 	for (i = 0; i < len; i++) {
-	    if (buf[i] == HIGH_EXPLOSIVE) {
+	    if (Item::obdata_isHighExplosive(buf[i])) {
 	    	target2 = true;
 	    	break;
 		}
@@ -803,7 +803,7 @@ bool Scenario::platoon_sabotage (PanPos pos, char buf[10000], int len)
 		int he_num = 0;
 
 		for (int i = 0; i < len; i++) {
-			if (buf[i] == HIGH_EXPLOSIVE)
+			if (Item::obdata_isHighExplosive(buf[i]))
 				he_num++;
 		}
 
@@ -854,11 +854,11 @@ bool Scenario::platoon_capture (Platoon *platoon, Soldier *first_soldier, PanPos
 		bool stun_rod = false, stun_gun = false, stun_bomb = false;
 
 		for (int i = 0; i < len; i++) {
-			if (buf[i] == STUN_ROD)
+			if (Item::obdata_name(buf[i]) == "STUN ROD")
 				stun_rod = true;
-			if (buf[i] == SMALL_LAUNCHER)
+			if (Item::obdata_name(buf[i]) == "SMALL LAUNCHER")
 				stun_gun = true;
-			if (buf[i] == STUN_MISSILE)
+			if (Item::obdata_name(buf[i]) == "STUN MISSILE")
 				stun_bomb = true;
 		}
 
