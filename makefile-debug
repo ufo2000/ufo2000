@@ -2,7 +2,7 @@ CC = g++
 LD = g++
 CFLAGS = -funsigned-char -Wall
 CFLAGS += -pipe -DLINUX
-CFLAGS += -mcpu=i686 
+CFLAGS += -mcpu=i386 
 CFLAGS += -g 
 INCLUDES = ${shell /tmp/al402/bin/allegro-config --cflags debug}
 CFLAGS += $(INCLUDES)
