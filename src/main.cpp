@@ -1174,9 +1174,12 @@ static LONG WINAPI TopLevelExceptionFilter(PEXCEPTION_POINTERS pExceptionInfo)
 void gameloop()
 {
 	int mouse_leftr = 1, mouse_rightr = 1, select_y = 0;
-
-	FS_MusicPlay(F(cfg_get_combat_music_file_name()));
-
+	
+	if ((rand() % 2) == 1)
+	FS_MusicPlay(F(cfg_get_combat2_music_file_name()));
+	else
+	FS_MusicPlay(F(cfg_get_combat1_music_file_name()));
+	
 	clear_keybuf();
 	GAMELOOP = 1;
 

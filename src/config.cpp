@@ -43,7 +43,8 @@ static int min_color_depth = 8;
 static std::string menu_midi_file_name;
 static std::string setup_midi_file_name;
 static std::string editor_midi_file_name;
-static std::string combat_midi_file_name;
+static std::string combat1_midi_file_name;
+static std::string combat2_midi_file_name;
 static std::string win_midi_file_name;
 static std::string lose_midi_file_name;
 static std::string net1_midi_file_name;
@@ -137,9 +138,14 @@ const char *cfg_get_editor_music_file_name()
 	return editor_midi_file_name.c_str();
 }
 
-const char *cfg_get_combat_music_file_name()
+const char *cfg_get_combat1_music_file_name()
 {
-	return combat_midi_file_name.c_str();
+	return combat1_midi_file_name.c_str();
+}
+
+const char *cfg_get_combat2_music_file_name()
+{
+	return combat2_midi_file_name.c_str();
 }
 
 const char *cfg_get_win_music_file_name()
@@ -203,7 +209,8 @@ void loadini()
 	menu_midi_file_name = get_config_string(gen, "menu_music", "$(xcom)/sound/gmstory.mid");
 	setup_midi_file_name = get_config_string(gen, "setup_music", "$(xcom)/sound/gmenbase.mid");
 	editor_midi_file_name = get_config_string(gen, "editor_music", "$(xcom)/sound/gmdefend.mid");
-	combat_midi_file_name = get_config_string(gen, "combat_music", "$(xcom)/sound/gmtactic.mid");
+	combat1_midi_file_name = get_config_string(gen, "combat1_music", "$(xcom)/sound/gmtactic.mid");
+	combat2_midi_file_name = get_config_string(gen, "combat2_music", "$(xcom)/sound/gmtactic.mid");
 	win_midi_file_name = get_config_string(gen, "win_music", "$(xcom)/sound/gmwin.mid");
 	lose_midi_file_name = get_config_string(gen, "lose_music", "$(xcom)/sound/gmlose.mid");
 	net1_midi_file_name = get_config_string(gen, "net_music1", "$(xcom)/sound/gmgeo1.mid");
