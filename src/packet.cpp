@@ -25,9 +25,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "packet.h"
 
 char *Packet::strCommand[COMMAND_NUM] = {
-	"NOTE", "QUIT", "TURN", "DOOR", "POSE", "PRIM", "DETO", "EXPL", "UNLO", "LOAD",
-	"TAKE", "DROP", "MOVE", "FACE", "THRU", "BEAM", "FIRE", "ADUN", "PDSZ", "PDAT",
-	"SEUN", "DEUN", "MDAT", "STRT", "REST", "PNCH", "AMTR", "TLIM", "TCRC"
+	"NOTE", "QUIT", "TURN", "DOOR", "POSE", "PRIM", "UNLO", "LOAD", "TAKE", "DROP", 
+	"MOVE", "FACE", "THRU", "BEAM", "FIRE", "ADUN", "PDSZ", "PDAT", "SEUN", "DEUN", 
+	"MDAT", "STRT", "REST", "PNCH", "AMTR", "TLIM", "TCRC", "ELEV"
 };
 
 Packet::Packet()

@@ -74,6 +74,7 @@ private:
 
 	int recv_move();
 	int recv_face();
+	int recv_use_elevator();
 
 	int recv_thru();
 	int recv_beam();
@@ -128,6 +129,7 @@ public:
 
 	void send_move(int NID, int lev, int col, int row);
 	void send_face(int NID, int col, int row);
+	void send_use_elevator(int NID, int dz);
 
 	void send_thru(int NID, int z0, int x0, int y0, REAL ro, REAL fi, REAL te, REAL zA, int iplace, int req_time);
 	void send_beam(int NID, int _z0, int _x0, int _y0, REAL _fi, REAL _te, int iplace, int req_time);

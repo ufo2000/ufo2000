@@ -24,24 +24,24 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <list>
 #include <string>
 
-#define COMMAND_NUM 29
+#define COMMAND_NUM 28
 
 enum Command {CMD_MESSAGE = -2, CMD_NONE = -1,
-              CMD_NOTICE = 0, CMD_QUITGAME, CMD_ENDTURN,              //3
-              CMD_OPENDOOR, CMD_CHANGEPOSE, CMD_PRIMEGRENADE,         //6
-              CMD_DETONATE_ITEM, CMD_EXPLODE,
+              CMD_NOTICE = 0, CMD_QUITGAME, CMD_ENDTURN,              
+              CMD_OPENDOOR, CMD_CHANGEPOSE, CMD_PRIMEGRENADE,         
               CMD_UNLOAD_AMMO, CMD_LOAD_AMMO,
               CMD_TAKE_ITEM, CMD_DROP_ITEM,
-              CMD_MOVE, CMD_FACE,                                     //14
-              CMD_THROW_ITEM, CMD_BEAM_LASER, CMD_FIRE_GUN,           //17
-              CMD_ADD_UNIT, CMD_UNIT_DATA_SIZE, CMD_UNIT_DATA,        //20
-              CMD_SELECT_UNIT, CMD_DESELECT_UNIT,                     //22
-              CMD_MAP_DATA,                                           //23
-              CMD_FINISH_PLANNER,                                     //24
-              CMD_RESTARTGAME,                                        //25
-              CMD_PUNCH, CMD_AIMEDTHROW,                              //27
-              CMD_TIME_LIMIT,                                         //28
-              CMD_TERRAIN_CRC32                                       //29
+              CMD_MOVE, CMD_FACE,                                     
+              CMD_THROW_ITEM, CMD_BEAM_LASER, CMD_FIRE_GUN,           
+              CMD_ADD_UNIT, CMD_UNIT_DATA_SIZE, CMD_UNIT_DATA,        
+              CMD_SELECT_UNIT, CMD_DESELECT_UNIT,                     
+              CMD_MAP_DATA,                                           
+              CMD_FINISH_PLANNER,                                     
+              CMD_RESTARTGAME,                                        
+              CMD_PUNCH, CMD_AIMEDTHROW,                              
+              CMD_TIME_LIMIT,                                         
+              CMD_TERRAIN_CRC32,                                      
+              CMD_USE_ELEVATOR                                        
              };
 
 

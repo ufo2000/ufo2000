@@ -285,12 +285,6 @@ void Net::check()
 		case CMD_LOAD_AMMO:
 			recv_load_ammo();
 			break;
-		case CMD_DETONATE_ITEM:
-			recv_detonate_item();
-			break;
-		case CMD_EXPLODE:
-			recv_explode();
-			break;
 		case CMD_TAKE_ITEM:
 			recv_select_item();
 			break;
@@ -302,6 +296,9 @@ void Net::check()
 			break;
 		case CMD_FACE:
 			recv_face();
+			break;
+		case CMD_USE_ELEVATOR:
+			recv_use_elevator();
 			break;
 		case CMD_PUNCH:
 			recv_punch();
@@ -591,82 +588,6 @@ int Net::recv_load_ammo()
 	return 0;
 }
 
-/*
-void Net::send_detonate_item(int owner, int lev, int col, int row, int iplace, int ix, int iy)
-{
-	if (!SEND) return ;
-
-	pkt.create(CMD_DETONATE_ITEM);
-	pkt << lev;
-	pkt << col;
-	pkt << row;
-	pkt << iplace;
-	pkt << ix;
-	pkt << iy;
-	pkt << owner;
-	send();
-}
-*/
-
-int Net::recv_detonate_item()
-{ // "DETO"
-	int lev, col, row, iplace, ix, iy, owner;
-
-	pkt >> lev;
-	pkt >> col;
-	pkt >> row;
-	pkt >> iplace;
-	pkt >> ix;
-	pkt >> iy;
-	pkt >> owner;
-
-	SEND = 0;
-	if (!elist->detonate(owner, lev, col, row, iplace, ix, iy)) {
-		error("EXPLO can't detonate item");
-	}
-	SEND = 1;
-	return 1;
-}
-
-/*
-void Net::send_explode(int owner, int lev, int col, int row, int type, int range, int damage)
-{
-	if (!SEND) return ;
-
-	pkt.create(CMD_EXPLODE);
-	pkt << lev;
-	pkt << col;
-	pkt << row;
-	pkt << type;
-	pkt << range;
-	pkt << damage;
-	pkt << owner;
-	send();
-}
-*/
-
-int Net::recv_explode()
-{ // "EXPL"
-	int lev, col, row, type, range, damage, owner;
-
-	pkt >> lev;
-	pkt >> col;
-	pkt >> row;
-	pkt >> type;
-	pkt >> range;
-	pkt >> damage;
-	pkt >> owner;
-
-	SEND = 0;
-	if (!map->explode(owner, lev, col, row, type, range, damage)) {
-		error("MAP can't explode");
-	}
-	SEND = 1;
-	return 1;
-}
-
-
-
 void Net::send_select_item(int NID, int iplace, int ix, int iy)
 {
 	if (!SEND) return ;
@@ -810,6 +731,34 @@ int Net::recv_face()
 	return 0;
 }
 
+void Net::send_use_elevator(int NID, int dz)
+{ // "ELEV"
+	if (!SEND) return;
+
+	pkt.create(CMD_USE_ELEVATOR);
+	pkt << NID;
+	pkt << dz;
+	send();
+}
+
+int Net::recv_use_elevator()
+{ // "ELEV"
+	int NID, dz;
+
+	pkt >> NID;
+	pkt >> dz;
+
+	Soldier *ss = findman(NID);
+	if (ss != NULL) {
+		SEND = 0;
+		ss->use_elevator(dz);
+		SEND = 1;
+		return 1;
+	} else
+		error("NID");
+	return 0;
+}
+	
 void Net::send_thru(int NID, int z0, int x0, int y0, REAL ro, REAL fi, REAL te, REAL zA, int iplace, int req_time)
 {
 	if (!SEND) return ;

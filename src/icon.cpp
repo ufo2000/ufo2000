@@ -308,7 +308,9 @@ void Icon::execute(int mx, int my)
 		n = (mx - 52) / 31;
 		if (my < 16) {
 			switch (n) {
-				case 0: cprintf("0");
+				case 0:      //cprintf("0");
+					if (sel_man->use_elevator(+1))
+						map->center(sel_man);
 					break;
 				case 1:      //cprintf("1");
 					if (map->sel_lev < map->level - 1)
@@ -352,7 +354,9 @@ void Icon::execute(int mx, int my)
 			}
 		} else {
 			switch (n) {
-				case 0: cprintf("7");
+				case 0:      //cprintf("7");
+					if (sel_man->use_elevator(-1))
+						map->center(sel_man);
 					break;
 				case 1:      //cprintf("8");
 					if (map->sel_lev > 0)

@@ -1157,6 +1157,34 @@ void Soldier::wayto(int dest_lev, int dest_col, int dest_row)
 	}
 }
 
+bool Soldier::use_elevator(int dz)
+{
+	// Check map borders and available time units
+	if (z + dz >= map->level || z + dz < 0 || !havetime(10))
+		return false;
+	// Check that the soldier is standing on elevator and can use it
+	if (!map->mcd(z, x, y, 0)->Gravlift || !map->mcd(z + dz, x, y, 0)->Gravlift)
+		return false;
+	// Check that nobody blocks the way
+	if (map->man(z + dz, x, y))
+		return false;
+	
+	// Spend time units
+	spend_time(10);
+	m_reaction_chances++;
+	
+	// Change map location
+	map->set_man(z, x, y, NULL);
+	z += dz;
+	map->set_man(z, x, y, this);
+	
+	// Sent action to remote player
+	if (platoon_local->belong(this))
+		net->send_use_elevator(NID, dz);
+	
+	calc_visible_cells();
+	return true;
+}
 
 void Soldier::finish_march(int ISLOCAL)
 {
@@ -1883,6 +1911,7 @@ int Soldier::change_pose()
 		m_state = SIT;
 		spend_time(4);
 	}
+	m_reaction_chances++;
 	net->send_change_pose(NID);
 	return 1;
 
@@ -1899,6 +1928,7 @@ int Soldier::prime_grenade(int iplace, int delay_time, int req_time)
 		elist->add(this, it, delay_time);
 
 		spend_time(req_time);
+		m_reaction_chances += req_time / 4;
 		net->send_prime_grenade(NID, iplace, delay_time, req_time);
 		return 1;
 	}

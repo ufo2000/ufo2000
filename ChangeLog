@@ -1,3 +1,8 @@
+Changes in version 0.4.0.353  Tue 30 Mar 2004
+   - improved win32-installer (it can automatically download x-com demo now)
+   - elevators are working now
+   - some bugs fixed
+
 Changes in version 0.4.0.344  Mon 01 Mar 2004
    - the game now has win32-installer (script for NSIS contributed 
      by Daniel "SupSuper" Albano)
