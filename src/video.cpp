@@ -77,32 +77,27 @@ void drawit_timer()
 END_OF_FUNCTION(drawit_timer);
 
 int REDRAW = 0;
-#ifdef WIN32
+
+//! Counter for number of switches to ufo2000 from other programs
+volatile int g_switch_in_counter;
+
+/**
+ * This function is called when we switch back to ufo2000 from other 
+ * task in win32. All the information drawn on screen is lost, so we
+ * need some way to detect this situation.
+ */
 static void switch_in_callback()
 {
-	/*
-		REDRAW++;
-		//directdraw->RestoreAllSurfaces();
-	//	dd_prim_surface->Restore();
-		info->redraw_full();
-	*/
-	return;
+	g_switch_in_counter++;
 }
-
-static void switch_out_callback()
-{
-	/*
-		info->redraw_full();
-	*/
-	return;
-}
-
-#endif
+END_OF_FUNCTION(switch_in_callback);
 
 void initvideo()
 {
 	LOCK_VARIABLE(DRAWIT);
 	LOCK_FUNCTION(drawit_timer);
+	LOCK_VARIABLE(g_switch_in_counter);
+	LOCK_FUNCTION(switch_in_callback);
 
 	selector = (BITMAP*)datafile[DAT_SELECT].dat;
 	mouser = (BITMAP*)datafile[DAT_MOUSE].dat;
@@ -157,6 +152,18 @@ void change_screen_mode()
 	}
 }
 
+static int ufo2k_set_gfx_mode(int gfx_driver)
+{
+	int exit_code = set_gfx_mode(gfx_driver, 640, 400, 0, 0);
+	if (exit_code < 0)
+		exit_code = set_gfx_mode(gfx_driver, 640, 480, 0, 0);
+	if (exit_code < 0) {
+		fprintf(stderr, "Error: set_gfx_mode() failed.\n");
+		exit(1);
+	}
+	return exit_code;
+}
+
 void set_video_mode()
 {
 #ifdef USE_HICOLOR
@@ -167,22 +174,21 @@ void set_video_mode()
 #endif
 
 #ifdef DJGPP
-	set_gfx_mode(GFX_AUTODETECT, 640, 400, 0, 0);
+	ufo2k_set_gfx_mode(GFX_AUTODETECT);
 #elif WIN32
 	if (FLAGS & F_SAFEVIDEO) {
 		if (FLAGS & F_FULLSCREEN)
-			set_gfx_mode(GFX_DIRECTX_SAFE, 640, 400, 0, 0);
+			ufo2k_set_gfx_mode(GFX_DIRECTX_SAFE);
 		else
-			set_gfx_mode(GFX_GDI, 640, 400, 0, 0);
+			ufo2k_set_gfx_mode(GFX_GDI);
 	} else {
 		if (FLAGS & F_FULLSCREEN)
-			set_gfx_mode(GFX_DIRECTX, 640, 400, 0, 0);
+			ufo2k_set_gfx_mode(GFX_DIRECTX);
 		else
-			set_gfx_mode(GFX_DIRECTX_WIN, 640, 400, 0, 0);
+			ufo2k_set_gfx_mode(GFX_DIRECTX_WIN);
 	}
 	set_display_switch_mode(SWITCH_AMNESIA);
-	//	set_display_switch_callback(SWITCH_IN, switch_in_callback);
-	//	set_display_switch_callback(SWITCH_OUT, switch_out_callback);
+	set_display_switch_callback(SWITCH_IN, switch_in_callback);
 #elif LINUX
 	int got_display_env = (NULL != getenv("DISPLAY"));
 
@@ -196,7 +202,7 @@ void set_video_mode()
 			fprintf(stderr, "\nWarning: initializing svgalib while running X11.");
 		}
 		if (got_root) {
-			set_gfx_mode(GFX_SVGALIB, 640, 400, 0, 0);
+			ufo2k_set_gfx_mode(GFX_SVGALIB);
 			return ;
 		}
 		fprintf(stderr, "\nNeed setuid root to use svgalib, got none.\n");
@@ -207,9 +213,9 @@ void set_video_mode()
 #ifdef GFX_XWINDOWS
 	if (got_display_env) {
         if (FLAGS & F_FULLSCREEN) {
-            set_gfx_mode(GFX_XWINDOWS_FULLSCREEN, 640, 400, 0, 0);
+            ufo2k_set_gfx_mode(GFX_XWINDOWS_FULLSCREEN);
         } else {
-            set_gfx_mode(GFX_XWINDOWS, 640, 400, 0, 0);
+            ufo2k_set_gfx_mode(GFX_XWINDOWS);
         }
 		return ;
 	} else
@@ -217,13 +223,13 @@ void set_video_mode()
 	{
 #ifdef GFX_SVGALIB
 		if (got_root) {
-			set_gfx_mode(GFX_SVGALIB, 640, 400, 0, 0);
+			ufo2k_set_gfx_mode(GFX_SVGALIB);
 		} else {
 			fprintf(stderr, "\nNeed setuid root to use svgalib, got none.\n");
 			exit(1);
 		}
 #elif defined GFX_BEOS_FULLSCREEN_SAFE
-		set_gfx_mode(GFX_BEOS_FULLSCREEN_SAFE, 640, 400, 0, 0);
+		ufo2k_set_gfx_mode(GFX_BEOS_FULLSCREEN_SAFE);
 #else
 	fprintf(stderr, "\nNo $DISPLAY or X11 driver, no svgalib driver... I'm giving up. \n");
 	exit(1);

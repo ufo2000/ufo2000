@@ -366,6 +366,8 @@ extern BITMAP *logo;
 extern Icon *icon;
 extern int VISIBILITY_CHANGED;
 
+extern volatile int g_switch_in_counter;
+
 #include "../ufo2000.h"
 
 #endif
