@@ -106,7 +106,8 @@ private:
     TerraPCK *m_terrain;
     
     typedef struct { int lev, col, row, state; } effect;	//should it be used for fire and smoke? 
-    std::vector<effect> explo_spr_list;
+    typedef std::vector<effect> effect_vector;
+	effect_vector *explo_spr_list;
 
     static int m_animation_cycle;
     PF_MODE m_pathfind_mode;
@@ -360,7 +361,7 @@ public:
         center(s->z, s->x, s->y);
     }
     void unhide();
-
+                                          
     virtual bool Write(persist::Engine &archive) const;
     virtual bool Read(persist::Engine &archive);
 };

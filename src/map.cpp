@@ -159,6 +159,8 @@ Map::Map(GEODATA &mapdata)
 	build_visi();
 
 	m_minimap_area = new MinimapArea(this, SCREEN_W - SCREEN2W, SCREEN2H);
+	
+	explo_spr_list = new effect_vector;
 }
 
 Map::~Map()
@@ -178,6 +180,8 @@ Map::~Map()
 	delete m_terrain;
 
 	delete m_minimap_area;
+	
+	delete explo_spr_list;
 }
 
 void Map::loadmaps(unsigned char *_map)
@@ -349,9 +353,13 @@ void Map::draw(int show_cursor)
 					}
 
 					draw_cell_pck(0, 6, lev, col, row, 3, seen(lev, col, row), cell_bmp);
-					
-					set_trans_blender(0, 0, 0, 0);
-					draw_lit_sprite(screen2, cell_bmp, sx, sy - 6, 255 * (17 - m_cell[lev][col][row]->m_light) / 16);
+
+					if (m_cell[lev][col][row]->m_light != 16) {
+						set_trans_blender(0, 0, 0, 0);
+						draw_lit_sprite(screen2, cell_bmp, sx, sy - 6, 255 * (17 - m_cell[lev][col][row]->m_light) / 16);
+					} else {
+						draw_sprite(screen2, cell_bmp, sx, sy - 6);
+					}
 
 					if (seen(lev, col, row)) {
 						int gy = sy + mcd(lev, col, row, 0)->T_Level;
@@ -407,7 +415,7 @@ void Map::draw(int show_cursor)
 	                               
 	//explosions have to be drawn over all other sprites
 	std::vector<effect>::iterator exp;	
-	for (exp = explo_spr_list.begin(); exp != explo_spr_list.end(); exp++) {
+	for (exp = explo_spr_list->begin(); exp != explo_spr_list->end(); exp++) {
 		int l = exp->lev, r = exp->row, c = exp->col;
 			
 		if (!(seen(l, c, r)) ||
@@ -429,8 +437,6 @@ void Map::draw(int show_cursor)
 
 void Map::step()
 {
-	explo_spr_list.clear();
-
  	for(int k=0; k<level;k++)
  		for(int i=0; i<10*width;i++)
  			for(int j=0; j<10*height;j++)
@@ -468,11 +474,11 @@ void Map::smoker()
 			for (int j = 0; j < 10 * height; j++)
 				cell(k, i, j)->cycle_smoke();
 				
-	std::vector<effect>::iterator exp = explo_spr_list.begin();
-	while (exp != explo_spr_list.end()) {
+	std::vector<effect>::iterator exp = explo_spr_list->begin();
+	while (exp != explo_spr_list->end()) {
 		exp->state++;
 		if (exp->state > 15)
-			exp = explo_spr_list.erase(exp);
+			exp = explo_spr_list->erase(exp);
 		else
 			exp++;
 	}
@@ -1462,8 +1468,8 @@ int Map::explode(int z, int x, int y, int max_damage)
     
     effect eff;
     eff.lev = z / 12; eff.col = x / 16; eff.row = y / 16;
-	eff.state = 0 - explo_spr_list.size();
-    explo_spr_list.push_back(eff);
+	eff.state = 0 - explo_spr_list->size();
+    explo_spr_list->push_back(eff);
     
     soundSystem::getInstance()->play(SS_CV_GRENADE_BANG);
     
@@ -1512,8 +1518,8 @@ int Map::explode(int sniper, int z, int x, int y, int type)
     
     effect eff;
     eff.lev = z / 12; eff.col = x / 16; eff.row = y / 16;
-	eff.state = 0 - explo_spr_list.size();
-    explo_spr_list.push_back(eff);
+	eff.state = 0 - explo_spr_list->size();
+    explo_spr_list->push_back(eff);
     // should be sound associated with given weapon
     soundSystem::getInstance()->play(SS_CV_GRENADE_BANG);
     
@@ -1841,7 +1847,7 @@ int Map::walk_time(int _z, int _x, int _y)
 }
 
 bool Map::Write(persist::Engine &archive) const
-{
+{                                   
 	PersistWriteBinary(archive, *this);
 
 	for (int lev = 0; lev < level; lev++)
@@ -1872,6 +1878,8 @@ bool Map::Read(persist::Engine &archive)
     load_terrain_pck(m_terrain_name, m_terrain);
 
 	m_minimap_area = new MinimapArea(this, SCREEN_W - SCREEN2W, SCREEN2H);
+	
+	explo_spr_list = new effect_vector;
 
 	return true;
 }
