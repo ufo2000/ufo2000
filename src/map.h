@@ -358,6 +358,8 @@ class Terrain
 	std::vector<block_info> m_blocks;
 	int                     m_rand_weight;
 
+	unsigned long           m_crc32;
+
 	int get_random_block();
 
 public:
@@ -365,6 +367,8 @@ public:
 	virtual ~Terrain();
 
 	int get_rand_weight() { return m_rand_weight; }
+	unsigned long get_crc32() { return m_crc32; }
+	const std::string &get_name() { return m_name; }
 
 	bool create_geodata(GEODATA &gd);
 	bool check_geodata(const GEODATA &gd);
@@ -378,14 +382,26 @@ public:
  */
 class TerrainSet
 {
-	std::map<int, Terrain *> terrain;
 public:
+	std::map<int, Terrain *> terrain;
+
 	TerrainSet();
 	virtual ~TerrainSet();
 
 	int get_random_terrain_id();
 	int get_random_terrain_size_x();
 	int get_random_terrain_size_y();
+
+	unsigned long get_terrain_crc32(int index)
+	{
+		if (terrain.find(index) == terrain.end()) return 0;
+		return terrain[index]->get_crc32();
+	}
+	std::string get_terrain_name(int index)
+	{
+		if (terrain.find(index) == terrain.end()) return "";
+		return terrain[index]->get_name();
+	}
 
 	bool create_geodata(int terrain_index, int size_x, int size_y, GEODATA &gd);
 	bool check_geodata(const GEODATA &gd);

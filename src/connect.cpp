@@ -434,6 +434,14 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 	local.set_mouse_range(639, SCREEN2H - 1, map2d_x, 0, map2d_x + map2d->w - 1, map2d->h - 1);
 	editor->build_Units(local);
 
+#undef map
+		std::map<int, Terrain *>::iterator it = terrain_set->terrain.begin();
+		while (it != terrain_set->terrain.end()) {
+			net->send_terrain_crc32(it->first, it->second->get_crc32());
+			it++;
+		}
+#define map ufo2000_map
+
 	if (HOST) {
 		net->send_map_data(&mapdata);
 		net->send_time_limit(g_time_limit);

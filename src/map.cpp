@@ -31,10 +31,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "multiplay.h"
 #include "platoon.h"
 #include "pfxopen.h"
+#include "crc32.h"
 
 #define SCANGSIZE 4
-
-//extern GEODATA mapdata;
 
 unsigned short *Map::m_loftemp = NULL;
 int Map::m_loftemp_num = 0;
@@ -1570,6 +1569,9 @@ bool Map::Read(persist::Engine &archive)
 Terrain::Terrain(const char *fileprefix, const char *name, int rand_weight):
 	m_name(name), m_rand_weight(rand_weight)
 {
+	if (m_name.empty()) m_name = fileprefix;
+	m_crc32 = 0;
+
 	if (m_rand_weight < 0) m_rand_weight = 0;
 	m_blocks.resize(MAP_BLOCKS_LIMIT);
 	std::vector<block_info>::size_type index;
@@ -1582,14 +1584,19 @@ Terrain::Terrain(const char *fileprefix, const char *name, int rand_weight):
 			m_blocks[index].rand_weight = 0;
 			continue;
 		}
-		unsigned char tmp[3];
-		read(fh, &tmp, sizeof(tmp));
-		assert(tmp[0] % 10 == 0);
-		assert(tmp[1] % 10 == 0);
-		m_blocks[index].x_size      = tmp[0] / 10;
-		m_blocks[index].y_size      = tmp[1] / 10;
-		m_blocks[index].z_size      = tmp[2];
+		long size = filelength(fh);
+		unsigned char *buffer = new unsigned char[size];
+		read(fh, buffer, size);
+		assert(buffer[0] % 10 == 0);
+		assert(buffer[1] % 10 == 0);
+		m_blocks[index].x_size      = buffer[0] / 10;
+		m_blocks[index].y_size      = buffer[1] / 10;
+		m_blocks[index].z_size      = buffer[2];
 		m_blocks[index].rand_weight = 100;
+	//	Update terrain crc32 with map block filename and its content
+		m_crc32 = update_crc32(m_crc32, fname, strlen(fname));
+		m_crc32 = update_crc32(m_crc32, buffer, size);
+		delete [] buffer;
 		close(fh);
 	}
 }

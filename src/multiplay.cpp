@@ -335,6 +335,9 @@ void Net::check()
 		case CMD_TIME_LIMIT:
 			recv_time_limit();
 			break;
+		case CMD_TERRAIN_CRC32:
+			recv_terrain_crc32();
+			break;
 		case CMD_FINISH_PLANNER:
 			recv_finish_planner();
 			break;
@@ -1242,16 +1245,13 @@ void Net::send_map_data(GEODATA *gd)
 
 	pkt.create(CMD_MAP_DATA);
 	pkt.push((char *)gd, sizeof(GEODATA));
-	//send();
 	send(pkt.str(), pkt.str_len());
-	//info->printstr("\nsend_map_data\n");
 }
 
 int Net::recv_map_data()
 {
 	pkt.pop((char *) & mapdata, sizeof(GEODATA));
 	mapdata.load_game = 77;
-	//info->printstr("\nrecv_map_data\n");
 	return 1;
 }
 
@@ -1270,5 +1270,41 @@ int Net::recv_time_limit()
 	int time_limit;
 	pkt >> time_limit;
 	g_time_limit = time_limit;
+	return 1;
+}
+
+void Net::send_terrain_crc32(int index, unsigned long crc32)
+{
+	if (!SEND) return ;
+
+	int crc32_lo = (int)(crc32 & 0xFFFF);
+	int crc32_hi = (int)(crc32 >> 16);
+
+	pkt.create(CMD_TERRAIN_CRC32);
+	pkt << index;
+	pkt << crc32_lo;
+	pkt << crc32_hi;
+
+	send(pkt.str(), pkt.str_len());
+}
+
+int Net::recv_terrain_crc32()
+{
+	int index;
+	int crc32_lo;
+	int crc32_hi;
+
+	pkt >> index;
+	pkt >> crc32_lo;
+	pkt >> crc32_hi;
+
+	unsigned long crc32 = ((unsigned long)crc32_hi << 16) | (unsigned long)crc32_lo;
+
+	std::string name = terrain_set->get_terrain_name(index);
+
+	if (!name.empty() && crc32 != terrain_set->get_terrain_crc32(index)) {
+		g_console->printf("remote player has different maps in '%s' tileset\n", name.c_str());
+	}
+	
 	return 1;
 }
