@@ -24,6 +24,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <string>
 #include <vector>
 #include <set>
+#include <time.h>
+#include <stdarg.h>
+#include <assert.h>
 #include "server_config.h"
 
 struct ip_info
@@ -123,26 +126,26 @@ void load_config()
 		if (!get_variable(buffer, var, val, '#', comment)) continue;
 
 		if (var == "accept_user") {
-			printf("accept_user = '%s'\n", val.c_str());
+			server_log("config accept_user = '%s'\n", val.c_str());
 			accept_user.insert(val);
 		} else if (var == "reject_ip") {
 			NLulong ip, mask;
 			if (!decode_ip(val.c_str(), ip, mask)) {
-				printf("Warning: invalid ip address format: %s\n", val.c_str());
+				server_log("invalid ip address format in config: %s\n", val.c_str());
 			} else {
-				printf("reject_ip = '%s' (0x%08X 0x%08X)\n", val.c_str(), (int)ip, (int)mask);
+				server_log("config reject_ip = '%s' (0x%08X 0x%08X)\n", val.c_str(), (int)ip, (int)mask);
 				reject_ip.push_back(ip_info(ip, mask));
 			}
 		} else if (var == "accept_ip") {
 			NLulong ip, mask;
 			if (!decode_ip(val.c_str(), ip, mask)) {
-				printf("Warning: invalid ip address format: %s\n", val.c_str());
+				server_log("invalid ip address format in config: %s\n", val.c_str());
 			} else {
-				printf("accept_ip = '%s' (0x%08X 0x%08X)\n", val.c_str(), (int)ip, (int)mask);
+				server_log("config accept_ip = '%s' (0x%08X 0x%08X)\n", val.c_str(), (int)ip, (int)mask);
 				accept_ip.push_back(ip_info(ip, mask));
 			}
 		} else {
-			printf("Warning: unrecognized variable: %s\n", var.c_str());
+			server_log("unrecognized variable in config: %s\n", var.c_str());
 		}
 	}
 	fclose(f);
@@ -167,4 +170,28 @@ bool validate_ip(const std::string &ip_string)
 	for (i = 0; i < reject_ip.size(); i++)
 		if (check_ip_match(ip, reject_ip[i])) return false;
 	return true;
+}
+
+
+
+/**
+ * Add a message to log file
+ */ 
+void server_log(const char *fmt, ...)
+{
+	time_t now = time(NULL);
+	struct tm * t = localtime(&now);
+	char timebuf[1000];
+	strftime(timebuf, 1000, "%d/%m/%Y %H:%M:%S", t);
+
+	va_list arglist;
+	va_start(arglist, fmt);
+
+	FILE *flog = fopen("ufo2000-srv.log", "at");
+	assert(flog != NULL);
+	fprintf(flog, "%s ", timebuf);
+	vfprintf(flog, fmt, arglist);
+	fclose(flog);
+
+	va_end(arglist);
 }

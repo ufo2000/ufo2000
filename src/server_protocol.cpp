@@ -50,7 +50,7 @@ void ServerDispatch::MakeHtmlReport(std::string &html_body)
 
 	html_body = "<html><head></head><body>";
 	html_body += "<table border=1>";
-	html_body += "<tr><td>user name<td>bytes from<td>bytes to<td>max average traffic<td>time online";
+	html_body += "<tr><td>address<td>user name<td>bytes from<td>bytes to<td>max average traffic<td>time online";
 
 //	Report other players status
 	std::map<std::string, ServerClient *>::iterator it = m_clients_by_name.begin();
@@ -58,6 +58,8 @@ void ServerDispatch::MakeHtmlReport(std::string &html_body)
 		ServerClientUfo *client = dynamic_cast<ServerClientUfo *>(it->second);
 
 		html_body += "<tr><td>";
+		html_body += client->m_ip;
+		html_body += "<td>";
 		html_body += client->m_name;
 		html_body += "<td>";
 		html_body += num_to_string(nlGetSocketStat(client->m_socket, NL_BYTES_RECEIVED));
@@ -139,21 +141,25 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 				}
 			}
 
-			printf("user login. login = '%s', password = '%s'\n", login.c_str(), password.c_str());
+			server_log("user login (name = '%s', pwd = '%s' ip = %s)\n", 
+				login.c_str(), password.c_str(), m_ip.c_str());
 
 			if (login.size() > USERNAME_SIZE_LIMIT) {
+		    	server_log("login failed: user name is too long\n");
 				send_packet_back(SRV_FAIL, "User name is too long");
 				m_error = true;
 				break;
 			}
 
 		    if (!validate_user(login, password)) {
+		    	server_log("login failed: invalid name or password\n");
 				send_packet_back(SRV_FAIL, "Authentication failed");
 				m_error = true;
 				break;
 		    }
 
 			if (m_server->m_clients_by_name.find(login) != m_server->m_clients_by_name.end()) {
+		    	server_log("login failed: already online\n");
 				send_packet_back(SRV_FAIL, "User with this name is already online");
 				m_error = true;
 				break;
@@ -161,10 +167,13 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 
 		//	check clients number limit
 			if (m_server->m_clients_by_name.size() >= PLAYERS_COUNT_LIMIT) {
+		    	server_log("login failed: too many players\n");
 				send_packet_back(SRV_FAIL, "Too many players on server");
 				m_error = true;
 				break;
 			}
+
+	    	server_log("login ok\n");
 
 			m_name = login;
 			send_packet_back(SRV_OK, "login ok");
@@ -205,6 +214,9 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
         //	Try to find self in the opponent's challenge list
         	if (opponent->m_challenged_opponents.find(m_name) != opponent->m_challenged_opponents.end()) {
             //	opponent found in the challenge list
+
+            	server_log("game start: '%s' vs '%s'\n", m_name.c_str(), packet.c_str());
+
         		send_packet_all(SRV_USER_BUSY, m_name);
 				opponent->send_packet_all(SRV_USER_BUSY, packet);
         		send_packet_back(SRV_GAME_START_JOIN, packet);

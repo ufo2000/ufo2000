@@ -28,5 +28,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 void load_config();
 bool validate_ip(const std::string &ip);
 bool validate_user(const std::string &username, const std::string &password);
+void server_log(const char *fmt, ...);
 
 #endif

@@ -133,7 +133,7 @@ void ServerDispatch::HandleSocket(NLsocket socket)
 		MakeHtmlReport(html_body);
 		http_reply += html_body;
 		send_to_socket(socket, http_reply.data(), http_reply.size());
-	    printf("SERVER: HTTP reply sent, socket %d closed\n", (int)socket);
+	    server_log("http request from %s\n", client->m_ip.c_str());
         delete client;
         return;
     }
@@ -143,7 +143,7 @@ void ServerDispatch::HandleSocket(NLsocket socket)
 
 	if (err < 0 || client->m_error)
 	{
-		printf("SERVER: socket %d closed\n", (int)socket);
+		server_log("connection with %s closed\n", client->m_ip.c_str());
 		delete client;
 	}
 }
@@ -178,18 +178,19 @@ void ServerDispatch::HandleNewConnections()
 
     NLbyte string[NL_MAX_STRING_LENGTH];
     
-    printf("SERVER: Client %d connected from %s on socket %d\n", 
-    	m_clients_by_socket.size(), nlAddrToString(&addr, string), (int)newsock);
-
 	if (!validate_ip(nlAddrToString(&addr, string))) {
-		printf("SERVER: Connection closed. Client IP found in blacklist\n");
+		server_log("rejected connection from %s, address found in blacklist\n",
+			nlAddrToString(&addr, string));
 		nlClose(newsock);
 		return;
+    } else {
+		server_log("accepted connection from %s\n", nlAddrToString(&addr, string));
     }
 
-    nlGroupAddSocket(m_group, newsock);
-    ServerClient *client = CreateServerClient(newsock);
-    assert(client != NULL);
+	nlGroupAddSocket(m_group, newsock);
+	ServerClient *client = CreateServerClient(newsock);
+	assert(client != NULL);
+	client->m_ip = nlAddrToString(&addr, string);
 }
 
 void ServerDispatch::Run(NLsocket sock)
@@ -225,6 +226,8 @@ void ServerDispatch::Run(NLsocket sock)
 				if (ave_traffic > client->m_max_ave_traffic)
 					client->m_max_ave_traffic = ave_traffic;
 				if (ave_traffic > AVE_TRAFFIC_LIMIT) {
+					server_log("flooder detected, connection terminated: user '%s' from %s\n",
+						client->m_name.c_str(), client->m_ip.c_str());
 					client->m_error = true;
 					break;
 				}

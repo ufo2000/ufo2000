@@ -56,6 +56,8 @@ protected:
     long            m_max_ave_traffic;
     NLtime          m_connection_time;
 
+	std::string     m_ip;
+
 	void Run();
 
 public:

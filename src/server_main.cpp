@@ -62,6 +62,7 @@ int main()
         printErrorExit();
     }
 
+    server_log("server started\n");
 	load_config();
 
 	ServerDispatch *server = new ServerDispatch();
