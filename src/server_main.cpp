@@ -292,6 +292,26 @@ static std::string *find_config_file(int argc, char *argv[])
     exit(1);
 }
 
+// Create or upgrade the database, if it's not existed or outdated.
+void prepare_db()
+{
+    sqlite3::connection db_conn(DB_FILENAME);
+    char buffer[512];
+    FILE *f = fopen("update_db.sql", "rt");
+    if (f == NULL) {
+        printf("Error: can't db init script.\n");
+        return;
+    }
+
+    while (fgets(buffer, 511, f))
+        try {
+            db_conn.executenonquery(buffer);
+        }
+        catch(std::exception &ex) {
+            server_log("Exception Occured: %s",ex.what());
+        }
+}
+
 int main(int argc, char *argv[])
 {
 #ifdef WIN32
@@ -332,6 +352,7 @@ int main(int argc, char *argv[])
 #ifndef WIN32
     set_signal_handlers();
 #endif
+    prepare_db();
 
 	ServerDispatch *server = new ServerDispatch();
     server_log("server started\n");

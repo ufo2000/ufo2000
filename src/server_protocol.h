@@ -23,7 +23,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define __SERVER_PROTOCOL_H__
 
 #include "server.h"
-#include "sqlite/sqlite3_plus.h"
 
 // server replies
 #define SRV_FAIL               0
@@ -50,8 +49,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #define SRV_KEEP_ALIVE         15
 #define SRV_DECLINE_CHALLENGE  16
-
-#define DB_FILENAME "ufo2000.db"
 
 class Server_Game_UFO;
 

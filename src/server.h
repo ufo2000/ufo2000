@@ -9,6 +9,7 @@
 #include <map>
 #include <set>
 #include <nl.h>
+#include "sqlite/sqlite3_plus.h"
 
 // Limit for average incoming traffic (average is calculated by HawkNL 
 // for the past 8 seconds)
@@ -121,5 +122,7 @@ public:
     virtual ServerClient *CreateServerClient(NLsocket socket);
     virtual void MakeHtmlReport(std::string &html_body);
 };
+
+#define DB_FILENAME "ufo2000.db"
 
 #endif
