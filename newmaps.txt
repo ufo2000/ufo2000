@@ -22,69 +22,144 @@ Contents
 1. Basic concepts
 -----------------
 
-1) Unlike the original X-COM, UFO2000 allows for maps with sizes 30x30 and higher (up to 60x60), and also it is possible to use non square maps (like 20x10, for instance).
+0) The layout of the battlescape is composed from several maps, and a map 
+consists of tiles.  E.g. a battlescape of size 4*4 can be made of 4 maps,
+with 10*10 tiles each.
 
-2) A terrain/map set requires 2 types of files: the maps themselves, which should be named in the format nameXX.map (e.g. urban18.map) and the tilesets (.pck, .mcd and .tab files) containing the tiles which are used in the terrain.
+1) Unlike the original X-COM, UFO2000 allows for maps with sizes 30x30 
+and higher (up to 60x60), and also it is possible to use non square maps 
+(like 20x10, for instance).
 
-3) The basic component of a map is a tile. There are 4 types of tile: ground, north wall, west wall and object. 
+2) A terrain/map set requires 2 types of files: the maps themselves, which 
+should be named in the format nameXX.map (e.g. urban18.map) and the tilesets 
+(.pck, .mcd and .tab files) containing the tiles which are used in the terrain.
 
-4) A tile is composed of two assigned elements: an MCD entry and a PCK image. Basically, an MCD entry determines the tile's physical properties, such its strength, the line of sight characteristics and so on. The MCD entries are classified accordingly to the tile slot they occupy, so there are ground, north wall, west wall and object MCD entries. 
+3) The basic component of a map is a tile. 
+There are 4 types of tile: ground, north wall, west wall and object. 
 
-5) The MCDs are organized into MCD files. Each .mcd file has corresponding .pck and .tab files, which contain the graphics used by the MCD entries. The .pck contain the graphics for each tile, and some MCD entries can have more than 1 PCK image assigned in order to "animate" the object (like the glowing UFO lifts).  
+4) A tile is composed of two assigned elements: an MCD entry and a PCK image. 
+Basically, an MCD entry determines the tile's physical properties, such as
+its strength, the line of sight characteristics and so on. 
+The MCD entries are classified accordingly to the tile slot they occupy, 
+so there are ground, north wall, west wall and object MCD entries. 
+
+5) The MCDs are organized into MCD files. Each .mcd file has corresponding 
+.pck and .tab files, which contain the graphics used by the MCD entries. 
+The .pck contain the graphics for each tile, and some MCD entries can have 
+more than 1 PCK image assigned in order to "animate" the object 
+(like the glowing UFO lifts).  
  
-6) A proper tileset consists of a .mcd, .pck and .tab file, like frniture or desert. A terrain can have several tilesets assigned to it, up to a maximum of 253 total MCD entries + the 2 entries of the Blank tileset which is must be assigned. There is also a maximum of 255 .PCK entries for each .mcd file used.
+6) A proper tileset consists of a .mcd, .pck and .tab file, like frniture 
+or desert. A terrain can have several tilesets assigned to it, up to a 
+maximum of 253 total MCD entries + the 2 entries of the Blank tileset 
+which must be assigned. 
+There is also a maximum of 255 .PCK entries for each .mcd file used.
+
+7) There are also files with routing information for maps, like Desert00.rmp
+These were used by the AI of XCOM for moving the aliens.
 
 
 ----------------------------
 2. Creating terrains/mapsets
 ----------------------------
 
-To create new maps for UFO2000 you will need a map editor such as daishiva's Map View (www.daishiva.com). To create new maps with it you need to go to the Edit > Paths > Map Files options. Right click on the groups then choose to create a new subgroup (e.g. Sewer). Afterwards you can add new maps to the subgroup and assign tilesets into it (e.g. urban or barn). 
-Is is possible for each mapset to be composed of up to 100 individual maps of different sizes (e.g. sewer00-99). 
+To create new maps for UFO2000 you will need a map editor such as daishiva's 
+Map View (www.daishiva.com). 
+To create new maps with it you go to the Edit > Paths > Map Files options. 
+Right click on the groups, then choose to create a new subgroup (e.g. Sewer). 
+Afterwards you can add new maps to the subgroup and assign tilesets into it 
+(e.g. urban or barn). 
+Is is possible for each mapset to be composed of up to 100 individual maps 
+of different sizes (e.g. sewer00-99). 
 
 Map requirements
 ----------------
 
-1) Each terrain should contain at least 1 10x10 map, especially when the map set includes non-square maps, otherwise UFO2000 will crash when building the battle area if there are spots that can't be filled by a map.
+1) Each terrain should contain at least 1 10x10 map, especially when the 
+map set includes non-square maps. Otherwise UFO2000 will crash when building 
+the battle area if there are spots that can't be filled by a map.
 
 2) Always make the maps with 4 levels (but no more!). 
 
-3) In the case of maps like X-Com Base or Warehouse there must be connections on the necessary sides of the maps otherwise these maps can become isolated.
+3) In the case of maps like X-Com Base or Warehouse there must be connections 
+on the necessary sides of the maps, otherwise these maps can become isolated.
 
-4) The maps belonging to a terrain must all be assigned the same tilesets. The order by which they are listed must be always maintained. 
+4) The maps belonging to a terrain must all be assigned the same tilesets. 
+The order by which they are listed must be always maintained. 
 
 Map design tips/info
 --------------------
 
-- It is better to assign the tiles to their proper locations (ground, walls, etc.) otherwise the map might look/act weird during gameplay. 
+- It is better to assign the tiles to their proper locations (ground, walls,
+etc.) otherwise the map might look/act weird during gameplay. 
 
-- The west walls that look like pillars should be placed at the intersection of west and north walls, otherwise it will be possible to look inside of buildings (see existing maps to see what is their proper placement). 
+- The west walls that look like pillars should be placed at the intersection 
+of west and north walls, otherwise it will be possible to look thru the wall 
+into buildings (see existing maps to see what is their proper placement). 
 
-- Concerning walls, in some maps there are outer and inner walls (especially on buildings). One example is the brick (outer) and yellow (inner) walls on City. 
+- Concerning walls, in some maps there are outer and inner walls (especially 
+on buildings).  One example is the brick (outer side) and yellow (inner side) 
+walls on City. 
 
 - The ground of a map's 1st level must be filled. 
 
-- If a door is placed at a corner, when it is opened it can occupy the place of the wall. If the door is closed again, the wall will disappear. 
+- If a door is placed at a corner, when it is opened it can occupy the place 
+of the wall. If the door is closed again, the wall will disappear. 
 
-- The color palettes of UFO and TFTD are different. If you assign tilesets from both games to a map the colors will become messed up. You should only use tilesets from only 1 game for each terrain.
+- The color palettes of UFO and TFTD are different. If you assign tilesets 
+from both games to a map, the colors will become messed up. 
+You should use tilesets from only one of the game for each terrain.
 
-- You can make buildings having its parts across several maps but you will have to use a loadable preset map (more below on those) for them to connect. Otherwise, if the battlefield is generated randomly you will have to apply differently the principle of the XBase and Alien Base terrains: instead of all sides connecting, the maps must all have one or two sides that has a connecting part, either to form a larger structure or to serve as end to a building.  
+- You can make buildings having its parts across several maps but you 
+will have to use a loadable preset map (more below on those) for them 
+to connect. Otherwise, if the battlefield is generated randomly you will 
+have to apply differently the principle of the XBase and Alien Base terrains: 
+instead of all sides connecting, the maps must all have one or two sides 
+that has a connecting part, either to form a larger structure or to serve 
+as end to a building.  
 
-- Large maps or buildings can look very nice and be fun to build. Unfortunately, they also can turn boring and be difficult to play very easily. The same can happen with lots of small rooms, narrow corridors, lots of objects and maps with several built levels. It is best to keep terrains simple, with space for units to move and easy communications between maps. You are free to disagree with this but the players are also free to choose not to play with that terrain if they don't like it :).
+- Large maps or buildings can look very nice and be fun to build. 
+Unfortunately, they also can turn boring and be difficult to play very easily.
+The same can happen with lots of small rooms, narrow corridors, lots of 
+objects and maps with several levels. 
+It is best to keep terrains simple, with space for units to move and 
+easy communications between maps. 
+You are free to disagree with this, but the players are also free to choose 
+not to play with that terrain if they don't like it :).
 
 Creating/Modifying Tilesets
 ---------------------------
 
-The .mcd and .pck files can be edited to create new tiles or modify existing ones. To do this you will need daishiva's PCK View (available at www.daishiva.com) in order to replace the images on the .pck files and Koralt's MCD Editor (ask on the www.xcomufo.com forums on how to get it). You will also need a graphic editor to modify the images (MS Paint will do if you are a masochist :). 
+The .mcd and .pck files can be edited to create new tiles or modify 
+existing ones. 
+To do this you will need daishiva's PCK View (available at www.daishiva.com) 
+in order to replace the images on the .pck files and Koralt's MCD Editor 
+(ask on the www.xcomufo.com forums on how to get it). 
+You will also need a graphic editor to modify the images (MS Paint will do 
+if you are a masochist :). 
 
 There are 3 types of modifications possible, listed in order of difficulty: 
-1) Only change the image of a specific tile, maintaining its .mcd settings (easiest to do, only requires PCK View)
-2) Only change the settings of the tile on the .mcd file, modifying its physical characteristics. Examples of modifications possible are increasing the strength of walls or turning ground tiles into lifts. 
-3) Change the image and settings of a tile, effectively replacing it with a new tile. 
+1) Only change the image of a specific tile, maintaining its .mcd settings 
+ (easiest to do, only requires PCK View)
+2) Only change the settings of the tile on the .mcd file, modifying its 
+ physical characteristics. Examples of possible modifications are increasing 
+ the strength of walls or turning ground tiles into lifts. 
+3) Change the image and settings of a tile, effectively replacing it 
+ with a new tile. 
 
-PCK View is fairly easy to use. It allows to see the images contained on each .pck file and to save/replace them, while automatically adjusting the .tab files. MCD Editor is more difficult to use (very easy to make errors if you don't know what you are doing). Always read the documentation and make backups files in case anything goes wrong.  
+PCK View is fairly easy to use. It allows to see the images contained on 
+each .pck file and to save/replace them, while automatically adjusting 
+the .tab files. 
+MCD Editor is more difficult to use (it is very easy to make errors 
+if you don't know what you are doing). 
+Always read the documentation and make backups files in case anything 
+goes wrong.  
 
-Finally, if your maps use different tilesets remember to include them with the release, preferably in a separate directory (so that they don't mistakenly replace the original terrain files). See below for more instructions on this. 
+Finally, if your maps use different tilesets, remember to include them 
+with the release, preferably in a separate directory (so that they don't 
+mistakenly replace the original terrain files). 
+See below for more instructions on this. 
+
 
 ----------------------
 3. Use of LUA language
@@ -93,7 +168,9 @@ Finally, if your maps use different tilesets remember to include them with the r
 Installing terrains
 -------------------
 
-The terrains are loaded to UFO2000 through .lua files. The .lua file simply tells UFO2000 where to look in the UFO2000 directory for the tileset and map files. An example can be seem below. 
+The terrains are loaded to UFO2000 through .lua files. The .lua file simply 
+tells UFO2000 where to look in the UFO2000 directory for the tileset and 
+map files. An example can be seem below. 
 
 AddXcomTerrain {
 	Name = "Modified City",
@@ -129,26 +206,38 @@ AddXcomTerrain {
 	},
 }
 
-Name = Defines the name that appears on the mission planner list of available terrains
+Name = Defines the name that appears on the mission planner list 
+ of available terrains
 Tiles = Sets the tiles used by that terrain
 Maps = Indicates what are the maps that compose the terrain 
 
 Compiling terrains for release
 ------------------------------
 
-1) You can create a .lua file by simply copy one of the existing ones to somewhere else and rename it. 
+1) You can create a .lua file by simply copying one of the existing ones 
+to somewhere else and rename it. 
 
-2) Each file name has a prefix like "$(xcom)" or "$(ufo2000)". The prefix indicates the directory where either UFO/TFTD or UFO2000 are.  
+2) Each file name has a prefix like "$(xcom)" or "$(ufo2000)". 
+The prefix indicates the directory where either UFO/TFTD or UFO2000 are.  
 
-3) You must always add $(xcom)/terrain/blanks.* to the list of tilesets, regardless if you are using  UFO/TFTD/Modified tilesets. It is a required file for UFO2000. 
+3) You must always add $(xcom)/terrain/blanks.* to the list of tilesets, 
+regardless if you are using  UFO/TFTD/Modified tilesets. 
+It is a required file for UFO2000. 
 
-4) All new maps should go in the /newmaps directory of UFO2000. If you include modified tileset files with your release it is better to place them in a separate directory inside the /newmaps. In that case remember to set the Tiles properly, e.g. (ufo2000)/newmaps/sewer/sewer.*
+4) All new maps should go into the /newmaps directory of UFO2000. 
+If you include modified tileset files with your release, it is better 
+to place them in a separate directory inside the /newmaps. 
+In that case remember to set the Tiles properly, e.g. 
+$(ufo2000)/newmaps/sewer/sewer.*
 
 Randomization vs. preset maps
 -----------------------------
 
-UFO2000 allows for the generated battlefields to be either randomized or predefined or a combination of both. 
-Using the City terrain, let's imagine that you wanted your mapset to create a specific combination when the battlefield is 60x60. You would have to add before the final bracket the following code.
+UFO2000 allows for the generated battlefields to be either randomized or 
+predefined or a combination of both. 
+Using the City terrain, let's imagine that you wanted your mapset to create 
+a specific combination when the battlefield is 60x60. 
+You would have to add the following code before the final bracket:
 
 MapGenerator = function(map)
  if ((map.SizeX == 6) and (map.SizeY == 6)) then
@@ -165,9 +254,16 @@ MapGenerator = function(map)
 end
 }
 
-Everytime the 60x60 size was chosen on UFO2000's mission planner screen the above map would appear, consisting of 3 20x20 houses (urban08) on the middle, with two roads passing by them (urban01 and 02), plus several smaller houses at the top and the end (urban17 and 18).
+Everytime the 60x60 size is chosen in the UFO2000's mission planner screen, 
+the above map would appear, consisting of 3 20x20 houses (urban08) 
+on the middle, with two roads passing by them (urban01 and 02), 
+plus several smaller houses at the top and the corners (urban17 and 18).
 
-The preset maps are better used if you have a mapset with independent maps than have to be properly placed in order to form a larger terrain feature (e.g. a building surrounded by watchtowers). If you have several preset maps for the same terrain then a random function can be added to the .lua code.
+The preset maps are better used if you have a mapset with independent maps 
+that have to be properly placed in order to form a larger terrain feature 
+(e.g. a building surrounded by watchtowers). 
+If you have several preset maps for the same terrain, then a random function 
+can be added to the .lua code.
 
 -- generate an integer random number ranging from 0 to 1
 if (math.random(0, 1) == 1) then
@@ -178,14 +274,21 @@ else
  map.Mapdata = { ... }
 end
 
-Everytime the player clicked New on the mission planner screen the program would load a different preset map out of the available configurations listed on the .lua. 
+Everytime the player clicks "NEW" on the mission planner screen the program 
+will load a different preset map out of the available configurations 
+listed on the .lua. 
 
-However, if you are designing a terrain and there is only 1 preset map defined, usually it is better to simply create a map file large enough (30x30 or higher) to include everything you want to be placed together. Another easier possibility is to create independent .lua files that you can later load.
+However, if you are designing a terrain and there is only 1 preset map defined,
+it is usually better to simply create a map file large enough (30x30 or higher)
+to include everything you want to be placed together. 
+Another easier possibility is to create independent .lua files 
+that you can load later.
 
 Saving and loading maps 
 -----------------------
 
-The mission planner on UFO2000 includes the option to save the current map displayed or load a new one. The maps are saved into a .lua file such as this: 
+The mission planner on UFO2000 includes the option to save the current map 
+or load a new one. The maps are saved into a .lua file such as this: 
 
 return {
 	Name = "Sewer",
@@ -200,10 +303,17 @@ return {
 	}
 }
 
-It is possible to edit the .lua file to change the configuration of the maps present and to create new loadable map files. Each number on the Mapdata field is the map you want to use. Notice that, when using maps bigger than 10x10 (such as the 10x20 sewer10 and 30x30 sewer05 maps above) you need to fill the rest of the space occupied by the map with the -1. 
+It is possible to edit the .lua file to change the configuration of the maps 
+present and to create new loadable map files. 
+Each number on the Mapdata field is the map you want to use. 
+Note: when using maps bigger than 10x10 (such as the 30x20 sewer10 and 
+30x30 sewer05 maps above) you need to fill the rest of the space 
+occupied by the map with the -1. 
 
 Specific generation rules
 -------------------------
 
-Some of the terrains, like City or Port, use .lua generation rules in order for roads or the seaside are properly aligned or placed on the battlefield. These rules can also be used on other maps. 
+Some of the terrains, like City or Port, use .lua generation rules 
+in order to properly align roads or place the seaside on the battlefield. 
+These rules can also be used on other maps. 
 
