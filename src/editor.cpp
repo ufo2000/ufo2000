@@ -89,7 +89,7 @@ Editor::Editor()
 	LUA_PUSH_OBJECT_POINTER(L, Place, m_armoury);
 	lua_settable(L, LUA_GLOBALSINDEX);
 
-	lua_dostring(L, "SetEquipment('Standard')");
+	lua_safe_dostring(L, "SetEquipment('Standard')");
 	
 	if (local_platoon_size > 10) local_platoon_size = 10;      //!!!!!!!!!!!
 	ASSERT(local_platoon_size > 0);
@@ -802,7 +802,7 @@ void Editor::change_equipment()
 	// Get list of available equipment sets
 	eqsets.clear();
 	LUA_REGISTER_FUNCTION(L, change_equipment_callback);
-	lua_dostring(L, "for name in EquipmentTable do change_equipment_callback(name) end");
+	lua_safe_dostring(L, "for name in EquipmentTable do change_equipment_callback(name) end");
 	
 	int result = gui_select_from_list(
 		300, 200, "Select equipment set", 
@@ -811,7 +811,7 @@ void Editor::change_equipment()
 	lua_pushstring(L, "SetEquipment");
 	lua_gettable(L, LUA_GLOBALSINDEX);
 	lua_pushstring(L, eqsets[result].c_str());
-	lua_call(L, 1, 0);
+	lua_safe_call(L, 1, 0);
 }
 
 int Editor::do_mapselect()

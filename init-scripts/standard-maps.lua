@@ -112,16 +112,16 @@ AddXcomTerrain {
 		"$(xcom)/maps/urban17.map",
 		"$(xcom)/maps/urban18.map"
 	},
-	MapGenerator = function(size)
+	MapGenerator = function(tmp)
 		local function add_roads(size_x, size_y, map)
 			local x, y
 	
-			if (math.random(1, 10) ~= 1) then
+			if (math.random(1, size_x) ~= 1) then
 				x = math.random(1, size_x)
 				for i = 1, size_y do map[x][i] = 0 end
 			end
 	
-			if (math.random(1, 10) ~= 1) then
+			if (math.random(1, size_y) ~= 1) then
 				y = math.random(1, size_y)
 				for i = 1, size_x do map[i][y] = 1 end
 			end
@@ -150,29 +150,21 @@ AddXcomTerrain {
 			end
 		end
 
-		local tmp = { Name = "City", Mapdata = {} }
-		
-		size = size or math.random(4, 6)
-		tmp.Width = size
-		tmp.Height = size
-		for i = 1, tmp.Height do
-			tmp.Mapdata[i] = {}
-			for j = 1, tmp.Width do
+		for i = 1, tmp.SizeY do
+			for j = 1, tmp.SizeX do
 				tmp.Mapdata[i][j] = random_normal()
 			end
 		end
 
-		add_roads(tmp.Width, tmp.Height, tmp.Mapdata)
+		add_roads(tmp.SizeX, tmp.SizeY, tmp.Mapdata)
 
-		for i = 1, tmp.Height - 1 do
-			for j = 1, tmp.Width - 1 do
+		for i = 1, tmp.SizeY - 1 do
+			for j = 1, tmp.SizeX - 1 do
 				if (math.random(1, 12) > 8) then
 					random_double(i, j, tmp.Mapdata)
 				end
 			end
 		end
-
-		return tmp
 	end		
 }
 

@@ -280,7 +280,7 @@ Item::Item(int _type)
 	std::string sound = obdata_get_string(m_type, "sound");
 	m_sound = getSymCode(sound.c_str());
 	if (!sound.empty() && m_sound == SS_UNKNOWN) {
-		lua_dostring(L, 
+		lua_safe_dostring(L, 
 			(std::string("Warning([[%s]], [[Invalid sound effect identifier - '") + 
 			sound + std::string("']])")).c_str());
 	}

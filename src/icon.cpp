@@ -80,10 +80,10 @@ Icon::Icon()
 	int stack_top = lua_gettop(L);
 	
 	if (exists(F("$(ufo2000)/init-scripts/icons.lua"))) {
-		lua_dofile(L, F("$(ufo2000)/init-scripts/icons.lua"));
+		lua_safe_dofile(L, F("$(ufo2000)/init-scripts/icons.lua"));
 		custom_icons = true;
 	} else 
-		lua_dofile(L, F("$(ufo2000)/init-scripts/standart-icons.lua"));	
+		lua_safe_dofile(L, F("$(ufo2000)/init-scripts/standart-icons.lua"));	
 	
 	//image
 	if (custom_icons) {

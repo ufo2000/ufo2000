@@ -215,6 +215,26 @@ function SetEquipment(name)
 	end
 end
 
+-- global map generator function
+function MapGenerator(name, size_x, size_y)
+	-- check if this particular map has custom map generator function
+	if not (TerrainTable[name] and TerrainTable[name].MapGenerator) then 
+		return nil 
+	end
+	-- initialize empty map template
+	local tmp = {Name = name, SizeX = size_x, SizeY = size_y, Mapdata = {}}
+	for i = 1, size_y do
+		tmp.Mapdata[i] = {}
+		for j = 1, size_x do
+			tmp.Mapdata[i][j] = -1
+		end
+	end
+	-- pass map template to appropriate map generator function
+	TerrainTable[name].MapGenerator(tmp)
+	-- return final map data (maybe some verification here is needed)
+	return tmp
+end
+
 -- perform data files integrity check before applying security
 -- restrictions
 dofile(ufo2000_dir .. "/init-scripts/filecheck.lua")

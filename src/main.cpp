@@ -338,17 +338,10 @@ static int lua_UpdateCrc32(lua_State *L)
     return 1;
 }
 
-static int lua_ALERT(lua_State *L)
-{
-	int n = lua_gettop(L);
-	if (n != 1 || !lua_isstring(L, 1)) {
-		display_error_message("Lua unknown error");
-		return 0;
-	}
-	display_error_message(lua_tostring(L, 1));
-	return 0;
-}
-
+/**
+ * Resolve file name and get absolute path (it can have one of the following 
+ * prefixes: '$(xcom)', '$(tftd)', '$(ufo2000)', '$(home)')
+ */
 const char *F(const char *fileid)
 {
 	static std::string fname;
@@ -358,7 +351,7 @@ const char *F(const char *fileid)
 	if (!lua_isfunction(L, -1))
 		display_error_message("Fatal: no 'GetDataFileName' function registered");
 	lua_pushstring(L, fileid);
-	lua_call(L, 1, 1);
+	lua_safe_call(L, 1, 1);
 	if (!lua_isstring(L, -1))
 		display_error_message(std::string("Can't find file name by ") + fileid + " identifier");
 	fname = lua_tostring(L, -1);
@@ -369,11 +362,57 @@ const char *F(const char *fileid)
 
 void find_lua_files_callback(const char *filename, int attrib, int param)
 {
-	lua_dofile(L, filename);
+	lua_safe_dofile(L, filename);
 	// $$$ Fixme: lua_dofile sets errno variable in some mysterious way,
     // so allegro for_each_file function stops searching files if we do not 
     // reset this back to 0
 	*allegro_errno = 0; 
+}
+
+/**
+ * lua_call replacement with error message showing on errors
+ */
+int lua_safe_call(lua_State *L, int narg, int nret)
+{
+	int status;
+	int base = lua_gettop(L) - narg;  /* function index */
+	lua_pushliteral(L, "_TRACEBACK");
+	lua_rawget(L, LUA_GLOBALSINDEX);  /* get traceback function */
+	lua_insert(L, base);  /* put it under chunk and args */
+	status = lua_pcall(L, narg, nret, base);
+	lua_remove(L, base);  /* remove traceback function */
+	if (status) {
+		display_error_message(lua_tostring(L, -1));
+	}
+	return status;
+}
+
+/**
+ * lua_dofile replacement with error message showing on errors
+ */
+int lua_safe_dofile(lua_State *L, const char *name)
+{
+	int status = luaL_loadfile(L, name);
+	if (status == 0) status = lua_safe_call(L, 0, LUA_MULTRET);
+	return status;
+}
+
+/**
+ * lua_dobuffer replacement with error message showing on errors
+ */
+int lua_safe_dobuffer(lua_State *L, const char *buff, size_t size, const char *name)
+{
+	int status = luaL_loadbuffer(L, buff, size, name);
+	if (status == 0) status = lua_safe_call(L, 0, LUA_MULTRET);
+	return status;
+}
+
+/**
+ * lua_dostring replacement with error message showing on errors
+ */
+int lua_safe_dostring(lua_State *L, const char *str)
+{
+	return lua_safe_dobuffer(L, str, strlen(str), str);
 }
 
 void initmain(int argc, char *argv[])
@@ -387,11 +426,11 @@ void initmain(int argc, char *argv[])
 
 	L = lua_open();
 	lua_register(L, "UpdateCrc32", lua_UpdateCrc32);
-	lua_register(L, "_ALERT", lua_ALERT);
 	luaopen_base(L);
 	luaopen_string(L);
 	luaopen_io(L);
 	luaopen_math(L);
+	luaopen_debug(L);
 	LUA_REGISTER_CLASS(L, Place);
 	LUA_REGISTER_CLASS_METHOD(L, Place, add_item);
 	LUA_REGISTER_CLASS_METHOD(L, Place, destroy_all_items);
@@ -450,8 +489,8 @@ void initmain(int argc, char *argv[])
 #define DATA_DIR "."
 #endif
 
-	lua_dofile(L, DATA_DIR "/init-scripts/main.lua");
-	lua_dofile(L, DATA_DIR "/init-scripts/standard-maps.lua");
+	lua_safe_dofile(L, DATA_DIR "/init-scripts/main.lua");
+	lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-maps.lua");
 
 	for_each_file(DATA_DIR "/newmaps/*.lua", FA_RDONLY | FA_ARCH, find_lua_files_callback, 0);
 
@@ -529,8 +568,8 @@ void initmain(int argc, char *argv[])
 	gui_list_proc = d_agup_list_proc;
 	gui_text_list_proc = d_agup_text_list_proc;
 
-	lua_dofile(L, DATA_DIR "/init-scripts/standard-items.lua");
-	lua_dofile(L, DATA_DIR "/init-scripts/standard-equipment.lua");
+	lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-items.lua");
+	lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-equipment.lua");
 
 	console<<"install_timer"<<std::endl;
 	install_timer();

@@ -1504,24 +1504,20 @@ void Map::new_GEODATA(GEODATA *md, const std::string &terrain_name)
 
 	// Try to use map generator function defined in terrain description
 	int stack_top = lua_gettop(L);
-    // Enter 'TerrainTable' table
-	lua_pushstring(L, "TerrainTable");
+	lua_pushstring(L, "MapGenerator");
 	lua_gettable(L, LUA_GLOBALSINDEX);
-	ASSERT(lua_istable(L, -1)); 
+	ASSERT(lua_isfunction(L, -1)); 
     // Enter [terrain_name] table
 	lua_pushstring(L, terrain_name.c_str());
-	lua_gettable(L, -2);
-	ASSERT(lua_istable(L, -1));
-	lua_pushstring(L, "MapGenerator");
-	lua_gettable(L, -2);
-	if (!lua_isfunction(L, -1)) {
+	lua_pushnumber(L, MAP_WIDTH);
+	lua_pushnumber(L, MAP_HEIGHT);
+	lua_safe_call(L, 3, 1);
+	if (!lua_istable(L, -1)) {
 		lua_settop(L, stack_top);
 		// Fallback to default random shuffle map generation algorithm
 		terrain_set->create_geodata(terrain_name, MAP_WIDTH, MAP_HEIGHT, *md);
 		return;
 	}
-	lua_pushnumber(L, MAP_WIDTH);
-	lua_call(L, 1, 1);
 	// We should have map description returned at the top of stack here
 	load_map_from_top_of_lua_stack(md);
 	lua_settop(L, stack_top);
@@ -1570,13 +1566,13 @@ bool Map::load_map_from_top_of_lua_stack(GEODATA *mapdata)
 	mapdata->terrain = (uint16)tid;
 	lua_pop(L, 1);
 
-	lua_pushstring(L, "Width");
+	lua_pushstring(L, "SizeX");
 	lua_gettable(L, -2);
 	if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false;	}
 	mapdata->x_size = (uint16)lua_tonumber(L, -1);
 	lua_pop(L, 1);
 
-	lua_pushstring(L, "Height");
+	lua_pushstring(L, "SizeY");
 	lua_gettable(L, -2);
 	if (!lua_isnumber(L, -1)) { lua_settop(L, stack_top); return false;	}
 	mapdata->y_size = (uint16)lua_tonumber(L, -1);
@@ -1652,7 +1648,7 @@ bool Map::load_map_from_top_of_lua_stack(GEODATA *mapdata)
 bool Map::load_GEODATA(const char *filename, GEODATA *mapdata)
 {
 	int stack_top = lua_gettop(L);
-	lua_dofile(L, F(filename));
+	lua_safe_dofile(L, F(filename));
 	bool result = load_map_from_top_of_lua_stack(mapdata);
 	lua_settop(L, stack_top);
 	return result;
@@ -1668,7 +1664,7 @@ bool Map::save_GEODATA(const char *filename, GEODATA *mapdata)
 
 	fprintf(fh, "return {\n");
 	fprintf(fh, "\tName = \"%s\",\n", terrain_set->get_terrain_name(mapdata->terrain).c_str());
-	fprintf(fh, "\tWidth = %d, Height = %d,\n", mapdata->x_size, mapdata->y_size);
+	fprintf(fh, "\tSizeX = %d, SizeY = %d,\n", mapdata->x_size, mapdata->y_size);
 	
 	fprintf(fh, "\tMapdata = {\n");
 

@@ -107,6 +107,11 @@ extern "C" {
 	lua_pushdirectclosure(L, functionname, 0); \
 	lua_settable(L, LUA_GLOBALSINDEX); \
 
+int lua_safe_call(lua_State *L, int narg, int nret);
+int lua_safe_dofile(lua_State *L, const char *name);
+int lua_safe_dobuffer(lua_State *L, const char *buff, size_t size, const char *name);
+int lua_safe_dostring(lua_State *L, const char *str);
+
 #include <nl.h>
 
 // We rely on HawkNL in defining data types of proper system independent size
