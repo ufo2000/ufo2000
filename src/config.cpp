@@ -178,7 +178,8 @@ void saveini()
     set_config_int(gen,     "speed_mapscroll", speed_mapscroll);
     set_config_int(gen,     "mapscroll",       mapscroll);
 
-    set_config_int(gen,   "console_font_size", get_console_font_size());
+    set_config_string(gen,  "console_font_file", console_font_file.c_str());
+    set_config_int(gen,     "console_font_size", get_console_font_size());
 	
     set_config_int(edit,    "platoon_size",    local_platoon_size);
     set_config_string(edit, "last_unit_name",  last_unit_name);

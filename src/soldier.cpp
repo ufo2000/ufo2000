@@ -308,7 +308,8 @@ void Soldier::process_ITEMDATA()
         if (id.place[i] == 0xFF) //clip
         {
             ASSERT(it != NULL);
-            int v = it->loadclip(new Item(id.type[i]));
+            Item *clip = new Item(id.type[i]);
+            int v = it->loadclip(clip);
             ASSERT(v);
         } else {
             Place *pp = place(id.place[i]);
