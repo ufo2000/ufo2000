@@ -57,6 +57,7 @@ void Place::set(int x, int y, int w, int h)
  * Scroll items on the ground-grid left
  */
 // Todo: repack items
+// ?? maybe scroll several columns at once
 void Place::scroll_left()
 {
 	if (viscol > 0) viscol--;
@@ -124,6 +125,7 @@ int Place::ishand()
 
 /**
  * Test if item fits into a place like hand, belt, backpack etc.
+ * Return 1 if it fits, 0 otherwise
  */
 int Place::isfit(Item * it, int xx, int yy)
 {
@@ -234,7 +236,7 @@ int Place::outside_belt(int x, int y)
 
 /**
  * Draw item at a place on the battlemap.
- * If there are several items, draw the one with the highest importance.
+ * If there are several items, draw the item with the highest importance.
  */
 void Place::draw(int gx, int gy)
 {
@@ -277,7 +279,10 @@ void Place::drawgrid(int PLACE_NUM)
 {
 	ASSERT((PLACE_NUM >= 0) && (PLACE_NUM <= NUMBER_OF_PLACES));
 
-	textout(screen2, g_small_font, place_name[PLACE_NUM], gx, gy - 8, COLOR_LT_OLIVE);
+    if (PLACE_NUM==P_ARMOURY)
+        textout(screen2, large,        place_name[PLACE_NUM], gx, gy -16, COLOR_LT_OLIVE);
+	else
+        textout(screen2, g_small_font, place_name[PLACE_NUM], gx, gy - 8, COLOR_LT_OLIVE);
 
 	if (!ishand()) {
 		int dx = 0, dy = 0;

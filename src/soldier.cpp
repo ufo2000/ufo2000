@@ -2072,7 +2072,7 @@ void Soldier::panic()
 	change_morale(20);
 		
 	net->send_panic(NID);
-		
+
 	g_console->printf(COLOR_ROSE, "%s has panicked.", md.Name);
     FILE *f_br = fopen( "battlereport.txt", "at");
     fprintf(f_br, "%s: %s\n", _("Panicked"), md.Name);
@@ -2114,9 +2114,9 @@ int Soldier::calctime(int src, int dst)
 
 	if (((src == 2) && (dst == 3)) || ((src == 3) && (dst == 2)))
 		return 4;
-	//  shl  arm  leg   bk bl map
-	static int tohand[] = {3, 3, 0, 0, 4, 4, 8, 4, 8};
-	static int fromhand[] = {10, 10, 0, 0, 8, 8, 14, 8, 2};
+                           // shl    arm   leg   bk bl map
+    static int tohand[]   = { 3,  3, 0, 0, 4, 4,  8, 4, 8};
+    static int fromhand[] = {10, 10, 0, 0, 8, 8, 14, 8, 2};
 
 	return tohand[src] + fromhand[dst];
 }

@@ -1895,8 +1895,10 @@ void gameloop()
 					} else if (MODE == UNIT_INFO || MODE == MAP2D) {
 						MODE = MAP3D;
                     } else {
-                        b1 = alert3( "", _("ABORT MISSION ?"), "",
-                                     _("YES=RESIGN"), _("OFFER DRAW"), _("NO=CONTINUE"), 0,0,1 );
+                      //b1 = alert3( "", _("ABORT MISSION ?"), "",
+                      //             _("YES=RESIGN"), _("OFFER DRAW"), _("NO=CONTINUE"), 0,0,1 );
+                        b1 = alert( "", _("ABORT MISSION ?"), "",
+                                     _("YES=RESIGN"), _("NO=CONTINUE"), 0,1 );
                         if (b1 == 1) {
                             DONE = 1;
                             FILE *f_br = fopen( "battlereport.txt", "at");

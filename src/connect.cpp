@@ -203,6 +203,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 
 	int mouse_leftr = 1, mouse_rightr = 1;
 	int DONE = 0;
+    int vol;
 	//HOST = 0;
 	FINISH_PLANNER = 0;
 
@@ -356,6 +357,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 			mouse_leftr = 0;
 			CHANGE = 1;
 			local.execute(map, map_change_allowed);
+            // Calls Editor::show() via Units::execute and execute_main()
 
 			//	"START"
 			if (mouse_inside(local.gx + 5 * 8 - 20, SCREEN2H - 20, local.gx + 5 * 8 + 20, SCREEN2H - 5))
@@ -393,8 +395,14 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 					break;
                 // Todo: Save+Load for teams
                 case KEY_F2: 
+                  //Editor::save();
                     break;
                 case KEY_F3: 
+                  //Editor::load();
+                    break;
+                case KEY_F4: 
+				  //editor->set_man(name[1]);
+                  //Editor::show();
                     break;
 				case KEY_F5:
 					if (FLAGS & F_RAWMESSAGES) {
@@ -402,6 +410,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 					} else {
 						FLAGS |= F_RAWMESSAGES;
 					}
+                    g_console->printf( COLOR_SYS_INFO1, "%s: %d", "RAWMESSAGES:", F_RAWMESSAGES );
 					break;
 				case KEY_F9:
 					keyswitch(0);
@@ -409,11 +418,17 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 				case KEY_F10:
 					change_screen_mode();
 					break;
+                case KEY_ASTERISK:   // ?? ToDo: Sound+Music on/off
+                    FS_MusicPlay(NULL);
+                    g_console->printf(COLOR_SYS_FAIL, _("Music OFF") );
+                    break;
 				case KEY_PLUS_PAD:
-					FS_IncMusicVolume();
+					vol = FS_IncMusicVolume();
+                    g_console->printf(COLOR_SYS_OK, _("Music Volume: %d"), vol );
 					break;
 				case KEY_MINUS_PAD:
-					FS_DecMusicVolume();
+					vol = FS_DecMusicVolume();
+                    g_console->printf(COLOR_SYS_OK, _("Music Volume: %d"), vol );
 					break;
 				case KEY_ESC:
                     if (askmenu( _("EXIT MISSION-PLANNER") )) {
