@@ -19,7 +19,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #include "global.h"
-#ifdef WIN32
+#if defined (WIN32) && defined(HAVE_DPLAY)
 
 #include "wind.h"
 #include <stdio.h>

@@ -3,6 +3,7 @@ Changes in version 0.3.51     tbd, now Thu 24 Oct 2002
    - fixed bug with firing accuracy decrease for two-handed weapons
    - now game can use original ufo fonts instead of allegro's default 8x8 (but colors are broken yet)
    - path to the original UFO resources can now be put into ufo2000.ini
+   - Directplay support now is conditionally compiled. Depends on HAVE_DPLAY #define.
 
 Changes in version 0.3.50     Tue 13 Aug 2002
    - added 4 more terrain types, now the following terrains are

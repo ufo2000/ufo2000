@@ -86,6 +86,7 @@ static void switch_in_callback()
 	//	dd_prim_surface->Restore();
 		info->redraw_full();
 	*/
+	return;
 }
 
 static void switch_out_callback()
@@ -93,6 +94,7 @@ static void switch_out_callback()
 	/*
 		info->redraw_full();
 	*/
+	return;
 }
 
 #endif
@@ -123,9 +125,15 @@ void initvideo()
 	if (FLAGS & F_LARGEFONT) {
 		font = large;
 	}
-    if (FLAGS & F_SMALLFONT) {
-        font = small;
-    }
+	
+	if (FLAGS & F_SMALLFONT) {
+		
+// crude hack around a some idiot's #define in rpcndr.h file, apparently from WIN32 SDK.
+// instead of using typedef these bozos put a '#define small char'  there. 
+#undef small		
+		font = small;
+	}
+	
 }
 
 void closevideo()
