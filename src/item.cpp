@@ -164,7 +164,7 @@ int Item::explo_range(int type)
 
 void Item::od_info(int type, int gx, int gy, int gcol)
 {
-	text_mode( -1);
+	text_mode(-1);
 	OBDATA *od = &obdata[type];
 	textprintf(screen2, font, gx, gy, gcol, "%d name=%s ", type, od->name);
 	textprintf(screen2, font, gx, gy + 10, gcol,
@@ -188,7 +188,6 @@ void Item::od_info(int type, int gx, int gy, int gcol)
 	textprintf(screen2, font, gx, gy + 70, gcol,
 	           "imp=%d pInv=%d pMap=%d pHeld=%d",
 	           od->importance, od->pInv, od->pMap, od->pHeld);
-
 }
 
 
@@ -328,11 +327,11 @@ int Item::health()
 
 void Item::draw_health(int GRAPH, int gx, int gy)
 {
-	int color = 50;      //gr
+	int color = xcom1_color(50);      //gr
 	if (m_health < health_max() * 2 / 3)
-		color = 145;      //yel
+		color = xcom1_color(145);      //yel
 	if (m_health < health_max() / 3)
-		color = 33;      //red
+		color = xcom1_color(33);      //red
 	if (GRAPH) {
 		int len;     //=m_health;
 		len = 14 * m_health / health_max();

@@ -425,7 +425,7 @@ void Map::set_sel(int mx, int my)
 	if (sel_row < 0) sel_row = 0;
 	if (sel_col >= 10 * width) sel_col = 10 * width - 1;
 	if (sel_row >= 10 * height) sel_row = 10 * height - 1;
-	text_mode(0); textprintf(screen, font, SCREEN2W + 8, 0, 1, "x=%02d, y=%02d", sel_col, sel_row);
+	text_mode(0); textprintf(screen, font, SCREEN2W + 8, 0, xcom1_color(1), "x=%02d, y=%02d", sel_col, sel_row);
 }
 
 
@@ -479,21 +479,21 @@ void Map::svga2d()
 						color = 144;      //yellow
 					else
 						color = 32;      //red
-					rectfill(map2d, col * 3, row * 3, col * 3 + S, row * 3 + S, color);
+					rectfill(map2d, col * 3, row * 3, col * 3 + S, row * 3 + S, xcom1_color(color));
 					continue;
 				}
 			}
 
 			if (cell.type[2])
-				rectfill(map2d, col * 3 + S, row * 3, col * 3 + S, row * 3 + S, m_cell[0][col][row]->type[2]);
+				rectfill(map2d, col * 3 + S, row * 3, col * 3 + S, row * 3 + S, xcom1_color(m_cell[0][col][row]->type[2]));
 			else
 				if (cell.type[1])
-					rectfill(map2d, col * 3, row * 3, col * 3 + S, row * 3, m_cell[0][col][row]->type[1]);
+					rectfill(map2d, col * 3, row * 3, col * 3 + S, row * 3, xcom1_color(m_cell[0][col][row]->type[1]));
 				else
-					rectfill(map2d, col * 3, row * 3, col * 3 + S, row * 3 + S, color);
+					rectfill(map2d, col * 3, row * 3, col * 3 + S, row * 3 + S, xcom1_color(color));
 
 			if (cell.type[3])
-				circlefill(map2d, col * 3 + S / 2, row * 3 + S / 2, S / 2, m_cell[0][col][row]->type[3]);
+				circlefill(map2d, col * 3 + S / 2, row * 3 + S / 2, S / 2, xcom1_color(m_cell[0][col][row]->type[3]));
 		}
 	}
 
@@ -548,12 +548,12 @@ void Map::draw2d()
 						if (platoon_local->belong(man(lev, col, row)))
 							rectfill(screen2, cx + ( -sel_col + col) * 4 + 1, cy + ( -sel_row + row) * 4 + 1,
 							         cx + ( -sel_col + col) * 4 + SCANGSIZE - 1, cy + ( -sel_row + row) * 4 + SCANGSIZE - 1,
-							         144);      //yellow
+							         xcom1_color(144));      //yellow
 						else
 							if (visible(lev, col, row))
 								rectfill(screen2, cx + ( -sel_col + col) * 4 + 1, cy + ( -sel_row + row) * 4 + 1,
 								         cx + ( -sel_col + col) * 4 + SCANGSIZE - 1, cy + ( -sel_row + row) * 4 + SCANGSIZE - 1,
-								         32);      //red
+								         xcom1_color(32));      //red
 					}
 				}
 			}
@@ -562,7 +562,7 @@ void Map::draw2d()
 	scanbord->show(screen2, cx - 160 + 4, cy - 100 + 12);
 	text_mode( -1);
 	//textprintf(screen2, font, cx-160+283 + 4, cy-100+77 + 12, 1, "%d", sel_lev);
-	textprintf(screen2, large, cx - 160 + 281 + 4, cy - 100 + 74 + 12, 66, "%d", sel_lev);
+	textprintf(screen2, large, cx - 160 + 281 + 4, cy - 100 + 74 + 12, xcom1_color(66), "%d", sel_lev);
 }
 
 
@@ -587,7 +587,7 @@ BITMAP *Map::create_bitmap_of_map()
 
 				for (int i = 0; i < 16; i++)
 					if (scang4x4[i])
-						putpixel(bmp, col * 4 + (3 - i / 4), row * 4 + i % 4, scang4x4[i]);
+						putpixel(bmp, col * 4 + (3 - i / 4), row * 4 + i % 4, xcom1_color(scang4x4[i]));
 			}
 		}
 	}
@@ -1118,7 +1118,7 @@ void Map::show_lof_cell()
 	bmp = create_bitmap(30, 90); clear_to_color(bmp, xcom1_color(0));
 	for (int k = 0; k < 3; k++) {
 		for (int i = 0; i < 3; i++) {
-			textprintf(bmp, font, 0, 80 - (k * 30 + i * 8), 1,
+			textprintf(bmp, font, 0, 80 - (k * 30 + i * 8), xcom1_color(1),
 			           "%d%d%d",
 			           m_cell[sel_lev][sel_col][sel_row]->visi[k][i][0],
 			           m_cell[sel_lev][sel_col][sel_row]->visi[k][i][1],
@@ -1238,7 +1238,7 @@ void Map::drawline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 	//yg2 = y - (xd+1.0)/2.0 + yd/2.0 - zd*23.5/12.0;
 	yg2 = (int)(y - (xd + 1) / 2.0 + yd / 2.0 - zd * 2.0 - 2);
 
-	line(screen2, xg, yg, xg2, yg2, 144);
+	line(screen2, xg, yg, xg2, yg2, xcom1_color(144));
 }
 
 

@@ -84,7 +84,7 @@ void About::transinfo()
 	BITMAP *textline = create_bitmap(strlen(aboutstr[0]) * 8, 8);
 	clear_to_color(textline, 0);     // 208); //yellow
 	text_mode( -1);
-	textout(textline, font, aboutstr[0], 0, 0, 80);      //80 green
+	textout(textline, font, aboutstr[0], 0, 0, xcom1_color(80));      //80 green
 
 	BITMAP *roto = create_bitmap(350, 200);
 	clear_to_color(roto, 0);     // 208); //yellow
@@ -156,7 +156,7 @@ void About::transinfo()
 					destroy_bitmap(textline);
 					textline = create_bitmap(strlen(aboutstr[cm]) * 8, 8);
 					clear(textline);
-					textout(textline, font, aboutstr[cm], 0, 0, 80);      //80 green
+					textout(textline, font, aboutstr[cm], 0, 0, xcom1_color(80));      //80 green
 					clear(roto);
 
 					if (strlen(aboutstr[cm]) < 13)

@@ -43,24 +43,38 @@ void reset_video();
 void initpal(char *fname);
 void setpal(RGB pal[PAL_SIZE], int pofs);
 
+extern int xcom1_color_table[256];
+extern int xcom1_menu_color_table[256];
+
 /**
  * Function that converts color from xcom1 game palette to current
  * representation
  *
  * @param c  xcom1 color
  * @return   allegro color
- *
- * @todo make conversion faster (use precalculated table for conversion)
  */
 #ifdef USE_HICOLOR
 inline int xcom1_color(int c)
 {
-	if (c == 0) return makecol(255, 0, 255);
-	const RGB & rgb = ((RGB *)datafile[DAT_GAMEPAL].dat)[c];
-	return makecol(rgb.r << 2, rgb.g << 2, rgb.b << 2);
+	assert(c >= 0 && c < 256);
+	return xcom1_color_table[c]; 
+}
+inline int xcom1_menu_color(int c)
+{ 
+	assert(c >= 0 && c < 256);
+	return xcom1_menu_color_table[c]; 
+}
+inline int xcom1_darken_color(int c, int level)
+{ 
+	return makecol(
+		getr(c) * (8 - level) / 8, 
+		getg(c) * (8 - level) / 8, 
+		getb(c) * (8 - level) / 8);
 }
 #else
 inline int xcom1_color(int c) { return c; }
+inline int xcom1_menu_color(int c) { return c; }
+inline int xcom1_darken_color(int c, int level) { return c + level * 2; }
 #endif
 
 inline void spr_set(BITMAP *dest, int ofs, char val)

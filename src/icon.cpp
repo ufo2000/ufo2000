@@ -35,7 +35,7 @@ extern void next_turn(int crc);
 
 void cprintf(char *str)
 {
-	text_mode(0); textprintf(screen, font, 1, 1, 1, "%s", str);
+	text_mode(0); textprintf(screen, font, 1, 1, xcom1_color(1), "%s", str);
 }
 
 
@@ -395,11 +395,11 @@ void Icon::execute(int mx, int my)
 
 void Icon::info()
 {
-	text_mode( -1);
+	text_mode(-1);
 	if (sel_man != NULL) {
 		sel_man->drawinfo(x, y);
 	}
-	textprintf(screen2, font, x + 112, y + 41, 1, "%02d", turn);
+	textprintf(screen2, font, x + 112, y + 41, xcom1_color(1), "%02d", turn);
 }
 
 int Icon::inside(int mx, int my)

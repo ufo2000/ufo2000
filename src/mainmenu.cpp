@@ -76,21 +76,21 @@ static void d_draw_baton(BITMAP *bmp, int x, int y, int w, int h, buttonState *s
     int i, in_x, in_y, in_w, in_h, tmode, text_x, text_y;
     
     for (i=0; i< state->border_width; i++) {
-        if (state->border_colors[i] > 0)
-            rect(bmp, x+i, y+i, x + w - i, y + h - i, state->border_colors[i]);
+        if (xcom1_menu_color(state->border_colors[i]) != xcom1_menu_color(0))
+            rect(bmp, x+i, y+i, x + w - i, y + h - i, xcom1_menu_color(state->border_colors[i]));
     }
     
     in_x = x + state->border_width; in_y = y + state->border_width; 
     in_h = h - 2 * state->border_width; in_w = w - 2 * state->border_width; 
-    if (state->background_color > 0) {
-        rectfill(bmp, in_x, in_y, in_x + in_w, in_y + in_h, state->background_color);
+    if (xcom1_menu_color(state->background_color) != xcom1_menu_color(0)) {
+        rectfill(bmp, in_x, in_y, in_x + in_w, in_y + in_h, xcom1_menu_color(state->background_color));
     }
     
     text_x = in_x + in_w/2;
     text_y = in_y + in_h/2 - text_height(state->font)/2;
     
     tmode = text_mode(-1);
-    textout_centre(bmp, state->font, text, text_x, text_y, state->font_color);
+    textout_centre(bmp, state->font, text, text_x, text_y, xcom1_menu_color(state->font_color));
     text_mode(tmode);
 }
 
@@ -99,7 +99,7 @@ static int d_mainmenu_background_proc(int msg, DIALOG *d, int c)
 	if (msg == MSG_DRAW) {
 		stretch_blit(menuback, screen, 0, 0, menuback->w, menuback->h, 0, 0, screen->w, screen->h);
 		text_mode(-1);
-		textprintf(screen, g_small_font, 0, 0, 220, "UFO2000 %s", UFO_VERSION_STRING);
+		textprintf(screen, g_small_font, 0, 0, xcom1_menu_color(220), "UFO2000 %s", UFO_VERSION_STRING);
 	}
 	return D_O_K;
 }

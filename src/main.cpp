@@ -247,7 +247,7 @@ void print(char *str)
 		print_win->printstr("\r\n");
 	} else {
 		text_mode( -1);
-		textout(screen, font, str, 0, print_y, 255);
+		textout(screen, font, str, 0, print_y, xcom1_color(255));
 		print_y += 10;
 	}
 	//#else
@@ -612,7 +612,7 @@ void build_screen(int & select_y)
 			icon->draw();
 
 			if (MODE == WATCH)
-				textprintf(screen2, font, 0, 0, 1, "%s", "WATCH");
+				textprintf(screen2, font, 0, 0, xcom1_color(1), "%s", "WATCH");
 			break;
 		case MAN:
 			if (sel_man != NULL) {

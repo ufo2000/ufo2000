@@ -187,9 +187,9 @@ int selectplaymode()
 			}
 			back03->show(scr, 0, 0);
 			if (mouse_inside(0 * 2, 0 * 2, 100 * 2, 150 * 2))
-				textout(scr, font, "Server", 0, 141, 1);
+				textout(scr, font, "Server", 0, 141, xcom1_color(1));
 			if (mouse_inside(200 * 2, 0 * 2, 320 * 2, 150 * 2))
-				textout(scr, font, "Client", 272, 141, 1);
+				textout(scr, font, "Client", 272, 141, xcom1_color(1));
 			if (USETRANS) {
 				color_map = &trans_table_left;
 				draw_trans_sprite(scr, left, 0, 0);

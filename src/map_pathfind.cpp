@@ -164,7 +164,8 @@ exitloop:
 
 	if (FLAGS & F_SHOWROUTE) {
 		text_mode(0);
-		textprintf(screen, font, 0, SCREEN2H + 20, 1, "(%d,%d,%d)-(%d,%d,%d) %d  ", sz, sx, sy, dz, dx, dy, cur_iter);
+		textprintf(screen, font, 0, SCREEN2H + 20, xcom1_color(1), 
+			"(%d,%d,%d)-(%d,%d,%d) %d  ", sz, sx, sy, dz, dx, dy, cur_iter);
 
 		BITMAP *path2d = create_bitmap(width * 10 * PATH2DSIZE, height * 10 * PATH2DSIZE);
 		for (k = 0; k < level; k++) {
@@ -179,7 +180,7 @@ exitloop:
 						color = 56;
 
 					rectfill(path2d, i * PATH2DSIZE, j * PATH2DSIZE,
-					         i * PATH2DSIZE + PATH2DSIZE, j * PATH2DSIZE + PATH2DSIZE, color);
+					         i * PATH2DSIZE + PATH2DSIZE, j * PATH2DSIZE + PATH2DSIZE, xcom1_color(color));
 				}
 			}
 			blit(path2d, screen, 0, 0, SCREEN2W + k * 90, SCREEN2H, path2d->w, path2d->h);
@@ -208,7 +209,7 @@ exitloop:
 
 	if (FLAGS & F_SHOWROUTE) {
 		for (j = 0; j < cur_iter + 2; j++) {
-			textprintf(screen, font, SCREEN2W + j * 8, SCREEN2H - 9, 1, "%d ", way[j]);
+			textprintf(screen, font, SCREEN2W + j * 8, SCREEN2H - 9, xcom1_color(1), "%d ", way[j]);
 		}
 	}
 
@@ -259,7 +260,7 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen)
 				TU_color += 4;
 			}
 			//if (TU >= 0)
-			printsmall_center(sx, sy, TU_color, TU);
+			printsmall_center(sx, sy, xcom1_color(TU_color), TU);
 		}
 
 		//textprintf(screen, font, 0+i*80, SCREEN2H+20, 1, "way[%d]=%d ", i, way[i]);

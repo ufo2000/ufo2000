@@ -203,44 +203,43 @@ void Editor::show(int NEXTPREV)
 			draw_sprite_h_flip(screen2, b5, 255, 137);
 			man->showspk();
 
-			textout(screen2, large, man->md.Name, 0, 0, 66);
+			textout(screen2, large, man->md.Name, 0, 0, xcom1_color(66));
 			for (i = 0; i < NUMBER_OF_PLACES; i++) //man->drawgrid();
 				man->place(i)->drawgrid(i);
 			m_armoury->drawgrid(P_ARMOURY);
 
 			text_mode( -1);
-			textout(screen2, large, "F2 Save   F3 Load", 8, 380, 130);
+			textout(screen2, large, "F2 Save   F3 Load", 8, 380, xcom1_color(130));
 
-			//man->show_MANDATA(330, 0, 1);
 			man->draw_unibord(320, 0);
 
 			if (sel_item != NULL) {
 				if (dup_item != NULL)
-					sel_item->od_info(330, 220, 1);
+					sel_item->od_info(330, 220, xcom1_color(1));
 				else
-					sel_item->od_info(330, 220, 69);
+					sel_item->od_info(330, 220, xcom1_color(69));
 
 				//textprintf(screen2, font, 129, 141, color, "%s", sel_item->data()->name);
 				if (dup_item == NULL)
-					textprintf(screen2, g_small_font, 128, 140, 50, "%s", sel_item->data()->name);
+					textprintf(screen2, g_small_font, 128, 140, xcom1_color(50), "%s", sel_item->data()->name);
 				else
-					textprintf(screen2, g_small_font, 128, 208, 3, "%s", sel_item->data()->name);
+					textprintf(screen2, g_small_font, 128, 208, xcom1_color(3), "%s", sel_item->data()->name);
 
 				if (sel_item->haveclip()) {
 					//textprintf(screen2, font, 272, 80, color, "%d", sel_item->roundsremain());
-					textout(screen2, g_small_font, "AMMO:", 272, 64, 66);
-					textout(screen2, g_small_font, "ROUNDS", 272, 72, 66);
-					textout(screen2, g_small_font, "LEFT=", 272, 80, 66);
-					textprintf(screen2, g_small_font, 299, 80, 18, "%d", sel_item->roundsremain());
-					rect(screen2, 272, 88, 303, 135, 8);      //clip
+					textout(screen2, g_small_font, "AMMO:", 272, 64, xcom1_color(66));
+					textout(screen2, g_small_font, "ROUNDS", 272, 72, xcom1_color(66));
+					textout(screen2, g_small_font, "LEFT=", 272, 80, xcom1_color(66));
+					textprintf(screen2, g_small_font, 299, 80, xcom1_color(18), "%d", sel_item->roundsremain());
+					rect(screen2, 272, 88, 303, 135, xcom1_color(8));      //clip
 					bigobs->showpck(sel_item->clip()->data()->pInv, 272, 88 + 8);
 				} else if (sel_item->data()->isAmmo) {
 					//textprintf(screen2, font, 272, 80, color, "%d", sel_item->rounds);
-					textout(screen2, g_small_font, "AMMO:", 272, 64, 66);
-					textout(screen2, g_small_font, "ROUNDS", 272, 72, 66);
-					textout(screen2, g_small_font, "LEFT=", 272, 80, 66);
-					textprintf(screen2, g_small_font, 299, 80, 18, "%d", sel_item->rounds);
-					rect(screen2, 272, 88, 303, 135, 8);      //clip
+					textout(screen2, g_small_font, "AMMO:", 272, 64, xcom1_color(66));
+					textout(screen2, g_small_font, "ROUNDS", 272, 72, xcom1_color(66));
+					textout(screen2, g_small_font, "LEFT=", 272, 80, xcom1_color(66));
+					textprintf(screen2, g_small_font, 299, 80, xcom1_color(18), "%d", sel_item->rounds);
+					rect(screen2, 272, 88, 303, 135, xcom1_color(8));      //clip
 					bigobs->showpck(sel_item->data()->pInv, 272, 88 + 8);
 				}
 				bigobs->showpck(sel_item->data()->pInv,
@@ -250,9 +249,9 @@ void Editor::show(int NEXTPREV)
 				Item *it = m_armoury->item_under_mouse();
 				if (it != NULL) {
 					if (memchr(weapon_in_use, it->type, sizeof(weapon_in_use)) != NULL)
-						it->od_info(330, 220, 5);
+						it->od_info(330, 220, xcom1_color(5));
 					else
-						it->od_info(330, 220, 10);
+						it->od_info(330, 220, xcom1_color(10));
 				}
 			}
 
@@ -769,7 +768,7 @@ void Editor::do_mapedit()
 			m_map->draw();
 
 			text_mode( -1);
-			textout(screen2, g_small_font, "F2 Save   F3 Load", 0, 0, 130);
+			textout(screen2, g_small_font, "F2 Save   F3 Load", 0, 0, xcom1_color(130));
 
 			draw_sprite(screen2, mouser, mouse_x, mouse_y);
 			blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);

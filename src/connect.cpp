@@ -463,9 +463,9 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 			//map->show2d(0, 0);
 			blit(map2d, screen2, 0, 0, map2d_x, 0, map2d->w, map2d->h);
 
-			local.print(1);
+			local.print(xcom1_color(1));
 			//remote.print(1);
-			remote.print_simple(1);
+			remote.print_simple(xcom1_color(1));
 
 			//if (local.SEND)
 			// draw_pd_info(editor->pd_local, local.gx, 170);
@@ -587,7 +587,7 @@ void Connect::draw_pd_info(void *_pd, int gx, int gy)
 {
 	PLAYERDATA *pd = (PLAYERDATA *)_pd;
 
-	textout(screen2, g_small_font, "INFO", gx, gy, 1);
+	textout(screen2, g_small_font, "INFO", gx, gy, xcom1_color(1));
 	int i;
 	int points = 0;
 	for (i = 0; i < pd->size; i++) {
@@ -596,5 +596,5 @@ void Connect::draw_pd_info(void *_pd, int gx, int gy)
 		          pd->md[i].Firing +
 		          pd->md[i].Throwing;
 	}
-	textprintf(screen2, g_small_font, gx, gy + 10, 1, "total men points=%d", points);
+	textprintf(screen2, g_small_font, gx, gy + 10, xcom1_color(1), "total men points=%d", points);
 }

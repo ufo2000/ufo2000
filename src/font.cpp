@@ -304,49 +304,44 @@ static uaf_fontcache * uaf_make_cacheentry(AL_CONST FONT *f, int tmode, int fgco
 	newcache->tmode = tmode; 
 	newcache->fgcol = fgcol;
 	
-
 	int x,y,origval;
 	
-	/* the two loops construct the bitmaps to put into the cache. Note
+	/* construct the bitmaps to put into the cache. Note
 	   that all the dimensions are retained, and the same rect-pointers 
 	   are used for all cache entries. 
 	*/
 	newcache->U00 = create_bitmap(idat->max_w, idat->max_h * 128);
-	assert(newcache->U00 != NULL);
+	newcache->U04 = create_bitmap(idat->max_w, idat->max_h * 128);
+	assert(newcache->U00 != NULL && newcache->U04 != NULL);
+	if (tmode > 0) {
+		clear_to_color(newcache->U00, tmode);
+		clear_to_color(newcache->U04, tmode);
+	} else {
+		clear_to_color(newcache->U00, xcom1_color(0));
+		clear_to_color(newcache->U04, xcom1_color(0));
+	}
+
+	int font_color_table[6] = {
+		xcom1_darken_color(fgcol, 0),
+		xcom1_darken_color(fgcol, 1),
+		xcom1_darken_color(fgcol, 2),
+		xcom1_darken_color(fgcol, 3),
+		xcom1_darken_color(fgcol, 4),
+		xcom1_darken_color(fgcol, 5),
+	};
+
 	for (y = 0; y < idat->max_h * 128 ; y++) {
 		for (x=0; x<idat->max_w; x++) {
 			origval = *(idat->origU00 + x + y * idat->max_w);
-			if (origval == 0) {
-				if (tmode > 0) {
-					putpixel(newcache->U00, x, y, xcom1_color(tmode));
-				} else {
-					putpixel(newcache->U00, x, y, xcom1_color(0));
-				}
-			} else {
-				putpixel(newcache->U00, x, y, xcom1_color(fgcol + origval * 2));
+			if (origval > 0 && origval < 6) {
+				putpixel(newcache->U00, x, y, font_color_table[origval]);
+			}
+			origval = *(idat->origU04 + x + y * idat->max_w);
+			if (origval > 0 && origval < 6) {
+				putpixel(newcache->U04, x, y, font_color_table[origval]);
 			}
 		}
 	}
-        if (idat->origU04 != NULL) {
-                newcache->U04 = create_bitmap(idat->max_w, idat->max_h * 128);
-                assert(newcache->U04 != NULL);
-                for (y = 0; y < idat->max_h * 128 ; y++) {
-                        for (x=0; x<idat->max_w; x++) {
-                                origval = *(idat->origU04 + x + y * idat->max_w);
-                                if (origval == 0) {
-                                        if (tmode > 0) {
-                                                putpixel(newcache->U04, x, y, xcom1_color(tmode));
-                                        } else {
-                                                putpixel(newcache->U04, x, y, xcom1_color(0));
-                                        }
-                                } else {
-                                        putpixel(newcache->U04, x, y, xcom1_color(fgcol + origval * 2));
-                                }
-                        }
-                }
-        } else {
-                newcache->U04 = NULL;
-        }
 	return newcache;
 }
 /** Just returns the common glyph height.
@@ -743,24 +738,10 @@ void create_small_font() {
 	assert(fh != -1);
 	fl = filelength(fh);
 	unsigned char *dat_lat = new unsigned char[fl];
-        unsigned char *dat_cyr;
+	unsigned char *dat_cyr = (unsigned char *)datafile[DAT_SMALLSET_CYR].dat;
 	read(fh, dat_lat, fl);
 	close(fh);
-	fh = open("smallset_cyr", O_RDONLY | O_BINARY);
-	if (fh != -1) {
-                fl = filelength(fh);
-                dat_cyr = new unsigned char[fl];
-                read(fh, dat_cyr, fl);
-                close(fh);
-        } else {
-                dat_cyr = NULL;
-        }
-	
 	g_small_font = create_font(dat_lat, dat_cyr, 8, 9, 1);
-	
-	if (dat_cyr != NULL) {
-                delete []dat_cyr;
-        }
 	delete []dat_lat;
 }
 
@@ -772,23 +753,10 @@ void create_large_font() {
 	assert(fh != -1);
 	fl = filelength(fh);
 	unsigned char *dat_lat = new unsigned char[fl];
-	unsigned char *dat_cyr;
-        read(fh, dat_lat, fl);
+	unsigned char *dat_cyr = (unsigned char *)datafile[DAT_BIGLETS_CYR].dat;
+	read(fh, dat_lat, fl);
 	close(fh);
-	fh = open("biglets_cyr", O_RDONLY | O_BINARY);
-	if (fh != -1) {
-                fl = filelength(fh);
-                dat_cyr = new unsigned char[fl];
-                read(fh, dat_cyr, fl);
-                close(fh);
-        } else {
-                dat_cyr = NULL;
-        }
-        large = create_font(dat_lat, dat_cyr, 16, 16, 1);
-	
-	if (dat_cyr != NULL) {
-                delete []dat_cyr;
-        }
+	large = create_font(dat_lat, dat_cyr, 16, 16, 1);
 	delete []dat_lat;
 }
 

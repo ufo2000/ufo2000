@@ -628,9 +628,9 @@ void Soldier::draw_inventory()
 	showspk();
 
 	text_mode(-1);
-	textout(screen2, large, md.Name, 0, 0, 66);
-	textout(screen2, g_small_font, "TUS>", 250, 24, 66);
-	textprintf(screen2, g_small_font, 271, 24, 18, "%d", ud.CurTU);
+	textout(screen2, large, md.Name, 0, 0, xcom1_color(66));
+	textout(screen2, g_small_font, "TUS>", 250, 24, xcom1_color(66));
+	textprintf(screen2, g_small_font, 271, 24, xcom1_color(18), "%d", ud.CurTU);
 
 	for (int i = 0; i < 8; i++)
 		m_place[i]->drawgrid(i);
@@ -650,7 +650,7 @@ void Soldier::draw_unibord(int gx, int gy)
 	//draw_sprite(ui, m_unibord, 0, 0);
 
 	//textout_centre(screen2, font, md.Name, gx+160, gy+7, 66);
-	textout_centre(screen2, large, md.Name, gx + 160, gy + 4, 66);
+	textout_centre(screen2, large, md.Name, gx + 160, gy + 4, xcom1_color(66));
 
 	int fw = ud.HeadWound + ud.TorsoWound + ud.RArmWound +
 	         ud.LArmWound + ud.RLegWound + ud.LLegWound;
@@ -684,14 +684,14 @@ void Soldier::draw_unibord(int gx, int gy)
 	for (int i = 0; i < 17; i++) {
 		if (param[i].str != NULL) {
 			//textout(screen2, font, param[i].str, gx+8, gy+31+i*10, 50);
-			textout(screen2, g_small_font, param[i].str, gx + 8, gy + 31 + i * 10, 50);
+			textout(screen2, g_small_font, param[i].str, gx + 8, gy + 31 + i * 10, xcom1_color(50));
 			//textprintf(ui, font, 150, 31+i*10, 146, "%d", param[i].val);
 			//printsmall(gx+154, gy+32+i*10, 146, param[i].cur);
-			textprintf(screen2, g_small_font, gx + 151, gy + 31 + i * 10, 146, "%d", param[i].cur);
+			textprintf(screen2, g_small_font, gx + 151, gy + 31 + i * 10, xcom1_color(146), "%d", param[i].cur);
 
-			rect(screen2, gx + 170, gy + 32 + i * 10, gx + 170 + param[i].max, gy + 36 + i * 10, param[i].col);
+			rect(screen2, gx + 170, gy + 32 + i * 10, gx + 170 + param[i].max, gy + 36 + i * 10, xcom1_color(param[i].col));
 			if (param[i].cur)
-				rectfill(screen2, gx + 170, gy + 33 + i * 10, gx + 170 + param[i].cur - 1, gy + 35 + i * 10, param[i].col - 4);
+				rectfill(screen2, gx + 170, gy + 33 + i * 10, gx + 170 + param[i].cur - 1, gy + 35 + i * 10, xcom1_color(param[i].col - 4));
 		}
 	}
 
@@ -719,11 +719,11 @@ void Soldier::draw_blue_selector()
 		//	Draw blue triangle with its point at sx, sy and height 5
 		sx += 3; sy += 10; int j;
 		for (j = 0; j < 5; j++) {
-			line(screen2, sx - j, sy - j, sx + j, sy - j, 256 - 48 + 3);
-			putpixel(screen2, sx - j, sy - j, 15);
-			putpixel(screen2, sx + j, sy - j, 15);
+			line(screen2, sx - j, sy - j, sx + j, sy - j, xcom1_color(256 - 48 + 3));
+			putpixel(screen2, sx - j, sy - j, xcom1_color(15));
+			putpixel(screen2, sx + j, sy - j, xcom1_color(15));
 		}
-		line(screen2, sx - j, sy - j, sx + j, sy - j, 15);
+		line(screen2, sx - j, sy - j, sx + j, sy - j, xcom1_color(15));
 	}
 }
 
@@ -741,10 +741,10 @@ void Soldier::draw_enemy_seen(int select_y)
 		x2 = x1 + ES_SIDE;
 		y2 = y1 + ES_SIDE - 1;
 		int color = 39;
-		rectfill(screen2, x1, y1, x2, y2, color);
+		rectfill(screen2, x1, y1, x2, y2, xcom1_color(color));
 
 		num[0] = i + '0';
-		textout(screen2, font, num, x1 + 5, y1 + 4, 16);
+		textout(screen2, font, num, x1 + 5, y1 + 4, xcom1_color(16));
 		/*
 			//	Draw selectors and numbers above seen enemies
 				if (FLAGS & F_SELECTENEMY)
@@ -772,7 +772,7 @@ void Soldier::draw_enemy_seen(int select_y)
 			int sy = map->y - (enemy_x[i] + 1) * 8 + 8 * enemy_y[i] - 29 - 24 * enemy_z[i];
 
 			//	Draw a number over enemy head
-			if (i < 10)	textout(screen2, font, num, sx, sy - 2, 1);
+			if (i < 10)	textout(screen2, font, num, sx, sy - 2, xcom1_color(1));
 		}
 	}
 }
@@ -1758,10 +1758,10 @@ void Soldier::drawinfo(int x, int y)
 
 		bigobs->showpck(rhand_item()->data()->pInv, x + 280 + dx, y + 10 + dy);
 		if (rhand_item()->clip() != NULL)
-			printsmall(x + 304, y + 47, 1, rhand_item()->roundsremain());
+			printsmall(x + 304, y + 47, xcom1_color(1), rhand_item()->roundsremain());
 		if (rhand_item()->is_grenade()) {
 			if (rhand_item()->delay_time())
-				printsmall(x + 304, y + 47, 36, rhand_item()->delay_time() - 1);
+				printsmall(x + 304, y + 47, xcom1_color(36), rhand_item()->delay_time() - 1);
 		}
 	}
 	if (lhand_item() != NULL) {
@@ -1772,35 +1772,33 @@ void Soldier::drawinfo(int x, int y)
 
 		bigobs->showpck(lhand_item()->data()->pInv, x + 8 + dx, y + 10 + dy);
 		if (lhand_item()->clip() != NULL)
-			printsmall(x + 33, y + 47, 1, lhand_item()->roundsremain());
+			printsmall(x + 33, y + 47, xcom1_color(1), lhand_item()->roundsremain());
 		if (lhand_item()->is_grenade()) {
 			if (lhand_item()->delay_time())
-				printsmall(x + 33, y + 47, 36, lhand_item()->delay_time() - 1);
+				printsmall(x + 33, y + 47, xcom1_color(36), lhand_item()->delay_time() - 1);
 		}
 	}
-	textout(screen2, g_small_font, md.Name, x + 134, y + 32, 130);
+	textout(screen2, g_small_font, md.Name, x + 134, y + 32, xcom1_color(130));
 
 
 	drawbar(71, 64, 170 + x, 41 + y, ud.CurTU, ud.MaxTU);
 	//textprintf(screen2, font, x+136, y+41, 64, "%d", ud.CurTU);
-	printsmall(x + 136, y + 42, 64, ud.CurTU);
+	printsmall(x + 136, y + 42, xcom1_color(64), ud.CurTU);
 
 	drawbar(21, 16, 170 + x, 45 + y, ud.CurEnergy, ud.MaxEnergy);
 	//textprintf(screen2, font, x+154, y+41, 16, "%d", ud.CurEnergy);
-	printsmall(x + 154, y + 42, 16, ud.CurEnergy);
+	printsmall(x + 154, y + 42, xcom1_color(16), ud.CurEnergy);
 
 	drawbar(37, 32, 170 + x, 49 + y, ud.CurHealth, ud.MaxHealth);
 	//textprintf(screen2, font, x+136, y+49, 32, "%d", ud.CurHealth);
-	printsmall(x + 136, y + 50, 32, ud.CurHealth);
+	printsmall(x + 136, y + 50, xcom1_color(32), ud.CurHealth);
 
 	drawbar(197, 192, 170 + x, 53 + y, ud.Morale, 100);
 	//textprintf(screen2, font, x+154, y+49, 192, "%d", ud.Morale);
-	printsmall(x + 154, y + 50, 192, ud.Morale);
-
-	//show_MANDATA(0, 0, 1);
+	printsmall(x + 154, y + 50, xcom1_color(192), ud.Morale);
 }
 
-
+/*
 void Soldier::show_MANDATA(int gx, int gy, int gcol)
 {
 	text_mode( -1);
@@ -1817,7 +1815,7 @@ void Soldier::show_MANDATA(int gx, int gy, int gcol)
 	           "Firing=%d Throwing=%d Close=%d",
 	           md.Firing, md.Throwing, md.Close);
 }
-
+*/
 int Soldier::eot_save(char *txt)
 {
 	int len = 0;

@@ -115,20 +115,20 @@ int Units::add(int num, char *nm, int ct)
 void Units::print(int gcol)
 {
 	text_mode( -1);
-	int x1, y1, x2, y2, color = 60;
+	int x1, y1, x2, y2, color = xcom1_color(60);
 	int i;
 	for (i = 0; i < size; i++) {
 		if (selected == i) {
 			if (pos == POS_LEFT)
-				line(screen2, gx + 20 * 8 + 4, gy + i * 15 + 3, mouse_x, mouse_y, 1);
+				line(screen2, gx + 20 * 8 + 4, gy + i * 15 + 3, mouse_x, mouse_y, xcom1_color(1));
 			else
-				line(screen2, gx - 4, gy + i * 15 + 3, mouse_x, mouse_y, 1);
-			color = 120;
+				line(screen2, gx - 4, gy + i * 15 + 3, mouse_x, mouse_y, xcom1_color(1));
+			color = xcom1_color(120);
 		} else
 			if (x[i] != 0) {
 				rectfill(screen2, gmx + col[i] * 4 + 1, gmy + row[i] * 4 + 1,
 				         gmx + col[i] * 4 + 3, gmy + row[i] * 4 + 3,
-				         144);      //yellow
+				         xcom1_color(144));      //yellow
 				if (pos == POS_LEFT) {
 					line(screen2, gx + 20 * 8 + 4, gy + i * 15 + 3, x[i], y[i], gcol);
 					textprintf(screen2, font, gx - 60, gy + i * 15, gcol, "(%d,%d)", col[i], row[i]);
@@ -136,9 +136,9 @@ void Units::print(int gcol)
 					line(screen2, gx - 4, gy + i * 15 + 3, x[i], y[i], gcol);
 					textprintf(screen2, font, gx + 20 * 8 + 5, gy + i * 15, gcol, "(%d,%d)", col[i], row[i]);
 				}
-				color = 53;
+				color = xcom1_color(53);
 			} else {
-				color = 60;
+				color = xcom1_color(60);
 			}
 
 		x1 = gx - 2; x2 = gx + 20 * 8 + 2;
@@ -155,10 +155,10 @@ void Units::print(int gcol)
 	}
 	draw_text();
 
-	rect(screen2, gmx, SCREEN2H - 35, gmx + gmw, SCREEN2H - 5, 1);
-	textout_centre(screen2, font, "MAP", gmx + gmw / 2, SCREEN2H - 29, 8);
-	textout_centre(screen2, font, "NEW", gmx + gmw / 2 - gmw / 4, SCREEN2H - 17, 1);
-	textout_centre(screen2, font, "LOAD", gmx + gmw / 2 + gmw / 4, SCREEN2H - 17, 1);
+	rect(screen2, gmx, SCREEN2H - 35, gmx + gmw, SCREEN2H - 5, xcom1_color(1));
+	textout_centre(screen2, font, "MAP", gmx + gmw / 2, SCREEN2H - 29, xcom1_color(8));
+	textout_centre(screen2, font, "NEW", gmx + gmw / 2 - gmw / 4, SCREEN2H - 17, xcom1_color(1));
+	textout_centre(screen2, font, "LOAD", gmx + gmw / 2 + gmw / 4, SCREEN2H - 17, xcom1_color(1));
 
 
 	//textout_centre(screen2, large, "START", gmx+gmw/2, SCREEN2H-49, 33);
@@ -173,7 +173,7 @@ void Units::print(int gcol)
 		}
 	}
 	//textout(screen2, small, "INFO", gx, 160, 1);
-	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, 50, "total men points=%d", points);
+	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, xcom1_color(50), "total men points=%d", points);
 
 
 	char buf[10000]; memset(buf, 0, sizeof(buf));
@@ -219,7 +219,7 @@ void Units::draw_items_stats(int gx, int gy, char *buf, int len)
 		}
 		if (num != 0) {
 			textprintf(screen2, g_small_font, gx + (aa / 72) * 90, gy + (aa % 72),
-			           1, "%s=%d", Item::obdata[weapon[w]].name, num);
+			           xcom1_color(1), "%s=%d", Item::obdata[weapon[w]].name, num);
 			aa += 9;
 		}
 	}
@@ -229,7 +229,7 @@ void Units::draw_items_stats(int gx, int gy, char *buf, int len)
 void Units::print_simple(int gcol)
 {
 	text_mode( -1);
-	int i, x1, y1, x2, y2, color = 60;
+	int i, x1, y1, x2, y2, color = xcom1_color(60);
 	for (i = 0; i < size; i++) {
 		if (x[i] != 0) {
 			if (FLAGS & F_PLANNERDBG) { // show lines of remote
@@ -239,9 +239,9 @@ void Units::print_simple(int gcol)
 					line(screen2, gx - 4, gy + i * 15 + 3, x[i], y[i], gcol);
 				}
 			}
-			color = 53;
+			color = xcom1_color(53);
 		} else {
-			color = 60;
+			color = xcom1_color(60);
 		}
 
 		x1 = gx - 2; x2 = gx + 20 * 8 + 2;
@@ -267,7 +267,7 @@ void Units::print_simple(int gcol)
 		          pd_remote->md[i].Firing +
 		          pd_remote->md[i].Throwing;
 	}
-	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, 50, "total men points=%d", points);
+	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, xcom1_color(50), "total men points=%d", points);
 
 	char buf[10000]; memset(buf, 0, sizeof(buf));
 	int len = 0;
@@ -288,28 +288,28 @@ void Units::draw_text()
 
 	//rect(screen2, gx+50, SCREEN2H-35, gx+20*8-50, SCREEN2H-5, 1);
 	//rect(screen2, gx+40, SCREEN2H-35, gx+20*8-40, SCREEN2H-5, 1);
-	rect(screen2, gx, SCREEN2H - 35, gx + 20 * 8, SCREEN2H - 5, 1);
+	rect(screen2, gx, SCREEN2H - 35, gx + 20 * 8, SCREEN2H - 5, xcom1_color(1));
 
 	if (pos == POS_LEFT) {
 		//textprintf(screen2, font, gx+56, SCREEN2H-29, 8, "%s", "SERVER");
-		textout_centre(screen2, font, "SERVER", gx + 10 * 8, SCREEN2H - 29, 8);
+		textout_centre(screen2, font, "SERVER", gx + 10 * 8, SCREEN2H - 29, xcom1_color(8));
 	} else {
 		//textprintf(screen2, font, gx+56, SCREEN2H-29, 8, "%s", "CLIENT");
-		textout_centre(screen2, font, "CLIENT", gx + 10 * 8, SCREEN2H - 29, 8);
+		textout_centre(screen2, font, "CLIENT", gx + 10 * 8, SCREEN2H - 29, xcom1_color(8));
 	}
 
 	int color = 40;      //red
 	if (SEND)
 		color = 55;      //green
 
-	textout_centre(screen2, font, "SEND", gx + 15 * 8, SCREEN2H - 16, color);
+	textout_centre(screen2, font, "SEND", gx + 15 * 8, SCREEN2H - 16, xcom1_color(color));
 
 	if (START)
 		color = 55;      //green
 	else
 		color = 40;      //red
 
-	textout_centre(screen2, font, "START", gx + 5 * 8, SCREEN2H - 16, color);
+	textout_centre(screen2, font, "START", gx + 5 * 8, SCREEN2H - 16, xcom1_color(color));
 }
 
 void Units::execute(Map *map, int map_change_allowed)
@@ -504,7 +504,7 @@ void Units::draw_lines(int gcol)
 {
 	for (int i = 0; i < size; i++) {
 		if (selected == i) {
-			line(screen2, gx + 20 * 8 + 4, gy + i * 15 + 3, mouse_x, mouse_y, 1);
+			line(screen2, gx + 20 * 8 + 4, gy + i * 15 + 3, mouse_x, mouse_y, xcom1_color(1));
 		} else
 			if (x[i] != 0) {
 				line(screen2, gx + 20 * 8 + 4, gy + i * 15 + 3, x[i], y[i], gcol);

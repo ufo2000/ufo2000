@@ -142,6 +142,9 @@ void change_screen_mode()
 	}
 }
 
+int xcom1_color_table[256];
+int xcom1_menu_color_table[256];
+
 static int ufo2k_set_gfx_mode(int gfx_driver)
 {
 	int exit_code = set_gfx_mode(gfx_driver, 640, 400, 0, 0);
@@ -151,6 +154,22 @@ static int ufo2k_set_gfx_mode(int gfx_driver)
 		fprintf(stderr, "Error: set_gfx_mode() failed.\n");
 		exit(1);
 	}
+
+#ifdef USE_HICOLOR
+//	Create tables for translation from xcom1 palette colors to colors
+//	for currently selected video mode
+	xcom1_color_table[0] = makecol(255, 0, 255);
+	xcom1_menu_color_table[0] = makecol(255, 0, 255);
+
+	for (int c = 1; c < 256; c++)
+	{
+		const RGB & rgb = ((RGB *)datafile[DAT_GAMEPAL].dat)[c];
+		xcom1_color_table[c] = makecol(rgb.r << 2, rgb.g << 2, rgb.b << 2);
+		const RGB & menu_rgb = ((RGB *)datafile[DAT_MENUPAL].dat)[c];
+		xcom1_menu_color_table[c] = makecol(menu_rgb.r << 2, menu_rgb.g << 2, menu_rgb.b << 2);
+	}
+#endif
+
 	return exit_code;
 }
 

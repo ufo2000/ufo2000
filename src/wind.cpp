@@ -56,7 +56,7 @@ bool ConsoleStatusLine::backspace()
 void ConsoleStatusLine::redraw_full(BITMAP *bmp, int x, int y)
 {
 	BITMAP * temp_bmp = create_bitmap(m_width, m_height);
-	clear_to_color(temp_bmp, 11);
+	clear_to_color(temp_bmp, xcom1_color(11));
 	text_mode(-1); textout(temp_bmp, m_font, m_text.c_str(), 0, 0, m_color);
 	int len = text_length(m_font, m_text.c_str());
 	if (len > 0)
@@ -419,7 +419,7 @@ void Wind::writechr(BITMAP *_bmp, int _x, int _y, int c, int color)
 void Wind::showcursor()
 {
 	rectfill(screen, m_x + m_curx * m_charw, m_y + m_cury * m_charh + m_charh - 2,
-	         m_x + m_curx * m_charw + m_charw - 3, m_y + m_cury * m_charh + m_charh - 1, m_scrcol);
+	         m_x + m_curx * m_charw + m_charw - 3, m_y + m_cury * m_charh + m_charh - 1, xcom1_color(m_scrcol));
 }
 
 void Wind::hidecursor()

@@ -276,14 +276,14 @@ void Place::drawgrid(int PLACE_NUM)
 {
 	assert((PLACE_NUM >= 0) && (PLACE_NUM < 10));
 
-	textout(screen2, g_small_font, place_name[PLACE_NUM], gx, gy - 8, 66);
+	textout(screen2, g_small_font, place_name[PLACE_NUM], gx, gy - 8, xcom1_color(66));
 
 	if (!ishand()) {
 		int dx = 0, dy = 0;
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				if (!outside_belt(j, i))
-					rect(screen2, gx + dx, gy + dy, gx + dx + 16, gy + dy + 15, 8);      //square
+					rect(screen2, gx + dx, gy + dy, gx + dx + 16, gy + dy + 15, xcom1_color(8));      //square
 				dx += 16;
 				if (j == 19) break;      // for map cell!!!!!!!!!!!!!!!!!!!
 			}
@@ -291,7 +291,7 @@ void Place::drawgrid(int PLACE_NUM)
 			dy += 15;
 		}
 	} else {
-		rect(screen2, gx, gy, gx + width * 16, gy + height * 15, 8);
+		rect(screen2, gx, gy, gx + width * 16, gy + height * 15, xcom1_color(8));
 	}
 
 	Item * t = m_item;
@@ -505,7 +505,7 @@ void Place::draw_deselect_time(int PLACE_NUM, int time)
 	if (time) {
 		//place_name[PLACE_NUM]
 		//textout(screen2, small, time, gx, gy-8, 66);
-		printsmall(gx + 1 + text_length(g_small_font, place_name[PLACE_NUM]), gy - 6, 1, time);
+		printsmall(gx + 1 + text_length(g_small_font, place_name[PLACE_NUM]), gy - 6, xcom1_color(1), time);
 	}
 }
 
