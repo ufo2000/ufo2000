@@ -11,18 +11,18 @@
 
 // Limit for average incoming traffic (average is calculated by HawkNL 
 // for for past 8 seconds)
-#define AVE_TRAFFIC_LIMIT 500
+#define AVE_TRAFFIC_LIMIT g_srv_ave_traffic_limit
 // Maximum number of authenticated users allowed on server
-#define PLAYERS_COUNT_LIMIT 16
+#define PLAYERS_COUNT_LIMIT g_srv_players_count_limit
 // Maximum number of connections
-#define CONNECTIONS_COUNT_LIMIT 32
+#define CONNECTIONS_COUNT_LIMIT g_srv_connections_count_limit
 // Number of miliseconds for users to login (after this time the socket 
 // will be closed)
-#define LOGIN_TIME_LIMIT 10000
+#define LOGIN_TIME_LIMIT g_srv_login_time_limit
 // The maximum length of user name
-#define USERNAME_SIZE_LIMIT 16
+#define USERNAME_SIZE_LIMIT g_srv_username_size_limit
 // Maximum size of data packet
-#define PACKET_SIZE_LIMIT 16384
+#define PACKET_SIZE_LIMIT g_srv_packet_size_limit
 
 inline long get_time_diff(const NLtime &x, const NLtime &y)
 {
@@ -57,7 +57,7 @@ protected:
 	bool            m_error;
 	ServerDispatch *m_server;
 
-    long            m_max_ave_traffic;
+    unsigned long   m_max_ave_traffic;
     NLtime          m_connection_time;
 
 	std::string     m_ip;
@@ -92,10 +92,10 @@ public:
 	NLsocket                              m_socket;
 
 	NLtime                                m_connection_time;
-	long                                  m_traffic_in;
-	long                                  m_traffic_out;
-	long                                  m_http_traffic_in;
-	long                                  m_http_traffic_out;
+	unsigned long                         m_traffic_in;
+	unsigned long                         m_traffic_out;
+	unsigned long                         m_http_traffic_in;
+	unsigned long                         m_http_traffic_out;
 
 	void HandleNewConnections();
 	void HandleSocket(NLsocket socket);

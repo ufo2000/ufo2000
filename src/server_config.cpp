@@ -19,6 +19,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#ifdef _MSC_VER
+#pragma warning(disable:4786)
+#endif
+
 #include <nl.h>
 #include <stdio.h>
 #include <string>
@@ -28,6 +32,34 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <stdarg.h>
 #include <assert.h>
 #include "server_config.h"
+
+static std::map<std::string, unsigned long *> config_variables;
+
+static unsigned long init_server_variable(const std::string name, unsigned long *val, unsigned long defval)
+{
+	config_variables[name] = val;
+	return defval;
+}
+
+#define SERVER_CONFIG_VARIABLE(a, d) \
+	unsigned long g_srv_##a = init_server_variable(#a, &g_srv_##a, d)
+
+SERVER_CONFIG_VARIABLE(tcp_port,                2000);
+// Limit for average incoming traffic (average is calculated by HawkNL 
+// for for past 8 seconds)
+SERVER_CONFIG_VARIABLE(ave_traffic_limit,       2000);
+// Maximum number of authenticated users allowed on server
+SERVER_CONFIG_VARIABLE(players_count_limit,     16);
+// Maximum number of connections (including non authenticated and 
+// http requests)
+SERVER_CONFIG_VARIABLE(connections_count_limit, 32);
+// Number of miliseconds for users to login (after this time the socket 
+// will be closed)
+SERVER_CONFIG_VARIABLE(login_time_limit,        10000);
+// The maximum length of user name
+SERVER_CONFIG_VARIABLE(username_size_limit,     16);
+// Maximum size of data packet
+SERVER_CONFIG_VARIABLE(packet_size_limit,       16384);
 
 struct ip_info
 {
@@ -149,6 +181,11 @@ void load_config()
 				server_log("config accept_ip = '%s' (0x%08X 0x%08X)\n", val.c_str(), (int)ip, (int)mask);
 				accept_ip.push_back(ip_info(ip, mask));
 			}
+		} else if (config_variables.find(var) != config_variables.end()) {
+			unsigned long old = *config_variables[var];
+			*config_variables[var] = atoi(val.c_str());
+			if (old != *config_variables[var])
+				server_log("config variable '%s' changed to %d\n", var.c_str(), *config_variables[var]);
 		} else {
 			server_log("unrecognized variable in config: %s\n", var.c_str());
 		}

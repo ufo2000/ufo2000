@@ -66,6 +66,9 @@ ServerClient::~ServerClient()
 	if (m_name != "") m_server->m_clients_by_name.erase(m_name);
 	nlGroupDeleteSocket(m_server->m_group, m_socket);
 	nlClose(m_socket);
+
+	server_log("connection closed (name='%s', max_ave_traffic=%d, ip=%s)\n", 
+		m_name.c_str(), m_max_ave_traffic, m_ip.c_str());
 }
 
 #define PACKET_HEADER_SIZE 8
@@ -143,11 +146,7 @@ void ServerDispatch::HandleSocket(NLsocket socket)
 		client->recv_packet(id, packet);
 
 	if (err < 0 || client->m_error)
-	{
-		server_log("connection closed (name='%s', max_ave_traffic=%d, ip=%s)\n", 
-			client->m_name.c_str(), client->m_max_ave_traffic, client->m_ip.c_str());
 		delete client;
-	}
 }
 
 void ServerDispatch::HandleNewConnections()
@@ -160,8 +159,10 @@ void ServerDispatch::HandleNewConnections()
 	while (it != m_clients_by_socket.end()) {
 		ServerClient *client = it->second; it++;
 		if (!client->m_name.empty()) continue;
-		if (get_time_diff(client->m_connection_time, now) > LOGIN_TIME_LIMIT)
+		if (get_time_diff(client->m_connection_time, now) > (long)LOGIN_TIME_LIMIT) {
+			server_log("connection timeout ip=%s\n", client->m_ip.c_str());
 			delete client;
+		}
 	}
 
 //	Check limit for the number of connections
@@ -197,6 +198,8 @@ void ServerDispatch::HandleNewConnections()
 
 void ServerDispatch::Run(NLsocket sock)
 {
+	static std::vector<NLsocket> s;
+
 	nlTime(&m_connection_time);
 	m_traffic_in       = 0;
 	m_traffic_out      = 0;
@@ -216,8 +219,8 @@ void ServerDispatch::Run(NLsocket sock)
     	HandleNewConnections();
         
     //	Check for incoming messages
-        NLsocket s[CONNECTIONS_COUNT_LIMIT];
-        NLint count = nlPollGroup(m_group, NL_READ_STATUS, s, CONNECTIONS_COUNT_LIMIT, 0);
+        if (s.size() < CONNECTIONS_COUNT_LIMIT) s.resize(CONNECTIONS_COUNT_LIMIT);
+        NLint count = nlPollGroup(m_group, NL_READ_STATUS, &s[0], CONNECTIONS_COUNT_LIMIT, 0);
         assert(count != NL_INVALID);
 
 	//	Loop through the clients and read the packets
@@ -229,7 +232,7 @@ void ServerDispatch::Run(NLsocket sock)
 			while ((readlen = nlRead(s[i], buffer, sizeof(buffer))) > 0) {
 				client->m_stream.append(buffer, readlen);
             //	Check for traffic limit
-				long ave_traffic = nlGetSocketStat(s[i], NL_AVE_BYTES_RECEIVED);
+				unsigned long ave_traffic = nlGetSocketStat(s[i], NL_AVE_BYTES_RECEIVED);
 				if (ave_traffic > client->m_max_ave_traffic)
 					client->m_max_ave_traffic = ave_traffic;
 				if (ave_traffic > AVE_TRAFFIC_LIMIT) {

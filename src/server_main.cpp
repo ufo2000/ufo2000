@@ -33,9 +33,9 @@ void printErrorExit(void)
 	NLenum err = nlGetError();
     
 	if (err == NL_SYSTEM_ERROR)
-		printf("System error: %s\n", nlGetSystemErrorStr(nlGetSystemError()));
+		server_log("System error: %s\n", nlGetSystemErrorStr(nlGetSystemError()));
 	else
-		printf("HawkNL error: %s\n", nlGetErrorStr(err));
+		server_log("HawkNL error: %s\n", nlGetErrorStr(err));
 
 	nlShutdown();
 	exit(1);
@@ -51,6 +51,9 @@ int main()
 	NLsocket serversock;
 	NLenum   type = NL_IP;/* default network type */
 
+    server_log("server started\n");
+	load_config();
+
 	if (!nlInit()) printErrorExit();
 
 	printf("nlGetString(NL_VERSION) = %s\n", nlGetString(NL_VERSION));
@@ -58,7 +61,7 @@ int main()
     if (!nlSelectNetwork(type)) printErrorExit();
 
     nlEnable(NL_SOCKET_STATS);
-    serversock = nlOpen(2000, NL_RELIABLE);
+    serversock = nlOpen(g_srv_tcp_port, NL_RELIABLE);
     
     if (serversock == NL_INVALID) printErrorExit();
     
@@ -67,9 +70,6 @@ int main()
         nlClose(serversock);
         printErrorExit();
     }
-
-    server_log("server started\n");
-	load_config();
 
 #ifndef WIN32
 	signal(SIGHUP, reload_config);

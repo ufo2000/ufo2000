@@ -132,7 +132,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 			std::string login, password;
 			split_loginpass(packet, login, password);
 
-			server_log("user login (name = '%s', pwd = '%s' ip = %s)\n", 
+			server_log("user login (name='%s', pwd='%s', ip=%s)\n", 
 				login.c_str(), password.c_str(), m_ip.c_str());
 
 			if (login.size() > USERNAME_SIZE_LIMIT) {
@@ -152,7 +152,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 				if (password.size() >= 6 && add_user(login, password)) {
 					server_log("successful registration: %s:%s\n", login.c_str(), password.c_str());
 		    	} else {
-					server_log("login failed: password is too short\n");
+					server_log("registration failed: password is too short\n");
 					send_packet_back(SRV_FAIL, "Registration failed (password is too short)");
 					m_error = true;
 					break;

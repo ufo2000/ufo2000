@@ -27,6 +27,14 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 extern int g_server_reload_config_flag;
 
+extern unsigned long g_srv_tcp_port;
+extern unsigned long g_srv_ave_traffic_limit;
+extern unsigned long g_srv_players_count_limit;
+extern unsigned long g_srv_connections_count_limit;
+extern unsigned long g_srv_login_time_limit;
+extern unsigned long g_srv_username_size_limit;
+extern unsigned long g_srv_packet_size_limit;
+
 void load_config();
 bool split_loginpass(const std::string &str, std::string &login, std::string &pass);
 bool validate_ip(const std::string &ip);
