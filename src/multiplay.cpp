@@ -181,7 +181,7 @@ extern int GAMELOOP;
 void Net::send()
 {
     if (GAMELOOP && (net->gametype != GAME_TYPE_REPLAY))
-        *m_replay_file<<pkt.str()<<"\n";
+        *m_oreplay_file<<pkt.str()<<"\n";
 
     ASSERT(pkt.str_len() > 0);
     send(pkt.str());
@@ -224,7 +224,7 @@ int Net::recv(std::string &pkt)
 				return 0;
 			} else {
                 if ((net->gametype != GAME_TYPE_REPLAY) && GAMELOOP)
-                    *m_replay_file<<pkt<<"\n";
+                    *m_oreplay_file<<pkt<<"\n";
 
                 return pkt.size();
 			}
@@ -232,7 +232,7 @@ int Net::recv(std::string &pkt)
             // loads packet from replay file up to \n, needs to 
             // be rewritten in a proper way
             char buffer[1000];
-            m_replay_file->getline(buffer, 1000);
+            m_ireplay_file->getline(buffer, 1000);
             pkt = buffer;
             return pkt.size();
 		default:

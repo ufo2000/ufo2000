@@ -316,9 +316,9 @@ extern ConsoleStatusLine *g_status;
 class ConsoleWindow;
 extern ConsoleWindow *g_console;
 
-bool loadgame(const char *filename);
+bool loadgame(const char *filename, int compress = 0);
 bool loadgame_stream(std::istream &stream);
-void savegame(const char *filename);
+void savegame(const char *filename, int compress = 0);
 void savegame_stream(std::ostream &stream);
 
 void check_crc(int crc);

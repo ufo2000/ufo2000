@@ -107,7 +107,9 @@ private:
     int recv_initrand();
 	
 public:
-	std::iostream *m_replay_file;
+	std::istream *m_ireplay_file;
+	std::ostream *m_oreplay_file;
+	
 	ClientServerUfo *m_internet_server;
 	GameType gametype;
 

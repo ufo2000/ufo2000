@@ -98,7 +98,7 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
        scenario.cpp server_config.cpp server_gui.cpp                  \
        server_protocol.cpp server_transport.cpp skin.cpp soldier.cpp  \
        sound.cpp spk.cpp stats.cpp terrapck.cpp text.cpp units.cpp    \
-       video.cpp wind.cpp                                             \
+       video.cpp wind.cpp zfstream.cpp                                 \
                                                                       \
        $(SRCS_LUA)                                                    \
                                                                       \

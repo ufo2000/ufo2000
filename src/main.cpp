@@ -51,6 +51,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "text.h"
 #include "random.h"
 #include "stats.h"
+#include "zfstream.h"
 #ifdef HAVE_PNG
 #include "loadpng/loadpng.h"
 #endif
@@ -1208,10 +1209,15 @@ void build_screen(int & select_y)
 /**
  * Save game state to "ufo2000.sav" file
  */
-void savegame(const char *filename)
+void savegame(const char *filename, int compress)
 {
-    std::fstream f(filename, std::ios::binary | std::ios::out);
-    savegame_stream(f);
+    std::ostream* f;
+    if(compress)
+        f = new gzofstream(filename, std::ios::binary | std::ios::out);
+    else
+        f = new std::fstream(filename, std::ios::binary | std::ios::out);
+    savegame_stream(*f);
+    delete f;
 }
 
 /**
@@ -1228,8 +1234,8 @@ void savereplay(const char *filename)
         platoon_remote = pt;
     }
 
-    net->m_replay_file = new std::fstream(filename, std::ios::binary | std::ios::out);
-    savegame_stream(*net->m_replay_file);
+    net->m_oreplay_file = new gzofstream(filename, std::ios::binary | std::ios::out);
+    savegame_stream(*net->m_oreplay_file);
     
     //Restoring platoons for current game
     if(HOST) {
@@ -1269,12 +1275,17 @@ void savegame_stream(std::ostream &stream)
  * @param filename name of the file in which the game state is stored
  * @return         true on success, false on failure
  */
-bool loadgame(const char *filename)
+bool loadgame(const char *filename, int compress)
 {
-    std::fstream f(filename, std::ios::binary | std::ios::in);
-    if (!f.good()) return false;
+    std::istream* f;
+    if(compress)
+        f = new gzifstream(filename, std::ios::binary | std::ios::in);
+    else
+        f = new std::fstream(filename, std::ios::binary | std::ios::in);
 
-    return loadgame_stream(f);
+    if (!f->good()) return false;
+
+    return loadgame_stream(*f);
 }
 
 /**
@@ -1282,10 +1293,12 @@ bool loadgame(const char *filename)
  */
 bool loadreplay(const char *filename)
 {
-    std::fstream* fs = new std::fstream(filename, std::ios::binary | std::ios::in);
-    if (!fs->is_open()) return false;
-    net->m_replay_file = fs;
-    return loadgame_stream(*net->m_replay_file);
+    net->m_ireplay_file = new gzifstream(filename, std::ios::binary | std::ios::in);
+    if (!net->m_ireplay_file->good()) {
+        delete net->m_ireplay_file;
+        return false;
+    }
+    return loadgame_stream(*net->m_ireplay_file);
 }
 
 bool loadgame_stream(std::istream &stream)
@@ -1310,7 +1323,7 @@ bool loadgame_stream(std::istream &stream)
     delete p2;
     delete map;
     delete elist;
-
+                                    
     PersistReadObject(archive, p1);
     PersistReadObject(archive, p2);
     PersistReadObject(archive, platoon_local);
@@ -2155,7 +2168,7 @@ void gameloop()
                     break;
                 case KEY_F2:
                     if (askmenu( _("SAVE GAME") )) {
-                        savegame(F("$(home)/ufo2000.sav"));
+                        savegame(F("$(home)/ufo2000.sav"), 1);
                         // Todo: test if save was successful
                         g_console->printf(COLOR_SYS_OK, _("Game saved") );
 
@@ -2164,7 +2177,7 @@ void gameloop()
                     break;
                 case KEY_F3:
                     if (askmenu( _("LOAD GAME") )) {
-                        if (!loadgame(F("$(home)/ufo2000.sav"))) {
+                        if (!loadgame(F("$(home)/ufo2000.sav" ), 1)) {
                             battle_report( "# %s: %s\n", _("LOAD GAME"), _("failed") );
                             temp_mouse_range_ptr = new MouseRange(0, 0, SCREEN_W - 1, SCREEN_H - 1);
                             alert( _("Saved game not found"), "", "", _("OK"), NULL, 0, 0);
@@ -2264,9 +2277,11 @@ void gameloop()
 
     if (win || loss)
     {
-        // Closes replay file (input or output according to mode, play or replay)
-        delete net->m_replay_file;
-        net->m_replay_file = NULL;
+        // Closes replay file
+        if (net->gametype != GAME_TYPE_REPLAY) {
+            delete net->m_oreplay_file;
+            net->m_oreplay_file = NULL;
+        };
 
         if (net->gametype != GAME_TYPE_REPLAY && askmenu(_("Save replay?"))) {
             std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
@@ -2298,6 +2313,12 @@ void gameloop()
     
         endgame_stats();
     }
+
+        // Closes replay file
+        if (net->gametype == GAME_TYPE_REPLAY) {
+            delete net->m_ireplay_file;
+            net->m_ireplay_file = NULL;
+        };
 
     net->send_quit();
 
@@ -2371,7 +2392,7 @@ game have been played before. I don't know how to fix it in other way.*/
     reset_video();
 
     // Todo: message for "version of savegame not compatible"
-    if (!loadgame(F("$(home)/ufo2000.sav")))
+    if (!loadgame(F("$(home)/ufo2000.sav"),1))
     {
         alert( "", _("Saved game not available"), "", _("OK"), NULL, 0, 0);
         return;
