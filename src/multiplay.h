@@ -20,6 +20,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 #ifndef MULTIPLAY_H
 #define MULTIPLAY_H
+
 #include "item.h"
 #include "soldier.h"
 #include "map.h"
@@ -149,7 +150,7 @@ public:
 	void send_punch(int NID, int _z0, int _x0, int _y0, REAL _fi, REAL _te, int iplace, int req_time);
 
 	void send_add_unit(int num, char *name, int cost);
-	void send_select_unit(int num, int mx, int my);
+	void send_select_unit(int num, int lev, int col, int row);
 	void send_deselect_unit(int num);
 
 	void send_unit_data_size(int size);

@@ -36,7 +36,7 @@ void MouseRange::set_mouse_range()
 #ifdef MOUSE_DEBUG
     lua_message("MouseRange::set_mouse_range()");
 #endif
-    ::set_mouse_range(x_min, y_min, x_max, y_max);
+    ::set_mouse_range(m_x_min, m_y_min, m_x_max, m_y_max);
 }
 
 /**
@@ -49,7 +49,7 @@ void MouseRange::reset_mouse_range(int xminn, int yminn, int xmaxn, int ymaxn)
 #endif
     ASSERT(xminn <= xmaxn); ASSERT(yminn <= ymaxn);
     ASSERT(cur_mouse_range == this);
-    x_min = xminn; y_min = yminn; x_max = xmaxn; y_max = ymaxn;
+    m_x_min = xminn; m_y_min = yminn; m_x_max = xmaxn; m_y_max = ymaxn;
     set_mouse_range();
 }
 
@@ -62,8 +62,8 @@ MouseRange::MouseRange(int xminn, int yminn, int xmaxn, int ymaxn)
     lua_message("MouseRange::MouseRange(int xminn, int yminn, int xmaxn, int ymaxn)");
 #endif
     ASSERT(xminn <= xmaxn); ASSERT(yminn <= ymaxn);
-    x_min = xminn; y_min = yminn; x_max = xmaxn; y_max = ymaxn;
-    prev_mouse_range = cur_mouse_range;
+    m_x_min = xminn; m_y_min = yminn; m_x_max = xmaxn; m_y_max = ymaxn;
+    m_prev_mouse_range = cur_mouse_range;
     cur_mouse_range = this;
     set_mouse_range();
 }
@@ -77,7 +77,7 @@ MouseRange::~MouseRange()
     lua_message("MouseRange::~MouseRange()");
 #endif
     ASSERT(cur_mouse_range == this);
-    cur_mouse_range = prev_mouse_range;
+    cur_mouse_range = m_prev_mouse_range;
     if (cur_mouse_range != NULL) cur_mouse_range->set_mouse_range();
 }
 

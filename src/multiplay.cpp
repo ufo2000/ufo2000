@@ -1080,14 +1080,15 @@ int Net::recv_add_unit()
 	return 1;
 }
 
-void Net::send_select_unit(int num, int mx, int my)
+void Net::send_select_unit(int num, int lev, int col, int row)
 {
 	if (!SEND) return ;
 
 	pkt.create(CMD_SELECT_UNIT);
 	pkt << num;
-	pkt << mx;
-	pkt << my;
+    pkt << lev;
+    pkt << col;
+    pkt << row;
 	send();
 
 	local.SEND = 0;
@@ -1097,13 +1098,14 @@ void Net::send_select_unit(int num, int mx, int my)
 
 int Net::recv_select_unit()
 {
-	int num, mx, my;
+	int num, lev, col, row;
 
 	pkt >> num;
-	pkt >> mx;
-	pkt >> my;
+    pkt >> lev;
+    pkt >> col;
+    pkt >> row;
 
-	if (!remote.select_unit(num, mx, my)) {
+	if (!remote.select_unit(num, lev, col, row)) {
 		error("can't select remote unit");
 		return 0;
 	}

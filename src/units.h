@@ -30,10 +30,9 @@ class Units
 	friend class Connect;
 private:
 	int size;
-	char name[20][26];
-	int cost[20];
-	int x[20], y[20];
-	int lev[20], col[20], row[20];
+    char name[SQUAD_LIMIT][26];
+    int cost[SQUAD_LIMIT];
+    int lev[SQUAD_LIMIT], col[SQUAD_LIMIT], row[SQUAD_LIMIT];
 	int selected;                   //!< number of the soldier currently selected for editing
     int mx1, my1, mx2, my2;
 	int gx, gy, gmx, gmw, gmy, gmh;
@@ -57,6 +56,9 @@ private:
 	void execute_rules_2(Map *map, int map_change_allowed);
 	void execute_rules_3(Map *map, int map_change_allowed);
 	void execute_rules_4(Map *map, int map_change_allowed);
+
+    int minimap_x(int num) {return gmx + (col[num] << 2) + 2;}
+    int minimap_y(int num) {return gmy + (row[num] << 2) + 2;}
 public:
 	int SEND;
 	int START;
@@ -85,9 +87,9 @@ public:
 	void deselect();
 	void draw_lines(int gcol);
 	void draw_text();
-	int select_unit(int num, int mx, int my);
+	int select_unit(int num, int n_lev, int n_col, int n_row);
 	int deselect_unit(int num);
-
+    int is_selected(int num) {return (lev[num] != -1);}
 	friend class Platoon;
 };
 

@@ -573,7 +573,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 35,
-	cost = 100,
+	cost = 75,
 	name = "Heavy Plasma Clip",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 25),
 	pMap = pck_image("$(xcom)/units/floorob.pck", 33),
@@ -614,7 +614,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 37,
-	cost = 150,
+	cost = 100,
 	name = "Plasma Rifle Clip",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 41),
 	pMap = pck_image("$(xcom)/units/floorob.pck", 33),

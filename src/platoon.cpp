@@ -588,11 +588,12 @@ void Platoon::build_Units(Units &u)
 
 void Platoon::send_Units(Units &u)
 {
-	net->send_unit_data_size(0);
-	int num = 0;
-	for (int i = 0; i < u.size; i++) {
-		if (u.x[i] == 0)
-			continue;
+    net->send_unit_data_size(0);
+    int i;
+    int num = 0;
+    for (i = 0; i < u.size; i++) {
+        if (!u.is_selected(i))
+            continue;
 		Soldier *ss = findman(u.name[i]);
 		if (ss != NULL) {
 			pd_local->lev[num] = u.lev[i];

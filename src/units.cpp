@@ -75,23 +75,17 @@ Units::~Units()
 void Units::reset()
 {
 	size = 0;
-	memset(x,    0, sizeof(x));
-	memset(y,    0, sizeof(y));
 	memset(cost, 0, sizeof(cost));
-	memset(lev,  0, sizeof(lev));
-	memset(col,  0, sizeof(col));
-	memset(row,  0, sizeof(row));
 	memset(buf,  0, sizeof(buf));
-	SEND = 0; START = 0;
 	state = PS_MAIN;
-	selected = -1;
+    reset_selections();
 }
 
 void Units::reset_selections()
 {
-	memset(x,   0, sizeof(x));
-	memset(y,   0, sizeof(y));
-	memset(lev, 0, sizeof(lev));
+    int i;
+    for (i = 0; i < SQUAD_LIMIT; i++)
+        lev[i] = -1;
 	memset(col, 0, sizeof(col));
 	memset(row, 0, sizeof(row));
 	SEND = 0; START = 0;
@@ -112,12 +106,13 @@ void Units::set_pos(PanPos pos, int gx, int gy, int gmx, int gmw, int gmy, int g
 /**
  * Select unit (for going on the mission) by putting it onto the map
  */
-int Units::select_unit(int num, int mx, int my)
+int Units::select_unit(int num, int n_lev, int n_col, int n_row)
 {
 	if (num >= size)
 		return 0;
-	x[num] = mx;
-	y[num] = my;
+    lev[num] = n_lev;
+    col[num] = n_col;
+    row[num] = n_row;
 	SEND = 0; START = 0;
 	return 1;
 }
@@ -129,8 +124,9 @@ int Units::deselect_unit(int num)
 {
 	if (num >= size)
 		return 0;
-	x[num] = 0;
-	y[num] = 0;
+    lev[num] = -1;
+    col[num] = 0;
+    row[num] = 0;
 	SEND = 0; START = 0;
 	return 1;
 }
@@ -176,15 +172,15 @@ void Units::print(int gcol)
 				line(screen2, gx - 4, gy + i * 15 + 3, mouse_x, mouse_y, COLOR_WHITE);
 			color = COLOR_DK_BLUE;
 		} else
-			if (x[i] != 0) {    // soldier selected for mission has a position on the map
+			if (is_selected(i)) {    // soldier selected for mission has a position on the map
 				rectfill(screen2, gmx + col[i] * 4 + 1, gmy + row[i] * 4 + 1,
 				         gmx + col[i] * 4 + 3, gmy + row[i] * 4 + 3,
 				         COLOR_YELLOW);
 				if (pos == POS_LEFT) {
-					line(screen2, gx + MAN_NAME_LEN * 8 + 4, gy + i * 15 + 3, x[i], y[i], gcol);
+					line(screen2, gx + MAN_NAME_LEN * 8 + 4, gy + i * 15 + 3, minimap_x(i), minimap_y(i), gcol);
 					//textprintf(screen2, font, gx - 60, gy + i * 15, gcol, "(%d,%d)", col[i], row[i]);
 				} else {
-					line(screen2, gx - 4, gy + i * 15 + 3, x[i], y[i], gcol);
+					line(screen2, gx - 4, gy + i * 15 + 3, minimap_x(i), minimap_y(i), gcol);
 					//textprintf(screen2, font, gx + 20 * 8 + 5, gy + i * 15, gcol, "(%d,%d)", col[i], row[i]);
 				}
                 color = COLOR_GREEN05;   // background for selected man
@@ -236,26 +232,22 @@ void Units::print(int gcol)
  	points = 0;
  	damage_points = 0;
 
-    for (int n = 0; n < size; n++) {
-		if (x[n] != 0) {
-			Soldier * ss = editor->platoon()->findman(name[n]);
-			ASSERT(ss != NULL);
-			points += ss->calc_ammunition_cost();
-		}
+    for (int n = 0; n < size; n++) if (is_selected(n)) {
+        Soldier * ss = editor->platoon()->findman(name[n]);
+        ASSERT(ss != NULL);
+        points += ss->calc_ammunition_cost();
     }
 	//textout(screen2, small, "INFO", gx, 160, 1);
 	// Moved down...
 	// textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, COLOR_GREEN, "total men points=%d", points);
 
-    for (i = 0; i < size; i++) {
-		if (x[i] == 0)
-			continue;
-		Soldier *ss = editor->platoon()->findman(name[i]);
-		ASSERT(ss != NULL);
-		if (ss != NULL) {
-			//ss->build_items_stats(buf, len);
-			build_items_stats(&ss->id, buf, len);
-		}
+    for (i = 0; i < size; i++) if (is_selected(i)) {
+        Soldier *ss = editor->platoon()->findman(name[i]);
+        ASSERT(ss != NULL);
+        if (ss != NULL) {
+            //ss->build_items_stats(buf, len);
+            build_items_stats(&ss->id, buf, len);
+        }
     }
 
 	/*if (pos == POS_LEFT)
@@ -584,20 +576,19 @@ void Units::print_simple(int gcol)
 {
 	text_mode( -1);
 	int i, x1, y1, x2, y2, color = COLOR_GREEN12;
-	for (i = 0; i < size; i++) {
-		if (x[i] != 0) {    // unit is selected for mission
-			if (FLAGS & F_PLANNERDBG) { // show lines of remote
-				if (pos == POS_LEFT) {
-					line(screen2, gx + MAN_NAME_LEN * 8 + 4, gy + i * 15 + 3, x[i], y[i], gcol);
-				} else {
-					line(screen2, gx - 4, gy + i * 15 + 3, x[i], y[i], gcol);
-				}
-			}
-			color = COLOR_GREEN05;
-		} else {
-			color = COLOR_GREEN12;
-		}
-
+    for (i = 0; i < size; i++) {
+        if (is_selected(i)) {
+            if (FLAGS & F_PLANNERDBG) { // show lines of remote
+                if (pos == POS_LEFT) {
+                    line(screen2, gx + MAN_NAME_LEN * 8 + 4, gy + i * 15 + 3, minimap_x(i), minimap_y(i), gcol);
+                } else {
+                    line(screen2, gx - 4, gy + i * 15 + 3, minimap_x(i), minimap_y(i), gcol);
+                }
+            }
+            color = COLOR_GREEN05;
+        } else {
+            color = COLOR_GREEN12;
+        }
 		x1 = gx - 2;          x2 = gx + MAN_NAME_LEN * 8 + 2;
 		y1 = gy + i * 15 - 2; y2 = y1 + 8 + 3;
 		rectfill(screen2, x1, y1, x2, y2, color);  // Background for name-field
@@ -608,7 +599,7 @@ void Units::print_simple(int gcol)
 		/*if (mouse_inside(x1, y1, x2, y2)) {
 			textprintf(screen2, font, gx, gy+200, gcol, "%d", cost[i]);
 		}*/
-	}
+    }
 	draw_text();
 	
 	scenario->draw_deploy_zone(pos, gmx, 0, xcom1_color(REMOTE_COLOR));
@@ -714,10 +705,9 @@ void Units::execute_main(Map *map, int map_change_allowed)
 {
 	int i;
 	if (selected != -1) {
-		int mx = mouse_x;
-		int my = mouse_y;
-		int c = (mx - gmx) / 4;
-		int r = (my - gmy) / 4;
+		int l;
+		int c = (mouse_x - gmx) / 4;
+		int r = (mouse_y - gmy) / 4;
 
 		if (!(FLAGS & F_PLANNERDBG)) { // allow place at any position
 			/*if (pos == POS_LEFT) {
@@ -731,22 +721,20 @@ void Units::execute_main(Map *map, int map_change_allowed)
 			    return;
 		}
 
-		if (!map->passable(0, c, r) || 
-			(map->mcd(0, c, r, 3)->T_Level == -24 && !map->passable(1, c, r))) return;
+        for (l = 0; l < map->level && (!map->passable(l, c, r) || map->isStairs(l, c, r)); l++) ;
+        if (l == map->level) return;
 
 		for (int s = 0; s < size; s++) {
 			if (s == selected)
 				continue;
-			if ((x[s] != 0) && (col[s] == c) && (row[s] == r))
+            if (is_selected(s) && (lev[s] == l) && (col[s] == c) && (row[s] == r))
 				return ;
 		}
 
-		x[selected] = mx;
-		y[selected] = my;
-		lev[selected] = 0;
-		col[selected] = c;     //(x[selected] - gx - (20*8+20)) / 4;
-		row[selected] = r;     //(y[selected] - gy + 10) / 4;
-		net->send_select_unit(selected, x[selected], y[selected]);
+		lev[selected] = l;
+		col[selected] = c;
+		row[selected] = r;
+		net->send_select_unit(selected, lev[selected], col[selected], row[selected]);
 		deselect();
 		return ;
 	}
@@ -759,7 +747,7 @@ void Units::execute_main(Map *map, int map_change_allowed)
 
 		if (mouse_inside(x1, y1, x2, y2)) {
 			if (key[KEY_LCONTROL]) { // do editor
-				//if (x[i]) // don't edit selected
+				//if (is_selected(i)) // don't edit selected
 				//	return;
 				if (editor->set_man(name[i])) {
 					fade_out(10);
@@ -771,8 +759,8 @@ void Units::execute_main(Map *map, int map_change_allowed)
 
 					destroy_bitmap(screen2);
 					screen2 = create_bitmap(640, SCREEN2H - 1); clear(screen2);
-					/*if (x[i]) {
-						x[i] = 0; y[i] = 0;
+					/*if (is_selected(i)) {
+						lev[i] = -1;
 						net->send_deselect_unit(i);
 					}*/
 				}
@@ -782,7 +770,7 @@ void Units::execute_main(Map *map, int map_change_allowed)
 			limit_mouse_range();
 			return ;
 		}
-		if (x[i] != 0) {
+		if (is_selected(i)) {
 			if (mouse_inside(gmx + col[i] * 4 + 0, gmy + row[i] * 4 + 0,
 			                 gmx + col[i] * 4 + 3, gmy + row[i] * 4 + 3)) {
 				selected = i;
@@ -805,7 +793,7 @@ void Units::execute_main(Map *map, int map_change_allowed)
 		int num_of_men_sel = 0;
 		
 		for (i = 0; i < editor->platoon()->num_of_men(); i++) {
-			if (x[i] != 0 && y[i] != 0) {
+			if (is_selected(i)) {
 				Soldier *ss = editor->platoon()->findman(name[i]);
 				ASSERT(ss != NULL);
 				if (ss->has_forbidden_equipment()) {
@@ -1253,8 +1241,8 @@ void Units::execute_right()
 			y1 = gy + i * 15 - 2; y2 = y1 + 8 + 3;
 
 			if (mouse_inside(x1, y1, x2, y2)) {
-				if (x[i] != 0) {
-					x[i] = 0; y[i] = 0;
+				if (is_selected(i)) {
+					lev[i] = -1; // Deselect the current unit
 					net->send_deselect_unit(i);
 				}
 				return ;
@@ -1281,8 +1269,8 @@ void Units::limit_mouse_range()
 {
     ASSERT (temp_mouse_range == NULL);
     temp_mouse_range = new MouseRange(mx1, my1, mx2, my2);
-	if (x[selected] != 0)
-		position_mouse(x[selected], y[selected]);
+	if (is_selected(selected))
+		position_mouse(minimap_x(selected), minimap_y(selected));
 	else {
 		if (pos == POS_LEFT)
 			position_mouse(mx1 + 20, mouse_y);
@@ -1309,9 +1297,8 @@ void Units::draw_lines(int gcol)
 		if (selected == i) {
 			line(screen2, gx + MAN_NAME_LEN * 8 + 4, gy + i * 15 + 3, mouse_x, mouse_y, COLOR_WHITE);
 		} else
-			if (x[i] != 0) {
-				line(screen2, gx + MAN_NAME_LEN * 8 + 4, gy + i * 15 + 3, x[i], y[i], gcol);
+			if (is_selected(i)) {
+				line(screen2, gx + MAN_NAME_LEN * 8 + 4, gy + i * 15 + 3, minimap_x(i), minimap_y(i), gcol);
 			}
 	}
 }
-
