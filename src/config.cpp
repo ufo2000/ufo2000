@@ -57,7 +57,6 @@ void loadini()
 
 	strcpy(PORT, get_config_string(gen, "port", "2000"));
 	strcpy(HOSTNAME, get_config_string(gen, "server", "127.0.0.1"));
-	MODEMPORT = get_config_int(gen, "comport", 2) - 1;
 
 	SCREEN2W = get_config_int(gen, "width", 430);
 	SCREEN2H = get_config_int(gen, "height", 280);

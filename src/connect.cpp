@@ -26,11 +26,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "keys.h"
 #include "spk.h"
 #include "wind.h"
-#include "netmdm.h"
 #include "netsock.h"
-#include "netipx.h"
 #include "multiplay.h"
-#include "netdplay.h"
 #include "connect.h"
 #include "platoon.h"
 #include "units.h"
@@ -242,15 +239,11 @@ int Connect::do_chat()
 	SPK *back09 = new SPK("geograph/back09.scr");      //gamepal used
 
 	install_int_ex(drawit_timer, BPS_TO_TIMER(10));      //ticks each second
-	//position_mouse(160, 100);
-	//set_mouse_range(0, 0, 319, 199);
 
 	back09->show(scr, 0, 0);
 	stretch_blit(scr, screen, 0, 0, 320, 200, 0, 0, 640, 400);
 	stretch_blit(scr, backscr, 0, 0, 320, 200, 0, 0, 640, 400);
 
-	//remote_win = new Wind(backscr, 15, 197, 619, 383, 33);
-	//local_win = new Wind(backscr, 15, 12, 408, 179, 15);
 	local_win = new Wind(backscr, 15, 197, 619, 383, 16);
 	remote_win = new Wind(backscr, 15, 12, 408, 179, 33);
 	info_win = new Wind(backscr, 434, 17, 619, 171, 192);
@@ -258,24 +251,7 @@ int Connect::do_chat()
 	int DONE = 0;
 	char buf[10000]; buf[0] = 0;
 
-	//gametype = MODEM;
-	//gametype = SOCK;
-	//gametype = IPX;
-
-
 	switch (net->gametype) {
-		case MODEM:
-			if (!initmdmgame()) {
-				net->SEND = 0;
-				goto g_return;
-			}
-			break;
-		case IPX:
-			if (!initipxgame()) {
-				net->SEND = 0;
-				goto g_return;
-			}
-			break;
 		case SOCK:
 			if (!HOST) {
 				do {
@@ -293,11 +269,8 @@ int Connect::do_chat()
 		case HOTSEAT:
 			//inithotseatgame();
 			break;
-		case DPLAY:
-			if (!initdplaygame()) {
-				net->SEND = 0;
-				goto g_return;
-			}
+		default:
+			assert(false);
 			break;
 	}
 

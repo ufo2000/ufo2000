@@ -328,7 +328,6 @@ extern Platoon *platoon_local, *platoon_remote;
 extern Explosive *elist;
 extern Net *net;
 extern int BLOODYMENU;
-extern int MODEMPORT;
 extern int SOUND;
 extern int MODSOUND;
 extern int digvoices;

@@ -32,9 +32,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "map.h"
 #include "sound.h"
 #include "netsock.h"
-#include "netipx.h"
-#include "netmdm.h"
-#include "netdplay.h"
 #include "packet.h"
 #include "units.h"
 #include "pfxopen.h"
@@ -127,20 +124,14 @@ void Net::close()
 {
 	log("close()");
 	switch (gametype) {
-		case MODEM:
-			closemdmgame();
-			break;
-		case IPX:
-			closeipxgame();
-			break;
 		case SOCK:
 			closesocketgame();
 			break;
 		case HOTSEAT:
 			closehotseatgame();
 			break;
-		case DPLAY:
-			closedplaygame();
+		default:
+			assert(false);
 			break;
 	}
 }
@@ -167,17 +158,14 @@ void Net::send(char *dat, int size)
 	}
 
 	switch (gametype) {
-		case MODEM:
-			break;
-		case IPX:
-			break;
 		case SOCK:
 			packet_send_socket(dat, size);
 			break;
 		case HOTSEAT:
 			break;
-		case DPLAY:
-			packet_send_dplay(dat, size);
+		default:
+			assert(false);
+			break;
 	}
 }
 
@@ -196,22 +184,13 @@ void Net::send(char *_str)
 
 	log("send:[", str);
 	switch (gametype) {
-		case MODEM:
-			str[l] = '\r';
-			str[l + 1] = '\n';
-			str[l + 2] = 0;
-			packet_send_mdm(str);
-			break;
-		case IPX:
-			packet_send_ipx(str);
-			break;
 		case SOCK:
 			packet_send_socket(str);
 			break;
 		case HOTSEAT:
 			break;
-		case DPLAY:
-			packet_send_dplay(str);
+		default:
+			assert(false);
 	}
 }
 
@@ -219,19 +198,13 @@ void Net::send(char *_str)
 void Net::send_raw(char *str)
 {
 	switch (gametype) {
-		case MODEM:
-			packet_send_mdm(str);
-			break;
-		case IPX:
-			packet_send_ipx(str);
-			break;
 		case SOCK:
 			packet_send_socket(str);
 			break;
 		case HOTSEAT:
 			break;
-		case DPLAY:
-			packet_send_dplay(str);
+		default:
+			assert(false);
 			break;
 	}
 }
@@ -241,20 +214,13 @@ int Net::recv_raw(char *pkt)
 	int pr = 0;
 
 	switch (gametype) {
-		case MODEM:
-			pr = packet_recv_mdm_char(pkt[0]);
-			pkt[1] = 0;
-			break;
-		case IPX:
-			pr = packet_recv_ipx(pkt);
-			break;
 		case SOCK:
 			pr = packet_recv_socket(pkt);
 			break;
 		case HOTSEAT:
 			break;
-		case DPLAY:
-			pr = packet_recv_dplay(pkt);      //!!!ret size of pkt, not 1
+		default:
+			assert(false);
 			break;
 	}
 	return pr;
@@ -271,14 +237,6 @@ void Net::check()
 
 	int pr = 0;
 	switch (gametype) {
-		case MODEM:
-			pr = packet_recv_mdm(recv_str);
-			break;
-			recv_str_len = pr;
-		case IPX:
-			pr = packet_recv_ipx(recv_str);
-			recv_str_len = pr;
-			break;
 		case SOCK:
 			pr = packet_recv_socket(recv_str);
 			recv_str_len = pr;
@@ -286,9 +244,8 @@ void Net::check()
 		case HOTSEAT:
 			pr = 0;
 			break;
-		case DPLAY:
-			pr = packet_recv_dplay(recv_str);      //!!!ret size of pkt, not 1
-			recv_str_len = pr;
+		default:
+			assert(false);
 			break;
 	}
 	assert((recv_str_len >= 0) && (recv_str_len < 1000));
