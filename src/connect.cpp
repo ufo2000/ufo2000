@@ -252,7 +252,7 @@ int Connect::do_chat()
 	info_win = new Wind(backscr, 434, 17, 619, 171, 192);
 
 	int DONE = 0;
-	char buf[10000]; buf[0] = 0;
+	std::string buf;
 
 	switch (net->gametype) {
 		case SOCK:
@@ -269,9 +269,6 @@ int Connect::do_chat()
 					goto g_return;
 				}
 			break;
-		case HOTSEAT:
-			//inithotseatgame();
-			break;
 		default:
 			assert(false);
 			break;
@@ -283,23 +280,23 @@ int Connect::do_chat()
 
 	char version_check_packet[128];
 	sprintf(version_check_packet, "UFO2000 REVISION OF YOUR OPPONENT: %d\r\n", UFO_REVISION_NUMBER);
-	net->send_raw(version_check_packet);
+	net->send(version_check_packet);
 
 	while (!DONE) {
-		if (net->recv_raw(buf)) {
+		if (net->recv(buf)) {
 			int remote_revision;
-			if (sscanf(buf, "UFO2000 REVISION OF YOUR OPPONENT: %d", &remote_revision) == 1) {
+			if (sscanf(buf.c_str(), "UFO2000 REVISION OF YOUR OPPONENT: %d", &remote_revision) == 1) {
 				if (UFO_REVISION_NUMBER == remote_revision) {
-					net->send_raw("START\r\n");
+					net->send("START\r\n");
 					version_check_passed = true;
 				} else {
 					if (remote_revision < UFO_REVISION_NUMBER) {
-						net->send_raw("UFO2000 VERSION CHECK FAILED!\r\n");
-						net->send_raw("YOU UFO2000 VERSION IS OUTDATED\r\n");
-						net->send_raw("\r\n");
-						net->send_raw("PLEASE VISIT http://ufo2000.sourceforge.net\r\n");
-						net->send_raw("AND UPGRADE YOUR UFO2000 VERSION\r\n");
-						net->send_raw("\r\n");
+						net->send("UFO2000 VERSION CHECK FAILED!\r\n");
+						net->send("YOU UFO2000 VERSION IS OUTDATED\r\n");
+						net->send("\r\n");
+						net->send("PLEASE VISIT http://ufo2000.sourceforge.net\r\n");
+						net->send("AND UPGRADE YOUR UFO2000 VERSION\r\n");
+						net->send("\r\n");
 						remote_win->printstr("\nUnfortunately your opponent has an\n");
 						remote_win->printstr("outdated UFO2000 version and you will be\n");
 						remote_win->printstr("unable to play until he upgrades\n");
@@ -309,28 +306,28 @@ int Connect::do_chat()
 						remote_win->printstr("Please visit http://ufo2000.sourceforge.net\n");
 						remote_win->printstr("and upgrade your UFO2000 version\n");
 				    }
-					net->send_raw("QUIT\r\n");
+					net->send("QUIT\r\n");
 					net->SEND = 0;
 					DONE = 1;
 				}
 			}
 
-			if (strstr(buf, "QUIT") != NULL) {
+			if (strstr(buf.c_str(), "QUIT") != NULL) {
 				net->SEND = 0;
 				DONE = 1;
 			}
-			if (strstr(buf, "START") != NULL) {
+			if (strstr(buf.c_str(), "START") != NULL) {
 				if (!version_check_passed) {
-					net->send_raw("UFO2000 VERSION CHECK FAILED!\r\n");
-					net->send_raw("YOU UFO2000 VERSION IS OUTDATED\r\n");
-					net->send_raw("\r\n");
-					net->send_raw("PLEASE VISIT http://ufo2000.sourceforge.net\r\n");
-					net->send_raw("AND UPGRADE YOUR UFO2000 VERSION\r\n");
-					net->send_raw("\r\n");
+					net->send("UFO2000 VERSION CHECK FAILED!\r\n");
+					net->send("YOU UFO2000 VERSION IS OUTDATED\r\n");
+					net->send("\r\n");
+					net->send("PLEASE VISIT http://ufo2000.sourceforge.net\r\n");
+					net->send("AND UPGRADE YOUR UFO2000 VERSION\r\n");
+					net->send("\r\n");
 					remote_win->printstr("\nUnfortunately your opponent has an\n");
 					remote_win->printstr("outdated UFO2000 version and you will be\n");
 					remote_win->printstr("unable to play until he upgrades\n");
-					net->send_raw("QUIT\r\n");
+					net->send("QUIT\r\n");
 					net->SEND = 0;
 				}
 				DONE = 1;
@@ -355,7 +352,7 @@ int Connect::do_chat()
 					remote_win->redraw();
 					break;
 				case KEY_ESC:
-					net->send_raw("QUIT\r\n");
+					net->send("QUIT\r\n");
 					net->SEND = 0;
 					DONE = 1;
 					break;
@@ -401,6 +398,8 @@ int FINISH_PLANNER = 0;
 
 int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 {
+	MODE = PLANNER;
+
 	int mouse_leftr = 1, mouse_rightr = 1;
 	int DONE = 0;
 	//HOST = 0;
@@ -572,15 +571,6 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 		}
 		if (FINISH_PLANNER)
 			break;
-
-		/*if (local.START && remote.START) {
-			if (CONFIRM_FINISH_PLANNER == 0) {
-				net->send_finish_planner();
-				CONFIRM_FINISH_PLANNER = 1;
-			}
-		} else {
-			CONFIRM_FINISH_PLANNER = 0;
-		}*/
 	}
 
 	delete map;

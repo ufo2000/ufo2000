@@ -23,6 +23,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <list>
 #include "video.h"
 #include "wind.h"
 #include "explo.h"
@@ -36,8 +37,28 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "units.h"
 #include "pfxopen.h"
 
+static std::list<std::string> g_hotseat_cmd_queue;
+
+void packet_send_hotseat(const std::string &data)
+{
+	g_hotseat_cmd_queue.push_back(data);
+}
+
+int packet_recv_hotseat(std::string &packet)
+{
+	if (g_hotseat_cmd_queue.empty()) {
+		packet = "";
+		return 0;
+	}
+
+	packet = g_hotseat_cmd_queue.front();
+	g_hotseat_cmd_queue.pop_front();
+	return packet.size();
+}
+
 void inithotseatgame()
 {
+	while (!g_hotseat_cmd_queue.empty()) g_hotseat_cmd_queue.pop_front();
 }
 
 void closehotseatgame()
@@ -49,7 +70,7 @@ void next_turn(int crc);
 void Net::error(char *str)
 {
 	g_console->printf("___error in %s___", str);
-	log(str);
+	log("%s\n", str);
 }
 
 Net::Net()
@@ -58,40 +79,37 @@ Net::Net()
 	queue = new BQ(1000);
 	connect = new Connect();
 	flog = FOPEN_RTEMP("ufo2000.log", "at");
-	log("_____________Net()");
+	log("%s\n", "_____________Net()");
 }
 
 Net::~Net()
 {
-	log("_____________~Net()");
+	log("%s\n", "_____________~Net()");
 	fclose(flog);
 	delete connect;
 	delete queue;
 }
 
-void Net::log(char *str)
+void Net::log(const char *fmt, ...)
 {
-	time_t now = time (NULL);
-	struct tm * t = localtime (&now);
-	char buf[1000];
-	strftime(buf, 1000, "%d/%m/%Y %H:%M:%S", t);
-	fprintf(flog, "%s %s\n", buf, str);
-	fflush(flog);
-}
+	time_t now = time(NULL);
+	struct tm * t = localtime(&now);
+	char timebuf[1000];
+	strftime(timebuf, 1000, "%d/%m/%Y %H:%M:%S", t);
 
-void Net::log(char *str, char *str2)
-{
-	time_t now = time (NULL);
-	struct tm *t = localtime (&now);
-	char buf[1000];
-	strftime(buf, 1000, "%H:%M:%S", t);
-	fprintf(flog, "%s %s %s]", buf, str, str2);
+	va_list arglist;
+	va_start(arglist, fmt);
+
+	fprintf(flog, "%s ", timebuf);
+	vfprintf(flog, fmt, arglist);
 	fflush(flog);
+
+	va_end(arglist);
 }
 
 int Net::init()
 {
-	log("init()");
+	log("%s\n", "init()");
 	SEND = 1;
 
 	connect->reset_uds();
@@ -110,19 +128,19 @@ int Net::init()
 		clear(screen);
 		reset_video();
 		alert(" ", "  GAME START  ", " ", "    OK    ", NULL, 1, 0);
+		inithotseatgame();
 	} else {
 		if (!connect->do_chat() || !connect->do_planner(0)) {
 			close();
 			return 0;
 		}
-		//connect->do_planner();
 	}
 	return 1;
 }
 
 void Net::close()
 {
-	log("close()");
+	log("%s\n", "close()");
 	switch (gametype) {
 		case SOCK:
 			closesocketgame();
@@ -136,148 +154,85 @@ void Net::close()
 	}
 }
 
-void Net::send_message(char *mess)
+void Net::send_message(const std::string &msg)
 {
-	char str[1000];
-	strcpy(str, "_Xmes_");
-	strcat(str, mess);
-	send(str);
+	send(std::string("_Xmes_") + msg);
 }
 
 void Net::send()
 {
 	assert(pkt.str_len() > 0);
 	send(pkt.str());
-	//send(pkt.str(), pkt.str_len());
 }
 
-void Net::send(char *dat, int size)
+void Net::send(const std::string &pkt)
 {
-	if (FLAGS & F_RAWMESSAGES) {
-		g_console->printf("send:[PLAYERDATA size %d byte", size);
-	}
+	if (FLAGS & F_RAWMESSAGES) g_console->printf("send:[%s]", pkt.c_str());
+
+	log("send:[%s]\n", pkt.c_str());
 
 	switch (gametype) {
 		case SOCK:
-			packet_send_socket(dat, size);
+			packet_send_socket((char *)pkt.data(), pkt.size()); // $$$
 			break;
 		case HOTSEAT:
-			break;
-		default:
-			assert(false);
-			break;
-	}
-}
-
-void Net::send(char *_str)
-{
-	char str[1000];
-	strcpy(str, _str);
-
-	int l = strlen(str);
-	str[l] = '\n';
-	str[l + 1] = 0;
-
-	if (FLAGS & F_RAWMESSAGES) {
-		g_console->printf("send:[%s", str);
-	}
-
-	log("send:[", str);
-	switch (gametype) {
-		case SOCK:
-			packet_send_socket(str);
-			break;
-		case HOTSEAT:
+			if (MODE != PLANNER)
+				packet_send_hotseat(pkt);
 			break;
 		default:
 			assert(false);
 	}
 }
 
-
-void Net::send_raw(char *str)
+int Net::recv(std::string &pkt)
 {
+	pkt = "";
 	switch (gametype) {
-		case SOCK:
-			packet_send_socket(str);
-			break;
+		case SOCK: { // $$$
+			char temp[1000];
+			int size = packet_recv_socket(temp);
+			pkt = std::string(temp, size);
+			return size;
+		}
 		case HOTSEAT:
-			break;
+			if (MODE != WATCH) return 0;
+			packet_recv_hotseat(pkt);
+			return pkt.size();
 		default:
 			assert(false);
 			break;
 	}
-}
-
-int Net::recv_raw(char *pkt)
-{
-	int pr = 0;
-
-	switch (gametype) {
-		case SOCK:
-			pr = packet_recv_socket(pkt);
-			break;
-		case HOTSEAT:
-			break;
-		default:
-			assert(false);
-			break;
-	}
-	return pr;
+	return 0;
 }
 
 extern int GAMELOOP;
 
 void Net::check()
 {
-	//if (!platoon_remote->nomoves())
-	//	return;
-	char recv_str[1000];      //memset(recv_str, 0, sizeof(recv_str));
-	int recv_str_len = 0;
+	std::string packet;
 
-	int pr = 0;
-	switch (gametype) {
-		case SOCK:
-			pr = packet_recv_socket(recv_str);
-			recv_str_len = pr;
-			break;
-		case HOTSEAT:
-			pr = 0;
-			break;
-		default:
-			assert(false);
-			break;
-	}
-	assert((recv_str_len >= 0) && (recv_str_len < 1000));
-	//if (!recv_str_len)
-	//	recv_str_len = strlen(recv_str);
-	if (pr) {
-		//queue->put(recv_str);
-		queue->put(recv_str, recv_str_len);
+	recv(packet);
+
+	if (!packet.empty()) {
+		queue->put((char *)packet.data(), packet.size());
 		if (FLAGS & F_RAWMESSAGES) {
-			g_console->printf("put:[%d]", recv_str_len);
-			g_console->print(recv_str);
+			g_console->printf("put:[%d]", packet.size());
+			g_console->print(packet.c_str());
 		}
 	}
+
 	if (GAMELOOP && (!platoon_remote->nomoves()))
 		return ;
 
-	pr = 0;
-	//if (queue->get(recv_str))
-	if (queue->get(recv_str, recv_str_len))
-		pr = 1;
-
-	if (!pr)
-		return ;
+	if (!queue->get(packet)) return;
 
 	if (FLAGS & F_RAWMESSAGES) {
-		g_console->printf("get:[%d]", recv_str_len);
-		g_console->print(recv_str);      //info->printstr("], ");
+		g_console->printf("get:[%d]", packet.size());
+		g_console->print(packet.c_str());
 	}
 
-	log("recv:[", recv_str);
-	//switch (pkt.command(recv_str)) {
-	switch (pkt.command(recv_str, recv_str_len)) {
+	log("recv:[%s]\n", packet.c_str());
+	switch (pkt.command((char *)packet.data(), packet.size())) {
 		case CMD_NOTICE:
 			recv_notice();
 			break;
@@ -288,7 +243,14 @@ void Net::check()
 			recv_restart();
 			break;
 		case CMD_ENDTURN:
-			recv_endturn();
+			if (gametype == HOTSEAT && MODE == WATCH) {
+				MODE = MAP3D;
+				savegame("ufo2000.tmp");
+				g_time_left = g_time_limit;
+				map->m_minimap_area->set_full_redraw();
+			} else {
+				recv_endturn();
+			}
 			break;
 		case CMD_OPENDOOR:
 			recv_open_door();
@@ -367,10 +329,7 @@ void Net::check()
 			g_console->print(pkt.str(), xcom1_color(32));
 			break;
 		case CMD_NONE:
-			//play(S_MESSAGE);
-			//if (FLAGS & F_RAWMESSAGES == 0) {
-			g_console->print(recv_str, xcom1_color(144));      //info->printstr("], ");
-			//}
+			assert(false);
 			break;
 	};
 }
@@ -1158,6 +1117,7 @@ int Net::recv_deselect_unit()
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 extern int FINISH_PLANNER;
+
 void Net::send_finish_planner()
 {
 	if (!SEND) return ;
@@ -1186,14 +1146,8 @@ int Net::recv_finish_planner()
 	if (CNF) {
 		FINISH_PLANNER = 1;
 	}
-	//if  (CONFIRM_FINISH_PLANNER != 2)
-	//if (local.START && remote.START) {
-	//	send_confirm_finish_planner();
-	// CONFIRM_FINISH_PLANNER = 2;
-	//}
 	return 1;
 }
-
 
 void Net::send_unit_data_size(int size)
 {
@@ -1206,7 +1160,6 @@ void Net::send_unit_data_size(int size)
 	if (size)
 		local.SEND = 1;
 }
-
 
 extern PLAYERDATA *pd_remote;
 
@@ -1305,162 +1258,4 @@ int Net::recv_time_limit()
 	pkt >> time_limit;
 	g_time_limit = time_limit;
 	return 1;
-}
-
-char *replay_data = NULL;
-int replay_size = 0;
-int replay_cur = 0;
-int REPLAY = 0;
-
-void Net::replay_load(char *fn)
-{
-	REPLAY = 0;
-	replay_cur = 0;
-
-	int fh = OPEN_GTEMP(fn, O_RDONLY | O_BINARY);
-	assert(fh != -1);
-	if (fh == -1)
-		return ;
-	replay_size = filelength(fh);
-	if (replay_size <= 0)
-		return ;
-
-	if (replay_data != NULL)
-		delete replay_data;
-	replay_data = new char[replay_size];
-	replay_size = read(fh, replay_data, replay_size);
-	if (replay_size <= 0)
-		return ;
-	::close(fh);
-
-	REPLAY = 1;
-}
-
-extern Platoon *p1;
-extern Platoon *p2;
-
-void Net::replay()
-{
-	if (!REPLAY)
-		return ;
-
-	char str[10000]; memset(str, 0, sizeof(str));
-	int i = 0;
-
-	while (replay_data[replay_cur] != 0xA) {
-		str[i++] = replay_data[replay_cur++];
-		if (replay_cur >= replay_size) {
-			REPLAY = 0;
-			break;
-		}
-	}
-	replay_cur++;
-
-	g_console->print(str);
-
-	char *xcom = strstr(str, "send:[ ");
-	if (xcom != NULL) {
-		platoon_local = p2;
-		platoon_remote = p1;
-	} else {
-		xcom = strstr(str, "recv:[ ");
-		if (xcom != NULL) {
-			platoon_local = p1;
-			platoon_remote = p2;
-		} else
-			return ;
-	}
-
-
-	switch (pkt.command(xcom)) {
-		case CMD_NOTICE:
-			recv_notice();
-			break;
-		case CMD_QUITGAME:
-			recv_quit();
-			break;
-		case CMD_RESTARTGAME:
-			//recv_restart();
-			break;
-		case CMD_ENDTURN:
-			recv_endturn();
-			break;
-		case CMD_OPENDOOR:
-			recv_open_door();
-			break;
-		case CMD_CHANGEPOSE:
-			recv_change_pose();
-			break;
-		case CMD_PRIMEGRENADE:
-			recv_prime_grenade();
-			break;
-		case CMD_UNLOAD_AMMO:
-			recv_unload_ammo();
-			break;
-		case CMD_LOAD_AMMO:
-			recv_load_ammo();
-			break;
-		case CMD_DETONATE_ITEM:
-			recv_detonate_item();
-			break;
-		case CMD_EXPLODE:
-			recv_explode();
-			break;
-		case CMD_TAKE_ITEM:
-			recv_select_item();
-			break;
-		case CMD_DROP_ITEM:
-			recv_deselect_item();
-			break;
-		case CMD_MOVE:
-			recv_move();
-			break;
-		case CMD_FACE:
-			recv_face();
-			break;
-		case CMD_PUNCH:
-			recv_punch();
-			break;
-		case CMD_THROW_ITEM:
-			recv_thru();
-			break;
-		case CMD_AIMEDTHROW:
-			recv_aimedthrow();
-			break;
-		case CMD_BEAM_LASER:
-			recv_beam();
-			break;
-		case CMD_FIRE_GUN:
-			recv_fire();
-			break;
-		case CMD_ADD_UNIT:
-			//recv_add_unit();
-			break;
-		case CMD_SELECT_UNIT:
-			//recv_select_unit();
-			break;
-		case CMD_DESELECT_UNIT:
-			//recv_deselect_unit();
-			break;
-		case CMD_UNIT_DATA_SIZE:
-			//recv_unit_data_size();
-			break;
-		case CMD_UNIT_DATA:
-			//recv_unit_data();
-			break;
-		case CMD_MAP_DATA:
-			//recv_map_data();
-			break;
-		case CMD_FINISH_PLANNER:
-			//recv_finish_planner();
-			break;
-		case CMD_MESSAGE:
-			soundSystem::getInstance()->play(SS_BUTTON_PUSH_2);
-			g_console->print(pkt.str(), xcom1_color(32));
-			break;
-		case CMD_NONE:
-        default:
-			break;
-        
-	}
 }

@@ -253,20 +253,6 @@ int selectplaymode()
 	return ishost;
 }
 
-int setmodemplay()
-{
-	int host = selectplaymode();
-	net->gametype = MODEM;
-	return host;
-}
-
-int setnetplay()
-{
-	int host = selectplaymode();
-	net->gametype = IPX;
-	return host;
-}
-
 int setsocketplay()
 {
 	int host = selectplaymode();
@@ -279,14 +265,6 @@ int sethotseatplay()
 	net->gametype = HOTSEAT;
 	return 1;
 }
-
-int setdplayplay()
-{
-	int host = selectplaymode();
-	net->gametype = DPLAY;
-	return host;
-}
-
 
 #define FG 0
 #define BG 1

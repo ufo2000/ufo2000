@@ -191,9 +191,9 @@ BQ::BQ(int sz) {
 BQ::~BQ() {
 }
 
-void BQ::put(char *str)
+void BQ::put(const std::string &str)
 {
-	bq.push_back(std::string(str));
+	bq.push_back(str);
 }
 
 void BQ::put(char *buf, int buf_size)
@@ -201,11 +201,11 @@ void BQ::put(char *buf, int buf_size)
 	bq.push_back(std::string(buf, buf_size));
 }
 
-int BQ::get(char *str)
+int BQ::get(std::string &str)
 {
 	if (bq.empty()) return 0;
 
-	strcpy(str, bq.front().c_str());
+	str = bq.front();
 	bq.pop_front();
 	return 1;
 }

@@ -32,8 +32,8 @@ private:
 	long     ID;
 	long     size;
 
-	int m_visible[4][10 * 6][10 * 6];
-	int m_seen[4][10 * 6][10 * 6];
+	char m_visible[4][10 * 6][10 * 6];
+	char m_seen[4][10 * 6][10 * 6];
 
 public:
 	Platoon() { memset(m_seen, 0, sizeof(m_seen)); }

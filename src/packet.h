@@ -84,9 +84,9 @@ public:
 	BQ(int sz);
 	~BQ();
 
-	void put(char *str);
+	void put(const std::string &str);
 	void put(char *buf, int buf_size);
-	int get(char *str);
+	int get(std::string &str);
 	int get(char *buf, int &buf_size);
 };
 

@@ -27,18 +27,19 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "connect.h"
 #include "packet.h"
 
-enum GameType {HOTSEAT, MODEM, IPX, SOCK, DPLAY};
+enum GameType {HOTSEAT, SOCK};
 
 class Net
 {
 public:
 	int SEND;
 
-	void send_raw(char *str);
-	int recv_raw(char *str);
-	void send(char *dat, int size);
+	void send(const std::string &packet);
+	void send(const char *buf, int size) { send(std::string(buf, size)); }
+	int recv(std::string &pkt);
+
 private:
-	void send(char *_str);
+	void send();
 
 	FILE *flog;
 	BQ *queue;
@@ -46,8 +47,6 @@ private:
 
 	Item *itaken;
 	Connect *connect;
-
-	void send();
 
 	int recv_notice();
 	int recv_quit();
@@ -75,7 +74,6 @@ private:
 	int recv_aimedthrow();
 
 	int recv_shoot();
-	//int recv_time();
 
 	int recv_add_unit();
 	int recv_select_unit();
@@ -92,11 +90,10 @@ public:
 	int init();
 	void close();
 	void check();
-	void log(char *str);
-	void log(char *str, char *str2);
+	void log(const char *fmt, ...);
 	void error(char *str);
 
-	void send_message(char *mess);
+	void send_message(const std::string &msg);
 
 	void send_notice();
 	void send_quit();
@@ -124,11 +121,6 @@ public:
 	void send_aimedthrow(int NID, int _z0, int _x0, int _y0, REAL _fi, REAL _te, int iplace, int req_time);
 	void send_punch(int NID, int _z0, int _x0, int _y0, REAL _fi, REAL _te, int iplace, int req_time);
 
-	///void send_shoot(int NID, int x, int y, int tcol, int trow,
-	//					 int iplace, int btype, int whit, int ttime, int harm);
-	//void send_time(int NID, int time);
-	//void command(Command cmd, const char *types, ...);
-
 	void send_add_unit(int num, char *name, int cost);
 	void send_select_unit(int num, int mx, int my);
 	void send_deselect_unit(int num);
@@ -140,12 +132,6 @@ public:
 
 	void send_finish_planner();
 	int recv_finish_planner();
-	void send_confirm_finish_planner();
-	int recv_confirm_finish_planner();
-
-	void replay_load(char *fn);
-	void replay();
 };
-
 
 #endif

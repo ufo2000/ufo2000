@@ -418,5 +418,4 @@ int Icon::inside(int mx, int my)
 void Icon::show_eot()
 {
 	tac00->show_strech(screen, 0, 0, 640, 400);
-	alert(" ", "  NEXT TURN  ", " ", "    OK    ", NULL, 1, 0);
 }

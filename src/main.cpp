@@ -414,7 +414,7 @@ void initmain(int argc, char *argv[])
 		close(fh);
 	}
 
-	set_window_title("UFO 2000");
+	set_window_title("UFO2000");
 	set_window_close_button(0);
 #ifdef WIN32
 	HICON hi = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON));
@@ -618,7 +618,11 @@ void next_turn(int crc)
 	}
 
 	if (net->gametype == HOTSEAT) {
+    //	Load the game state for the start of enemy turn and switch to WATCH mode
 		icon->show_eot();
+		loadgame("ufo2000.tmp");
+		MODE = WATCH;
+
 		map->m_minimap_area->set_full_redraw();
 		g_console->set_full_redraw();
 
@@ -629,10 +633,10 @@ void next_turn(int crc)
 		sel_man = platoon_local->captain();
 		if (sel_man != NULL)
 			map->center(sel_man);
-//		map->clearseen();
-		MODE = MAP3D;
-		g_time_left = g_time_limit;
-		RECALC_VISIBILITY = 1;      // !!!!!!!!!!!!!!!!!
+
+		RECALC_VISIBILITY = 1;
+
+		alert(" ", "  NEXT TURN  ", " ", "    OK    ", NULL, 1, 0);
 	}
 
 	if (crc == -1) {
@@ -723,14 +727,18 @@ void build_screen(int & select_y)
 /**
  * Save game state to "ufo2000.sav" file
  */
-void savegame()
+void savegame(const char *filename)
 {
-	std::fstream f("ufo2000.sav", std::ios::binary | std::ios::out);
+	savegame(std::fstream(filename, std::ios::binary | std::ios::out));
+}
+
+void savegame(std::iostream &stream)
+{
 	char sign[64];
 	sprintf(sign, "ufo2000 %s (%s %s)\n", UFO_VERSION_STRING, __DATE__, __TIME__);
-	f.write(sign, strlen(sign) + 1);
+	stream.write(sign, strlen(sign) + 1);
 
-	persist::Engine archive(f, persist::Engine::modeWrite);
+	persist::Engine archive(stream, persist::Engine::modeWrite);
 
 	PersistWriteBinary(archive, &turn, sizeof(turn));
 	PersistWriteBinary(archive, &MODE, sizeof(MODE));
@@ -758,12 +766,17 @@ bool loadgame(const char *filename)
 	std::fstream f(filename, std::ios::binary | std::ios::in);
 	if (!f.is_open()) return false;
 
+	return loadgame(f);
+}
+
+bool loadgame(std::iostream &stream)
+{
 	char sign[64], buff[64];
 	sprintf(sign, "ufo2000 %s (%s %s)\n", UFO_VERSION_STRING, __DATE__, __TIME__);
-	f.read(buff, strlen(sign) + 1);
+	stream.read(buff, strlen(sign) + 1);
 	if (strcmp(sign, buff) != 0) return false;
 
-	persist::Engine archive(f, persist::Engine::modeRead);
+	persist::Engine archive(stream, persist::Engine::modeRead);
 
 	PersistReadBinary(archive, &turn, sizeof(turn));
 	PersistReadBinary(archive, &MODE, sizeof(MODE));
@@ -807,6 +820,9 @@ void gameloop()
 	} else {
 		g_time_left = 0;
 	}
+
+	if (net->gametype == HOTSEAT)
+		savegame("ufo2000.tmp");
 
 	while (!DONE) {
 
@@ -1034,7 +1050,7 @@ void gameloop()
 					break;
 				case KEY_F2:
 					if (askmenu("SAVE GAME"))
-						savegame();
+						savegame("ufo2000.sav");
 					break;
 				case KEY_F3:
 					if (askmenu("LOAD GAME")) {

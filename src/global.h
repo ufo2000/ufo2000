@@ -322,7 +322,7 @@ class Wind;
 class PCK;
 class Soldier;
 
-enum Mode { MAP2D, MAP3D, MAN, WATCH, UNIT_INFO };
+enum Mode { MAP2D, MAP3D, MAN, WATCH, UNIT_INFO, PLANNER };
 
 extern volatile int CHANGE;
 extern Map *map;
@@ -374,6 +374,11 @@ class ConsoleStatusLine;
 extern ConsoleStatusLine *g_status;
 class ConsoleWindow;
 extern ConsoleWindow *g_console;
+
+bool loadgame(const char *filename);
+bool loadgame(std::iostream &stream);
+void savegame(const char *filename);
+void savegame(std::iostream &stream);
 
 #define CELL_SCR_X 16
 #define CELL_SCR_Y 8
