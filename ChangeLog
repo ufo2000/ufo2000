@@ -1,4 +1,22 @@
-Changes in version 0.4.0      ??? ?? ??? 2004
+Changes in version 0.4.0.344  Mon 01 Mar 2004
+   - the game now has win32-installer (script for NSIS contributed 
+     by Daniel "SupSuper" Albano)
+   - French readme file translation added (by Benjamin Power and JFarceur)
+   - added music volume config to ufo2000.ini ('music_volume' variable), 
+     also it is now possible to adjust music volume using keypad '+' and '-' 
+     keys in the game
+   - now lua scripts for user maps are moved to newmaps subdirectory, the 
+     game loads all the files with lua extension from it
+   - some bugs fixed
+
+Changes in version 0.4.0.334  Sat 07 Feb 2004
+   - added support for different audio formats and a new battlescape 
+     soundtrack by ATeX from project Xenocide
+   - new terrain type ('Airfield' by Twilight Owl)
+   - alternative keymap switch for notebook users (F9 key)
+   - some bugs fixed
+
+Changes in version 0.4.0.324  Wed 28 Jan 2004
    - internet game server is now used to find opponents and hold tournaments
    - reaction (opportunity) fire
    - support for data files from X-COM demo added
