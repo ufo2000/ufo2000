@@ -82,7 +82,7 @@ int Item::obdata_get_int(int item_index, const char *property_name)
 	lua_pushstring(L, property_name);
 	lua_gettable(L, -2);
 	ASSERT(lua_isnumber(L, -1));
-	int result = lua_tonumber(L, -1);
+	int result = (int)lua_tonumber(L, -1);
 	lua_settop(L, stack_top);
 	return result;
 }
@@ -97,12 +97,15 @@ std::string Item::obdata_get_string(int item_index, const char *property_name)
     // Enter [item_index] table
 	lua_pushnumber(L, item_index);
 	lua_gettable(L, -2);
-	ASSERT(lua_istable(L, -1));
-    // Get property value
-	lua_pushstring(L, property_name);
-	lua_gettable(L, -2);
-	ASSERT(lua_isstring(L, -1));
-	std::string result = lua_tostring(L, -1);
+	std::string result = "<empty>";
+	if (lua_istable(L, -1)) {
+	    // Get property value
+		lua_pushstring(L, property_name);
+		lua_gettable(L, -2);
+		if (lua_isstring(L, -1)) {
+			result = lua_tostring(L, -1);
+		}
+	}
 	lua_settop(L, stack_top);
 	return result;
 }
@@ -200,19 +203,21 @@ void Item::od_info(int type, int gx, int gy, int gcol)
 	}
 
 	if (obdata_ammo(type, 0) != 255) {
-		textprintf(screen2, font, gx, gy, gcol, "Ammo1: %s", obdata_name(obdata_ammo(type, 0)).c_str());
+		textprintf(screen2, font, gx, gy, gcol, " Ammo1: %s", obdata_name(obdata_ammo(type, 0)).c_str());
 		gy += 10;
 	}
 	if (obdata_ammo(type, 1) != 255) {
-		textprintf(screen2, font, gx, gy, gcol, "Ammo2: %s", obdata_name(obdata_ammo(type, 1)).c_str());
+		textprintf(screen2, font, gx, gy, gcol, " Ammo2: %s", obdata_name(obdata_ammo(type, 1)).c_str());
 		gy += 10;
 	}
 	if (obdata_ammo(type, 2) != 255) {
-		textprintf(screen2, font, gx, gy, gcol, "Ammo3: %s", obdata_name(obdata_ammo(type, 2)).c_str());
+		textprintf(screen2, font, gx, gy, gcol, " Ammo3: %s", obdata_name(obdata_ammo(type, 2)).c_str());
 		gy += 10;
 	}
 
 	textprintf(screen2, font, gx, gy, gcol, "Weight: %d", obdata_weight(type));
+	gy += 10;
+	textprintf(screen2, font, gx, gy, gcol, "  Cost: %d", obdata_cost(type));
 	gy += 10;
 }
 

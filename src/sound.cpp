@@ -291,12 +291,12 @@ static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log,
     unsigned curp = 0;
 
     buf_fread(buffer, 12, inbuf, &curp);       /* check RIFF header */
-
+/*
     log<<std::hex;
     for (i=0; i<12; i++)
         log<<" 0x"<<static_cast<int>(buffer[i]);
     log<<std::endl;
-
+*/
     if (memcmp(buffer, "RIFF", 4) || memcmp(buffer+8, "WAVE", 4)) {
         if (verbose)
             log<<"Not RIFF WAVE.\n";
@@ -553,8 +553,11 @@ void soundFile::loadCeCat(const std::string& buf, std::ostream& log,
                        "next offset should be 0x"
                    <<(lengths[i] + offsets[i] + datbytes)
                    <<", is 0x"<<offsets[i+1]<<std::endl;
-            log<<"Giving 0x"<<lengths[i]<<" bytes at offset 0x"
-               <<(offsets[i] + datbytes)<<" to wav2sample()"<<std::endl;
+
+            if (verbose)
+	            log<<"Giving 0x"<<lengths[i]<<" bytes at offset 0x"
+    	           <<(offsets[i] + datbytes)<<" to wav2sample()"<<std::endl;
+
             std::string chunk = buf.substr(offsets[i] + datbytes, lengths[i]);
 
             smpl = wav2sample(chunk, log, verbose);

@@ -1,6 +1,6 @@
 AddXcomItem {
 	index = 0,
-	cost = 0,
+	cost = 51,
 	name = "PISTOL",
 	pInv = 3,
 	pMap = 3,
@@ -34,7 +34,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 1,
-	cost = 26,
+	cost = 51,
 	name = "PISTOL CLIP",
 	pInv = 4,
 	pMap = 4,
@@ -68,7 +68,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 2,
-	cost = 0,
+	cost = 68,
 	name = "RIFLE",
 	pInv = 1,
 	pMap = 1,
@@ -102,7 +102,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 3,
-	cost = 30,
+	cost = 68,
 	name = "RIFLE CLIP",
 	pInv = 2,
 	pMap = 2,
@@ -136,7 +136,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 4,
-	cost = 0,
+	cost = 50,
 	name = "HEAVY CANNON",
 	pInv = 11,
 	pMap = 11,
@@ -170,7 +170,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 5,
-	cost = 56,
+	cost = 50,
 	name = "CANNON AP-AMMO",
 	pInv = 12,
 	pMap = 8,
@@ -204,7 +204,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 6,
-	cost = 52,
+	cost = 50,
 	name = "CANNON HE-AMMO",
 	pInv = 13,
 	pMap = 9,
@@ -238,7 +238,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 7,
-	cost = 60,
+	cost = 50,
 	name = "CANNON I-AMMO",
 	pInv = 14,
 	pMap = 10,
@@ -272,7 +272,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 8,
-	cost = 0,
+	cost = 75,
 	name = "AUTO-CANNON",
 	pInv = 7,
 	pMap = 7,
@@ -306,7 +306,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 9,
-	cost = 42,
+	cost = 75,
 	name = "AUTO-CANNON AP-AMMO",
 	pInv = 8,
 	pMap = 12,
@@ -340,7 +340,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 10,
-	cost = 44,
+	cost = 75,
 	name = "AUTO-CANNON HE-AMMO",
 	pInv = 9,
 	pMap = 13,
@@ -374,7 +374,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 11,
-	cost = 48,
+	cost = 75,
 	name = "AUTO-CANNON I-AMMO",
 	pInv = 10,
 	pMap = 14,
@@ -408,7 +408,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 12,
-	cost = 0,
+	cost = 72,
 	name = "ROCKET LAUNCHER",
 	pInv = 15,
 	pMap = 15,
@@ -442,7 +442,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 13,
-	cost = 75,
+	cost = 72,
 	name = "SMALL ROCKET",
 	pInv = 16,
 	pMap = 16,
@@ -476,7 +476,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 14,
-	cost = 100,
+	cost = 72,
 	name = "LARGE ROCKET",
 	pInv = 17,
 	pMap = 17,
@@ -510,7 +510,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 15,
-	cost = 90,
+	cost = 72,
 	name = "INCENDIARY ROCKET",
 	pInv = 18,
 	pMap = 18,
@@ -544,7 +544,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 16,
-	cost = 46,
+	cost = 101,
 	name = "LASER PISTOL",
 	pInv = 5,
 	pMap = 5,
@@ -578,7 +578,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 17,
-	cost = 60,
+	cost = 173,
 	name = "LASER GUN",
 	pInv = 0,
 	pMap = 0,
@@ -612,7 +612,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 18,
-	cost = 85,
+	cost = 75,
 	name = "HEAVY LASER",
 	pInv = 6,
 	pMap = 6,
@@ -680,7 +680,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 20,
-	cost = 60,
+	cost = 30,
 	name = "SMOKE GRENADE",
 	pInv = 20,
 	pMap = 20,
@@ -714,7 +714,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 21,
-	cost = 70,
+	cost = 30,
 	name = "PROXIMITY GRENADE",
 	pInv = 21,
 	pMap = 21,
@@ -884,7 +884,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 26,
-	cost = 0,
+	cost = 100,
 	name = "STUN ROD",
 	pInv = 26,
 	pMap = 26,
@@ -940,108 +940,6 @@ AddXcomItem {
 	weight = 3,
 	primeType = 0,
 	_2D = 0,
-	isShootable = 0,
-	isWeapon = 0,
-	isGun = 0,
-	isAmmo = 0,
-	twoHanded = 0,
-	wayPoints = 0,
-	isAlien = 0,
-	_35 = 0,
-}
-
-AddXcomItem {
-	index = 28,
-	cost = 40,
-	name = "empty",
-	pInv = 0,
-	pMap = 7,
-	damage = 40,
-	importance = 1,
-	width = 1,
-	height = 3,
-	ammo = {255, 255, 255},
-	pHeld = 0,
-	_1E = 14,
-	damageType = 3,
-	accuracy = {50, 65, 80},
-	time = {15, 30, 60},
-	rounds = 10,
-	hitType = 8,
-	throw_accuracy = 100,
-	_29 = 50,
-	_2A = 20,
-	weight = 1,
-	primeType = 0,
-	_2D = 1,
-	isShootable = 0,
-	isWeapon = 0,
-	isGun = 0,
-	isAmmo = 0,
-	twoHanded = 0,
-	wayPoints = 0,
-	isAlien = 0,
-	_35 = 0,
-}
-
-AddXcomItem {
-	index = 29,
-	cost = 40,
-	name = "empty",
-	pInv = 0,
-	pMap = 7,
-	damage = 40,
-	importance = 20,
-	width = 1,
-	height = 3,
-	ammo = {255, 255, 255},
-	pHeld = 0,
-	_1E = 14,
-	damageType = 3,
-	accuracy = {50, 65, 80},
-	time = {15, 30, 60},
-	rounds = 10,
-	hitType = 8,
-	throw_accuracy = 100,
-	_29 = 50,
-	_2A = 20,
-	weight = 22,
-	primeType = 0,
-	_2D = 1,
-	isShootable = 0,
-	isWeapon = 0,
-	isGun = 0,
-	isAmmo = 0,
-	twoHanded = 0,
-	wayPoints = 0,
-	isAlien = 0,
-	_35 = 0,
-}
-
-AddXcomItem {
-	index = 30,
-	cost = 40,
-	name = "empty",
-	pInv = 0,
-	pMap = 7,
-	damage = 40,
-	importance = 20,
-	width = 1,
-	height = 3,
-	ammo = {255, 255, 255},
-	pHeld = 0,
-	_1E = 14,
-	damageType = 3,
-	accuracy = {50, 65, 80},
-	time = {15, 30, 60},
-	rounds = 10,
-	hitType = 8,
-	throw_accuracy = 100,
-	_29 = 50,
-	_2A = 20,
-	weight = 22,
-	primeType = 0,
-	_2D = 1,
 	isShootable = 0,
 	isWeapon = 0,
 	isGun = 0,
@@ -1156,7 +1054,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 34,
-	cost = 0,
+	cost = 166,
 	name = "Heavy Plasma",
 	pInv = 30,
 	pMap = 29,
@@ -1190,7 +1088,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 35,
-	cost = 115,
+	cost = 166,
 	name = "Heavy Plasma Clip",
 	pInv = 25,
 	pMap = 33,
@@ -1224,7 +1122,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 36,
-	cost = 0,
+	cost = 243,
 	name = "Plasma Rifle",
 	pInv = 31,
 	pMap = 30,
@@ -1258,7 +1156,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 37,
-	cost = 80,
+	cost = 243,
 	name = "Plasma Rifle Clip",
 	pInv = 41,
 	pMap = 33,
@@ -1292,7 +1190,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 38,
-	cost = 0,
+	cost = 149,
 	name = "Plasma Pistol",
 	pInv = 32,
 	pMap = 31,
@@ -1326,7 +1224,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 39,
-	cost = 52,
+	cost = 149,
 	name = "Plasma Pistol Clip",
 	pInv = 34,
 	pMap = 33,
@@ -1360,7 +1258,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 40,
-	cost = 0,
+	cost = 100,
 	name = "BLASTER LAUNCHER",
 	pInv = 35,
 	pMap = 34,
@@ -1394,7 +1292,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 41,
-	cost = 200,
+	cost = 100,
 	name = "BLASTER BOMB",
 	pInv = 36,
 	pMap = 35,
@@ -1428,7 +1326,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 42,
-	cost = 0,
+	cost = 93,
 	name = "SMALL LAUNCHER",
 	pInv = 37,
 	pMap = 36,
@@ -1462,7 +1360,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 43,
-	cost = 90,
+	cost = 93,
 	name = "STUN MISSILE",
 	pInv = 38,
 	pMap = 37,
@@ -1584,108 +1482,6 @@ AddXcomItem {
 	_29 = 50,
 	_2A = 20,
 	weight = 5,
-	primeType = 0,
-	_2D = 1,
-	isShootable = 0,
-	isWeapon = 0,
-	isGun = 0,
-	isAmmo = 0,
-	twoHanded = 1,
-	wayPoints = 0,
-	isAlien = 1,
-	_35 = 1,
-}
-
-AddXcomItem {
-	index = 47,
-	cost = 70,
-	name = ">>UNDEFINED <<",
-	pInv = 33,
-	pMap = 37,
-	damage = 70,
-	importance = 1,
-	width = 1,
-	height = 3,
-	ammo = {255, 255, 255},
-	pHeld = 0,
-	_1E = 14,
-	damageType = 4,
-	accuracy = {0, 0, 0},
-	time = {0, 0, 0},
-	rounds = 0,
-	hitType = 0,
-	throw_accuracy = 0,
-	_29 = 0,
-	_2A = 20,
-	weight = 1,
-	primeType = 0,
-	_2D = 1,
-	isShootable = 0,
-	isWeapon = 0,
-	isGun = 0,
-	isAmmo = 1,
-	twoHanded = 0,
-	wayPoints = 0,
-	isAlien = 1,
-	_35 = 1,
-}
-
-AddXcomItem {
-	index = 48,
-	cost = 0,
-	name = ">> empty <<",
-	pInv = 2,
-	pMap = 3,
-	damage = 0,
-	importance = 4,
-	width = 1,
-	height = 1,
-	ammo = {1, 255, 255},
-	pHeld = 12,
-	_1E = 12,
-	damageType = 255,
-	accuracy = {0, 60, 75},
-	time = {0, 20, 40},
-	rounds = 8,
-	hitType = 9,
-	throw_accuracy = 100,
-	_29 = 50,
-	_2A = 20,
-	weight = 4,
-	primeType = 0,
-	_2D = 1,
-	isShootable = 1,
-	isWeapon = 1,
-	isGun = 1,
-	isAmmo = 0,
-	twoHanded = 0,
-	wayPoints = 0,
-	isAlien = 0,
-	_35 = 0,
-}
-
-AddXcomItem {
-	index = 49,
-	cost = 0,
-	name = ">> empty <<",
-	pInv = 29,
-	pMap = 28,
-	damage = 0,
-	importance = 7,
-	width = 2,
-	height = 2,
-	ammo = {255, 255, 255},
-	pHeld = 0,
-	_1E = 0,
-	damageType = 0,
-	accuracy = {0, 0, 0},
-	time = {0, 0, 0},
-	rounds = 0,
-	hitType = 8,
-	throw_accuracy = 100,
-	_29 = 50,
-	_2A = 20,
-	weight = 4,
 	primeType = 0,
 	_2D = 1,
 	isShootable = 0,
@@ -2717,4 +2513,3 @@ AddXcomItem {
 	isAlien = 0,
 	_35 = 0,
 }
-
