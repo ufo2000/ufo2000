@@ -269,6 +269,7 @@ public:
 
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	int calc_ammunition_cost();
+	int calc_full_ammunition_cost();
 	Item *item_under_mouse(int ipl);
 	int calctime(int src, int dst);
 	Item *select_item(int &pn);

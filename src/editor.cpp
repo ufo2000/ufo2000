@@ -250,6 +250,9 @@ void Editor::show(int NEXTPREV)
 						it->od_info(330, 220, xcom1_color(10));
 				}
 			}
+			
+			textprintf(screen2, g_small_font, 0, 20, xcom1_color(2), "Equipment weight: %d", man->count_weight());
+			textprintf(screen2, g_small_font, 105, 20, xcom1_color(2), "Equipment cost: %d", man->calc_full_ammunition_cost());
 
 			draw_sprite(screen2, mouser, mouse_x, mouse_y);
 			blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);

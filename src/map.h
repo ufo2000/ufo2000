@@ -100,6 +100,7 @@ public:
 	static int valid_GEODATA(GEODATA *gd);
     //! creates new random GEODATA structure
 	static void new_GEODATA(GEODATA *mapdata);
+	static void new_GEODATA(GEODATA *mapdata, int terrain_id);
     //! loads GEODATA structure from lua-file
 	static bool load_GEODATA(const char *filename, GEODATA *mapdata);
     //! saves GEODATA structure to lua-file

@@ -497,7 +497,6 @@ void Soldier::destroy_all_items()
 	}
 }
 
-
 int Soldier::calc_ammunition_cost()
 {
 	// TUs with stamina as they determine how far you go in a turn.
@@ -512,6 +511,41 @@ int Soldier::calc_ammunition_cost()
 	        ((md.Firing + md.Throwing) / 2) +
 			(md.Strength * 2) +
 			g_skins[get_skin_index(md.SkinType, md.fFemale)].armour_values[0];
+
+	return p;
+}
+
+int Soldier::calc_full_ammunition_cost()
+{
+	// TUs with stamina as they determine how far you go in a turn.
+	// TUs twice as important because they get used up twice as fast.
+	// Reactions is doubled because it means doing damage in enemy's turn!
+	// Strength is two for one points wise, so double the value that's in there.
+	// Accuracy averaged into one value.
+	// The amount of armour we have matters, too!
+	int p = (((md.TimeUnits * 2) + md.Stamina) / 2) +
+	        md.Health +
+			(md.Reactions * 2) +
+	        ((md.Firing + md.Throwing) / 2) +
+			(md.Strength * 2) +
+			g_skins[get_skin_index(md.SkinType, md.fFemale)].armour_values[0];
+			
+	// Equipment points
+	char buf[10000]; memset(buf, 0, sizeof(buf));
+	int len = 0;
+	extern int weapon[];
+	
+	build_items_stats (buf, len);
+	
+	for (int w = 0; w < 40; w++) {
+		int num = 0;
+		for (int i = 0; i < len; i++) {
+			if (weapon[w] == buf[i])
+				num++;
+		}
+		if ((Item::obdata_damage(weapon[w]) > 0) && (num > 0))
+			p += (Item::obdata_damage(weapon[w]) * num);
+	}
 
 	return p;
 }

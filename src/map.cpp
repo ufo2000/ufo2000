@@ -1493,6 +1493,21 @@ void Map::new_GEODATA(GEODATA *md)
 	terrain_set->create_geodata(terrain_id, MAP_WIDTH, MAP_HEIGHT, *md);
 }
 
+void Map::new_GEODATA(GEODATA *md, int terrain_id)
+{
+	// Check map size settings
+	if (MAP_WIDTH < 2) MAP_WIDTH = 2;
+	if (MAP_HEIGHT < 2) MAP_HEIGHT = 2;
+
+	if (MAP_WIDTH > 6) MAP_WIDTH = 6;
+	if (MAP_HEIGHT > 6) MAP_HEIGHT = 6;
+
+    // $$$ Hack - the game currently crashes when using nonsquare map
+	if (MAP_WIDTH != MAP_HEIGHT) MAP_HEIGHT = MAP_WIDTH;
+
+	terrain_set->create_geodata(terrain_id, MAP_WIDTH, MAP_HEIGHT, *md);
+}
+
 int Map::valid_GEODATA(GEODATA *md)
 {
 	if ((md->x_size > 6) || (md->y_size > 6) ||

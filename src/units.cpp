@@ -31,6 +31,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "map.h"
 #include "wind.h"
 
+int terrain_id;
+
+int points = 0;
+int damage_points = 0;
 
 Units::Units()
 {
@@ -157,8 +161,8 @@ void Units::print(int gcol)
 	}
 	draw_text();
 
-	rect(screen2, gmx, SCREEN2H - 47, gmx + gmw, SCREEN2H - 5, xcom1_color(1));
-	textout_centre(screen2, font, "MAP", gmx + gmw / 2, SCREEN2H - 41, xcom1_color(8));
+	rect(screen2, gmx, SCREEN2H - 59, gmx + gmw, SCREEN2H - 5, xcom1_color(1));
+	textout_centre(screen2, font, "MAP", gmx + gmw / 2, SCREEN2H - 53, xcom1_color(8));
 	textout_centre(screen2, font, "NEW", gmx + gmw / 2 - gmw / 4, SCREEN2H - 17, xcom1_color(1));
 	textout_centre(screen2, font, "LOAD", gmx + gmw / 2 + gmw / 4, SCREEN2H - 17, xcom1_color(1));
 
@@ -186,8 +190,12 @@ void Units::print(int gcol)
 	textout_centre(screen2, font, "4*4", gmx + gmw / 2 - gmw / 4, SCREEN2H - 29, xcom1_color(color4));
 	textout_centre(screen2, font, "5*5", gmx + gmw / 2, SCREEN2H - 29, xcom1_color(color5));
 	textout_centre(screen2, font, "6*6", gmx + gmw / 2 + gmw / 4, SCREEN2H - 29, xcom1_color(color6));
+	
+	textout_centre(screen2, font, terrain_set->get_terrain_name(mapdata.terrain).c_str(), gmx + gmw / 2, SCREEN2H - 41, xcom1_color(40));
 
-	int points = 0;
+ 	points = 0;
+ 	damage_points = 0;
+
 	for (int n = 0; n < size; n++) {
 		if (x[n] != 0) {
 			Soldier * ss = editor->platoon()->findman(name[n]);
@@ -198,7 +206,6 @@ void Units::print(int gcol)
 	//textout(screen2, small, "INFO", gx, 160, 1);
 	// Moved down...
 	// textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, xcom1_color(50), "total men points=%d", points);
-
 
 	char buf[10000]; memset(buf, 0, sizeof(buf));
 	int len = 0;
@@ -217,7 +224,7 @@ void Units::print(int gcol)
 	/*if (pos == POS_LEFT)
 		draw_items_stats(0, 160+10, buf, len);
 	else*/
-	int damage_points = draw_items_stats(gx, 160 + 10, buf, len);
+	damage_points = draw_items_stats(gx, 160 + 10, buf, len);
 
 	textprintf_centre(screen2, g_small_font, gx + 10 * 8, 160, xcom1_color(50), "Total points=%d", points + damage_points);
 }
@@ -438,7 +445,10 @@ void Units::execute(Map *map, int map_change_allowed)
 
 	if (mouse_inside(gx + 15 * 8 - 20, SCREEN2H - 20, gx + 15 * 8 + 20, SCREEN2H - 5)) {
 		//"SEND"
-		editor->send_Units(*this);
+		if ((points + damage_points) > 10000)
+			g_console->printf("10000 points limit exceeded!\n");
+		else
+			editor->send_Units(*this);
 		return ;
 	}
 
@@ -454,7 +464,8 @@ void Units::execute(Map *map, int map_change_allowed)
 
 	if (mouse_inside(gmx + gmw / 2 - gmw / 4 - 20, SCREEN2H - 20, gmx + gmw / 2 - gmw / 4 + 20, SCREEN2H - 5)) {
 		//"NEW"
-		Map::new_GEODATA(&mapdata);
+		terrain_id = mapdata.terrain;
+		Map::new_GEODATA(&mapdata, terrain_id);
 		net->send_map_data(&mapdata);
 		mapdata.load_game = 77;
 	}
@@ -497,6 +508,23 @@ void Units::execute(Map *map, int map_change_allowed)
 		//"6*6"
 		MAP_WIDTH = MAP_HEIGHT = 6;
 	}
+	
+	if (mouse_inside(gmx + gmw / 2 - 60, SCREEN2H - 45, gmx + gmw / 2 + 60, SCREEN2H - 33)) {
+		//MAP TYPE
+  		terrain_id = terrain_set->get_random_terrain_id();
+
+		if (net->is_network_game()) {
+	   		ASSERT(g_net_allowed_terrains.size() > 1);
+			while (g_net_allowed_terrains.find(terrain_id) == g_net_allowed_terrains.end()) {
+				terrain_id = terrain_set->get_random_terrain_id();
+			}
+		}
+
+		Map::new_GEODATA(&mapdata, terrain_id);
+		net->send_map_data(&mapdata);
+		mapdata.load_game = 77;
+	}
+
 }
 
 void Units::execute_right()
