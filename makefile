@@ -236,7 +236,7 @@ source-bz2:
 # create tar.bz2 archive with ufo2000 sources (on *nix systems)
 	-$(RM) $(DISTNAME)-src.tar.bz2
 	svn delete --force $(DISTNAME)
-	svn export . $(DISTNAME)
+	svn export --native-eol "LF" . $(DISTNAME)
 	sed 's,unknown,$(UFO_SVNVERSION),g' < src/version.h > $(DISTNAME)/src/version.h
 	tar -cjf $(DISTNAME)-src.tar.bz2 $(DISTNAME)
 	svn delete --force $(DISTNAME)

@@ -442,6 +442,10 @@ Section "${GAME_NAME} (required)" MainSec
 	
 	File script\*
 	
+	SetOutPath $INSTDIR\translations
+	
+	File translations\*
+
 	IfFileExists $XCOM_FOLDER xcom xcom_no
 	xcom: CopyFiles $XCOM_FOLDER\*.* $INSTDIR\XCOM
 	xcom_no:
