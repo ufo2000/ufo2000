@@ -389,6 +389,10 @@ extern int local_platoon_size;
 extern char last_map_name[1000];
 extern char last_unit_name[1000];
 
+// gettext-translation deactivated / active:
+//#define _(String) (String
+#define _(String) gettext(String)
+
 extern Editor *editor;
 
 extern int HOST;

@@ -18,6 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
+
 #ifndef MAINMENU_H
 #define MAINMENU_H
 
@@ -39,6 +40,7 @@ enum MAINMENU_ITEMS
     MAINMENU_INTERNET,
     MAINMENU_COUNT,
     // Currently disabled menu items come next
+    MAINMENU_TIP_OF_DAY,
     MAINMENU_EDITOR, // does not support all terrains
     MAINMENU_TOTAL_COUNT
 };

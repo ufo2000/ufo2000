@@ -27,28 +27,37 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 //! Starting pages for the help-chapters
-#define HELP_U2K_INDEX    0 
+#define HELP_U2K_INDEX    0
  // "HELP_INDEX" already used in /MinGW/include/winuser.h
-#define HELP_BATTLESCAPE  1 
-#define HELP_INVENTORY   20 
-#define HELP_STATS       30 
-#define HELP_ENDGAME     50 
-#define HELP_NET         60 
+#define HELP_INTRO       10
+#define HELP_BATTLESCAPE 20
+#define HELP_MAPVIEW     40
+#define HELP_MINDPROBE   50
+#define HELP_SCANNER     60
+#define HELP_MEDIKIT     70
+#define HELP_PSI_AMP     80
+#define HELP_BLASTER     90
+#define HELP_INVENTORY  100
+#define HELP_STATS      110
+#define HELP_ENDGAME    130
+#define HELP_NET        140
 
-// First page of scenario-help follows directly 
+// First page of scenario-help follows directly
 // after last page of help for mission-planner:
-#define HELP_PLANNER     90 
-#define HELP_SCENARIO   101 
+#define HELP_PLANNER    160
+#define HELP_SCENARIO   HELP_PLANNER + 11
 
-/**
- * Tooltips for the control-panel
- */
+//! Write message into init-scripts.log
+void lua_message( const std::string &str1 );
+
+//! Interface to LUA-gettext()
+char *gettext( char *str1 );
+
+//! Tooltips for the control-panel
 char *icontext( const int icon_nr );
 
-/**
- * Simple help, using alert3().
- */
-void help( const int helppage ); 
+//! Simple help, using alert3().
+void help( const int helppage );
 
 #endif
 

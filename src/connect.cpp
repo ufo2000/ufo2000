@@ -197,6 +197,7 @@ int FINISH_PLANNER = 0;
  */
 int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 {
+    lua_message( "Enter: Connect::do_planner" );
 	MODE = PLANNER;
 
 	int mouse_leftr = 1, mouse_rightr = 1;
@@ -439,6 +440,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 	screen2 = create_bitmap(SCREEN2W, SCREEN2H); clear(screen2);
 	fade_out(10);
 	clear(screen);
+  //lua_message( "Exit : Connect::do_planner" );
 	return net->SEND;
 }
 

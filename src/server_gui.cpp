@@ -182,10 +182,10 @@ public:
 			text_mode(-1);
 			int color;
 			switch (m_users[i].status) {
-				case USER_STATUS_BUSY         : color = COLOR_RED00; break;
-				case USER_STATUS_CHALLENGE_IN: color = COLOR_GREEN; break;
+				case USER_STATUS_BUSY         : color = COLOR_RED00;  break;
+				case USER_STATUS_CHALLENGE_IN : color = COLOR_GREEN;  break;
 				case USER_STATUS_CHALLENGE_OUT: color = COLOR_YELLOW; break;
-				case USER_STATUS_SELF         : color = COLOR_WHITE;   break;
+				case USER_STATUS_SELF         : color = COLOR_WHITE;  break;
 				default: color = COLOR_GRAY; break;
 			}
 
@@ -299,16 +299,16 @@ static bool asklogin()
 	static char host_buffer[1024];
 
 	static DIALOG login_dialog[] = {
-		//(dialog proc)		 (x)  (y) (w) (h) (fg) (bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
-		{ d_agup_shadow_box_proc, 0,   0,  280, 80, 0,  1, 0, 0, 0, 0, NULL, NULL, NULL },
-		{ d_agup_rtext_proc,      10,  10, 70,  10, 0,  1, 0, 0, 0, 0, (void *)"Server:", NULL, NULL },
-		{ d_agup_edit_proc,       80,  10, 192, 10, 0,  1, 0, 0, 22, 0, (void *)host_buffer, NULL, NULL },
-		{ d_agup_rtext_proc,      10,  25, 70,  10, 0,  1, 0, 0, 0, 0, (void *)"Login:", NULL, NULL },
-		{ d_agup_edit_proc,       80,  25, 192, 10, 0,  1, 0, 0, 22, 0, (void *)login_buffer, NULL, NULL },
-		{ d_agup_rtext_proc,      10,  40, 70,  10, 0,  1, 0, 0, 0, 0, (void *)"Password:", NULL, NULL },
-		{ d_agup_edit_proc,       80,  40, 192, 10, 0,  1, 0, 0, 22, 0, (void *)password_buffer, NULL, NULL },
-		{ d_agup_button_proc,     140, 56, 60,  18, 0,  1, 13, D_EXIT, 0, 0, (void *)"OK", NULL, NULL },
-		{ d_agup_button_proc,     210, 56, 60,  18, 0,  1, 27, D_EXIT, 0, 0, (void *)"Cancel", NULL, NULL },
+        //(dialog proc)           (x)  (y) (w) (h) (fg)(bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
+        { d_agup_shadow_box_proc,  0,   0, 280, 80, 0,  1,  0, 0,  0, 0, NULL, NULL, NULL },
+        { d_agup_rtext_proc,      10,  10,  70, 10, 0,  1,  0, 0,  0, 0, (void *)_("Server:"), NULL, NULL },
+        { d_agup_edit_proc,       80,  10, 192, 10, 0,  1,  0, 0, 22, 0, (void *)host_buffer, NULL, NULL },
+        { d_agup_rtext_proc,      10,  25,  70, 10, 0,  1,  0, 0,  0, 0, (void *)_("Login:"), NULL, NULL },
+        { d_agup_edit_proc,       80,  25, 192, 10, 0,  1,  0, 0, 22, 0, (void *)login_buffer, NULL, NULL },
+        { d_agup_rtext_proc,      10,  40,  70, 10, 0,  1,  0, 0,  0, 0, (void *)_("Password:"), NULL, NULL },
+        { d_agup_edit_proc,       80,  40, 192, 10, 0,  1,  0, 0, 22, 0, (void *)password_buffer, NULL, NULL },
+        { d_agup_button_proc,     140, 56,  60, 18, 0,  1, 13, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL },
+        { d_agup_button_proc,     210, 56,  60, 18, 0,  1, 27, D_EXIT, 0, 0, (void *)_("Cancel"), NULL, NULL },
 		{ d_yield_proc,           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
 		{ NULL }
 	};
@@ -321,8 +321,8 @@ static bool asklogin()
 	set_dialog_color(login_dialog, COLOR_BLACK1, COLOR_WHITE);
 
 	if (popup_dialog(login_dialog, 2) == 7) {
-		g_server_host = host_buffer;
-		g_server_login = login_buffer;
+		g_server_host     = host_buffer;
+		g_server_login    = login_buffer;
 		g_server_password = password_buffer;
 		return true;
 	}
@@ -365,6 +365,7 @@ const char *get_os_type_string()
  */
 int connect_internet_server()
 {
+  //lua_message( "Enter: connect_internet_server" );
 	if ((rand() % 2) == 1)
 		FS_MusicPlay(F(cfg_get_net2_music_file_name()));
 	else
@@ -376,18 +377,19 @@ int connect_internet_server()
 			return -1;
 
 	text_mode(-1); 
-	textprintf(screen, font, 1, 1, COLOR_SYS_INFO1, "%s", "Connecting...");
+    textprintf(screen, font, 1, 1, COLOR_SYS_INFO1, "%s", _("Connecting to server..."));
+    lua_message( "Start: connect_internet_server" );
 
     std::auto_ptr<ClientServerUfo> server(new ClientServerUfo());
     std::string error_message;
     if (!server->connect(cfg_get_server_host(), cfg_get_server_proxy(), error_message)) {
-		alert(" ", error_message.c_str(), " ", "    OK    ", NULL, 1, 0);
+        alert(" ", error_message.c_str(), " ", _("    OK    "), NULL, 1, 0);
 		g_server_autologin = 0;
     	return -1;
 	}
 
     if (!server->login(cfg_get_server_login(), cfg_get_server_password(), error_message)) {
-		alert(" ", error_message.c_str(), " ", "    OK    ", NULL, 1, 0);
+        alert(" ", error_message.c_str(), " ", _("    OK    "), NULL, 1, 0);
 		g_server_autologin = 0;
 		return -1;
 	}
@@ -400,21 +402,21 @@ int connect_internet_server()
 	chat_border->set_full_redraw();
 	std::auto_ptr<UsersList> users(new UsersList(large));
 	users->update_user_info(g_server_login, USER_STATUS_SELF);
-	std::auto_ptr<WindowBorder> users_border(new WindowBorder(users.get(), "users online", large));
+    std::auto_ptr<WindowBorder> users_border(new WindowBorder(users.get(), _("users online"), large));
 	users_border->set_full_redraw();
 
 	// Write greetings and the short help to the chat console
-	chat->printf(COLOR_SYS_HEADER, "You have just connected to ufo2000 internet server\n");
-	chat->printf(COLOR_SYS_HEADER, "There are two windows here: chat console in the left window\n");
-	chat->printf(COLOR_SYS_HEADER, "and the list of online players in the right\n");
+    chat->printf(COLOR_SYS_HEADER, _("You have just connected to ufo2000 internet server\n") );
+    chat->printf(COLOR_SYS_HEADER, _("There are two windows here: chat console in the left window\n") );
+    chat->printf(COLOR_SYS_HEADER, _("and the list of online players in the right\n") );
 	chat->printf("\n");
-	chat->printf(COLOR_WHITE,      "white player name - that's your own name\n");
-	chat->printf(COLOR_GRAY, "gray player name - available for chat\n");
-	chat->printf(COLOR_YELLOW, "yellow player name - you have sent a challenge to this player\n");
-	chat->printf(COLOR_GREEN, "green player name - you can accept a challenge from this player\n");
-	chat->printf(COLOR_RED00,      "red player name - the player is busy playing with someone else\n");
+    chat->printf(COLOR_WHITE,      _("white player name - that's your own name\n") );
+    chat->printf(COLOR_GRAY,       _("gray player name - available for chat\n") );
+    chat->printf(COLOR_YELLOW,     _("yellow player name - you have sent a challenge to this player\n") );
+    chat->printf(COLOR_GREEN,      _("green player name - you can accept a challenge from this player\n") );
+    chat->printf(COLOR_RED00,      _("red player name - the player is busy playing with someone else\n") );
 	chat->printf("\n");
-	chat->printf(COLOR_SYS_PROMPT, "You can left click on player names to select them as your opponents\n");
+    chat->printf(COLOR_SYS_PROMPT, _("You can left click on player names to select them as your opponents\n") );
 	chat->printf("\n");
 
 	chat_border->resize(SCREEN_W - users_border->get_width(), SCREEN_H);
@@ -433,7 +435,7 @@ int connect_internet_server()
 		std::string packet;
 		int res = server->recv_packet(id, packet);
 		if (res == -1) {
-			alert(" ", "  Connection lost  ", " ", "    OK    ", NULL, 1, 0);
+            alert(" ", _("  Connection lost  "), " ", "    OK    ", NULL, 1, 0);
 			return -1;
 		}
 		if (res != 0)
@@ -444,16 +446,16 @@ int connect_internet_server()
 					if (users->get_user_status(packet) != USER_STATUS_READY) {
 						soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
 						if (users->get_user_status(packet) == USER_STATUS_BUSY)
-							chat->printf(COLOR_DARKGRAY, "%s is back from a game\n", packet.c_str());
+                            chat->printf(COLOR_DARKGRAY, _("%s is back from a game\n"), packet.c_str());
 						else
-							chat->printf(COLOR_DARKGRAY, "%s is here\n", packet.c_str());
+                            chat->printf(COLOR_DARKGRAY, _("%s is here\n"), packet.c_str());
 					}
 					users->update_user_info(packet, USER_STATUS_READY);
 					break;
 				case SRV_USER_OFFLINE:
 					if (users->get_user_status(packet) != USER_STATUS_OFFLINE) {
 						soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
-						chat->printf(COLOR_DARKGRAY, "%s disconnected\n", packet.c_str());
+                        chat->printf(COLOR_DARKGRAY, _("%s disconnected\n"), packet.c_str());
 					}
 					users->update_user_info(packet, USER_STATUS_OFFLINE);
 					break;
@@ -468,7 +470,7 @@ int connect_internet_server()
 					if (users->get_user_status(packet) != USER_STATUS_BUSY &&
 							users->get_user_status(packet) != USER_STATUS_OFFLINE) {
 						soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
-						chat->printf(COLOR_DARKGRAY, "%s left chat to play a game\n", packet.c_str());
+                        chat->printf(COLOR_DARKGRAY, _("%s left chat to play a game\n"), packet.c_str());
 					}
 					users->update_user_info(packet, USER_STATUS_BUSY);
 					break;
@@ -566,6 +568,10 @@ int connect_internet_server()
 				case KEY_MINUS_PAD:
 					FS_DecMusicVolume();
 					break;
+                case KEY_ASTERISK:
+                    FS_MusicPlay(NULL);
+                    g_console->printf(COLOR_SYS_OK, _("Music off") );
+                    break;
 				case KEY_F1:
 					help( HELP_NET );
 					break;
@@ -577,7 +583,7 @@ int connect_internet_server()
 					lobby_init_mouse();
 					break;
 				case KEY_ESC:
-					if (askmenu("DISCONNECT FROM SERVER"))
+                    if (askmenu( _("DISCONNECT FROM SERVER") ))
 						return -1;
 					break;
 				default:

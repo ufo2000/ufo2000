@@ -30,7 +30,7 @@ Programming:
       * Truecolor graphics support
       * New chat console and minimap screen
       * Replay of enemy turns in hotseat game
-	  
+
    Twilight Owl
       * Support for different scenarios
 	  * Numerous improvements in user interface (map size and type selection,
@@ -40,6 +40,12 @@ Programming:
 
    Александр Чернобровый aka Dream
       * Some performance improvements and fixes to UFO2000 code
+
+   Hans-Joachim Gurt aka HaJo
+      * Several improvements to user interface (Help-System and Tooltips,
+        more details shown in inventory, reserve-time-buttons,
+        different pointers for standing/kneeling/items on ground ...)
+      * More detailed endgame-statistics
 
 Artwork and other game related data files:
    Munkeylord
@@ -60,7 +66,7 @@ Artwork and other game related data files:
    Alexey Vasiliev
       * New background pictures for main menu and win/lose screens 
       * A new nice UFO2000 logo for website
-	  
+
    Nail
       * Pictures for different hairstyle in the battlescape, legs
 	    for sitting sectoids and mutons
@@ -70,7 +76,7 @@ Artwork and other game related data files:
 Music and sound effects:
    dickie
       * New default music for the game
-	  
+
    ATeX from project Xenocide (http://projectxenocide.com)
       * X-COM style battlescape music soundtrack
 
@@ -92,6 +98,9 @@ Manual writing and translations:
 
    Benjamin Power and JFarceur
       * French translation of game manual
+
+   Hans-Joachim Gurt aka HaJo
+      * German translation of game manual
 
 Testing the game, bugreports and valuable suggestions:
    Anton (Zerocool), antonio_neo@chat.ru
@@ -127,7 +136,7 @@ Other:
 
    Dolny
       * Old UFO2000 forum
-	  
+
    Josh Day <koralt@yahoo.com>
       * UFO data files format information
 
@@ -137,7 +146,7 @@ Other:
    Skybuck
       * UFO2000 Pager (win32-program that notifies when other players
         log on to ufo2000 game server)
-		
+
 ===============================================================================
 == Many thanks to the authors of the following libraries that are used in
 == UFO2000 now or have been used in the past
@@ -155,3 +164,4 @@ Other:
    Ogg Vorbis (http://www.vorbis.org/)
 
 ==============================================================================
+

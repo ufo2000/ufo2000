@@ -33,6 +33,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "config.h"
 #include "icon.h"
 #include "colors.h"
+#include "text.h"
 
 //uncomment to view some formulas results (reaction fire)
 #define SHOW_DEBUG_INFO
@@ -819,7 +820,7 @@ void Soldier::draw_inventory()
 	int wht     = count_weight();
 	int max_wht = md.Strength;
 	int color   = max_wht < wht ? COLOR_RED03 : COLOR_GRAY02; 
-	textprintf(screen2, g_small_font, 0, 20, color, "Equipment weight: %d/%d", wht, max_wht);
+    textprintf(screen2, g_small_font, 0, 20, color, _("Equipment weight: %d/%d"), wht, max_wht);
 
 	color = COLOR_ORANGE;
 	if (ud.CurTU < 20)              // $$$ Todo: use required(25) and havetime()
@@ -828,8 +829,8 @@ void Soldier::draw_inventory()
 		color = COLOR_LT_BLUE; 	// low energy - only 3 steps remain
 	if (ud.CurEnergy < 2)
 		color = COLOR_BLUE; 	// not enough energy for a single step
-	textout(screen2,    g_small_font, "TUs>", 245, 25, COLOR_LT_OLIVE);
-	textprintf(screen2, g_small_font,         276, 25, color, "%d", ud.CurTU);
+    textout(screen2,    g_small_font, _("TUs>"), 245, 25, COLOR_LT_OLIVE);
+    textprintf(screen2, g_small_font,            276, 25, color, "%d", ud.CurTU);
 
 	color = COLOR_ORANGE;
 	if ((ud.CurFront < ud.MaxFront) ||  // Armor damaged
@@ -850,8 +851,8 @@ void Soldier::draw_inventory()
 	         ud.LArmWound + ud.RLegWound  + ud.LLegWound;	
 	if (fw > 0) 
 		color = COLOR_RED07; 	    // Fatal Wounds
-	textout(screen2,    g_small_font, "Health>", 245, 34, COLOR_LT_OLIVE);
-	textprintf(screen2, g_small_font,            276, 34, color, "%d", ud.CurHealth); 
+    textout(screen2,    g_small_font, _("Health>"), 245, 34, COLOR_LT_OLIVE);
+    textprintf(screen2, g_small_font,               276, 34, color, "%d", ud.CurHealth); 
 //
 	for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
 		m_place[i]->drawgrid(i);
@@ -877,7 +878,10 @@ void Soldier::draw_unibord(int gx, int gy)
 
 	int fw = ud.HeadWound + ud.TorsoWound + ud.RArmWound +
 	         ud.LArmWound + ud.RLegWound  + ud.LLegWound;	// Fatal Wounds
-
+// from Soldier::FAccuracy() :
+	int ac = ud.CurFAccuracy;
+	ac -= (ac * (ud.MaxHealth - ud.CurHealth)) / ud.MaxHealth / 2;
+//
 	struct {
 		char *str;
 		int cur;
@@ -885,23 +889,23 @@ void Soldier::draw_unibord(int gx, int gy)
 		int col;
 	}
 	param[17] = {
-	                {"TIME UNITS",        ud.CurTU,        ud.MaxTU,      68},
-	                {"ENERGY",            ud.CurEnergy,    ud.MaxEnergy, 148},
-	                {"HEALTH",            ud.CurHealth,    ud.MaxHealth,  36},
-	                {"FATAL WOUNDS",      fw,              fw,            36},
-	                {"BRAVERY",           md.Bravery,      md.Bravery,   196},
-	                {"MORALE",            ud.Morale,       100,          197},
-	                {"REACTIONS",         ud.CurReactions, md.Reactions,  20},
-	                {"FIRING ACCURACY",   ud.CurFAccuracy, ud.MaxFA,     132},
-	                {"THROWING ACCURACY", ud.CurTAccuracy, ud.MaxTA,     100},
-	                {"STRENGTH",          ud.MaxStrength,  md.Strength,   52},
-	                {NULL, 0, 0, 0},
-	                {NULL, 0, 0, 0},
-	                {"FRONT ARMOUR",      ud.CurFront,     ud.MaxFront,   84},
-	                {"LEFT ARMOUR",       ud.CurLeft,      ud.MaxLeft,    84},
-	                {"RIGHT ARMOUR",      ud.CurRight,     ud.MaxRight,   84},
-	                {"REAR ARMOUR",       ud.CurRear,      ud.MaxRear,    84},
-	                {"UNDER ARMOUR",      ud.CurUnder,     ud.MaxUnder,   84}
+                    {_("TIME UNITS"),        ud.CurTU,        ud.MaxTU,      68},
+                    {_("ENERGY"),            ud.CurEnergy,    ud.MaxEnergy, 148},
+                    {_("HEALTH"),            ud.CurHealth,    ud.MaxHealth,  36},
+                    {_("FATAL WOUNDS"),      fw,              fw,            36},
+                    {_("BRAVERY"),           md.Bravery,      md.Bravery,   196},
+                    {_("MORALE"),            ud.Morale,       100,          197},
+                    {_("REACTIONS"),         ud.CurReactions, md.Reactions,  20},
+                    {_("FIRING ACCURACY"),   ac,              ud.MaxFA,     132},
+                    {_("THROWING ACCURACY"), TAccuracy(100),  ud.MaxTA,     100},
+                    {_("STRENGTH"),          ud.MaxStrength,  md.Strength,   52},
+                    {NULL, 0, 0, 0},
+                    {NULL, 0, 0, 0},
+                    {_("FRONT ARMOUR"),      ud.CurFront,     ud.MaxFront,   84},
+                    {_("LEFT ARMOUR"),       ud.CurLeft,      ud.MaxLeft,    84},
+                    {_("RIGHT ARMOUR"),      ud.CurRight,     ud.MaxRight,   84},
+                    {_("REAR ARMOUR"),       ud.CurRear,      ud.MaxRear,    84},
+                    {_("UNDER ARMOUR"),      ud.CurUnder,     ud.MaxUnder,   84}
 	            };
 
 	for (int i = 0; i < 17; i++) {
@@ -971,7 +975,7 @@ void Soldier::draw_blue_selector()
 		//	Draw blue triangle with its point at sx, sy and height 5
 		sx += 3; sy += 10; int j;
 		for (j = 0; j < 5; j++) {
-			line(screen2,     sx - j, sy - j, sx + j, sy - j, xcom1_color(256 - 48 + 3));  // =211 --> COLOR_??
+            line(screen2,     sx - j, sy - j, sx + j, sy - j, xcom1_color(256 - 48 + 3));  // =211 : COLOR_SKYBLUE03
 			putpixel(screen2, sx - j, sy - j, COLOR_BLACK1);
 			putpixel(screen2, sx + j, sy - j, COLOR_BLACK1);
 		}
@@ -1015,6 +1019,10 @@ void Soldier::draw_enemy_seen(int select_y)
 	}
 }
 
+/**
+ * Process mouseclick on numbered buttons for seen enemy soldier,
+ * center map on selected soldier.
+ */
 int Soldier::center_enemy_seen()
 {
 	for (int i = 0; i < enemy_num; i++) {
@@ -1263,9 +1271,13 @@ int Soldier::move(int ISLOCAL)
 	return 1;
 }
 
+/**
+ * Test if soldier has reserved time for shooting.
+ * Returns true if he has enough time for the next action.
+ */
 bool Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
 {
-	if(!ISLOCAL)
+    if(!ISLOCAL) 			// during enemy turn: don't check for reserved time
 		return havetime(walk_time, use_energy);
 
 	Item *it = rhand_item();
@@ -1282,28 +1294,28 @@ bool Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
 			case RESERVE_SNAP:
 			if (it->obdata_accuracy(1)) {
 				time = required(it->obdata_time(1));
-				error = "Time units are reserved for snap shot.";
+                error = _("Time units are reserved for snap shot.");
 			}
 			break;
 		
 			case RESERVE_AIM:
 			if (it->obdata_accuracy(2)) {
 				time = required(it->obdata_time(2));
-				error = "Time units are reserved for aimed shot.";
+                error = _("Time units are reserved for aimed shot.");
 			}
 			break;
 		
 			case RESERVE_AUTO:
 			if (it->obdata_accuracy(0)) {
 				time = (required(it->obdata_time(0)) + 2) / 3 * 3;
-				error = "Time units are reserved for auto shot.";
+                error = _("Time units are reserved for auto shot.");
 			}
 			break;
 		}
 		
 		if(it->is_grenade() && it->delay_time() > 0 && m_ReserveTimeMode != RESERVE_FREE) {
 			time = required(25);
-			error = "Time units are reserved for grenade throw.";
+            error = _("Time units are reserved for grenade throw.");
 		}
 	}
 	
@@ -1341,6 +1353,10 @@ void Soldier::wayto(int dest_lev, int dest_col, int dest_row)
 	}
 }
 
+/**
+ * Move soldier up or down a level.
+ * Currently, this only works on gravlifts.
+ */
 bool Soldier::use_elevator(int dz)
 // Todo: Flying armor
 {
@@ -2310,6 +2326,7 @@ int Soldier::FAccuracy(int peraccur, int TWOHAND)
 {
 	int ac = ud.CurFAccuracy;
 	ac -= (ac * (ud.MaxHealth - ud.CurHealth)) / ud.MaxHealth / 2;
+    // see also: Soldier::draw_unibord()
 
 	if (TWOHAND) {
 		if ((rhand_item() != NULL) && (lhand_item() != NULL))

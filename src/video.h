@@ -66,27 +66,28 @@ int gui_select_from_list(
 uint16 crc16(const char *data_p);
 
 extern unsigned long FLAGS;
-#define F_CLEARSEEN		    0x00000001
-#define F_SHOWROUTE		    0x00000002
-#define F_SHOWLOFCELL		0x00000004
-#define F_SHOWLEVELS		0x00000008
-#define F_FASTSTART		    0x00000010
-#define F_FULLSCREEN		0x00000020
-#define F_RAWMESSAGES		0x00000040
-#define F_SEL_ANY_MAN		0x00000080
-#define F_SWITCHVIDEO		0x00000100
-#define F_PLANNERDBG		0x00000200
-#define F_ENDLESS_TU		0x00000400
-#define F_SAFEVIDEO		    0x00000800
-#define F_SELECTENEMY		0x00001000
-#define F_FILECHECK		    0x00002000
-#define F_LARGEFONT		    0x00004000
-#define F_SMALLFONT		    0x00008000
-#define F_SOUNDCHECK    	0x00010000
+#define F_CLEARSEEN         0x00000001
+#define F_SHOWROUTE         0x00000002
+#define F_SHOWLOFCELL       0x00000004
+#define F_SHOWLEVELS        0x00000008
+#define F_FASTSTART         0x00000010
+#define F_FULLSCREEN        0x00000020
+#define F_RAWMESSAGES       0x00000040
+#define F_SEL_ANY_MAN       0x00000080
+#define F_SWITCHVIDEO       0x00000100
+#define F_PLANNERDBG        0x00000200
+#define F_ENDLESS_TU        0x00000400
+#define F_SAFEVIDEO         0x00000800
+#define F_SELECTENEMY       0x00001000
+#define F_FILECHECK         0x00002000
+#define F_LARGEFONT         0x00004000
+#define F_SMALLFONT         0x00008000
+#define F_SOUNDCHECK        0x00010000
 #define F_LOGTOSTDOUT       0x00020000
 #define F_DEBUGDUMPS        0x00040000
-#define F_ENDTURNSND		0x00080000
+#define F_ENDTURNSND        0x00080000
 #define F_TOOLTIPS          0x00100000
 #define F_SECONDSIT	    0x00200000
 #define F_REACTINFO	    0x00400000
 #endif
+

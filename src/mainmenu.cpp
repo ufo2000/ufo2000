@@ -21,7 +21,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "stdafx.h"
 
-
 #include "global.h"
 #include "video.h"
 #include "../ufo2000.h"
@@ -31,6 +30,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "sound.h"
 #include "music.h"
+#include "text.h"
 
 static int old_mouse_x = -1, old_mouse_y = -1;
 
@@ -139,10 +139,12 @@ static int d_mainmenu_button_proc(int msg, DIALOG *d, int c)
 
 extern MIDI *g_menu_midi_music;
 
-/** Initializes and runs button-based main menu. It is implemented as an Allegro gui dialog.
+/** Initializes and runs button-based main menu. 
+ * It is implemented as an Allegro gui dialog.
  */
 int do_mainmenu()
 {
+    lua_message( "Enter: do_mainmenu" );
 	clear_keybuf();
 
 	// static added to workaround a weird crash bug on exit
@@ -159,29 +161,30 @@ int do_mainmenu()
         the_dialog[i].y = MENU_TOP + (MAINMENU_COUNT - i - 1) * (MENU_BTN_STEP + MENU_BTN_H);
         the_dialog[i].w = MENU_BTN_W;
         the_dialog[i].h = MENU_BTN_H;
-        the_dialog[i].fg = 0;
-        the_dialog[i].bg = 255;
+        the_dialog[i].fg    =  0;	// COLOR_WHITE
+        the_dialog[i].bg    = 255;	// COLOR_BLACK2
         the_dialog[i].flags = D_EXIT;
         the_dialog[i].key = 0;
-        the_dialog[i].d1 = 0;
-        the_dialog[i].d2 = 0;
-        the_dialog[i].dp = NULL;
+        the_dialog[i].d1  = 0;
+        the_dialog[i].d2  = 0;
+        the_dialog[i].dp  = NULL;
         the_dialog[i].dp2 = NULL;
         the_dialog[i].dp3 = NULL;
     }
     
-    the_dialog[MAINMENU_QUIT].key = 27;
+    the_dialog[MAINMENU_QUIT].key   = 27;
     the_dialog[MAINMENU_YIELD].proc = d_yield_proc;
     the_dialog[MAINMENU_COUNT].proc = NULL;
     
     the_dialog[MAINMENU_BACKGROUND].proc = d_mainmenu_background_proc;
 
-    the_dialog[MAINMENU_INTERNET].dp    = (void *) "connect to internet server";
-    the_dialog[MAINMENU_HOTSEAT].dp     = (void *) "start hotseat game";
-    the_dialog[MAINMENU_EDITOR].dp      = (void *) "editor";
-    the_dialog[MAINMENU_LOADGAME].dp    = (void *) "load saved game";
-    the_dialog[MAINMENU_ABOUT].dp       = (void *) "about";
-    the_dialog[MAINMENU_QUIT].dp        = (void *) "quit";
+    the_dialog[MAINMENU_INTERNET].dp    = (void *) _("connect to internet server");
+    the_dialog[MAINMENU_HOTSEAT].dp     = (void *) _("start hotseat game");
+    the_dialog[MAINMENU_EDITOR].dp      = (void *) _("editor");
+    the_dialog[MAINMENU_LOADGAME].dp    = (void *) _("load saved game");
+    the_dialog[MAINMENU_ABOUT].dp       = (void *) _("about");
+  //the_dialog[MAINMENU_TIP_OF_DAY].dp  = (void *) _("tip of the day");
+    the_dialog[MAINMENU_QUIT].dp        = (void *) _("quit");
     
     BS_DISABLED.font    = large;
     BS_IDLE.font        = large;    
@@ -202,8 +205,9 @@ int do_mainmenu()
 	else
 		position_mouse(550, 180);
 
-	FS_MusicPlay(F(cfg_get_menu_music_file_name()));
 	soundSystem::getInstance()->play(SS_WINDOW_OPEN_1);
+	// Todo: wait with start of music until sound is finished ?
+	FS_MusicPlay(F(cfg_get_menu_music_file_name()));
 
 	int v = do_dialog(the_dialog, -1);
 

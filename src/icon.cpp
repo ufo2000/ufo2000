@@ -34,13 +34,14 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "config.h"
 #include "scenario.h"
 #include "colors.h"
+#include "text.h"
 
 //! firemenu foreground color
 #define _FG COLOR_WHITE
 //! firemenu background color
 #define _BG COLOR_BLACK1
 
-// not used ??
+// not used / debug
 void cprintf(char *str)
 {
 	text_mode(0); textprintf(screen, font, 1, 1, COLOR_WHITE, "%s", str);
@@ -57,39 +58,39 @@ Icon::Icon()
 	int j;
 
 	//names in .lua file
-	item[I_LEFT].name = "LeftItem";
-	item[I_RIGHT].name = "RightItem";
+	item[I_LEFT].name            = "LeftItem";
+	item[I_RIGHT].name           = "RightItem";
 	
-	button[B_MAN_UP].name = "ManUp";
-	button[B_MAN_DOWN].name = "ManDown";
-	button[B_VIEW_UP].name = "ViewUp";
-	button[B_VIEW_DOWN].name = "ViewDown";
-	button[B_MAP].name = "Map";
-	button[B_CROUCH].name = "Crouch";
-	button[B_INVENTORY].name = "Inventory";
-	button[B_CENTER_VIEW].name = "CenterView";
-	button[B_NEXT_MAN].name = "NextMan";
-	button[B_NEXT_MAN_2].name = "NextMan2";
-	button[B_TOGGLE_ROOF].name = "ToggleRoof";
-	button[B_OPTIONS].name = "Options";
-	button[B_DONE].name = "Done";
-	button[B_EXIT].name = "Exit";
+	button[B_MAN_UP].name        = "ManUp";
+	button[B_MAN_DOWN].name      = "ManDown";
+	button[B_VIEW_UP].name       = "ViewUp";
+	button[B_VIEW_DOWN].name     = "ViewDown";
+	button[B_MAP].name           = "Map";
+	button[B_CROUCH].name        = "Crouch";
+	button[B_INVENTORY].name     = "Inventory";
+	button[B_CENTER_VIEW].name   = "CenterView";
+	button[B_NEXT_MAN].name      = "NextMan";
+	button[B_NEXT_MAN_2].name    = "NextMan2";
+	button[B_TOGGLE_ROOF].name   = "ToggleRoof";
+	button[B_OPTIONS].name       = "Options";
+	button[B_DONE].name          = "Done";
+	button[B_EXIT].name          = "Exit";
 
-	button[B_MAN_STATS].name = "ManStats";
-	button[B_BARCHART].name = "BarChart";
-	
-	text[T_TURN_NUMBER].name = "TurnNumber";
-	text[T_MAN_NAME].name = "ManName";
+	button[B_MAN_STATS].name     = "ManStats"; 
+	button[B_BARCHART].name      = "BarChart";
+
+	text[T_TURN_NUMBER].name     = "TurnNumber";
+	text[T_MAN_NAME].name        = "ManName";
 	
 	attribute[A_TIME_UNITS].name = "TimeUnits";
-	attribute[A_ENERGY].name = "Energy";
-	attribute[A_HEALTH].name = "Health";
-	attribute[A_MORALE].name = "Morale";
+	attribute[A_ENERGY].name     = "Energy";
+	attribute[A_HEALTH].name     = "Health";
+	attribute[A_MORALE].name     = "Morale";
 		
-	reserve[R_TIME_FREE].name = "ResTimeFree";
-	reserve[R_TIME_AIM].name = "ResTimeAim";
-	reserve[R_TIME_SNAP].name = "ResTimeSnap";
-	reserve[R_TIME_AUTO].name = "ResTimeAuto";
+	reserve[R_TIME_FREE].name    = "ResTimeFree";
+	reserve[R_TIME_AIM].name     = "ResTimeAim";
+	reserve[R_TIME_SNAP].name    = "ResTimeSnap";
+	reserve[R_TIME_AUTO].name    = "ResTimeAuto";
 
 	int nc[4];
 	const char *nd;
@@ -404,7 +405,7 @@ Icon::Icon()
 		BITMAP *custom_image;
 		custom_image = load_bitmap(F(filename.c_str()), NULL);
 		ASSERT(custom_image);
-		width = custom_image->w;
+		width  = custom_image->w;
 		height = custom_image->h;
 		
 		iconsbmp = create_bitmap(width, height);
@@ -508,14 +509,14 @@ void Icon::firemenu(int iplace)
 
 	if (it != NULL && scenario->can_use(sel_man, it)) {
 		int i = 0;
-		sprintf(dstr[i], "CANCEL");
+        sprintf(dstr[i], _("CANCEL") );
 		the_dialog[i].proc = firemenu_dialog_proc;
 		i++;
 
 		waccur[i] = sel_man->TAccuracy(100); // !!! no such parameter in obdata.dat
-		wtime[i] = sel_man->required(25);
+		wtime[i]  = sel_man->required(25);
 		if (sel_man->havetime(wtime[i])) {
-			sprintf(dstr[i], "THROW       ACC>%02d%% TUS>%02d", waccur[i], wtime[i]);
+            sprintf(dstr[i], _("THROW       ACC>%02d%% TUs>%02d"), waccur[i], wtime[i]);
 			the_dialog[i].proc = firemenu_dialog_proc;
 			waction[i] = THROW;
 			i++;
@@ -523,13 +524,13 @@ void Icon::firemenu(int iplace)
         
 		if (it->is_cold_weapon()) {
 			waccur[i] = 100;
-			wtime[i] = sel_man->required(25);
+			wtime[i]  = sel_man->required(25);
 			if (sel_man->havetime(wtime[i])) {
 				// More stun rod hack.
 				if (it->is_stun_rod())
-					sprintf(dstr[i], "STUN        ACC>%02d%% TUS>%02d", waccur[i], wtime[i]);
-				else
-					sprintf(dstr[i], "PUNCH       ACC>%02d%% TUS>%02d", waccur[i], wtime[i]);
+                    sprintf(dstr[i], _("STUN        ACC>%02d%% TUs>%02d"), waccur[i], wtime[i]);
+                else
+                    sprintf(dstr[i], _("PUNCH       ACC>%02d%% TUs>%02d"), waccur[i], wtime[i]);
 				the_dialog[i].proc = firemenu_dialog_proc;
 				waction[i] = PUNCH;
 				i++;
@@ -538,7 +539,7 @@ void Icon::firemenu(int iplace)
 				waccur[i] = sel_man->TAccuracy(it->obdata_accuracy(ATHROW));
 				wtime[i] = sel_man->required(50);
 				if (sel_man->havetime(wtime[i])) {
-					sprintf(dstr[i], "AIMED THROW ACC>%02d%% TUS>%02d", waccur[i], wtime[i]);
+                    sprintf(dstr[i], _("AIMED THROW ACC>%02d%% TUs>%02d"), waccur[i], wtime[i]);
 					the_dialog[i].proc = firemenu_dialog_proc;
 					waction[i] = AIMEDTHROW;
 					i++;
@@ -550,14 +551,14 @@ void Icon::firemenu(int iplace)
 				if (sel_man->havetime(wtime[i])) {
 					if (it->is_explo()) {
 						if (it->delay_time() == 0) {
-							sprintf(dstr[i], "PRIME EXPLOSIVE     TUS>%02d", wtime[i]);
+                            sprintf(dstr[i], _("PRIME EXPLOSIVE     TUs>%02d"), wtime[i]);
 							the_dialog[i].proc = firemenu_dialog_proc;
 							waction[i] = PRIME;
 							i++;
 						}
 					} else {
 						if (it->delay_time() == 0) {
-							sprintf(dstr[i], "PRIME GRENADE       TUS>%02d", wtime[i]);
+							sprintf(dstr[i], _("PRIME GRENADE       TUs>%02d"), wtime[i]);
 							the_dialog[i].proc = firemenu_dialog_proc;
 							waction[i] = PRIME;
 							i++;
@@ -570,7 +571,7 @@ void Icon::firemenu(int iplace)
 						waccur[i] = sel_man->FAccuracy(it->obdata_accuracy(AUTO), it->obdata_twoHanded());
 						wtime[i] = sel_man->required(it->obdata_time(AUTO));
 						if (sel_man->havetime(wtime[i])) {
-							sprintf(dstr[i], "AUTO SHOT   ACC>%02d%% TUS>%02d", waccur[i], (wtime[i] + 2) / 3 * 3);
+                            sprintf(dstr[i], _("AUTO SHOT   ACC>%02d%% TUs>%02d"), waccur[i], (wtime[i] + 2) / 3 * 3);
 							the_dialog[i].proc = firemenu_dialog_proc;
 							waction[i] = AUTOSHOT;
 							wtime[i] = (wtime[i] + 2) / 3;      // per 3
@@ -581,7 +582,7 @@ void Icon::firemenu(int iplace)
 						waccur[i] = sel_man->FAccuracy(it->obdata_accuracy(SNAP), it->obdata_twoHanded());
 						wtime[i] = sel_man->required(it->obdata_time(SNAP));
 						if (sel_man->havetime(wtime[i])) {
-							sprintf(dstr[i], "SNAP SHOT   ACC>%02d%% TUS>%02d", waccur[i], wtime[i]);
+                            sprintf(dstr[i], _("SNAP SHOT   ACC>%02d%% TUs>%02d"), waccur[i], wtime[i]);
 							the_dialog[i].proc = firemenu_dialog_proc;
 							waction[i] = SNAPSHOT;
 							i++;
@@ -591,7 +592,7 @@ void Icon::firemenu(int iplace)
 						waccur[i] = sel_man->FAccuracy(it->obdata_accuracy(AIMED), it->obdata_twoHanded());
 						wtime[i] = sel_man->required(it->obdata_time(AIMED));
 						if (sel_man->havetime(wtime[i])) {
-							sprintf(dstr[i], "AIMED SHOT  ACC>%02d%% TUS>%02d", waccur[i], wtime[i]);
+                            sprintf(dstr[i], _("AIMED SHOT  ACC>%02d%% TUs>%02d"), waccur[i], wtime[i]);
 							the_dialog[i].proc = firemenu_dialog_proc;
 							waction[i] = AIMEDSHOT;
 							i++;
@@ -608,12 +609,14 @@ void Icon::firemenu(int iplace)
 			//if (sel == i) return;
 			if (firemenu_dialog_proc_exit || sel == 0) return ;
 
+            // Todo: Fire-commands DROP & USE
+
 			if (waction[sel] != PRIME) {
-				target.accur = waccur[sel];
-				target.time = wtime[sel];
+				target.accur  = waccur[sel];
+				target.time   = wtime[sel];
 				target.action = waction[sel];
-				target.item = it;
-				target.place = iplace;
+				target.item   = it;
+				target.place  = iplace;
 				TARGET = 1;
 			} else {
 				target.time = wtime[sel];
@@ -641,7 +644,7 @@ int Icon::doprime(Item *it)
 
 	static DIALOG dPrime[] = {
 		//  dialog proc, x                , y                ,  w,  h,  fg,  bg, key,  flags, d1, d2, dp              ,  dp2,  dp3
-		{ d_button_proc, DX               , DY - 17          , 98, 15, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"Cancel", NULL, NULL},
+        { d_button_proc, DX               , DY - 17          , 98, 15, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Cancel"), NULL, NULL},
 		{ d_button_proc, DX               , DY               , DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"0"     , NULL, NULL},
 		{ d_button_proc, DX + (DS + 2) * 1, DY               , DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"1"     , NULL, NULL},
 		{ d_button_proc, DX + (DS + 2) * 2, DY               , DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"2"     , NULL, NULL},
@@ -736,7 +739,7 @@ void Icon::execute(int mx, int my)
 		if (map->sel_lev > 0)
 			map->sel_lev--;
 //
-// Test: Buttons for reserving time (Todo: further processing)
+// Buttons for reserving time:
 //
 	} else
 	if (reserve[R_TIME_FREE].button.is_inside(mx, my)) {
@@ -854,7 +857,7 @@ void Icon::info()
 	text_mode(-1);
 	if (sel_man != NULL) {
 		sel_man->drawinfo(x, y);
-	}      
+	}
 	
 	draw_text(T_TURN_NUMBER, (turn / 2) + 1, "%02d");
 		
