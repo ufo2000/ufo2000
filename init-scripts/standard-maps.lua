@@ -530,10 +530,6 @@ AddXcomTerrain {
 	}
 }
 
-------------------------------------------------------------------------------
--- A little bit of sea in the middle of town is not TOO bad. portxx.map     --
-------------------------------------------------------------------------------
-
 AddXcomTerrain {
 	Name = "Port",
 	Tiles =	{
@@ -564,7 +560,52 @@ AddXcomTerrain {
 		"$(tftd)/maps/port18.map",
 		"$(tftd)/maps/port19.map",
 		"$(tftd)/maps/port20.map"
-	}
+	},
+	MapGenerator = function(tmp)
+		local function random_normal()
+			if(math.random(1, 9) > 2) then
+				return math.random(10, 16)
+			else
+				return math.random(0, 1)
+			end
+		end
+
+
+		local function random_double(x, y, map)
+			local a = x + 1
+			local b = y + 1
+			if(map.Mapdata[x][y] ~= -1 and map.Mapdata[a][y] ~= -1 and map.Mapdata[x][b] ~= -1 and map.Mapdata[a][b] ~= -1) then
+				if(y == map.SizeY - 1) then
+					map.Mapdata[x][y] = math.random(17, 20)
+				else
+					map.Mapdata[x][y] = math.random(17, 19)
+				end
+				map.Mapdata[a][y] = -1
+				map.Mapdata[x][b] = -1
+				map.Mapdata[a][b] = -1
+			end
+		end	
+
+		for i = 1, tmp.SizeY - 1 do
+			for j = 1, tmp.SizeX do
+				tmp.Mapdata[i][j] = random_normal()
+			end
+		end
+
+		for i = 1, tmp.SizeY do
+			tmp.Mapdata[tmp.SizeX][i] = math.random(2, 9)
+		end
+
+		for i = 1, tmp.SizeY - 2 do
+			for j = 1, tmp.SizeX - 1 do
+				if (math.random(1, 13) > 9) then
+					random_double(i, j, tmp)
+				end
+			end
+		end
+
+		return tmp
+	end
 }
 
 --[[  
