@@ -1,3 +1,38 @@
+------------------------------------------------------------------------------
+-- Set explosion animation 
+-- (experimental feature, interface can change any time)
+------------------------------------------------------------------------------
+
+-- set new explosion animation made by nappes
+SetExplosionAnimation {
+	png_image_ex("$(ufo2000)/arts/explo1.png", true),
+	png_image_ex("$(ufo2000)/arts/explo2.png", true),
+	png_image_ex("$(ufo2000)/arts/explo3.png", true),
+	png_image_ex("$(ufo2000)/arts/explo4.png", true),
+	png_image_ex("$(ufo2000)/arts/explo5.png", true),
+	png_image_ex("$(ufo2000)/arts/explo6.png", true),
+	png_image_ex("$(ufo2000)/arts/explo7.png", true),
+	png_image_ex("$(ufo2000)/arts/explo8.png", true),
+}
+
+if not ExplosionAnimation[1] then
+	-- fallback to old x-com explosion animation
+	SetExplosionAnimation {
+	    pck_image_ex(false, 128, 64, "$(xcom)/ufograph/x1.pck", 0),
+	    pck_image_ex(false, 128, 64, "$(xcom)/ufograph/x1.pck", 1),
+	    pck_image_ex(false, 128, 64, "$(xcom)/ufograph/x1.pck", 2),
+	    pck_image_ex(false, 128, 64, "$(xcom)/ufograph/x1.pck", 3),
+	    pck_image_ex(false, 128, 64, "$(xcom)/ufograph/x1.pck", 4),
+	    pck_image_ex(false, 128, 64, "$(xcom)/ufograph/x1.pck", 5),
+	    pck_image_ex(false, 128, 64, "$(xcom)/ufograph/x1.pck", 6),
+	    pck_image_ex(false, 128, 64, "$(xcom)/ufograph/x1.pck", 7),
+	}
+end
+
+------------------------------------------------------------------------------
+-- Initialize items
+------------------------------------------------------------------------------
+
 AddXcomItem {
 	index = 0,
 	cost = 75,

@@ -54,7 +54,7 @@ static std::map<std::string, BITMAP *> g_png_large_cache;
 /**
  * Load bitmap (this function is aware of truecolor transparency)
  */
-static BITMAP *load_bitmap_alpha(const char *filename)
+static BITMAP *load_bitmap_alpha(const char *filename, bool use_alpha)
 {
     // Allow any color conversions except when loaded file 
     // contains alpha channel
@@ -70,7 +70,8 @@ static BITMAP *load_bitmap_alpha(const char *filename)
     if (!bmp_orig) return NULL;
     
     // Check color depth, if it is 32 bit then we need some more work to do
-    if (bitmap_color_depth(bmp_orig) != 32) return bmp_orig;
+    bool mode32 = bitmap_color_depth(bmp_orig) == 32;
+    if (!mode32 || use_alpha) return bmp_orig;
 
     BITMAP *bmp = create_bitmap(bmp_orig->w, bmp_orig->h);
     clear_to_color(bmp, bitmap_mask_color(bmp));
@@ -78,7 +79,10 @@ static BITMAP *load_bitmap_alpha(const char *filename)
         for (int y = 0; y < bmp_orig->h; y++) {
             int c = getpixel(bmp_orig, x, y);
             if (geta32(c) != 0) {
-                putpixel(bmp, x, y, makecol(getr32(c), getg32(c), getb32(c)));
+            	if (mode32)
+	                putpixel(bmp, x, y, makeacol(getr32(c), getg32(c), getb32(c), 255));
+            	else
+	                putpixel(bmp, x, y, makecol(getr32(c), getg32(c), getb32(c)));
             }
         }
     destroy_bitmap(bmp_orig);
@@ -101,11 +105,11 @@ static BITMAP *load_bitmap_alpha(const char *filename)
  * @param filename  path to a file with image on disk
  * @return          allegro bitmap on success or NULL if any error occurs
  */
-BITMAP *png_image(const char *filename)
+BITMAP *png_image_ex(const char *filename, bool use_alpha)
 {
 	std::string fullname = F(filename);
 	if (g_png_cache.find(fullname) == g_png_cache.end()) {
-        BITMAP *bmp = load_bitmap_alpha(fullname.c_str());
+        BITMAP *bmp = load_bitmap_alpha(fullname.c_str(), use_alpha);
         if (!bmp) {
             // Maybe we could find this picture inside of large bitmap
             int width, height, index;
@@ -114,7 +118,7 @@ BITMAP *png_image(const char *filename)
                 std::string large_bitmap_name = std::string(filename, p - filename - 1) + "." + get_extension(filename);
                 large_bitmap_name = F(large_bitmap_name.c_str());
             	if (g_png_large_cache.find(large_bitmap_name) == g_png_large_cache.end()) {
-                    g_png_large_cache[large_bitmap_name] = load_bitmap_alpha(large_bitmap_name.c_str());
+                    g_png_large_cache[large_bitmap_name] = load_bitmap_alpha(large_bitmap_name.c_str(), use_alpha);
                 }
                 if (g_png_large_cache[large_bitmap_name] && index > 0) {
                     // number of pictures in a row
@@ -131,6 +135,11 @@ BITMAP *png_image(const char *filename)
 		g_png_cache[fullname] = bmp;
     }
 	return g_png_cache[fullname];
+}
+
+BITMAP *png_image(const char *filename)
+{
+    return png_image_ex(filename, false);
 }
 
 /**

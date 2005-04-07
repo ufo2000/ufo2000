@@ -42,7 +42,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 uint16 *Map::m_loftemp = NULL;
 int Map::m_loftemp_num = 0;
 SPK *Map::scanbord = NULL;
-PCK *Map::smoke = NULL, *Map::cursor = NULL, *Map::x1 = NULL;
+PCK *Map::smoke = NULL, *Map::cursor = NULL;
 int Map::m_animation_cycle = 0;
 
 //			  dirs		0  1  2  3  4  5  6  7
@@ -107,7 +107,6 @@ void load_terrain_pck(const std::string &tid, TerraPCK *&terrain_pck)
 void Map::initpck()
 {
 	cursor	 = new PCK("$(xcom)/ufograph/cursor.pck");
-	x1		 = new PCK("$(xcom)/ufograph/x1.pck", 0, 128, 64);
 	scanbord = new SPK("$(xcom)/ufograph/scanbord.pck");
 	smoke	 = new PCK("$(xcom)/ufograph/smoke.pck");
 	int fh = open(F("$(xcom)/geodata/loftemps.dat"), O_RDONLY | O_BINARY);
@@ -122,7 +121,6 @@ void Map::initpck()
 void Map::freepck()
 {
 	delete cursor;
-	delete x1;
 	delete scanbord;
 	delete smoke;
 
@@ -437,8 +435,25 @@ void Map::draw(int show_cursor)
 		sy = y - (c) * CELL_SCR_Y + CELL_SCR_Y * r - 26 - l * CELL_SCR_Z - 1;
 				
 		int e = exp->state;
-		if (e >= 0)
- 			x1->showpck(e / 2, (sx + 16) - 64, (sy + 12) - 32);
+		if (e >= 0) {
+			int stack_top = lua_gettop(L);
+			lua_pushstring(L, "ExplosionAnimation");
+			lua_gettable(L, LUA_GLOBALSINDEX);
+			ASSERT(lua_istable(L, -1)); 
+		    // Enter [tid] table
+			lua_pushnumber(L, e / 2 + 1);
+			lua_gettable(L, -2);
+			if (lua_isuserdata(L, -1)) {
+				BITMAP *bmp = (BITMAP *)lua_touserdata(L, -1);
+				if (bitmap_color_depth(bmp) == 32) {
+					set_alpha_blender();
+					draw_trans_sprite(screen2, bmp, (sx + 16) - (bmp->w / 2), (sy + 12) - (bmp->h / 2));
+				} else {
+					draw_sprite(screen2, bmp, (sx + 16) - (bmp->w / 2), (sy + 12) - (bmp->h / 2));
+				}
+			}
+			lua_settop(L, stack_top);
+ 		}
  	}
 
 	m_cell[sel_lev][sel_col][sel_row]->MOUSE = 0;

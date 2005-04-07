@@ -592,6 +592,7 @@ void initmain(int argc, char *argv[])
     LUA_REGISTER_FUNCTION(L, pck_image);
     LUA_REGISTER_FUNCTION(L, pck_image_ex);
     LUA_REGISTER_FUNCTION(L, png_image);
+    LUA_REGISTER_FUNCTION(L, png_image_ex);
     
 #ifdef LINUX
     // Do not silently exit on broken network connection

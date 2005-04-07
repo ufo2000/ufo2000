@@ -13,6 +13,8 @@ TerrainTable = {}
 ItemsTable = {}
 -- global table with the information about all available weaponsets
 EquipmentTable = {}
+-- table with images for explosion animation
+ExplosionAnimation = {}
 
 -- Workaround for a problem when running the game in valgrind.
 -- Appears that get_executable_name() function can't get correct
@@ -199,6 +201,10 @@ function AddXcomTerrain(terrain)
     end
 
     return 1
+end
+
+function SetExplosionAnimation(tbl)
+    ExplosionAnimation = tbl
 end
 
 -- Loads squad information
