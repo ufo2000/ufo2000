@@ -119,12 +119,16 @@ void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, c
         char timebuf[1000];
         strftime(timebuf, 1000, "%d/%m/%Y %H:%M:%S", t);
 
-        db_conn.executenonquery("\
+		sqlite3::command sql_cmd(db_conn, "\
             insert into ufo2000_game_packets\
             (game, id, sender, date, command) values \
-            (%d, %d, %d, '%s', '%s' );",
-            game_id, last_received_packed, sender->position, timebuf, packet.c_str());
-    }
+            (?, ?, ?, ?, ? );");
+        sql_cmd.parameters.push_back(sqlite3::parameter(1, (int)game_id));
+        sql_cmd.parameters.push_back(sqlite3::parameter(2, (int)last_received_packed));
+        sql_cmd.parameters.push_back(sqlite3::parameter(3, (int)sender->position));
+        sql_cmd.parameters.push_back(sqlite3::parameter(4,timebuf,strlen(timebuf)));
+		sql_cmd.parameters.push_back(sqlite3::parameter(5, (void*) packet.c_str(), packet.size()));
+		sql_cmd.executenonquery();    }
     catch(std::exception &ex) {
         server_log("Exception Occured: %s",ex.what());
     }
