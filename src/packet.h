@@ -55,8 +55,8 @@ private:
 	char data[1000];
 	int cur, size;
 	static char *strCommand[COMMAND_NUM];
-	int Position; //!< 1 - the sender is a player going first, 2 - second
 public:
+	int Position; //!< 1 - the sender is a player going first, 2 - second
 	Packet();
 	void reset();
 	void create(char *header);

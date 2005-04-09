@@ -67,6 +67,7 @@ int HOST, DONE, TARGET, turn;
 Mode MODE;                      //!< Display-Mode
 ConsoleWindow *g_console;
 int g_pause;
+int g_game_receiving = 0;       //!< If we are getting saved game from server, no output
 
 int g_time_limit;               //!< Limit of time for a single turn in seconds
 volatile int g_time_left;       //!< Current counter for time left for this turn
@@ -233,14 +234,20 @@ void initrand()
 {
     Mode old_MODE = MODE;
     MODE = WATCH;
-    g_random_init[0] = getsomerand();
+
+    // One-side generation (temporary solution?)
+    int random_init = getsomerand();
+    net->send_initrand(random_init);
+    cur_random->init(random_init);
+
+    /*g_random_init[0] = getsomerand();
     g_random_init[1] = -1;
     net->send_initrand(g_random_init[0]);
     do {
         rest(1);
         net->check();
     } while (g_random_init[1] == -1);
-    cur_random->init(g_random_init[HOST] * 3600 + g_random_init[!HOST]);
+    cur_random->init(g_random_init[HOST] * 3600 + g_random_init[!HOST]);*/
     MODE = old_MODE;
 }
 
@@ -322,7 +329,8 @@ int initgame()
     reset_video();
     restartgame();
     g_tie = 0; // Clear tie flags for the new game.
-    initrand();
+    if (HOST)
+        initrand();
     //clear_to_color(screen, 58); //!!!!!
     
     // Set/Clear some scenario specific variables and effects:

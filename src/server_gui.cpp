@@ -502,6 +502,7 @@ int connect_internet_server()
 					chat->printf(chat_msg_color(packet), "%s", packet.c_str());
 					break;
 				case SRV_GAME_START_HOST:
+				    g_game_receiving = 0;
 					show_mouse(NULL);
 					FS_MusicPlay(NULL);
 		            HOST = 1;
@@ -526,11 +527,37 @@ int connect_internet_server()
 					lobby_init_mouse();
 					break;
 				case SRV_GAME_START_JOIN:
+				    g_game_receiving = 0;
 					show_mouse(NULL);
 					FS_MusicPlay(NULL);
 		            HOST = 0;
 
                     lua_message( std::string("Join networkgame with") + packet.c_str() );
+                    battle_report( "# %s: %s\n", _("Join networkgame with"), packet.c_str() );
+                    // Todo: use this name for endgame-stats
+
+		            if (initgame()) {
+		                gameloop();
+		                closegame();
+		            }
+
+					users->remove_all_users();
+					users->update_user_info(g_server_login, USER_STATUS_SELF);
+
+					server->send_packet(SRV_ENDGAME, "");
+					if ((rand() % 2) == 1)
+						FS_MusicPlay(F(cfg_get_net2_music_file_name()));
+					else
+						FS_MusicPlay(F(cfg_get_net1_music_file_name()));
+					lobby_init_mouse();
+					break;
+                case SRV_GAME_RECOVERY_START:
+                    g_game_receiving = 1;
+					show_mouse(NULL);
+					FS_MusicPlay(NULL);
+		            HOST = 1;
+
+                    lua_message( std::string("Start recovering") + packet.c_str() );
                     battle_report( "# %s: %s\n", _("Join networkgame with"), packet.c_str() );
                     // Todo: use this name for endgame-stats
 
@@ -605,6 +632,9 @@ int connect_internet_server()
                     break;
     			case KEY_F1:
                     help( HELP_NET );
+					break;
+    			case KEY_F3:
+                    server->resume_game();
 					break;
 				case KEY_F9:
 					keyswitch(0);

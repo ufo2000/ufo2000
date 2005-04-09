@@ -174,6 +174,8 @@ int Connect::do_chat()
 
 Units local;
 Units remote;
+// Pointers to "Units" in order of their positions (HOST/JOIN), not local/remote choice.
+Units* target_uints[2];
 
 // uds ??
 void Connect::reset_uds()
@@ -222,20 +224,22 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 	int map2d_x = (640 - map2d->w) / 2;
 
 	if (HOST) {
-        local.Position = 1;
-        remote.Position = 2;
+	    target_uints[1] = &remote;
+	    target_uints[0] = &local;
         local.set_pos(POS_LEFT,   map2d_x - (MAN_NAME_LEN * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
 		remote.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
 		pd_local = &pd1;
 		pd_remote = &pd2;
 	} else {
-        local.Position = 2;
-        remote.Position = 1;
+	    target_uints[0] = &remote;
+	    target_uints[1] = &local;
         remote.set_pos(POS_LEFT, map2d_x - (MAN_NAME_LEN * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
 		local.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
 		pd_remote = &pd1;
 		pd_local = &pd2;
 	}
+    target_uints[0]->Position = 1;
+    target_uints[1]->Position = 2;
 
     local.store_mouse_range(map2d_x, 0, map2d_x + map2d->w - 1, map2d->h - 1);
 	editor->build_Units(local);
@@ -295,7 +299,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 
 	mapdata.load_game = 77;
 
-	if (HOST) {
+	if (HOST && !g_game_receiving) {
 		int i;
 		net->send_map_data(&mapdata);
 		net->send_time_limit(g_time_limit);
@@ -360,8 +364,10 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 			//map->show2d(0, 0);
 			blit(map2d, screen2, 0, 0, map2d_x, 0, map2d->w, map2d->h);
 
-			remote.print_simple(COLOR_WHITE);
-			local.print(COLOR_WHITE);
+            if(!g_game_receiving) {
+            	remote.print_simple(COLOR_WHITE);
+			    local.print(COLOR_WHITE);
+            }
 			//remote.print(1);
 
 			//if (local.SEND)

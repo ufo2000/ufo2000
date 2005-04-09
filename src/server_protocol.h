@@ -90,6 +90,8 @@ public:
 	bool message(const std::string &text);
 	bool challenge(const std::string &user);
 	bool decline_challenge(const std::string &user);
+	//! Send request to server to resume unfinished game
+	bool resume_game();
 };
 
 #endif

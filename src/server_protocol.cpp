@@ -403,6 +403,12 @@ bool ClientServerUfo::decline_challenge(const std::string &user)
     return true;
 }
 
+bool ClientServerUfo::resume_game()
+{
+    if (!send_packet(SRV_GAME_CONTINUE_REQUEST , "Game request")) return false;
+    return true;
+}
+
 bool ServerClientUfo::add_user(const std::string &login, const std::string &password)
 {
     try {

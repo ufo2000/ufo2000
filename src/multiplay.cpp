@@ -32,6 +32,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "scenario.h"
 #include "colors.h"
 #include "text.h"
+#include "random.h"
 
 static std::list<std::string> g_hotseat_cmd_queue;
 
@@ -273,7 +274,24 @@ void Net::check()
 	}
 
 	log("recv:[%s]\n", packet.c_str());
-	switch (pkt.command((char *)packet.data(), packet.size())) {
+
+    int cmd_id = pkt.command((char *)packet.data(), packet.size());
+	// Bad place, bad style. To apply command to rigth platoon we
+    // just switch pointers. (andrew)
+    if (g_game_receiving)
+        if (pkt.Position == 1) {
+            platoon_local = p2;
+            platoon_remote = p1;
+            pd_local = &pd2;
+            pd_remote = &pd1;
+        } else {
+            platoon_local = p1;
+            platoon_remote = p2;
+            pd_local = &pd1;
+            pd_remote = &pd2;
+        }
+
+	switch (cmd_id) {
 		case CMD_NOTICE:
 			recv_notice();
 			break;
@@ -382,7 +400,7 @@ void Net::check()
             break;
 		case CMD_NONE:
         case COMMAND_NUM:
-			ASSERT(false);
+//			ASSERT(false);
 			break;
 	};
 }
@@ -880,6 +898,7 @@ int Net::recv_target_action()
 
 extern Units local;
 extern Units remote;
+extern Units* target_uints[2];
 
 void Net::send_add_unit(int num, char *name, int cost)
 {
@@ -906,7 +925,7 @@ int Net::recv_add_unit()
 	pkt >> name;
 	pkt >> cost;
 
-	if (!remote.add(num, name, cost)) {
+	if (!target_uints[pkt.Position-1]->add(num, name, cost)) {
 		error("can't add to remote units");
 		return 0;
 	}
@@ -942,7 +961,7 @@ int Net::recv_select_unit()
     pkt >> col;
     pkt >> row;
 
-	if (!remote.select_unit(num, lev, col, row)) {
+	if (!target_uints[pkt.Position-1]->select_unit(num, lev, col, row)) {
 		error("can't select remote unit");
 		return 0;
 	}
@@ -972,7 +991,7 @@ int Net::recv_deselect_unit()
 
 	pkt >> num;
 
-	if (!remote.deselect_unit(num)) {
+	if (!target_uints[pkt.Position-1]->deselect_unit(num)) {
 		error("can't deselect remote unit");
 		return 0;
 	}
@@ -1007,7 +1026,7 @@ void Net::send_finish_planner()
 
 int Net::recv_finish_planner()
 {
-	remote.START = 1;
+	target_uints[pkt.Position-1]->START = 1;
 	int CNF;
 	pkt >> CNF;
 
@@ -1465,11 +1484,14 @@ void Net::send_initrand(int init_num)
     send();
 }
 
+extern Random *cur_random;
+
 int Net::recv_initrand()
 {
     int initrand;
     pkt >> initrand;
-    g_random_init[1] = initrand;
+    //g_random_init[1] = initrand;
+    cur_random->init(initrand);
     return 0;
 }
 

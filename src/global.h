@@ -306,6 +306,7 @@ extern int TARGET;
 extern Soldier *sel_man;
 extern Mode MODE;
 extern int g_pause;
+extern int g_game_receiving;
 extern int turn;
 extern int CONFIRM_REQUESTED;
 extern DATAFILE *datafile;

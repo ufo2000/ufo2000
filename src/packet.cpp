@@ -88,7 +88,7 @@ Command Packet::command(char *buf, int buf_size)
 				int data_start = pkt + strlen(strCommand[i]) + 1 - buf;
 				memcpy(data, buf + data_start, buf_size - data_start);
 				size = buf_size - data_start;
-				return (Command)i;
+                return (Command)i;
 			}
 		}
 	return CMD_NONE;
