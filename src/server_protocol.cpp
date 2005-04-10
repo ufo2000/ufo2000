@@ -368,8 +368,10 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
                     if(reader.getstring(0) == "START")
                         game_start_sended = 1;
                 }
+            char stop_packet[100];
+            sprintf(stop_packet, "_Xcom_%d_RSTP_", 3 - players_position);
+            send_packet_back(SRV_GAME_PACKET, stop_packet);
             break;
-            send_packet_back(SRV_GAME_RECOVERY_STOP, "Game loaded");
         }
     }
     return true;

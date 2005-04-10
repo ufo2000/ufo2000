@@ -201,7 +201,8 @@ void Net::send(const std::string &pkt)
 				packet_send_hotseat(pkt);
 			break;
 		case GAME_TYPE_INTERNET_SERVER:
-			m_internet_server->send_packet(SRV_GAME_PACKET, pkt);
+            if(!g_game_receiving)
+                m_internet_server->send_packet(SRV_GAME_PACKET, pkt);
 			break;
        case GAME_TYPE_REPLAY:
            break;
@@ -397,6 +398,9 @@ void Net::check()
             break;
         case CMD_INITRAND:
             recv_initrand();
+            break;
+        case CMD_RECOVERY_STOP:
+            recv_recovery_stop();
             break;
 		case CMD_NONE:
         case COMMAND_NUM:
@@ -1492,6 +1496,16 @@ int Net::recv_initrand()
     pkt >> initrand;
     //g_random_init[1] = initrand;
     cur_random->init(initrand);
+    return 0;
+}
+
+int Net::recv_recovery_stop()
+{
+    g_game_receiving = 0;
+    if ( (turn%2 && HOST) || (!(turn%2) && !HOST))
+        MODE = WATCH;
+    else
+        MODE = MAP3D;
     return 0;
 }
 

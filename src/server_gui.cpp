@@ -555,7 +555,10 @@ int connect_internet_server()
                     g_game_receiving = 1;
 					show_mouse(NULL);
 					FS_MusicPlay(NULL);
-		            HOST = 1;
+					if (packet == "1")
+		                HOST = 1;
+                    else
+		                HOST = 0;
 
                     lua_message( std::string("Start recovering") + packet.c_str() );
                     battle_report( "# %s: %s\n", _("Join networkgame with"), packet.c_str() );
@@ -569,7 +572,7 @@ int connect_internet_server()
 					users->remove_all_users();
 					users->update_user_info(g_server_login, USER_STATUS_SELF);
 
-					server->send_packet(SRV_ENDGAME, "");
+//					server->send_packet(SRV_ENDGAME, "");
 					if ((rand() % 2) == 1)
 						FS_MusicPlay(F(cfg_get_net2_music_file_name()));
 					else

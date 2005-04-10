@@ -105,6 +105,8 @@ private:
 	int recv_equipment();
     int recv_tie();
     int recv_initrand();
+    
+    int recv_recovery_stop();
 	
 public:
 	std::istream *m_ireplay_file;

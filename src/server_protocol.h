@@ -52,7 +52,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #define SRV_GAME_CONTINUE_REQUEST  17
 #define SRV_GAME_RECOVERY_START    18
-#define SRV_GAME_RECOVERY_STOP     19
 
 class Server_Game_UFO;
 

@@ -30,7 +30,7 @@ char *Packet::strCommand[COMMAND_NUM] = {
     "TAKE", "DROP", "MOVE", "FACE", "TACT", "ADUN", "PDSZ", "PDAT",
     "SEUN", "DEUN", "MDAT", "STRT", "REST", "TLIM", "TCRC", "ELEV",
     "SCEN", "RULE", "OPTN", "PANI", "MORL", "RTIM", "P2ST", "EQUI",
-    "DRAW", "IRND"
+    "DRAW", "IRND", "RSTP"
 };
 
 Packet::Packet()
