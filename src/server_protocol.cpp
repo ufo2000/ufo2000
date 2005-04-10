@@ -359,9 +359,15 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
             sprintf(pos_str_buffer, "%d", players_position);
             send_packet_back(SRV_GAME_RECOVERY_START, pos_str_buffer);
             sqlite3::reader reader=db_conn.executereader("select command, packet_type from ufo2000_game_packets where game=%d order by id;", game_id);
+            int game_start_sended = 0;
             while(reader.read())
                 if(reader.getint32(1) == SRV_GAME_PACKET)
-                    send_packet_back(SRV_GAME_PACKET, reader.getstring(0));
+                {
+                    if(!(reader.getstring(0) == "START" && game_start_sended))
+                        send_packet_back(SRV_GAME_PACKET, reader.getstring(0));
+                    if(reader.getstring(0) == "START")
+                        game_start_sended = 1;
+                }
             break;
             send_packet_back(SRV_GAME_RECOVERY_STOP, "Game loaded");
         }

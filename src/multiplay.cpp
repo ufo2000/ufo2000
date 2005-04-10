@@ -400,7 +400,7 @@ void Net::check()
             break;
 		case CMD_NONE:
         case COMMAND_NUM:
-//			ASSERT(false);
+			ASSERT(false);
 			break;
 	};
 }
