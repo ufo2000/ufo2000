@@ -329,7 +329,7 @@ int initgame()
     reset_video();
     restartgame();
     g_tie = 0; // Clear tie flags for the new game.
-    if (HOST)
+    if (HOST && !g_game_receiving)
         initrand();
     //clear_to_color(screen, 58); //!!!!!
     
@@ -1069,7 +1069,7 @@ void recv_turn(int crc)
         return;
     }
 
-    ASSERT(MODE == WATCH);
+    ASSERT(MODE == WATCH || g_game_receiving);
     switch_turn();
     
     check_crc(crc);

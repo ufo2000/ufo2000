@@ -439,7 +439,7 @@ void Platoon::apply_hit(int sniper, int z, int x, int y, int type, int hitdir)
 int Platoon::check_reaction_fire(Soldier *target)
 {
     // Reaction fire isn't calculated in replay mode
-    if (net->gametype == GAME_TYPE_REPLAY)
+    if (net->gametype == GAME_TYPE_REPLAY || g_game_receiving)
         return 0;
 
 	std::vector<Soldier *> soldiers;
@@ -463,6 +463,7 @@ void Platoon::change_morale(int delta, bool send_to_remote)
 {
 	Soldier *ss = man;
 
+    if (! g_game_receiving || !send_to_remote)
 	while (ss != NULL) {
 		ss->change_morale(delta);	
 		ss = ss->next();
