@@ -403,7 +403,6 @@ Section "${GAME_NAME} (required)" MainSec
 	File "readme_es.txt"
 	File "readme_fr.txt"
 	File "readme_pt.txt"
-	File "newmaps.txt"
 	File "readme_ru.html"
 	File "soundmap.xml"
 	File "squad.default.lua"
@@ -427,27 +426,27 @@ Section "${GAME_NAME} (required)" MainSec
 	File init-scripts\*
 	
 	SetOutPath $INSTDIR\newmaps
-	
 	File newmaps\*
 	
 	SetOutPath $INSTDIR\newmusic
-	
 	File ..\newmusic\*
 	
+	SetOutPath $INSTDIR\docs
+	File docs\*
+
+	SetOutPath $INSTDIR\extensions
+	File extensions\*
+
 	SetOutPath $INSTDIR\newunits
-	
 	File newunits\*
 	
 	SetOutPath $INSTDIR\script
-	
 	File script\*
 	
 	SetOutPath $INSTDIR\translations
-	
 	File translations\*
 
 	SetOutPath $INSTDIR\fonts
-	
 	File fonts\*
 	
 	IfFileExists $XCOM_FOLDER xcom xcom_no
