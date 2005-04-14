@@ -435,7 +435,7 @@ Section "${GAME_NAME} (required)" MainSec
 	File docs\*
 
 	SetOutPath $INSTDIR\extensions
-	File extensions\*
+	File /r extensions\*
 
 	SetOutPath $INSTDIR\newunits
 	File newunits\*
