@@ -169,7 +169,7 @@ END_OF_FUNCTION(timer_handler4);
 
 void timer_replay()
 {
-	REPLAYIT++;
+    REPLAYIT++;
 }
 END_OF_FUNCTION(timer_replay);
 
@@ -177,7 +177,7 @@ int speed_unit      = 15;
 int speed_bullet    = 30;
 int speed_mapscroll = 30;
 int mapscroll       = 10;
-int replaydelay		= 2;
+int replaydelay     = 2;
 
 void install_timers(int _speed_unit, int _speed_bullet, int _speed_mapscroll)
 {
@@ -365,19 +365,19 @@ Wind *print_win = NULL;
 
 std::string indent(const std::string &str)
 {
-	bool newline = true;
-	std::string tmp;
-	for (int i = 0; i < (int)str.size(); i++) {
-		if (newline) {
-			tmp += "\t";
-			newline = false;
-		}
-		if (str[i] == '\n') {
-			newline = true;
-		}
-		tmp += str[i];
-	}
-	return tmp;
+    bool newline = true;
+    std::string tmp;
+    for (int i = 0; i < (int)str.size(); i++) {
+        if (newline) {
+            tmp += "\t";
+            newline = false;
+        }
+        if (str[i] == '\n') {
+            newline = true;
+        }
+        tmp += str[i];
+    }
+    return tmp;
 }
 
 class consoleBuf : public std::streambuf {
@@ -506,6 +506,26 @@ void find_lua_files_callback(const char *filename, int attrib, int param)
     *allegro_errno = 0; 
 }
 
+void find_dir_callback(const char *filename, int attrib, int param)
+{
+    char *filepart = get_filename(filename);
+    if (strcmp(filepart, ".") != 0 && strcmp(filepart, "..") != 0) {
+        
+        lua_pushstring(L, "extension_dir");
+        lua_pushstring(L, filename);
+        lua_settable(L, LUA_GLOBALSINDEX);
+
+        char tmp[1024];
+        sprintf(tmp, "%s/*.lua", filename);
+        printf("%s\n", tmp);
+        for_each_file(tmp, FA_RDONLY | FA_ARCH, find_lua_files_callback, 0);
+    }
+    // $$$ Fixme: lua_dofile sets errno variable in some mysterious way,
+    // so allegro for_each_file function stops searching files if we do not 
+    // reset this back to 0
+    *allegro_errno = 0; 
+}
+
 /**
  * lua_call replacement with error message showing on errors
  */
@@ -569,7 +589,7 @@ void initmain(int argc, char *argv[])
     jpgalleg_init();
 #ifdef HAVE_PNG    
     _png_screen_gamma = 0.0;
-	loadpng_init();
+    loadpng_init();
 #endif
     set_color_conversion(COLORCONV_TOTAL | COLORCONV_KEEP_TRANS);
 
@@ -581,11 +601,11 @@ void initmain(int argc, char *argv[])
     luaopen_math(L);
     luaopen_table(L);
     luaopen_debug(L);
-	
-	// Lua API for accessing C++ objects
+    
+    // Lua API for accessing C++ objects
     LUA_REGISTER_CLASS(L, Platoon);
     LUA_REGISTER_CLASS_METHOD(L, Platoon, findnum);
-	
+    
     LUA_REGISTER_CLASS(L, Soldier);
     LUA_REGISTER_CLASS_METHOD(L, Soldier, reset_stats);
     LUA_REGISTER_CLASS_METHOD(L, Soldier, set_attribute);
@@ -596,7 +616,7 @@ void initmain(int argc, char *argv[])
     LUA_REGISTER_CLASS(L, Place);
     LUA_REGISTER_CLASS_METHOD(L, Place, add_item);
     LUA_REGISTER_CLASS_METHOD(L, Place, destroy_all_items);
-	
+    
     LUA_REGISTER_FUNCTION(L, pck_image);
     LUA_REGISTER_FUNCTION(L, pck_image_ex);
     LUA_REGISTER_FUNCTION(L, png_image);
@@ -658,10 +678,6 @@ void initmain(int argc, char *argv[])
     // Initialize lua environment
     lua_safe_dofile(L, DATA_DIR "/init-scripts/main.lua");
 
-    // Load standard and custom maps
-    lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-maps.lua", "plugins_sandbox");
-    for_each_file(DATA_DIR "/newmaps/*.lua", FA_RDONLY | FA_ARCH, find_lua_files_callback, 0);
-
     FLAGS = 0;
     push_config_state();
     set_config_file(F("$(home)/ufo2000.ini"));
@@ -702,7 +718,7 @@ void initmain(int argc, char *argv[])
     if (get_config_int("Flags", "F_SECONDSIT", 1)) FLAGS |= F_SECONDSIT;      // second player starts in SIT position
     if (get_config_int("Flags", "F_REACTINFO", 0)) FLAGS |= F_REACTINFO;      // show debug info on reaction fire
     if (get_config_int("Flags", "F_CONVERT_XCOM_DATA", 0)) FLAGS |= F_CONVERT_XCOM_DATA; // convert x-com resources to a more conventional and readable format for debugging
-    if (get_config_int("Flags", "F_SHOWNIGHT", 1)) FLAGS |= F_SHOWNIGHT;	  // shade tile using the light level
+    if (get_config_int("Flags", "F_SHOWNIGHT", 1)) FLAGS |= F_SHOWNIGHT;      // shade tile using the light level
 
     const AGUP_THEME *gui_theme = NULL;
 
@@ -758,7 +774,11 @@ void initmain(int argc, char *argv[])
 
     lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-items.lua");
     lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-equipment.lua");
-    lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-soldiersetup.lua");
+
+    // Load standard and custom maps
+    lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-maps.lua", "plugins_sandbox");
+    for_each_file(DATA_DIR "/newmaps/*.lua", FA_RDONLY | FA_ARCH, find_lua_files_callback, 0);
+    for_each_file(DATA_DIR "/extensions/*", FA_DIREC, find_dir_callback, 0);
 
     console<<"install_timer"<<std::endl;
     install_timer();
@@ -913,7 +933,7 @@ int build_crc()
 {
     char buf[200000]; memset(buf, 0, sizeof(buf));
     int buf_size = 0;
-	
+    
     p1->eot_save(buf, buf_size);
     p2->eot_save(buf, buf_size);
     map->eot_save(buf, buf_size);
@@ -1061,11 +1081,11 @@ void recv_turn(int crc)
     if (net->gametype == GAME_TYPE_REPLAY) {
         switch_turn();
         platoon_local->restore();
-		
+        
         Platoon *pt = platoon_local;
         platoon_local = platoon_remote;
         platoon_remote = pt;
-		
+        
         return;
     }
 
@@ -1131,7 +1151,7 @@ void build_screen(int & select_y)
     int icon_nr = -9;
     clear_to_color(screen2, BACKCOLOR);
 
-	int show_cursor = (MODE == MAP3D || MODE == WATCH) && (!icon->inside(mouse_x, mouse_y));
+    int show_cursor = (MODE == MAP3D || MODE == WATCH) && (!icon->inside(mouse_x, mouse_y));
 
     map->set_sel(mouse_x, mouse_y);
     map->draw(show_cursor);
@@ -1155,7 +1175,7 @@ void build_screen(int & select_y)
     }
 
     icon->draw();
-	
+    
     if (net->gametype == GAME_TYPE_REPLAY) {
         char buf[10];
         if (replaydelay != -1)
@@ -1203,8 +1223,8 @@ void build_screen(int & select_y)
             inventory->draw(SCREEN2W / 2 - 160, SCREEN2H / 2 - 100);
         } else {
             MODE = MAP3D;
-        }			
-	} else if (MODE == UNIT_INFO) {
+        }           
+    } else if (MODE == UNIT_INFO) {
         if (sel_man != NULL)
             sel_man->draw_unibord(SCREEN2W / 2 - 160, SCREEN2H / 2 - 100);
         else
@@ -1240,9 +1260,9 @@ void savegame(const char *filename, int compress)
  */
 void savereplay(const char *filename)
 {   
-	//When engine will read packets from replay file it will expect packets are send
-	//from remote platoon to local platoon. So if local player goes first we have to
-	//swap platoons in replay.
+    //When engine will read packets from replay file it will expect packets are send
+    //from remote platoon to local platoon. So if local player goes first we have to
+    //swap platoons in replay.
     if(HOST) {
         Platoon *pt = platoon_local;
         platoon_local = platoon_remote;
@@ -1871,12 +1891,12 @@ void gameloop()
 
         g_console->redraw(screen, 0, SCREEN2H);
 
-		if (net->gametype == GAME_TYPE_REPLAY) {
-			if (REPLAYIT >= replaydelay) {
-				if (replaydelay != - 1)
-					net->check();
-				REPLAYIT = 0;
-			}
+        if (net->gametype == GAME_TYPE_REPLAY) {
+            if (REPLAYIT >= replaydelay) {
+                if (replaydelay != - 1)
+                    net->check();
+                REPLAYIT = 0;
+            }
         } else {
             net->check();
         }
@@ -1945,29 +1965,29 @@ void gameloop()
                 case UNIT_INFO:
                     MODE = MAP3D;
                     break;
-                case WATCH:	
+                case WATCH: 
                     if (icon->inside(mouse_x, mouse_y)) {
-                       	icon->execute(mouse_x, mouse_y);
-                       	break;
-                   	}
-                   	
+                        icon->execute(mouse_x, mouse_y);
+                        break;
+                    }
+                    
                     if (net->gametype == GAME_TYPE_REPLAY) {
-                    	if (mouse_inside(2, 12, 10, 20)) {
-                    			if (replaydelay != -1)
-                    				replaydelay++;
-                    			if (replaydelay > 8)
-                    				replaydelay = -1;
-                    	}
-                    	if (mouse_inside(18, 12, 26, 20))
-                    		replaydelay = -1;
-                    	if (mouse_inside(34, 12, 42, 20)) {
-                    			if (replaydelay != -1)
-                    				replaydelay--;
-                    			else
-                    				replaydelay = 8;
-                    			if (replaydelay < 0)
-                    				replaydelay = 0;
-                    	}
+                        if (mouse_inside(2, 12, 10, 20)) {
+                                if (replaydelay != -1)
+                                    replaydelay++;
+                                if (replaydelay > 8)
+                                    replaydelay = -1;
+                        }
+                        if (mouse_inside(18, 12, 26, 20))
+                            replaydelay = -1;
+                        if (mouse_inside(34, 12, 42, 20)) {
+                                if (replaydelay != -1)
+                                    replaydelay--;
+                                else
+                                    replaydelay = 8;
+                                if (replaydelay < 0)
+                                    replaydelay = 0;
+                        }
                     }
                     break;
                 case MAP2D:
@@ -2247,38 +2267,38 @@ void gameloop()
                     } else {
                         temp_mouse_range_ptr = new MouseRange(0, 0, SCREEN_W - 1, SCREEN_H - 1);
                         who = (p1 == platoon_local);
-	                    k = (1 << who);
-	                    if (net->gametype != GAME_TYPE_REPLAY) {
-    	                    b1 = alert3("", _("ABORT MISSION ?"), "", _("YES=RESIGN"),
-        	                    (g_tie & k) ? _("RECALL DRAW OFFER") : 
-            	                (g_tie & (k ^ 3)) ? _("ACCEPT DRAW OFFER") :
-                	            _("OFFER DRAW"), _("NO=CONTINUE"), 0, 0, 1);
-                	    } else {
-                	    	b1 = askmenu(_("EXIT FROM REPLAY?"));
-                	    }
-                   	    delete temp_mouse_range_ptr;
-                       	if (b1 == 1) {
-                           	DONE = 1;
+                        k = (1 << who);
+                        if (net->gametype != GAME_TYPE_REPLAY) {
+                            b1 = alert3("", _("ABORT MISSION ?"), "", _("YES=RESIGN"),
+                                (g_tie & k) ? _("RECALL DRAW OFFER") : 
+                                (g_tie & (k ^ 3)) ? _("ACCEPT DRAW OFFER") :
+                                _("OFFER DRAW"), _("NO=CONTINUE"), 0, 0, 1);
+                        } else {
+                            b1 = askmenu(_("EXIT FROM REPLAY?"));
+                        }
+                        delete temp_mouse_range_ptr;
+                        if (b1 == 1) {
+                            DONE = 1;
                             battle_report( "# %s\n", _("Game aborted") );
-   	                    } else if (b1 == 2) {
-       	                    g_tie ^= k;
-           	                net->send_tie(who);
-               	            if (g_tie == 3) {
-                   	            sprintf(buf, "%s", _("You: Draw offer accepted"));
-                       	    } else if (g_tie & k) {
-                           	    sprintf(buf, "%s", _("You: Draw offered"));
+                        } else if (b1 == 2) {
+                            g_tie ^= k;
+                            net->send_tie(who);
+                            if (g_tie == 3) {
+                                sprintf(buf, "%s", _("You: Draw offer accepted"));
+                            } else if (g_tie & k) {
+                                sprintf(buf, "%s", _("You: Draw offered"));
                             } else {
-   	                            sprintf(buf, "%s", _("You: Draw offer recalled"));
-       	                    }
-           	                g_console->printf(COLOR_SYS_PROMPT, buf);
-               	            battle_report("# %s\n", buf);
-                   	    }
+                                sprintf(buf, "%s", _("You: Draw offer recalled"));
+                            }
+                            g_console->printf(COLOR_SYS_PROMPT, buf);
+                            battle_report("# %s\n", buf);
+                        }
                     }
                     break;
                 case KEY_SPACE:
-                	if (key[KEY_LSHIFT] || key[KEY_RSHIFT]) {
-                    	g_pause = !g_pause;
-                    	break;
+                    if (key[KEY_LSHIFT] || key[KEY_RSHIFT]) {
+                        g_pause = !g_pause;
+                        break;
                     }
                 default:
                     if (g_console->process_keyboard_input(keycode, scancode))
@@ -2307,9 +2327,9 @@ void gameloop()
             if (!filename.empty()) {
                 if (exists(filename.c_str()))
                     if (remove(filename.c_str()) != 0) {
-                    	g_console->printf(_("Unable to delete existing file %s!"), filename.c_str());
-                    	g_console->printf("%s (%d)", strerror(errno), errno);
-                    	filename += "_";
+                        g_console->printf(_("Unable to delete existing file %s!"), filename.c_str());
+                        g_console->printf("%s (%d)", strerror(errno), errno);
+                        filename += "_";
                     }
                 
                 if (rename(F("$(home)/replay.tmp"), filename.c_str()) == 0) {
@@ -2371,20 +2391,20 @@ void faststart()
     cur_random = new Random;
 
     elist->reset();
-	
+    
     platoon_local  = p1;
     platoon_remote = p2;
     MODE = MAP3D;
-	
-	// synchronize available equipment with ourselves :)
-	lua_pushstring(L, "SyncEquipmentInfo");
-	lua_gettable(L, LUA_GLOBALSINDEX);
-	lua_pushstring(L, "QueryEquipmentInfo");
-	lua_gettable(L, LUA_GLOBALSINDEX);
-	lua_safe_call(L, 0, 1);
-	lua_safe_call(L, 1, 0);
     
-	lua_safe_dostring(L, "SetEquipment('Standard')");
+    // synchronize available equipment with ourselves :)
+    lua_pushstring(L, "SyncEquipmentInfo");
+    lua_gettable(L, LUA_GLOBALSINDEX);
+    lua_pushstring(L, "QueryEquipmentInfo");
+    lua_gettable(L, LUA_GLOBALSINDEX);
+    lua_safe_call(L, 0, 1);
+    lua_safe_call(L, 1, 0);
+    
+    lua_safe_dostring(L, "SetEquipment('Standard')");
 
     sel_man = platoon_local->captain();
     if (sel_man != NULL) map->center(sel_man);
@@ -2642,8 +2662,8 @@ int main(int argc, char *argv[])
                     start_loadreplay();
                     break;
                 case MAINMENU_OPTIONS:
-                	configure();
-                	break;
+                    configure();
+                    break;
                 default:
                     continue;
             }

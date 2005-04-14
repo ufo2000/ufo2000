@@ -24,12 +24,12 @@ ExplosionAnimation = {}
 if string.find(ufo2000_dir, "^%S+valgrind") then ufo2000_dir, home_dir = nil, nil end
 
 -- directories for data files from the original x-com and ufo2000
-ufo2000_dir  = ufo2000_dir or "."
-xcomdemo_dir = xcomdemo_dir or (ufo2000_dir .. "/XCOMDEMO")
-xcom_dir     = xcom_dir or (ufo2000_dir .. "/XCOM")
-tftddemo_dir = tftddemo_dir or (ufo2000_dir .. "/TFTDDEMO")
-tftd_dir     = tftd_dir or (ufo2000_dir .. "/TFTD")
-home_dir     = home_dir or "."
+ufo2000_dir   = ufo2000_dir or "."
+xcomdemo_dir  = xcomdemo_dir or (ufo2000_dir .. "/XCOMDEMO")
+xcom_dir      = xcom_dir or (ufo2000_dir .. "/XCOM")
+tftddemo_dir  = tftddemo_dir or (ufo2000_dir .. "/TFTDDEMO")
+tftd_dir      = tftd_dir or (ufo2000_dir .. "/TFTD")
+home_dir      = home_dir or "."
 
 -- Functions for writing debug information to init-scripts.log 
 local io_open_unrestricted = io.open
@@ -100,6 +100,9 @@ function LocateFile(filename)
 
     filename = string.gsub(filename, "^%$%(ufo2000%)", ufo2000_dir)
     filename = string.gsub(filename, "^%$%(home%)", home_dir)
+    if extension_dir then
+        filename = string.gsub(filename, "^%$%(extension%)", extension_dir)
+    end
 
     local fname = SearchFile(filename)
     if fname then return fname end
@@ -212,25 +215,25 @@ function LoadSquad(squad_data, squad_object)
     -- sort squad_data by keys
     local tmp = {} for k, v in squad_data do table.insert(tmp, {k, v}) end
     table.sort(tmp, function (a, b) return a[1] < b[1] end)
-	squad_data = {}	for _, v in ipairs(tmp) do table.insert(squad_data, v[2]) end
-	-- 
+    squad_data = {} for _, v in ipairs(tmp) do table.insert(squad_data, v[2]) end
+    -- 
     for id, soldier_data in ipairs(squad_data) do
-    	local soldier = squad_object:findnum(id - 1)
+        local soldier = squad_object:findnum(id - 1)
         if not soldier then break end
-		soldier:reset_stats()
-    	soldier:set_name(soldier_data.Name)
-    	soldier:set_skin_info(soldier_data.SkinType, soldier_data.fFemale, soldier_data.Appearance)
-    	for attribute_id, attribute_value in soldier_data.Attributes do
-		    soldier:set_attribute(attribute_id, attribute_value)
-	    end
-	    for place_id, place_data in soldier_data.Inventory do
-    		local place = soldier:find_place(place_id)
-		    place:destroy_all_items()
-		    for _, v in ipairs(place_data) do
-    			place:add_item(v[1], v[2], v[3])
-				if v[4] then place:add_item(v[1], v[2], v[4]) end
-		    end
-	    end
+        soldier:reset_stats()
+        soldier:set_name(soldier_data.Name)
+        soldier:set_skin_info(soldier_data.SkinType, soldier_data.fFemale, soldier_data.Appearance)
+        for attribute_id, attribute_value in soldier_data.Attributes do
+            soldier:set_attribute(attribute_id, attribute_value)
+        end
+        for place_id, place_data in soldier_data.Inventory do
+            local place = soldier:find_place(place_id)
+            place:destroy_all_items()
+            for _, v in ipairs(place_data) do
+                place:add_item(v[1], v[2], v[3])
+                if v[4] then place:add_item(v[1], v[2], v[4]) end
+            end
+        end
     end
 end
 
@@ -284,13 +287,13 @@ function AddEquipment(x)
 
     local sorted_tbl = {}
     for k, v in x.Layout do 
-	    local name = v[3]
-	    if not ItemsTable[name] then 
-		    Warning("Equipment set '%s' refers to invalid item '%s' - ignored", x.Name, name) 
-			return 
+        local name = v[3]
+        if not ItemsTable[name] then 
+            Warning("Equipment set '%s' refers to invalid item '%s' - ignored", x.Name, name) 
+            return 
         end
-	    table.insert(sorted_tbl, {name, ItemsTable[name]}) 
-	end
+        table.insert(sorted_tbl, {name, ItemsTable[name]}) 
+    end
     table.sort(sorted_tbl, function(a, b) return a[1] < b[1] end)
     x.Crc32 = 0
     for _, v in ipairs(sorted_tbl) do 
@@ -368,6 +371,15 @@ function pck_image_set(filename, start, count)
     local tbl = {}
     for i = 1, count do
         tbl[i] = pck_image(filename, start + i - 1)
+    end
+    return tbl
+end
+
+-- returns a table with a set of pck images
+function pck_image_set_ex(a, b, c, filename, start, count)
+    local tbl = {}
+    for i = 1, count do
+        tbl[i] = pck_image_ex(a, b, c, filename, start + i - 1)
     end
     return tbl
 end
@@ -559,16 +571,26 @@ io.popen  = nil
 io.input  = nil
 io.output = nil
 
--- Preparing sandbox for plugins (it contains data and functions that 
--- are allowed to be used from plugins, read only access is granted and
--- plugins are not allowed to create or modify global variables)
+-- Preparing sandbox for ufo2000 extensions (it contains data and functions that 
+-- are allowed to be used from extensions, read only access is granted and
+-- extensions are not allowed to create or modify global variables)
 
 plugins_sandbox = {
     string = string,
     math = math,
     random = random,
+
     AddXcomTerrain = AddXcomTerrain,
-    AddXcomItem = AddXcomItem
+
+    AddXcomItem = AddXcomItem,
+    pck_image = pck_image,
+    pck_image_ex = pck_image_ex,
+    png_image = png_image,
+    png_image_ex = png_image_ex,
+    pck_image_set = pck_image_set,
+    pck_image_set_ex = pck_image_set_ex,
+
+    AddEquipment = AddEquipment,
 }
 
 plugins_sandbox = setmetatable({}, {
@@ -577,7 +599,7 @@ plugins_sandbox = setmetatable({}, {
 })
 
 restricted_sandbox = {
-	random = random
+    random = random
 }
 
 restricted_sandbox = setmetatable({}, {
