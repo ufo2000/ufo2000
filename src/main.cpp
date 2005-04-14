@@ -517,7 +517,6 @@ void find_dir_callback(const char *filename, int attrib, int param)
 
         char tmp[1024];
         sprintf(tmp, "%s/*.lua", filename);
-        printf("%s\n", tmp);
         for_each_file(tmp, FA_RDONLY | FA_ARCH, find_lua_files_callback, 0);
     }
     // $$$ Fixme: lua_dofile sets errno variable in some mysterious way,

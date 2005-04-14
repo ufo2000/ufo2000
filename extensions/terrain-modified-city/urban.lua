@@ -23,13 +23,13 @@ AddXcomTerrain {
 		"$(xcom)/maps/urban16.map",
 		"$(xcom)/maps/urban17.map",
 		"$(xcom)/maps/urban18.map",
-		"$(ufo2000)/newmaps/urban19.map",
-		"$(ufo2000)/newmaps/urban20.map",
-		"$(ufo2000)/newmaps/urban21.map",
-		"$(ufo2000)/newmaps/urban22.map",
-		"$(ufo2000)/newmaps/urban23.map",
-		"$(ufo2000)/newmaps/urban24.map",
-		"$(ufo2000)/newmaps/urban25.map"
+		"$(extension)/urban19.map",
+		"$(extension)/urban20.map",
+		"$(extension)/urban21.map",
+		"$(extension)/urban22.map",
+		"$(extension)/urban23.map",
+		"$(extension)/urban24.map",
+		"$(extension)/urban25.map"
 	},
 	MapGenerator = function(tmp)
 		local function add_roads(size_x, size_y, map)
