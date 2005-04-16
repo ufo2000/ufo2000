@@ -58,7 +58,6 @@ class Server_Game_UFO;
 class ServerClientUfo: public ServerClient
 {
 	std::set<std::string>  m_challenged_opponents;
-	ServerClientUfo       *m_opponent;
 	bool                   m_busy;
 public:
 	static int             m_games_started;
@@ -66,11 +65,11 @@ public:
 	static NLtime          m_last_user_disconnect_time;
 	
 	ServerClientUfo(ServerDispatch *d, NLsocket s)
-		: ServerClient(d, s), m_opponent(NULL), m_busy(false), game(NULL), db_conn(DB_FILENAME) { }
+		: ServerClient(d, s), m_busy(false), game(NULL), db_conn(DB_FILENAME) { }
 	virtual ~ServerClientUfo();
 	bool recv_packet(NLulong id, const std::string &packet);
 
-	ServerClientUfo *get_opponent() { return m_opponent; }
+    // TODO - return right opponent.
 	bool is_in_server_chat() { return !m_busy; }
 	Server_Game_UFO* game;
 	int position;

@@ -94,8 +94,8 @@ void ServerDispatch::MakeHtmlReport(std::string &html_body)
         html_body += "<td>";
         html_body += time_to_string(get_time_diff(client->m_connection_time, now));
         html_body += "<td>";
-        if (client->get_opponent()) {
-            html_body += "fighting vs " + client->get_opponent()->m_name;
+        if (client->game) {
+            html_body += "in game ";
         } else if (client->is_in_server_chat()) {
             html_body += "in server chat";
         } else {
@@ -156,14 +156,6 @@ ServerClientUfo::~ServerClientUfo()
         m_last_user_name = m_name;
         nlTime(&m_last_user_disconnect_time);
 
-    }
-//  if there is opponent playing with this user, remove pointer to
-//  self from opponent's data
-    if (m_opponent != NULL && m_opponent->m_opponent != NULL) {
-    //  A hack to notify remote player that current player has disconnected
-        m_opponent->send_packet_back(SRV_GAME_PACKET, "_Xmes_Something bad happened to remote player and he disconnected from server");
-        m_opponent->send_packet_back(SRV_GAME_PACKET, "_Xmes_The only thing you can do now is to return to the server chat :-(");
-        m_opponent->m_opponent = NULL;
     }
 }
 
@@ -303,8 +295,6 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
                 opponent->send_packet_all(SRV_USER_BUSY, packet);
                 send_packet_back(SRV_GAME_START_JOIN, packet);
                 opponent->send_packet_back(SRV_GAME_START_HOST, m_name);
-                m_opponent = opponent;
-                opponent->m_opponent = this;
                 m_busy = true;
                 opponent->m_busy = true;
                 m_challenged_opponents.clear();
@@ -322,18 +312,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
             send_packet_all(SRV_MESSAGE, m_name + ": " + packet);
             break;
         }
-        case SRV_GAME_PACKET: {
-        // send packet to the opponent
-            if (m_opponent != NULL) {
-                m_opponent->send_packet_back(SRV_GAME_PACKET, packet);
-            } else {
-                printf("Warning: game packet from '%s', no opponent to forward\n", m_name.c_str());
-            }
-            break;
-        }
         case SRV_ENDGAME: {
-            if (m_opponent) m_opponent->m_opponent = NULL;
-            m_opponent = NULL;
             m_busy = false;
 
         //  Report other players status
@@ -354,6 +333,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
         }
         case SRV_GAME_CONTINUE_REQUEST: {
             int game_id = db_conn.executeint32("select max(game) from ufo2000_game_players where player='%s';", m_name.c_str());
+            Server_Game_UFO::ActivatePlayer(game_id, this);
             int players_position = db_conn.executeint32("select position from ufo2000_game_players where player='%s' and game=%d;", m_name.c_str(), game_id);
             char pos_str_buffer[100];
             sprintf(pos_str_buffer, "%d", players_position);
@@ -368,6 +348,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
                     if(reader.getstring(0) == "START")
                         game_start_sended = 1;
                 }
+            reader.close();
             char stop_packet[100];
             sprintf(stop_packet, "_Xcom_%d_RSTP_", 3 - players_position);
             send_packet_back(SRV_GAME_PACKET, stop_packet);

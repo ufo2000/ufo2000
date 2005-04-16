@@ -64,6 +64,9 @@ void Server_Game_UFO::ActivatePlayer(int game_id,ServerClientUfo* player)
         active_games[game_id]=new Server_Game_UFO(game_id);
         active_games[game_id]->db_conn.executenonquery("begin transaction;");
         server_log("Game %d activated.\n", game_id);
+    } else {
+        active_games[game_id]->db_conn.executenonquery("commit");
+        active_games[game_id]->db_conn.executenonquery("begin transaction;");
     }
     try {
         player->position = db_conn.executeint32(
@@ -105,6 +108,9 @@ void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, c
     catch(std::exception &ex) {
         server_log("Exception Occured: %s",ex.what());
     }
+    
+    if (packet_type == SRV_GAME_PACKET && players[2-sender->position])
+        players[2-sender->position]->send_packet_back(SRV_GAME_PACKET, packet);
     // Testing mode: only first 30 games are saved
     if(game_id<=30)
     {
