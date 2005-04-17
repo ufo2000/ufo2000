@@ -591,6 +591,8 @@ plugins_sandbox = {
     pck_image_set_ex = pck_image_set_ex,
 
     AddEquipment = AddEquipment,
+	
+	SetExplosionAnimation = SetExplosionAnimation,
 }
 
 plugins_sandbox = setmetatable({}, {
