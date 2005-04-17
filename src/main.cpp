@@ -68,6 +68,7 @@ Mode MODE;                      //!< Display-Mode
 ConsoleWindow *g_console;
 int g_pause;
 int g_game_receiving = 0;       //!< If we are getting saved game from server, no output
+int g_fast_forward = 0;         //!< True means a fast, invisible and silent game recovery
 
 int g_time_limit;               //!< Limit of time for a single turn in seconds
 volatile int g_time_left;       //!< Current counter for time left for this turn
@@ -1921,6 +1922,11 @@ void gameloop()
             FLYIT  = 0;
             MOVEIT = 0;
         }
+        
+        if (g_fast_forward) {
+            FLYIT = 1;
+            MOVEIT = 1;
+        }
 
         while (FLYIT > 0 && !g_pause ) {
             platoon_local->bullmove();     //!!!! bull of dead?
@@ -1946,7 +1952,8 @@ void gameloop()
         }
 
         if (CHANGE) {
-            build_screen(select_y);
+            if (!g_fast_forward)
+                build_screen(select_y);
 //          g_console->printf(COLOR_SYS_INFO, "*"); // temp - for debugging
             CHANGE = 0;
         }

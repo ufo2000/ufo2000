@@ -1502,6 +1502,8 @@ int Net::recv_initrand()
 int Net::recv_recovery_stop()
 {
     g_game_receiving = 0;
+    CHANGE = 1;
+    g_fast_forward = 0;
     if ( (turn%2 && HOST) || (!(turn%2) && !HOST))
         MODE = WATCH;
     else

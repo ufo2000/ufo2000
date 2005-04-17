@@ -920,6 +920,9 @@ void soundSystem::setSample(SoundSym_e_t sndSym, SAMPLE * sample) {
 }
 
 void soundSystem::play(SoundSym_e_t sndSym, int vol, int pan, int freq) {
+    if(g_fast_forward)
+        return;
+
     if (!soundInstalled)
         return;
 

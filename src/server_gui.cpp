@@ -503,6 +503,7 @@ int connect_internet_server()
 					break;
 				case SRV_GAME_START_HOST:
 				    g_game_receiving = 0;
+                    g_fast_forward = 0;
 					show_mouse(NULL);
 					FS_MusicPlay(NULL);
 		            HOST = 1;
@@ -528,6 +529,7 @@ int connect_internet_server()
 					break;
 				case SRV_GAME_START_JOIN:
 				    g_game_receiving = 0;
+                    g_fast_forward = 0;
 					show_mouse(NULL);
 					FS_MusicPlay(NULL);
 		            HOST = 0;
@@ -553,6 +555,7 @@ int connect_internet_server()
 					break;
                 case SRV_GAME_RECOVERY_START:
                     g_game_receiving = 1;
+                    g_fast_forward = 1;
 					show_mouse(NULL);
 					FS_MusicPlay(NULL);
 					if (packet == "1")
