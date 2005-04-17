@@ -41,7 +41,7 @@ enum Command {CMD_MESSAGE = -2, CMD_NONE = -1,
               CMD_SCENARIO, CMD_RULES, CMD_OPTIONS,
               CMD_PANIC, CMD_MORALE, CMD_RESTIME, CMD_P2_ISSIT,
               CMD_EQUIPMENT, CMD_TIE, CMD_INITRAND,
-              CMD_RECOVERY_STOP,
+              CMD_RECOVERY_STOP, CMD_START_VISIBLE_RECOVERY,
               COMMAND_NUM // COMMAND_NUM - Should be the last command!
              };
 

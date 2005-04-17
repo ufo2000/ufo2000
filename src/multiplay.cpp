@@ -402,6 +402,9 @@ void Net::check()
         case CMD_RECOVERY_STOP:
             recv_recovery_stop();
             break;
+        case CMD_START_VISIBLE_RECOVERY:
+            recv_start_visible_recovery();
+            break;
 		case CMD_NONE:
         case COMMAND_NUM:
 			ASSERT(false);
@@ -1509,6 +1512,12 @@ int Net::recv_recovery_stop()
     else
         MODE = MAP3D;
     return 0;
+}
+
+int Net::recv_start_visible_recovery()
+{
+    CHANGE = 1;
+    g_fast_forward = 0;
 }
 
 void Net::send_debug_message(const char *fmt, ...)

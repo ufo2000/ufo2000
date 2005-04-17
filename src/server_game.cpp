@@ -62,11 +62,21 @@ void Server_Game_UFO::ActivatePlayer(int game_id,ServerClientUfo* player)
     sqlite3::connection db_conn(DB_FILENAME);
     if (active_games.find(game_id) == active_games.end()) {
         active_games[game_id]=new Server_Game_UFO(game_id);
-        active_games[game_id]->db_conn.executenonquery("begin transaction;");
+        try {
+            active_games[game_id]->db_conn.executenonquery("begin transaction;");
+        }
+        catch(std::exception &ex) {
+            server_log("Exception Occured: %s",ex.what());
+        }
         server_log("Game %d activated.\n", game_id);
     } else {
-        active_games[game_id]->db_conn.executenonquery("commit");
-        active_games[game_id]->db_conn.executenonquery("begin transaction;");
+        try {
+            active_games[game_id]->db_conn.executenonquery("commit");
+            active_games[game_id]->db_conn.executenonquery("begin transaction;");
+        }
+        catch(std::exception &ex) {
+            server_log("Exception Occured: %s",ex.what());
+        }
     }
     try {
         player->position = db_conn.executeint32(
@@ -109,8 +119,6 @@ void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, c
         server_log("Exception Occured: %s",ex.what());
     }
     
-    if (packet_type == SRV_GAME_PACKET && players[2-sender->position])
-        players[2-sender->position]->send_packet_back(SRV_GAME_PACKET, packet);
     // Testing mode: only first 30 games are saved
     if(game_id<=30)
     {
@@ -118,6 +126,8 @@ void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, c
 //        db_conn.executenonquery("begin transaction;");
         db_conn.executenonquery("update ufo2000_games set last_received_packed=last_received_packed+1 where id=%d;",game_id);
         long int last_received_packed = db_conn.executeint32("select last_received_packed from ufo2000_games where id=%d;",game_id);
+        db_conn.executenonquery("update ufo2000_game_players set last_sended_packet=%d where game=%d and player='%s';",
+            last_received_packed, game_id, sender->m_name.c_str());
         //db_conn.executenonquery("commit;");
 
         time_t now = time(NULL);
@@ -135,9 +145,19 @@ void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, c
         sql_cmd.parameters.push_back(sqlite3::parameter(4,timebuf,strlen(timebuf)));
 		sql_cmd.parameters.push_back(sqlite3::parameter(5, (void*) packet.c_str(), packet.size()));
 		sql_cmd.parameters.push_back(sqlite3::parameter(6, (int)packet_type));
-		sql_cmd.executenonquery();    }
+		sql_cmd.executenonquery();
+
+        ServerClientUfo* recipient = players[2-sender->position];
+
+        if (packet_type == SRV_GAME_PACKET && recipient) {
+            recipient->send_packet_back(SRV_GAME_PACKET, packet);
+            db_conn.executenonquery("update ufo2000_game_players set last_sended_packet=%d where game=%d and player='%s';",
+            last_received_packed, game_id, recipient->m_name.c_str());
+        }
+    }
     catch(std::exception &ex) {
         server_log("Exception Occured: %s",ex.what());
     }
-    }
+    } else if (packet_type == SRV_GAME_PACKET && players[2-sender->position]) // for testing -30 first games - to delete for all games
+        players[2-sender->position]->send_packet_back(SRV_GAME_PACKET, packet); // for testing -30 first games - to delete for all games
 }

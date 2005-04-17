@@ -335,10 +335,11 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
             int game_id = db_conn.executeint32("select max(game) from ufo2000_game_players where player='%s';", m_name.c_str());
             Server_Game_UFO::ActivatePlayer(game_id, this);
             int players_position = db_conn.executeint32("select position from ufo2000_game_players where player='%s' and game=%d;", m_name.c_str(), game_id);
+            int last_sended_packet = db_conn.executeint32("select last_sended_packet from ufo2000_game_players where player='%s' and game=%d;", m_name.c_str(), game_id);
             char pos_str_buffer[100];
             sprintf(pos_str_buffer, "%d", players_position);
             send_packet_back(SRV_GAME_RECOVERY_START, pos_str_buffer);
-            sqlite3::reader reader=db_conn.executereader("select command, packet_type from ufo2000_game_packets where game=%d order by id;", game_id);
+            sqlite3::reader reader=db_conn.executereader("select command, packet_type, id from ufo2000_game_packets where game=%d order by id;", game_id);
             int game_start_sended = 0;
             while(reader.read())
                 if(reader.getint32(1) == SRV_GAME_PACKET)
@@ -347,6 +348,11 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
                         send_packet_back(SRV_GAME_PACKET, reader.getstring(0));
                     if(reader.getstring(0) == "START")
                         game_start_sended = 1;
+                    if(reader.getint32(2) == last_sended_packet) {
+                        char start_visible_packet[100];
+                        sprintf(start_visible_packet, "_Xcom_%d_VSRC_", 3 - players_position);
+                        send_packet_back(SRV_GAME_PACKET, start_visible_packet);
+                    }
                 }
             reader.close();
             char stop_packet[100];

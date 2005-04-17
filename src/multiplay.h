@@ -107,6 +107,7 @@ private:
     int recv_initrand();
     
     int recv_recovery_stop();
+    int recv_start_visible_recovery();
 	
 public:
 	std::istream *m_ireplay_file;
