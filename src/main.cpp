@@ -510,7 +510,8 @@ void find_lua_files_callback(const char *filename, int attrib, int param)
 void find_dir_callback(const char *filename, int attrib, int param)
 {
     char *filepart = get_filename(filename);
-    if (strcmp(filepart, ".") != 0 && strcmp(filepart, "..") != 0) {
+    if ((attrib & FA_DIREC) && strcmp(filepart, ".") != 0 && strcmp(filepart, "..") != 0) {
+        lua_message(std::string("Loading extension '") + filename + std::string("'"));
         
         lua_pushstring(L, "extension_dir");
         lua_pushstring(L, filename);
@@ -778,7 +779,7 @@ void initmain(int argc, char *argv[])
     // Load standard and custom maps
     lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-maps.lua", "plugins_sandbox");
     for_each_file(DATA_DIR "/newmaps/*.lua", FA_RDONLY | FA_ARCH, find_lua_files_callback, 0);
-    for_each_file(DATA_DIR "/extensions/*", FA_DIREC, find_dir_callback, 0);
+    for_each_file(DATA_DIR "/extensions/*", FA_DIREC | FA_RDONLY | FA_ARCH, find_dir_callback, 0);
 
     console<<"install_timer"<<std::endl;
     install_timer();
