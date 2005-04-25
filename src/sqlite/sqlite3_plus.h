@@ -70,7 +70,7 @@ namespace sqlite3 {
 		datatype type;
 // It's a hack which I hope allows to deal with some outdated compilers.
 //		union {
-			struct {
+//			struct {
 //				union {
 					const void *data_blob;
 					const char *data_text;
@@ -80,7 +80,7 @@ namespace sqlite3 {
 			double data_double;
 			int data_int32;
 			__int64 data_int64;
-		};
+//		};
 
 		parameter() {};
 		parameter(int index) : index(index),type(dt_null) {};
