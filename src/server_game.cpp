@@ -27,7 +27,7 @@ std::map<long int, Server_Game_UFO *> Server_Game_UFO::active_games;
 
 long int Server_Game_UFO::CreateGame(std::string playername1,std::string playername2)
 {
-    sqlite3::connection db_conn(DB_FILENAME);
+//    sqlite3::connection db_conn(DB_FILENAME);
     try {
         db_conn.executenonquery("update ufo2000_sequences set seq_val=seq_val+1 where name='ufo2000_games';");
         long int game_id = db_conn.executeint32("select seq_val from ufo2000_sequences where name='ufo2000_games';");
@@ -59,11 +59,10 @@ void Server_Game_UFO::ActivatePlayer(int game_id,ServerClientUfo* player)
 {
     if(player->game)
         DeactivatePlayer(player);
-    sqlite3::connection db_conn(DB_FILENAME);
     if (active_games.find(game_id) == active_games.end()) {
         active_games[game_id]=new Server_Game_UFO(game_id);
         try {
-            active_games[game_id]->db_conn.executenonquery("begin transaction;");
+            db_conn.executenonquery("begin transaction;");
         }
         catch(std::exception &ex) {
             server_log("Exception Occured: %s",ex.what());
@@ -71,8 +70,8 @@ void Server_Game_UFO::ActivatePlayer(int game_id,ServerClientUfo* player)
         server_log("Game %d activated.\n", game_id);
     } else {
         try {
-            active_games[game_id]->db_conn.executenonquery("commit");
-            active_games[game_id]->db_conn.executenonquery("begin transaction;");
+            db_conn.executenonquery("commit");
+            db_conn.executenonquery("begin transaction;");
         }
         catch(std::exception &ex) {
             server_log("Exception Occured: %s",ex.what());
@@ -97,7 +96,7 @@ void Server_Game_UFO::DeactivatePlayer(ServerClientUfo* player)
     {
         active_games.erase(player->game->game_id);
         server_log("Game %d deactivated.\n",player->game->game_id);
-        player->game->db_conn.executenonquery("commit;");
+        db_conn.executenonquery("commit;");
         delete player->game;
     }
     player->game = NULL;

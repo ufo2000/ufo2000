@@ -295,7 +295,6 @@ static std::string *find_config_file(int argc, char *argv[])
 // Create or upgrade the database, if it's not existed or outdated.
 void prepare_db()
 {
-    sqlite3::connection db_conn(DB_FILENAME);
     char buffer[512];
     FILE *f = fopen("update_db.sql", "rt");
     if (f == NULL) {

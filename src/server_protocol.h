@@ -65,7 +65,7 @@ public:
 	static NLtime          m_last_user_disconnect_time;
 	
 	ServerClientUfo(ServerDispatch *d, NLsocket s)
-		: ServerClient(d, s), m_busy(false), game(NULL), db_conn(DB_FILENAME) { }
+		: ServerClient(d, s), m_busy(false), game(NULL) { }
 	virtual ~ServerClientUfo();
 	bool recv_packet(NLulong id, const std::string &packet);
 
@@ -75,7 +75,6 @@ public:
 	int position;
 
 private:
-    sqlite3::connection db_conn;
     bool add_user(const std::string &username, const std::string &password);
     int validate_user(const std::string &username, const std::string &password);
 };

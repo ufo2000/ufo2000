@@ -19,9 +19,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include "sqlite/sqlite3_plus.h"
+
 #ifndef SERVER_CONFIG_H
 #define SERVER_CONFIG_H
 
+#define DB_FILENAME "ufo2000.db"
 
 extern int g_server_reload_config_flag;
 
@@ -34,6 +37,7 @@ extern unsigned long g_srv_username_size_limit;
 extern unsigned long g_srv_packet_size_limit;
 extern unsigned long g_srv_keep_log_time;
 extern unsigned long g_srv_daemonize;
+extern sqlite3::connection db_conn;
 
 void load_config();
 void load_config(const std::string &pathname);

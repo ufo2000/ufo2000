@@ -43,9 +43,8 @@ private:
     ServerClientUfo *players[2];
     static std::map<long int, Server_Game_UFO *> active_games;
     int PacketToClient(ServerClientUfo* recipient, int packet_type, const std::string &packet);
-    sqlite3::connection db_conn;
     long int game_id;
-	Server_Game_UFO(long int _game_id) : db_conn(DB_FILENAME), game_id(_game_id) {
+	Server_Game_UFO(long int _game_id) : game_id(_game_id) {
         players[0] = NULL;
         players[1] = NULL;
     }
