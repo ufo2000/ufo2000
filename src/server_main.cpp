@@ -307,8 +307,9 @@ void prepare_db()
             db_conn.executenonquery(buffer);
         }
         catch(std::exception &ex) {
-            server_log("Exception Occured: %s",ex.what());
+            server_log("Exception Occured: %s\n",ex.what());
         }
+    db_conn.executenonquery("begin transaction;");
 }
 
 int main(int argc, char *argv[])

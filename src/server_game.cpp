@@ -62,6 +62,7 @@ void Server_Game_UFO::ActivatePlayer(int game_id,ServerClientUfo* player)
     if (active_games.find(game_id) == active_games.end()) {
         active_games[game_id]=new Server_Game_UFO(game_id);
         try {
+            db_conn.executenonquery("commit");
             db_conn.executenonquery("begin transaction;");
         }
         catch(std::exception &ex) {
@@ -96,7 +97,8 @@ void Server_Game_UFO::DeactivatePlayer(ServerClientUfo* player)
     {
         active_games.erase(player->game->game_id);
         server_log("Game %d deactivated.\n",player->game->game_id);
-        db_conn.executenonquery("commit;");
+        db_conn.executenonquery("commit");
+        db_conn.executenonquery("begin transaction;");
         delete player->game;
     }
     player->game = NULL;
@@ -118,9 +120,6 @@ void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, c
         server_log("Exception Occured: %s",ex.what());
     }
     
-    // Testing mode: only first 30 games are saved
-    if(game_id<=30)
-    {
     try {
 //        db_conn.executenonquery("begin transaction;");
         db_conn.executenonquery("update ufo2000_games set last_received_packed=last_received_packed+1 where id=%d;",game_id);
@@ -157,6 +156,4 @@ void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, c
     catch(std::exception &ex) {
         server_log("Exception Occured: %s",ex.what());
     }
-    } else if (packet_type == SRV_GAME_PACKET && players[2-sender->position]) // for testing -30 first games - to delete for all games
-        players[2-sender->position]->send_packet_back(SRV_GAME_PACKET, packet); // for testing -30 first games - to delete for all games
 }
