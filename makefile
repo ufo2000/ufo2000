@@ -46,10 +46,11 @@ endif
 
 CX = g++
 CC = gcc
-CFLAGS = -funsigned-char -Wall -Wno-deprecated-declarations -I src/lua -DDEBUGMODE
+CFLAGS = -funsigned-char -Wall -Wno-deprecated-declarations -I src/lua -I src/luasqlite3 -DDEBUGMODE
 OBJDIR = obj
 NAME = ufo2000
 SERVER_NAME = ufo2000-srv
+LUA_NAME = lua
 
 ifneq ($(UFO_SVNVERSION),)
 	CFLAGS += -DUFO_SVNVERSION=\"$(UFO_SVNVERSION)\"
@@ -82,13 +83,13 @@ ifdef valgrind
 endif
 
 VPATH = src src/jpgalleg src/dumbogg src/exchndl src/agup src/lua \
-        src/glyphkeeper src/loadpng src/sqlite
+        src/glyphkeeper src/loadpng src/sqlite src/luasqlite3 src/lua/lua
 
-SRCS_LUA = lapi.c lauxlib.c lbaselib.c lcode.c ldblib.c ldebug.c      \
+SRCS_LUALIB = lapi.c lauxlib.c lbaselib.c lcode.c ldblib.c ldebug.c   \
            ldo.c ldump.c lfunc.c lgc.c liolib.c llex.c lmathlib.c     \
            lmem.c loadlib.c lobject.c lopcodes.c lparser.c            \
            lstate.c lstring.c lstrlib.c ltable.c ltablib.c            \
-           ltests.c ltm.c lundump.c lvm.c lzio.c
+           ltests.c ltm.c lundump.c lvm.c lzio.c luasqlite3.c
 
 SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
        editor.cpp explo.cpp font.cpp icon.cpp inventory.cpp item.cpp  \
@@ -103,17 +104,18 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
        sqlite3_command.cpp sqlite3_connection.cpp                     \
        sqlite3_internal.cpp sqlite3_reader.cpp                        \
                                                                       \
-       $(SRCS_LUA)                                                    \
+       $(SRCS_LUALIB)                                                 \
                                                                       \
        aalg.c aase.c abeos.c abitmap.c agtk.c agup.c ans.c            \
        aphoton.c awin95.c decode.c encode.c io.c jpgalleg.c
 
 SRCS_SERVER = server_config.cpp server_main.cpp server_protocol.cpp   \
               server_game.cpp                                         \
-              server_transport.cpp $(SRCS_LUA)                        \
+              server_transport.cpp $(SRCS_LUALIB)                     \
               sqlite3_command.cpp sqlite3_connection.cpp              \
               sqlite3_internal.cpp sqlite3_reader.cpp                 \
 
+SRCS_LUA = lua.c $(SRCS_LUALIB)
 
 ifdef debug
 	CFLAGS += -g
@@ -123,6 +125,7 @@ endif
 	OBJDIR := ${addsuffix -debug,$(OBJDIR)}
 	NAME := ${addsuffix -debug,$(NAME)}
 	SERVER_NAME := ${addsuffix -debug,$(SERVER_NAME)}
+	LUA_NAME := ${addsuffix -debug,$(LUA_NAME)}
 else
 	CFLAGS += $(OPTFLAGS)
 endif
@@ -157,6 +160,7 @@ ifdef win32
 	OBJDIR := ${addsuffix -win32,$(OBJDIR)}
 	NAME := ${addsuffix .exe,$(NAME)}
 	SERVER_NAME := ${addsuffix .exe,$(SERVER_NAME)}
+	LUA_NAME := ${addsuffix .exe,$(LUA_NAME)}
 	CFLAGS += -DWIN32 -DALLEGRO_STATICLINK -I mingw-libs/include -L mingw-libs/lib
 	LIBS += -lNL_s -lalleg_s -lws2_32 -lkernel32 -luser32 -lgdi32 -lcomdlg32 \
 	        -lole32 -ldinput -lddraw -ldxguid -lwinmm -ldsound -lbfd -liberty
@@ -185,6 +189,11 @@ OBJS_SERVER := $(OBJS_SERVER:.c=.o)
 OBJS_SERVER := $(addprefix $(OBJDIR)/,$(OBJS_SERVER))
 DEPS_SERVER = $(OBJS_SERVER:.o=.d)
 
+OBJS_LUA := $(SRCS_LUA:.cpp=.o)
+OBJS_LUA := $(OBJS_LUA:.c=.o)
+OBJS_LUA := $(addprefix $(OBJDIR)/,$(OBJS_LUA))
+DEPS_LUA = $(OBJS_LUA:.o=.d)
+
 ifdef win32
 	OBJS := $(OBJS) Seccast.o 
 ifndef debug
@@ -197,6 +206,8 @@ endif
 all: $(OBJDIR) $(NAME)
 
 server: $(OBJDIR) $(SERVER_NAME)
+
+tools: $(OBJDIR) $(LUA_NAME)
 
 $(OBJDIR):
 	mkdir $(OBJDIR)
@@ -212,6 +223,10 @@ $(NAME): $(OBJS)
 
 $(SERVER_NAME): $(OBJS_SERVER)
 	$(CX) $(CFLAGS) -o $@ $^ $(SERVER_LIBS)
+
+$(LUA_NAME): $(OBJS_LUA)
+	echo $(OBJS_LUA)
+	$(CX) $(CFLAGS) -o $@ $^ -lsqlite3
 
 clean:
 	$(RM) $(OBJDIR)/*.o
@@ -291,11 +306,12 @@ source-bz2:
 	tar -cjf $(DISTNAME)-src.tar.bz2 $(DISTNAME)
 	svn delete --force $(DISTNAME)
 
-docs:
+source-docs:
 	sed 's,%REVISION%,$(UFO_VERSION).$(UFO_SVNVERSION),g' < doxygen/doxy-en.conf > doxy-en.conf
 	doxygen doxy-en.conf
 
 -include $(DEPS)
 -include $(DEPS_SERVER)
+-include $(DEPS_LUA)
 
 #.

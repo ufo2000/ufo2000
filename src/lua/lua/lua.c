@@ -16,7 +16,7 @@
 
 #include "lauxlib.h"
 #include "lualib.h"
-
+#include "luasqlite3.h"
 
 /*
 ** generic extra include file
@@ -75,6 +75,7 @@ static const luaL_reg lualibs[] = {
   {"math", luaopen_math},
   {"debug", luaopen_debug},
   {"loadlib", luaopen_loadlib},
+  {"sqlite3", luaopen_sqlite3},
   /* add your libraries here */
   LUA_EXTRALIBS
   {NULL, NULL}
