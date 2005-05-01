@@ -929,18 +929,22 @@ void closemain()
  */
 static std::map<int, std::string> g_eot_save;
 #define map g_map
+#define CRCBUFFSIZE 1048576
 
 int build_crc()
 {
-    char buf[200000]; memset(buf, 0, sizeof(buf));
+    char *buf = (char *)malloc(CRCBUFFSIZE);
+    memset(buf, 0, CRCBUFFSIZE);
     int buf_size = 0;
     
     p1->eot_save(buf, buf_size);
     p2->eot_save(buf, buf_size);
     map->eot_save(buf, buf_size);
-
+	
     int crc = crc16(buf);
     g_eot_save[crc] = std::string(buf, buf_size);
+
+    delete [] buf;
 
     return crc;
 }
