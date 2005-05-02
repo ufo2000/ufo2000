@@ -8,3 +8,5 @@ CREATE TRIGGER ufo2000_game_insert insert ON ufo2000_games BEGIN delete from ufo
 pragma autovacuum=on;
 alter table ufo2000_users add column score1 double default 0;
 alter table ufo2000_users add column elo_score double default 1500;
+create table dual (a integer primary key);
+insert into dual values(0);
