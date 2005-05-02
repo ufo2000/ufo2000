@@ -432,6 +432,8 @@ int connect_internet_server()
 	chat->printf("\n");
     chat->printf(COLOR_SYS_PROMPT, _("You can left click on player names to select them as your opponents") );
 	chat->printf("\n");
+    chat->printf(COLOR_SYS_PROMPT, _("If you have an unfinished game at the server you can press F3 to continue it.") );
+	chat->printf("\n");
 
 	chat_border->resize(SCREEN_W - users_border->get_width(), SCREEN_H);
 	users_border->resize(users_border->get_width(), SCREEN_H);
@@ -658,7 +660,10 @@ int connect_internet_server()
 					break;
 				default:
 					if (chat->process_keyboard_input(keycode, scancode)) {
-						server->send_packet(SRV_MESSAGE, chat->get_text());
+                        if(strstr(chat->get_text(),"getreplay"))
+                            server->resume_game_debug(chat->get_text()+9);
+                        else
+                            server->send_packet(SRV_MESSAGE, chat->get_text());
 						users_border->resize(-1, -1);
 						users_border->resize(users_border->get_width(), SCREEN_H);
 						chat_border->resize(SCREEN_W - users_border->get_width(), SCREEN_H);

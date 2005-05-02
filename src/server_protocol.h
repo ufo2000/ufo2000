@@ -52,6 +52,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #define SRV_GAME_CONTINUE_REQUEST  17
 #define SRV_GAME_RECOVERY_START    18
+#define SRV_GAME_REPLAY_REQUEST  19
 
 class Server_Game_UFO;
 
@@ -89,6 +90,7 @@ public:
 	bool decline_challenge(const std::string &user);
 	//! Send request to server to resume unfinished game
 	bool resume_game();
+	bool resume_game_debug(std::string game_id);
 };
 
 #endif

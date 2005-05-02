@@ -95,7 +95,9 @@ void ServerDispatch::MakeHtmlReport(std::string &html_body)
         html_body += time_to_string(get_time_diff(client->m_connection_time, now));
         html_body += "<td>";
         if (client->game) {
-            html_body += "in game ";
+            char tmp_buff[100];
+            sprintf(tmp_buff, "in game %d", client->game->game_id);
+            html_body += tmp_buff;
         } else if (client->is_in_server_chat()) {
             html_body += "in server chat";
         } else {
@@ -331,6 +333,27 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 
             break;
         }
+        case SRV_GAME_REPLAY_REQUEST: {
+	        send_packet_back(SRV_GAME_RECOVERY_START, "1");
+            try {
+                sqlite3::reader reader=db_conn.executereader("select command, packet_type, id from ufo2000_game_packets where game=%s order by id;", packet.c_str());
+			    int game_start_sended = 0;
+                while(reader.read()) {
+	                if(reader.getint32(1) == SRV_GAME_PACKET) {
+                        if(!(reader.getstring(0) == "START" && game_start_sended))
+                            send_packet_back(SRV_GAME_PACKET, reader.getstring(0));
+	                    if(reader.getstring(0) == "START") {
+                            game_start_sended = 1;
+                            send_packet_back(SRV_GAME_PACKET, "_Xcom_2_VSRC_");
+                        }
+		            }
+                }
+				reader.close();
+			} catch(std::exception &ex) {
+                server_log("Exception Occured: %s",ex.what());
+            }
+			break;
+        }
         case SRV_GAME_CONTINUE_REQUEST: {
             int game_id = db_conn.executeint32("select max(game) from ufo2000_game_players where player='%s';", m_name.c_str());
 			if(game_id > 0) {
@@ -403,6 +426,12 @@ bool ClientServerUfo::decline_challenge(const std::string &user)
 bool ClientServerUfo::resume_game()
 {
     if (!send_packet(SRV_GAME_CONTINUE_REQUEST , "Game request")) return false;
+    return true;
+}
+
+bool ClientServerUfo::resume_game_debug(std::string game_id)
+{
+    if (!send_packet(SRV_GAME_REPLAY_REQUEST , game_id)) return false;
     return true;
 }
 

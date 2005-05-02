@@ -38,12 +38,12 @@ public:
     static void DeactivatePlayer(ServerClientUfo* player);
     //! Packet from user
     void PacketToServer(ServerClientUfo* sender, int packet_type,const std::string &packet);
+    long int game_id;
 private:
     //! Pointers to clients, NULL if a client is not active
     ServerClientUfo *players[2];
     static std::map<long int, Server_Game_UFO *> active_games;
     int PacketToClient(ServerClientUfo* recipient, int packet_type, const std::string &packet);
-    long int game_id;
 	Server_Game_UFO(long int _game_id) : game_id(_game_id) {
         players[0] = NULL;
         players[1] = NULL;
