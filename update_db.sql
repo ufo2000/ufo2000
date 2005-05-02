@@ -6,3 +6,5 @@ insert or ignore into ufo2000_sequences values ('ufo2000_games',0);
 CREATE TABLE ufo2000_game_packets(game integer, id integer, sender integer, date text, command text, packet_type integer, primary key(game,id));
 CREATE TRIGGER ufo2000_game_insert insert ON ufo2000_games BEGIN delete from ufo2000_game_packets where game<new.id-100; END;
 pragma autovacuum=on;
+alter table ufo2000_users add column score1 double default 0;
+alter table ufo2000_users add column elo_score double default 1500;
