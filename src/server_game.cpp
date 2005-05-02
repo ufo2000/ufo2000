@@ -20,6 +20,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
 #include <time.h>
+#include <math.h>
 #include "server_game.h"
 #include "server_config.h"
 
@@ -62,7 +63,7 @@ void Server_Game_UFO::ActivatePlayer(int game_id,ServerClientUfo* player)
     if (active_games.find(game_id) == active_games.end()) {
         active_games[game_id]=new Server_Game_UFO(game_id);
         try {
-            db_conn.executenonquery("commit");
+            db_conn.executenonquery("commit;");
             db_conn.executenonquery("begin transaction;");
         }
         catch(std::exception &ex) {
@@ -71,7 +72,7 @@ void Server_Game_UFO::ActivatePlayer(int game_id,ServerClientUfo* player)
         server_log("Game %d activated.\n", game_id);
     } else {
         try {
-            db_conn.executenonquery("commit");
+            db_conn.executenonquery("commit;");
             db_conn.executenonquery("begin transaction;");
         }
         catch(std::exception &ex) {
@@ -97,7 +98,7 @@ void Server_Game_UFO::DeactivatePlayer(ServerClientUfo* player)
     {
         active_games.erase(player->game->game_id);
         server_log("Game %d deactivated.\n",player->game->game_id);
-        db_conn.executenonquery("commit");
+        db_conn.executenonquery("commit;");
         db_conn.executenonquery("begin transaction;");
         delete player->game;
     }
@@ -107,11 +108,31 @@ void Server_Game_UFO::DeactivatePlayer(ServerClientUfo* player)
 
 void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, const std::string &packet) {
     try {
-        if(packet == "result:victory")
+        if(packet == "result:victory") {
             if(sender -> position == 1)
                 db_conn.executenonquery("update ufo2000_games set is_finished='Y', result=1 where id=%d;",game_id);
             else
                 db_conn.executenonquery("update ufo2000_games set is_finished='Y', result=2 where id=%d;",game_id);
+            std::string winner = db_conn.executestring("select p.player from ufo2000_games g,ufo2000_game_players p where g.id=%d and g.id=p.game and g.result=p.position;", game_id);
+            std::string looser = db_conn.executestring("select p.player from ufo2000_games g,ufo2000_game_players p where g.id=%d and g.id=p.game and g.result!=p.position;", game_id);
+            double winner_score = db_conn.executedouble("select elo_score from ufo2000_users where name='%s';", winner.c_str());
+            double looser_score = db_conn.executedouble("select elo_score from ufo2000_users where name='%s';", looser.c_str());
+            double winner_expected = 1 / (1 + pow(10, ((looser_score - winner_score) / 400)));
+            double looser_expected = 1 / (1 + pow(10, ((winner_score - looser_score) / 400)));
+            double k;
+            if (winner_score <= 2400)
+                k = 32;
+            else
+                k = 16;
+            db_conn.executenonquery("update ufo2000_users set elo_score=%f where name='%s';", winner_score + (k * (1 - winner_expected)), winner.c_str());
+            if (looser_score <= 2400)
+                k = 32;
+            else
+                k = 16;
+            db_conn.executenonquery("update ufo2000_users set elo_score=%f where name='%s';", looser_score + (k * (0 - looser_expected)), looser.c_str());
+            db_conn.executenonquery("commit; ");
+            db_conn.executenonquery("begin transaction;");
+        }
         if(packet == "result:draw")
             if(sender -> position == 1)
                 db_conn.executenonquery("update ufo2000_games set is_finished='Y', result=3 where id=%d;",game_id);

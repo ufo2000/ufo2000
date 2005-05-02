@@ -439,7 +439,8 @@ bool ServerClientUfo::add_user(const std::string &login, const std::string &pass
 {
     try {
         db_conn.executenonquery("insert into ufo2000_users(name,password) values('%s','%s');", login.c_str(),password.c_str());
-        db_conn.executenonquery("commit; begin transaction;");
+        db_conn.executenonquery("commit;");
+        db_conn.executenonquery("begin transaction;");
     }
     catch(std::exception &ex) {
         server_log("Exception Occured: %s",ex.what());
