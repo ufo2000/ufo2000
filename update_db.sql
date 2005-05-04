@@ -10,3 +10,4 @@ alter table ufo2000_users add column score1 double default 0;
 alter table ufo2000_users add column elo_score double default 1500;
 create table dual (a integer primary key);
 insert into dual values(0);
+alter table ufo2000_games add column client_version text;

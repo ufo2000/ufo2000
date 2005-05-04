@@ -136,6 +136,16 @@ void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, c
         if(packet == "result:draw")
             if(sender -> position == 1)
                 db_conn.executenonquery("update ufo2000_games set is_finished='Y', result=3 where id=%d;",game_id);
+        if(strstr(packet.c_str(), "UFO2000 REVISION OF YOUR OPPONENT: ")) {
+            db_conn.executenonquery("update ufo2000_games set client_version='%s' where id=%d;",packet.c_str()+strlen("UFO2000 REVISION OF YOUR OPPONENT: "), game_id);
+            db_conn.executenonquery("commit; ");
+            db_conn.executenonquery("begin transaction;");
+        }
+        if(strstr(packet.c_str(), "crc error") || strstr(packet.c_str(), "assert")) {
+            db_conn.executenonquery("update ufo2000_games set error='%s' where id=%d;", packet.c_str(), game_id);
+            db_conn.executenonquery("commit; ");
+            db_conn.executenonquery("begin transaction;");
+        }
     }
     catch(std::exception &ex) {
         server_log("Exception Occured: %s",ex.what());
