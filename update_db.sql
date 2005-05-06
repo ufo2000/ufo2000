@@ -11,3 +11,4 @@ alter table ufo2000_users add column elo_score double default 1500;
 create table dual (a integer primary key);
 insert into dual values(0);
 alter table ufo2000_games add column client_version text;
+update ufo2000_users set elo_score=1500 where elo_score is null;

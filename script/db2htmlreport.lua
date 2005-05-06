@@ -68,6 +68,7 @@ where p.player=u.name and p.game=g.id and g.is_finished='Y' and g.result=p.posit
 elo_score \
 from ufo2000_users u \
 ) \
+where won>0 \
 order by elo_score desc \
 ") do
 out:write(html_row)
@@ -76,8 +77,8 @@ out:write("</table>")
 
 
 out:write("<br> <b>UFO2000 played games statistics table</b><br>")
-out:write("<table border=1>")
-out:write("<tr><td>game<td>player1<td>player2<td>result<td>comment<td>")
+out:write("<table border=1>\n")
+out:write("<tr><td>game<td>version<td>player1<td>player2<td>result<td>comment<td>\n")
 
 for html_row in db:cols("\
 select \"<tr><td>\"||id||\"<td>\"||ver||\"<td>\"||pl1||\"<td>\"||pl2||\"<td>\"||result||\"<td>\"||errors||\"<td>\" from \
@@ -88,6 +89,7 @@ order by id desc \
 limit 100 \
 ") do
 out:write(html_row)
+out:write("\n")
 end
 out:write("</table>")
 
