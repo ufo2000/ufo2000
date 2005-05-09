@@ -35,6 +35,7 @@ Platoon::Platoon(int PID, int num)
 {
 	StatEntry *current;
 	ID = PID;
+        
 	size = num;
 	memset(m_seen, 0, sizeof(m_seen));
 	
@@ -60,8 +61,6 @@ Platoon::Platoon(int PID, int num)
 		}
 		s1 = s2;
 	}
-
-	m_visibility_changed = 1;
 }
 
 Platoon::Platoon(int PID, PLAYERDATA * pd, DeployType dep_type)
@@ -81,8 +80,9 @@ Platoon::Platoon(int PID, PLAYERDATA * pd, DeployType dep_type)
 
 	Soldier *s1 = NULL, *s2;
 	int i;
+    int32 vision_mask = 1;
 	for (i = 0; i < size; i++) {
-		s2 = new Soldier(this, i+PID, pd->lev[i], pd->col[i], pd->row[i], &pd->md[i], &pd->id[i], dep_type);
+        s2 = new Soldier(this, i+PID, pd->lev[i], pd->col[i], pd->row[i], &pd->md[i], &pd->id[i], dep_type,vision_mask);
 		current->set_name(pd->md[i].Name);
 		current->set_SID(i+PID);
 		current = current->getnext();
@@ -93,8 +93,8 @@ Platoon::Platoon(int PID, PLAYERDATA * pd, DeployType dep_type)
 			man = s2;
 		}
 		s1 = s2;
+        vision_mask = vision_mask << 1;
 	}
-	m_visibility_changed = 1;
 }
 
 
@@ -116,43 +116,6 @@ void Platoon::destroy()
 	delete m_stats;
 }
 
-void Platoon::recalc_visibility()
-{
-	if (!m_visibility_changed) return;
-
-	memset(m_visible, 0, sizeof(m_visible));
-        
-    // In replay mode all map is visible
-    if (net->gametype == GAME_TYPE_REPLAY)
-        memset(m_visible, 1, sizeof(m_visible));
-
-
-	Soldier *ss = man;
-	while (ss != NULL) {
-		if (ss->is_active()) {
-			ss->calc_visible_cells();
-			int n = 0, k, i, j, width_10 = 10 * map->width, height_10 = 10 * map->height;
-			for (k = 0; k < map->level; k++)
-				for (i = 0; i < width_10; i++)
-					for (j = 0; j < height_10; j++) {
-						m_visible[k][i][j] |= ss->m_visible_cells[n++];
-						m_seen[k][i][j] |= m_visible[k][i][j];
-
-                        if (m_visible[k][i][j]) {
-                            if (map->place(k, i, j)->top_item())
-                                m_seen_item_index[k][i][j] = map->place(k, i, j)->top_item()->itemtype();
-                            else
-                                m_seen_item_index[k][i][j] = -1;
-                        }
-					}
-		}
-		ss = ss->next();
-	}
-
-	m_visibility_changed = 0;
-}
-
-
 void Platoon::move(int ISLOCAL)
 {
 	Soldier *ss = man;
@@ -170,15 +133,23 @@ void Platoon::move(int ISLOCAL)
 			Soldier *s = ss;
 			ss = ss->next();
 			if (s->is_dead()) {
-				s->die();
-				size--;
-				delete s;
-				platoon_local->set_visibility_changed();
-				platoon_remote->set_visibility_changed();
+                map->clear_vision_matrix(s);
+                s->die();
+                size--;
+                            
+                if (this == platoon_local)
+                    platoon_remote->soldier_moved(s);
+                else
+                    platoon_local->soldier_moved(s);
+                            
+                delete s;
 			} else if (s->x != -1) {
-				s->stun();
-				platoon_local->set_visibility_changed();
-				platoon_remote->set_visibility_changed();
+                map->clear_vision_matrix(s);
+                s->stun();
+                if (this == platoon_local)
+                    platoon_remote->soldier_moved(s);
+                else
+                    platoon_local->soldier_moved(s);
 			}
 			
 		} else {
@@ -186,9 +157,7 @@ void Platoon::move(int ISLOCAL)
 		}
 	}
 
-	recalc_visibility();
 }
-
 
 void Platoon::bullmove()
 {
@@ -245,6 +214,177 @@ Soldier *Platoon::findman(int NID)
 		ss = ss->next();
 	}
 	return ss;
+}
+
+/**
+ * Loop through all soldiers in platoon and force a vision update
+ * Used only at game start.
+ */
+void Platoon::initialize_vision_matrix()
+{
+    memset(m_vision_matrix, 0, map->size() * sizeof(int32));
+    Soldier *ss = man;
+    while (ss != NULL) {
+        if ( ss->is_active() )
+            map->update_vision_matrix(ss);
+        ss = ss->next();
+    }
+}
+
+int Platoon::is_seen(int lev, int col, int row) 
+{
+    return m_seen[lev][col][row] || net->gametype == GAME_TYPE_REPLAY;
+}
+
+int Platoon::is_visible(int lev, int col, int row) 
+{
+    return m_vision_matrix[Position(lev,col,row).index()] || (net->gametype == GAME_TYPE_REPLAY);
+}
+
+/**
+ * When a soldier moves into a new voxel, tell all of the enemy
+ * soldiers who can see that voxel that he is there.  This avoids
+ * having to unneccesarily recalculate those soldier's visibility.
+ */ 
+void Platoon::soldier_moved(Soldier* mover)
+{
+    Soldier *ss = man;
+    int32 index = Position(mover->z, mover->x, mover->y).index();
+    int32 vision_mask = mover->get_vision_mask();
+    while (ss != NULL) {
+        if ( ss->is_active()) {
+            if(mover->is_active() && m_vision_matrix[index] & ss->get_vision_mask())
+                ss->set_visible_enemies(ss->get_visible_enemies() | vision_mask);
+            else
+                ss->set_visible_enemies(ss->get_visible_enemies() & ~vision_mask);
+        }
+        ss = ss->next();
+    }
+}
+
+/**
+ * Loop through all soldiers and append their visible enemies
+ * to the platoon.
+ */
+int32 Platoon::update_visible_enemies()
+{
+    m_visible_enemies = 0;
+    Soldier *ss = man;
+    while (ss != NULL) {
+        if ( ss->is_active() )
+            m_visible_enemies |= ss->get_visible_enemies();
+        ss = ss->next();    
+    }
+
+    return m_visible_enemies;
+}
+
+/**
+ * Queue all enemy soldiers who can see the target.
+ * Then check if each soldier can take a shot at target.
+ */
+int Platoon::check_reaction_fire(Soldier *target)
+{
+    // Reaction fire isn't calculated in replay mode
+    if (net->gametype == GAME_TYPE_REPLAY || g_game_receiving)
+        return 0;
+
+    std::vector<Soldier *> soldiers;
+    Soldier *ss = man;
+    int32 n = Position(target->z, target->x, target->y).index();
+    while (ss != NULL) {
+        if ( ss->is_active() ) {
+            // Can we see this cell?
+            if( get_vision_matrix()[n] & ss->get_vision_mask() ){
+                soldiers.push_back(ss);
+            }
+        }
+        ss = ss->next();
+    }
+
+    while (!soldiers.empty()) {
+        int index = rand() % soldiers.size();
+        if (soldiers[index]->check_reaction_fire(target))
+            return 1;
+        soldiers.erase(soldiers.begin() + index);
+    }
+	
+    return 0;
+}
+
+/**
+ * Create appropriate bar with a digit in the right bottom corner 
+ * for enemies that are seen.  
+ */
+#define ES_SIDE 15
+void Platoon::draw_enemy_indicators() 
+{
+    if (m_visible_enemies == 0 )
+        return;
+    
+    text_mode( -1);
+    char num[2] = {0, 0};
+    int32 counter = 0;
+        
+    Soldier* s = platoon_remote->man;
+    while (s != NULL && counter < 10){
+        if (m_visible_enemies & s->get_vision_mask()){
+            int x1, y1, x2, y2;
+            x1 = SCREEN2W - 25;
+            y1 = SCREEN2H - 23 - counter * 20;
+    
+            x2 = x1 + ES_SIDE;
+            y2 = y1 + ES_SIDE - 1;
+            
+            // Draw it bright red if the selected soldier can see 
+            // the enemy, otherwise make the indicator dull red.
+            if (sel_man != NULL)
+                rectfill(screen2, x1, y1, x2, y2, (sel_man->get_visible_enemies() & s->get_vision_mask()) ? COLOR_RED07 : COLOR_RED15);
+    
+            // Start at 1 instead of 0.
+            num[0] = ((counter + 1) % 10) + '0';
+            textout(screen2, font, num, x1 + 5, y1 + 4, COLOR_GOLD);
+            counter++;
+            
+            //  Draw numbers above seen enemies
+            if (FLAGS & F_SELECTENEMY) { // && map->man(s->z, s->x, s->y)
+                int sx = map->x + CELL_SCR_X * s->x + CELL_SCR_X * s->y + 12;
+                int sy = map->y - (s->x + 1) * CELL_SCR_Y + CELL_SCR_Y * s->y - 29 - CELL_SCR_Z * s->z;
+
+                //  Draw a number over enemy head
+                textout(screen2, font, num, sx, sy - 2, COLOR_WHITE);
+            }
+        }
+        s = s->next();
+    }
+}
+
+/**
+ * Process mouseclick on numbered buttons for seen enemy soldier,
+ * center map on selected soldier.
+ */
+int Platoon::center_enemy_seen()
+{
+    int counter = 0; // Number displayed inside visible enemy indicator
+    Soldier* s = platoon_remote->man;
+    while (s != NULL) {
+        if (m_visible_enemies & s->get_vision_mask()) {
+            int x1, y1, x2, y2;
+            x1 = SCREEN2W - 25;
+            y1 = SCREEN2H - 23 - counter * 20;
+            
+            x2 = x1 + ES_SIDE;
+            y2 = y1 + ES_SIDE - 1;
+
+            counter++;        
+            if (mouse_inside(x1, y1, x2, y2)) {
+                map->center(s);
+                return 1;
+            }
+        }
+        s = s->next();
+    }
+    return 0;
 }
 
 
@@ -434,29 +574,6 @@ void Platoon::apply_hit(int sniper, int z, int x, int y, int type, int hitdir)
 		ss->apply_hit(sniper, z, x, y, type, hitdir);
 		ss = ss->next();
 	}
-}
-
-int Platoon::check_reaction_fire(Soldier *target)
-{
-    // Reaction fire isn't calculated in replay mode
-    if (net->gametype == GAME_TYPE_REPLAY || g_game_receiving)
-        return 0;
-
-	std::vector<Soldier *> soldiers;
-	Soldier *ss = man;
-	while (ss != NULL) {
-		if (ss->is_active()) soldiers.push_back(ss);
-		ss = ss->next();
-	}
-
-	while (!soldiers.empty()) {
-		int index = rand() % soldiers.size();
-		if (soldiers[index]->check_reaction_fire(target))
-			return 1;
-		soldiers.erase(soldiers.begin() + index);
-	}
-	
-	return 0;
 }
 
 void Platoon::change_morale(int delta, bool send_to_remote)

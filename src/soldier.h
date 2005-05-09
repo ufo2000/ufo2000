@@ -27,6 +27,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "item.h"
 #include "place.h"
 #include "skin.h"
+#include "position.h"
 
 struct UNITDATA
 {
@@ -141,8 +142,15 @@ private:
 	int dir;
 	// direction of the movement
 	int move_dir;
-    int phase;
+        int phase;
 	State m_state;
+
+//! Each soldier in a platoon has a unique vision mask
+//! This bit is written to the index vision matrix when a soldier can see that cell
+    int32 m_vision_mask;            
+
+//!	Information about seen enemies. 
+    int32 m_visible_enemies;
 
 //!	This flag is set after soldier has moved. 
 //!	Needed for correct work of 'switch to next soldier'-button
@@ -164,18 +172,10 @@ private:
 	char way[100];
 	int curway, waylen;
 
-	char m_visible_cells[4 * 6 * 10 * 6 * 10];      // do sizeof
-//@{
-    //!	Information about seen enemies. 
-	int enemy_num;
-	int enemy_z[100], enemy_x[100], enemy_y[100];
-	int seen_enemy_num;
-	int seen_enemy_z[100], seen_enemy_x[100], seen_enemy_y[100];
-//@}    
 	void berserk_fire();
     int calc_z();
     void standard_aiming(int za, int xa, int ya);
-    void precise_aiming(int za, int xa, int ya);
+    void precise_aiming(int za, int xa, int ya);    
 
 public:
     // set all stats to minimum and remove all inventory
@@ -196,7 +196,7 @@ public:
 	static void freepck() { Skin::freepck(); }
 
 	Soldier(Platoon *platoon, int _NID);
-	Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *sdat, ITEMDATA *idat, DeployType dep_type);
+    Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *sdat, ITEMDATA *idat, DeployType dep_type,int32 vision_mask);
 	virtual ~Soldier();
 
 	void initialize();
@@ -216,7 +216,6 @@ public:
     void restore_moved();
 	void restore();
 	int move(int ISLOCAL);
-	void calc_visible_cells();
 
 	void draw() { m_skin->draw(); }
 	void draw_inventory(BITMAP *dest);
@@ -228,8 +227,7 @@ public:
 	void drawinfo(int x, int y);
 	void draw_stats(BITMAP* bitmap, int x, int y, bool selected);
 	void draw_bullet_way();
-	void draw_enemy_seen(int select_y);
-	int center_enemy_seen();
+	//void draw_enemy_seen(int select_y);
 
 	void turnto(int destdir);
 	void wayto(int dest_lev, int dest_col, int dest_row);
@@ -250,7 +248,7 @@ public:
 	void apply_accuracy(REAL &fi, REAL &te);
 	void apply_throwing_accuracy(REAL &fi, REAL &te, int weight);
 	int required(int pertime);
-    int eff_FAccuracy();
+        int eff_FAccuracy();
 	int FAccuracy(int peraccur, int TWOHAND);
 	int TAccuracy(int peraccur);
 
@@ -279,7 +277,7 @@ public:
 	void spend_time(int tm, int use_energy = 0);
 	int walktime(int _dir);
 	int tus_reserved(std::string *error = NULL);
-    int get_dir() { return dir; }
+        int get_dir() { return dir; }
 	State state() { return m_state; }
 
 	void unlink();
@@ -293,7 +291,7 @@ public:
 	Skin *skin() { return m_skin; }
 
 	void calc_bullet_start(int xs, int ys, int zs, int* xr, int* yr, int *zr); //calculates starting position for a bullet
-    void calc_shot_stat(int zd, int xd, int yd);
+        void calc_shot_stat(int zd, int xd, int yd);
 
 	bool is_active()
 	{
@@ -332,14 +330,18 @@ public:
 		return NULL;
 	}
 
-	int check_reaction_fire(Soldier *the_target);
+    int32 get_vision_mask(){return m_vision_mask;}
+    void set_visible_enemies(int32 visible_enemies) {m_visible_enemies=visible_enemies;}
+    int32 get_visible_enemies() {return m_visible_enemies;}
+
+    int check_reaction_fire(Soldier *the_target);
 	int do_reaction_fire(Soldier *the_target, int place, int shot_type);
 
 	int eot_save(char *txt);
 
 	int count_weight();
 	int has_forbidden_equipment();
-    int has_twohanded_weapon();
+        int has_twohanded_weapon();
 
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	static int calc_mandata_cost(MANDATA _md);

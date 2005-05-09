@@ -23,6 +23,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "global.h"
 #include "video.h"
+#include "cell.h"
 #include "place.h"
 #include "map.h"
 #include "colors.h"
@@ -36,6 +37,15 @@ Place::Place(int x, int y, int w, int h)
 	viscol = 0;
 	m_item = NULL;
 	set(x, y, w, h);
+    m_cell = NULL;
+}
+
+Place::Place(int x, int y, int w, int h, Cell* cell)
+{
+    viscol = 0;
+    m_item = NULL;
+    set(x, y, w, h);
+    m_cell = cell;
 }
 
 Place::~Place()
@@ -168,7 +178,10 @@ int Place::put(Item *it, int xx, int yy)
 		it->m_next = m_item; it->m_prev = NULL; it->m_place = this;
 		it->setpos(xx, yy);
 		m_item = it;
-		return 1;
+        if (m_cell != NULL)
+            map->update_seen_item(m_cell->get_position());
+		
+        return 1;
 	}
 	return 0;
 }
@@ -186,6 +199,15 @@ int Place::put(Item * it)
 	return 0;
 }
 
+void Place::set_item(Item *it) 
+{ 
+    m_item = it; 
+    if (m_cell != NULL)
+        map->update_seen_item(m_cell->get_position());
+
+}
+
+
 Item * Place::get(int xx, int yy)
 {
 	Item * t;
@@ -193,6 +215,8 @@ Item * Place::get(int xx, int yy)
 	while (t != NULL) {
 		if (ishand() || t->inside(xx, yy)) {
 			t->unlink();
+            if (m_cell != NULL)
+                map->update_seen_item(m_cell->get_position());
 			return t;
 		}
 		t = t->m_next;
@@ -207,6 +231,8 @@ int Place::destroy(Item *it)
 	while (t != NULL) {
 		if (t == it) {
 			t->unlink();
+            if (m_cell != NULL)
+                map->update_seen_item(m_cell->get_position());
 			delete it;
 			return 1;
 		}
@@ -617,6 +643,8 @@ void Place::destroy_all_items()
 		t = t2;
 	}
 	m_item = NULL;
+    if (m_cell != NULL)
+        map->update_seen_item(m_cell->get_position());
 }
 
 void Place::damage_items(int dam)
@@ -628,8 +656,11 @@ void Place::damage_items(int dam)
 	while(it != NULL) {
 		if (it->damage(dam)) { //destroyed
 			Item *t2 = it->m_next;
-			if (m_item == it)     
+            if (m_item == it) {
 				m_item = t2;
+                if (m_cell != NULL)
+                    map->update_seen_item(m_cell->get_position());
+            }
                             
             if (it->is_grenade()) {
             	explo_type.push_back(it->m_type);
@@ -695,6 +726,7 @@ bool Place::Write(persist::Engine &archive) const
 	PersistWriteBinary(archive, *this);
 
 	PersistWriteObject(archive, m_item);
+    PersistWriteObject(archive, m_cell);
 
 	return true;
 }
@@ -704,6 +736,7 @@ bool Place::Read(persist::Engine &archive)
 	PersistReadBinary(archive, *this);
 
 	PersistReadObject(archive, m_item);
+    PersistReadObject(archive, m_cell);
 
 	return true;
 }

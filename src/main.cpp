@@ -1024,12 +1024,50 @@ void switch_turn()
 }
 
 /**
+ * Update visibility for both platoons. 
+ * Center on, or break march for newly visible enemies.
+ */
+void update_visibility()
+{
+    int32 visible_enemies = platoon_local->get_visible_enemies();
+    int32 new_visible_enemies = map->update_vision_matrix(platoon_local);
+    
+    if( (new_visible_enemies &= (~visible_enemies)) ) {
+        if( MODE == WATCH ){
+            Soldier* ss = platoon_remote->findnum(0);
+            while (ss != NULL) {
+                if( ss->get_vision_mask() & new_visible_enemies ) {
+                    map->center(ss);
+                    break;
+                }
+                ss = ss->next();
+            }
+        }
+        else{
+            Soldier* ss = platoon_local->findnum(0);
+            while (ss != NULL) {
+                if( ss->get_visible_enemies() & new_visible_enemies && ss->is_marching() ) {
+                    ss->break_march();
+                    break;
+                }
+                ss = ss->next();
+            }
+        }
+    }
+
+    map->update_vision_matrix(platoon_remote);
+    map->clear_changed_cells();
+
+}
+
+/**
  * This function is called when player wants to pass turn to the other player
  */
 void send_turn()
 {
     ASSERT(MODE != WATCH);
     platoon_local->restore_moved();
+    update_visibility();
     switch_turn();
     
     int crc = build_crc();
@@ -1041,9 +1079,7 @@ void send_turn()
         soundSystem::getInstance()->play(SS_BUTTON_PUSH_2);
 
     platoon_remote->restore();
-    platoon_remote->set_visibility_changed();
-    platoon_remote->recalc_visibility();
-
+    
     if (net->gametype == GAME_TYPE_HOTSEAT) {
         if (win || loss) {
         //  !!! Hack - to prevent unnecessery replay while in endgame screen
@@ -1065,9 +1101,6 @@ void send_turn()
         sel_man = platoon_local->captain();
         if (sel_man != NULL) map->center(sel_man);
 
-        platoon_local->set_visibility_changed();
-        platoon_local->recalc_visibility();
-
         MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
         alert(" ", _("  NEXT TURN  "), " ", 
                    _("    OK    "), NULL, 1, 0);
@@ -1075,6 +1108,7 @@ void send_turn()
 
     g_time_left = 0;
     MODE = WATCH;
+    update_visibility();
 }
 
 /**
@@ -1095,13 +1129,13 @@ void recv_turn(int crc)
     }
 
     ASSERT(MODE == WATCH || g_game_receiving);
+    update_visibility();
     switch_turn();
     
     check_crc(crc);
 
     platoon_local->restore();
-    platoon_local->set_visibility_changed();
-    platoon_local->recalc_visibility();
+    update_visibility();
 
     if (net->gametype == GAME_TYPE_HOTSEAT) {
         savegame(F("$(home)/ufo2000.tmp"));
@@ -1176,9 +1210,10 @@ void build_screen(int & select_y)
     if (sel_man != NULL) {
         // Todo: adjust select_y for elevation of current tile (e.g. stairs)
         sel_man->draw_selector(select_y);
-        sel_man->draw_enemy_seen(select_y);
     }
-
+    
+    platoon_local->draw_enemy_indicators();
+    
     icon->draw();
     
     if (net->gametype == GAME_TYPE_REPLAY) {
@@ -1841,7 +1876,7 @@ void gameloop()
     // If it's not replay mode, this code start to write information into replay file
     if (net->gametype != GAME_TYPE_REPLAY)
         savereplay(F("$(home)/replay.tmp"));
-
+    
     int select_y = 0;
     int mouse_leftr = 1, mouse_rightr = 1;
     int old_mouse_z = mouse_z; // mouse wheel status on the previous cycle
@@ -1865,12 +1900,10 @@ void gameloop()
     g_console->printf( COLOR_SYS_INFO1,  _("Press F1 for help.") );  // see KEY_F1
     color1 = 0;
     battle_report( "*\n* %s: %s\n*\n\n", _("Battlereport"), datetime() );
-
-    platoon_local->set_visibility_changed();
-    platoon_local->recalc_visibility();
-    platoon_remote->set_visibility_changed();
-    platoon_remote->recalc_visibility();
-
+    
+    platoon_local->initialize_vision_matrix();
+    platoon_remote->initialize_vision_matrix();
+    
     if (MODE != WATCH) {
         g_time_left = g_time_limit;
         last_time_left  = -1;
@@ -1906,11 +1939,10 @@ void gameloop()
             net->check();
         }
 
-    if (g_tie == 3) // Check if both players accepted the draw.
-    {
-        win = loss = 1;
-        DONE = 1;
-    }
+        if (g_tie == 3){ // Check if both players accepted the draw.
+            win = loss = 1;
+            DONE = 1;
+        }
 
         if (win || loss) break;
 
@@ -1936,7 +1968,6 @@ void gameloop()
         while (FLYIT > 0 && !g_pause ) {
             platoon_local->bullmove();     //!!!! bull of dead?
             platoon_remote->bullmove();
-
             FLYIT--;
         }
 
@@ -1947,6 +1978,7 @@ void gameloop()
             map->smoker();
             platoon_remote->move(0);
             platoon_local->move(1);      //!!sel_man may die
+           
             if (sel_man == NULL)  // Get cursor back to normal mode in case
                 TARGET = 0;       // the current soldier died while targetting.
 
@@ -2008,7 +2040,7 @@ void gameloop()
                 case MAP3D:
                     // Center to one of seen enemies if appropriate bar with a digit 
                     // in the right bottom corner was clicked
-                    if (sel_man != NULL && sel_man->center_enemy_seen()) break;
+                    if (platoon_local->center_enemy_seen()) break;
 
                     // Wait for opponent to finish reaction fire (avoid dodging 
                     // reaction fire bullets)
@@ -2317,6 +2349,7 @@ void gameloop()
             }
             CHANGE = 1;
         }
+        update_visibility();
     }
 
     FS_MusicPlay(NULL);
@@ -2372,6 +2405,7 @@ void gameloop()
 
     clear(screen);
 }
+
 
 void faststart()
 {

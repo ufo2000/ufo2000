@@ -22,8 +22,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define CELL_H
 
 #include "global.h"
+#include "position.h"
 #include "place.h"
 #include "soldier.h"
+
 
 /**
  * Minimal part of map. It can contain a soldier, stack of items, 
@@ -40,6 +42,7 @@ private:
  	int m_fire_state;
  	int m_fire_time;
  	int m_light;
+    Position m_position;
 
 	int MOUSE;
 	char visi[3][3][3];
@@ -53,8 +56,9 @@ public:
 	Place *get_place() { return m_place; }
 	void set_soldier(Soldier *soldier) { m_soldier = soldier; }
 	bool soldier_here() { return m_soldier != NULL; }
+    Position get_position() { return m_position; }
 
-	Cell();
+	Cell(Position p);
 	virtual ~Cell();
 
 	void cycle_smoke();

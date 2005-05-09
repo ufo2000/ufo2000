@@ -138,10 +138,14 @@ void Map::create(int l, int w, int h)
 		for (j = 0; j < 10 * width; j++) {
 			m_cell[i][j] = new Cell * [10 * height];
 			for (k = 0; k < 10 * height; k++) {
-				m_cell[i][j][k] = new Cell();
+                m_cell[i][j][k] = new Cell(Position(i, j, k));
 			}
 		}
 	}
+    m_level_offset = height * 10 * width * 10;
+    m_width_offset = height * 10;
+    m_height_offset = 1;
+    m_size = l * 10 * w * 10 * h;
 }
 
 Map::Map(GEODATA &mapdata)
@@ -161,6 +165,7 @@ Map::Map(GEODATA &mapdata)
 	m_minimap_area = new MinimapArea(this, SCREEN_W - SCREEN2W, SCREEN2H);
 	
 	explo_spr_list = new effect_vector;
+        m_changed_visicells = new std::vector<Position>;
 }
 
 Map::~Map()
@@ -182,6 +187,7 @@ Map::~Map()
 	delete m_minimap_area;
 	
 	delete explo_spr_list;
+    delete m_changed_visicells;
 }
 
 void Map::loadmaps(unsigned char *_map)
@@ -325,7 +331,7 @@ void Map::draw(int show_cursor)
 				if ((sx > -32) && (sx < SCREEN2W) && (sy >= -34) && (sy < SCREEN2H)) {
 					clear_to_color(cell_bmp, makecol(255, 0, 255));
 
-					draw_cell_pck(0, 6, lev, col, row, 0, seen(lev, col, row), cell_bmp);
+                    draw_cell_pck(0, 6, lev, col, row, 0, platoon_local->is_seen(lev, col, row), cell_bmp);
 					
 					//set_trans_blender(0, 0, 0, 0);
 					//draw_lit_sprite(screen2, cell_bmp, sx, sy - 6, 255 * (17 - m_cell[lev][col][row]->m_light) / 16);
@@ -333,7 +339,7 @@ void Map::draw(int show_cursor)
 
 					if (m_cell[sel_lev][col][row]->MOUSE && show_cursor) {
 						if (lev == sel_lev) {
-							if ((m_cell[lev][col][row]->soldier_here()) && (visible(lev, col, row)))
+							if ((m_cell[lev][col][row]->soldier_here()) && (platoon_local->is_visible(lev, col, row)))
 								mtype = 1;
 							else
 								mtype = 0;
@@ -344,15 +350,15 @@ void Map::draw(int show_cursor)
 						}
 					}
 
-					if (seen(lev, col, row)) {
+                    if (platoon_local->is_seen(lev, col, row)) {
 						draw_cell_pck(0, 6, lev, col, row, 1, 1, cell_bmp);
 						draw_cell_pck(0, 6, lev, col, row, 2, 1, cell_bmp);
 					} else if ((mcd(lev, col, row, 1)->Door || mcd(lev, col, row, 1)->UFO_Door) &&
-					        (row > 0) && seen(lev, col, row - 1)) {
+                               (row > 0) && platoon_local->is_seen(lev, col, row - 1)) {
 						draw_cell_pck(0, 6, lev, col, row, 1, 1, cell_bmp);
 						draw_cell_pck(0, 6, lev, col, row, 2, 0, cell_bmp);
 					} else if ((mcd(lev, col, row, 2)->Door || mcd(lev, col, row, 2)->UFO_Door) &&
-					        (col < width * 10 - 1) && seen(lev, col + 1, row)) {
+                               (col < width * 10 - 1) && platoon_local->is_seen(lev, col + 1, row)) {
 						draw_cell_pck(0, 6, lev, col, row, 1, 0, cell_bmp);
 						draw_cell_pck(0, 6, lev, col, row, 2, 1, cell_bmp);
 					} else {
@@ -360,7 +366,7 @@ void Map::draw(int show_cursor)
 						draw_cell_pck(0, 6, lev, col, row, 2, 0, cell_bmp);
 					}
 
-					draw_cell_pck(0, 6, lev, col, row, 3, seen(lev, col, row), cell_bmp);
+                    draw_cell_pck(0, 6, lev, col, row, 3, platoon_local->is_seen(lev, col, row), cell_bmp);
 
 					if (m_cell[lev][col][row]->m_light < 16 && FLAGS & F_SHOWNIGHT) {
 						set_trans_blender(0, 0, 0, 0);
@@ -369,7 +375,7 @@ void Map::draw(int show_cursor)
 						draw_sprite(screen2, cell_bmp, sx, sy - 6);
 					}
 
-					if (seen(lev, col, row)) {
+                    if (platoon_local->is_seen(lev, col, row)) {
 						int gy = sy + mcd(lev, col, row, 0)->T_Level;
 						gy += mcd(lev, col, row, 3)->T_Level;
 						//m_cell[lev][col][row]->get_place()->draw(sx, gy);
@@ -377,7 +383,7 @@ void Map::draw(int show_cursor)
                             drawitem(Item::obdata_get_bitmap(platoon_local->get_seen_item_index(lev, col, row), "pMap"), sx, gy);
 					}
 
-					if (visible(lev, col, row)) {
+                    if (platoon_local->is_visible(lev, col, row)) {
 						if (m_cell[lev][col][row]->soldier_here())
 							m_cell[lev][col][row]->get_soldier()->draw();
 
@@ -404,7 +410,7 @@ void Map::draw(int show_cursor)
 						}
 					}
 
-					if (seen(lev, col, row)) {
+                    if (platoon_local->is_seen(lev, col, row)) {
  						int s = fire_state(lev, col, row);
  						if (fire_time(lev,col,row)>0) {
  							smoke->showpck(8-s, sx, sy);
@@ -426,7 +432,7 @@ void Map::draw(int show_cursor)
 	for (exp = explo_spr_list->begin(); exp != explo_spr_list->end(); exp++) {
 		int l = exp->lev, r = exp->row, c = exp->col;
 			
-		if (!(seen(l, c, r)) ||
+        if (!(platoon_local->is_seen(l, c, r)) ||
 			!(l >= l1 && l <= l2) ||
 			!(r >= r1 && r <= r2) ||
 			!(c >= c1 && c <= c2)) continue;
@@ -594,7 +600,7 @@ void Map::draw2d()
 	for (int lev = 0; lev <= sel_lev; lev++)
 		for (int row = r1; row <= r2; row++)
 			for (int col = c1; col <= c2; col++) {
-				if (!seen(lev, col, row)) continue;
+                if (!platoon_local->is_seen(lev, col, row)) continue;
 
 				blit(tmp, screen2, 
 					col * 4 + 3, 
@@ -609,11 +615,10 @@ void Map::draw2d()
 					rectfill(screen2, cx + ( -sel_col + col) * 4 + 1, cy + ( -sel_row + row) * 4 + 1,
 					         cx + ( -sel_col + col) * 4 + SCANGSIZE - 1, cy + ( -sel_row + row) * 4 + SCANGSIZE - 1,
 					         COLOR_YELLOW);
-				else
-					if (visible(lev, col, row))
-						rectfill(screen2, cx + ( -sel_col + col) * 4 + 1, cy + ( -sel_row + row) * 4 + 1,
-						         cx + ( -sel_col + col) * 4 + SCANGSIZE - 1, cy + ( -sel_row + row) * 4 + SCANGSIZE - 1,
-						         COLOR_RED00);
+				else if (platoon_local->is_visible(lev, col, row))
+					rectfill(screen2, cx + ( -sel_col + col) * 4 + 1, cy + ( -sel_row + row) * 4 + 1,
+					         cx + ( -sel_col + col) * 4 + SCANGSIZE - 1, cy + ( -sel_row + row) * 4 + SCANGSIZE - 1,
+					         COLOR_RED00);
 			}
 
 	destroy_bitmap(tmp);
@@ -674,12 +679,13 @@ int Map::center2d(int xx, int yy)
 	return 0;
 }
 
+
 void Map::clearseen()
 {
 	for (int k = 0; k < level; k++)
 		for (int i = 0; i < 10*width; i++)
 			for (int j = 0; j < 10*height; j++)
-				set_seen(k, i, j, 0);
+				platoon_local->set_seen(k, i, j, 0);
 }
 
 void Map::unhide()
@@ -687,7 +693,7 @@ void Map::unhide()
 	for (int k = 0; k < level; k++)
 		for (int i = 0; i < 10*width; i++)
 			for (int j = 0; j < 10*height; j++)
-				set_seen(k, i, j, 1);
+				platoon_local->set_seen(k, i, j, 1);
 }
 
 void Map::center(int lev, int col, int row)
@@ -725,7 +731,7 @@ int Map::haveGROUND(int lev, int col, int row)
 
 void Map::build_visi_cell(int lev, int col, int row)
 {
-	for (int k = 0; k < 3; k++) {
+    	for (int k = 0; k < 3; k++) {
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
 				int dz = k - 1;
@@ -784,9 +790,6 @@ void Map::build_visi()
 
 void Map::rebuild_visi(int z, int x, int y)
 {
-	platoon_local->set_visibility_changed();
-	platoon_remote->set_visibility_changed();
-
 	for (int lev = z - 1; lev <= z + 1; lev++) {
 		if ((lev < 0) || (lev >= level))
 			continue;
@@ -797,6 +800,7 @@ void Map::rebuild_visi(int z, int x, int y)
 				if ((row < 0) || (row >= height * 10))
 					continue;
 				build_visi_cell(lev, col, row);
+                cell_visibility_changed(lev, col, row);
 			}
 		}
 	}
@@ -895,7 +899,7 @@ int Map::stopWALK(int oz, int ox, int oy, int part)
                 if (man(oz, ox, oy)) return 1;
                 break;
             case PF_DISPLAY:
-                if (man(oz, ox, oy) && visible(oz, ox, oy)) return 1;
+                if (man(oz, ox, oy) && platoon_local->is_visible(oz, ox, oy)) return 1;
                 break;
         }
         if (isStairs(oz, ox, oy) && ((oz + 1 >= level) || !passable(oz + 1, ox, oy))) return 1;
@@ -1137,7 +1141,7 @@ BITMAP *Map::create_lof_bitmap(int lev, int col, int row)
 	clear_to_color(bmp, COLOR_BLACK1);
 
 	int dir = -1, s = 0;     //, tl = 0;
-	if (visible(lev, col, row))
+	if (platoon_local->is_visible(lev, col, row))
 		if (man(lev, col, row) != NULL) {
 			dir = man(lev, col, row)->dir;
 			if (man(lev, col, row)->m_state == SIT)
@@ -1396,77 +1400,166 @@ int Map::find_ground(int lev, int col, int row)
 
 static char field[8 * 6*10 * 6*10];
 
-int Map::calc_visible_cells(Soldier *watcher, int z, int x, int y, int dir, char *visicells, int *ez, int *ex, int *ey)
+/**
+ * Store position of cells whose visibility has changed in a queue. 
+ * Queue is cleared when we call update_vision for the platoon. 
+ * Smoke, lighting changes, terrain destruction, and doors all changed
+ * cell visibility.
+ */ 
+void Map::cell_visibility_changed(int lev, int col, int row)
 {
-	visicells[z * width * 10 * height * 10 + x * height * 10 + y] = 1;
-	if (z > 0) {
-		if (isStairs(z - 1, x, y)) {
-			visicells[(z - 1) * width * 10 * height * 10 + x * height * 10 + y] = 1;
-		}
-	}
+    Position pos(lev,col,row);
+    std::vector<Position>::iterator iter = m_changed_visicells->begin();
+    while(iter != m_changed_visicells->end()) {
+        if (*iter == pos)
+            return;
+        iter++;
+    }
+    m_changed_visicells->push_back(pos);
+}
 
-	memset(field, 0, level * width * 10 * height * 10);
-	int en = 0;
-	int ang = dir * 32;
+/**
+ * Clear a soldiers vision. Called when soldier dies, or vision is updated.
+ */ 
+void Map::clear_vision_matrix(Soldier *watcher)
+{
+    int32 vision_mask = watcher->get_vision_mask();
+    int32* pMask = watcher->get_platoon()->get_vision_matrix();    
+    int32* pEnd = pMask + size();
+    while(pMask < pEnd)
+        *(pMask++) &= (~vision_mask);
+}
 
-	for (int fi = 24; fi <= 128 - 24; fi += 4) {
-		fixed cos_fi = fcos(itofix(fi));
-		fixed sin_fi = fsin(itofix(fi));
+/**
+ * Calculate viewable cells and write a soldiers vision mask to vision 
+ * matrix.  A discrete pseudo-raytracing algorithm is used.
+ */
+void Map::update_vision_matrix(Soldier *watcher)
+{
+    clear_vision_matrix(watcher);
+    Position pos(watcher->z, watcher->x, watcher->y);
+    int dir = watcher->get_dir();
+    int32 vision_mask = watcher->get_vision_mask();
+    Platoon* pplatoon = watcher->get_platoon();
+    Soldier* target;
+    int32 visible_enemies = 0;
+    int32 *vision_matrix = pplatoon->get_vision_matrix();
+    int32 index = pos.index();
+    
+    vision_matrix[index] |= vision_mask;
+        
+    if (pos.level() > 0 && isStairs(pos.level(), pos.column(), pos.row())) 
+        vision_matrix[index - m_level_offset] |= vision_mask;
+    
+    memset(field, 0, size());
+    int ang = dir * 32;
 
-		for (int te = ang - 32; te <= ang + 32; te += 1) {
-			fixed cos_te = fcos(itofix(te));
-			fixed sin_te = fsin(itofix(te));
+    for (int fi = 24; fi <= 128 - 24; fi += 4) {
+        fixed cos_fi = fcos(itofix(fi));
+        fixed sin_fi = fsin(itofix(fi));
 
-			int oz = z, ox = x, oy = y;
-			int l;
-			int vz, vx, vy;
-			int smokeway = 0;
-			int lightway = 0;
-			int lw_delta = 0;
+        for (int te = ang - 32; te <= ang + 32; te += 1) {
+            fixed cos_te = fcos(itofix(te));
+            fixed sin_te = fsin(itofix(te));
 
-			for (l = 1; l < 18 - smokeway * 3; l++) { /////////////from smoke
+            int oz = pos.level(), ox = pos.column(), oy = pos.row();
+            int l;
+            int vz, vx, vy;
+            int smokeway = 0;
+            int lightway = 0;
+            int lw_delta = 0;
 
-				vx = x + fixtoi(fmul(itofix(l), fmul(cos_te, sin_fi)));
-				vy = y + fixtoi(fmul(itofix(l), fmul(sin_te, sin_fi)));
-				vz = z + fixtoi(fmul(itofix(l), cos_fi));
+            for (l = 1; l < 18 - smokeway * 3; l++) { /////////////from smoke
+
+                vz = pos.level() + fixtoi(fmul(itofix(l), cos_fi));                
+                vx = pos.column() + fixtoi(fmul(itofix(l), fmul(cos_te, sin_fi)));
+                vy = pos.row() + fixtoi(fmul(itofix(l), fmul(sin_te, sin_fi)));
+                
 				
-				if (!cell_inside(vz, vx, vy))
-					break;
-				if ((vz == oz) && (vx == ox) && (vy == oy))
-					continue;
+                if (!cell_inside(vz, vx, vy))
+                    break;
+                if ((vz == oz) && (vx == ox) && (vy == oy))
+                    continue;
 					
-				lw_delta = 16 - m_cell[vz][vx][vy]->m_light;
-				if (lw_delta < 0) lw_delta = 0;
+                lw_delta = 16 - m_cell[vz][vx][vy]->m_light;
+                if (lw_delta < 0) lw_delta = 0;
 					
-				if (m_cell[vz][vx][vy]->m_light < (lightway + lw_delta) / 3)
-					continue;
+                if (m_cell[vz][vx][vy]->m_light < (lightway + lw_delta) / 3)
+                    continue;
 
-				if (!m_cell[oz][ox][oy]->visi[vz - oz + 1][vx - ox + 1][vy - oy + 1]) break;
+                if (!m_cell[oz][ox][oy]->visi[vz - oz + 1][vx - ox + 1][vy - oy + 1]) break;
 
-				visicells[vz * width * 10 * height * 10 + vx * height * 10 + vy] = 1;
+                vision_matrix[vz * width * 10 * height * 10 + vx * height * 10 + vy] |= vision_mask;
+                pplatoon->set_seen(vz, vx, vy, 1);
+                
+                Item* item = map->place(vz, vx, vy)->top_item();
+                int itemtype = (item != NULL) ? item->itemtype() : -1;
+                pplatoon->set_seen_item_index(vz, vx, vy,itemtype);
+    
+                if (field[vz * width * 10 * height * 10 + vx * height * 10 + vy] == 0) {
+                    if (((target = man(vz, vx, vy)) != NULL) && (!pplatoon->belong(target))) {
+                        visible_enemies |= target->get_vision_mask();
+                    }
+                }
+                field[vz * width * 10 * height * 10 + vx * height * 10 + vy] = 1;
 
-				if (field[vz * width * 10 * height * 10 + vx * height * 10 + vy] == 0)
-					if (man(vz, vx, vy) != NULL) {
-						if (!watcher->get_platoon()->belong(man(vz, vx, vy))) {
-							ez[en] = vz;
-							ex[en] = vx;
-							ey[en] = vy;
-							en++;
-						}
-					}
-				field[vz * width * 10 * height * 10 + vx * height * 10 + vy] = 1;
+                oz = vz; ox = vx; oy = vy;
 
-				oz = vz; ox = vx; oy = vy;
+                if (!viewable_further(vz, vx, vy)) break;
 
-				if (!viewable_further(vz, vx, vy)) break;
+                if (smog_state(vz, vx, vy) != 0) if (++smokeway > 2) break;
+                lightway += lw_delta; 
+            }
+        }
+    }
+    
+    watcher->set_visible_enemies(visible_enemies);
+}
 
-				if (smog_state(vz, vx, vy) != 0) if (++smokeway > 2) break;
-				lightway += lw_delta;
-			}
-		}
-	}
+/**
+ * Loop through platoon and update vision only for soldiers 
+ * with changed vision.
+ */
+int32 Map::update_vision_matrix(Platoon* platoon)
+{
+    int32* vision_matrix = platoon->get_vision_matrix();
+    int32 soldiers_affected = 0;
+    std::vector<Position>::iterator iter = m_changed_visicells->begin();
+    
+    // Build a list of soldiers whose vision has changed
+    while( iter != m_changed_visicells->end() ) {
+        soldiers_affected |= vision_matrix[iter->index()];
+        iter++;
+    }
+    if (soldiers_affected != 0) {
+        Soldier *ss = platoon->findnum(0); 
+        
+        // Recalculate visibile cells for soldiers whose vision has changed.
+        while (ss != NULL) {
+            if ( (ss->is_active()) && (ss->get_vision_mask() & soldiers_affected) )
+                map->update_vision_matrix(ss);
+            ss = ss->next();
+        }
+    }
+    return platoon->update_visible_enemies();
+}
 
-	return en;
+/**
+ * When a new item is placed in a voxel, inform all soldiers who can see
+ * that voxel.
+ */
+void Map::update_seen_item(Position p)
+{
+    Item* item = map->place(p.level(), p.column(), p.row())->top_item();
+    int itemtype = (item != NULL) ? item->itemtype() : -1;
+    
+    if( platoon_local != NULL)
+        if( platoon_local->get_vision_matrix()[p.index()] )
+            platoon_local->set_seen_item_index(p.level(), p.column(), p.row(), itemtype);
+    
+    if( platoon_remote != NULL)
+        if( platoon_remote->get_vision_matrix()[p.index()] )
+            platoon_remote->set_seen_item_index(p.level(), p.column(), p.row(), itemtype);
 }
 
 double distance_3d(double v1, double v2, double v3)
@@ -1644,7 +1737,9 @@ void Map::add_light_source(int lev, int col, int row, int power)
 						continue;
 						
 				m_cell[i][j][k]->m_light += power - (int)((double)(power - 1) / range * dst);
-			}
+                if (MODE != PLANNER)
+                    cell_visibility_changed(i, j, k);
+            }
 		}
 	}
 }
@@ -1664,6 +1759,7 @@ void Map::remove_light_source(int lev, int col, int row, int power)
 						continue;
 						
 				m_cell[i][j][k]->m_light -= power - (int)((double)(power - 1) / range * dst);
+                cell_visibility_changed(i, j, k);
 			}
 		}
 	}
@@ -1953,6 +2049,7 @@ bool Map::Read(persist::Engine &archive)
 	m_minimap_area = new MinimapArea(this, SCREEN_W - SCREEN2W, SCREEN2H);
 	
 	explo_spr_list = new effect_vector;
+    m_changed_visicells = new std::vector<Position>;
 
 	return true;
 }

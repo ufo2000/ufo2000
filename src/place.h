@@ -22,6 +22,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define PLACE_H
 #include "global.h"
 #include "item.h"
+#include "cell.h"
 
 /**
  * Items container. Simulates items stacked on the ground and also 
@@ -43,11 +44,13 @@ private:
 	int viscol;
 
 	Item *m_item;
+    Cell* m_cell;
 
 	void set(int x, int y, int w, int h);
 
 public:
 	Place(int x, int y, int w, int h);
+    Place(int x, int y, int w, int h, Cell* cell);
 	virtual ~Place();
 
 	void draw(int gx, int gy);
@@ -86,7 +89,7 @@ public:
 	Item *item(int ix, int iy);
 	Item *item() { return m_item; }
 	Item *top_item();
-	void set_item(Item *it) { m_item = it; }
+    void set_item(Item *it);
 
 	void build_ITEMDATA(int ip, ITEMDATA *id);
 	void build_items_stats(char *buf, int &len);

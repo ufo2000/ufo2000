@@ -21,6 +21,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef MAP_H
 #define MAP_H
 
+#include "global.h"
+#include "position.h"
 #include "cell.h"
 #include "terrapck.h"
 #include "place.h"
@@ -108,6 +110,7 @@ private:
     typedef struct { int lev, col, row, state; } effect;	//should it be used for fire and smoke? 
     typedef std::vector<effect> effect_vector;
 	effect_vector *explo_spr_list;
+    std::vector<Position>* m_changed_visicells;
 
     static int m_animation_cycle;
     PF_MODE m_pathfind_mode;
@@ -119,6 +122,11 @@ private:
     void assign_type(int lev, int col, int row, int part, int type);
 
     static bool load_map_from_top_of_lua_stack(GEODATA *mapdata);
+    
+    int m_level_offset;
+    int m_width_offset;
+    int m_height_offset;
+    int m_size;
     
 public:
     MinimapArea *m_minimap_area;
@@ -173,7 +181,12 @@ public:
     int viewable(int oz, int ox, int oy, int dir);
     int viewable_further(int vz, int vx, int vy);
 
-    int calc_visible_cells(Soldier *watcher, int z, int x, int y, int dir, char *visicells, int *ez, int *ex, int *ey);
+    void cell_visibility_changed(int lev, int col, int row);
+    void update_vision_matrix(Soldier* watcher);
+    int32 update_vision_matrix(Platoon* platoon);
+    void clear_vision_matrix(Soldier *watcher);
+    void update_seen_item(Position p);
+    
     void build_visi();
     void rebuild_visi(int z, int x, int y);
     void build_visi_cell(int lev, int col, int row);
@@ -219,6 +232,11 @@ public:
 
     int eot_save(char *buf, int &buf_size);
     int saveitems(char *txt);
+    
+    int size(){ return m_size; }
+    int level_offset() {return m_level_offset;}
+    int width_offset() {return m_width_offset;}
+    int height_offset() {return m_height_offset;} 
 
     MCD *mcd(int lev, int col, int row, int type)
     {
@@ -271,24 +289,6 @@ public:
         m_cell[lev][col][row]->set_soldier(man);
     }
 
-    int visible(int lev, int col, int row)
-    {
-        return platoon_local->is_visible(lev, col, row);
-    }
-    void set_visible(int lev, int col, int row, int value)
-    {
-        platoon_local->set_visible(lev, col, row, value);
-    }
-
-    int seen(int lev, int col, int row)
-    {
-        return platoon_local->is_seen(lev, col, row);
-    }
-    void set_seen(int lev, int col, int row, int value)
-    {
-        platoon_local->set_seen(lev, col, row, value);
-    }
-
     int fire_state(int lev, int col, int row)
     {
         return m_cell[lev][col][row]->m_fire_state; 
@@ -326,15 +326,22 @@ public:
     }
     void set_smog_state(int lev, int col, int row, int value)
     {
+        int state = m_cell[lev][col][row]->m_smog_state;
+        if ( (state == 0 && value != 0) || (state != 0 && value == 0))
+            cell_visibility_changed(lev, col, row);
         m_cell[lev][col][row]->m_smog_state = value;
     }
     void dec_smog_state(int lev, int col, int row)
     {
-        m_cell[lev][col][row]->m_smog_state--;
+        int state = m_cell[lev][col][row]->m_smog_state--;
+        if( state == 0 || state == 1)
+            cell_visibility_changed(lev, col, row);
     }
     void inc_smog_state(int lev, int col, int row)
     {
-        m_cell[lev][col][row]->m_smog_state++;
+        int state = m_cell[lev][col][row]->m_smog_state++;
+        if(state == 0 || state == -1)
+            cell_visibility_changed(lev, col, row);
     }
 
     int smog_time(int lev, int col, int row)
@@ -356,6 +363,16 @@ public:
     int isStairs(int lev, int col, int row)
     {
         return (mcd(lev, col, row, 3)->T_Level < -15);
+    }
+    
+    void clear_changed_cells()
+    {
+        m_changed_visicells->clear();
+    }
+    
+    int have_visicells_changed()
+    {
+        return m_changed_visicells->size();
     }
 
     void center(Soldier *s)
@@ -398,7 +415,6 @@ public:
 
     bool create_geodata(GEODATA &gd);
 };
-
 
 /**
  * Data about map cell used in pathfinding.

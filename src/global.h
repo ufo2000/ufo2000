@@ -245,10 +245,12 @@ class Icon;
 class Net;
 class Wind;
 class PCK;
+class Position;
 class Soldier;
 class Scenario;
 class Explosive;
 class Random;
+class Cell;
 
 //! Display-Modes
 enum Mode { MAP2D, MAP3D, MAN, WATCH, UNIT_INFO, PLANNER };
@@ -386,4 +388,5 @@ std::string indent(const std::string &);
 /**
  * @defgroup battlescape Battlescape 
  */
+ 
 #endif

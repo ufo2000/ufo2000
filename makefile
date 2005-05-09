@@ -95,8 +95,8 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
        editor.cpp explo.cpp font.cpp icon.cpp inventory.cpp item.cpp  \
        keys.cpp main.cpp mainmenu.cpp map.cpp map_pathfind.cpp        \
        minimap.cpp mouse.cpp multiplay.cpp music.cpp packet.cpp       \
-       pck.cpp persist.cpp place.cpp platoon.cpp random.cpp           \
-       scenario.cpp server_config.cpp server_gui.cpp                  \
+       pck.cpp persist.cpp place.cpp platoon.cpp position.cpp         \
+       random.cpp scenario.cpp server_config.cpp server_gui.cpp       \
        server_protocol.cpp server_transport.cpp skin.cpp soldier.cpp  \
        server_game.cpp                                                \
        sound.cpp spk.cpp stats.cpp terrapck.cpp text.cpp units.cpp    \

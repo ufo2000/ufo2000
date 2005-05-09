@@ -114,16 +114,16 @@ void Minimap::redraw_minimap(BITMAP *bmp, int x, int y, int full_redraw_mode)
 				    state = MINIMAP_STATE_SCTARGET;
 					break;
 				}
-				if (m_map->visible(lev, col, row) && m_map->man(lev, col, row) != NULL) {
+                if (platoon_local->is_visible(lev, col, row) && m_map->man(lev, col, row) != NULL) {
 					state = platoon_local->belong(m_map->man(lev, col, row)) ? 
 						MINIMAP_STATE_FRIEND : MINIMAP_STATE_ENEMY;
 					break;
 				}
 			}
 
-			if (state == MINIMAP_STATE_UNEXPLORED && m_map->seen(l, col, row))
+			if (state == MINIMAP_STATE_UNEXPLORED && platoon_local->is_seen(l, col, row))
 				state = MINIMAP_STATE_SEEN;
-			if (state == MINIMAP_STATE_SEEN && m_map->visible(l, col, row))
+			if (state == MINIMAP_STATE_SEEN && platoon_local->is_visible(l, col, row))
 				state = MINIMAP_STATE_VISIBLE;
 
 			if (full_redraw_mode || state != m_minimap_state[col][row]) {

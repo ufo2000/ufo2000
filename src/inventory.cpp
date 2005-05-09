@@ -147,7 +147,6 @@ void Inventory::execute()
 		} 
 		if (mouse_inside(x + 237, y + 1, x + 271, y + 22)) {  //ok
 			MODE = MAP3D;
-			platoon_local->set_visibility_changed();
 			//map->place(sel_man->z, sel_man->x, sel_man->y)->viscol=0; //!!reset vis
 		} else {
 			Soldier *s = sel_man;
@@ -219,7 +218,6 @@ void Inventory::close()
 {
 	if (sel_item == NULL) {
 		MODE = MAP3D;
-		platoon_local->set_visibility_changed();
 	} else                                             
         backput();      //return item to original place
 }

@@ -86,8 +86,6 @@ Soldier::Soldier(Platoon *platoon, int _NID)
 
     curway = -1; waylen = 0;
     FIRE_num = 0;
-    enemy_num = 0;
-    seen_enemy_num = 0;
     MOVED = 0;
     m_reaction_chances = 0;
 
@@ -98,11 +96,12 @@ Soldier::Soldier(Platoon *platoon, int _NID)
     memset(&ud, 0, sizeof(ud));
 }
 
-Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *mdat, ITEMDATA *idat, DeployType dep_type)
+Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *mdat, ITEMDATA *idat, DeployType dep_type,int32 vision_mask)
 {
     NID = _NID; z = _z; x = _x; y = _y;
     dir = 0; move_dir = 0;
-
+    m_vision_mask = vision_mask;
+    
     //  Face the enemy depending on what the deployment is
     int ang, dest_col, dest_row;
     fixed ox, oy;
@@ -170,8 +169,6 @@ Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *md
 
     curway = -1; waylen = 0;
     FIRE_num = 0;
-    enemy_num = 0;
-    seen_enemy_num = 0;
     MOVED = 0;
     m_reaction_chances = 0;
 
@@ -496,6 +493,8 @@ void Soldier::build_items_stats(char *buf, int &len)
     }
 }
 
+   
+
 /**
  * Get list of pointer to all the items owned by this soldier
  */
@@ -522,7 +521,6 @@ void Soldier::restore_moved()
 void Soldier::restore()
 {
     restore_moved();
-    seen_enemy_num = 0;
     // Percent of TUs: the lesser of 100% or ((strength / weight) * 100%).
     ud.CurTU = (count_weight() > ud.CurStrength) ? (ud.MaxTU * ud.CurStrength / count_weight()) : ud.MaxTU;
     //ud.CurHealth = ud.MaxHealth;
@@ -753,7 +751,7 @@ void Soldier::draw_selector(int select_y)
 // See also: Platoon::draw_blue_selectors()
 void Soldier::draw_blue_selector()
 {
-    if ((FLAGS & F_SELECTENEMY) && map->visible(z, x, y)) {
+    if ((FLAGS & F_SELECTENEMY) && platoon_local->is_visible(z, x, y)) {
         int sx = map->x + CELL_SCR_X * x + CELL_SCR_X * y + 12;
         int sy = map->y - (x + 1) * CELL_SCR_Y + CELL_SCR_Y * y - 29 - CELL_SCR_Z * z;
 
@@ -766,64 +764,6 @@ void Soldier::draw_blue_selector()
         }
         line(screen2, sx - j, sy - j, sx + j, sy - j, COLOR_BLACK1);
     }
-}
-
-#define ES_SIDE 15
-/**
- * Draw red buttons on the screen for each seen enemy soldier,
- * and numbers above seen enemies on the map
- */
-// !! At minimal screen-width, these buttons disappear under the control-panel
-void Soldier::draw_enemy_seen(int select_y)
-{
-    text_mode( -1);
-    char num[2] = {0, 0};
-
-    for (int i = 0; i < enemy_num; i++) {
-        int x1, y1, x2, y2;
-        x1 = SCREEN2W - 25;
-        y1 = SCREEN2H - 23 - i * 20;
-
-        x2 = x1 + ES_SIDE;
-        y2 = y1 + ES_SIDE - 1;
-        int color = 39;     // COLOR_RED07
-        rectfill(screen2, x1, y1, x2, y2, xcom1_color(color));
-
-        // Start at 1 instead of 0.
-        num[0] = ((i + 1) % 10) + '0';
-        textout(screen2, font, num, x1 + 5, y1 + 4, COLOR_GOLD);
-
-        //  Draw numbers above seen enemies
-        if ((FLAGS & F_SELECTENEMY) && map->man(enemy_z[i], enemy_x[i], enemy_y[i])) {
-            int sx = map->x + CELL_SCR_X * enemy_x[i] + CELL_SCR_X * enemy_y[i] + 12;
-            int sy = map->y - (enemy_x[i] + 1) * CELL_SCR_Y + CELL_SCR_Y * enemy_y[i] - 29 - CELL_SCR_Z * enemy_z[i];
-
-            //  Draw a number over enemy head
-            if (i < 10) textout(screen2, font, num, sx, sy - 2, COLOR_WHITE);
-        }
-    }
-}
-
-/**
- * Process mouseclick on numbered buttons for seen enemy soldier,
- * center map on selected soldier.
- */
-int Soldier::center_enemy_seen()
-{
-    for (int i = 0; i < enemy_num; i++) {
-        int x1, y1, x2, y2;
-        x1 = SCREEN2W - 25;
-        y1 = SCREEN2H - 23 - i * 20;
-
-        x2 = x1 + ES_SIDE;
-        y2 = y1 + ES_SIDE - 1;
-
-        if (mouse_inside(x1, y1, x2, y2)) {
-            map->center(enemy_z[i], enemy_x[i], enemy_y[i]);
-            return 1;
-        }
-    }
-    return 0;
 }
 
 void Soldier::turnto(int destdir)
@@ -859,51 +799,6 @@ int Soldier::ismoving()
     return false;
 }
 
-void Soldier::calc_visible_cells()
-{
-    m_platoon->set_visibility_changed();
-    memset(m_visible_cells, 0, sizeof(m_visible_cells));
-
-    int i, j;
-    for (i = 0; i < enemy_num; i++) {
-        int seen = 0;
-        for (j = 0; j < seen_enemy_num; j++) {
-            if ((seen_enemy_z[j] == enemy_z[i]) &&
-                    (seen_enemy_x[j] == enemy_x[i]) &&
-                    (seen_enemy_y[j] == enemy_y[i])) {
-                seen = 1;
-                break;
-            }
-        }
-        if (!seen) {
-            seen_enemy_z[seen_enemy_num] = enemy_z[i];
-            seen_enemy_x[seen_enemy_num] = enemy_x[i];
-            seen_enemy_y[seen_enemy_num] = enemy_y[i];
-            seen_enemy_num++;
-        }
-    }
-
-    enemy_num = map->calc_visible_cells(this, z, x, y, dir, m_visible_cells, enemy_z, enemy_x, enemy_y);
-
-    if (is_marching()) {
-        for (i = 0; i < enemy_num; i++) {
-            int seen = 0;
-            for (j = 0; j < seen_enemy_num; j++) {
-                if ((seen_enemy_z[j] == enemy_z[i]) &&
-                        (seen_enemy_x[j] == enemy_x[i]) &&
-                        (seen_enemy_y[j] == enemy_y[i])) {
-                    seen = 1;
-                    break;
-                }
-            }
-            if (!seen) {
-                break_march();
-                return ;
-            }
-        }
-    }
-}
-
 int Soldier::move(int ISLOCAL)
 {
     if (z == -1) return 0; // auto-return 0 if stunned
@@ -916,7 +811,6 @@ int Soldier::move(int ISLOCAL)
                 //map->center(this);
                 map->sel_lev = z;
             }
-            calc_visible_cells();
         }
     }
     if (map->isStairs(z, x, y)) {
@@ -927,7 +821,6 @@ int Soldier::move(int ISLOCAL)
             //map->center(this);
             map->sel_lev = z;
         }
-        calc_visible_cells();
     }
 
     map->set_man(z, x, y, this);      //preventor!!
@@ -967,8 +860,8 @@ int Soldier::move(int ISLOCAL)
                     map->sel_lev = z;
                 }
 
-                calc_visible_cells();
-
+                map->update_vision_matrix(this);
+                
                 curway++;
                 if (curway >= waylen) {
                     move_dir = dir;
@@ -986,7 +879,7 @@ int Soldier::move(int ISLOCAL)
         }
 
 
-        if ((phase == 3 || phase == 7) && map->visible(z, x, y) && !is_flying()) {
+        if ((phase == 3 || phase == 7) && platoon_local->is_visible(z, x, y) && !is_flying()) {
             // Make some step sounds (twice per movement from one cell to another)
             switch (md.SkinType) {
                 case S_SECTOID:
@@ -1005,10 +898,9 @@ int Soldier::move(int ISLOCAL)
         if (phase == 4) {
             // We are exactly in the middle between map cells
             map->set_man(z, x, y, NULL);
-
             x += DIR_DELTA_X(dir);
             y += DIR_DELTA_Y(dir);
-
+            
             // If we're moving along a diagonal, use 1.5 times the cost, as 
             // in the original game itself. Please note that walktime(-1) 
             // returns the time of a horizontal move, whereas walktime(dir)
@@ -1017,17 +909,17 @@ int Soldier::move(int ISLOCAL)
                 spend_time((walktime(-1) * 3 / 2), 1);
             else
                 spend_time(walktime(-1), 1);
-
+            
             map->set_man(z, x, y, this);
             m_place[P_MAP] = map->place(z, x, y);
 
-            calc_visible_cells();
+            map->update_vision_matrix(this);
         }
 
         if (phase >= 8) {
             // We have just come to another map cell
             phase = 0;
-
+            
             // Check for proximity grenades
             if (map->check_mine(z, x, y)) {
                 finish_march(ISLOCAL);
@@ -1036,12 +928,15 @@ int Soldier::move(int ISLOCAL)
 
             // Check for reaction fire.
             if (ISLOCAL) {
+                platoon_remote->soldier_moved(this);
                 if (platoon_remote->check_reaction_fire(this)) {
                     // In other words, if more than 0 shots were fired.
                     finish_march(ISLOCAL);
                 }
+            } else {
+                platoon_local->soldier_moved(this);
             }
-
+            
             if (m_state == MARCH) {
                 // We haven't stopped because of proximity mines and reaction 
                 // fire, so continue marching until we reach final destination
@@ -1088,7 +983,7 @@ int Soldier::move(int ISLOCAL)
                 turnto(way[curway]);
             }
 
-            calc_visible_cells();
+            map->update_vision_matrix(this);
         } else {
             if (FIRE_num && m_bullet->ready()) {
                 FIRE_num--;
@@ -1216,8 +1111,9 @@ bool Soldier::use_elevator(int dz)
     // Sent action to remote player
     if (platoon_local->belong(this))
         net->send_use_elevator(NID, dz);
-    
-    calc_visible_cells();
+
+    map->update_vision_matrix(this);
+    map->cell_visibility_changed(z, x, y);
     return true;
 }
 
@@ -1273,7 +1169,7 @@ bool Soldier::faceto(int dest_col, int dest_row)
         spend_time(nturns);
         net->send_face(NID, dest_col, dest_row);
         way[0] = ang >> 5; curway = 0; waylen = 0;
-        calc_visible_cells();
+        map->update_vision_matrix(this);
         return true;
     } else
         return false;
@@ -1655,8 +1551,6 @@ void Soldier::stun()
 
     curway = -1; waylen = 0;
     FIRE_num  = 0;
-    enemy_num = 0;
-    seen_enemy_num = 0;
     MOVED = 0;
     m_reaction_chances = 0;
 
@@ -2010,9 +1904,7 @@ int Soldier::unload_ammo(Item * it)
        		putitem(it, P_ARM_RIGHT);
        		putitem(it->unload(), P_MAP);
        		spend_time(10);           
-			platoon_local->set_visibility_changed();      
-				
-			net->send_unload_ammo(NID);
+            net->send_unload_ammo(NID);
        		return 1;
 		} else return 0;
     }
@@ -2728,9 +2620,14 @@ void Soldier::drawinfo(int x, int y)
 void Soldier::draw_stats(BITMAP* bitmap, int x, int y, bool selected)
 {   
     int dx = 15;
-    textprintf(bitmap, g_small_font, x, y, selected ? COLOR_BLUE02 : COLOR_WHITE, "%s", md.Name); x += 70;
+    int color = COLOR_WHITE;
+    if(m_visible_enemies>0) color = COLOR_RED;
+    if(selected) color = COLOR_BLUE02;
+    textprintf(bitmap, g_small_font, x, y, color, "%s", md.Name); x += 70;
     textprintf(bitmap, g_small_font, x, y, COLOR_GREEN, "%d", ud.CurTU); x += dx;
+    //textprintf(bitmap, g_small_font, x, y, COLOR_GREEN, "%d", m_vision_mask); x += dx;
     textprintf(bitmap, g_small_font, x, y, COLOR_RED, "%d", ud.CurHealth); x += dx;
+    //textprintf(bitmap, g_small_font, x, y, COLOR_RED, "%d", m_visible_enemies); x += dx;
     textprintf(bitmap, g_small_font, x, y, COLOR_WHITE, "%d", ud.CurFront); x += dx;
     textprintf(bitmap, g_small_font, x, y, COLOR_WHITE, "%d", ud.CurLeft); x += dx;
     textprintf(bitmap, g_small_font, x, y, COLOR_WHITE, "%d", ud.CurRight); x += dx;
@@ -2744,67 +2641,59 @@ void Soldier::draw_stats(BITMAP* bitmap, int x, int y, bool selected)
 
 int Soldier::check_reaction_fire(Soldier *the_target)
 {
-    // Translate target's cell into a value used by m_visible_cells.
-    int width_10 = 10 * map->width, height_10 = 10 * map->height,
-        n = the_target->y + (the_target->x * height_10) + (the_target->z * width_10 * height_10);
-    calc_visible_cells(); //!!
-    if(m_visible_cells[n] != 0) // Can we see this cell?
+    // Ok, check for reaction fire.
+    // Compare the reaction figures.
+    float total_reactions = ud.CurReactions;
+    float tu_ratio; 
+    if (the_target->ud.CurTU > 0) tu_ratio = (float)ud.CurTU / the_target->ud.CurTU; //needs for smooth interpolating
+    else tu_ratio = 999;
+
+    ASSERT(the_target->ud.CurReactions > 0); // Shouldn't happen, but...
+    
+    if (((float)ud.CurReactions / (float)the_target->ud.CurReactions) < total_reactions)
+        total_reactions = ((float)ud.CurReactions / (float)the_target->ud.CurReactions);
+
+    float r1 = total_reactions;
+    total_reactions /= 2;
+    float r2 = total_reactions;
+
+    if (tu_ratio < 1) total_reactions *= tu_ratio;
+
+    if(FLAGS & F_REACTINFO)
+        g_console->printf(COLOR_SYS_INFO1, "ToReact = %5.4f (%5.4f, %5.4f) TU: %5.4f", total_reactions, r1, r2, tu_ratio);
+    
+    if (randval(0, 1) < total_reactions)
     {
-        // Ok, check for reaction fire.
-        // Compare the reaction figures.
-        float total_reactions = ud.CurReactions;
-        float tu_ratio; 
-        if (the_target->ud.CurTU > 0) tu_ratio = (float)ud.CurTU / the_target->ud.CurTU; //needs for smooth interpolating
-        else tu_ratio = 999;
+        // We can make a reaction shot.
+        // Try the weapon in right hand first
 
-        ASSERT(the_target->ud.CurReactions > 0); // Shouldn't happen, but...
-        
-        if (((float)ud.CurReactions / (float)the_target->ud.CurReactions) < total_reactions)
-            total_reactions = ((float)ud.CurReactions / (float)the_target->ud.CurReactions);
-
-        float r1 = total_reactions;
-        total_reactions /= 2;
-        float r2 = total_reactions;
-
-        if (tu_ratio < 1) total_reactions *= tu_ratio;
-
-        if(FLAGS & F_REACTINFO)
-            g_console->printf(COLOR_SYS_INFO1, "ToReact = %5.4f (%5.4f, %5.4f) TU: %5.4f", total_reactions, r1, r2, tu_ratio);
-        
-        if (randval(0, 1) < total_reactions)
-        {
-            // We can make a reaction shot.
-            // Try the weapon in right hand first
-
-            switch (m_ReserveTimeMode) {
-            case RESERVE_FREE:
-                if (do_reaction_fire(the_target, P_ARM_RIGHT, AUTO)) return 1;
-                if (do_reaction_fire(the_target, P_ARM_RIGHT, AIMED)) return 1;
-                if (do_reaction_fire(the_target, P_ARM_RIGHT, SNAP)) return 1;
-                break;
-            case RESERVE_SNAP:
-                if (do_reaction_fire(the_target, P_ARM_RIGHT, SNAP)) return 1;
-                break;
-            case RESERVE_AIM:
-                if (do_reaction_fire(the_target, P_ARM_RIGHT, AIMED)) return 1;
-                if (do_reaction_fire(the_target, P_ARM_RIGHT, SNAP)) return 1;
-                break;
-            case RESERVE_AUTO:
-                if (do_reaction_fire(the_target, P_ARM_RIGHT, AUTO)) return 1;
-                if (do_reaction_fire(the_target, P_ARM_RIGHT, SNAP)) return 1;
-                break;
-            }
-
-            // No luck with right arm, go to left arm.
-            if (do_reaction_fire(the_target, P_ARM_LEFT, AIMED)) return 1;
-            if (do_reaction_fire(the_target, P_ARM_LEFT, SNAP)) return 1;
-
-            // No weapon was ready to be fired.
-            return 0;
+        switch (m_ReserveTimeMode) {
+        case RESERVE_FREE:
+            if (do_reaction_fire(the_target, P_ARM_RIGHT, AUTO)) return 1;
+            if (do_reaction_fire(the_target, P_ARM_RIGHT, AIMED)) return 1;
+            if (do_reaction_fire(the_target, P_ARM_RIGHT, SNAP)) return 1;
+            break;
+        case RESERVE_SNAP:
+            if (do_reaction_fire(the_target, P_ARM_RIGHT, SNAP)) return 1;
+            break;
+        case RESERVE_AIM:
+            if (do_reaction_fire(the_target, P_ARM_RIGHT, AIMED)) return 1;
+            if (do_reaction_fire(the_target, P_ARM_RIGHT, SNAP)) return 1;
+            break;
+        case RESERVE_AUTO:
+            if (do_reaction_fire(the_target, P_ARM_RIGHT, AUTO)) return 1;
+            if (do_reaction_fire(the_target, P_ARM_RIGHT, SNAP)) return 1;
+            break;
         }
-        else return 0; // Can't react fast enough. No go.
+
+        // No luck with right arm, go to left arm.
+        if (do_reaction_fire(the_target, P_ARM_LEFT, AIMED)) return 1;
+        if (do_reaction_fire(the_target, P_ARM_LEFT, SNAP)) return 1;
+
+        // No weapon was ready to be fired.
+        return 0;
     }
-    return 0; // Can't see cell. Abort.
+    return 0;
 }
 
 int Soldier::do_reaction_fire(Soldier *the_target, int place, int shot_type)

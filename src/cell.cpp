@@ -27,11 +27,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 IMPLEMENT_PERSISTENCE(Cell, "Cell");
 
-Cell::Cell()
+Cell::Cell( Position p )
+    : m_position(p)
 {
 	m_soldier = NULL;
 	MOUSE = 0;
-	m_place = new Place(0, 152, 20 * 10, 3);
+    m_place = new Place(0, 152, 20 * 10, 3 ,this);
 
 	type[0] = 0; type[1] = 0; type[2] = 0; type[3] = 0;
 
@@ -75,7 +76,7 @@ bool Cell::Write(persist::Engine &archive) const
 
 	PersistWriteObject(archive, m_soldier);
 	PersistWriteObject(archive, m_place);
-
+        
 	return true;
 }
 
@@ -85,6 +86,6 @@ bool Cell::Read(persist::Engine &archive)
 
 	PersistReadObject(archive, m_soldier);
 	PersistReadObject(archive, m_place);
-
+        
 	return true;
 }

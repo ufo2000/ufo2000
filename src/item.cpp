@@ -284,7 +284,7 @@ void Item::unlink()
 {
 	if (m_prev != NULL) m_prev->m_next = m_next;
 	if (m_next != NULL) m_next->m_prev = m_prev;
-	if (m_place != NULL && m_place->m_item == this) m_place->m_item = m_next;
+        if (m_place != NULL && m_place->m_item == this) m_place->m_item = m_next;
 	m_prev = NULL; m_next = NULL; m_place = NULL;
 }
 
