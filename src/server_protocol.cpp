@@ -154,6 +154,17 @@ ServerClientUfo::~ServerClientUfo()
             it++;
         }
 
+    try {
+        db_conn.executenonquery("\
+        update ufo2000_user_sessions\
+        set end=julianday('now') \
+        where id=(%d);", session_id);
+        db_conn.executenonquery("commit;");
+        db_conn.executenonquery("begin transaction;");
+	} catch(std::exception &ex) {
+        server_log("Exception Occured: %s",ex.what());
+    }
+
     //  Save the name and disconnect time of user
         m_last_user_name = m_name;
         nlTime(&m_last_user_disconnect_time);
@@ -227,6 +238,20 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
                 send_packet_back(SRV_FAIL, "Too many players on server");
                 m_error = true;
                 break;
+            }
+
+            try {
+                db_conn.executenonquery("update ufo2000_sequences set seq_val=seq_val+1 where name='ufo2000_user_sessions';");
+                session_id = db_conn.executeint32("select seq_val from ufo2000_sequences where name='ufo2000_user_sessions';");
+                db_conn.executenonquery("\
+                insert into ufo2000_user_sessions\
+                (id, user, begin) \
+                values \
+                (%d, '%s', julianday('now'));", session_id, login.c_str());
+                db_conn.executenonquery("commit;");
+                db_conn.executenonquery("begin transaction;");
+			} catch(std::exception &ex) {
+                server_log("Exception Occured: %s",ex.what());
             }
 
             server_log("login ok\n");

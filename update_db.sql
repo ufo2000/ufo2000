@@ -12,3 +12,7 @@ create table dual (a integer primary key);
 insert into dual values(0);
 alter table ufo2000_games add column client_version text;
 update ufo2000_users set elo_score=1500 where elo_score is null;
+alter table ufo2000_game_packets add column time real;
+create table ufo2000_user_sessions (id integer primary key, user text, begin real, end real, unique (user, begin));
+alter table ufo2000_game_packets add column session integer;
+insert or ignore into ufo2000_sequences values ('ufo2000_user_sessions', 0);

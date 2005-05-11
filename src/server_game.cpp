@@ -166,14 +166,14 @@ void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, c
 
 		sqlite3::command sql_cmd(db_conn, "\
             insert into ufo2000_game_packets\
-            (game, id, sender, date, command, packet_type) values \
-            (?, ?, ?, ?, ?, ?);");
-        sql_cmd.parameters.push_back(sqlite3::parameter(1, (int)game_id));
+            (game, id, sender, time, command, packet_type, session) values \
+            (?, ?, ?, julianday('now'), ?, ?, ?);");
+        sql_cmd.parameters.push_back(sqlite3::parameter(1, (long long int)game_id));
         sql_cmd.parameters.push_back(sqlite3::parameter(2, (int)last_received_packed));
         sql_cmd.parameters.push_back(sqlite3::parameter(3, (int)sender->position));
-        sql_cmd.parameters.push_back(sqlite3::parameter(4,timebuf,strlen(timebuf)));
-		sql_cmd.parameters.push_back(sqlite3::parameter(5, (void*) packet.c_str(), packet.size()));
-		sql_cmd.parameters.push_back(sqlite3::parameter(6, (int)packet_type));
+		sql_cmd.parameters.push_back(sqlite3::parameter(4, (void*) packet.c_str(), packet.size()));
+		sql_cmd.parameters.push_back(sqlite3::parameter(5, (int)packet_type));
+		sql_cmd.parameters.push_back(sqlite3::parameter(6, (long long int)sender->session_id));
 		sql_cmd.executenonquery();
 
         ServerClientUfo* recipient = players[2-sender->position];

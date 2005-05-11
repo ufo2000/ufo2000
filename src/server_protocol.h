@@ -73,6 +73,7 @@ public:
     // TODO - return right opponent.
 	bool is_in_server_chat() { return !m_busy; }
 	Server_Game_UFO* game;
+	long int session_id;
 	int position;
 
 private:
