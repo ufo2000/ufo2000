@@ -191,7 +191,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
     switch (id) {
         case SRV_LOGIN: {
             std::string login, password;
-            split_loginpass(packet, login, password);
+            split_with_colon(packet, login, password);
 
             server_log("user login (name='%s', pwd='%s', ip=%s)\n",
                 login.c_str(), password.c_str(), m_ip.c_str());

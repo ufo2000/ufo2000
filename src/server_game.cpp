@@ -176,6 +176,23 @@ void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, c
 		sql_cmd.parameters.push_back(sqlite3::parameter(6, (long long int)sender->session_id));
 		sql_cmd.executenonquery();
 
+        if (packet_type == SRV_DEBUG_MESSAGE) {
+            std::string param, val;
+            split_with_colon(packet, param, val);
+
+       		sqlite3::command sql_cmd(db_conn, "\
+            insert into ufo2000_debug_packets\
+            (game, id, sender, time, param, value, session) values \
+            (?, ?, ?, julianday('now'), ?, ?, ?);");
+            sql_cmd.parameters.push_back(sqlite3::parameter(1, (long long int)game_id));
+            sql_cmd.parameters.push_back(sqlite3::parameter(2, (int)last_received_packed));
+            sql_cmd.parameters.push_back(sqlite3::parameter(3, (int)sender->position));
+		    sql_cmd.parameters.push_back(sqlite3::parameter(4, param.c_str(), param.size()));
+    		sql_cmd.parameters.push_back(sqlite3::parameter(5, val.c_str(), val.size()));
+	   	    sql_cmd.parameters.push_back(sqlite3::parameter(6, (long long int)sender->session_id));
+	       	sql_cmd.executenonquery();
+        }
+
         ServerClientUfo* recipient = players[2-sender->position];
 
         if (packet_type == SRV_GAME_PACKET && recipient) {

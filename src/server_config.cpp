@@ -311,7 +311,7 @@ void strip_server_log(double delta_time)
     rename(tmp_name.c_str(), server_log_pathname.c_str());
 }
 
-bool split_loginpass(const std::string &str, std::string &login, std::string &password)
+bool split_with_colon(const std::string &str, std::string &login, std::string &password)
 {
     bool colon_found = false;
     for (unsigned int i = 0; i < str.size(); i++) {

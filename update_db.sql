@@ -16,3 +16,4 @@ alter table ufo2000_game_packets add column time real;
 create table ufo2000_user_sessions (id integer primary key, user text, begin real, end real, unique (user, begin));
 alter table ufo2000_game_packets add column session integer;
 insert or ignore into ufo2000_sequences values ('ufo2000_user_sessions', 0);
+create table ufo2000_debug_packets (game integer, id integer, sender integer, time real, param text, value text, session integer, primary key (game, id));
