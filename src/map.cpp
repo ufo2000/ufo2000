@@ -1265,6 +1265,7 @@ void Map::destroy_cell_part(int lev, int col, int row, int _part)
 
 		if ((_part == 0) && (lev > 0)) {
 			m_cell[lev][col][row]->type[_part] = 0;
+            place(lev, col, row)->dropall(lev, col, row);
 			return ;
 		}                                        
 		

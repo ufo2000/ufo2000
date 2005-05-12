@@ -172,9 +172,18 @@ int Place::isfit(Item * it, int xx, int yy)
 int Place::put(Item *it, int xx, int yy)
 {
     ASSERT(it->m_place == NULL);
-
-	if (isfree(xx, yy) && isfit(it, xx, yy)) {
-		if (m_item != NULL) m_item->m_prev = it;
+    
+    //If an item is dropped, make it fall down
+    if (m_cell != NULL) {
+        Position p = m_cell->get_position();
+        if ((p.level() > 0) && (map->mcd(p.level(), p.column(), p.row(), 0)->No_Floor)) 
+            return map->place(p.level()-1, p.column(), p.row())->put(it, xx, yy);
+    }
+    
+    
+    if (isfree(xx, yy) && isfit(it, xx, yy)) {
+        if (m_item != NULL)  
+            m_item->m_prev = it;
 		it->m_next = m_item; it->m_prev = NULL; it->m_place = this;
 		it->setpos(xx, yy);
 		m_item = it;
@@ -410,13 +419,17 @@ void Place::dropall(int lev, int col, int row)
 	while (t != NULL) {
 		//text_mode(0);
 		//textprintf(screen, font, 1, 150, 1, "x=%d y=%d t=%2x p=%4s n=%1s   ", t->x, t->y, t->type, t->prev, t->next);
-		Item *tn = t->m_next;
-		map->place(lev, col, row)->put(t);
-		//textprintf(screen, font, 1, 160, 1, "put t=%2x", t->type);
+        //Place::put modifies t, so store reference to next item beforehand
+        Item* tm = t->m_next;
+        map->place(lev, col, row)->put(t);
+        //textprintf(screen, font, 1, 160, 1, "put t=%2x", t->type);
 		//textprintf(screen, font, 1, 170, 1, "x=%d y=%d t=%2x p=%4s n=%1s   ", t->x, t->y, t->type, t->prev, t->next);
-		t = tn;
+		t = tm;
 	}
 	m_item = NULL;
+    if (m_cell != NULL)
+        map->update_seen_item(m_cell->get_position());
+        
 }
 
 int Place::isthere(Item *it)
