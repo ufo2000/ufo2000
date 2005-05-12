@@ -151,7 +151,7 @@ void Map::create(int l, int w, int h)
 Map::Map(GEODATA &mapdata)
 {
 	sel_row = 0; sel_col = 0; sel_lev = 0;
-
+    m_changed_visicells = new std::vector<Position>;
 	create(mapdata.z_size, mapdata.x_size, mapdata.y_size);
 
 	std::string terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
@@ -165,7 +165,6 @@ Map::Map(GEODATA &mapdata)
 	m_minimap_area = new MinimapArea(this, SCREEN_W - SCREEN2W, SCREEN2H);
 	
 	explo_spr_list = new effect_vector;
-        m_changed_visicells = new std::vector<Position>;
 }
 
 Map::~Map()
@@ -1737,8 +1736,7 @@ void Map::add_light_source(int lev, int col, int row, int power)
 						continue;
 						
 				m_cell[i][j][k]->m_light += power - (int)((double)(power - 1) / range * dst);
-                if (MODE != PLANNER)
-                    cell_visibility_changed(i, j, k);
+                cell_visibility_changed(i, j, k);
             }
 		}
 	}
