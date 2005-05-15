@@ -45,17 +45,17 @@ for name, played, won, elo_score in db:cols([[
 	order by elo_score desc 
 	]]) 
 do
-	io.write("<tr><td>", name, "<td>", played ,"<td>", won, "<td>", elo_score, "\n")
+	io.write("<tr><td>", name, "<td>", played ,"<td>", won, "<td>", elo_score or "1500", "\n")
 end
 
 io.write("</table>")
 
 io.write("<br> <b>UFO2000 recent games statistics</b><br>")
 io.write("<table border=1>\n")
-io.write("<tr><td>game<td>version<td>player1<td>player2<td>result<td>comment\n")
+io.write("<tr><td>date<td>game<td>version<td>player1<td>player2<td>result<td>comment\n")
 
-for html_row in db:cols([[
-	select "<tr><td>"||id||"<td>"||ver||"<td>"||pl1||"<td>"||pl2||"<td>"||result||"<td>"||errors from 
+for id, ver, pl1, pl2, result in db:cols([[
+	select id, ver, pl1, pl2, result from 
 	(select id,ifnull(g.client_version, "") ver,p1.player pl1, p2.player pl2, case when g.result=1 then p1.player||" won" when g.result=2 then p2.player||" won" when g.result=3 then "draw" else "not finished" end result,ifnull(g.errors,"") errors 
 	from ufo2000_games g, ufo2000_game_players p1, ufo2000_game_players p2 
 	where g.id=p1.game and g.id=p2.game and p1.position=1 and p2.position=2) 
@@ -63,7 +63,12 @@ for html_row in db:cols([[
 	limit 100 
 	]]) 
 do
-	io.write(html_row, "\n")
+    local julian_day = db:first_cols("select time from ufo2000_game_packets where game=" .. id)
+    local date_string = ""
+    if julian_day then 
+        date_string = os.date("%Y-%m-%d %H:%M:%S", (julian_day - 2440587.5) * 86400.0 + 0.5) 
+    end
+	io.write("<tr><td>", date_string, "<td>", id, "<td>", ver, "<td>", pl1, "<td>", pl2, "<td>", result, "\n")
 end
 io.write("</table>")
 
