@@ -50,7 +50,7 @@ long int Server_Game_UFO::CreateGame(std::string playername1,std::string playern
         return game_id;
     }
     catch(std::exception &ex) {
-        server_log("Exception Occured: %s",ex.what());
+        LOG_EXCEPTION(ex.what());
         return 0;
     }
 }
@@ -67,7 +67,7 @@ void Server_Game_UFO::ActivatePlayer(int game_id,ServerClientUfo* player)
             db_conn.executenonquery("begin transaction;");
         }
         catch(std::exception &ex) {
-            server_log("Exception Occured: %s",ex.what());
+            LOG_EXCEPTION(ex.what());
         }
         server_log("Game %d activated.\n", game_id);
     } else {
@@ -76,7 +76,7 @@ void Server_Game_UFO::ActivatePlayer(int game_id,ServerClientUfo* player)
             db_conn.executenonquery("begin transaction;");
         }
         catch(std::exception &ex) {
-            server_log("Exception Occured: %s",ex.what());
+            LOG_EXCEPTION(ex.what());
         }
     }
     try {
@@ -85,7 +85,7 @@ void Server_Game_UFO::ActivatePlayer(int game_id,ServerClientUfo* player)
         game_id,player->m_name.c_str());
     }
     catch(std::exception &ex) {
-        server_log("Exception Occured: %s",ex.what());
+        LOG_EXCEPTION(ex.what());
     }
     player->game=active_games[game_id];
     player->game->players[player->position - 1] = player;
@@ -148,7 +148,7 @@ void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, c
         }
     }
     catch(std::exception &ex) {
-        server_log("Exception Occured: %s",ex.what());
+        LOG_EXCEPTION(ex.what());
     }
     
     try {
@@ -202,6 +202,6 @@ void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, c
         }
     }
     catch(std::exception &ex) {
-        server_log("Exception Occured: %s",ex.what());
+        LOG_EXCEPTION(ex.what());
     }
 }

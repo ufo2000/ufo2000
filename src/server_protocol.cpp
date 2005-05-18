@@ -162,7 +162,7 @@ ServerClientUfo::~ServerClientUfo()
         db_conn.executenonquery("commit;");
         db_conn.executenonquery("begin transaction;");
 	} catch(std::exception &ex) {
-        server_log("Exception Occured: %s",ex.what());
+        LOG_EXCEPTION(ex.what());
     }
 
     //  Save the name and disconnect time of user
@@ -251,7 +251,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
                 db_conn.executenonquery("commit;");
                 db_conn.executenonquery("begin transaction;");
 			} catch(std::exception &ex) {
-                server_log("Exception Occured: %s",ex.what());
+                LOG_EXCEPTION(ex.what());
             }
 
             server_log("login ok\n");
@@ -375,7 +375,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
                 }
 				reader.close();
 			} catch(std::exception &ex) {
-                server_log("Exception Occured: %s",ex.what());
+                LOG_EXCEPTION(ex.what());
             }
 			break;
         }
@@ -468,7 +468,7 @@ bool ServerClientUfo::add_user(const std::string &login, const std::string &pass
         db_conn.executenonquery("begin transaction;");
     }
     catch(std::exception &ex) {
-        server_log("Exception Occured: %s",ex.what());
+        LOG_EXCEPTION(ex.what());
     }
     return true;
 }
@@ -487,7 +487,7 @@ int ServerClientUfo::validate_user(const std::string &username, const std::strin
         return 1;
     }
     catch(std::exception &ex) {
-        server_log("Exception Occured: %s",ex.what());
+        LOG_EXCEPTION(ex.what());
     }
     return -1;
     

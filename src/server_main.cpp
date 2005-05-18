@@ -302,13 +302,17 @@ void prepare_db()
         return;
     }
 
-    while (fgets(buffer, 511, f))
+    int line = 1;
+    while (fgets(buffer, 511, f)) {
         try {
             db_conn.executenonquery(buffer);
         }
         catch(std::exception &ex) {
-            server_log("Exception Occured: %s\n",ex.what());
+		    server_log("Error in update_db.sql, line %d - %s\n", line, buffer);
+            LOG_EXCEPTION(ex.what());
         }
+		line++;
+    }
     db_conn.executenonquery("begin transaction;");
 }
 
