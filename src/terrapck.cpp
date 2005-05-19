@@ -73,7 +73,27 @@ void TerraPCK::add(const char *mcd_name, int tftd_flag)
     char *scang_data = new char[scang_size];
     read(fh, scang_data, scang_size);
     close(fh);
+    char *scang_rgb_data = new char[scang_size * 3];
+    for (int i = 0; i < scang_size; i++) {
+        if (tftd_flag) {
+            scang_rgb_data[i * 3 + 0] = getr(tftd_color(scang_data[i]));
+            scang_rgb_data[i * 3 + 1] = getg(tftd_color(scang_data[i]));
+            scang_rgb_data[i * 3 + 2] = getb(tftd_color(scang_data[i]));
+        } else {
+            scang_rgb_data[i * 3 + 0] = getr(xcom_color(scang_data[i]));
+            scang_rgb_data[i * 3 + 1] = getg(xcom_color(scang_data[i]));
+            scang_rgb_data[i * 3 + 2] = getb(xcom_color(scang_data[i]));
+        }
+    }
+        
 
+	fh = open(F("$(xcom)/geodata/loftemps.dat"), O_RDONLY | O_BINARY);
+	ASSERT(fh != -1);
+	int loftemps_size = filelength(fh);
+	char *loftemps_data = new char[loftemps_size];
+	read(fh, loftemps_data, loftemps_size);
+	close(fh);
+    
 	// get pck name
 	strcpy(m_fname, mcd_name);
 	strcpy(strrchr(m_fname, '.') + 1, "pck");
@@ -99,7 +119,9 @@ void TerraPCK::add(const char *mcd_name, int tftd_flag)
         lua_pushstring(L, "convert_xcom_tileset");
         lua_gettable(L, LUA_GLOBALSINDEX);
         lua_pushstring(L, F(m_fname));
-        lua_safe_call(L, 1, 1);
+        lua_pushlstring(L, scang_rgb_data, scang_size * 3);
+        lua_pushlstring(L, loftemps_data, loftemps_size);
+        lua_safe_call(L, 3, 1);
         ASSERT(lua_isstring(L, -1));
         FILE *f = fopen(F(html_name.c_str()), "wt");
         fprintf(f, "%s", lua_tostring(L, -1));
@@ -145,4 +167,6 @@ void TerraPCK::add(const char *mcd_name, int tftd_flag)
     }
     close(fh);
     delete [] scang_data;
+    delete [] scang_rgb_data;
+    delete [] loftemps_data;
 }

@@ -9,7 +9,7 @@
 -- returns result as a large string containing ufo2000 tileset
 -- description
 ------------------------------------------------------------------------------
-function convert_xcom_tileset(mcd_file_name, tftd_flag)
+function convert_xcom_tileset(mcd_file_name, scang, loftemps)
     local result = {}
     local function write(...)
         for _, v in ipairs(arg) do
@@ -119,6 +119,23 @@ function convert_xcom_tileset(mcd_file_name, tftd_flag)
 
     local function process_property(name, value)
         if string.find(name, "^u%d+") then return end
+        if name == "Shape" then
+			write("            Shape = [[\n")
+			local shape_data = ""
+			for k = 12, 1, -1 do
+				v = value[k]
+				shape_data = shape_data .. "                "
+				for i = 15, 0, -1 do
+					local x = string.byte(loftemps, v * 16 * 2 + i * 2 + 1) + 
+					      string.byte(loftemps, v * 16 * 2 + i * 2 + 2) * 256
+					shape_data = shape_data .. string.format("%04X,", x)
+				end
+				shape_data = shape_data .. "\n"
+			end
+			write(shape_data)
+			write("            ]],\n")
+			return
+		end
         if name == "MinimapImage" then
             write("            MinimapImage = png_image(\"", scang_name(value[1] + value[2] * 256 + 1), "\"),\n")
             return
