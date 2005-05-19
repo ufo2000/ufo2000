@@ -69,6 +69,7 @@ public:
 	int SEND;
 	int START;
     int Position; //!< 1 - the player goes first, 2 - second
+    int packet_num; //!< Number of packets sended by player
 
     Units();
     ~Units();

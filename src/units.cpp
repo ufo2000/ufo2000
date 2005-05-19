@@ -63,6 +63,7 @@ Units::Units()
     Position = 1; // has to be deleted later
 	reset();
     temp_mouse_range = NULL;
+    packet_num = 0;
 }
 
 Units::~Units()

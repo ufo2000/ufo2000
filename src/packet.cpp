@@ -58,7 +58,8 @@ void Packet::create(Command cmd)
 {
 	reset();
 	assert (local.Position >= 1 && local.Position <= 2);
-	int len = sprintf(data + size, "_Xcom_%d_%s_", local.Position, strCommand[(int)cmd]);
+	int len = sprintf(data + size, "_Xcom_%d_%05d_%s_", local.Position, local.packet_num, strCommand[(int)cmd]);
+	local.packet_num++;
 	size += len;
 }
 
@@ -81,7 +82,7 @@ Command Packet::command(char *buf, int buf_size)
 			char *xcom = strstr(buf, "_Xcom_");
 			char *pkt = NULL;
 			Position = xcom [strlen("_Xcom_")] - '0';
-			if (!memcmp(xcom + strlen("_Xcom_") + 2, strCommand[i], strlen(strCommand[i])))
+			if (!memcmp(xcom + strlen("_Xcom_") + 8, strCommand[i], strlen(strCommand[i])))
 				pkt = strstr(buf, strCommand[i]);
 
 			if (pkt != NULL) {

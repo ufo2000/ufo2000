@@ -369,7 +369,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
                             send_packet_back(SRV_GAME_PACKET, reader.getstring(0));
 	                    if(reader.getstring(0) == "START") {
                             game_start_sended = 1;
-                            send_packet_back(SRV_GAME_PACKET, "_Xcom_2_VSRC_");
+                            send_packet_back(SRV_GAME_PACKET, "_Xcom_2_99999_VSRC_");
                         }
 		            }
                 }
@@ -399,13 +399,13 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 		                    game_start_sended = 1;
 			            if(reader.getint32(2) == last_sended_packet) {
 				            char start_visible_packet[100];
-					        sprintf(start_visible_packet, "_Xcom_%d_VSRC_", 3 - players_position);
+					        sprintf(start_visible_packet, "_Xcom_%d_99999_VSRC_", 3 - players_position);
 						    send_packet_back(SRV_GAME_PACKET, start_visible_packet);
 	                    }
 		            }
 				reader.close();
 	            char stop_packet[100];
-		        sprintf(stop_packet, "_Xcom_%d_RSTP_", 3 - players_position);
+		        sprintf(stop_packet, "_Xcom_%d_99999_RSTP_", 3 - players_position);
 			    send_packet_back(SRV_GAME_PACKET, stop_packet);
 			}
 			break;
