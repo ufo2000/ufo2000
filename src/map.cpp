@@ -507,7 +507,7 @@ void Map::smoker()
 	std::vector<effect>::iterator exp = explo_spr_list->begin();
 	while (exp != explo_spr_list->end()) {
 		exp->state++;
-		if (exp->state > 15)
+		if (exp->state > 30)
 			exp = explo_spr_list->erase(exp);
 		else
 			exp++;
