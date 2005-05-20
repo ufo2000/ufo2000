@@ -15,7 +15,7 @@ function convert_xcom_tileset(mcd_file_name, scang, loftemps)
         for _, v in ipairs(arg) do
             table.insert(result, v)
         end
-    end    
+    end
 
     local function basename(fname)
         local _, _, x = string.find(fname, "([^/\\]+)%.[^%./\\]+$")
@@ -52,7 +52,7 @@ function convert_xcom_tileset(mcd_file_name, scang, loftemps)
         unsigned char Armour;
         unsigned char HE_Block;
         unsigned char Die_MCD;
-        unsigned char Flammable;
+        unsigned char u46;
         unsigned char Alt_MCD;       
         unsigned char u48;
         signed char T_Level;      
@@ -70,6 +70,31 @@ function convert_xcom_tileset(mcd_file_name, scang, loftemps)
         unsigned char u61;
         unsigned char u62;
     ]]
+	
+	local ignore_list = {
+		["UFO_Door"] = 0,
+		["No_Floor"] = 0,
+		["Big_Wall"] = 0,
+		["Gravlift"] = 0,
+		["Door"] = 0,
+		["TU_Walk"] = 255,
+		["TU_Fly"] = 255,
+		["TU_Slide"] = 255,
+		["Light_Source"] = 0,
+		["HE_Type"] = 0,
+		["HE_Strength"] = 0,
+		["Smoke_Blockage"] = 0,
+		["T_Level"] = 0,
+		["P_Level"] = 0,
+		["Stop_LOS"] = 0,
+		["Block_Fire"] = 0,
+		["Block_Smoke"] = 0,
+		["Footstep"] = 2,
+		["Target_Type"] = 0,
+		["Fuel"] = 1,
+		["HE_Block"] = 0,
+		["Light_Block"] = 0,
+	}
     
     -- parse C++ structure definition to extract information about every every property 
     -- offset and size
@@ -118,6 +143,7 @@ function convert_xcom_tileset(mcd_file_name, scang, loftemps)
     end
 
     local function process_property(name, value)
+		if ignore_list[name] == value then return end
         if string.find(name, "^u%d+") then return end
         if name == "Shape" then
 			write("            Shape = [[\n")
@@ -137,7 +163,27 @@ function convert_xcom_tileset(mcd_file_name, scang, loftemps)
 			return
 		end
         if name == "MinimapImage" then
-            write("            MinimapImage = png_image(\"", scang_name(value[1] + value[2] * 256 + 1), "\"),\n")
+			write("            MinimapImage = [[\n")
+			local n = value[1] + value[2] * 256
+			local tmp = {} for x = 0, 3 do tmp[x] = {} end
+			for k = 0, 15 do
+				local x = 3 - math.floor(k / 4)
+				local y = math.mod(k, 4)
+				tmp[x][y] = string.format("%02X%02X%02X", 
+					string.byte(scang, 35 * 16 * 3 + n * 16 * 3 + k * 3 + 1),
+					string.byte(scang, 35 * 16 * 3 + n * 16 * 3 + k * 3 + 2),
+					string.byte(scang, 35 * 16 * 3 + n * 16 * 3 + k * 3 + 3))
+			end
+			
+			for y = 0, 3 do
+				write("                ")
+				for x = 0, 3 do
+					write(tmp[x][y], ",")
+				end
+				write("\n") 
+			end
+			
+			write("            ]],\n")
             return
         end
         if name == "IsometricImage" then
