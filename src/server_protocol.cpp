@@ -425,7 +425,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
             try {
                 db_conn.executenonquery("\
                 insert into ufo2000_debug_log\
-                (game, session, sender, id, time, type, value)
+                (game, session, sender, id, time, type, value) \
                 values (%d, %d, %d, %d, julianday('now'), 1, '%s');",
                 debug_game_id, session_id, packet.c_str()[0]-'0', packet_debug_id, packet.c_str()+8);
             } catch(std::exception &ex) {
