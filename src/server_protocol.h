@@ -54,6 +54,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define SRV_GAME_RECOVERY_START    18
 #define SRV_GAME_REPLAY_REQUEST  19
 
+#define SRV_SAVE_DEBUG_INFO  20
+
 class Server_Game_UFO;
 
 class ServerClientUfo: public ServerClient
@@ -74,6 +76,8 @@ public:
 	bool is_in_server_chat() { return !m_busy; }
 	Server_Game_UFO* game;
 	long int session_id;
+	// game_id for user who doesn't really play the game but can send debug info (debug replay)
+	long int debug_game_id;
 	int position;
 
 private:

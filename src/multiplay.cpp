@@ -244,6 +244,8 @@ int Net::recv(std::string &pkt)
 	return 0;
 }
 
+extern int build_crc();
+
 /**
  * Receive packets from network and check them
  */
@@ -291,6 +293,14 @@ void Net::check()
             pd_local = &pd1;
             pd_remote = &pd2;
         }
+
+    if(GAMELOOP)
+    {
+	    // send debug info to the server (crc)
+	    char debug_info[1000];
+	    sprintf(debug_info, "%d_%05d_%d", g_current_packet_pos, g_current_packet_num, build_crc());
+        net->m_internet_server->send_packet(SRV_SAVE_DEBUG_INFO, std::string(debug_info));
+    }
 
 	switch (cmd_id) {
 		case CMD_NOTICE:

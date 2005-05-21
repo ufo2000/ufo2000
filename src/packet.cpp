@@ -21,8 +21,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "stdafx.h"
 
+#include "server_protocol.h"
 #include "global.h"
 #include "packet.h"
+#include "multiplay.h"
 #include "units.h"
 
 char *Packet::strCommand[COMMAND_NUM] = {
@@ -53,14 +55,26 @@ void Packet::create(char *header)
 }
 
 extern Units local;
+extern int build_crc();
+extern int GAMELOOP;
 
 void Packet::create(Command cmd)
 {
 	reset();
 	assert (local.Position >= 1 && local.Position <= 2);
 	int len = sprintf(data + size, "_Xcom_%d_%05d_%s_", local.Position, local.packet_num, strCommand[(int)cmd]);
+	g_current_packet_num=local.packet_num;
+	g_current_packet_pos=local.Position;
 	local.packet_num++;
 	size += len;
+	
+    if(GAMELOOP)
+        {
+	        // send debug info to the server (crc)
+	        char debug_info[1000];
+	        sprintf(debug_info, "%d_%05d_%d", g_current_packet_pos, g_current_packet_num, build_crc());
+            net->m_internet_server->send_packet(SRV_SAVE_DEBUG_INFO, std::string(debug_info));
+        }
 }
 
 //01234567890123
@@ -82,6 +96,13 @@ Command Packet::command(char *buf, int buf_size)
 			char *xcom = strstr(buf, "_Xcom_");
 			char *pkt = NULL;
 			Position = xcom [strlen("_Xcom_")] - '0';
+			
+			//get packet number from the packet
+			char packet_num[100];
+			strncpy(packet_num, xcom + strlen("_Xcom_") + 2, 5);
+            g_current_packet_num = atol(packet_num);
+            g_current_packet_pos = Position;
+
 			if (!memcmp(xcom + strlen("_Xcom_") + 8, strCommand[i], strlen(strCommand[i])))
 				pkt = strstr(buf, strCommand[i]);
 

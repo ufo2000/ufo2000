@@ -190,6 +190,9 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 //  process incoming packet
     switch (id) {
         case SRV_LOGIN: {
+            // some value just to stay alive with unexpected debug packet
+            debug_game_id = 0;
+
             std::string login, password;
             split_with_colon(packet, login, password);
 

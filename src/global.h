@@ -310,6 +310,11 @@ extern Mode MODE;
 extern int g_pause;
 extern int g_game_receiving;
 extern int g_fast_forward;
+// id of a last received or sended packet to use in the debug info.
+extern long int g_current_packet_num;
+//position of player who send currently processed packet to use in the debug info.
+extern long int g_current_packet_pos;
+
 extern int turn;
 extern int CONFIRM_REQUESTED;
 extern DATAFILE *datafile;

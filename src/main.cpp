@@ -76,6 +76,8 @@ int last_time_left;             //!< Time of last screen-update for g_time_left
 int g_p2_start_sit=0;           //!< If player 2 starts sitting - 0 by default
 int g_tie;                      //   Flags denoting which players accepted draw
 int g_random_init[2];           //   For initializing Random
+long int g_current_packet_num; //!< id of a last received or sended packet to use in the debug info.
+long int g_current_packet_pos; //!<position of player who send currently processed packet to use in the debug info.
 
 int GameErrorColour[-ERR_MINUS_NUM];
 const char GameErrorMessage[-ERR_MINUS_NUM][STDBUFSIZE] = {
