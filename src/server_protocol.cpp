@@ -317,6 +317,8 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
                 long int game_id = Server_Game_UFO::CreateGame(opponent->m_name, m_name);
                 Server_Game_UFO::ActivatePlayer(game_id, this);
                 Server_Game_UFO::ActivatePlayer(game_id, opponent);
+                debug_game_id = game_id;
+                opponent->debug_game_id = game_id;
 
                 server_log("game start: '%s' vs '%s'\n", m_name.c_str(), packet.c_str());
                 m_games_started++;
@@ -364,6 +366,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
         case SRV_GAME_REPLAY_REQUEST: {
 	        send_packet_back(SRV_GAME_RECOVERY_START, "1");
             try {
+                debug_game_id = atol(packet.c_str());
                 sqlite3::reader reader=db_conn.executereader("select command, packet_type, id from ufo2000_game_packets where game=%s order by id;", packet.c_str());
 			    int game_start_sended = 0;
                 while(reader.read()) {
@@ -384,6 +387,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
         }
         case SRV_GAME_CONTINUE_REQUEST: {
             int game_id = db_conn.executeint32("select max(game) from ufo2000_game_players where player='%s';", m_name.c_str());
+            debug_game_id = game_id;
 			if(game_id > 0) {
 				Server_Game_UFO::ActivatePlayer(game_id, this);
 				int players_position = db_conn.executeint32("select position from ufo2000_game_players where player='%s' and game=%d;", m_name.c_str(), game_id);
@@ -411,6 +415,21 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 		        sprintf(stop_packet, "_Xcom_%d_99999_RSTP_", 3 - players_position);
 			    send_packet_back(SRV_GAME_PACKET, stop_packet);
 			}
+			break;
+        }
+        case SRV_SAVE_DEBUG_INFO: {
+            char str_packet_debug_id[100];
+        	strncpy(str_packet_debug_id, packet.c_str()+2, 5);
+            long int packet_debug_id=atol(str_packet_debug_id);
+            try {
+                db_conn.executenonquery("\
+                insert into ufo2000_debug_log\
+                (game, session, sender, id, time, type, value)
+                values (%d, %d, %d, %d, julianday('now'), 1, '%s');",
+                debug_game_id, session_id, packet.c_str()[0]-'0', packet_debug_id, packet.c_str()+8);
+            } catch(std::exception &ex) {
+                LOG_EXCEPTION(ex.what());
+            }
 			break;
         }
     }
