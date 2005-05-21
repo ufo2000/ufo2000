@@ -100,6 +100,7 @@ Command Packet::command(char *buf, int buf_size)
 			//get packet number from the packet
 			char packet_num[100];
 			strncpy(packet_num, xcom + strlen("_Xcom_") + 2, 5);
+			packet_num[5]=0;
             g_current_packet_num = atol(packet_num);
             g_current_packet_pos = Position;
 

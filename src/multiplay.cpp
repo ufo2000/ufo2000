@@ -294,14 +294,6 @@ void Net::check()
             pd_remote = &pd2;
         }
 
-    if(GAMELOOP)
-    {
-	    // send debug info to the server (crc)
-	    char debug_info[1000];
-	    sprintf(debug_info, "%d_%05d_%d", g_current_packet_pos, g_current_packet_num, build_crc());
-        net->m_internet_server->send_packet(SRV_SAVE_DEBUG_INFO, std::string(debug_info));
-    }
-
 	switch (cmd_id) {
 		case CMD_NOTICE:
 			recv_notice();
@@ -420,6 +412,13 @@ void Net::check()
 			ASSERT(false);
 			break;
 	};
+    if(GAMELOOP)
+    {
+	    // send debug info to the server (crc)
+	    char debug_info[1000];
+	    sprintf(debug_info, "%d_%05d_%d", g_current_packet_pos, g_current_packet_num, build_crc());
+        net->m_internet_server->send_packet(SRV_SAVE_DEBUG_INFO, std::string(debug_info));
+    }
 }
 
 void Net::send_notice()

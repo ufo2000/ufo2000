@@ -420,6 +420,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
         case SRV_SAVE_DEBUG_INFO: {
             char str_packet_debug_id[100];
         	strncpy(str_packet_debug_id, packet.c_str()+2, 5);
+        	str_packet_debug_id[5]=0;
             long int packet_debug_id=atol(str_packet_debug_id);
             try {
                 db_conn.executenonquery("\
