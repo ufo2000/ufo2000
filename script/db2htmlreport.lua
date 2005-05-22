@@ -5,6 +5,8 @@ if arg[1] == nil then
     os.exit()
 end
 
+db = sqlite3.open(arg[1])
+
 ------------------------------------------------------------------------------
 -- start making html report
 ------------------------------------------------------------------------------
@@ -21,10 +23,6 @@ table {
 }
 --></style><meta http-equiv="content-type" content="text/html; charset=UTF-8">
 </head><body>]])
-
-
--- complete table of played games
-db = sqlite3.open(arg[1])
 
 io.write("<br> <b>UFO2000 players rating table</b><br>")
 io.write("<table border=1>")
@@ -55,10 +53,6 @@ end
 
 io.write("</table>")
 
-io.write("<br> <b>UFO2000 recent games statistics</b><br>")
-io.write("<table border=1>\n")
-io.write("<tr><td>start time<td>game id<td>version<td>player1<td>player2<td>result<td>comment\n")
-
 local get_version_request = db:prepare([[
     SELECT sender, command FROM ufo2000_game_packets 
     WHERE game=? AND (id<10) AND command LIKE "UFO2000 REVISION OF YOUR OPPONENT: %"]])
@@ -73,7 +67,64 @@ local function get_client_versions(game_id)
     
     return x, y
 end
+
     
+local get_bugreport_request = db:prepare([[
+    SELECT param, value FROM ufo2000_debug_packets 
+    WHERE game=? AND (param="crash" or param="assert" or param="crc error")]])
+
+local function get_bugreport(game_id)
+    local tmp = {}
+    for bug_type, bug_msg in get_bugreport_request:bind(game_id):cols() do 
+        tmp["<b>" .. bug_type .. "</b><pre>" .. bug_msg .. "</pre>"] = 1 
+    end
+    local tmp2 = {}
+    for k in tmp do table.insert(tmp2, k) end
+    return table.concat(tmp2, "<br>")
+end
+
+local get_game_start_time_request = db:prepare([[
+    SELECT time FROM ufo2000_game_packets WHERE id=1 AND game=?]])
+    
+local get_game_end_time_request = db:prepare([[
+    SELECT time FROM ufo2000_game_packets WHERE game=? ORDER BY id DESC LIMIT 1]])
+
+local function convert_julian_day(julian_day)
+    if not julian_day then return end
+    return (julian_day - 2440587.5) * 86400.0 + 0.5
+end
+    
+local function get_game_time(game_id)
+    if not get_game_start_time_request:bind(game_id) then return end
+    if not get_game_end_time_request:bind(game_id) then return end
+    
+    local start_time = convert_julian_day(get_game_start_time_request:first_cols())
+    local end_time = convert_julian_day(get_game_end_time_request:first_cols())
+    if not start_time or not end_time then return end
+    local duration = end_time - start_time
+    
+    return start_time, duration
+end
+    
+-- function that formats time
+function timestring(x)
+    local hours = math.floor(x / 3600)
+    local minutes = math.floor((x - hours * 3600) / 60)
+    local seconds = math.floor(x - hours * 3600 - minutes * 60)
+    local result = ""
+    if hours > 0 then
+        result = result .. hours .. "h "
+    end
+    if hours > 0 or minutes > 0 then
+        result = result .. minutes .. "m "
+    end
+
+    return result .. seconds .. "s"
+end
+
+io.write("<br> <b>UFO2000 recent games statistics</b><br>")
+io.write("<table border=1>\n")
+io.write("<tr><td>id<td>version<td>date<td>player1<td>player2<td>time<td>result<td>comment\n")
 for id, ver, pl1, pl2, result in db:cols([[
 	select id, ver, pl1, pl2, result from 
 	(select id,ifnull(g.client_version, "") ver,p1.player pl1, p2.player pl2, case when g.result=1 then p1.player||" won" when g.result=2 then p2.player||" won" when g.result=3 then "draw" else "not finished" end result,ifnull(g.errors,"") errors 
@@ -86,33 +137,59 @@ do
     local comment = ""
     
     local v1, v2 = get_client_versions(id)
-    if v1 ~= v2 then comment = string.format("version check failed (%d vs %d)", v1, v2) end
+    if v1 ~= v2 then 
+        comment = string.format("version check failed (%d vs %d)", v1, v2)
+    else
+        comment = get_bugreport(id)
+    end
     
     if result == "not finished" then result = "-" end
-
-    local julian_day = db:first_cols("select time from ufo2000_game_packets where id=1 and game=" .. id)
-    local date_string = ""
-    if julian_day then 
-        date_string = os.date("%Y-%m-%d %H:%M:%S", (julian_day - 2440587.5) * 86400.0 + 0.5) 
-        io.write("<tr><td>", date_string, "<td>", id, "<td>", ver, "<td>", pl1, "<td>", pl2, "<td>", result, "<td>", comment, "\n")
+    
+    local start_time, duration = get_game_time(id)
+    
+    if start_time then
+        io.write("<tr>",
+            "<td>", id, "<td>", ver, 
+            "<td>", os.date("%Y-%m-%d %H:%M:%S", start_time),
+            "<td>", pl1, "<td>", pl2,  
+            "<td>", timestring(duration), 
+            "<td>", result, 
+            "<td>", comment, "\n")
     end
 end
 io.write("</table>")
 
-io.write("<br> <b>UFO2000 bugs statistics table</b><br>")
-io.write("<table border=1>\n")
-io.write("<tr><td>game id<td>version<td>error report\n")
-for game, version, param, error_report in db:cols([[
-    select d.game, g.client_version, param, d.value from 
-        ufo2000_debug_packets d, ufo2000_games g where 
-        d.game=g.id and (param="crash" or param="assert" or param="crc error")
-        ]])
+local terain_games_table = {}
+local terrain_table = {}
+
+for game, terrain in db:cols([[
+    SELECT game, value FROM ufo2000_debug_packets WHERE param="terrain" ORDER BY id DESC]])
 do
-    if param == "crc error" then error_report = "crc error" end
-    io.write("<tr><td>", game, "<td>", version, "<td>", error_report, "\n")
+    if not terain_games_table[game] then 
+        terrain_table[terrain] = (terrain_table[terrain] or 0) + 1
+        terain_games_table[game] = 1
+    end
+end
+
+-- display terrain types popularity statistics
+io.write("<br>")
+io.write("<b>Terrain types statistics table</b><br>")
+local count = 0
+local tmp = {}
+for k, v in terrain_table do
+    count = count + v 
+    table.insert(tmp, {k, v}) 
+end 
+terrain_table = tmp
+table.sort(terrain_table, function (a, b) return a[2] > b[2] end)
+io.write("<table border=1>")
+io.write("<tr><td>terrain type<td>number of times used<td>percent share\n") 
+for k, v in ipairs(terrain_table) do
+    io.write(string.format("<tr><td>%s<td>%d<td>%.1f%%", v[1], v[2], v[2] / count * 100))
 end
 io.write("</table>")
 
 io.write(string.format("<br>report generated on %s<br>time %.2f seconds", os.date(), os.clock()))
 io.write("</body></html>")
+
 db:close()
