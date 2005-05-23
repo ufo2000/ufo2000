@@ -68,13 +68,13 @@ void Packet::create(Command cmd)
 	local.packet_num++;
 	size += len;
 	
-    if(GAMELOOP)
-        {
-	        // send debug info to the server (crc)
-	        char debug_info[1000];
-	        sprintf(debug_info, "%d_%05d_%d", g_current_packet_pos, g_current_packet_num, build_crc());
-            net->m_internet_server->send_packet(SRV_SAVE_DEBUG_INFO, std::string(debug_info));
-        }
+    if(GAMELOOP && net->gametype == GAME_TYPE_INTERNET_SERVER)
+    {
+	    // send debug info to the server (crc)
+	    char debug_info[1000];
+	    sprintf(debug_info, "%d_%05d_%d", g_current_packet_pos, g_current_packet_num, build_crc());
+        net->m_internet_server->send_packet(SRV_SAVE_DEBUG_INFO, std::string(debug_info));
+    }
 }
 
 //01234567890123

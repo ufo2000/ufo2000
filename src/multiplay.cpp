@@ -412,7 +412,7 @@ void Net::check()
 			ASSERT(false);
 			break;
 	};
-    if(GAMELOOP)
+    if(GAMELOOP && net->gametype == GAME_TYPE_INTERNET_SERVER)
     {
 	    // send debug info to the server (crc)
 	    char debug_info[1000];
