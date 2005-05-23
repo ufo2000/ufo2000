@@ -1565,7 +1565,24 @@ void Map::update_seen_item(Position p)
 double distance_3d(double v1, double v2, double v3)
 {
     // this procedure probably should be moved somewhere else
-    return sqrt( v1*v1 + v2*v2 + v3*v3 );
+    v1 = (long long int) (v1 * 10000);
+    v2 = (long long int) (v2 * 10000);
+    v2 = (long long int) (v3 * 10000);
+    return ((long long int)sqrt( v1*v1 + v2*v2 + v3*v3 ))/10000;
+}
+
+/*
+Is point (v1, v2, v3) inside the sphere with center in (0, 0, 0) and radius "range"?
+*/
+bool InsideSphere(double v1, double v2, double v3, double range)
+{
+/* Try to use only integer arithmetic. TODO: rewrite this code if it solves
+problem with different results on the windows and unix clients (crc errors). */
+    long long int x=v1*10000;
+    long long int y=v2*10000;
+    long long int z=v3*10000;
+    long long int r=range*10000;
+    return x*x + y*y + z*z <= r*r;
 }
 
 int calculate_hitdir(double dz, double dx, double dy)
@@ -1610,9 +1627,8 @@ int Map::explode(int z, int x, int y, int max_damage)
     for (int l = 0; l <= level; l++)
         for (int r = int(floor(row - range)); r <= int(ceil(row + range)); r++)
             for (int c = int(floor(col - range)); c <= int(ceil(col + range)); c++) {
-                double distance = distance_3d(row - double(r), col - double(c), (lev - double(l)) * HEIGHT_RATIO);
-                if (distance <= range) {
-                    damage = int ( ( EXPL_BORDER_DAMAGE + (1 - EXPL_BORDER_DAMAGE)*(range - distance)/range )*double(max_damage) );
+                if (InsideSphere(row - double(r), col - double(c), (lev - double(l)) * HEIGHT_RATIO, range)) {
+                    damage = int ( ( EXPL_BORDER_DAMAGE + (1 - EXPL_BORDER_DAMAGE)*(range - distance_3d(row - double(r), col - double(c), (lev - double(l)) * HEIGHT_RATIO))/range )*double(max_damage) );
                     if (damage > 0 && cell_inside(l, c, r)) {
                         if (man(l, c, r) != NULL) {
                             hit_dir = calculate_hitdir((lev - double(l)) * HEIGHT_RATIO, double(c) - col, double(r) - row);
@@ -1655,8 +1671,8 @@ int Map::explode(int sniper, int z, int x, int y, int type)
     for (int l = 0; l <= level; l++)
         for (int r = int(floor(row - range)); r <= int(ceil(row + range)); r++)
             for (int c = int(floor(col - range)); c <= int(ceil(col + range)); c++) {
-                double distance = distance_3d(row - double(r), col - double(c), (lev - double(l)) * HEIGHT_RATIO);
-                if (distance <= range) {
+                double distance = distance_3d(row - double(r), col - double(c), (lev - double(l)));
+                if (InsideSphere(row - double(r), col - double(c), (lev - double(l)) * HEIGHT_RATIO, range)) {
                     damage = int ( ( EXPL_BORDER_DAMAGE + (1 - EXPL_BORDER_DAMAGE)*(range - distance)/range )*double(max_damage) );
                     if (damage >= 0 && cell_inside(l, c, r)) {
                         if (man(l, c, r) != NULL) {
