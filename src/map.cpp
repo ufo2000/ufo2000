@@ -1565,10 +1565,8 @@ void Map::update_seen_item(Position p)
 double distance_3d(double v1, double v2, double v3)
 {
     // this procedure probably should be moved somewhere else
-    v1 = (long long int) (v1 * 10000);
-    v2 = (long long int) (v2 * 10000);
-    v2 = (long long int) (v3 * 10000);
-    return ((long long int)sqrt( v1*v1 + v2*v2 + v3*v3 ))/10000;
+    double r2=v1*v1 + v2*v2 + v3*v3;
+    return fixtof(fixsqrt(ftofix(r2)));
 }
 
 /*
@@ -1583,6 +1581,7 @@ problem with different results on the windows and unix clients (crc errors). */
     long long int z=v3*10000;
     long long int r=range*10000;
     return x*x + y*y + z*z <= r*r;
+//    return v1*v1 + v2*v2 + v3*v3 <= range*range;
 }
 
 int calculate_hitdir(double dz, double dx, double dy)
