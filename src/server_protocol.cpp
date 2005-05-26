@@ -96,7 +96,7 @@ void ServerDispatch::MakeHtmlReport(std::string &html_body)
         html_body += "<td>";
         if (client->game) {
             char tmp_buff[100];
-            sprintf(tmp_buff, "in game %d", client->game->game_id);
+            sprintf(tmp_buff, "in game %d", (int)client->game->game_id);
             html_body += tmp_buff;
         } else if (client->is_in_server_chat()) {
             html_body += "in server chat";
@@ -427,7 +427,7 @@ bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
                 insert into ufo2000_debug_log\
                 (game, session, sender, id, time, type, value) \
                 values (%d, %d, %d, %d, julianday('now'), 1, '%s');",
-                debug_game_id, session_id, packet.c_str()[0]-'0', packet_debug_id, packet.c_str()+8);
+                debug_game_id, session_id, (int) (packet.c_str()[0]-'0'), packet_debug_id, packet.c_str()+8);
             } catch(std::exception &ex) {
                 LOG_EXCEPTION(ex.what());
             }
