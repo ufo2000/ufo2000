@@ -257,6 +257,10 @@ BKSP        Remove last character in the message.
 F12         Save the screen to "snapshot_n.pcx" file where n is the number
             of the snapshot.
 
+SHIFT       Pause game.
+ + Space    
+
+
 Other keys such as Latin letters, numbers, etc. can be used to write
 a message to your opponent.
 --END OF FILE--

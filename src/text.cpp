@@ -535,8 +535,8 @@ void help( const int helppage )
             break;
         case HELP_BATTLESCAPE + 0 :
             b1 = alert3( _("UFO2000 is controlled mainly with the mouse, and these keys:"),
-                         _("F1: Help, F2+F3: Save+Load, F9: Keymap, F10: Window/Fullscreen"),
-                         _("F12: Screenshot, Keypad+/-: adjust Music-Volume, ESC: Quit."),
+                         _("F1: Help, F2+F3: Save+Load, F9: Keymap, F10: Window/Fullscreen, F12: Screenshot"),
+                         _("Keypad+/-: adjust Music-Volume, Shift+space: Pause, ESC: Quit."),
                          index, ok, next, kp_index, kp_ok, kp_next);
             break;
         case HELP_BATTLESCAPE + 1 :

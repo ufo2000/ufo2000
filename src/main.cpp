@@ -1238,7 +1238,7 @@ void build_screen(int & select_y)
         textprintf(screen2, font, 0, 0, COLOR_WHITE, _("WATCH") );
 
     if (g_pause)
-        textprintf_right(screen2, font, SCREEN2W - 1, 0, COLOR_WHITE, _("PAUSE") );
+        textprintf_right(screen2, font, SCREEN2W - 1, 0, COLOR_WHITE, _("PAUSE (press shift+space to resume)") );
 
     if (FLAGS & F_TOOLTIPS) {
         // Tooltips for the buttons of the control-panel:
