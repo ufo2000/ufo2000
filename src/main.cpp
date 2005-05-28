@@ -79,6 +79,9 @@ int g_random_init[2];           //   For initializing Random
 long int g_current_packet_num; //!< id of a last received or sended packet to use in the debug info.
 long int g_current_packet_pos; //!<position of player who send currently processed packet to use in the debug info.
 
+int debug_save_state_sender;
+int debug_save_state_id;
+
 int GameErrorColour[-ERR_MINUS_NUM];
 const char GameErrorMessage[-ERR_MINUS_NUM][STDBUFSIZE] = {
     "Success.",
@@ -722,6 +725,9 @@ void initmain(int argc, char *argv[])
     if (get_config_int("Flags", "F_REACTINFO", 0)) FLAGS |= F_REACTINFO;      // show debug info on reaction fire
     if (get_config_int("Flags", "F_CONVERT_XCOM_DATA", 0)) FLAGS |= F_CONVERT_XCOM_DATA; // convert x-com resources to a more conventional and readable format for debugging
     if (get_config_int("Flags", "F_SHOWNIGHT", 1)) FLAGS |= F_SHOWNIGHT;      // shade tile using the light level
+
+    debug_save_state_sender = get_config_int("Debug", "save_state_sender", -1);
+    debug_save_state_id = get_config_int("Debug", "save_state_id", -1);
 
     const AGUP_THEME *gui_theme = NULL;
 

@@ -315,6 +315,9 @@ extern long int g_current_packet_num;
 //position of player who send currently processed packet to use in the debug info.
 extern long int g_current_packet_pos;
 
+extern int debug_save_state_sender;
+extern int debug_save_state_id;
+
 extern int turn;
 extern int CONFIRM_REQUESTED;
 extern DATAFILE *datafile;

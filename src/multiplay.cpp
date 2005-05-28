@@ -414,6 +414,8 @@ void Net::check()
 	};
     if(GAMELOOP && net->gametype == GAME_TYPE_INTERNET_SERVER)
     {
+        if (g_current_packet_pos==debug_save_state_sender && g_current_packet_num==debug_save_state_id)
+            savegame(F("$(home)/debug.sav"), 0);
 	    // send debug info to the server (crc)
 	    char debug_info[1000];
 	    sprintf(debug_info, "%d_%05d_%d", g_current_packet_pos, g_current_packet_num, build_crc());
