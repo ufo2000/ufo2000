@@ -1590,8 +1590,8 @@ int calculate_hitdir(double dz, double dx, double dy)
     
     int dir = DAMAGEDIR_UNDER;
     double hor_dist = distance_3d(dx, dy, 0);
-    if (atan(dz / hor_dist) >= -UNDER_ARMOR_ANGLE) {
-        dir = int(round( - 2 + (4.0/PI)*atan2(dx, dy) ));
+    if (fixtof(fixatan((ftofix(dz / hor_dist)))) >= -UNDER_ARMOR_ANGLE) {
+        dir = int(round( - 2 + (4.0/PI)*fixtof(fixatan2(ftofix(dx), ftofix(dy))) ));
         if (hor_dist==0) dir = 0; // this should not really happen
         if (dir < 0) dir += 8;
     }
