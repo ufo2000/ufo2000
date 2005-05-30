@@ -1586,12 +1586,13 @@ problem with different results on the windows and unix clients (crc errors). */
 
 int calculate_hitdir(double dz, double dx, double dy)
 {
-    double UNDER_ARMOR_ANGLE = PI/3; // to rules.h ?
+    double ALLEGRO_PI=128; // PI=128 in the allegro trigonometry
+    double UNDER_ARMOR_ANGLE = ALLEGRO_PI/3; //to rules.h ?
     
     int dir = DAMAGEDIR_UNDER;
     double hor_dist = distance_3d(dx, dy, 0);
     if (fixtof(fixatan((ftofix(dz / hor_dist)))) >= -UNDER_ARMOR_ANGLE) {
-        dir = int(round( - 2 + (4.0/PI)*fixtof(fixatan2(ftofix(dx), ftofix(dy))) ));
+        dir = int(round( - 2 + (4.0/ALLEGRO_PI)*fixtof(fixatan2(ftofix(dx), ftofix(dy))) ));
         if (hor_dist==0) dir = 0; // this should not really happen
         if (dir < 0) dir += 8;
     }
