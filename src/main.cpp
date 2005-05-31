@@ -353,9 +353,11 @@ void closegame()
     delete cur_random;
     cur_random = NULL;
     delete p1;
-    p1 = NULL;
     delete p2;
+    p1 = NULL;
     p2 = NULL;
+    platoon_local = NULL;
+    platoon_remote = NULL;
     delete map;
     map = NULL;
     delete elist;
@@ -1404,6 +1406,10 @@ bool loadgame_stream(std::istream &stream)
 
     delete p1;
     delete p2;
+    p1 = NULL;
+    p2 = NULL;
+    platoon_local = NULL;
+    platoon_remote = NULL;
     delete map;
     delete elist;
                                     
