@@ -1586,6 +1586,9 @@ problem with different results on the windows and unix clients (crc errors). */
 
 int calculate_hitdir(double dz, double dx, double dy)
 {
+    // Disabled since linux and windows clients get different results
+    // Need more debug and testing
+    return DAMAGEDIR_UNDER;
     double ALLEGRO_PI=128; // PI=128 in the allegro trigonometry
     double UNDER_ARMOR_ANGLE = ALLEGRO_PI/3; //to rules.h ?
     
