@@ -1393,7 +1393,7 @@ bool loadgame_stream(std::istream &stream)
     stream.read(buff, strlen(sign) + 1);
     if (strcmp(sign, buff) != 0) {
       // Developers: comment this out, to re-use saved game after new compile
-//        return false;  // "version of savegame not compatible"
+        return false;  // "version of savegame not compatible"
     }
 
     persist::Engine archive(stream);
