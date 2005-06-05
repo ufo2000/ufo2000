@@ -54,6 +54,7 @@ public:
 	void execute();
 	void close();
 	void backput();
+    Item* get_sel_item() {return sel_item;}
 };
 
 #endif

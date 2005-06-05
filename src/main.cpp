@@ -2202,6 +2202,8 @@ void gameloop()
                             map->center(sel_man);
                     } else if (!sel_man->ismoving()) {
                         Soldier *s = sel_man;
+                        if (inventory->get_sel_item() != NULL)
+                            inventory->backput();
                         sel_man = platoon_local->next_not_moved_man(sel_man);
                         if (s != sel_man)
                             map->center(sel_man);
