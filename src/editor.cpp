@@ -635,7 +635,7 @@ void Editor::show()
                     else
                         it->od_info(330, 220, COLOR_GRAY10);
                 } else {
-                    textprintf(screen2, large, 330, 220, COLOR_LT_BLUE, "%s:", "Quick-Setup");
+                    /*textprintf(screen2, large, 330, 220, COLOR_LT_BLUE, "%s:", "Quick-Setup");
                     textprintf(screen2, font,  330, 240, COLOR_BLUE, "%s", _("Use keys with shift to configure them:") );
                   //textprintf(screen2, font,  330, 250, COLOR_BLUE, "%-3s: %s #%d", "F5", _("Soldier-Type"), 1 );
                     textprintf(screen2, font,  330, 250, COLOR_BLUE, "%-3s: %s", "F5", g_setup_f5.c_str() );
@@ -649,7 +649,19 @@ void Editor::show()
                     textprintf(screen2, font,  330, 320, COLOR_LT_BLUE, "%-3s: %s", "F12", _("Cycle thru Armor-types") );
 
                     textprintf(screen2, font,  330, 335, COLOR_LT_BLUE, "%-3s: %s", "DEL", _("Delete Equipment of current man") );
-                    textprintf(screen2, font,  330, 345, COLOR_LT_BLUE, "%-3s: %s", "TAB", _("Next soldier") );
+                    textprintf(screen2, font,  330, 345, COLOR_LT_BLUE, "%-3s: %s", "TAB", _("Next soldier") );*/
+                    
+                    textprintf(screen2, large, 330, 220, COLOR_LT_BLUE, _("Hotkeys"));
+                    int ty = 250;
+                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _(" Ctrl+Ins: Copy current soldier")); ty += 10;
+                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("Shift+Ins: Paste on current soldier")); ty += 15;
+                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("      Del: Delete items of current man")); ty += 10;
+                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("Shift+Del: Drop items of current man")); ty += 15;
+                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("      F11: Cycle through appearences")); ty += 10;
+                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("      F12: Cycle through human armours")); ty += 10;
+                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("Shift+F12: Cycle through alien races")); ty += 15;
+                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("      Tab: Next soldier")); ty += 10;
+                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("Shift+Tab: Previous soldier")); ty += 10;
                 }
             }
 

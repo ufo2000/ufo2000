@@ -41,7 +41,9 @@ struct SKIN_INFO {
 	const char *Name;
 	int         SkinType;
 	int         fFemale;
+	int         fFlying;
 	int         armour_values[5];
+    int         cost;
 };
 
 extern SKIN_INFO g_skins[];
@@ -79,9 +81,10 @@ public:
 
     int get_type() { return skin_info.SkinType; }
 	int get_fFemale() { return skin_info.fFemale; }
-	int get_armour_value(int part) { return skin_info.armour_values[part]; }
+	int get_fFlying() { return skin_info.fFlying; }
+	int get_armour_value(int side) { return skin_info.armour_values[side]; }
 	
-	static int get_armour_cost(int skin_type, int female_flag);
+	static int get_armour_cost(int skin_type, int female_flag) { return g_skins[get_skin_index(skin_type, female_flag)].cost; }
 	int get_armour_cost() { return get_armour_cost(skin_info.SkinType, skin_info.fFemale); }
 	
 	bool check_for_hit(int sit, int dir, int lev, int col, int row)

@@ -32,16 +32,17 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SKIN_INFO g_skins[] =
 {
-    { "male",    S_XCOM_0,  0, { 12,  8,  8,  5,  2} },
-    { "female",  S_XCOM_0,  1, { 12,  8,  8,  5,  2} },
-    { "armour_m",S_XCOM_1,  0, { 50, 40, 40, 30, 30} },
-    { "armour_f",S_XCOM_1,  1, { 50, 40, 40, 30, 30} },
-    { "power_m", S_XCOM_2,  0, {100, 80, 80, 70, 60} },
-    { "power_f", S_XCOM_2,  1, {100, 80, 80, 70, 60} },
-    { "fly_m",   S_XCOM_3,  0, {110, 90, 90, 80, 70} },
-    { "fly_f",   S_XCOM_3,  1, {110, 90, 90, 80, 70} },
-    { "sectoid", S_SECTOID, 0, {  4,  3,  3,  2,  2} },
-    { "muton",   S_MUTON,   0, { 20, 20, 20, 20, 10} }
+//    name,      SkinType,  fFemale, fFlying, armour_values, cost
+    { "male",    S_XCOM_0,  0, 0, { 12,  8,  8,  5,  2}, 70 },
+    { "female",  S_XCOM_0,  1, 0, { 12,  8,  8,  5,  2}, 70 },
+    { "armour_m",S_XCOM_1,  0, 0, { 50, 40, 40, 30, 30}, 380 },
+    { "armour_f",S_XCOM_1,  1, 0, { 50, 40, 40, 30, 30}, 380 },
+    { "power_m", S_XCOM_2,  0, 0, {100, 80, 80, 70, 60}, 780 },
+    { "power_f", S_XCOM_2,  1, 0, {100, 80, 80, 70, 60}, 780 },
+    { "fly_m",   S_XCOM_3,  0, 1, {110, 90, 90, 80, 70}, 1030 },
+    { "fly_f",   S_XCOM_3,  1, 1, {110, 90, 90, 80, 70}, 1030 },
+    { "sectoid", S_SECTOID, 0, 0, {  4,  3,  3,  2,  2}, 28 },
+    { "muton",   S_MUTON,   0, 0, { 20, 20, 20, 20, 10}, 180 }
 };
 
 int g_skins_count = sizeof(g_skins) / sizeof(g_skins[0]);
@@ -277,16 +278,6 @@ void Skin::next_alien()
 
     if(m_soldier->md.SkinType > S_MUTON)
         m_soldier->md.SkinType = S_SECTOID;
-}
-
-int Skin::get_armour_cost(int skin_type, int female_flag)
-{
-    int p = 0;
-
-    for (int i = 0; i < 5; i++)
-        p += 2 * g_skins[get_skin_index(skin_type, female_flag)].armour_values[i];
-        
-    return p;
 }
 
 void Skin::draw_head(int Appearance, int head_frame, int dir, BITMAP *image, int delta)

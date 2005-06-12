@@ -1626,7 +1626,7 @@ int Map::explode(int z, int x, int y, int max_damage)
     double col = double(x)/16 - 0.5;
     double row = double(y)/16 - 0.5;
     
-    double range = (double(max_damage) / 10);
+    double range = (double(max_damage) / 15);
     for (int l = 0; l <= level; l++)
         for (int r = int(floor(row - range)); r <= int(ceil(row + range)); r++)
             for (int c = int(floor(col - range)); c <= int(ceil(col + range)); c++) {

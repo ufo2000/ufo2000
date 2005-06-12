@@ -2840,7 +2840,7 @@ void Soldier::set_reserve_type(int type)
 
 int Soldier::can_fly()
 {
-    return skin()->get_type() == S_XCOM_3;
+    return skin()->get_fFlying();
 }
 
 int Soldier::is_flying()
