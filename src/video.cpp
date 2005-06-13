@@ -441,8 +441,9 @@ static int d_custom_list_proc(int msg, DIALOG *d, int c)
 {
     int result = d_agup_list_proc(msg, d, c);
     if (d->flags & D_GOTFOCUS) {
-        strcpy(buffer, (*current_list)[d->d1].c_str());
-        if (result == D_O_K) result = D_REDRAW;
+        if (d->d1 < (signed)current_list->size())
+            strcpy(buffer, (*current_list)[d->d1].c_str());
+        //if (result == D_O_K) result = D_REDRAW;
     }
     return result;
 }

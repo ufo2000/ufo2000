@@ -624,7 +624,7 @@ void Icon::firemenu(int iplace)
 			firemenu_dialog_proc_exit = 0;
 			int sel = do_dialog(the_dialog, -1);
 			//if (sel == i) return;
-			if (firemenu_dialog_proc_exit || sel == 0) return ;
+			if (firemenu_dialog_proc_exit || sel == 0 || sel == -1) return ;
 
             // Todo: Fire-commands DROP & USE
 
