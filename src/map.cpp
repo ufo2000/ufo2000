@@ -1730,8 +1730,10 @@ void Map::explocell(int sniper, int lev, int col, int row, int damage, int damag
  			destroy_cell_part(lev, col, row, i);
  		}
  	}
-  
-	place(lev, col, row)->damage_items(damage);
+
+    if (damage_type != DT_STUN)
+	   place(lev, col, row)->damage_items(damage);
+
 	if (man(lev, col, row) != NULL) {
 		if (hitdir != DAMAGEDIR_UNDER)
 			hitdir = (man(lev, col, row)->get_dir() + (hitdir + 4)) % 8;

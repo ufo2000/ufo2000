@@ -1419,7 +1419,8 @@ void Soldier::explo_hit(int sniper, int pierce, int type, int hitdir) //silent
     // Record that we took damage.
     this->m_platoon->get_stats()->get_stat_for_SID(NID)->inc_damage_taken(pierce);
 
-    damage_items(pierce / 3);
+    if (type != DT_STUN)
+        damage_items(pierce / 3);
 	// Items are OUTSIDE the armour, after all; 
 	// but in order not to leave a soldier without his items, damage is seriously reduced
   
