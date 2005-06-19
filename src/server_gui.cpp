@@ -246,7 +246,7 @@ public:
 
 void lobby_init_mouse()
 {
-	BITMAP *mouser = (BITMAP *)datafile[DAT_MOUSE_BMP].dat;
+	BITMAP *mouser = get_image_from_lua_table("mouse");
 	set_mouse_sprite(mouser);
 	set_palette((RGB *)datafile[DAT_GAMEPAL_BMP].dat);
 	set_mouse_speed(1, 1);

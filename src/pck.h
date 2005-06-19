@@ -31,6 +31,9 @@ BITMAP *png_image_ex(const char *filename, bool use_alpha);
 void free_pck_cache();
 void free_png_cache();
 
+BITMAP *get_image_from_lua_table(const char *name);
+std::vector<BITMAP *> get_image_vector_from_lua_table(const char *name);
+
 /**
  * Class for processing graphics in PCK-format
  */

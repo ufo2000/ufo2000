@@ -181,6 +181,47 @@ void free_png_cache()
     }
 }
 
+BITMAP *get_image_from_lua_table(const char *name)
+{
+    int stack_top = lua_gettop(L);
+	lua_pushstring(L, "ImageTable");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	ASSERT(lua_istable(L, -1));
+	lua_pushstring(L, name);
+	lua_gettable(L, -2);
+	ASSERT(lua_isuserdata(L, -1));
+	BITMAP *bmp = (BITMAP *)lua_touserdata(L, -1);
+	lua_settop(L, stack_top);
+	
+	return bmp;
+}
+
+std::vector<BITMAP *> get_image_vector_from_lua_table(const char *name)
+{
+    std::vector<BITMAP *> res;
+
+    int stack_top = lua_gettop(L);
+	lua_pushstring(L, "ImageTable");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	ASSERT(lua_istable(L, -1));
+	lua_pushstring(L, name);
+	lua_gettable(L, -2);
+	ASSERT(lua_istable(L, -1));
+	
+    int i = 1;
+	while (true) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, -2);
+		if (!lua_isuserdata(L, -1)) {
+			lua_settop(L, stack_top);
+			return res;
+		}
+		res.push_back((BITMAP *)lua_touserdata(L, -1));
+		lua_pop(L, 1);
+		i++;
+	}
+}
+
 PCK::PCK(const char *pckfname, int tftd_flag, int width, int height)
 {
     m_tftd_flag = tftd_flag;

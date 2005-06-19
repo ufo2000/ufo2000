@@ -1,22 +1,4 @@
 ------------------------------------------------------------------------------
--- Set explosion animation 
--- (experimental feature, interface can change any time)
-------------------------------------------------------------------------------
-
-SetExplosionAnimation {
-	png_image_ex("$(ufo2000)/arts/explosion/256x178-001.png", true),
-	png_image_ex("$(ufo2000)/arts/explosion/256x178-002.png", true),
-	png_image_ex("$(ufo2000)/arts/explosion/256x178-003.png", true),
-	png_image_ex("$(ufo2000)/arts/explosion/256x178-004.png", true),
-	png_image_ex("$(ufo2000)/arts/explosion/256x178-005.png", true),
-	png_image_ex("$(ufo2000)/arts/explosion/256x178-006.png", true),
-	png_image_ex("$(ufo2000)/arts/explosion/256x178-007.png", true),
-	png_image_ex("$(ufo2000)/arts/explosion/256x178-008.png", true),
-	png_image_ex("$(ufo2000)/arts/explosion/256x178-009.png", true),
-	png_image_ex("$(ufo2000)/arts/explosion/256x178-010.png", true),
-}
-
-------------------------------------------------------------------------------
 -- Initialize items
 ------------------------------------------------------------------------------
 
@@ -1478,4 +1460,24 @@ AddXcomItem {
     isGrenade = 1,
     rounds = 10,
     weight = 3,
+}
+
+AddXcomItem {
+	index = 83,
+	cost = 80,
+	name = "KNIFE",
+	pInv = png_image("$(ufo2000)/arts/knife.png"),
+	pMap = png_image("$(ufo2000)/arts/knife_f.png"),
+	health = 120,
+	damage = 60,
+	dDeviation = 80,
+	importance = 6,
+	width = 1,
+	height = 2,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
+	damageType = 0,
+	rounds = 65,
+	weight = 2,
+	isWeapon = 1,
+	isHandToHand = 1,
 }

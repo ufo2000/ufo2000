@@ -15,6 +15,8 @@ ItemsTable = {}
 EquipmentTable = {}
 -- table with images for explosion animation
 ExplosionAnimation = {}
+-- table with minor images
+ImageTable = {}
 
 -- Workaround for a problem when running the game in valgrind.
 -- Appears that get_executable_name() function can't get correct
@@ -206,6 +208,15 @@ function AddXcomTerrain(terrain)
     return 1
 end
 
+function AddImage(key, val)
+    if ImageTable[key] then
+        Message("AddImage: replaced image '%s'", key)
+    else
+        Message("AddImage: added image '%s'", key)
+    end
+    ImageTable[key] = val
+end
+
 function SetExplosionAnimation(tbl)
     ExplosionAnimation = tbl
 end
@@ -380,6 +391,15 @@ function pck_image_set_ex(a, b, c, filename, start, count)
     local tbl = {}
     for i = 1, count do
         tbl[i] = pck_image_ex(a, b, c, filename, start + i - 1)
+    end
+    return tbl
+end
+
+-- returns a table with a set of png images
+function png_image_set(filename, start, count)
+    local tbl = {}
+    for i = 1, count do
+        tbl[i] = png_image(filename .. "-" .. tostring(start + i - 1) .. ".png")
     end
     return tbl
 end
@@ -593,6 +613,7 @@ plugins_sandbox = {
     AddEquipment = AddEquipment,
 	
 	SetExplosionAnimation = SetExplosionAnimation,
+	AddImage = AddImage,
 }
 
 plugins_sandbox = setmetatable({}, {

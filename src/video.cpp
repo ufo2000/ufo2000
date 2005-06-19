@@ -36,9 +36,8 @@ unsigned long FLAGS = 0;
 
 DATAFILE *datafile;
 
-BITMAP *mouser;                   //!< Mouse-pointer
-BITMAP *selector, *selector2;     //!< Arrow above active friendly unit: standing, kneeling
-BITMAP *selector3, *selector4;    //!< Arrow above active friendly unit: with items on the ground
+BITMAP *mouser;                    //!< Mouse-pointer
+std::vector<BITMAP *> selector;    //!< Arrows above active friendly unit: standing/kneeling, with/without items on the ground
 BITMAP *screen2;
 
 int SCREEN2W = 320, SCREEN2H = 200;
@@ -71,11 +70,8 @@ void initvideo()
     LOCK_VARIABLE(g_switch_in_counter);
     LOCK_FUNCTION(switch_in_callback);
 
-    mouser    = (BITMAP*)datafile[DAT_MOUSE_BMP].dat;
-    selector  = (BITMAP*)datafile[DAT_SELECT_BMP].dat;
-    selector2 = (BITMAP*)datafile[DAT_SELECT2_BMP].dat;
-    selector3 = (BITMAP*)datafile[DAT_SELECT3_BMP].dat;
-    selector4 = (BITMAP*)datafile[DAT_SELECT4_BMP].dat;
+    mouser   = get_image_from_lua_table("mouse");
+    selector = get_image_vector_from_lua_table("selector");
 
     screen2 = create_bitmap(SCREEN2W, SCREEN2H);
     clear(screen2);

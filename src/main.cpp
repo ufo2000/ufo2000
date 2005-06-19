@@ -785,6 +785,7 @@ void initmain(int argc, char *argv[])
 
     lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-items.lua");
     lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-equipment.lua");
+    lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-images.lua");
 
     // Load standard and custom maps
     lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-maps.lua", "plugins_sandbox");
@@ -1248,7 +1249,7 @@ void build_screen(int & select_y)
     if (g_pause)
         textprintf_right(screen2, font, SCREEN2W - 1, 0, COLOR_WHITE, _("PAUSE (press shift+space to resume)") );
 
-    if (FLAGS & F_TOOLTIPS) {
+    if (FLAGS & F_TOOLTIPS && (MODE == MAP3D || MODE == WATCH)) {
         // Tooltips for the buttons of the control-panel:
         if (icon->inside(mouse_x, mouse_y)) {
             icon_nr = icon->identify(mouse_x, mouse_y);
@@ -2696,7 +2697,7 @@ int main(int argc, char *argv[])
                                     UFO_VERSION_STRING, UFO_SVNVERSION);
                     b1 = alert(about1,
                           _("inspired by 'X-COM: UFO Defense', see http://ufo2000.sf.net."),
-                          "(c) 2000-2001 A.Ivanov, (c) 2002-2004 ufo2000 development team",
+                          "(c) 2000-2001 A.Ivanov, (c) 2002-2005 ufo2000 development team",
                           _(" &MORE "), _(" OK "), 109, 0);    // 109: 'm'
                     if ( b1 == 1 ) 
                         help( HELP_INTRO );

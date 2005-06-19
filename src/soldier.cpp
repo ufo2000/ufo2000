@@ -727,22 +727,16 @@ void Soldier::draw_unibord(int gx, int gy)
  */
 void Soldier::draw_selector(int select_y)
 {
-     if (!ismoving()) {
-        int sx = map->x + CELL_SCR_X * x + CELL_SCR_X * y + 12;
-        int sy = map->y - (x + 1) * CELL_SCR_Y + CELL_SCR_Y * y - 29 - CELL_SCR_Z * z;
+    if (ismoving()) return;
 
-        // Show different selectors for standing/kneeling & items on ground : 
-        if (!map->place(z, x, y)->item())          // no item on ground:
-            if (m_state == STAND) 
-                draw_sprite(screen2, selector,  sx, sy - select_y); // yellow
-            else
-                draw_sprite(screen2, selector2, sx, sy - select_y); // green
-        else                                       // items on ground:
-            if (m_state == STAND) 
-                draw_sprite(screen2, selector3, sx, sy - select_y); // yellow + dot
-            else
-                draw_sprite(screen2, selector4, sx, sy - select_y); // green + dot
-    }
+    int num = 0;
+    num ^= (m_state == SIT);
+    num ^= (map->place(z, x, y)->item() != NULL) * 2;
+    
+    int sx = map->x + CELL_SCR_X * x + CELL_SCR_X * y + 8 + selector[num]->w / 2;
+    int sy = map->y - (x + 1) * CELL_SCR_Y + CELL_SCR_Y * y - CELL_SCR_Z * z - 20 - selector[num]->h;
+
+    draw_sprite(screen2, selector[num], sx, sy - select_y + calc_z());
 }
 
 /**

@@ -887,7 +887,7 @@ void Icon::execute(int mx, int my)
 void Icon::info()
 {
     for (int i = 0; i < BUTTON_NUMBER; i++)
-        if (button[i].is_inside(mouse_x - x, mouse_y - y))
+        if (button[i].is_inside(mouse_x - x, mouse_y - y) && (MODE == MAP3D || MODE == WATCH))
             button[i].Draw(iconsbmp, highlbmp);
 
 	text_mode(-1);

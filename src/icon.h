@@ -88,10 +88,7 @@ public:
      */
     bool is_inside(int x, int y)
 	{
-		if ((x >= x1) && (x <= x2) && (y >= y1) && (y <= y2))
-			return true;
-		else
-			return false;
+		return (x >= x1) && (x <= x2) && (y >= y1) && (y <= y2);
 	};
 	
 	void Draw(BITMAP *dest, BITMAP *src)
