@@ -1,3 +1,11 @@
+##############################################################################
+# NOTE: this file is NOT used to build the game right now, it is just an
+# experimental SCons support, it might or might not work for you, better use 
+# makefile instead
+#
+# Check http://ufo2k.lxnt.info/mantis/view.php?id=255 for more details
+##############################################################################
+
 BuildDir('#' + "obj", "#.", duplicate=0)
 SConsignFile()
 SetOption('implicit_cache', 1)
@@ -21,8 +29,8 @@ def getsources():
                     allsource.append(os.path.join('obj', root, name))
         if 'dumbogg' in dirs and not HAVE_DUMBOGG:
             dirs.remove('dumbogg')
-        if 'jinete' in dirs and not HAVE_TTF:
-            dirs.remove('jinete')
+        if 'glyphkeeper' in dirs and not HAVE_TTF:
+            dirs.remove('glyphkeeper')
         if 'exchndl' in dirs:
             dirs.remove('exchndl')
         if '.svn' in dirs:
@@ -36,7 +44,7 @@ def getsources():
 
 game_sources = getsources()
 
-env.Append(LIBS = ["expat", "lua", "lualib"])
+env.Append(LIBS = ["expat", "lua", "lualib", "sqlite3", "png", "z"])
 
 if env["CC"] == "gcc":
     env.Append(CCFLAGS = ["-funsigned-char", "-Wall", "-Wno-deprecated-declarations"])
