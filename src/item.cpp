@@ -223,6 +223,24 @@ void Item::od_info(int type, int gx, int gy, int gcol)
                    _("Rounds"), obdata_rounds(type));
 		gy += 10;
 	}
+	
+	if (obdata_exploRange(type) > 0) {
+        textprintf(screen2, font, gx, gy, gcol, "%13s: %3d",
+                   _("Blast range"), obdata_exploRange(type));
+		gy += 10;
+	}
+	
+	if (obdata_smokeRange(type) > 0) {
+        textprintf(screen2, font, gx, gy, gcol, "%13s: %3d",
+                   _("Smoke range"), obdata_smokeRange(type));
+		gy += 10;
+	}
+	
+	if (obdata_smokeTime(type) > 0) {
+        textprintf(screen2, font, gx, gy, gcol, "%13s: %3d",
+                   _("Smoke time"), obdata_smokeTime(type));
+		gy += 10;
+	}
 
 	std::vector<std::string> ammo;
 	get_ammo_list(obdata_name(type), ammo);

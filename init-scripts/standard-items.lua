@@ -1,5 +1,6 @@
 ------------------------------------------------------------------------------
 -- Initialize items
+-- (note: indexes 48 and 49 are free)
 ------------------------------------------------------------------------------
 
 AddXcomItem {
@@ -218,7 +219,7 @@ AddXcomItem {
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 8),
 	pMap = pck_image("$(xcom)/units/floorob.pck", 12),
 	health = 100,
-	damage = 60,
+	damage = 52,
 	dDeviation = 50,
 	importance = 4,
 	width = 2,
@@ -626,6 +627,79 @@ AddXcomItem {
 }
 
 AddXcomItem {
+	index = 28,
+	cost = 400,
+	name = "LASER MINIGUN",
+	pInv = png_image("$(ufo2000)/arts/laserminigun.png", 3),
+	pMap = png_image("$(ufo2000)/arts/laserminigun_f.png", 3),
+	health = 70,
+	damage = 65,
+	dDeviation = 50,
+	importance = 7,
+	width = 2,
+	height = 3,
+	pHeld = png_image_set("$(ufo2000)/arts/laserminigun_h/32x40", 1, 8),
+	damageType = 3,
+	accuracy = {36, 50, 0},
+	time = {10, 50, 0},
+	autoShots = 3,
+	rounds = 10,
+	weight = 30,
+	isShootable = 1,
+	isWeapon = 1,
+	isGun = 1,
+	twoHanded = 1,
+	sound = "laser-heavy-shot",
+}
+
+AddXcomItem {
+	index = 29,
+	cost = 75,
+	name = "SMOKE ROCKET",
+	pInv = png_image("$(ufo2000)/arts/smokem.png", 3),
+	pMap = pck_image("$(xcom)/units/floorob.pck", 16),
+	health = 100,
+	damage = 15,
+	dDeviation = 50,
+	exploRange = 1,
+	smokeRange = 7,
+	smokeTime = 3,
+	importance = 5,
+	width = 1,
+	height = 3,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 80, 8),
+	damageType = 2,
+	rounds = 1,
+	disappear = 1,
+	weight = 4,
+	isAmmo = 1,
+	reloadTime = 15,
+	sound = "small-rocket-hit",
+}
+
+AddXcomItem {
+	index = 30,
+	cost = 75,
+	name = "STUN GRENADE",
+	pInv = pck_image("$(xcom)/units/bigobs.pck", 27),
+	pMap = pck_image("$(xcom)/units/floorob.pck", 27),
+	health = 50,
+	damage = 75,
+	dDeviation = 25,
+	exploRange = 5,
+	smokeRange = 3,
+	smokeTime = 2,
+	importance = 1,
+	width = 1,
+	height = 1,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
+	damageType = 5,
+	isGrenade = 1,
+	rounds = 10,
+	weight = 3,
+}
+
+AddXcomItem {
 	index = 31,
 	cost = 0,
 	name = "CORPSE",
@@ -958,6 +1032,26 @@ AddXcomItem {
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	weight = 5,
 	isAlien = 1,
+}
+
+AddXcomItem {
+	index = 47,
+	cost = 80,
+	name = "KNIFE",
+	pInv = png_image("$(ufo2000)/arts/knife.png"),
+	pMap = png_image("$(ufo2000)/arts/knife_f.png"),
+	health = 120,
+	damage = 60,
+	dDeviation = 80,
+	importance = 6,
+	width = 1,
+	height = 2,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
+	damageType = 0,
+	rounds = 65,
+	weight = 2,
+	isWeapon = 1,
+	isHandToHand = 1,
 }
 
 AddXcomItem {
@@ -1463,21 +1557,21 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 83,
-	cost = 80,
-	name = "KNIFE",
-	pInv = png_image("$(ufo2000)/arts/knife.png"),
-	pMap = png_image("$(ufo2000)/arts/knife_f.png"),
-	health = 120,
-	damage = 60,
-	dDeviation = 80,
-	importance = 6,
-	width = 1,
-	height = 2,
-	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
-	damageType = 0,
-	rounds = 65,
-	weight = 2,
-	isWeapon = 1,
-	isHandToHand = 1,
+    index = 83,
+    cost = 80,
+    name = "KNIFE",
+    pInv = png_image("$(ufo2000)/arts/knife.png"),
+    pMap = png_image("$(ufo2000)/arts/knife_f.png"),
+    health = 120,
+    damage = 60,
+    dDeviation = 80,
+    importance = 6,
+    width = 1,
+    height = 2,
+    pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
+    damageType = 0,
+    rounds = 65,
+    weight = 2,
+    isWeapon = 1,
+    isHandToHand = 1,
 }

@@ -1682,8 +1682,11 @@ int Map::explode(int sniper, int z, int x, int y, int type)
                             hit_dir = calculate_hitdir((lev - double(l)) * HEIGHT_RATIO, double(c) - col, double(r) - row);
                         }
                         
-                        if (distance <= explo_range)
+                        if (distance <= explo_range) {
                         	explocell(sniper, l, c, r, damage, damage_type, hit_dir);
+                        	if (man(l, c, r))
+                                man(l, c, r)->change_morale(((int)(distance - explo_range) - 1) * 2);
+                        }
                         if (distance <= smoke_range)
                         	smokecell(l, c, r, smoke_time);                    
                     }

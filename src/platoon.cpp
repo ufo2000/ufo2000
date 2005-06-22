@@ -576,6 +576,25 @@ void Platoon::apply_hit(int sniper, int z, int x, int y, int type, int hitdir)
 	}
 }
 
+int Platoon::dist_to_nearest(Soldier *some)
+{
+    int res = -1, cur;
+    Soldier *ss = man;
+    
+    while (ss != NULL) {
+        if (ss != some) {
+            cur = (int)sqrt((some->x - ss->x) * (some->x - ss->x) +
+                            (some->y - ss->y) * (some->y - ss->y));
+            if ((res == -1) || (cur < res))
+                res = cur;
+        }
+
+        ss = ss->next();
+    }
+    
+    return res;
+}
+
 void Platoon::change_morale(int delta, bool send_to_remote)
 {
 	Soldier *ss = man;

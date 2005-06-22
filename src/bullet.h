@@ -51,6 +51,8 @@ private:
 
 	int owner;
 	bool explodes;
+	
+	std::vector<int> *affected;
 public:
 
 	Bullet(Soldier *man);
@@ -66,6 +68,8 @@ public:
 
 	void hitcell();
 	void hitman();
+	
+	void affect_morale(int cz, int cx, int cy);
 
 	void detonate();
 	int explodable();

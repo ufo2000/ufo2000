@@ -41,6 +41,7 @@ Bullet::Bullet(Soldier *man)
     phase = 0;
     item  = NULL;
     owner = man->get_NID();
+    affected = new std::vector<int>;
 }
 
 void Bullet::punch(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
@@ -76,6 +77,7 @@ void Bullet::punch(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 void Bullet::fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 {
     state = FLY;
+    affected->clear();
 
     z0 = _z0; x0 = _x0; y0 = _y0;
     fi = _fi; te = _te;
@@ -88,15 +90,26 @@ void Bullet::fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 void Bullet::beam(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 {
     state = BEAM;
+    affected->clear();
 
     z0 = _z0; x0 = _x0; y0 = _y0;
     fi = _fi; te = _te;
     type = _type;
+    
+    int cx = -1, cy = -1, cz = -1;
+    bool new_check = false;
 
     for (i = 3; i < 100000; i++) {
         z = (int)(z0 + i * cos(fi));
         x = (int)(x0 + i * cos(te) * sin(fi));
         y = (int)(y0 + i * sin(te) * sin(fi));
+        
+        if (cz != z / 12) { cz = z / 12; new_check = true; }
+        if (cx != x / 16) { cx = x / 16; new_check = true; }
+        if (cy != y / 16) { cy = y / 16; new_check = true; }
+        
+        if (new_check)
+            affect_morale(cz, cx, cy);
 
         if ((!map->inside(z, x, y)) ||
                 (!map->pass_lof_cell(z, x, y)))
@@ -106,6 +119,7 @@ void Bullet::beam(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
            )
             break;
     }
+
 /*
     x0 += (int)(8 * cos(te) * sin(fi));
     y0 += (int)(8 * sin(te) * sin(fi));
@@ -165,6 +179,8 @@ void Bullet::move()
 {
     int j;
     REAL zK;
+    static int cx, cy, cz;
+    bool new_check = false;
 
     switch (state) {
         case READY:
@@ -178,6 +194,13 @@ void Bullet::move()
                 z = (int)(z0 + i * cos(fi));
                 //text_mode(0);
                 //textprintf(screen, font, 0, SCREEN2H+20, 1, "(%f,%f,%f)", z, x, y);
+                
+                if (cz != z / 12) { cz = z / 12; new_check = true; }
+                if (cx != x / 16) { cx = x / 16; new_check = true; }
+                if (cy != y / 16) { cy = y / 16; new_check = true; }
+
+                if (new_check)
+                    affect_morale(cz, cx, cy);
 
                 if ((!map->inside(z, x, y)) ||
                         (!map->pass_lof_cell(z, x, y)) ||
@@ -709,6 +732,38 @@ void Bullet::hitman()
     platoon_local->apply_hit(owner, z, x, y, type, hitdir);
 }
 
+void Bullet::affect_morale(int cz, int cx, int cy) {
+    int sNID;
+    bool cont;
+    std::vector<int>::iterator itr;
+
+    for (int l = cz - 1; l <= cz + 1; l++) {
+        for (int c = cx - 1; c <= cx + 1; c++) {
+            for (int r = cy - 1; r <= cy + 1; r++) {
+                if (!map->cell_inside(l, c, r)) continue;
+                if (!map->man(l, c, r)) continue;
+
+                sNID = map->man(l, c, r)->get_NID();
+                if (sNID == owner) continue;
+
+                cont = false;
+                itr = affected->begin();
+                while (itr != affected->end()) {
+                    if (sNID == *itr) {
+                        cont = true;
+                        break;
+                    }
+                    itr++;
+                }
+                if (cont) continue;
+
+                map->man(l, c, r)->change_morale(-2);
+                affected->push_back(sNID);
+            }
+        }
+    }
+}
+
 bool Bullet::Write(persist::Engine &archive) const
 {
     PersistWriteBinary(archive, *this);
@@ -723,6 +778,8 @@ bool Bullet::Read(persist::Engine &archive)
     PersistReadBinary(archive, *this);
 
     PersistReadObject(archive, item);
+    
+    affected = new std::vector<int>;
 
     return true;
 }

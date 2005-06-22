@@ -47,10 +47,10 @@ private:
 	long     size;
 
     //! Each bit in the vision_matrix is set to 1 if the soldier
-    //! with the corresponding vision_mask can see that map voxel.
+    //! with the corresponding vision_mask can see that map cell.
     int32 m_vision_matrix[4 * 10 * 6 * 10 * 6];
         
-    //! Map voxel that has been explored
+    //! Map cell that has been explored
 	int m_seen[4][10 * 6][10 * 6];
         
     //! Seen items remain visible until you look at them again
@@ -87,6 +87,7 @@ public:
 	int find_place_coords(Place *pl, int &lev, int &col, int &row);
 	int check_for_hit(int z, int x, int y, Soldier* no_test = NULL);
 	void apply_hit(int sniper, int z, int x, int y, int type, int hitdir);
+	int dist_to_nearest(Soldier *some);
         
 	int nobullfly();
 	int nomoves();

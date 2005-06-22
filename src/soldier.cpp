@@ -1324,13 +1324,13 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir, int dam_dev)
             if (stat) stat->inc_kills();
             
             // Change the morale of enemy squad
-            if (platoon_local->belong(this))
+            /*if (platoon_local->belong(this))
                 platoon_remote->change_morale(10, false);
             else if (platoon_remote->belong(this))
-                platoon_local->change_morale(10, false);
+                platoon_local->change_morale(10, false);*/
                 
             // Change the morale of the sniper
-            if (m_platoon->findman(sniper) != NULL)
+            /*if (m_platoon->findman(sniper) != NULL)
                 m_platoon->findman(sniper)->change_morale(-20);
             else {
                 Soldier *snp = platoon_local->findman(sniper);
@@ -1341,7 +1341,7 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir, int dam_dev)
                     if (snp != NULL)
                         snp->change_morale(10);
                 }
-            }
+            }*/
         }
         // Record that we died
         this->get_platoon()->get_stats()->get_stat_for_SID(NID)->set_dead(1);
@@ -1506,7 +1506,7 @@ void Soldier::die()
 
     map->place(z, x, y)->put(new Item(ctype));
     
-    m_platoon->change_morale(-(100 / (m_platoon->num_of_men() + 1)), false);
+    //m_platoon->change_morale(-(100 / (m_platoon->num_of_men() + 1)), false);
 
     g_console->printf(COLOR_BLUE, "%s killed.", md.Name);
     battle_report( "%s: %s\n", _("killed"), md.Name);
@@ -1665,6 +1665,10 @@ void Soldier::berserk_fire()
 void Soldier::change_morale(int delta)
 {
     int new_morale = ud.Morale + delta;
+    
+    //double the morale penalty if there are no team-mates near
+    if (delta < 0 && m_platoon->dist_to_nearest(this) > 9)
+        new_morale += delta;
     
     if (new_morale > 100)
         new_morale = 100;
