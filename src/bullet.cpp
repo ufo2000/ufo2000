@@ -484,6 +484,8 @@ void Bullet::draw()
             break;
 
         case ST_PUNCH:
+            if (!platoon_local->is_visible(z0 / 12, x0 / 16, y0 / 16)) return;
+        
             xg = map->x + x0 + y0;
             yg = (int)(map->y - (x0 + 1) / 2.0 + y0 / 2.0 - z0 * 2.0 - 2);
 

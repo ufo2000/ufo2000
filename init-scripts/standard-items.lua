@@ -60,7 +60,7 @@ AddXcomItem {
 	ammo = {"RIFLE CLIP"},
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
 	accuracy = {35, 60, 110},
-	time = {35, 25, 80},
+	time = {12, 25, 80},
 	autoShots = 3,
 	rounds = 10,
 	weight = 4,
@@ -1036,7 +1036,7 @@ AddXcomItem {
 
 AddXcomItem {
 	index = 47,
-	cost = 80,
+	cost = 50,
 	name = "KNIFE",
 	pInv = png_image("$(ufo2000)/arts/knife.png"),
 	pMap = png_image("$(ufo2000)/arts/knife_f.png"),
