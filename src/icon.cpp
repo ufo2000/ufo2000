@@ -815,7 +815,9 @@ void Icon::execute(int mx, int my)
 	if (button[B_INVENTORY].is_inside(mx, my)) {
 		if (MODE != WATCH) {
 			TARGET = 0;
-			if ((sel_man != NULL) && (!sel_man->ismoving())) {
+			if ((sel_man != NULL) && (sel_man->is_panicking())) {
+                g_console->printf(COLOR_SYS_FAIL, _("%s is panicking and can't access inventory."), sel_man->md.Name);
+			} else if ((sel_man != NULL) && (!sel_man->ismoving())) {
 				MODE = MAN;
 			}
 		}

@@ -210,12 +210,12 @@ public:
     void apply_hit(int _z, int _x, int _y, int _type);
 
     //!Is a step in direction "dir" possible, where does it guide to, and what is the TU cost?
-    int step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2, int& y2, int& tu_cost);
+    int step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2, int& y2, int& tu_cost, bool less_time);
 
     //!Can we stand here and not to fall down?
     int support_for_feet(int z, int x, int y);
 
-    int pathfind(int sz, int sx, int sy, int dz, int dx, int dy, int can_fly, char *way, PF_MODE pf_mode = PF_TRUE);
+    int pathfind(int sz, int sx, int sy, int dz, int dx, int dy, int can_fly, bool less_time, char *way, PF_MODE pf_mode = PF_TRUE);
     void path_show(int _z, int _x, int _y, char *way, int waylen, Soldier *sld);
     void draw_path_from(Soldier *s);
     int walk_time(int z, int x, int y);
@@ -455,7 +455,7 @@ private:
     void SetMap(Map* _map);
 public:
     //! Search a path and return it as the list of moving's directions in array "way".
-    int pathfind(Map* _map,int sz, int sx, int sy, int dz, int dx, int dy, int can_fly,char *way, PF_MODE pf_mode = PF_TRUE);
+    int pathfind(Map* _map,int sz, int sx, int sy, int dz, int dx, int dy, int can_fly, bool less_time, char *way, PF_MODE pf_mode = PF_TRUE);
     Pathfinding();
     ~Pathfinding();
 };

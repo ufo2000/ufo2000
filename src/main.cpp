@@ -2208,6 +2208,10 @@ void gameloop()
                         sel_man = platoon_local->next_not_moved_man(sel_man);
                         if (s != sel_man)
                             map->center(sel_man);
+                        if (sel_man->is_panicking()) {
+                            g_console->printf(COLOR_SYS_FAIL, _("%s is panicking and can't access inventory."), sel_man->md.Name);
+                            inventory->close();
+                        }
                     }
                     break;
                 case KEY_ASTERISK:   // ?? ToDo: Sound+Music on/off

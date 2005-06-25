@@ -31,6 +31,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "sound.h"
 #include "colors.h"
 #include "text.h"
+#include "explo.h"
 
 char* damage_names[7] = {"AP", "IN", "HE", "LS", "PL", "ST",""};
 
@@ -340,6 +341,7 @@ void Item::shot()
 		m_ammo->m_rounds--;
 	if (m_ammo->m_rounds == 0 && m_ammo->obdata_disappear()) {
 		if (m_ammo != NULL) {
+            elist->remove(m_ammo);
 			delete m_ammo;
 			m_ammo = NULL;
 		}

@@ -37,12 +37,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #define PATH2DSIZE  2
 
-int Map::pathfind(int sz, int sx, int sy, int dz, int dx, int dy, int can_fly, char *way, PF_MODE pf_mode)
+int Map::pathfind(int sz, int sx, int sy, int dz, int dx, int dy, int can_fly, bool less_time, char *way, PF_MODE pf_mode)
 {
     m_pathfind_mode = pf_mode;
         
 	static Pathfinding pathfinding;
-	return pathfinding.pathfind(this, sz, sx, sy, dz, dx, dy, can_fly, way, pf_mode);
+	return pathfinding.pathfind(this, sz, sx, sy, dz, dx, dy, can_fly, less_time, way, pf_mode);
 }
 
 static int TU, TU_max, TU_color;
@@ -50,7 +50,7 @@ static int TU, TU_max, TU_color;
 void Map::draw_path_from(Soldier * s)
 {
 	char way[100];
-	int waylen = pathfind(s->z, s->x, s->y, sel_lev, sel_col, sel_row, s->can_fly(), way, PF_DISPLAY);
+	int waylen = pathfind(s->z, s->x, s->y, sel_lev, sel_col, sel_row, s->can_fly(), s->is_panicking(), way, PF_DISPLAY);
 	TU = s->ud.CurTU;
 	if (s->state() == SIT) TU -= 8;		//time to stand up
 	TU_max = s->ud.MaxTU;
@@ -68,7 +68,7 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen, Soldier *sld)
 		int dir = way[i];
 
         int time_of_dst;
-        step_dest(_z, _x, _y, dir, sld->can_fly(), _z, _x, _y, time_of_dst);
+        step_dest(_z, _x, _y, dir, sld->can_fly(), _z, _x, _y, time_of_dst, sld->is_panicking());
 
 		int sx = x + 16 * _x + 16 * _y + 16;
 		int sy = y - (_x + 1) * 8 + 8 * _y - 8 - _z * CELL_SCR_Z;
@@ -96,7 +96,7 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen, Soldier *sld)
 	}
 }
 
-int Map::step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2, int& y2, int& tu_cost)
+int Map::step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2, int& y2, int& tu_cost, bool less_time)
 {
     // Is starting movement allowed?
     if (!passable(z1, x1, y1, dir))
@@ -139,6 +139,9 @@ int Map::step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2
         if (DIR_DIAGONAL(dir))
             tu_cost = tu_cost * 3 / 2;
     }
+    
+    if (less_time)
+        tu_cost = tu_cost * 3 / 4;
 
     // Up over the stairs
 	if (isStairs(z2, x2, y2))
@@ -164,7 +167,7 @@ int Map::support_for_feet(int z, int x, int y)
 	return !mcd(z, x, y, 0)->No_Floor || isStairs(z - 1, x, y);
 }
 
-int Pathfinding::pathfind(Map* _map,int sz, int sx, int sy, int dz, int dx, int dy, int can_fly, char *way, PF_MODE pf_mode)
+int Pathfinding::pathfind(Map* _map,int sz, int sx, int sy, int dz, int dx, int dy, int can_fly, bool less_time, char *way, PF_MODE pf_mode)
 {
     SetMap(_map);
 
@@ -200,7 +203,7 @@ int Pathfinding::pathfind(Map* _map,int sz, int sx, int sy, int dz, int dx, int 
             int oy = pathfinding_cell_list.front() -> y;
             int oz = pathfinding_cell_list.front() -> z;
             // If we found new best way to cell in this direction ...
-            if(map->step_dest(oz, ox, oy, dir, can_fly, nz, nx, ny, tu_cost)) {
+            if(map->step_dest(oz, ox, oy, dir, can_fly, nz, nx, ny, tu_cost, less_time)) {
                 if( (!pf_info(nz, nx, ny)->path_is_known ||
                 pf_info(nz, nx, ny)->tu_cost > pf_info(oz, ox, oy)->tu_cost + tu_cost) &&
                 (!pf_info(dz, dx, dy)->path_is_known ||

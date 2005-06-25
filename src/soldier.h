@@ -172,6 +172,8 @@ private:
 	char way[100];
 	int curway, waylen;
 
+    bool panicking;
+
 	void berserk_fire();
     int calc_z();
     void standard_aiming(int za, int xa, int ya);
@@ -307,6 +309,11 @@ public:
 	{
 		return ud.CurStun >= ud.CurHealth;
 	}
+	
+	bool is_panicking()
+	{
+        return panicking;
+    }
 
 	Soldier *next_active_soldier()
 	{

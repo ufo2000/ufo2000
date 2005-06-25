@@ -152,13 +152,13 @@ void Inventory::execute()
 			Soldier *s = sel_man;
  			if (mouse_inside(x + 273, y + 1, x + 295, y + 22)) {  // <
  				sel_man = sel_man->prevman();
-				while (!sel_man->is_active() && (sel_man != s))
+				while ((!sel_man->is_active() && (sel_man != s)) || sel_man->is_panicking())
 					sel_man = sel_man->prevman();
 				if ((sel_man == s) && !s->is_active())
 					MODE = MAP3D; // we were stunned while we were looking at the screen, so move away!
 			} else if (mouse_inside(x + 297, y + 1, x + 319, y + 22)) {  // >
  				sel_man = sel_man->nextman();
-				while (!sel_man->is_active() && (sel_man != s))
+				while ((!sel_man->is_active() && (sel_man != s)) || sel_man->is_panicking())
 					sel_man = sel_man->nextman();
 				if ((sel_man == s) && !s->is_active())
 					MODE = MAP3D; // we were stunned while we were looking at the screen, so move away!

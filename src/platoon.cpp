@@ -615,8 +615,7 @@ void Platoon::check_morale()
 	Soldier *ss = man;
 	
 	while (ss != NULL) {
-		//if (rand() % 100 < 100 - 2 * ss->ud.Morale) {
-		if (false) {
+		if (rand() % 100 < 100 - 2 * ss->ud.Morale) {
 			int action = rand() % 2;
 			ss->panic(action);
 			net->send_panic(ss->get_NID(), action);
@@ -625,7 +624,7 @@ void Platoon::check_morale()
 		ss = ss->next();
 	}
 	
-	if (!panicked)				//balance issue - maybe should be disabled
+	if (!panicked)
 		change_morale(5, true);		
 }
 

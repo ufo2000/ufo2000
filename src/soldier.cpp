@@ -171,6 +171,7 @@ Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *md
     FIRE_num = 0;
     MOVED = 0;
     m_reaction_chances = 0;
+    panicking = false;
 
     m_ReserveTimeMode = RESERVE_FREE;
     memcpy(&md, mdat, sizeof(md));
@@ -531,6 +532,8 @@ void Soldier::restore()
     //ud.CurFAccuracy = ud.MaxFA;
     //ud.CurTAccuracy = ud.MaxTA;
 
+    panicking = false;
+
     if (ud.CurStun > 0) // Do we have stun damage?
     {
         int i = 5; //(int)randval(1, 11);
@@ -836,7 +839,7 @@ int Soldier::move(int ISLOCAL)
         if(move_dir > DIR_NULL) {
             int tu_cost;
             int zd, xd, yd;
-            map->step_dest(z, x, y, move_dir, can_fly(), zd, xd, yd, tu_cost);
+            map->step_dest(z, x, y, move_dir, can_fly(), zd, xd, yd, tu_cost, panicking);
             if (time_reserve(tu_cost, ISLOCAL) != OK)
                 finish_march(ISLOCAL);
             else
@@ -899,10 +902,14 @@ int Soldier::move(int ISLOCAL)
             // in the original game itself. Please note that walktime(-1) 
             // returns the time of a horizontal move, whereas walktime(dir)
             // factors in the diagonal move multiplier.
-            if (DIR_DIAGONAL(dir))
+            /*if (DIR_DIAGONAL(dir))
                 spend_time((walktime(-1) * 3 / 2), 1);
             else
-                spend_time(walktime(-1), 1);
+                spend_time(walktime(-1), 1);*/
+            if (panicking)
+                spend_time(walktime(dir) * 3 / 4, 1);
+            else
+                spend_time(walktime(dir), 1);
             
             map->set_man(z, x, y, this);
             m_place[P_MAP] = map->place(z, x, y);
@@ -1060,7 +1067,7 @@ void Soldier::wayto(int dest_lev, int dest_col, int dest_row)
 
 
         curway = 1;
-        waylen = map->pathfind(z, x, y, dest_lev, dest_col, dest_row, can_fly(), way);
+        waylen = map->pathfind(z, x, y, dest_lev, dest_col, dest_row, can_fly(), panicking, way);
         if (map->man(dest_lev, dest_col, dest_row) != NULL) {
             waylen--;
         }
@@ -1573,7 +1580,7 @@ void Soldier::draw_deselect_times(BITMAP *dest, Item *sel_item, int sel_item_pla
 
     for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++) {
     	time = calctime(sel_item_place, i);
-    	if (sel_item != NULL && sel_item->obdata_isAmmo() && 
+    	if (sel_item != NULL && sel_item->obdata_reloadTime() &&
 				(i == P_ARM_LEFT || i == P_ARM_RIGHT) && item(i) != NULL) {
 			time += sel_item->obdata_reloadTime();
 		}
@@ -1599,11 +1606,11 @@ void Soldier::damage_items(int damage)
  */
 void Soldier::panic(int action)
 {   
-    switch(action) {
+    /*switch(action) {
         case 0:
         m_place[P_ARM_LEFT]->dropall(z, x, y);
         m_place[P_ARM_RIGHT]->dropall(z, x, y);
-        /*run for you life! - not implemented yet*/
+        //run for you life! - not implemented yet
         ud.CurTU = 0;
         g_console->printf(COLOR_ROSE, "%s has panicked.", md.Name);
         break;
@@ -1613,9 +1620,17 @@ void Soldier::panic(int action)
             berserk_fire();              
         g_console->printf(COLOR_ROSE, "%s has gone berserk.", md.Name);
         break;
-    }
+    }*/
+    
+    panicking = true;
+    m_place[P_ARM_LEFT]->dropall(z, x, y);
+    m_place[P_ARM_RIGHT]->dropall(z, x, y);
 
     change_morale(20);
+    
+    g_console->printf(COLOR_ROSE, _("%s has panicked."), md.Name);
+    if (platoon_local->belong(this))
+        g_console->printf(COLOR_ROSE, _("(can't access inventory but moves faster)"));
                                          
     battle_report( "%s: %s\n", _("Panicked"), md.Name);
 }
