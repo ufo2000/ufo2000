@@ -745,6 +745,7 @@ void Bullet::affect_morale(int cz, int cx, int cy) {
                 if (!map->cell_inside(l, c, r)) continue;
                 if (!map->man(l, c, r)) continue;
 
+                if (map->man(l, c, r)->get_platoon()->findman(owner)) continue;
                 sNID = map->man(l, c, r)->get_NID();
                 if (sNID == owner) continue;
 

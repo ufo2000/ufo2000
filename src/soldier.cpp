@@ -1305,6 +1305,12 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir, int dam_dev)
         StatEntry *stat = platoon_local->get_stats()->get_stat_for_SID(sniper);
         if (!stat) stat = platoon_remote->get_stats()->get_stat_for_SID(sniper);
         if (stat) stat->inc_damage_inflicted(pierce);
+        
+        //morale penalty for friendly fire
+        if (m_platoon->findman(sniper)) {
+            change_morale(-10);
+            m_platoon->findman(sniper)->change_morale(-20);
+        }
     }
     
     // Record that we took damage.

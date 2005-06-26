@@ -651,7 +651,7 @@ void Editor::show()
                     textprintf(screen2, font,  330, 335, COLOR_LT_BLUE, "%-3s: %s", "DEL", _("Delete Equipment of current man") );
                     textprintf(screen2, font,  330, 345, COLOR_LT_BLUE, "%-3s: %s", "TAB", _("Next soldier") );*/
                     
-                    textprintf(screen2, large, 330, 220, COLOR_LT_BLUE, _("Hotkeys"));
+                    textprintf(screen2, large, 330, 220, COLOR_LT_BLUE, _("Click here to change equipment set"));
                     int ty = 250;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _(" Ctrl+Ins: Copy current soldier")); ty += 10;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("Shift+Ins: Paste on current soldier")); ty += 15;
@@ -668,7 +668,7 @@ void Editor::show()
             int wht = man->count_weight();
             int max_wht = man->md.Strength;
             color       = max_wht < wht ? COLOR_RED03 : COLOR_GRAY02;
-            textprintf(screen2, g_small_font, 0, 20, color, _("Equipment weight: %d/%2d"), wht, max_wht);
+            textprintf(screen2, g_small_font, 0, 20, color, _("Equipment weight: %2d/%2d"), wht, max_wht);
             char str1[64]; // to adjust position of translated string
           //int x1 = 120;
             int x2 = 236;

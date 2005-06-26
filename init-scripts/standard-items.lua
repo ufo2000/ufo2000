@@ -18,8 +18,6 @@ AddXcomItem {
 	time = {0, 20, 35},
 	rounds = 8,
 	weight = 3,
-	isShootable = 1,
-	isWeapon = 1,
 	isGun = 1,
 	sound = "cv-pistol-shot",
 }
@@ -63,8 +61,6 @@ AddXcomItem {
 	autoShots = 3,
 	rounds = 10,
 	weight = 4,
-	isShootable = 1,
-	isWeapon = 1,
 	isGun = 1,
 	twoHanded = 1,
 	sound = "cv-rifle-shot",
@@ -108,8 +104,6 @@ AddXcomItem {
 	time = {0, 33, 80},
 	rounds = 10,
 	weight = 18,
-	isShootable = 1,
-	isWeapon = 1,
 	isGun = 1,
 	twoHanded = 1,
 	sound = "cv-heavy-cannon-shot",
@@ -204,8 +198,6 @@ AddXcomItem {
 	autoShots = 3,
 	rounds = 10,
 	weight = 20,
-	isShootable = 1,
-	isWeapon = 1,
 	isGun = 1,
 	twoHanded = 1,
 	sound = "cv-auto-cannon-shot",
@@ -299,8 +291,6 @@ AddXcomItem {
 	time = {0, 45, 75},
 	rounds = 10,
 	weight = 10,
-	isShootable = 1,
-	isWeapon = 1,
 	isGun = 1,
 	twoHanded = 1,
 	sound = "rl-launch",
@@ -400,8 +390,6 @@ AddXcomItem {
 	autoShots = 3,
 	rounds = 10,
 	weight = 6,
-	isShootable = 1,
-	isWeapon = 1,
 	isGun = 1,
 	sound = "laser-pistol-shot",
 }
@@ -425,8 +413,6 @@ AddXcomItem {
 	autoShots = 3,
 	rounds = 10,
 	weight = 8,
-	isShootable = 1,
-	isWeapon = 1,
 	isGun = 1,
 	twoHanded = 1,
 	sound = "laser-rifle-shot",
@@ -450,8 +436,6 @@ AddXcomItem {
 	time = {0, 33, 66},
 	rounds = 10,
 	weight = 19,
-	isShootable = 1,
-	isWeapon = 1,
 	isGun = 1,
 	twoHanded = 1,
 	sound = "laser-heavy-shot",
@@ -606,7 +590,6 @@ AddXcomItem {
 	damageType = 5,
 	rounds = 65,
 	weight = 3,
-	isWeapon = 1,
 	isHandToHand = 1,
 	twoHanded = 1,
 }
@@ -644,8 +627,6 @@ AddXcomItem {
 	autoShots = 3,
 	rounds = 10,
 	weight = 30,
-	isShootable = 1,
-	isWeapon = 1,
 	isGun = 1,
 	twoHanded = 1,
 	sound = "laser-heavy-shot",
@@ -756,11 +737,8 @@ AddXcomItem {
 	time = {0, 30, 55},
 	rounds = 10,
 	weight = 10,
-	isShootable = 1,
-	isWeapon = 1,
 	isGun = 1,
 	twoHanded = 1,
-	isAlien = 1,
 	sound = "plasma-heavy-shot",
 }
 
@@ -783,7 +761,6 @@ AddXcomItem {
 	weight = 3,
 	isAmmo = 1,
 	reloadTime = 15,
-	isAlien = 1,
 	sound = "plasma-hit",
 }
 
@@ -804,11 +781,8 @@ AddXcomItem {
 	autoShots = 3,
 	rounds = 10,
 	weight = 5,
-	isShootable = 1,
-	isWeapon = 1,
 	isGun = 1,
 	twoHanded = 1,
-	isAlien = 1,
 	sound = "plasma-rifle-shot",
 }
 
@@ -831,7 +805,6 @@ AddXcomItem {
 	weight = 3,
 	isAmmo = 1,
 	reloadTime = 15,
-	isAlien = 1,
 	sound = "plasma-hit",
 }
 
@@ -852,10 +825,7 @@ AddXcomItem {
 	autoShots = 3,
 	rounds = 10,
 	weight = 3,
-	isShootable = 1,
-	isWeapon = 1,
 	isGun = 1,
-	isAlien = 1,
 	sound = "plasma-pistol-shot",
 }
 
@@ -878,7 +848,6 @@ AddXcomItem {
 	weight = 2,
 	isAmmo = 1,
 	reloadTime = 15,
-	isAlien = 1,
 	sound = "plasma-hit",
 }
 
@@ -898,11 +867,8 @@ AddXcomItem {
 	time = {0, 0, 80},
 	rounds = 10,
 	weight = 16,
-	isShootable = 1,
-	isWeapon = 1,
 	twoHanded = 1,
 	wayPoints = 1,
-	isAlien = 1,
 }
 
 AddXcomItem {
@@ -927,7 +893,6 @@ AddXcomItem {
 	weight = 3,
 	isAmmo = 1,
 	reloadTime = 15,
-	isAlien = 1,
 }
 
 AddXcomItem {
@@ -946,11 +911,8 @@ AddXcomItem {
 	time = {0, 40, 75},
 	rounds = 10,
 	weight = 10,
-	isShootable = 1,
-	isWeapon = 1,
 	isGun = 1,
 	twoHanded = 1,
-	isAlien = 1,
 	sound = "alien-small-launch",
 }
 
@@ -976,7 +938,6 @@ AddXcomItem {
 	disappear = 1,
 	weight = 3,
 	reloadTime = 15,
-	isAlien = 1,
 }
 
 AddXcomItem {
@@ -1001,7 +962,6 @@ AddXcomItem {
 	disappear = 1,
 	weight = 3,
 	reloadTime = 15,
-	isAlien = 1,
 }
 
 AddXcomItem {
@@ -1017,7 +977,6 @@ AddXcomItem {
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	rounds = 10,
 	weight = 3,
-	isAlien = 1,
 }
 
 AddXcomItem {
@@ -1032,7 +991,6 @@ AddXcomItem {
 	height = 2,
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	weight = 5,
-	isAlien = 1,
 }
 
 AddXcomItem {
@@ -1051,7 +1009,6 @@ AddXcomItem {
 	damageType = 0,
 	rounds = 65,
 	weight = 2,
-	isWeapon = 1,
 	isHandToHand = 1,
 }
 
@@ -1072,8 +1029,6 @@ AddXcomItem {
     autoShots = 5,
     rounds = 10,
     weight = 4,
-    isShootable = 1,
-    isWeapon = 1,
     isGun = 1,
     twoHanded = 1,
     sound = "cv-rifle-shot",
