@@ -902,14 +902,10 @@ int Soldier::move(int ISLOCAL)
             // in the original game itself. Please note that walktime(-1) 
             // returns the time of a horizontal move, whereas walktime(dir)
             // factors in the diagonal move multiplier.
-            /*if (DIR_DIAGONAL(dir))
-                spend_time((walktime(-1) * 3 / 2), 1);
-            else
-                spend_time(walktime(-1), 1);*/
-            if (panicking)
-                spend_time(walktime(dir) * 3 / 4, 1);
-            else
-                spend_time(walktime(dir), 1);
+            int time = walktime(-1);
+            if (DIR_DIAGONAL(dir)) time = time * 3 / 2;
+            if (panicking) time = time * 3 / 4;
+            spend_time(time, 1);
             
             map->set_man(z, x, y, this);
             m_place[P_MAP] = map->place(z, x, y);
