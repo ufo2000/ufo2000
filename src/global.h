@@ -214,7 +214,7 @@ struct MANDATA
 struct ITEMDATA
 {
     uint8 num;
-    uint8 type[100];
+    uint16 type[100];
     uint8 place[100];
     uint8 x[100];
     uint8 y[100];

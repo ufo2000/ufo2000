@@ -319,7 +319,7 @@ void Map::draw(int show_cursor)
 	else
 		l2 = sel_lev;
 		
-	BITMAP *cell_bmp = create_bitmap(32, 48);
+	BITMAP *cell_bmp = create_bitmap(32, 40);
 
 	for (int lev = l1; lev <= l2; lev++) {
 		for (int row = r1; row <= r2; row++) {
@@ -730,7 +730,7 @@ int Map::haveGROUND(int lev, int col, int row)
 
 void Map::build_visi_cell(int lev, int col, int row)
 {
-    	for (int k = 0; k < 3; k++) {
+    for (int k = 0; k < 3; k++) {
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
 				int dz = k - 1;
@@ -1287,11 +1287,11 @@ void Map::destroy_cell_part(int lev, int col, int row, int _part)
 	}
 }
 
-void Map::damage_cell_part(int lev, int col, int row, int _part, int dam)
+void Map::damage_cell_part(int lev, int col, int row, int _part, int dam, int dam_dev)
 {
-    // Currently just randomizing the damage to be from 0.5 to 1.5 of
-    // the table value, NOT 0.0 to 2.0 as it was in X-Com.
-    dam = (int) cur_random->getUniform(dam * 0.5, dam * 1.5);
+    // damage is randomized as +/- dam_dev %
+    if (dam_dev > 0)
+        dam = (int) cur_random->getUniform(dam * (1.0 - (dam_dev / 100.0)), dam * (1.0 + (dam_dev / 100.0)));
 	if (mcd(lev, col, row, _part)->Armour < dam) {
 		destroy_cell_part(lev, col, row, _part);
 	}
@@ -1306,7 +1306,7 @@ void Map::apply_hit(int _z, int _x, int _y, int _wtype)
 				int lev = _z / 12;
 				int col = _x / 16;
 				int row = _y / 16;
-				damage_cell_part(lev, col, row, i, Item::obdata_damage(_wtype));
+				damage_cell_part(lev, col, row, i, Item::obdata_damage(_wtype), Item::obdata_dDeviation(_wtype));
 			}
 	}
 }

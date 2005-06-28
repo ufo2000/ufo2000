@@ -386,7 +386,10 @@ public:
 	int putitem(Item *it, int ip, int ix, int iy)
 	{
 		ASSERT((ip >= 0) && (ip < NUMBER_OF_PLACES));
-		return m_place[ip]->put(it, ix, iy);
+		if (ix == -1 || iy == -1)
+            return m_place[ip]->put(it);
+        else
+            return m_place[ip]->put(it, ix, iy);
 	}
 
 	int putitem(Item *it, int ip)

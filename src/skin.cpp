@@ -42,7 +42,7 @@ SKIN_INFO g_skins[] =
     { "fly_m",   S_XCOM_3,  0, 1, {110, 90, 90, 80, 70}, 1030 },
     { "fly_f",   S_XCOM_3,  1, 1, {110, 90, 90, 80, 70}, 1030 },
     { "sectoid", S_SECTOID, 0, 0, {  4,  3,  3,  2,  2}, 28 },
-    { "muton",   S_MUTON,   0, 0, { 30, 30, 30, 30, 20}, 230 }
+    { "muton",   S_MUTON,   0, 0, { 70, 60, 60, 50, 50}, 580 }
 };
 
 int g_skins_count = sizeof(g_skins) / sizeof(g_skins[0]);

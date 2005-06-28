@@ -734,7 +734,8 @@ void Bullet::hitman()
     platoon_local->apply_hit(owner, z, x, y, type, hitdir);
 }
 
-void Bullet::affect_morale(int cz, int cx, int cy) {
+void Bullet::affect_morale(int cz, int cx, int cy)
+{
     int sNID;
     bool cont;
     std::vector<int>::iterator itr;
