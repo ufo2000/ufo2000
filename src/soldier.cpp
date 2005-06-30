@@ -2411,7 +2411,7 @@ int Soldier::assign_target(Action action, int iplace)
             break;
         case PUNCH:
             target.accur = 100;
-            target.time = required(25);
+            target.time = required(it->obdata_useTime());
             break;
         case AIMEDTHROW:
             target.accur = TAccuracy(it->obdata_accuracy(ATHROW));

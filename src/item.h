@@ -95,6 +95,7 @@ public:
     static int obdata_wayPoints(int index) { return obdata_get_int(index, "wayPoints"); }
     static int obdata_accuracy(int index, int n) { return obdata_get_array_int(index, "accuracy", n); }
     static int obdata_time(int index, int n) { return obdata_get_array_int(index, "time", n); }
+    static int obdata_useTime(int index) { return obdata_get_int(index, "useTime"); }
     static int obdata_autoShots(int index) { return obdata_get_int(index, "autoShots"); }
     static int obdata_weight(int index) { return obdata_get_int(index, "weight"); }
     static int obdata_twoHanded(int index) { return obdata_get_int(index, "twoHanded"); }
@@ -151,6 +152,7 @@ public:
     int obdata_smokeTime() { return obdata_smokeRange(m_type); }
     int obdata_accuracy(int n) { return obdata_get_array_int(m_type, "accuracy", n); }
     int obdata_time(int n) { return obdata_get_array_int(m_type, "time", n); }
+    int obdata_useTime() { return obdata_useTime(m_type); }
     int obdata_autoShots() { return obdata_autoShots(m_type); }
     int obdata_importance() { return obdata_get_int(m_type, "importance"); }
     int obdata_weight() { return obdata_weight(m_type); }

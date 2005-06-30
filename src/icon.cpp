@@ -552,13 +552,13 @@ void Icon::firemenu(int iplace)
         
 		if (it->is_hand_to_hand()) {
 			waccur[i] = 100;
-			wtime[i]  = sel_man->required(25);
+			wtime[i]  = sel_man->required(it->obdata_useTime());
 			if (sel_man->havetime(wtime[i]) == OK) {
 				// More stun rod hack.
 				if (it->is_stun_weapon())
-                    sprintf(dstr[i], _("STUN        ACC>%02d%% TUs>%02d"), waccur[i], wtime[i]);
+                    sprintf(dstr[i], _("STUN                TUs>%02d"), wtime[i]);
                 else
-                    sprintf(dstr[i], _("PUNCH       ACC>%02d%% TUs>%02d"), waccur[i], wtime[i]);
+                    sprintf(dstr[i], _("PUNCH               TUs>%02d"), wtime[i]);
 				the_dialog[i].proc = firemenu_dialog_proc;
 				waction[i] = PUNCH;
 				i++;

@@ -207,10 +207,25 @@ void Item::od_info(int type, int gx, int gy, int gcol)
 		gy += 5;
 	}
 
-	if (obdata_twoHanded(type)) {
-        textprintf(screen2, font, gx, gy, gcol, _("Two-handed weapon") );
-		gy += 15;
-	}
+    if (obdata_isHandToHand(type) || obdata_twoHanded(type)) {
+        if (obdata_isHandToHand(type)) {
+            textprintf(screen2, font, gx, gy, gcol, _("Hand-to-hand weapon") );
+            gy += 10;
+        }
+
+        if (obdata_twoHanded(type)) {
+            textprintf(screen2, font, gx, gy, gcol, _("Two-handed weapon") );
+            gy += 10;
+	   }
+	   
+	   gy += 5;
+    }
+	
+	if (obdata_useTime(type) > 0) {
+        textprintf(screen2, font, gx, gy, gcol, "%13s: %2d%%",
+                    _("Usage TU cost"), obdata_useTime(type));
+        gy += 10;
+    }
 
 	if (obdata_damage(type) > 0) {
         textprintf(screen2, font, gx, gy, gcol, "%13s: %3d (%2d%%) %8s: %d",
