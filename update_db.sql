@@ -17,3 +17,5 @@ alter table ufo2000_game_packets add column session integer;
 insert or ignore into ufo2000_sequences values ('ufo2000_user_sessions', 0);
 create table ufo2000_debug_packets (game integer, id integer, sender integer, time real, param text, value text, session integer, primary key (game, id));
 create table ufo2000_debug_log (game integer, session integer, sender integer, id integer, time real, type integer, value text);
+create index ufo2000_debug_log_indx on ufo2000_debug_log (game, session, sender, id, type);
+create index ufo2000_debug_packets_indx on ufo2000_debug_packets (session, game, param);

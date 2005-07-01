@@ -174,8 +174,25 @@ ServerClientUfo::~ServerClientUfo()
 
 bool ServerClientUfo::recv_packet(NLulong id, const std::string &packet)
 {
-    if(game)
+    if(game) {
         game->PacketToServer(this, id, packet);
+    } else {
+        if (id == SRV_DEBUG_MESSAGE) {
+        std::string param, val;
+        split_with_colon(packet, param, val);
+
+        sqlite3::command sql_cmd(db_conn, "\
+        insert into ufo2000_debug_packets\
+        (game, id, sender, time, param, value, session) values \
+        (null, null, null, julianday('now'), ?, ?, ?);");
+        sql_cmd.parameters.push_back(sqlite3::parameter(1, param.c_str(), param.size()));
+        sql_cmd.parameters.push_back(sqlite3::parameter(2, val.c_str(), val.size()));
+        sql_cmd.parameters.push_back(sqlite3::parameter(3, (long long int) session_id));
+        sql_cmd.executenonquery();
+        }
+    }
+
+    
     if ((id == SRV_GAME_PACKET) && (strstr(packet.c_str(), "_Xmes_") != NULL))
         server_log("packet from %s {game chat message}\n", m_name.c_str(), (int)id);
     else
