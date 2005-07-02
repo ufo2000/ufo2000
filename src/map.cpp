@@ -37,8 +37,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #define SCANGSIZE 4
 
-#define TILE_LIGHT 15
-
 uint16 *Map::m_loftemp = NULL;
 int Map::m_loftemp_num = 0;
 SPK *Map::scanbord = NULL;

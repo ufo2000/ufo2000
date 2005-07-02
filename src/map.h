@@ -56,6 +56,10 @@ enum DIRECTION
     DIR_NUM       = 11
 };
 
+//! Light source power (proportional to diameter of a sphere)
+#define TILE_LIGHT 15
+#define FIRE_LIGHT 10
+
 enum PF_MODE {PF_TRUE, PF_DISPLAY};
 
 //! x increment when moving specified direction
@@ -312,11 +316,17 @@ public:
     }
     void set_fire_time(int lev, int col, int row, int value)
     {
+        // Make sure that we are setting cell aflame for the first time
+        if (value > 0 && (fire_time(lev, col, row) == 0) )
+            add_light_source(lev, col, row, FIRE_LIGHT);
+        
         m_cell[lev][col][row]->m_fire_time = value; 
     }
     void dec_fire_time(int lev, int col, int row) 
     { 
-        m_cell[lev][col][row]->m_fire_time--;
+        int fire_time = m_cell[lev][col][row]->m_fire_time--;
+        if (fire_time <= 1)
+            remove_light_source(lev, col, row, FIRE_LIGHT);
     }
 
 
