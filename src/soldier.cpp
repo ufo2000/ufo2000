@@ -2412,6 +2412,7 @@ int Soldier::assign_target(Action action, int iplace)
         case PUNCH:
             target.accur = 100;
             target.time = required(it->obdata_useTime());
+            if (!target.time) target.time = required(25); // some old melee weapons don't have "useTime" property
             break;
         case AIMEDTHROW:
             target.accur = TAccuracy(it->obdata_accuracy(ATHROW));

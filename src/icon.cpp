@@ -553,6 +553,7 @@ void Icon::firemenu(int iplace)
 		if (it->is_hand_to_hand()) {
 			waccur[i] = 100;
 			wtime[i]  = sel_man->required(it->obdata_useTime());
+			if (!wtime[i]) wtime[i] = sel_man->required(25); // some old melee weapons don't have "useTime" property
 			if (sel_man->havetime(wtime[i]) == OK) {
 				// More stun rod hack.
 				if (it->is_stun_weapon())
