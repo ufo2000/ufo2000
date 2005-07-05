@@ -180,14 +180,14 @@ void Inventory::execute()
 				Item *it = sel_man->item_under_mouse(P_ARM_LEFT, x, y);
 				if ((it != NULL) && sel_man->load_ammo(P_ARM_LEFT, sel_item_place, sel_item)) {
 					sel_item_place = P_MAP;
-					sel_item->m_x = sel_item->m_y = -1;
+					if (sel_item) sel_item->m_x = sel_item->m_y = -1;
 					return ;
 				}
 
 				it = sel_man->item_under_mouse(P_ARM_RIGHT, x, y);
 				if ((it != NULL) && sel_man->load_ammo(P_ARM_RIGHT, sel_item_place, sel_item)) {
 					sel_item_place = P_MAP;
-					sel_item->m_x = sel_item->m_y = -1;
+					if (sel_item) sel_item->m_x = sel_item->m_y = -1;
 					return ;
 				}
 
