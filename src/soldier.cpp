@@ -2309,7 +2309,7 @@ void Soldier::try_reaction_shot(Soldier *the_target)
 
     // Check that we can fire at least one shot using current settings
 
-    if (havetime(target.time * FIRE_num) != OK) {
+    if (havetime(target.time) != OK) {
         FIRE_num = 0;
         return;
     }
@@ -2683,29 +2683,26 @@ int Soldier::check_reaction_fire(Soldier *the_target)
     {
         // We can make a reaction shot.
         // Try the weapon in right hand first
-
-        switch (m_ReserveTimeMode) {
-        case RESERVE_FREE:
-            if (do_reaction_fire(the_target, P_ARM_RIGHT, AUTO)) return 1;
-            if (do_reaction_fire(the_target, P_ARM_RIGHT, AIMED)) return 1;
-            if (do_reaction_fire(the_target, P_ARM_RIGHT, SNAP)) return 1;
-            break;
-        case RESERVE_SNAP:
-            if (do_reaction_fire(the_target, P_ARM_RIGHT, SNAP)) return 1;
-            break;
-        case RESERVE_AIM:
-            if (do_reaction_fire(the_target, P_ARM_RIGHT, AIMED)) return 1;
-            if (do_reaction_fire(the_target, P_ARM_RIGHT, SNAP)) return 1;
-            break;
-        case RESERVE_AUTO:
-            if (do_reaction_fire(the_target, P_ARM_RIGHT, AUTO)) return 1;
-            if (do_reaction_fire(the_target, P_ARM_RIGHT, SNAP)) return 1;
-            break;
+        for (int arm = P_ARM_RIGHT; arm <= P_ARM_LEFT; arm++) {
+            switch (m_ReserveTimeMode) {
+            case RESERVE_FREE:
+                if (do_reaction_fire(the_target, arm, AUTO)) return 1;
+                if (do_reaction_fire(the_target, arm, AIMED)) return 1;
+                if (do_reaction_fire(the_target, arm, SNAP)) return 1;
+                break;
+            case RESERVE_SNAP:
+                if (do_reaction_fire(the_target, arm, SNAP)) return 1;
+                break;
+            case RESERVE_AIM:
+                if (do_reaction_fire(the_target, arm, AIMED)) return 1;
+                if (do_reaction_fire(the_target, arm, SNAP)) return 1;
+                break;
+            case RESERVE_AUTO:
+                if (do_reaction_fire(the_target, arm, AUTO)) return 1;
+                if (do_reaction_fire(the_target, arm, SNAP)) return 1;
+                break;
+            }
         }
-
-        // No luck with right arm, go to left arm.
-        if (do_reaction_fire(the_target, P_ARM_LEFT, AIMED)) return 1;
-        if (do_reaction_fire(the_target, P_ARM_LEFT, SNAP)) return 1;
 
         // No weapon was ready to be fired.
         return 0;
