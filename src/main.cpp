@@ -1122,11 +1122,15 @@ void send_turn()
     update_visibility();
 }
 
+int GAMELOOP = 0;
+
 /**
  * This function is called when we receive turn from the other player
  */
 void recv_turn(int crc)
 {
+    if (!GAMELOOP) return;
+
     // In replay mode pass of the turn is simple
     if (net->gametype == GAME_TYPE_REPLAY) {
         switch_turn();
@@ -1169,8 +1173,6 @@ void recv_turn(int crc)
 
     battle_report("# %s: %d\n", _("Next turn"), turn );
 }
-
-int GAMELOOP = 0;
 
 #define STAT_PANEL_W 200
 

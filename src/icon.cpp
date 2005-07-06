@@ -738,8 +738,9 @@ void Icon::execute(int mx, int my)
 	if (button[B_MAN_UP].is_inside(mx, my)) {
 		if (MODE != WATCH) {
 		    //Pathfinding version 2:
-			if(map->cell_inside(sel_man->z + 1, sel_man->x, sel_man->y))
-                sel_man->wayto(sel_man->z + 1, sel_man->x, sel_man->y);
+		    if (sel_man)
+                if(map->cell_inside(sel_man->z + 1, sel_man->x, sel_man->y))
+                    sel_man->wayto(sel_man->z + 1, sel_man->x, sel_man->y);
                 
             //Pathfinding version 1:
 			/*if (sel_man->use_elevator(+1))
@@ -750,8 +751,9 @@ void Icon::execute(int mx, int my)
 	if (button[B_MAN_DOWN].is_inside(mx, my)) {
 		if (MODE != WATCH) {
 			//Pathfinding version 2:
-			if(map->cell_inside(sel_man->z - 1, sel_man->x, sel_man->y))
-		        sel_man->wayto(sel_man->z - 1, sel_man->x, sel_man->y);
+			if (sel_man)
+                if(map->cell_inside(sel_man->z - 1, sel_man->x, sel_man->y))
+                    sel_man->wayto(sel_man->z - 1, sel_man->x, sel_man->y);
 		        
             //Pathfinding version 1:
 			/*if (sel_man->use_elevator(-1))
