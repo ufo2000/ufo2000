@@ -282,6 +282,7 @@ extern int MODSOUND;
 extern int digvoices;
 extern int modvoices;
 extern int modvol;
+extern int mouse_sens;
 extern char modname[128];
 extern int HOST;
 extern char HOSTNAME[256];

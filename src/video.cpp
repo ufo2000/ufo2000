@@ -264,7 +264,7 @@ void reset_video()
     set_palette((RGB *)datafile[DAT_GAMEPAL_BMP].dat);
     position_mouse(160, 100);
     set_mouse_sprite(mouser);
-    set_mouse_speed(1, 1);
+    set_mouse_sens(mouse_sens);
     reset_mouse_range();
     gui_fg_color = COLOR_BLACK1;
     gui_bg_color = COLOR_WHITE;

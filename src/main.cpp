@@ -183,6 +183,7 @@ int speed_unit      = 15;
 int speed_bullet    = 30;
 int speed_mapscroll = 30;
 int mapscroll       = 10;
+int mouse_sens      = 14;
 int replaydelay     = 2;
 
 void install_timers(int _speed_unit, int _speed_bullet, int _speed_mapscroll)

@@ -126,6 +126,7 @@ void loadini()
     speed_bullet         = get_config_int(gen,       "speed_bullet",    30);
     speed_mapscroll      = get_config_int(gen,       "speed_mapscroll", 30);
     mapscroll            = get_config_int(gen,       "mapscroll",       10);
+    mouse_sens           = get_config_int(gen,       "mouse_sens",      14);
 
     set_console_font_size(get_config_int(gen, "console_font_size", 9));
 
@@ -177,6 +178,7 @@ void saveini()
     set_config_int(gen,     "speed_bullet",    speed_bullet);
     set_config_int(gen,     "speed_mapscroll", speed_mapscroll);
     set_config_int(gen,     "mapscroll",       mapscroll);
+    set_config_int(gen,     "mouse_sens",      mouse_sens);
 
     set_config_string(gen,  "console_font_file", console_font_file.c_str());
     set_config_int(gen,     "console_font_size", get_console_font_size());               
@@ -216,10 +218,11 @@ int sethotseatplay()
 #define MAPSCROLL        5
 #define VOLUME			 6
 #define FONT_SIZE		 7
-#define FLAG_ETS		 8
-#define FLAG_SS			 9
-#define FLAG_TT			 10
-#define OK_BUTTON        11
+#define MOUSE_SENS       8
+#define FLAG_ETS         9
+#define FLAG_SS          10
+#define FLAG_TT          11
+#define OK_BUTTON        12
 #define MAX_VALUE        99
                                                  
 static DIALOG *config_dlg = NULL;                                                 
@@ -264,7 +267,7 @@ void configure()
     MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
     DIALOG config_dlg[] = {
         //                   x    y   w    h   fg  bg key flags d1 d2  dp   dp2   dp3
-        { d_shadow_box_proc, 0,   0, 550, 200, FG, BG, 0, 0,    0, 0, NULL, NULL, NULL },
+        { d_shadow_box_proc, 0,   0, 550, 224, FG, BG, 0, 0,    0, 0, NULL, NULL, NULL },
         { d_text_proc,       8,   8, 534,  16, FG, BG, 0, 0, 0, 0, (void *)_("Options"), NULL, NULL },
         { d_slider_pro2,    24,  40, 136,  16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
         { d_slider_pro2,    24,  64, 136,  16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
@@ -272,17 +275,19 @@ void configure()
         { d_slider_pro2,    24, 112, 136,  16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
         { d_slider_pro2,	24, 136, 136,  16, FG, BG, 0, 0, MAX_VALUE, 4, NULL, NULL, NULL },
         { d_slider_pro2,	24, 160, 136,  16, FG, BG, 0, 0, 24, 4, NULL, NULL, NULL },
+        { d_slider_pro2,    24, 184, 136,  16, FG, BG, 0, 0, 16, 4, NULL, NULL, NULL },
         { d_check_proc,	   340,  40, 192,  16, FG, BG, 0, 0, 1, 0, (void *)_("end turn sound"), NULL, NULL },
         { d_check_proc,	   340,  64, 192,  16, FG, BG, 0, 0, 1, 0, (void *)_("start sitting if second"), NULL, NULL },
         { d_check_proc,	   340,  88, 192,  16, FG, BG, 0, 0, 1, 0, (void *)_("icon panel tooltips"), NULL, NULL },
-        { d_button_proc,   400, 176,  64,  16, FG, BG, 0, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL },
-        { d_button_proc,   472, 176,  64,  16, FG, BG, 0, D_EXIT | D_GOTFOCUS, 0, 0, (void *)_("Cancel"), NULL, NULL },
+        { d_button_proc,   400, 200,  64,  16, FG, BG, 0, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL },
+        { d_button_proc,   472, 200,  64,  16, FG, BG, 0, D_EXIT | D_GOTFOCUS, 0, 0, (void *)_("Cancel"), NULL, NULL },
         { d_text_proc,     176,  44,  88,  16, FG, BG, 0, 0, 0, 0, (void *)_("movement speed"), NULL, NULL },
         { d_text_proc,     176,  68, 104,  16, FG, BG, 0, 0, 0, 0, (void *)_("fire speed"), NULL, NULL },
         { d_text_proc,     176,  92, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("scroll speed"), NULL, NULL },
         { d_text_proc,     176, 116, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("mapscroll points"), NULL, NULL },
         { d_text_proc,	   176, 140, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("music volume"), NULL, NULL },
         { d_text_proc,	   176, 164, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("console font size"), NULL, NULL },
+        { d_text_proc,	   176, 188, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("mouse sensitivity"), NULL, NULL },
         { d_yield_proc,      0,   0,   0,   0,  0,  0, 0, 0, 0, 0, NULL, NULL, NULL},
         { NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL }
     };
@@ -296,6 +301,7 @@ void configure()
     config_dlg[MAPSCROLL].d2       = mapscroll;
     config_dlg[VOLUME].d2		   = music_volume * MAX_VALUE / 255;
     config_dlg[FONT_SIZE].d2	   = get_console_font_size();
+    config_dlg[MOUSE_SENS].d2      = mouse_sens;
     if (FLAGS & F_ENDTURNSND) config_dlg[FLAG_ETS].flags = D_SELECTED;
     if (FLAGS & F_SECONDSIT) config_dlg[FLAG_SS].flags = D_SELECTED;
     if (FLAGS & F_TOOLTIPS) config_dlg[FLAG_TT].flags = D_SELECTED;
@@ -310,6 +316,8 @@ void configure()
 		mapscroll = config_dlg[MAPSCROLL].d2;
 		music_volume = config_dlg[VOLUME].d2 * 255 / MAX_VALUE;
 		set_console_font_size(config_dlg[FONT_SIZE].d2);
+		mouse_sens = config_dlg[MOUSE_SENS].d2;
+		set_mouse_sens(mouse_sens);
 		
 		if (config_dlg[FLAG_ETS].flags == D_SELECTED) FLAGS |= F_ENDTURNSND;
 		else FLAGS &= ~F_ENDTURNSND;

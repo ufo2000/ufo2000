@@ -229,7 +229,7 @@ int do_mainmenu()
 
 	set_mouse_sprite(mouser2);
 	set_palette((RGB *)datafile[DAT_MENUPAL_BMP].dat);
-	set_mouse_speed(1, 1);
+	set_mouse_sens(mouse_sens);
 
 	menuback = load_back_image(cfg_get_menu_image_file_name());
 	

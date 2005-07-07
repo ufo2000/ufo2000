@@ -249,7 +249,7 @@ void lobby_init_mouse()
 	BITMAP *mouser = get_image_from_lua_table("mouse");
 	set_mouse_sprite(mouser);
 	set_palette((RGB *)datafile[DAT_GAMEPAL_BMP].dat);
-	set_mouse_speed(1, 1);
+	set_mouse_sens(mouse_sens);
 	show_mouse(screen);
 	gui_fg_color = COLOR_BLACK1;
 	gui_bg_color = COLOR_WHITE;

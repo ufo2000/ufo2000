@@ -45,4 +45,9 @@ inline int mouse_inside(int x1, int y1, int x2, int y2)
 {
 	return ((mouse_x >= x1) && (mouse_x <= x2) && (mouse_y >= y1) && (mouse_y <= y2));
 }
+
+inline void set_mouse_sens(int sens)
+{
+    set_mouse_speed(16 - sens, 16 - sens);
+}
 #endif
