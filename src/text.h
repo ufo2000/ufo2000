@@ -56,8 +56,11 @@ void lua_message( const std::string &str1 );
 //! Write message into battlereport.txt
 void battle_report( const char *format, ... );
 
+#undef map
 //! Interface to LUA-gettext()
 const char *ufo2k_gettext(const char *str);
+extern std::map<const char *, const char *> translation_cache;
+#define map g_map
 
 //! Translations for placenames
 void Init_place_names();

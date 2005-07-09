@@ -694,14 +694,7 @@ void initmain(int argc, char *argv[])
     install_keyboard();
 
     // initialize language settings
-    lua_pushstring(L, "SetLanguage");
-    lua_gettable(L, LUA_GLOBALSINDEX);
-    if (lua_isfunction(L, -1)) {
-        lua_pushstring(L, get_config_string("System", "language", "en"));
-        lua_safe_call(L, 1, 0);
-    } else {
-        lua_pop(L, 1);
-    }
+    set_language(get_config_string("System", "language", "en"));
     
     if (get_config_int("Flags", "F_CLEARSEEN", 0)) FLAGS |= F_CLEARSEEN;      // clear seen every time
     if (get_config_int("Flags", "F_SHOWROUTE", 0)) FLAGS |= F_SHOWROUTE;      // show pathfinder matrix

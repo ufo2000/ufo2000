@@ -208,6 +208,20 @@ int sethotseatplay()
 	return 1;
 }
 
+void set_language(const char *lang)
+{
+    int stack_top = lua_gettop(L);
+    lua_pushstring(L, "SetLanguage");
+    lua_gettable(L, LUA_GLOBALSINDEX);
+    if (lua_isfunction(L, -1)) {
+        lua_pushstring(L, lang);
+        lua_safe_call(L, 1, 0);
+    }
+    lua_settop(L, stack_top);
+
+    translation_cache.clear();
+}
+
 #define FG 0
 #define BG 1
 
@@ -222,7 +236,8 @@ int sethotseatplay()
 #define FLAG_ETS         9
 #define FLAG_SS          10
 #define FLAG_TT          11
-#define OK_BUTTON        12
+#define LANG             12
+#define OK_BUTTON        13
 #define MAX_VALUE        99
                                                  
 static DIALOG *config_dlg = NULL;                                                 
@@ -259,11 +274,55 @@ static int d_slider_pro2(int msg, DIALOG *d, int c)
 	return v;
 }                                                   
 
+// Todo: automatic detection of available languages
+std::vector<std::string> language_codes;
+std::vector<std::string> language_names;
+
+inline void add_lng(std::string code, std::string name)
+{
+    language_codes.push_back(code);
+    language_names.push_back(name);
+}
+
+void init_languages()
+{
+    language_codes.clear(); language_names.clear();
+    add_lng("be", "Byelorussian");
+    add_lng("en", "English");
+    //add_lng("fr", "French");  // actually no translation, though ufo2000-fr.po is present
+    add_lng("de", "German");
+    add_lng("ru", "Russian");
+    add_lng("es", "Spanish");
+}
+
+static int lang_change_button_proc(int msg, DIALOG *d, int c)
+{
+    int result = d_button_proc(msg, d, c);
+    if (result == D_CLOSE) {
+        if (language_names.size() > 1)
+            d->d1 = gui_select_from_list(180, 120, "Language:", language_names, d->d1);
+
+        char *temp = new char[strlen(language_codes[d->d1].c_str())];
+        strcpy(temp, language_codes[d->d1].c_str());
+
+        d->w = text_length(font, temp) + 6;
+        d->dp = (void *)temp;
+
+        return D_REDRAW;
+    }
+    return result;
+}
+
 /**
  * Animation speed and other settings dialog available from battlescape
  */
 void configure()
 {
+    set_config_file(F("$(home)/ufo2000.ini"));
+    init_languages();
+    char *temp = new char[strlen(get_config_string("System", "language", "en"))];
+    strcpy(temp, get_config_string("System", "language", "en"));
+
     MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
     DIALOG config_dlg[] = {
         //                   x    y   w    h   fg  bg key flags d1 d2  dp   dp2   dp3
@@ -279,6 +338,7 @@ void configure()
         { d_check_proc,	   340,  40, 192,  16, FG, BG, 0, 0, 1, 0, (void *)_("end turn sound"), NULL, NULL },
         { d_check_proc,	   340,  64, 192,  16, FG, BG, 0, 0, 1, 0, (void *)_("start sitting if second"), NULL, NULL },
         { d_check_proc,	   340,  88, 192,  16, FG, BG, 0, 0, 1, 0, (void *)_("icon panel tooltips"), NULL, NULL },
+        { lang_change_button_proc, 340, 132, 100, 16, FG, BG, 0, D_EXIT, 0, 0, (void *)temp, NULL, NULL },
         { d_button_proc,   400, 200,  64,  16, FG, BG, 0, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL },
         { d_button_proc,   472, 200,  64,  16, FG, BG, 0, D_EXIT | D_GOTFOCUS, 0, 0, (void *)_("Cancel"), NULL, NULL },
         { d_text_proc,     176,  44,  88,  16, FG, BG, 0, 0, 0, 0, (void *)_("movement speed"), NULL, NULL },
@@ -288,6 +348,7 @@ void configure()
         { d_text_proc,	   176, 140, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("music volume"), NULL, NULL },
         { d_text_proc,	   176, 164, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("console font size"), NULL, NULL },
         { d_text_proc,	   176, 188, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("mouse sensitivity"), NULL, NULL },
+        { d_text_proc,	   364, 136, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("language"), NULL, NULL },
         { d_yield_proc,      0,   0,   0,   0,  0,  0, 0, 0, 0, 0, NULL, NULL, NULL},
         { NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL }
     };
@@ -305,6 +366,7 @@ void configure()
     if (FLAGS & F_ENDTURNSND) config_dlg[FLAG_ETS].flags = D_SELECTED;
     if (FLAGS & F_SECONDSIT) config_dlg[FLAG_SS].flags = D_SELECTED;
     if (FLAGS & F_TOOLTIPS) config_dlg[FLAG_TT].flags = D_SELECTED;
+    config_dlg[LANG].w             = text_length(font, temp) + 6;
 
 	centre_dialog(config_dlg);
 	set_dialog_color(config_dlg, COLOR_BLACK1, COLOR_WHITE);
@@ -327,6 +389,10 @@ void configure()
 			
 		if (config_dlg[FLAG_TT].flags == D_SELECTED) FLAGS |= F_TOOLTIPS;
 		else FLAGS &= ~F_TOOLTIPS;
+
+        std::string lang = language_codes[config_dlg[LANG].d1];
+		set_config_string("System", "language", lang.c_str());
+		set_language(lang.c_str());
 
 		uninstall_timers();
 		install_timers(speed_unit, speed_bullet, speed_mapscroll);

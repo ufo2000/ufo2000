@@ -555,6 +555,9 @@ function SetLanguage(lng)
     if lng and lng ~= "en" and string.find(lng, "^[a-z][a-z]$") and FileExists(fn) then
         load_translated_messages(TranslatedMessages, fn)
         Message("Language set to: %s", lng)
+    else
+        TranslatedMessages = {}
+        Message("Language reset")
     end
 
     fn = ufo2000_dir .. "/translations/tips-" .. lng .. ".txt";

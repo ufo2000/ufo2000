@@ -106,12 +106,18 @@ void battle_report( const char *format, ... )
  * to read the texts and translations from a .po - file.
  * The language-file to use is configured in ufo2000.ini.
  *
- * Todo: investigate performance, cache translated messages ...
+ * Todo: investigate performance ...
  */
+#undef map
+std::map<const char *, const char *> translation_cache;
+
 const char *ufo2k_gettext(const char *str)
 { 
     if (L == NULL)   // lua is not yet working 
         return str;  // return input-string unchanged
+
+    if (translation_cache.find(str) != translation_cache.end())
+        return translation_cache[str];
 
     int stack_top = lua_gettop(L);
 	lua_pushstring(L, "TranslatedMessages");
@@ -137,6 +143,7 @@ const char *ufo2k_gettext(const char *str)
   //char test[1000];
   //sprintf( test, "gettext: '%s'='%s'", str, translated_str );
   //lua_message( test );
+    translation_cache[str] = translated_str;
     return translated_str;
 };
 
