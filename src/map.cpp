@@ -372,14 +372,32 @@ void Map::draw(int show_cursor)
 						draw_sprite(screen2, cell_bmp, sx, sy - 6);
 					}
 
+                    // draw item
                     if (platoon_local->is_seen(lev, col, row)) {
-						int gy = sy + mcd(lev, col, row, 0)->T_Level;
-						gy += mcd(lev, col, row, 3)->T_Level;
-						//m_cell[lev][col][row]->get_place()->draw(sx, gy);
-						if (platoon_local->get_seen_item_index(lev, col, row) != -1)
-                            drawitem(Item::obdata_get_bitmap(platoon_local->get_seen_item_index(lev, col, row), "pMap"), sx, gy);
+						int gy = sy;
+                        if ((lev > 0) && mcd(lev, col, row, 0)->No_Floor && isStairs(lev - 1, col, row)) {
+                            gy += CELL_SCR_Z + mcd(lev - 1, col, row, 3)->T_Level; 
+                        } else {
+                            gy += mcd(lev, col, row, 0)->T_Level;
+                            gy += mcd(lev, col, row, 3)->T_Level;
+                        }
+
+						int it = platoon_local->get_seen_item_index(lev, col, row);
+						if (it != -1)
+                            drawitem(Item::obdata_get_bitmap(it, "pMap"), sx, gy);
+                            
+                        if (lev < level - 1) {
+                            if (mcd(lev + 1, col, row, 0)->No_Floor && isStairs(lev, col, row)) {
+                                gy = sy + mcd(lev, col, row, 3)->T_Level;
+                                
+                                it = platoon_local->get_seen_item_index(lev + 1, col, row);
+                                if(it != -1)
+                                    drawitem(Item::obdata_get_bitmap(it, "pMap"), sx, gy);
+                            }
+                        }
 					}
 
+                    // draw soldier
                     if (platoon_local->is_visible(lev, col, row)) {
 						if (m_cell[lev][col][row]->soldier_here())
 							m_cell[lev][col][row]->get_soldier()->draw();
@@ -1390,6 +1408,7 @@ int Map::find_ground(int lev, int col, int row)
 		}
 		lev--;
 	}
+	if (isStairs(lev, col, row)) lev++;
 	return lev;
 }
 

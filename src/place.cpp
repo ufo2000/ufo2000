@@ -176,8 +176,10 @@ int Place::put(Item *it, int xx, int yy)
     //If an item is dropped, make it fall down
     if (m_cell != NULL) {
         Position p = m_cell->get_position();
-        if ((p.level() > 0) && (map->mcd(p.level(), p.column(), p.row(), 0)->No_Floor)) 
-            return map->place(p.level()-1, p.column(), p.row())->put(it, xx, yy);
+        if ((p.level() > 0) && 
+            (map->mcd(p.level(), p.column(), p.row(), 0)->No_Floor) &&
+            !(map->isStairs(p.level()-1, p.column(), p.row())))
+                return map->place(p.level()-1, p.column(), p.row())->put(it, xx, yy);
     }
     
     
