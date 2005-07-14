@@ -110,6 +110,11 @@ void Minimap::redraw_minimap(BITMAP *bmp, int x, int y, int full_redraw_mode)
 			MINIMAP_STATE state = MINIMAP_STATE_UNEXPLORED;
 
 			for (int lev = 0; lev < m_map->level; lev++) {
+                int it = platoon_local->get_seen_item_index(lev, col, row);
+                if (it != -1 && Item::obdata_minimapMark(it))
+                    state = platoon_local->is_visible(lev, col, row) ?
+                            MINIMAP_STATE_ITEM_VISIBLE : MINIMAP_STATE_ITEM_SEEN;
+                    
 				if (scenario->is_target_on_minimap(lev, col, row, m_map)) {
 				    state = MINIMAP_STATE_SCTARGET;
 					break;
@@ -149,6 +154,12 @@ void Minimap::redraw_minimap(BITMAP *bmp, int x, int y, int full_redraw_mode)
 						rect(bmp, x + col * 4, y + row * 4, x + col * 4 + S + 1, y + row * 4 + S + 1, COLOR_WHITE);
 						rectfill(bmp, x + col * 4 + 1, y + row * 4 + 1, x + col * 4 + S, y + row * 4 + S, COLOR_RED00);
 						break;
+					case MINIMAP_STATE_ITEM_SEEN:
+                    case MINIMAP_STATE_ITEM_VISIBLE:
+                        blit(state == MINIMAP_STATE_ITEM_SEEN ? m_minimap_seen[l] : m_minimap_visible[l], bmp, col * 4, row * 4, x + col * 4, y + row * 4, 4, 4);
+                        for (int i = 0; i < 4; i++)
+                            putpixel(bmp, x + col * 4 + 1 + (i & 1), y + row * 4 + 1 + (i & 2) / 2, (i & 1) == (i & 2) / 2 ? COLOR_GRAY02 : COLOR_GRAY04);
+                        break;
 				}
 				m_minimap_state[col][row] = state;
 			}

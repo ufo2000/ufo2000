@@ -19,6 +19,7 @@ AddXcomItem {
 	rounds = 8,
 	weight = 3,
 	isGun = 1,
+	minimapMark = 1,
 	sound = "cv-pistol-shot",
 }
 
@@ -62,6 +63,7 @@ AddXcomItem {
 	rounds = 10,
 	weight = 4,
 	isGun = 1,
+	minimapMark = 1,
 	twoHanded = 1,
 	sound = "cv-rifle-shot",
 }
@@ -105,6 +107,7 @@ AddXcomItem {
 	rounds = 10,
 	weight = 18,
 	isGun = 1,
+	minimapMark = 1,
 	twoHanded = 1,
 	sound = "cv-heavy-cannon-shot",
 }
@@ -199,6 +202,7 @@ AddXcomItem {
 	rounds = 10,
 	weight = 20,
 	isGun = 1,
+	minimapMark = 1,
 	twoHanded = 1,
 	sound = "cv-auto-cannon-shot",
 }
@@ -292,6 +296,7 @@ AddXcomItem {
 	rounds = 10,
 	weight = 10,
 	isGun = 1,
+	minimapMark = 1,
 	twoHanded = 1,
 	sound = "rl-launch",
 }
@@ -391,6 +396,7 @@ AddXcomItem {
 	rounds = 10,
 	weight = 6,
 	isGun = 1,
+	minimapMark = 1,
 	sound = "laser-pistol-shot",
 }
 
@@ -414,6 +420,7 @@ AddXcomItem {
 	rounds = 10,
 	weight = 8,
 	isGun = 1,
+	minimapMark = 1,
 	twoHanded = 1,
 	sound = "laser-rifle-shot",
 }
@@ -437,6 +444,7 @@ AddXcomItem {
 	rounds = 10,
 	weight = 19,
 	isGun = 1,
+	minimapMark = 1,
 	twoHanded = 1,
 	sound = "laser-heavy-shot",
 }
@@ -629,6 +637,7 @@ AddXcomItem {
 	rounds = 10,
 	weight = 30,
 	isGun = 1,
+	minimapMark = 1,
 	twoHanded = 1,
 	sound = "laser-heavy-shot",
 }
@@ -692,6 +701,7 @@ AddXcomItem {
 	height = 3,
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	weight = 22,
+	minimapMark = 1,
 }
 
 AddXcomItem {
@@ -706,6 +716,7 @@ AddXcomItem {
 	height = 3,
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	weight = 24,
+	minimapMark = 1,
 }
 
 AddXcomItem {
@@ -720,6 +731,7 @@ AddXcomItem {
 	height = 3,
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	weight = 26,
+	minimapMark = 1,
 }
 
 AddXcomItem {
@@ -739,6 +751,7 @@ AddXcomItem {
 	rounds = 10,
 	weight = 10,
 	isGun = 1,
+	minimapMark = 1,
 	twoHanded = 1,
 	sound = "plasma-heavy-shot",
 }
@@ -783,6 +796,7 @@ AddXcomItem {
 	rounds = 10,
 	weight = 5,
 	isGun = 1,
+	minimapMark = 1,
 	twoHanded = 1,
 	sound = "plasma-rifle-shot",
 }
@@ -827,6 +841,7 @@ AddXcomItem {
 	rounds = 10,
 	weight = 3,
 	isGun = 1,
+	minimapMark = 1,
 	sound = "plasma-pistol-shot",
 }
 
@@ -913,6 +928,7 @@ AddXcomItem {
 	rounds = 10,
 	weight = 10,
 	isGun = 1,
+	minimapMark = 1,
 	twoHanded = 1,
 	sound = "alien-small-launch",
 }
@@ -1032,6 +1048,7 @@ AddXcomItem {
     rounds = 10,
     weight = 4,
     isGun = 1,
+	minimapMark = 1,
     twoHanded = 1,
     sound = "cv-rifle-shot",
 }
@@ -1070,6 +1087,7 @@ AddXcomItem {
 	height = 3,
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
 	weight = 30,
+	minimapMark = 1,
 }
 
 AddXcomItem {
@@ -1084,6 +1102,7 @@ AddXcomItem {
 	height = 3,
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
 	weight = 40,
+	minimapMark = 1,
 }
 
 AddXcomItem {
@@ -1098,6 +1117,7 @@ AddXcomItem {
 	height = 3,
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
 	weight = 25,
+	minimapMark = 1,
 }
 
 AddXcomItem {
@@ -1112,6 +1132,7 @@ AddXcomItem {
 	height = 3,
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
 	weight = 40,
+	minimapMark = 1,
 }
 
 AddXcomItem {
@@ -1126,6 +1147,7 @@ AddXcomItem {
 	height = 3,
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
 	weight = 20,
+	minimapMark = 1,
 }
 
 AddXcomItem {
@@ -1140,6 +1162,7 @@ AddXcomItem {
 	height = 3,
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
 	weight = 35,
+	minimapMark = 1,
 }
 
 AddXcomItem {
@@ -1154,6 +1177,7 @@ AddXcomItem {
 	height = 3,
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
 	weight = 40,
+	minimapMark = 1,
 }
 
 AddXcomItem {
@@ -1168,6 +1192,7 @@ AddXcomItem {
 	height = 3,
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
 	weight = 40,
+	minimapMark = 1,
 }
 
 AddXcomItem {
@@ -1462,6 +1487,7 @@ AddXcomItem {
 	height = 2,
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
 	weight = 30,
+	minimapMark = 1,
 }
 
 AddXcomItem {
@@ -1476,5 +1502,6 @@ AddXcomItem {
 	height = 2,
 	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
 	weight = 50,
+	minimapMark = 1,
 }
 

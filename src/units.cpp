@@ -716,6 +716,7 @@ void Units::execute_main(Map *map, int map_change_allowed)
 
         for (l = 0; l < map->level && (!map->passable(l, c, r) || map->isStairs(l, c, r)); l++) ;
         if (l == map->level) return;
+        if (!map->support_for_feet(l, c, r)) return;
 
 		for (int s = 0; s < size; s++) {
 			if (s == selected)

@@ -338,7 +338,7 @@ void configure()
         { d_check_proc,	   340,  40, 192,  16, FG, BG, 0, 0, 1, 0, (void *)_("end turn sound"), NULL, NULL },
         { d_check_proc,	   340,  64, 192,  16, FG, BG, 0, 0, 1, 0, (void *)_("start sitting if second"), NULL, NULL },
         { d_check_proc,	   340,  88, 192,  16, FG, BG, 0, 0, 1, 0, (void *)_("icon panel tooltips"), NULL, NULL },
-        { lang_change_button_proc, 340, 132, 100, 16, FG, BG, 0, D_EXIT, 0, 0, (void *)temp, NULL, NULL },
+        { lang_change_button_proc, 340, 132, 100, 16, FG, BG, 0, D_EXIT, -1, 0, (void *)temp, NULL, NULL },
         { d_button_proc,   400, 200,  64,  16, FG, BG, 0, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL },
         { d_button_proc,   472, 200,  64,  16, FG, BG, 0, D_EXIT | D_GOTFOCUS, 0, 0, (void *)_("Cancel"), NULL, NULL },
         { d_text_proc,     176,  44,  88,  16, FG, BG, 0, 0, 0, 0, (void *)_("movement speed"), NULL, NULL },
@@ -348,7 +348,7 @@ void configure()
         { d_text_proc,	   176, 140, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("music volume"), NULL, NULL },
         { d_text_proc,	   176, 164, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("console font size"), NULL, NULL },
         { d_text_proc,	   176, 188, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("mouse sensitivity"), NULL, NULL },
-        { d_text_proc,	   364, 136, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("language"), NULL, NULL },
+        { d_text_proc,	   372, 137, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("language"), NULL, NULL },
         { d_yield_proc,      0,   0,   0,   0,  0,  0, 0, 0, 0, 0, NULL, NULL, NULL},
         { NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL }
     };
@@ -390,9 +390,11 @@ void configure()
 		if (config_dlg[FLAG_TT].flags == D_SELECTED) FLAGS |= F_TOOLTIPS;
 		else FLAGS &= ~F_TOOLTIPS;
 
-        std::string lang = language_codes[config_dlg[LANG].d1];
-		set_config_string("System", "language", lang.c_str());
-		set_language(lang.c_str());
+        if (config_dlg[LANG].d1 != -1) {
+            std::string lang = language_codes[config_dlg[LANG].d1];
+            set_config_string("System", "language", lang.c_str());
+            set_language(lang.c_str());
+        }
 
 		uninstall_timers();
 		install_timers(speed_unit, speed_bullet, speed_mapscroll);

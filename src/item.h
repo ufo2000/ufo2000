@@ -103,6 +103,7 @@ public:
     static int obdata_isHandToHand(int index) { return obdata_get_int(index, "isHandToHand"); }
     static int obdata_disappear(int index) { return obdata_get_int(index, "disappear"); }
     static int obdata_isGun(int index) { return obdata_get_int(index, "isGun"); }
+    static int obdata_minimapMark(int index) { return obdata_get_int(index, "minimapMark"); }
 
     char* get_damage_name();
     //! Get list of ammo types that can be used with this weapon
