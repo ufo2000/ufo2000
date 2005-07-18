@@ -46,11 +46,11 @@ public:
         const std::string &host,
         const std::string &proxy,
         std::string &error_message);
-    bool send_packet(NLulong id, const std::string &packet);
+    bool send_packet(NLuint id, const std::string &packet);
     bool send_delayed_packet();
     bool flush_sent_packets();
-    int recv_packet(NLulong &id, std::string &packet);
-    int wait_packet(NLulong &id, std::string &buffer);
+    int recv_packet(NLuint &id, std::string &packet);
+    int wait_packet(NLuint &id, std::string &buffer);
 };
 
 /**
@@ -82,14 +82,14 @@ public:
     ServerClient(ServerDispatch *server, NLsocket socket);
     virtual ~ServerClient();
 //  This function sends a data packet to the specified recipient
-    bool send_packet_back(NLulong id, const std::string &packet);
+    bool send_packet_back(NLuint id, const std::string &packet);
 //  This function sends a packet to all users
-    bool send_packet_all(NLulong id, const std::string &packet);
+    bool send_packet_all(NLuint id, const std::string &packet);
 //  This function sends a packet to the opponent of this user
-    bool send_packet_opponent(NLulong id, const std::string &packet);
+    bool send_packet_opponent(NLuint id, const std::string &packet);
 
 //  Function that handles packets received from this client 
-    virtual bool recv_packet(NLulong id, const std::string &packet) = 0;
+    virtual bool recv_packet(NLuint id, const std::string &packet) = 0;
 };
 
 /**

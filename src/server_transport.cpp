@@ -37,6 +37,23 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "server_protocol.h"
 #include "server_config.h"
 
+/**
+ * $$$ Hack - to workaround HawkNL bug - sizeof(NLulong) == 8 on 64-bit systems
+ * We use NLuint as 32-bit type here
+ */
+static NLuint nlSwapi(NLuint x)
+{
+    assert(sizeof(NLuint) == 4);
+    if (nlSwaps(0x1122) != 0x1122)
+    {
+        // swap is needed
+        return (NLuint)(((((NLuint)x) & 0x000000ff) << 24) | ((((NLuint)x) & 0x0000ff00) << 8) | 
+            ((((NLuint)x) & 0x00ff0000) >> 8) | ((((NLuint)x) & 0xff000000) >> 24));
+    } else {
+        // swap is not needed
+        return x;
+    }
+}
 
 ServerClient::ServerClient(ServerDispatch *server, NLsocket socket)
     :m_socket(socket), m_server(server)
@@ -68,28 +85,28 @@ ServerClient::~ServerClient()
 
 #define PACKET_HEADER_SIZE 8
 
-static int stream_to_packet(std::string &stream, NLulong &id, std::string &packet)
+static int stream_to_packet(std::string &stream, NLuint &id, std::string &packet)
 {
     if (stream.size() < PACKET_HEADER_SIZE) return 0;
 
     const char *p = stream.data();
 
-    NLulong size = nlSwapl(*(NLulong *)p);
+    NLuint size = nlSwapi(*(NLuint *)p);
     if (size > PACKET_SIZE_LIMIT) return -1;
 
 //  if the packet is still not completely transmitted, exit from this cycle
     if (stream.size() < PACKET_HEADER_SIZE + size) return 0;
 
-    id = nlSwapl(*(NLulong *)(p + 4));
+    id = nlSwapi(*(NLuint *)(p + 4));
     packet = std::string(p + PACKET_HEADER_SIZE, size);
     stream.erase(stream.begin(), stream.begin() + PACKET_HEADER_SIZE + size);
     return 1;
 }
 
-static bool packet_to_stream(std::string &stream, NLulong id, const std::string &packet)
+static bool packet_to_stream(std::string &stream, NLuint id, const std::string &packet)
 {
-    NLulong size = nlSwapl(packet.size());
-    id = nlSwapl(id);
+    NLuint size = nlSwapi(packet.size());
+    id = nlSwapi(id);
     
     stream += std::string((const char *)&size, sizeof(size));
     stream += std::string((const char *)&id, sizeof(id));
@@ -116,7 +133,7 @@ void ServerDispatch::HandleSocket(NLsocket socket)
     ServerClient *client = m_clients_by_socket[socket];
     std::string &stream = client->m_stream;
 
-    NLulong id;
+    NLuint id;
     std::string packet;
     int err;
 
@@ -291,7 +308,7 @@ void ServerDispatch::Run(NLsocket sock)
     }
 }
 
-bool ServerClient::send_packet_back(NLulong id, const std::string &packet)
+bool ServerClient::send_packet_back(NLuint id, const std::string &packet)
 {
     packet_to_stream(m_stream_out, id, packet);
     return stream_to_socket(m_socket, m_stream_out);
@@ -300,7 +317,7 @@ bool ServerClient::send_packet_back(NLulong id, const std::string &packet)
 /**
  * Sent packet to all other successfully logged in players
  */
-bool ServerClient::send_packet_all(NLulong id, const std::string &packet)
+bool ServerClient::send_packet_all(NLuint id, const std::string &packet)
 {
     std::map<std::string, ServerClient *>::iterator it = m_server->m_clients_by_name.begin();
     while (it != m_server->m_clients_by_name.end()) {
@@ -399,7 +416,7 @@ ClientServer::~ClientServer()
         nlClose(m_socket);
 }
 
-bool ClientServer::send_packet(NLulong id, const std::string &packet)
+bool ClientServer::send_packet(NLuint id, const std::string &packet)
 {
     packet_to_stream(m_stream_out, id, packet);
     return stream_to_socket(m_socket, m_stream_out);
@@ -419,7 +436,7 @@ bool ClientServer::flush_sent_packets()
     return true;
 }
 
-int ClientServer::recv_packet(NLulong &id, std::string &packet)
+int ClientServer::recv_packet(NLuint &id, std::string &packet)
 {
     int readlen;
     NLbyte buffer[128];
@@ -450,7 +467,7 @@ int ClientServer::recv_packet(NLulong &id, std::string &packet)
     return result;
 }
 
-int ClientServer::wait_packet(NLulong &id, std::string &buffer)
+int ClientServer::wait_packet(NLuint &id, std::string &buffer)
 {
     while (true) {
         if (!send_delayed_packet()) return -1;

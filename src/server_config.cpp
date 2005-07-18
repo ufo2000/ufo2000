@@ -77,10 +77,10 @@ SERVER_CONFIG_VARIABLE(daemonize,           1);
 
 struct ip_info
 {
-    NLulong ip;
-    NLulong mask;
+    NLuint ip;
+    NLuint mask;
     ip_info(): ip(0), mask(0xFFFFFFFF) { }
-    ip_info(NLulong _ip, NLulong _mask): ip(_ip), mask(_mask) { }
+    ip_info(NLuint _ip, NLuint _mask): ip(_ip), mask(_mask) { }
 };
 
 static std::vector<ip_info>  accept_ip;
@@ -92,7 +92,7 @@ static std::string server_log_pathname;
 /**
  * Decode string into IP-address and mask
  */
-static bool decode_ip(const char *buffer, NLulong &ip, NLulong &mask)
+static bool decode_ip(const char *buffer, NLuint &ip, NLuint &mask)
 {
     unsigned int p1, p2, p3, p4, x;
     if (sscanf(buffer, "%u.%u.%u.%u /%u", &p1, &p2, &p3, &p4, &x) == 5) {
@@ -110,7 +110,7 @@ static bool decode_ip(const char *buffer, NLulong &ip, NLulong &mask)
     return false;
 }
 
-static bool check_ip_match(NLulong ip, const ip_info &info)
+static bool check_ip_match(NLuint ip, const ip_info &info)
 {
     return (ip & info.mask) == (info.ip & info.mask);
 }
@@ -194,7 +194,7 @@ void load_config(const std::string &pathname)
                 accept_user.insert(std::pair<std::string, std::string>(login, password));
             }*/
         } else if (var == "reject_ip") {
-            NLulong ip, mask;
+            NLuint ip, mask;
             if (!decode_ip(val.c_str(), ip, mask)) {
                 server_log("invalid ip address format in config: %s\n", val.c_str());
             } else {
@@ -202,7 +202,7 @@ void load_config(const std::string &pathname)
                 reject_ip.push_back(ip_info(ip, mask));
             }
         } else if (var == "accept_ip") {
-            NLulong ip, mask;
+            NLuint ip, mask;
             if (!decode_ip(val.c_str(), ip, mask)) {
                 server_log("invalid ip address format in config: %s\n", val.c_str());
             } else {
@@ -225,7 +225,7 @@ void load_config(const std::string &pathname)
 
 bool validate_ip(const std::string &ip_string)
 {
-    NLulong ip = 0;
+    NLuint ip = 0;
     unsigned int p1, p2, p3, p4;
     if (sscanf(ip_string.c_str(), "%u.%u.%u.%u", &p1, &p2, &p3, &p4) != 4)
         return false;

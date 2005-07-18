@@ -60,25 +60,25 @@ class Server_Game_UFO;
 
 class ServerClientUfo: public ServerClient
 {
-	std::set<std::string>  m_challenged_opponents;
-	bool                   m_busy;
+    std::set<std::string>  m_challenged_opponents;
+    bool                   m_busy;
 public:
-	static int             m_games_started;
-	static std::string     m_last_user_name;
-	static NLtime          m_last_user_disconnect_time;
-	
-	ServerClientUfo(ServerDispatch *d, NLsocket s)
-		: ServerClient(d, s), m_busy(false), game(NULL) { }
-	virtual ~ServerClientUfo();
-	bool recv_packet(NLulong id, const std::string &packet);
+    static int             m_games_started;
+    static std::string     m_last_user_name;
+    static NLtime          m_last_user_disconnect_time;
+    
+    ServerClientUfo(ServerDispatch *d, NLsocket s)
+        : ServerClient(d, s), m_busy(false), game(NULL) { }
+    virtual ~ServerClientUfo();
+    bool recv_packet(NLuint id, const std::string &packet);
 
     // TODO - return right opponent.
-	bool is_in_server_chat() { return !m_busy; }
-	Server_Game_UFO* game;
-	long int session_id;
-	// game_id for user who doesn't really play the game but can send debug info (debug replay)
-	long int debug_game_id;
-	int position;
+    bool is_in_server_chat() { return !m_busy; }
+    Server_Game_UFO* game;
+    long int session_id;
+    // game_id for user who doesn't really play the game but can send debug info (debug replay)
+    long int debug_game_id;
+    int position;
 
 private:
     bool add_user(const std::string &username, const std::string &password);
@@ -88,14 +88,14 @@ private:
 class ClientServerUfo: public ClientServer
 {
 public:
-	bool login(const std::string &name, const std::string &pass,
-		std::string &error_message);
-	bool message(const std::string &text);
-	bool challenge(const std::string &user);
-	bool decline_challenge(const std::string &user);
-	//! Send request to server to resume unfinished game
-	bool resume_game();
-	bool resume_game_debug(std::string game_id);
+    bool login(const std::string &name, const std::string &pass,
+        std::string &error_message);
+    bool message(const std::string &text);
+    bool challenge(const std::string &user);
+    bool decline_challenge(const std::string &user);
+    //! Send request to server to resume unfinished game
+    bool resume_game();
+    bool resume_game_debug(std::string game_id);
 };
 
 #endif
