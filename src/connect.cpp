@@ -205,7 +205,6 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 
 	int mouse_leftr = 1, mouse_rightr = 1;
 	int DONE = 0;
-    int vol;
 	//HOST = 0;
 	FINISH_PLANNER = 0;
 
@@ -497,4 +496,3 @@ void Connect::draw_pd_info(void *_pd, int gx, int gy)
     textprintf(screen2, g_small_font, gx, gy + 10, COLOR_WHITE, 
                _("Total men points=%d"), points);
 }
-
