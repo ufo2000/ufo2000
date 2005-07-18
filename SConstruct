@@ -11,7 +11,10 @@ SConsignFile()
 SetOption('implicit_cache', 1)
 SetOption('max_drift', 1)
 
-env = Environment()
+if str(Platform()) == "win32":
+    env = Environment(tools=['mingw'])
+else:
+    env = Environment()
 
 HAVE_DUMBOGG=False
 HAVE_TTF=False
@@ -25,7 +28,7 @@ def getsources():
     for root, dirs, files in os.walk('src'):
         for name in files:
             if name[-4:] == ".cpp" or name[-2:] == ".c":
-                if name != 'server_main.cpp':
+                if name != 'server_main.cpp' and name != 'lua.c':
                     allsource.append(os.path.join('obj', root, name))
         if 'dumbogg' in dirs and not HAVE_DUMBOGG:
             dirs.remove('dumbogg')
@@ -37,14 +40,13 @@ def getsources():
             dirs.remove('.svn')
         if 'luac' in dirs:
             dirs.remove('luac')
-        if 'lua' in dirs:
-            dirs.remove('lua')
 
     return allsource
 
 game_sources = getsources()
 
-env.Append(LIBS = ["expat", "lua", "lualib", "sqlite3", "png", "z"])
+env.Append(LIBS = ["expat", "sqlite3", "png", "z"])
+env.Append(CPPPATH=["src/lua"])
 
 if env["CC"] == "gcc":
     env.Append(CCFLAGS = ["-funsigned-char", "-Wall", "-Wno-deprecated-declarations"])
@@ -60,7 +62,7 @@ if str(Platform()) == "win32":
         "kernel32", "user32", "gdi32", "comdlg32", "ole32", "dinput", "ddraw",
         "dxguid", "winmm", "dsound"])
     if env["CC"] == "gcc":
-        game_sources.append("exchndl/exchndl.c")
+        game_sources.append("obj/src/exchndl/exchndl.c")
         env.Append(LIBS = ["bfd", "iberty"])
         env.Append(CPPPATH=["#mingw-libs/include"])
         env.Append(LIBPATH=["#mingw-libs/lib"])
