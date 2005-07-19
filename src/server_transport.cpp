@@ -44,7 +44,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 static NLuint nlSwapi(NLuint x)
 {
     assert(sizeof(NLuint) == 4);
-    if (nlSwaps(0x1122) != 0x1122)
+    int tmp = 1;
+    if (*(char *)&tmp == 1)
     {
         // swap is needed
         return (NLuint)(((((NLuint)x) & 0x000000ff) << 24) | ((((NLuint)x) & 0x0000ff00) << 8) | 
@@ -368,7 +369,7 @@ bool ClientServer::connect(
         std::string reply;
 
         bool fail_flag = true;
-        for (retry = 0; retry < 50; retry++) {
+        for (retry = 0; retry < 100; retry++) {
             if (!stream_to_socket(m_socket, request)) return false;
             if (request.empty()) { fail_flag = false; break; }
             usleep(50000);
@@ -377,7 +378,7 @@ bool ClientServer::connect(
         if (fail_flag) return false;
 
         fail_flag = true;
-        for (retry = 0; retry < 50; retry++) {
+        for (retry = 0; retry < 100; retry++) {
             int readlen = nlRead(m_socket, tmp, sizeof(tmp));
             if (readlen > 0) {
                 reply += std::string(tmp, tmp + readlen);
@@ -449,7 +450,7 @@ int ClientServer::recv_packet(NLuint &id, std::string &packet)
     if (stream_size_before == m_stream.size() && readlen == NL_INVALID)
     {
         NLenum err = nlGetError();
-        if (err == NL_MESSAGE_END || err == NL_SOCK_DISCONNECT)
+        if (err == NL_SOCK_DISCONNECT)
             return -1;
     }
 
@@ -469,10 +470,11 @@ int ClientServer::recv_packet(NLuint &id, std::string &packet)
 
 int ClientServer::wait_packet(NLuint &id, std::string &buffer)
 {
-    while (true) {
-        if (!send_delayed_packet()) return -1;
+    for (int retry = 0; retry < 100; retry++) {
+        if (!flush_sent_packets()) return -1;
         int res = recv_packet(id, buffer);
         if (res != 0) return res;
-        usleep(1);
+        usleep(50000);
     }
+    return -1;
 }
