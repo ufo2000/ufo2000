@@ -44,7 +44,6 @@ void load_config(const std::string &pathname);
 bool split_with_colon(const std::string &str, std::string &login, std::string &pass);
 bool validate_ip(const std::string &ip);
 void server_log(const char *fmt, ...);
-void strip_server_log(double delta_time);
 
 #define LOG_EXCEPTION(x) server_log("Exception Occured at %s:%d - %s\n", __FILE__, __LINE__, x)
 

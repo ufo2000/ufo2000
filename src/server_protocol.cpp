@@ -192,12 +192,6 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &packet)
         }
     }
 
-    
-    if ((id == SRV_GAME_PACKET) && (strstr(packet.c_str(), "_Xmes_") != NULL))
-        server_log("packet from %s {game chat message}\n", m_name.c_str(), (int)id);
-    else
-        server_log("packet from %s {id=%d, data=%s}\n", m_name.c_str(), (int)id, packet.c_str());
-
 //  only SRV_LOGIN packet is accepted from not authenticated users
     if (m_name == "" && id != SRV_LOGIN) {
         m_error = true;

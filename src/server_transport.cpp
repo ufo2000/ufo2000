@@ -43,7 +43,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 static NLuint nlSwapi(NLuint x)
 {
-    assert(sizeof(NLuint) == 4);
     int tmp = 1;
     if (*(char *)&tmp == 1)
     {
@@ -224,16 +223,7 @@ void ServerDispatch::Run(NLsocket sock)
 
     m_group = nlGroupCreate();
 
-    time_t last_log_strip_time = time(NULL);
-    strip_server_log(g_srv_keep_log_time * 24 * 3600);
-
     while (1) {
-
-    //  Strip server log every 8 hours
-        if (difftime(time(NULL), last_log_strip_time) > 8 * 3600) {
-            last_log_strip_time = time(NULL);
-            strip_server_log(g_srv_keep_log_time * 24 * 3600);
-        }
 
         if (g_server_reload_config_flag) {
             load_config();
@@ -272,7 +262,7 @@ void ServerDispatch::Run(NLsocket sock)
 
             if (readlen == NL_INVALID) {
                 NLenum err = nlGetError();
-                if (err == NL_MESSAGE_END || err == NL_SOCK_DISCONNECT) {
+                if (err == NL_SOCK_DISCONNECT) {
                     client->m_error = true;
                 } else {
                     server_log("socket read error %d: user '%s' from %s\n",

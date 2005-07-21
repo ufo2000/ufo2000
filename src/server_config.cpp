@@ -266,51 +266,6 @@ void server_log(const char *fmt, ...)
     va_end(arglist);
 }
 
-/**
- * Strip outdated messages from server log file
- * (only the messages that are not older than delta_time seconds
- * will remain)
- *
- * (lxnt) This does not really belong to server, but for the sake of
- * poor windows' users' souls, we do it anyway. Requires write access
- * to the log file directory.
- */
-void strip_server_log(double delta_time)
-{
-    time_t now = time(NULL);
-    std::string tmp_name;
-
-    tmp_name.assign(server_log_pathname);
-    tmp_name.append(".tmp");
-
-    char buffer[1000];
-    FILE *flog = fopen(server_log_pathname.c_str(), "rt");
-    if (flog == NULL)
-        return;
-    FILE *flog_tmp = fopen(tmp_name.c_str(), "wt");
-    if (flog_tmp == NULL) {
-        fclose(flog);
-        return;
-    }
-
-    int flag = 0;
-    while (fgets(buffer, 999, flog)) {
-        tm t; t.tm_isdst = 0;
-        if (!flag && sscanf(buffer, "%d/%d/%d %d:%d:%d", &t.tm_mday, &t.tm_mon, &t.tm_year,
-                            &t.tm_hour, &t.tm_min, &t.tm_sec) == 6) {
-            t.tm_mon--; t.tm_year -= 1900;
-            if (difftime(now,  mktime(&t)) < delta_time) flag = 1;
-        }
-        if (flag) fprintf(flog_tmp, "%s", buffer);
-    }
-
-    fclose(flog);
-    fclose(flog_tmp);
-
-    remove(server_log_pathname.c_str());
-    rename(tmp_name.c_str(), server_log_pathname.c_str());
-}
-
 bool split_with_colon(const std::string &str, std::string &login, std::string &password)
 {
     bool colon_found = false;
