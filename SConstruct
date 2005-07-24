@@ -9,7 +9,15 @@
 import os
 import os.path
 
-build_dir = ".build-dir"
+debug_build = ARGUMENTS.get('debug', 0)
+
+if debug_build:
+    build_dir = ".build-dir-debug"
+    exe_name = "ufo2000-debug"
+else:
+    build_dir = ".build-dir"
+    exe_name = "ufo2000"
+
 BuildDir(build_dir, ".", duplicate=0)
 SConsignFile()
 SetOption('implicit_cache', 1)
@@ -26,32 +34,48 @@ if str(Platform()) == "win32":
 else:
     env = Environment()
 
+env.ParseConfig("allegro-config --cflags --libs")
+env.ParseConfig("freetype-config --cflags --libs")
+
+HAVE_TTF = True
+HAVE_DUMBOGG = False
+
+conf_error = False
 conf = env.Configure()
-if not conf.CheckCHeader("expat.h"):
-    print "You need 'expat' library installed"
-    Exit(1)
-if not conf.CheckCHeader("zlib.h"):
-    print "You need 'zlib' library installed (http://www.zlib.net)"
-    Exit(1)
-if not conf.CheckCHeader("png.h"):
-    print "You need 'libpng' library installed"
-    Exit(1)
-if not conf.CheckCHeader("sqlite3.h"):
+if not conf.CheckHeader("expat.h"):
+    print "You need to install 'expat' library (http://expat.sourceforge.net)"
+    conf_error = True
+if not conf.CheckHeader("zlib.h"):
+    print "You need to install 'zlib' library (http://www.zlib.net)"
+    conf_error = True
+if not conf.CheckHeader("png.h"):
+    print "You need to install 'libpng' library (http://www.libpng.org)"
+    conf_error = True
+if not conf.CheckHeader("sqlite3.h"):
     print "You need 'sqlite3' library installed (http://www.sqlite.org)"
+    conf_error = True
+if not conf.CheckHeader("allegro.h"):
+    print "You need 'allegro' library installed (http://www.talula.demon.co.uk/allegro)"
+    conf_error = True
+if not conf.CheckHeader("nl.h"):
+    print "You need 'HawkNL' library installed (http://www.hawksoft.com/hawknl)"
+    conf_error = True
+
+if conf_error:
+    if str(Platform()) == "win32":
+        if env["CC"] == "gcc":
+            print "---"
+            print "All of the needed libraries can be downloaded in a single package here:"
+            print "http://ufo2000.lxnt.info/files/mingw-libs.zip"
     Exit(1)
-if not conf.CheckCHeader("allegro.h"):
-    print "You need 'allegro' library installed (http://www.sqlite.org)"
-    Exit(1)
-if not conf.CheckCHeader("nl.h"):
-    print "You need 'HawkNL' library installed"
-    Exit(1)
+
+if not conf.CheckHeader("ft2build.h"):
+    print "Library 'freetype2' not found, building without truetype fonts support"
+    HAVE_TTF = False
+
 env = conf.Finish()
 
-HAVE_DUMBOGG=False
-HAVE_TTF=True
-
 def getsources():
-
     allsource = []
     prefix = ''
     for root, dirs, files in os.walk('src'):
@@ -69,7 +93,6 @@ def getsources():
             dirs.remove('.svn')
         if 'luac' in dirs:
             dirs.remove('luac')
-
     return allsource
 
 game_sources = getsources()
@@ -83,9 +106,11 @@ if HAVE_TTF:
 
 if env["CC"] == "gcc":
     env.Append(CCFLAGS = ["-funsigned-char", "-Wall", "-Wno-deprecated-declarations"])
+    if debug_build:
+        env.Append(CCFLAGS = ["-g"])
 
 if env["CC"] == "cl":
-    env.Append(CPPFLAGS = ["-O2", "-J", "-GX", "-MD"])
+    env.Append(CPPFLAGS = ["-O2", "-J", "-GX", "-MT"])
 
 if str(Platform()) == "win32":
     env.Append(CPPDEFINES = ["WIN32", "ALLEGRO_STATICLINK"])
@@ -101,9 +126,6 @@ else:
     env.Append(CPPDEFINES = ["LINUX"])
     env.Append(LIBS = ["NL"])
     env.Append(LINKFLAGS=["-pthread"])
-    env.ParseConfig("allegro-config --cflags --libs")
-    if HAVE_TTF:
-        env.ParseConfig("freetype-config --cflags --libs")
 
 if str(Platform()) == "win32":
     if env["CC"] == "gcc":
@@ -114,12 +136,63 @@ if str(Platform()) == "win32":
 game_sources_prefixed = []
 for filename in game_sources: game_sources_prefixed.append(os.path.join(build_dir, filename))
 
-ufo2000 = env.Program("#ufo2000", game_sources_prefixed)
+ufo2000 = env.Program("#" + exe_name, game_sources_prefixed)
 
-# Generate MSVC project file
+##############################################################################
+# Generate Dev-C++ project file
+##############################################################################
 
-envp = Environment()
-envp.MSVSProject(target = 'ufo2000' + envp['MSVSPROJECTSUFFIX'],
-                          srcs = game_sources,
-                          buildtarget = ufo2000,
-                          variant = 'Release')
+f = open("ufo2000.dev", "w")
+f.write("""
+[Project]
+FileName=ufo2000.dev
+Name=ufo2000
+UnitCount=%d
+Type=1
+Ver=1
+ObjFiles=
+Includes=
+Libs=
+PrivateResource=
+ResourceIncludes=
+MakeIncludes=
+Compiler=
+CppCompiler=
+Linker=
+IsCpp=1
+Icon=
+ExeOutput=
+ObjectOutput=
+OverrideOutput=1
+OverrideOutputName=ufo2000-debug.exe
+HostApplication=
+Folders=
+CommandLine=
+UseCustomMakefile=1
+CustomMakefile=makefile.scons
+IncludeVersionInfo=0
+SupportXPThemes=0
+CompilerSet=0
+CompilerSettings=0000000000000000000000
+""" % len(game_sources))
+
+i = 1
+for filename in game_sources:
+    f.write("""
+[Unit%d]
+FileName=%s
+CompileCpp=1
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+""" % (i, filename))
+    i += 1
+
+f.close()
+
+f = open("makefile.scons", "w")
+f.write("all:\n\tscons debug=1\nclean:\n\tscons -c debug=1")
+f.close()
