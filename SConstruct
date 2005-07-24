@@ -38,40 +38,83 @@ env.ParseConfig("allegro-config --cflags --libs")
 env.ParseConfig("freetype-config --cflags --libs")
 
 HAVE_TTF = True
-HAVE_DUMBOGG = False
+HAVE_DUMBOGG = True
+
+##############################################################################
+# Download and extract archive with thirdparty libraries
+##############################################################################
+
+def download_libs(libdirname):
+    import urllib
+    import zipfile
+    try:
+        zipname = libdirname + ".zip"
+        if not os.access(zipname, os.F_OK):
+            urllib.urlretrieve("http://ufo2000.lxnt.info/files/" + zipname, zipname)
+        zf = zipfile.ZipFile(zipname, "r")
+        if zf.testzip():
+            os.remove(zipname)
+            return False
+        for root, dirs, files in os.walk(libdirname, topdown=False):
+            for name in files:
+                os.remove(os.path.join(root, name))
+            for name in dirs:
+                os.rmdir(os.path.join(root, name))
+        for filename in zf.namelist():
+            data = zf.read(filename)
+            if data:
+                if not os.access(os.path.dirname(filename), os.F_OK):
+                    os.makedirs(os.path.dirname(filename))
+                fh = open(filename, "wb")
+                fh.write(data)
+                fh.close()
+    except:
+        return False
+    return True
 
 conf_error = False
 conf = env.Configure()
-if not conf.CheckHeader("expat.h"):
-    print "You need to install 'expat' library (http://expat.sourceforge.net)"
-    conf_error = True
-if not conf.CheckHeader("zlib.h"):
-    print "You need to install 'zlib' library (http://www.zlib.net)"
-    conf_error = True
-if not conf.CheckHeader("png.h"):
-    print "You need to install 'libpng' library (http://www.libpng.org)"
-    conf_error = True
-if not conf.CheckHeader("sqlite3.h"):
-    print "You need 'sqlite3' library installed (http://www.sqlite.org)"
-    conf_error = True
-if not conf.CheckHeader("allegro.h"):
-    print "You need 'allegro' library installed (http://www.talula.demon.co.uk/allegro)"
-    conf_error = True
-if not conf.CheckHeader("nl.h"):
-    print "You need 'HawkNL' library installed (http://www.hawksoft.com/hawknl)"
-    conf_error = True
 
-if conf_error:
-    if str(Platform()) == "win32":
-        if env["CC"] == "gcc":
-            print "---"
-            print "All of the needed libraries can be downloaded in a single package here:"
-            print "http://ufo2000.lxnt.info/files/mingw-libs.zip"
-    Exit(1)
+def check_required_libs(conf):
+    if not conf.CheckHeader("allegro.h"):
+        print "Required library not found: 'allegro' (http://www.talula.demon.co.uk/allegro)"
+        return False
+    if not conf.CheckHeader("nl.h"):
+        print "Required library not found: 'HawkNL' (http://www.hawksoft.com/hawknl)"
+        return False
+    if not conf.CheckHeader("expat.h"):
+        print "Required library not found: 'expat' (http://expat.sourceforge.net)"
+        return False
+    if not conf.CheckHeader("zlib.h"):
+        print "Required library not found: 'zlib' (http://www.zlib.net)"
+        return False
+    if not conf.CheckHeader("png.h"):
+        print "Required library not found: 'libpng' (http://www.libpng.org)"
+        return False
+    if not conf.CheckHeader("sqlite3.h"):
+        print "Required library not found: 'sqlite3' (http://www.sqlite.org)"
+        return False
+    return True
+
+if not check_required_libs(conf):
+    if str(Platform()) == "win32" and env["CC"] == "gcc":
+        print("Trying to download 'mingw-libs.zip' package, please wait...")
+        if not download_libs("mingw-libs"):
+            print("Download failed!")
+            Exit(1)
+        print("Success, running configure step again...")
+        if not check_required_libs(conf):
+            print("Still no luck, giving up :(")
+            Exit(1)
+    else:
+        Exit(1)
 
 if not conf.CheckHeader("ft2build.h"):
     print "Library 'freetype2' not found, building without truetype fonts support"
     HAVE_TTF = False
+if not conf.CheckHeader("dumb.h") or not conf.CheckHeader("vorbis/vorbisfile.h"):
+    print "Either 'DUMB' or 'Ogg Vorbis' library not found, building without music support"
+    HAVE_DUMBOGG = False
 
 env = conf.Finish()
 
@@ -103,6 +146,9 @@ env.Append(CPPDEFINES = ["DEBUGMODE", "HAVE_PNG"])
 if HAVE_TTF:
     env.Append(CPPDEFINES = ["HAVE_FREETYPE", "GLYPH_TARGET=GLYPH_TARGET_ALLEGRO", "GK_NO_LEGACY"])
     game_sources.append("src/glyphkeeper/glyph.c")
+if HAVE_DUMBOGG:
+    env.Append(CPPDEFINES = ["HAVE_DUMBOGG"])
+    env.Append(LIBS = ["vorbisfile", "vorbis", "ogg", "aldmb", "dumb"])
 
 if env["CC"] == "gcc":
     env.Append(CCFLAGS = ["-funsigned-char", "-Wall", "-Wno-deprecated-declarations"])
