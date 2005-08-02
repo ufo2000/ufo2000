@@ -395,7 +395,7 @@ int connect_internet_server()
 
     std::auto_ptr<ClientServerUfo> server(new ClientServerUfo());
     std::string error_message;
-    if (!server->connect(cfg_get_server_host(), cfg_get_server_proxy(), error_message)) {
+    if (!server->connect(cfg_get_server_host(), cfg_get_server_proxy(), cfg_get_server_proxy_login(), error_message)) {
         alert(" ", error_message.c_str(), " ", _("    OK    "), NULL, 1, 0);
         g_server_autologin = 0;
         return -1;

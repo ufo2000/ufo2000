@@ -71,6 +71,7 @@ std::string g_server_host;
 std::string g_server_login;
 std::string g_server_password;
 std::string g_server_proxy;
+std::string g_server_proxy_login;
 int         g_server_autologin;
 
 static std::string console_font_file;
@@ -91,6 +92,7 @@ const std::string &cfg_get_server_host()      { return g_server_host; }
 const std::string &cfg_get_server_login()     { return g_server_login; } 
 const std::string &cfg_get_server_password()  { return g_server_password; } 
 const std::string &cfg_get_server_proxy()     { return g_server_proxy; }
+const std::string &cfg_get_server_proxy_login() { return g_server_proxy_login; }
 
 const char *cfg_get_menu_music_file_name()    { return menu_midi_file_name.c_str(); } 
 const char *cfg_get_setup_music_file_name()   { return setup_midi_file_name.c_str(); } 

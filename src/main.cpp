@@ -737,6 +737,8 @@ void initmain(int argc, char *argv[])
         g_server_login = get_config_string("Server", "login", "anonymous");
         g_server_password = get_config_string("Server", "password", "");
     }
+ 
+    g_server_proxy_login = get_config_string("Server", "http_proxy_login", "");
 
     loadini();
     pop_config_state();
@@ -945,7 +947,7 @@ int build_crc()
     p1->eot_save(buf, buf_size);
     p2->eot_save(buf, buf_size);
     map->eot_save(buf, buf_size);
-	
+        
     int crc = crc16(buf);
     g_eot_save[crc] = std::string(buf, buf_size);
 

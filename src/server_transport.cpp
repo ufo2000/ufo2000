@@ -321,9 +321,39 @@ bool ServerClient::send_packet_all(NLuint id, const std::string &packet)
 
 /****************************************************************************/
 
+static bool string_to_base64(const char *src, std::string &dst)
+{
+    static unsigned char alphabet[] =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    int a = 1, b = 1;
+
+    while (true) {
+        unsigned char buffer[3];
+        unsigned char temp[4];
+
+        int x;
+
+        for (x = 0; x < 3 && *src != 0; x++)
+            buffer[x] = (unsigned char)(*src++);
+
+        if (x == 0) return true;
+
+        if (x == 1) a=0;
+        if (x == 2) b=0;
+        temp[0] = alphabet[buffer[0] >> 2];
+        temp[1] = alphabet[((buffer[0] & 3) << 4) | (buffer[1] >> 4) * a];
+        temp[2] = x > 1 ? alphabet[((buffer[1] & 0xF) << 2) | (buffer[2] >> 6) * b] : '=';
+        temp[3] = x > 2 ? alphabet[buffer[2] & 0x3F] : '=';
+
+        dst.append(std::string((const char *)temp, 4));
+    }
+    return true;
+}
+
 bool ClientServer::connect(
     const std::string &ufo2000_server,
     const std::string &http_proxy,
+    const std::string &http_proxy_login,
     std::string &error_message)
 {
     m_socket = NL_INVALID;
@@ -354,7 +384,21 @@ bool ClientServer::connect(
     if (!proxy.empty()) {
         int retry;
         char tmp[512];
-        sprintf(tmp, "CONNECT %s HTTP/1.1\r\n\r\n", host.c_str());
+
+        if (http_proxy_login.empty()) {
+            sprintf(tmp, 
+                "CONNECT %s HTTP/1.1\r\n\r\n", 
+                host.c_str());
+        } else {
+            std::string login_base64;
+            string_to_base64(http_proxy_login.c_str(), login_base64);
+            sprintf(tmp, 
+                "CONNECT %s HTTP/1.1\r\n"
+                "Proxy-Authorization: Basic %s\r\n\r\n",
+                host.c_str(),
+                login_base64.c_str());
+        }
+
         std::string request = tmp;
         std::string reply;
 

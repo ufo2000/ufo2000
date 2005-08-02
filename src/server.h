@@ -45,6 +45,7 @@ public:
     bool ClientServer::connect(
         const std::string &host,
         const std::string &proxy,
+        const std::string &proxy_login,
         std::string &error_message);
     bool send_packet(NLuint id, const std::string &packet);
     bool send_delayed_packet();
