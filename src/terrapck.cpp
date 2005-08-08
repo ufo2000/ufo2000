@@ -28,9 +28,13 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "colors.h"
 #include "pck.h"
 
+#include "map.h"
+
+#undef map
+
 TerraPCK::TerraPCK(const char *mcd_name, int tftd_flag)
 {
-	add(mcd_name, tftd_flag);
+    add(mcd_name, tftd_flag);
 }
 
 TerraPCK::~TerraPCK()
@@ -48,20 +52,20 @@ TerraPCK::~TerraPCK()
 BITMAP *TerraPCK::create_blackbmp(BITMAP *bmp)
 {
     BITMAP *black_bmp = create_bitmap(bmp->w, bmp->h);
-	clear_to_color(black_bmp, xcom_color(0));
-	
-	for (int i = 0; i < bmp->w; i++)
-		for (int j = 0; j < bmp->h; j++)
-			if (getpixel(bmp, i, j) != bitmap_mask_color(bmp))
-				putpixel(black_bmp, i, j, COLOR_BLACK1);
-				
-	return black_bmp;
+    clear_to_color(black_bmp, xcom_color(0));
+    
+    for (int i = 0; i < bmp->w; i++)
+        for (int j = 0; j < bmp->h; j++)
+            if (getpixel(bmp, i, j) != bitmap_mask_color(bmp))
+                putpixel(black_bmp, i, j, COLOR_BLACK1);
+                
+    return black_bmp;
 }
 
 void TerraPCK::add(const char *mcd_name, int tftd_flag)
 {
     char m_fname[512];
-   	int fh;
+    int fh;
     
     // read information about displaying this tile on minimap
     if (tftd_flag) 
@@ -87,21 +91,21 @@ void TerraPCK::add(const char *mcd_name, int tftd_flag)
     }
         
 
-	fh = open(F("$(xcom)/geodata/loftemps.dat"), O_RDONLY | O_BINARY);
-	ASSERT(fh != -1);
-	int loftemps_size = filelength(fh);
-	char *loftemps_data = new char[loftemps_size];
-	read(fh, loftemps_data, loftemps_size);
-	close(fh);
+    fh = open(F("$(xcom)/geodata/loftemps.dat"), O_RDONLY | O_BINARY);
+    ASSERT(fh != -1);
+    int loftemps_size = filelength(fh);
+    char *loftemps_data = new char[loftemps_size];
+    read(fh, loftemps_data, loftemps_size);
+    close(fh);
     
-	// get pck name
-	strcpy(m_fname, mcd_name);
-	strcpy(strrchr(m_fname, '.') + 1, "pck");
-	std::string pck_name = m_fname;
+    // get pck name
+    strcpy(m_fname, mcd_name);
+    strcpy(strrchr(m_fname, '.') + 1, "pck");
+    std::string pck_name = m_fname;
 
     // load mcd file itself    
-	strcpy(m_fname, mcd_name);
-	strcpy(strrchr(m_fname, '.') + 1, "mcd");
+    strcpy(m_fname, mcd_name);
+    strcpy(strrchr(m_fname, '.') + 1, "mcd");
     
     if (FLAGS & F_CONVERT_XCOM_DATA) {
         std::string filename;
@@ -109,7 +113,7 @@ void TerraPCK::add(const char *mcd_name, int tftd_flag)
         while (*p != '.' && *p != 0) {
             filename += *p++;
         }
-		std::string dir = F("$(home)/converted_xcom_data");
+        std::string dir = F("$(home)/converted_xcom_data");
 #ifdef LINUX
         mkdir(dir.c_str(), 0755);
 #else
@@ -169,4 +173,12 @@ void TerraPCK::add(const char *mcd_name, int tftd_flag)
     delete [] scang_data;
     delete [] scang_rgb_data;
     delete [] loftemps_data;
+}
+
+/**
+ * Check if voxel (z, x, y) inside of cell is solid and can stop bullet
+ */
+int TerraPCK::is_solid_voxel(int index, int z, int x, int y)
+{
+    return (Map::m_loftemp[m_mcd[index].LOFT[z] * 16 + (15 - x)] << y) & 0x8000;
 }

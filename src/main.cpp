@@ -1280,13 +1280,10 @@ void build_screen(int & select_y)
             MODE = MAP3D;
     }
     
+    if (FLAGS & F_SHOWLOFCELL) map->show_lof_cell();
     draw_sprite(screen2, mouser, mouse_x, mouse_y);
     blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
     map->svga2d();      // Minimap
-
-    if (FLAGS & F_SHOWLOFCELL) {
-        map->show_lof_cell();
-    }
 }
 
 

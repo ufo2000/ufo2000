@@ -100,8 +100,6 @@ private:
     static PCK *cursor;
     static PCK *x1;
     static SPK *scanbord;
-    static uint16 *m_loftemp;
-    static int m_loftemp_num;
 
     char m_terrain_name[128]; //!< Terrain name
 
@@ -111,9 +109,9 @@ private:
     Cell ****m_cell;
     TerraPCK *m_terrain;
     
-    typedef struct { int lev, col, row, state; } effect;	//should it be used for fire and smoke? 
+    typedef struct { int lev, col, row, state; } effect;    //should it be used for fire and smoke? 
     typedef std::vector<effect> effect_vector;
-	effect_vector *explo_spr_list;
+    effect_vector *explo_spr_list;
     std::vector<Position>* m_changed_visicells;
 
     static int m_animation_cycle;
@@ -133,6 +131,8 @@ private:
     int m_size;
     
 public:
+    static uint16 *m_loftemp;
+    static int m_loftemp_num;
     MinimapArea *m_minimap_area;
 
     static PCK *smoke;
@@ -171,10 +171,10 @@ public:
 
     void step();
     void smoker();
-    int explode(int z, int x, int y, int max_damage);	//for map objects
-    int explode(int SID, int z, int x, int y, int type);		//for weapons
+    int explode(int z, int x, int y, int max_damage);   //for map objects
+    int explode(int SID, int z, int x, int y, int type);        //for weapons
     void smokecell(int lev, int col, int row, int time);
-	void explocell(int SID, int lev, int col, int row, int damage, int damage_type, int hitdir);
+    void explocell(int SID, int lev, int col, int row, int damage, int damage_type, int hitdir);
     bool check_mine(int lev, int col, int row);
     int stopWALK(int oz, int ox, int oy, int part);
     int stopDOOR(int oz, int ox, int oy, int part);
@@ -206,6 +206,7 @@ public:
     BITMAP *create_lof_bitmap(int lev, int col, int row);
     void show_lof_cell();
     int pass_lof_cell(int _z, int _x, int _y);
+    int pass_lof_cell_fast(int _z, int _x, int _y);
     int pass_lof_cell_part(int _z, int _x, int _y, int _part);
 
     int open_door(int z, int x, int y, int part);
