@@ -351,7 +351,7 @@ void Soldier::reset_stats()
     md.Strength = 0;
     md.Firing = 0;
     md.Throwing = 0;
-	
+    
     for (int i = 0; i < NUMBER_OF_PLACES; i++) {
         m_place[i]->destroy_all_items();
     }
@@ -364,32 +364,32 @@ void Soldier::reset_stats()
  */
 bool Soldier::set_attribute(const char *attribute_name, int value)
 {
-	if (strcmp(attribute_name, "TimeUnits") == 0) {
-		md.TimeUnits = value;
-	} else if (strcmp(attribute_name, "Health") == 0) {
-		md.Health = value;
-	} else if (strcmp(attribute_name, "Stamina") == 0) {
-		md.Stamina = value;
-	} else if (strcmp(attribute_name, "Reactions") == 0) {
-		md.Reactions = value;
-	} else if (strcmp(attribute_name, "Strength") == 0) {
-		md.Strength = value;
-	} else if (strcmp(attribute_name, "Firing") == 0) {
-		md.Firing = value;
-	} else if (strcmp(attribute_name, "Throwing") == 0) {
-		md.Throwing = value;
-	} else {
-		return false;
-	}
-	process_MANDATA();
+    if (strcmp(attribute_name, "TimeUnits") == 0) {
+        md.TimeUnits = value;
+    } else if (strcmp(attribute_name, "Health") == 0) {
+        md.Health = value;
+    } else if (strcmp(attribute_name, "Stamina") == 0) {
+        md.Stamina = value;
+    } else if (strcmp(attribute_name, "Reactions") == 0) {
+        md.Reactions = value;
+    } else if (strcmp(attribute_name, "Strength") == 0) {
+        md.Strength = value;
+    } else if (strcmp(attribute_name, "Firing") == 0) {
+        md.Firing = value;
+    } else if (strcmp(attribute_name, "Throwing") == 0) {
+        md.Throwing = value;
+    } else {
+        return false;
+    }
+    process_MANDATA();
     return true;
 }
 
 bool Soldier::set_name(const char *newname)
 {
-	if (strlen(newname) + 1 > sizeof(ud.Name)) return false;
-	strcpy(ud.Name, newname);
-	strcpy(md.Name, newname);
+    if (strlen(newname) + 1 > sizeof(ud.Name)) return false;
+    strcpy(ud.Name, newname);
+    strcpy(md.Name, newname);
     return true;
 }
 
@@ -398,24 +398,24 @@ bool Soldier::set_skin_info(int skin_type, int female, int appearance)
     md.SkinType = skin_type;
     md.fFemale = female;
     md.Appearance = appearance;
-	process_MANDATA();
-	return true;
+    process_MANDATA();
+    return true;
 }
 
 Place *Soldier::find_place(const char *place_name)
 {
-	for (int i = 0; i < (int)(sizeof(place_name_id) / sizeof(place_name_id[0])); i++)
-		if (strcmp(place_name_id[i], place_name) == 0)
-			return m_place[i];
-	return NULL;
+    for (int i = 0; i < (int)(sizeof(place_name_id) / sizeof(place_name_id[0])); i++)
+        if (strcmp(place_name_id[i], place_name) == 0)
+            return m_place[i];
+    return NULL;
 }
 
 void Soldier::save_to_string(std::string &str)
 {
     str.clear();
-	
+    
     std::string inv;
-	
+    
     for (int i = 0; i < NUMBER_OF_PLACES; i++) {
         inv += "[\"" + lua_escape_string(place_name_id[i]) + "\"] = {\n";
         std::string place_str;
@@ -431,7 +431,7 @@ void Soldier::save_to_string(std::string &str)
     sprintf(tmp, "fFemale = %d,\n", md.fFemale); str += tmp;
     sprintf(tmp, "Appearance = %d,\n", md.Appearance); str += tmp;
 
-	str += "Attributes = {\n";
+    str += "Attributes = {\n";
     sprintf(tmp, "\tTimeUnits = %d,\n", md.TimeUnits); str += tmp;
     sprintf(tmp, "\tHealth = %d,\n", md.Health); str += tmp;
     sprintf(tmp, "\tStamina = %d,\n", md.Stamina); str += tmp;
@@ -439,11 +439,11 @@ void Soldier::save_to_string(std::string &str)
     sprintf(tmp, "\tStrength = %d,\n", md.Strength); str += tmp;
     sprintf(tmp, "\tFiring = %d,\n", md.Firing); str += tmp;
     sprintf(tmp, "\tThrowing = %d,\n", md.Throwing); str += tmp;
-	str += "},\n";
+    str += "},\n";
 
-	str += "Inventory = {\n";
-	str += indent(inv);
-	str += "},\n";
+    str += "Inventory = {\n";
+    str += indent(inv);
+    str += "},\n";
 }
 
 void Soldier::destroy_all_items()
@@ -661,8 +661,8 @@ void Soldier::draw_inventory(BITMAP *dest)
  */
 void Soldier::draw_unibord(int gx, int gy)
 {
-	BITMAP *temp = create_bitmap(m_unibord->w, m_unibord->h);
-	clear_bitmap(temp);
+    BITMAP *temp = create_bitmap(m_unibord->w, m_unibord->h);
+    clear_bitmap(temp);
 
     draw_sprite(temp, m_unibord, 0, 0);
 
@@ -1293,7 +1293,7 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir, int dam_dev)
     // Currently just randomizing the damage to be from 0.5 to 1.5 of
     // the table value, NOT 0.0 to 2.0 as it was in X-Com.
     if (dam_dev > 0)
-    	pierce = (int) cur_random->getUniform(pierce * (1.0 - (dam_dev / 100.0)), pierce * (1.0 + (dam_dev / 100.0)));
+        pierce = (int) cur_random->getUniform(pierce * (1.0 - (dam_dev / 100.0)), pierce * (1.0 + (dam_dev / 100.0)));
 
     // Give credit to the sniper for inflicting damage if it's not stun damage.
     if (sniper && (type != DT_STUN))
@@ -1403,8 +1403,8 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir, int dam_dev)
 void Soldier::explo_hit(int sniper, int pierce, int type, int hitdir) //silent
 {
     // TODO del this
-	// int damagedir = (dir + (hitdir + 4)) % 8; // Becomes DAMAGEDIR_*, except DAMAGEDIR_UNDER...
-	// int damagedir = hitdir;
+    // int damagedir = (dir + (hitdir + 4)) % 8; // Becomes DAMAGEDIR_*, except DAMAGEDIR_UNDER...
+    // int damagedir = hitdir;
   
     int hitloc;
 
@@ -1424,13 +1424,13 @@ void Soldier::explo_hit(int sniper, int pierce, int type, int hitdir) //silent
 
     if (type != DT_STUN)
         damage_items(pierce / 3);
-	// Items are OUTSIDE the armour, after all; 
-	// but in order not to leave a soldier without his items, damage is seriously reduced
+    // Items are OUTSIDE the armour, after all; 
+    // but in order not to leave a soldier without his items, damage is seriously reduced
   
     // TODO del this
     // If minimal range, hit under armour. Otherwise, hit armour normally.
-	//if ((dist < 2) && ((hitloc = do_armour_check(pierce, DAMAGEDIR_UNDER)) == -1)) return;
-	//else if ((dist >= 2) && (hitloc = do_armour_check(pierce, damagedir)) == -1) return;
+    //if ((dist < 2) && ((hitloc = do_armour_check(pierce, DAMAGEDIR_UNDER)) == -1)) return;
+    //else if ((dist >= 2) && (hitloc = do_armour_check(pierce, damagedir)) == -1) return;
   
     if ((hitloc = do_armour_check(pierce, hitdir)) == -1) return;
     
@@ -1578,14 +1578,14 @@ void Soldier::unlink()
  */ 
 void Soldier::draw_deselect_times(BITMAP *dest, Item *sel_item, int sel_item_place)
 {
-	int time = 0;
+    int time = 0;
 
     for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++) {
-    	time = calctime(sel_item_place, i);
-    	if (sel_item != NULL && sel_item->obdata_reloadTime() &&
-				(i == P_ARM_LEFT || i == P_ARM_RIGHT) && item(i) != NULL) {
-			time += sel_item->obdata_reloadTime();
-		}
+        time = calctime(sel_item_place, i);
+        if (sel_item != NULL && sel_item->obdata_reloadTime() &&
+                (i == P_ARM_LEFT || i == P_ARM_RIGHT) && item(i) != NULL) {
+            time += sel_item->obdata_reloadTime();
+        }
         m_place[i]->draw_deselect_time(dest, i, time);
     }
     map->place(z, x, y)->draw_deselect_time(dest, P_MAP, calctime(sel_item_place, P_MAP));
@@ -1803,12 +1803,12 @@ Place *Soldier::find_item(Item *it, int &lev, int &col, int &row)
 
 int Soldier::find_place_coords(Place *pl, int &lev, int &col, int &row)
 {
-	for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
-		if (m_place[i] == pl) {
-			lev = z; col = x; row = y;
-			return 1;
-		}
-	return 0;
+    for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
+        if (m_place[i] == pl) {
+            lev = z; col = x; row = y;
+            return 1;
+        }
+    return 0;
 }
 
 
@@ -1902,27 +1902,27 @@ int Soldier::unload_ammo(Item * it)
     if ((it == NULL) || (!it->haveclip()))
         return 0;
     if ((rhand_item() != NULL && rhand_item() != it) || 
-		(lhand_item() != NULL && lhand_item() != it))
+        (lhand_item() != NULL && lhand_item() != it))
         return 0;
 
     int ISLOCAL = platoon_local->belong(this);
     if (it->roundsremain() > 0) {
         if (time_reserve(8, ISLOCAL, false) == OK) {
-        	putitem(it, P_ARM_RIGHT);
-        	putitem(it->unload(), P_ARM_LEFT);
-        	spend_time(8);
-        		
-       		net->send_unload_ammo(NID);
-       		return 1;
-       	} else return 0;
-    } else {
-       	if (time_reserve(10, ISLOCAL, false) == OK) {
-       		putitem(it, P_ARM_RIGHT);
-       		putitem(it->unload(), P_MAP);
-       		spend_time(10);           
+            putitem(it, P_ARM_RIGHT);
+            putitem(it->unload(), P_ARM_LEFT);
+            spend_time(8);
+                
             net->send_unload_ammo(NID);
-       		return 1;
-		} else return 0;
+            return 1;
+        } else return 0;
+    } else {
+        if (time_reserve(10, ISLOCAL, false) == OK) {
+            putitem(it, P_ARM_RIGHT);
+            putitem(it->unload(), P_MAP);
+            spend_time(10);           
+            net->send_unload_ammo(NID);
+            return 1;
+        } else return 0;
     }
 }
 
@@ -1936,7 +1936,7 @@ int Soldier::load_ammo(int iplace, int srcplace, Item *&it)
     if (it == NULL)
         return 0;
                                                         
-	int time = it->obdata_reloadTime() + calctime(srcplace, iplace);
+    int time = it->obdata_reloadTime() + calctime(srcplace, iplace);
     int ISLOCAL = platoon_local->belong(this);
     if (time_reserve(time, ISLOCAL, false) != OK) return 0;
 
@@ -2040,7 +2040,7 @@ int Soldier::eff_FAccuracy()
 {
     int ac = ud.CurFAccuracy;
     int penalty_health = 0;
-	if (ud.MaxHealth != 0) penalty_health = (ac * (ud.MaxHealth - ud.CurHealth)) / ud.MaxHealth / 2;
+    if (ud.MaxHealth != 0) penalty_health = (ac * (ud.MaxHealth - ud.CurHealth)) / ud.MaxHealth / 2;
     int penalty_morale = (ac * (100 - ud.Morale)) / 100 / 2;
     int penalty_fly = is_flying() ? ac * 20 / 100 : 0;
     ac -= penalty_health + penalty_morale + penalty_fly;
@@ -2075,7 +2075,7 @@ int Soldier::FAccuracy(int peraccur, int TWOHAND)
 int Soldier::TAccuracy(int peraccur)
 {
     int ac = (ud.CurTAccuracy * peraccur) / 100;
-	if (ud.MaxHealth != 0) ac = (ac * ud.CurHealth) / ud.MaxHealth;
+    if (ud.MaxHealth != 0) ac = (ac * ud.CurHealth) / ud.MaxHealth;
     return ac;
 }
 
@@ -2586,8 +2586,25 @@ void Soldier::showspk(BITMAP *dest)
         case S_MUTON:
             Skin::m_spk[5][0][0]->show(dest, 0, 0);
             break;
+        case S_USER_MADE:
+        {
+            int stack_top = lua_gettop(L);
+            lua_pushstring(L, "UnitsTable");
+            lua_gettable(L, LUA_GLOBALSINDEX);
+            ASSERT(lua_istable(L, -1));
+            lua_pushstring(L, "default"); // $$$
+            lua_gettable(L, -2);
+            ASSERT(lua_istable(L, -1));
+            lua_pushstring(L, "pInv");
+            lua_gettable(L, -2);
+            ASSERT(lua_islightuserdata(L, -1));
+            BITMAP *bmp = (BITMAP *)lua_touserdata(L, -1);
+            draw_sprite(dest, bmp, 45, 25);
+            lua_settop(L, stack_top);
+            break;
+        }
         default:
-			break;
+            break;
     }
 }
 
@@ -2797,8 +2814,8 @@ int Soldier::has_twohanded_weapon()
     get_inventory_list(items);
     for (int i = 0; i < (int)items.size(); i++) {
         if (items[i]->obdata_twoHanded()) return 1;
-	}
-	return 0;
+    }
+    return 0;
 }
 
 bool Soldier::Write(persist::Engine &archive) const

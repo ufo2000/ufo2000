@@ -37,12 +37,15 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define S_SNAKEMAN        7
 #define S_CHRYSSALID      8
 
+// !!! Hack - only to test custom unit sprite rendering code
+#define S_USER_MADE       10
+
 struct SKIN_INFO {
-	const char *Name;
-	int         SkinType;
-	int         fFemale;
-	int         fFlying;
-	int         armour_values[5];
+    const char *Name;
+    int         SkinType;
+    int         fFemale;
+    int         fFlying;
+    int         armour_values[5];
     int         cost;
 };
 
@@ -53,7 +56,7 @@ int get_skin_index(int skin_type, int female_flag);
 
 class Skin: public persist::BaseObject
 {
-	DECLARE_PERSISTENCE(Skin);
+    DECLARE_PERSISTENCE(Skin);
 public:
     static char *****m_bof;
     static PCK **m_pck;
@@ -68,34 +71,36 @@ private:
     void draw_head(int Appearance, int head_frame, int dir, BITMAP *image, int delta);
     void draw_common();
     
+    void draw_lua();
+
     static void initbof();
 public:
     Skin(Soldier *soldier, int skin_type, int female_flag);
     
     static void initpck();
-	static void freepck();
-	
-	void update(int skin_type, int female_flag);
-	void next_human();
-	void next_alien();
+    static void freepck();
+    
+    void update(int skin_type, int female_flag);
+    void next_human();
+    void next_alien();
 
     int get_type() { return skin_info.SkinType; }
-	int get_fFemale() { return skin_info.fFemale; }
-	int get_fFlying() { return skin_info.fFlying; }
-	int get_armour_value(int side) { return skin_info.armour_values[side]; }
-	
-	static int get_armour_cost(int skin_type, int female_flag) { return g_skins[get_skin_index(skin_type, female_flag)].cost; }
-	int get_armour_cost() { return get_armour_cost(skin_info.SkinType, skin_info.fFemale); }
-	
-	bool check_for_hit(int sit, int dir, int lev, int col, int row)
+    int get_fFemale() { return skin_info.fFemale; }
+    int get_fFlying() { return skin_info.fFlying; }
+    int get_armour_value(int side) { return skin_info.armour_values[side]; }
+    
+    static int get_armour_cost(int skin_type, int female_flag) { return g_skins[get_skin_index(skin_type, female_flag)].cost; }
+    int get_armour_cost() { return get_armour_cost(skin_info.SkinType, skin_info.fFemale); }
+    
+    bool check_for_hit(int sit, int dir, int lev, int col, int row)
     {
         return m_bof[sit][dir][lev][col][row];
     }
-	
-	void draw();
-	
-	virtual bool Write(persist::Engine &archive) const;
-	virtual bool Read(persist::Engine &archive);
+    
+    void draw();
+    
+    virtual bool Write(persist::Engine &archive) const;
+    virtual bool Read(persist::Engine &archive);
 };
 
 #endif

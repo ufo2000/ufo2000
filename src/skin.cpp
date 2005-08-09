@@ -42,7 +42,8 @@ SKIN_INFO g_skins[] =
     { "fly_m",   S_XCOM_3,  0, 1, {110, 90, 90, 80, 70}, 1030 },
     { "fly_f",   S_XCOM_3,  1, 1, {110, 90, 90, 80, 70}, 1030 },
     { "sectoid", S_SECTOID, 0, 0, {  4,  3,  3,  2,  2}, 28 },
-    { "muton",   S_MUTON,   0, 0, { 70, 60, 60, 50, 50}, 580 }
+    { "muton",   S_MUTON,   0, 0, { 70, 60, 60, 50, 50}, 580 },
+    { "- user made -", S_USER_MADE, 0, 0, { 70, 60, 60, 50, 50}, 580 },
 };
 
 int g_skins_count = sizeof(g_skins) / sizeof(g_skins[0]);
@@ -299,6 +300,95 @@ void Skin::draw_head(int Appearance, int head_frame, int dir, BITMAP *image, int
 #define MAPX 0
 #define MAPY (-18)
 
+class UnitSprite
+{
+    BITMAP *m_bmp;
+public:
+    UnitSprite(BITMAP *bmp) { m_bmp = bmp; }
+    void draw(int x, int y, BITMAP *bmp) { draw_sprite(m_bmp, bmp, x, y); }
+};
+
+/**
+ * Call for user made unit rendering function implemented in lua
+ */
+void Skin::draw_lua()
+{
+    State state = m_soldier->state();
+    int x = m_soldier->x, y = m_soldier->y, z = m_soldier->z;
+    int dir = m_soldier->dir, phase = m_soldier->phase, is_flying = m_soldier->is_flying();
+    Item *lhand_item = m_soldier->lhand_item(), *rhand_item = m_soldier->rhand_item();
+
+    BITMAP *weapon = NULL;
+    if (rhand_item != NULL)
+        weapon = rhand_item->obdata_pHeld(dir);
+    else if (lhand_item != NULL)
+        weapon = lhand_item->obdata_pHeld(dir);
+
+    int gx = g_map->x + CELL_SCR_X * x + CELL_SCR_X * y;
+    int gy = g_map->y - (x + 1) * CELL_SCR_Y + CELL_SCR_Y * y - 18 - z * CELL_SCR_Z;
+    gy += m_soldier->calc_z();
+
+    BITMAP *image = m_image;
+    clear_to_color(m_image, xcom1_color(0));
+    UnitSprite sprite(m_image);
+
+    int stack_top = lua_gettop(L);
+
+    LUA_REGISTER_CLASS(L, UnitSprite);
+    LUA_REGISTER_CLASS_METHOD(L, UnitSprite, draw);
+
+    lua_pushstring(L, "UnitsTable");
+    lua_gettable(L, LUA_GLOBALSINDEX);
+    ASSERT(lua_istable(L, -1));
+    lua_pushstring(L, "default"); // $$$
+    lua_gettable(L, -2);
+    ASSERT(lua_istable(L, -1));
+    lua_pushstring(L, "pMap");
+    lua_gettable(L, -2);
+    ASSERT(lua_isfunction(L, -1));
+
+    LPCD::Push(L, &sprite);
+    lua_pushnumber(L, dir);
+    lua_pushnumber(L, phase);
+    lua_newtable(L);
+    if (weapon) {
+        lua_pushstring(L, "gun");
+        LPCD::Push(L, weapon);
+        lua_settable(L, -3);
+    }
+    if (state == FALL) {
+        lua_pushstring(L, "collapse");
+        lua_pushboolean(L, true);
+        lua_settable(L, -3);
+    }
+    if (state == SIT) {
+        lua_pushstring(L, "crouch");
+        lua_pushboolean(L, true);
+        lua_settable(L, -3);
+    }
+    lua_safe_call(L, 4, 0);
+    lua_settop(L, stack_top);
+
+    int ox, oy;
+    if (dir < 3) ox = 1; else if ((dir == 3) || (dir == 7)) ox = 0; else ox = -1;
+    if ((dir == 1) || (dir == 5)) {
+        oy = 0; ox *= 2;
+    } else
+            if ((dir > 1) && (dir < 5)) oy = -1; else oy = 1;
+    if ((dir == 3) || (dir == 7)) {
+        ox = 0; oy *= 2;
+    }
+
+    if (state == MARCH) {
+        if (phase < 4)
+            draw_sprite(screen2, image, gx + phase * 2 * ox, gy - phase * oy);
+        else
+            draw_sprite(screen2, image, gx + (phase - 8) * 2 * ox, gy - (phase - 8) * oy);
+    } else {
+        draw_sprite(screen2, image, gx + phase * 2 * ox, gy - phase * oy);
+    }
+}
+
 void Skin::draw_common()
 {
     State state = m_soldier->state();
@@ -320,8 +410,8 @@ void Skin::draw_common()
             break;
     }
 
-    int gx = map->x + CELL_SCR_X * x + CELL_SCR_X * y;
-    int gy = map->y - (x + 1) * CELL_SCR_Y + CELL_SCR_Y * y - 18 - z * CELL_SCR_Z;
+    int gx = g_map->x + CELL_SCR_X * x + CELL_SCR_X * y;
+    int gy = g_map->y - (x + 1) * CELL_SCR_Y + CELL_SCR_Y * y - 18 - z * CELL_SCR_Z;
     gy += m_soldier->calc_z();
 
     if (state == FALL) {
@@ -453,7 +543,10 @@ void Skin::draw_common()
 void Skin::draw()
 {
     //for different races (NIY)
-    switch(skin_info.SkinType) {
+    switch (skin_info.SkinType) {
+        case S_USER_MADE:
+            draw_lua();
+            break;
         default:
             draw_common();
             break;

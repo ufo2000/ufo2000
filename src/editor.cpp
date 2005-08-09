@@ -554,7 +554,7 @@ void Editor::show()
     clear_to_color(editor_bg, COLOR_BLACK1);
     tac01->show(editor_bg, 0, 0); // draw buttons: OK, Next-Man, Prev-Man, Unload-clip, Scroll-right
     draw_sprite_vh_flip(editor_bg, b5, 255, 137); // Button: Scroll-left
-    rectfill(editor_bg, 288, 32, 319, 57, COLOR_GRAY15);	//hide unused "unload" button
+    rectfill(editor_bg, 288, 32, 319, 57, COLOR_GRAY15);    //hide unused "unload" button
     text_mode(-1);
     textout(editor_bg, g_small_font, _("Click-and-drop weapons from the armory to the soldier, right-click to remove"), 8, 364, COLOR_WHITE); 
     textout(editor_bg, large, _("F1 Help   F2 Save Team   F3 Load Team   F4 Edit Attributes"), 8, 380, COLOR_LT_BLUE);
@@ -1011,6 +1011,7 @@ static const char *race_names[] = {
     "human",
     "sectoid",
     "muton",
+    "- user made -",
     NULL
 };
 
@@ -1258,7 +1259,10 @@ void Editor::edit_soldier()
         if (man->md.SkinType == S_SECTOID)
             sol_dialog[D_RACE].d1 = 1;
         else
+        if (man->md.SkinType == S_MUTON)
             sol_dialog[D_RACE].d1 = 2;
+        else
+            sol_dialog[D_RACE].d1 = 3;
         man->md.Appearance = 0;
     }
 
@@ -1284,7 +1288,8 @@ void Editor::edit_soldier()
     switch (sol_dialog[D_RACE].d1) {
         case  0: man->md.SkinType = sol_dialog[D_ARMOUR].d1 + 1; break;
         case  1: man->md.SkinType = S_SECTOID; break;
-        default: man->md.SkinType = S_MUTON; break;
+        case  2: man->md.SkinType = S_MUTON; break;
+        default: man->md.SkinType = S_USER_MADE; break;
     }
 
     man->md.TimeUnits  = sol_dialog[D_TIME].d2;

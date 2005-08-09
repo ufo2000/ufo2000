@@ -112,7 +112,7 @@ BITMAP *png_image_ex(const char *filename, bool use_alpha)
         BITMAP *bmp = load_bitmap_alpha(fullname.c_str(), use_alpha);
         if (!bmp) {
             // Maybe we could find this picture inside of large bitmap
-            int width, height, index;
+            int width, height, index, x, y;
             char *p = get_filename(filename);
             if (p > filename && sscanf(p, "%dx%d-%d.", &width, &height, &index) == 3) {
                 std::string large_bitmap_name = std::string(filename, p - filename - 1) + "." + get_extension(filename);
@@ -124,8 +124,19 @@ BITMAP *png_image_ex(const char *filename, bool use_alpha)
                     // number of pictures in a row
                     int rowcount = (g_png_large_cache[large_bitmap_name]->w + 1) / (width + 1);
                     // calculate sprite coordinates from index
-                    int x = ((index - 1) % rowcount) * (width + 1);
-                    int y = ((index - 1) / rowcount) * (height + 1);
+                    x = ((index - 1) % rowcount) * (width + 1);
+                    y = ((index - 1) / rowcount) * (height + 1);
+                    // create sub bitmap
+                    bmp = create_sub_bitmap(g_png_large_cache[large_bitmap_name],
+                        x, y, width, height);
+                }
+            } else if (p > filename && sscanf(p, "x=%d,y=%d,w=%d,h=%d).", &x, &y, &width, &height) == 4) {
+                std::string large_bitmap_name = std::string(filename, p - filename - 1) + "." + get_extension(filename);
+                large_bitmap_name = F(large_bitmap_name.c_str());
+                if (g_png_large_cache.find(large_bitmap_name) == g_png_large_cache.end()) {
+                    g_png_large_cache[large_bitmap_name] = load_bitmap_alpha(large_bitmap_name.c_str(), use_alpha);
+                }
+                if (g_png_large_cache[large_bitmap_name]) {
                     // create sub bitmap
                     bmp = create_sub_bitmap(g_png_large_cache[large_bitmap_name],
                         x, y, width, height);
@@ -184,16 +195,16 @@ void free_png_cache()
 BITMAP *get_image_from_lua_table(const char *name)
 {
     int stack_top = lua_gettop(L);
-	lua_pushstring(L, "ImageTable");
-	lua_gettable(L, LUA_GLOBALSINDEX);
-	ASSERT(lua_istable(L, -1));
-	lua_pushstring(L, name);
-	lua_gettable(L, -2);
-	ASSERT(lua_isuserdata(L, -1));
-	BITMAP *bmp = (BITMAP *)lua_touserdata(L, -1);
-	lua_settop(L, stack_top);
-	
-	return bmp;
+    lua_pushstring(L, "ImageTable");
+    lua_gettable(L, LUA_GLOBALSINDEX);
+    ASSERT(lua_istable(L, -1));
+    lua_pushstring(L, name);
+    lua_gettable(L, -2);
+    ASSERT(lua_isuserdata(L, -1));
+    BITMAP *bmp = (BITMAP *)lua_touserdata(L, -1);
+    lua_settop(L, stack_top);
+    
+    return bmp;
 }
 
 std::vector<BITMAP *> get_image_vector_from_lua_table(const char *name)
@@ -201,25 +212,25 @@ std::vector<BITMAP *> get_image_vector_from_lua_table(const char *name)
     std::vector<BITMAP *> res;
 
     int stack_top = lua_gettop(L);
-	lua_pushstring(L, "ImageTable");
-	lua_gettable(L, LUA_GLOBALSINDEX);
-	ASSERT(lua_istable(L, -1));
-	lua_pushstring(L, name);
-	lua_gettable(L, -2);
-	ASSERT(lua_istable(L, -1));
-	
+    lua_pushstring(L, "ImageTable");
+    lua_gettable(L, LUA_GLOBALSINDEX);
+    ASSERT(lua_istable(L, -1));
+    lua_pushstring(L, name);
+    lua_gettable(L, -2);
+    ASSERT(lua_istable(L, -1));
+    
     int i = 1;
-	while (true) {
-		lua_pushnumber(L, i);
-		lua_gettable(L, -2);
-		if (!lua_isuserdata(L, -1)) {
-			lua_settop(L, stack_top);
-			return res;
-		}
-		res.push_back((BITMAP *)lua_touserdata(L, -1));
-		lua_pop(L, 1);
-		i++;
-	}
+    while (true) {
+        lua_pushnumber(L, i);
+        lua_gettable(L, -2);
+        if (!lua_isuserdata(L, -1)) {
+            lua_settop(L, stack_top);
+            return res;
+        }
+        res.push_back((BITMAP *)lua_touserdata(L, -1));
+        lua_pop(L, 1);
+        i++;
+    }
 }
 
 PCK::PCK(const char *pckfname, int tftd_flag, int width, int height)
@@ -346,7 +357,7 @@ int PCK::loadpck(const char *pckfname, int width, int height)
             tab[i] = intel_uint16(tab[i]);
         tab[m_imgnum] = pcksize;
         m_bmp.resize(m_imgnum);
-		for (i = 0; i < m_imgnum; i++)
+        for (i = 0; i < m_imgnum; i++)
             m_bmp[i] = pckdat2bmp(&pck[tab[i]], tab[i + 1] - tab[i], width, height, m_tftd_flag);
     }
 

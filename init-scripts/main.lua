@@ -17,6 +17,8 @@ EquipmentTable = {}
 ExplosionAnimation = {}
 -- table with minor images
 ImageTable = {}
+-- table with information about units
+UnitsTable = {}
 
 -- Workaround for a problem when running the game in valgrind.
 -- Appears that get_executable_name() function can't get correct
@@ -217,6 +219,16 @@ function AddImage(key, val)
     ImageTable[key] = val
 end
 
+function AddUnit(val)
+    local key = "default"
+    if UnitsTable[key] then
+        Message("AddUnit: replaced unit '%s'", key)
+    else
+        Message("AddUnit: added unit '%s'", key)
+    end
+    UnitsTable[key] = val
+end
+
 function SetExplosionAnimation(tbl)
     ExplosionAnimation = tbl
 end
@@ -402,6 +414,13 @@ function png_image_set(filename, start, count)
         tbl[i] = png_image(filename .. "-" .. tostring(start + i - 1) .. ".png")
     end
     return tbl
+end
+
+function png_image_fragment(filename, x, y, w, h)
+    local _, _, name, ext = string.find(filename, "(.*)(%.[^%.\\/]+)$")
+    if not _ then return end
+    local newname = string.format("%s/x=%d,y=%d,w=%d,h=%d%s", name, x, y, w, h, ext)
+    return png_image(newname)
 end
 
 ------------------------------------------------------------------------------
@@ -600,6 +619,7 @@ io.output = nil
 
 plugins_sandbox = {
     string = string,
+    table = table,
     math = math,
     random = random,
 
@@ -610,13 +630,17 @@ plugins_sandbox = {
     pck_image_ex = pck_image_ex,
     png_image = png_image,
     png_image_ex = png_image_ex,
+    png_image_set = png_image_set,
+    png_image_set_ex = png_image_set_ex,
     pck_image_set = pck_image_set,
     pck_image_set_ex = pck_image_set_ex,
+    png_image_fragment = png_image_fragment,
 
     AddEquipment = AddEquipment,
-	
-	SetExplosionAnimation = SetExplosionAnimation,
-	AddImage = AddImage,
+    
+    SetExplosionAnimation = SetExplosionAnimation,
+    AddImage = AddImage,
+    AddUnit = AddUnit,
 }
 
 plugins_sandbox = setmetatable({}, {
