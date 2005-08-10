@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------------
--- Warning: API for units modding is still not finalized and can change in
---          the future !!!
+-- Warning: API for units modding is still not finalized and can be changed
+--          in the future !!!
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
@@ -17,22 +17,12 @@ for row = 7, 0, -1 do
     end
 end
 
-------------------------------------------------------------------------------
--- We do not have our own sprites for soldier death, so we "borrow" them from 
--- from ordinary X-COM soldier, also it is a good example of using mixed
--- frame sets:)
-------------------------------------------------------------------------------
+local falling_frames = {}
 
-local falling_frames = {
-    pck_image("$(xcom)/units/xcom_0.pck", 33 * 8 + 0),
-    pck_image("$(xcom)/units/xcom_0.pck", 33 * 8 + 0),
-    pck_image("$(xcom)/units/xcom_0.pck", 33 * 8 + 1),
-    pck_image("$(xcom)/units/xcom_0.pck", 33 * 8 + 1),
-    pck_image("$(xcom)/units/xcom_0.pck", 33 * 8 + 1),
-    pck_image("$(xcom)/units/xcom_0.pck", 33 * 8 + 2),
-    pck_image("$(xcom)/units/xcom_0.pck", 33 * 8 + 2),
-    pck_image("$(xcom)/units/xcom_0.pck", 33 * 8 + 2),
-}
+for row = 0, 7, 1 do
+    table.insert(falling_frames, png_image_fragment("$(extension)/soldier.png",
+         298, 1 + row * 41, 32, 40))
+end
 
 ------------------------------------------------------------------------------
 -- This function renders unit sprite image by probably combining several
@@ -56,7 +46,7 @@ local falling_frames = {
 ------------------------------------------------------------------------------
 
 local function sprite_renderer(img, dir, phase, info)
-    -- falling unit
+    -- falling unit (dead or stunned)
     if info.is_falling then
         img:draw(0, 0, falling_frames[phase + 1])
         return
@@ -91,5 +81,5 @@ end
 AddUnit {
     name = "soldier",
     pMap  = sprite_renderer,
-    pInv  = png_image_fragment("$(extension)/soldier.png", 325, 0, 70, 150)
+    pInv  = png_image_fragment("$(extension)/soldier.png", 344, 0, 420 - 350, 150)
 }
