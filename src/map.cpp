@@ -299,6 +299,9 @@ extern volatile unsigned int ANIMATION;
 
 /**
  * Draw "3D" Battlescape-Map
+ *
+ * @todo optimize performance, some caching is needed in order to 
+ *       avoid doing extra blit operations
  */
 void Map::draw(int show_cursor)
 {
@@ -317,9 +320,27 @@ void Map::draw(int show_cursor)
     else
         l2 = sel_lev;
         
-    BITMAP *cell_bmp = create_bitmap(32, 40);
+    BITMAP *cell_bmp = create_bitmap(32, 48);
 
     for (int lev = l1; lev <= l2; lev++) {
+        // Draw floor sprites first (otherwise they can overlap unit animation)
+        for (int row = r1; row <= r2; row++) {
+            for (int col = c2; col >= c1; col--) {
+                sx = x + CELL_SCR_X * col + CELL_SCR_X * row;
+                sy = y - (col) * CELL_SCR_Y + CELL_SCR_Y * row - 26 - lev * CELL_SCR_Z - 1;
+
+                clear_to_color(cell_bmp, makecol(255, 0, 255));
+                draw_cell_pck(0, 6, lev, col, row, 0, platoon_local->is_seen(lev, col, row), cell_bmp);
+
+                if (m_cell[lev][col][row]->m_light < 16 && FLAGS & F_SHOWNIGHT) {
+                    set_trans_blender(0, 0, 0, 0);
+                    draw_lit_sprite(screen2, cell_bmp, sx, sy - 6, 255 * (17 - m_cell[lev][col][row]->m_light) / 16);
+                } else {
+                    draw_sprite(screen2, cell_bmp, sx, sy - 6);
+                }
+            }
+        }
+        // Draw all the remaining sprites
         for (int row = r1; row <= r2; row++) {
             for (int col = c2; col >= c1; col--) {
                 sx = x + CELL_SCR_X * col + CELL_SCR_X * row;
@@ -327,12 +348,6 @@ void Map::draw(int show_cursor)
 
                 if ((sx > -32) && (sx < SCREEN2W) && (sy >= -34) && (sy < SCREEN2H)) {
                     clear_to_color(cell_bmp, makecol(255, 0, 255));
-
-                    draw_cell_pck(0, 6, lev, col, row, 0, platoon_local->is_seen(lev, col, row), cell_bmp);
-                    
-                    //set_trans_blender(0, 0, 0, 0);
-                    //draw_lit_sprite(screen2, cell_bmp, sx, sy - 6, 255 * (17 - m_cell[lev][col][row]->m_light) / 16);
-                    //clear_to_color(cell_bmp, makecol(255, 0, 255));
 
                     if (m_cell[sel_lev][col][row]->MOUSE && show_cursor) {
                         if (lev == sel_lev) {
@@ -424,7 +439,7 @@ void Map::draw(int show_cursor)
                             cursor->showpck(5, sx, sy);
                         }
                     }
-
+                    // Draw smoke
                     if (platoon_local->is_seen(lev, col, row)) {
                         int s = fire_state(lev, col, row);
                         if (fire_time(lev,col,row)>0) {
