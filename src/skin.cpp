@@ -32,18 +32,18 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SKIN_INFO g_skins[] =
 {
-//    name,      SkinType,  fFemale, fFlying, armour_values, cost
-    { "male",    S_XCOM_0,  0, 0, { 12,  8,  8,  5,  2}, 70 },
-    { "female",  S_XCOM_0,  1, 0, { 12,  8,  8,  5,  2}, 70 },
-    { "armour_m",S_XCOM_1,  0, 0, { 50, 40, 40, 30, 30}, 380 },
-    { "armour_f",S_XCOM_1,  1, 0, { 50, 40, 40, 30, 30}, 380 },
-    { "power_m", S_XCOM_2,  0, 0, {100, 80, 80, 70, 60}, 780 },
-    { "power_f", S_XCOM_2,  1, 0, {100, 80, 80, 70, 60}, 780 },
-    { "fly_m",   S_XCOM_3,  0, 1, {110, 90, 90, 80, 70}, 1030 },
-    { "fly_f",   S_XCOM_3,  1, 1, {110, 90, 90, 80, 70}, 1030 },
-    { "sectoid", S_SECTOID, 0, 0, {  4,  3,  3,  2,  2}, 28 },
-    { "muton",   S_MUTON,   0, 0, { 70, 60, 60, 50, 50}, 580 },
-    { "- user made -", S_USER_MADE, 0, 0, { 70, 60, 60, 50, 50}, 580 },
+//    name,        SkinType,    fFemale, fFlying, armour_values, cost
+    { "male",      S_XCOM_0,    0, 0, { 12,  8,  8,  5,  2}, 70 },
+    { "female",    S_XCOM_0,    1, 0, { 12,  8,  8,  5,  2}, 70 },
+    { "armour_m",  S_XCOM_1,    0, 0, { 50, 40, 40, 30, 30}, 380 },
+    { "armour_f",  S_XCOM_1,    1, 0, { 50, 40, 40, 30, 30}, 380 },
+    { "power_m",   S_XCOM_2,    0, 0, {100, 80, 80, 70, 60}, 780 },
+    { "power_f",   S_XCOM_2,    1, 0, {100, 80, 80, 70, 60}, 780 },
+    { "fly_m",     S_XCOM_3,    0, 1, {110, 90, 90, 80, 70}, 1030 },
+    { "fly_f",     S_XCOM_3,    1, 1, {110, 90, 90, 80, 70}, 1030 },
+    { "sectoid",   S_SECTOID,   0, 0, {  4,  3,  3,  2,  2}, 28 },
+    { "muton",     S_MUTON,     0, 0, { 70, 60, 60, 50, 50}, 580 },
+    { "chameleon", S_CHAMELEON, 0, 0, { 70, 60, 60, 50, 50}, 580 },
 };
 
 int g_skins_count = sizeof(g_skins) / sizeof(g_skins[0]);
@@ -94,6 +94,14 @@ void Skin::initpck()
         m_pck[n] = new PCK(fname, false, 32, 40);
     }
 
+    if (FLAGS & F_CONVERT_XCOM_DATA) {
+        for (int n = SKIN_NUMBER; n < (int)(sizeof(skin_fname) / sizeof(skin_fname[0])); n++) {
+            sprintf(fname, "$(xcom)/units/%s", skin_fname[n]);
+            PCK *tmp = new PCK(fname, false, 32, 40);
+            delete tmp;
+        }
+    }
+
     m_add1 = new PCK("$(ufo2000)/newunits/add1.pck", false, 32, 40);
 
     for (int ar = 0; ar < 2; ar++)
@@ -109,7 +117,7 @@ void Skin::initpck()
     m_spk[4][0][0] = new SPK("$(ufo2000)/newunits/sectoid.spk");
     m_spk[5][0][0] = new SPK("$(ufo2000)/newunits/muton.spk");
     
-    m_image = create_bitmap(32, 32);
+    m_image = create_bitmap(32, 40);
     
     initbof();
 }
@@ -318,11 +326,15 @@ void Skin::draw_lua()
     int dir = m_soldier->dir, phase = m_soldier->phase, is_flying = m_soldier->is_flying();
     Item *lhand_item = m_soldier->lhand_item(), *rhand_item = m_soldier->rhand_item();
 
-    BITMAP *weapon = NULL;
-    if (rhand_item != NULL)
-        weapon = rhand_item->obdata_pHeld(dir);
-    else if (lhand_item != NULL)
-        weapon = lhand_item->obdata_pHeld(dir);
+    BITMAP *weapon_hold = NULL;
+    BITMAP *weapon_aim  = NULL;
+    if (rhand_item != NULL) {
+        weapon_hold = rhand_item->obdata_pHeld(dir);
+        weapon_aim = rhand_item->obdata_pHeld((dir + 2) % 8);
+    } else if (lhand_item != NULL) {
+        weapon_hold = lhand_item->obdata_pHeld(dir);
+        weapon_aim = lhand_item->obdata_pHeld((dir + 2) % 8);
+    }
 
     int gx = g_map->x + CELL_SCR_X * x + CELL_SCR_X * y;
     int gy = g_map->y - (x + 1) * CELL_SCR_Y + CELL_SCR_Y * y - 18 - z * CELL_SCR_Z;
@@ -340,8 +352,13 @@ void Skin::draw_lua()
     lua_pushstring(L, "UnitsTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
     ASSERT(lua_istable(L, -1));
-    lua_pushstring(L, "default"); // $$$
+    lua_pushnumber(L, m_soldier->md.Appearance);
     lua_gettable(L, -2);
+    if (!lua_istable(L, -1)) {
+        lua_pop(L, 1);
+        lua_pushnumber(L, 0);
+        lua_gettable(L, -2);
+    }
     ASSERT(lua_istable(L, -1));
     lua_pushstring(L, "pMap");
     lua_gettable(L, -2);
@@ -349,15 +366,26 @@ void Skin::draw_lua()
 
     LPCD::Push(L, &sprite);
     lua_pushnumber(L, dir);
-    lua_pushnumber(L, phase);
+    lua_pushnumber(L, (state == MARCH || state == FALL) ? phase + 1 : phase);
     lua_newtable(L);
-    if (weapon) {
+    if (weapon_hold) {
         lua_pushstring(L, "gun");
-        LPCD::Push(L, weapon);
+        LPCD::Push(L, weapon_hold);
         lua_settable(L, -3);
+        lua_pushstring(L, "hand_object_image");
+        LPCD::Push(L, weapon_hold);
+        lua_settable(L, -3);
+        if (weapon_aim) {
+            lua_pushstring(L, "aimed_hand_object_image");
+            LPCD::Push(L, weapon_aim);
+            lua_settable(L, -3);
+        }
     }
     if (state == FALL) {
         lua_pushstring(L, "collapse");
+        lua_pushboolean(L, true);
+        lua_settable(L, -3);
+        lua_pushstring(L, "is_falling");
         lua_pushboolean(L, true);
         lua_settable(L, -3);
     }
@@ -365,7 +393,19 @@ void Skin::draw_lua()
         lua_pushstring(L, "crouch");
         lua_pushboolean(L, true);
         lua_settable(L, -3);
+        lua_pushstring(L, "is_crouching");
+        lua_pushboolean(L, true);
+        lua_settable(L, -3);
     }
+    if (is_flying) {
+        lua_pushstring(L, "is_flying");
+        lua_pushboolean(L, true);
+        lua_settable(L, -3);
+    }
+    lua_pushstring(L, "appearance");
+    lua_pushnumber(L, m_soldier->md.Appearance);
+    lua_settable(L, -3);
+
     lua_safe_call(L, 4, 0);
     lua_settop(L, stack_top);
 
@@ -385,7 +425,7 @@ void Skin::draw_lua()
         else
             draw_sprite(screen2, image, gx + (phase - 8) * 2 * ox, gy - (phase - 8) * oy);
     } else {
-        draw_sprite(screen2, image, gx + phase * 2 * ox, gy - phase * oy);
+        draw_sprite(screen2, image, gx, gy);
     }
 }
 
@@ -544,7 +584,7 @@ void Skin::draw()
 {
     //for different races (NIY)
     switch (skin_info.SkinType) {
-        case S_USER_MADE:
+        case S_CHAMELEON:
             draw_lua();
             break;
         default:

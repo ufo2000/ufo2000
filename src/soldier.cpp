@@ -2586,20 +2586,26 @@ void Soldier::showspk(BITMAP *dest)
         case S_MUTON:
             Skin::m_spk[5][0][0]->show(dest, 0, 0);
             break;
-        case S_USER_MADE:
-        {
+        case S_CHAMELEON: {
             int stack_top = lua_gettop(L);
             lua_pushstring(L, "UnitsTable");
             lua_gettable(L, LUA_GLOBALSINDEX);
             ASSERT(lua_istable(L, -1));
-            lua_pushstring(L, "default"); // $$$
+            lua_pushnumber(L, md.Appearance);
             lua_gettable(L, -2);
+            if (!lua_istable(L, -1)) {
+                lua_pop(L, 1);
+                lua_pushnumber(L, 0);
+                lua_gettable(L, -2);
+            }
             ASSERT(lua_istable(L, -1));
             lua_pushstring(L, "pInv");
             lua_gettable(L, -2);
-            ASSERT(lua_islightuserdata(L, -1));
-            BITMAP *bmp = (BITMAP *)lua_touserdata(L, -1);
-            draw_sprite(dest, bmp, 45, 25);
+            if (lua_islightuserdata(L, -1)) {
+                BITMAP *bmp = (BITMAP *)lua_touserdata(L, -1);
+                ASSERT(bmp);
+                draw_sprite(dest, bmp, 80 - (bmp->w / 2), 100 - (bmp->h / 2));
+            }
             lua_settop(L, stack_top);
             break;
         }

@@ -219,14 +219,21 @@ function AddImage(key, val)
     ImageTable[key] = val
 end
 
+local unit_index = 0
+
 function AddUnit(val)
-    local key = "default"
+    local key = val.name
+    if not key then 
+        Message("AddUnit: invalid unit ignored")
+        return
+    end
     if UnitsTable[key] then
-        Message("AddUnit: replaced unit '%s'", key)
-    else
-        Message("AddUnit: added unit '%s'", key)
+        Message("AddUnit: duplicate unit '%s' ignored", key)
+        return
     end
     UnitsTable[key] = val
+    UnitsTable[unit_index] = val
+    unit_index = unit_index + 1
 end
 
 function SetExplosionAnimation(tbl)

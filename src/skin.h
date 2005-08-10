@@ -38,7 +38,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define S_CHRYSSALID      8
 
 // !!! Hack - only to test custom unit sprite rendering code
-#define S_USER_MADE       10
+#define S_CHAMELEON       10
 
 struct SKIN_INFO {
     const char *Name;
