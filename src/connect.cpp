@@ -41,131 +41,131 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 int Connect::do_chat()
 {
-	Wind *local_win = NULL, *remote_win = NULL, *info_win = NULL;
+    Wind *local_win = NULL, *remote_win = NULL, *info_win = NULL;
 
-	bool version_check_passed = false;
+    bool version_check_passed = false;
 
-	reset_video();
+    reset_video();
 
-	position_mouse(320, 200);
+    position_mouse(320, 200);
     MouseRange temp_mouse_range(0, 0, 639, 399);
 
-	BITMAP *scr = create_bitmap(320, 200); clear(scr);
-	BITMAP *backscr = create_bitmap(640, 400);
-	SPK *back09 = new SPK("$(xcom)/geograph/back09.scr");      //gamepal used
+    BITMAP *scr = create_bitmap(320, 200); clear(scr);
+    BITMAP *backscr = create_bitmap(640, 400);
+    SPK *back09 = new SPK("$(xcom)/geograph/back09.scr");      //gamepal used
 
-	install_int_ex(drawit_timer, BPS_TO_TIMER(10));      //ticks each second
+    install_int_ex(drawit_timer, BPS_TO_TIMER(10));      //ticks each second
 
-	back09->show(scr, 0, 0);
-	stretch_blit(scr, screen,  0, 0, 320, 200, 0, 0, 640, 400);
-	stretch_blit(scr, backscr, 0, 0, 320, 200, 0, 0, 640, 400);
+    back09->show(scr, 0, 0);
+    stretch_blit(scr, screen,  0, 0, 320, 200, 0, 0, 640, 400);
+    stretch_blit(scr, backscr, 0, 0, 320, 200, 0, 0, 640, 400);
 
-	local_win  = new Wind(backscr,  15, 197, 619, 383, COLOR_GOLD);
-	remote_win = new Wind(backscr,  15,  12, 408, 179, COLOR_RED01);
-	info_win   = new Wind(backscr, 434,  17, 619, 171, COLOR_VIOLET00);
+    local_win  = new Wind(backscr,  15, 197, 619, 383, COLOR_GOLD);
+    remote_win = new Wind(backscr,  15,  12, 408, 179, COLOR_RED01);
+    info_win   = new Wind(backscr, 434,  17, 619, 171, COLOR_VIOLET00);
 
-	int DONE = 0;
-	std::string buf;
+    int DONE = 0;
+    std::string buf;
 
-	switch (net->gametype) {
-		case GAME_TYPE_INTERNET_SERVER:
-			break;
-		default:
-			ASSERT(false);
-			break;
-	}
+    switch (net->gametype) {
+        case GAME_TYPE_INTERNET_SERVER:
+            break;
+        default:
+            ASSERT(false);
+            break;
+    }
 
-	g_net_allowed_terrains.clear();
+    g_net_allowed_terrains.clear();
 
-	remote_win->printstr("\n");
+    remote_win->printstr("\n");
     remote_win->printstr( _("Comparing local and remote UFO2000 versions...") );
     remote_win->printstr( _("Press ESC to cancel") );
 
-	char version_check_packet[128];
-	sprintf(version_check_packet, "UFO2000 REVISION OF YOUR OPPONENT: %d", UFO_REVISION_NUMBER);
-	net->send(version_check_packet);
+    char version_check_packet[128];
+    sprintf(version_check_packet, "UFO2000 REVISION OF YOUR OPPONENT: %d", UFO_REVISION_NUMBER);
+    net->send(version_check_packet);
 
-	while (!DONE) {
-		if (net->recv(buf)) {
-			int remote_revision;
-			if (sscanf(buf.c_str(), "UFO2000 REVISION OF YOUR OPPONENT: %d", &remote_revision) == 1) {
-				if (UFO_REVISION_NUMBER == remote_revision) {
-					net->send("START");
-					version_check_passed = true;
-				} else {
-					if (remote_revision < UFO_REVISION_NUMBER) {
+    while (!DONE) {
+        if (net->recv(buf)) {
+            int remote_revision;
+            if (sscanf(buf.c_str(), "UFO2000 REVISION OF YOUR OPPONENT: %d", &remote_revision) == 1) {
+                if (UFO_REVISION_NUMBER == remote_revision) {
+                    net->send("START");
+                    version_check_passed = true;
+                } else {
+                    if (remote_revision < UFO_REVISION_NUMBER) {
                         // Todo: Reformat following texts for gettext()
-						remote_win->printstr("\nUnfortunately your opponent has an\n");
-						remote_win->printstr("outdated UFO2000 version and you will be\n");
-						remote_win->printstr("unable to play until he upgrades\n");
-				    } else {
-						char tmp[128];
-						sprintf(tmp, "\nYou need UFO2000 %s (revision %d)\nor newer", 
-							UFO_VERSION_STRING, remote_revision);
-						remote_win->printstr("\nUnfortunately you have an older UFO2000\n");
-						remote_win->printstr("version than your opponent has.\n");
-						remote_win->printstr("\nPlease visit http://ufo2000.sourceforge.net\n");
-						remote_win->printstr("and upgrade your UFO2000 version\n");
-						remote_win->printstr(tmp);
-				    }
-					net->send("QUIT");
-					net->SEND = 0;
-					DONE = 1;
-				}
-			}
+                        remote_win->printstr("\nUnfortunately your opponent has an\n");
+                        remote_win->printstr("outdated UFO2000 version and you will be\n");
+                        remote_win->printstr("unable to play until he upgrades\n");
+                    } else {
+                        char tmp[128];
+                        sprintf(tmp, "\nYou need UFO2000 %s (revision %d)\nor newer", 
+                            UFO_VERSION_STRING, remote_revision);
+                        remote_win->printstr("\nUnfortunately you have an older UFO2000\n");
+                        remote_win->printstr("version than your opponent has.\n");
+                        remote_win->printstr("\nPlease visit http://ufo2000.sourceforge.net\n");
+                        remote_win->printstr("and upgrade your UFO2000 version\n");
+                        remote_win->printstr(tmp);
+                    }
+                    net->send("QUIT");
+                    net->SEND = 0;
+                    DONE = 1;
+                }
+            }
 
-			if (strstr(buf.c_str(), "QUIT") != NULL) {
-				net->SEND = 0;
-				DONE = 1;
-			}
-			if (strstr(buf.c_str(), "START") != NULL) {
-				if (!version_check_passed) {
-					remote_win->printstr("\nUnfortunately your opponent has an\n");
-					remote_win->printstr("outdated UFO2000 version and you will be\n");
-					remote_win->printstr("unable to play until he upgrades\n");
-					net->send("QUIT");
-					net->SEND = 0;
-				}
-				DONE = 1;
-			}
-		}
+            if (strstr(buf.c_str(), "QUIT") != NULL) {
+                net->SEND = 0;
+                DONE = 1;
+            }
+            if (strstr(buf.c_str(), "START") != NULL) {
+                if (!version_check_passed) {
+                    remote_win->printstr("\nUnfortunately your opponent has an\n");
+                    remote_win->printstr("outdated UFO2000 version and you will be\n");
+                    remote_win->printstr("unable to play until he upgrades\n");
+                    net->send("QUIT");
+                    net->SEND = 0;
+                }
+                DONE = 1;
+            }
+        }
 
-		if (!net->SEND) {
+        if (!net->SEND) {
             info_win->printstr( _("connection closed") );
-			readkey();
-			DONE = 1;
-		}
+            readkey();
+            DONE = 1;
+        }
 
-		if (keypressed()) {
-			int scancode;
-			ureadkey(&scancode);
+        if (keypressed()) {
+            int scancode;
+            ureadkey(&scancode);
 
-			switch (scancode) {
-				case KEY_F4:
-				case KEY_F5:
-					info_win->redraw_full();
-					local_win->redraw();
-					remote_win->redraw();
-					break;
-				case KEY_ESC:
-					net->send("QUIT");
-					net->SEND = 0;
-					DONE = 1;
-					break;
-			}
-		}
-	}
+            switch (scancode) {
+                case KEY_F4:
+                case KEY_F5:
+                    info_win->redraw_full();
+                    local_win->redraw();
+                    remote_win->redraw();
+                    break;
+                case KEY_ESC:
+                    net->send("QUIT");
+                    net->SEND = 0;
+                    DONE = 1;
+                    break;
+            }
+        }
+    }
 
-	remove_int(drawit_timer);
-	delete back09;
-	delete local_win;  local_win  = NULL;
-	delete remote_win; remote_win = NULL;
-	delete info_win;   info_win   = NULL;
-	destroy_bitmap(scr);
-	destroy_bitmap(backscr);
+    remove_int(drawit_timer);
+    delete back09;
+    delete local_win;  local_win  = NULL;
+    delete remote_win; remote_win = NULL;
+    delete info_win;   info_win   = NULL;
+    destroy_bitmap(scr);
+    destroy_bitmap(backscr);
 
-	clear(screen);
-	return net->SEND;
+    clear(screen);
+    return net->SEND;
 }
 
 #include "map.h"
@@ -180,16 +180,16 @@ Units* target_uints[2];
 // uds ??
 void Connect::reset_uds()
 {
-	local.reset();
-	remote.reset();
+    local.reset();
+    remote.reset();
 }
 
 void Connect::swap_uds()
 {
-	Units u;
-	memcpy(&u,      &local,  sizeof(Units));
-	memcpy(&local,  &remote, sizeof(Units));
-	memcpy(&remote, &u,      sizeof(Units));
+    Units u;
+    memcpy(&u,      &local,  sizeof(Units));
+    memcpy(&local,  &remote, sizeof(Units));
+    memcpy(&remote, &u,      sizeof(Units));
 }
 
 int FINISH_PLANNER = 0;
@@ -201,120 +201,127 @@ int FINISH_PLANNER = 0;
 int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 {
     lua_message( "Enter: Connect::do_planner" );
-	MODE = PLANNER;
+    MODE = PLANNER;
 
-	int mouse_leftr = 1, mouse_rightr = 1;
-	int DONE = 0;
-	//HOST = 0;
-	FINISH_PLANNER = 0;
+    int mouse_leftr = 1, mouse_rightr = 1;
+    int DONE = 0;
+    //HOST = 0;
+    FINISH_PLANNER = 0;
 
-	reset_video();
-	destroy_bitmap(screen2);
-	screen2 = create_bitmap(640, SCREEN2H - 1); clear(screen2);
+    int old_SCREEN2H = SCREEN2H;
+    SCREEN2H = 380;
+
+    reset_video();
+    destroy_bitmap(screen2);
+    screen2 = create_bitmap(640, SCREEN2H); clear(screen2);
     MouseRange temp_mouse_range(0, 0, 639, SCREEN2H - 1);
 
-	g_console->set_full_redraw();
-	g_console->redraw(screen, 0, SCREEN2H);
+    g_console->resize(SCREEN_W, SCREEN_H - SCREEN2H);
+    g_console->set_full_redraw();
+    g_console->redraw(screen, 0, SCREEN2H);
 
     g_console->printf( COLOR_SYS_HEADER, "%s", _("Welcome to the mission-planner !") );
 
-	Map *map = new Map(mapdata);
-	BITMAP *map2d = map->create_bitmap_of_map(0);
-	int map2d_x = (640 - map2d->w) / 2;
+    Map *map = new Map(mapdata);
+    BITMAP *map2d = map->create_bitmap_of_map(0);
+    int map2d_x = (640 - map2d->w) / 2;
 
-	if (HOST) {
-	    target_uints[1] = &remote;
-	    target_uints[0] = &local;
+    if (HOST) {
+        target_uints[1] = &remote;
+        target_uints[0] = &local;
         local.set_pos(POS_LEFT,   map2d_x - (MAN_NAME_LEN * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
-		remote.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
-		pd_local = &pd1;
-		pd_remote = &pd2;
-	} else {
-	    target_uints[0] = &remote;
-	    target_uints[1] = &local;
+        remote.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
+        pd_local = &pd1;
+        pd_remote = &pd2;
+    } else {
+        target_uints[0] = &remote;
+        target_uints[1] = &local;
         remote.set_pos(POS_LEFT, map2d_x - (MAN_NAME_LEN * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
-		local.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
-		pd_remote = &pd1;
-		pd_local = &pd2;
-	}
+        local.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
+        pd_remote = &pd1;
+        pd_local = &pd2;
+    }
     target_uints[0]->Position = 1;
     target_uints[1]->Position = 2;
 
     local.store_mouse_range(map2d_x, 0, map2d_x + map2d->w - 1, map2d->h - 1);
-	editor->build_Units(local);
+    editor->build_Units(local);
 
-	if (net->is_network_game()) {
-		// synchronize available equipment with remote machine
-		net->send_equipment();
-	} else {
-		// synchronize available equipment with ourselves :)
-		lua_pushstring(L, "SyncEquipmentInfo");
-		lua_gettable(L, LUA_GLOBALSINDEX);
-		lua_pushstring(L, "QueryEquipmentInfo");
-		lua_gettable(L, LUA_GLOBALSINDEX);
-		lua_safe_call(L, 0, 1);
-		lua_safe_call(L, 1, 0);
-	}
+    if (net->is_network_game()) {
+        // synchronize available equipment with remote machine
+        net->send_equipment();
+    } else {
+        // synchronize available equipment with ourselves :)
+        lua_pushstring(L, "SyncEquipmentInfo");
+        lua_gettable(L, LUA_GLOBALSINDEX);
+        lua_pushstring(L, "QueryEquipmentInfo");
+        lua_gettable(L, LUA_GLOBALSINDEX);
+        lua_safe_call(L, 0, 1);
+        lua_safe_call(L, 1, 0);
+    }
 
     // Synchronize available terrains list
     if (net->is_network_game()) {
 #undef map
-		std::map<int, Terrain *>::iterator it = terrain_set->terrain.begin();
-		while (it != terrain_set->terrain.end()) {
-			net->send_terrain_crc32(it->second->get_name(), it->second->get_crc32());
-			it++;
-		}
-		net->send_terrain_crc32("", 0);
+        std::map<int, Terrain *>::iterator it = terrain_set->terrain.begin();
+        while (it != terrain_set->terrain.end()) {
+            net->send_terrain_crc32(it->second->get_name(), it->second->get_crc32());
+            it++;
+        }
+        net->send_terrain_crc32("", 0);
 #define map g_map
 
-		// Wait until a complete list of remote terrains is received
-		while (g_net_allowed_terrains.find("") == g_net_allowed_terrains.end()) {
-			net->check();
+        // Wait until a complete list of remote terrains is received
+        while (g_net_allowed_terrains.find("") == g_net_allowed_terrains.end()) {
+            net->check();
             rest(1);
-		}
+        }
 
         // Remove end marker
-		g_net_allowed_terrains.erase("");
+        g_net_allowed_terrains.erase("");
 
-		if (g_net_allowed_terrains.size() == 0) {
+        if (g_net_allowed_terrains.size() == 0) {
             alert( "", _("Remote player does not have any of your maps"), "",
                    _("OK"), NULL, 0, 0);
-			delete map;
+            delete map;
 
-			destroy_bitmap(screen2);
-			screen2 = create_bitmap(SCREEN2W, SCREEN2H); clear(screen2);
-			clear(screen);
-			return 0;
-		}
-	}
+            SCREEN2H = old_SCREEN2H;
+            destroy_bitmap(screen2);
+            screen2 = create_bitmap(SCREEN2W, SCREEN2H); clear(screen2);
+            clear(screen);
+            g_console->resize(SCREEN_W, SCREEN_H - SCREEN2H);
+            g_console->set_full_redraw();
+            return 0;
+        }
+    }
 
     // Make sure that we have a valid map
-	if (!Map::valid_GEODATA(&mapdata)) {
-		Map::new_GEODATA(&mapdata);
-	}
+    if (!Map::valid_GEODATA(&mapdata)) {
+        Map::new_GEODATA(&mapdata);
+    }
 
-	// Try to set standard equipment
-	lua_safe_dostring(L, "SetEquipment('Standard')");
+    // Try to set standard equipment
+    lua_safe_dostring(L, "SetEquipment('Standard')");
 
-	mapdata.load_game = 77;
+    mapdata.load_game = 77;
 
-	if (HOST && !g_game_receiving) {
-		int i;
-		net->send_map_data(&mapdata);
-		net->send_time_limit(g_time_limit);
-		net->send_scenario();
-		for (i = 0; i < 5; i++)
-			net->send_rules(i, scenario->rules[i]);
-		for (i = 0; i < SCENARIO_NUMBER; i++)
-			for (int j = 0; j < 3; j++)
-				net->send_options(i, j, scenario->options[i][j]->value);
-	}
-	else //send start_sit info now
-	{
-		net->send_p2_start_sit((FLAGS & F_SECONDSIT)?1:0);
-	}
+    if (HOST && !g_game_receiving) {
+        int i;
+        net->send_map_data(&mapdata);
+        net->send_time_limit(g_time_limit);
+        net->send_scenario();
+        for (i = 0; i < 5; i++)
+            net->send_rules(i, scenario->rules[i]);
+        for (i = 0; i < SCENARIO_NUMBER; i++)
+            for (int j = 0; j < 3; j++)
+                net->send_options(i, j, scenario->options[i][j]->value);
+    }
+    else //send start_sit info now
+    {
+        net->send_p2_start_sit((FLAGS & F_SECONDSIT)?1:0);
+    }
 
-	if (map_change_allowed)
+    if (map_change_allowed)
         g_console->printf( COLOR_SYS_OK,   _("You can select a map and change the match-settings.") );
     else
         g_console->printf( COLOR_SYS_FAIL, _("The map is already set for this game, and cannot be changed.") );
@@ -322,105 +329,105 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
     g_console->printf( COLOR_SYS_INFO1,    _("Left-click to place a soldier on the map, right-click to remove him.") );
     g_console->printf( COLOR_SYS_PROMPT,   _("When finished, click SEND, then START.  Press ESC to quit, F1 for help.") ); 
 
-	while (!DONE) {
+    while (!DONE) {
 
         rest(1); // Don't eat all CPU resources
-		g_console->redraw(screen, 0, SCREEN2H);
+        g_console->redraw(screen, 0, SCREEN2H);
 
-		net->check();
-		if (mapdata.load_game == 77) { //new	mapdata
-			//g_console->printf("suggested map: %s\n",
-			//	terrain_set->get_terrain_name(mapdata.terrain).c_str());
-			mapdata.load_game = 0;
-			delete map;
-			destroy_bitmap(map2d);
-			map = new Map(mapdata);
-			map2d = map->create_bitmap_of_map(0);
-			map2d_x = (640 - map2d->w) / 2;
+        net->check();
+        if (mapdata.load_game == 77) { //new    mapdata
+            //g_console->printf("suggested map: %s\n",
+            //  terrain_set->get_terrain_name(mapdata.terrain).c_str());
+            mapdata.load_game = 0;
+            delete map;
+            destroy_bitmap(map2d);
+            map = new Map(mapdata);
+            map2d = map->create_bitmap_of_map(0);
+            map2d_x = (640 - map2d->w) / 2;
 
-			local.reset_selections();
-			remote.reset_selections();
+            local.reset_selections();
+            remote.reset_selections();
 
-			if (HOST) {
+            if (HOST) {
                 local.Position = 1;
                 remote.Position = 2;
                 local.set_pos(POS_LEFT,   map2d_x - (MAN_NAME_LEN * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
-				remote.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
-			} else {
+                remote.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
+            } else {
                 local.Position = 2;
                 remote.Position = 1;
                 remote.set_pos(POS_LEFT,  map2d_x - (MAN_NAME_LEN * 8 + 20), 10, map2d_x, map2d->w, 0, map2d->h);
-				local.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
-			}
+                local.set_pos(POS_RIGHT, map2d_x + map2d->w + 20, 10, map2d_x, map2d->w, 0, map2d->h);
+            }
             local.store_mouse_range(map2d_x, 0, map2d_x + map2d->w - 1, map2d->h - 1);
-			local.deselect();
+            local.deselect();
 
-			CHANGE = 1;
-		}
+            CHANGE = 1;
+        }
 
-		if (CHANGE) { //!!build screen
-			clear(screen2);
-			//map->show2d(0, 0);
-			blit(map2d, screen2, 0, 0, map2d_x, 0, map2d->w, map2d->h);
+        if (CHANGE) { //!!build screen
+            clear(screen2);
+            //map->show2d(0, 0);
+            blit(map2d, screen2, 0, 0, map2d_x, 0, map2d->w, map2d->h);
 
             if(!g_game_receiving) {
-            	remote.print_simple(COLOR_WHITE);
-			    local.print(COLOR_WHITE);
+                remote.print_simple(COLOR_WHITE);
+                local.print(COLOR_WHITE);
             }
-			//remote.print(1);
+            //remote.print(1);
 
-			//if (local.SEND)
-			// draw_pd_info(editor->pd_local, local.gx, 170);
-			//if (remote.SEND)
-			// draw_pd_info(pd_remote, remote.gx, 170);
+            //if (local.SEND)
+            // draw_pd_info(editor->pd_local, local.gx, 170);
+            //if (remote.SEND)
+            // draw_pd_info(pd_remote, remote.gx, 170);
 
-			draw_sprite(screen2, mouser, mouse_x, mouse_y);
-			blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
+            draw_sprite(screen2, mouser, mouse_x, mouse_y);
+            blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
 
-			CHANGE = 0;
-		}
+            CHANGE = 0;
+        }
 
-		if ((mouse_b & 1) && (mouse_leftr)) //left
-		{
-			mouse_leftr = 0;
-			CHANGE = 1;
-			local.execute(map, map_change_allowed);
+        if ((mouse_b & 1) && (mouse_leftr)) //left
+        {
+            mouse_leftr = 0;
+            CHANGE = 1;
+            local.execute(map, map_change_allowed);
             // Calls Editor::show() via Units::execute and execute_main()
 
-			//	"START"
-			if (mouse_inside(local.gx + 5 * 8 - 20, SCREEN2H - 20, local.gx + 5 * 8 + 20, SCREEN2H - 5))
-			{
+            //  "START"
+            if (mouse_inside(local.gx + 5 * 8 - 20, SCREEN2H - 20, local.gx + 5 * 8 + 20, SCREEN2H - 5))
+            {
                 if (F10ALLOWED && local.SEND && askmenu( _("PREPARATIONS FOR MISSION FINISHED") ))
                     DONE = 1;
-			}
-		}
+            }
+        }
 
-		if ((mouse_b & 2) && (mouse_rightr)) { //right
-			mouse_rightr = 0;
-			CHANGE = 1;
-			local.execute_right();
-		}
+        if ((mouse_b & 2) && (mouse_rightr)) { //right
+            mouse_rightr = 0;
+            CHANGE = 1;
+            local.execute_right();
+        }
 
-		if (!(mouse_b & 1)) {
-			mouse_leftr = 1;
-		}
+        if (!(mouse_b & 1)) {
+            mouse_leftr = 1;
+        }
 
-		if (!(mouse_b & 2)) {
-			mouse_rightr = 1;
-		}
+        if (!(mouse_b & 2)) {
+            mouse_rightr = 1;
+        }
 
-		process_keyswitch();
+        process_keyswitch();
 
-		if (keypressed()) {
-			CHANGE = 1;
+        if (keypressed()) {
+            CHANGE = 1;
 
-			int scancode;
-			int keycode = ureadkey(&scancode);
+            int scancode;
+            int keycode = ureadkey(&scancode);
 
-			switch (scancode) {
-				case KEY_F1:
-					help( HELP_PLANNER );
-					break;
+            switch (scancode) {
+                case KEY_F1:
+                    help( HELP_PLANNER );
+                    break;
                 // Todo: Save+Load for teams
                 case KEY_F2: 
                   //Editor::save();
@@ -429,51 +436,50 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
                   //Editor::load();
                     break;
                 case KEY_F4: 
-				  //editor->set_man(name[1]);
+                  //editor->set_man(name[1]);
                   //Editor::show();
                     break;
                 case KEY_F5: // Toggle F_RAWMESSAGES
                     FLAGS ^= F_RAWMESSAGES;
                     g_console->printf( COLOR_SYS_INFO1, "%s: %lu", "RAWMESSAGES:", (FLAGS & F_RAWMESSAGES) );
                     break;
-				case KEY_F9:
-					keyswitch(0);
-					break;
-				case KEY_F10:
-					change_screen_mode();
-					break;
+                case KEY_F9:
+                    keyswitch(0);
+                    break;
+                case KEY_F10:
+                    change_screen_mode();
+                    break;
                 case KEY_ASTERISK:   // ?? ToDo: Sound+Music on/off
                     FS_MusicPlay(NULL);
                     g_console->printf(COLOR_SYS_FAIL, _("Music OFF") );
                     break;
-				case KEY_ESC:
+                case KEY_ESC:
                     if (askmenu( _("EXIT MISSION-PLANNER") )) {
-						net->send_quit();
-						net->SEND = 0;
-						DONE = 1;
-					}
-					break;
-				default:
-					if (g_console->process_keyboard_input(keycode, scancode))
-						net->send_message((char *)g_console->get_text());
-			}
-		}
-		if (FINISH_PLANNER)
-			break;
-	}
+                        net->send_quit();
+                        net->SEND = 0;
+                        DONE = 1;
+                    }
+                    break;
+                default:
+                    if (g_console->process_keyboard_input(keycode, scancode))
+                        net->send_message((char *)g_console->get_text());
+            }
+        }
+        if (FINISH_PLANNER)
+            break;
+    }
 
     local.restore_mouse_range();
-	delete map;
+    delete map;
 
-    g_console->printf(COLOR_SYS_INFO2, "%s\n\n\n\n\n\n\n\n\n\n\n\n\n", _("ok.") ); 
-    // clear message-area (scroll up)
-
-	g_console->redraw(screen, 0, SCREEN2H);
-	destroy_bitmap(screen2);
-	screen2 = create_bitmap(SCREEN2W, SCREEN2H); clear(screen2);
-	clear(screen);
-  //lua_message( "Exit : Connect::do_planner" );
-	return net->SEND;
+    g_console->printf(COLOR_SYS_INFO2, "------");
+    SCREEN2H = old_SCREEN2H;
+    destroy_bitmap(screen2);
+    screen2 = create_bitmap(SCREEN2W, SCREEN2H); clear(screen2);
+    clear(screen);
+    g_console->resize(SCREEN_W, SCREEN_H - SCREEN2H);
+    g_console->set_full_redraw();
+    return net->SEND;
 }
 
 /**
@@ -482,17 +488,17 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 // ?? does not account for stamina, strength, armor ??
 void Connect::draw_pd_info(void *_pd, int gx, int gy)
 {
-	PLAYERDATA *pd = (PLAYERDATA *)_pd;
+    PLAYERDATA *pd = (PLAYERDATA *)_pd;
 
     textout(screen2, g_small_font, _("INFO"), gx, gy, COLOR_WHITE);
-	int i;
-	int points = 0;
-	for (i = 0; i < pd->size; i++) {
-		points += pd->md[i].TimeUnits +
-		          pd->md[i].Health +
-		          pd->md[i].Firing +
-		          pd->md[i].Throwing;
-	}
+    int i;
+    int points = 0;
+    for (i = 0; i < pd->size; i++) {
+        points += pd->md[i].TimeUnits +
+                  pd->md[i].Health +
+                  pd->md[i].Firing +
+                  pd->md[i].Throwing;
+    }
     textprintf(screen2, g_small_font, gx, gy + 10, COLOR_WHITE, 
                _("Total men points=%d"), points);
 }

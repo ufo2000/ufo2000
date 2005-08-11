@@ -29,6 +29,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "colors.h"
 #include "text.h"
 #include "mouse.h"
+#include "multiplay.h"
 
 /**
  * Returns true if the weapon can be used. The weapon will be colored darkgray
@@ -56,7 +57,7 @@ Editor::Editor()
     blit(image, b5, 288, 137, 0, 0, 32, 15);
     destroy_bitmap(image);
 
-    m_armoury = new Place(0, 220, 20, 9);
+    m_armoury = new Place(0, 220, 20, 11);
 
     // make armoury object available to lua code
     lua_pushstring(L, "Armoury");
@@ -145,13 +146,14 @@ bool Editor::handle_mouse_leftclick()
         edit_soldier();
         return false;
     } 
-
+/*
     // Mouse click in item info panel (right bottom part of the screen) - 
     // change equipment dialog (Standard=all weapons/No explosives/No alien weapons/...)
     if (mouse_inside(320, 200, 639, 400)) {  // ?? disable this
         change_equipment();
         return false;
     }
+*/
     // Mouse click on text "ARMORY": change equipment dialog 
     if (mouse_inside(0, 200, 105, 220)) {
         change_equipment();
@@ -329,11 +331,10 @@ void Editor::show()
     draw_sprite_vh_flip(editor_bg, b5, 255, 137); // Button: Scroll-left
     rectfill(editor_bg, 288, 32, 319, 57, COLOR_GRAY15);    //hide unused "unload" button
     text_mode(-1);
-    textout(editor_bg, g_small_font, _("Click-and-drop weapons from the armory to the soldier, right-click to remove"), 8, 364, COLOR_WHITE); 
-    textout(editor_bg, large, _("F1 Help   F2 Save Team   F3 Load Team   F4 Edit Attributes"), 8, 380, COLOR_LT_BLUE);
+    textout(editor_bg, g_small_font, _("Click-and-drop weapons from the armory to the soldier, right-click to remove"), 0, 364 + 22, COLOR_WHITE); 
 
     position_mouse(320, 200);
-    MouseRange temp_mouse_range(0, 0, 639, 399);
+    MouseRange temp_mouse_range(0, 0, 639, 400);
 
     int DONE = 0;
     int mouse_leftr = 1, mouse_rightr = 1;
@@ -351,11 +352,19 @@ void Editor::show()
 
     while (mouse_b & 3) rest(1);
 
+    g_console->resize(SCREEN_W, SCREEN_H - 400);
+    g_console->set_full_redraw();
+    g_console->redraw(screen, 0, 400);
+
     while (!DONE) {
+
+        net->check();
 
         rest(1); // Don't eat all CPU resources
 
         if (CHANGE) {
+            g_console->redraw(screen, 0, 400);
+
             blit(editor_bg, screen2, 0, 0, 0, 0, editor_bg->w, editor_bg->h);
             man->showspk(screen2); // Show "bigpicture" of soldier in choosen armor
 
@@ -410,8 +419,13 @@ void Editor::show()
                     else
                         it->od_info(330, 220, COLOR_GRAY10);
                 } else {
-                    textprintf(screen2, large, 330, 220, COLOR_LT_BLUE, _("Click here to change equipment set"));
-                    int ty = 250;
+                    //textprintf(screen2, large, 330, 220, COLOR_LT_BLUE, _("Click here to change equipment set"));
+                    int ty = 220;
+                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("       F1: Help")); ty += 10;
+                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("    F2/F3: Save/load team")); ty += 10;
+                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("       F4: Edit attributes")); ty += 10;
+                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("       F5: Change weaponset")); ty += 15;
+
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _(" Ctrl+Ins: Copy current soldier")); ty += 10;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("Shift+Ins: Paste on current soldier")); ty += 15;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("      Del: Delete items of current man")); ty += 10;
@@ -506,7 +520,11 @@ void Editor::show()
                 case KEY_F4:
                     edit_soldier();   // Edit Attributes+Armor
                     break;
-//
+
+                case KEY_F5:
+                    change_equipment();
+                    break;
+
                 case KEY_F10:
                     change_screen_mode();
                     break;
@@ -595,8 +613,8 @@ void Editor::show()
                     DONE = 1;
                     break;
                 default: 
-                  g_console->process_keyboard_input(keycode, scancode);
-                  // Todo: show chat-window
+                    if (g_console->process_keyboard_input(keycode, scancode))
+                        net->send_message((char *)g_console->get_text());
             }
         }
     }
@@ -606,6 +624,9 @@ void Editor::show()
     destroy_bitmap(editor_bg);
     destroy_bitmap(screen2);
     screen2 = create_bitmap(SCREEN2W, SCREEN2H); clear(screen2);
+
+    g_console->resize(SCREEN_W, SCREEN_H - SCREEN2H);
+    g_console->set_full_redraw();
 
     clear(screen);
 }
