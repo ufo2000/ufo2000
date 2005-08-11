@@ -609,6 +609,11 @@ void Editor::show()
               //case KEY_ASTERISK:   // Test
               //    Editor::do_mapedit();
               //    break;
+                case KEY_PRTSCR:
+                    if (askmenu(_("SCREEN-SNAPSHOT"))) {
+                        savescreen();
+                    }
+                    break;
                 case KEY_ESC:
                     DONE = 1;
                     break;

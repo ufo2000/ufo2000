@@ -449,6 +449,11 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
                 case KEY_F10:
                     change_screen_mode();
                     break;
+                case KEY_PRTSCR:
+                    if (askmenu(_("SCREEN-SNAPSHOT"))) {
+                        savescreen();
+                    }
+                    break;
                 case KEY_ASTERISK:   // ?? ToDo: Sound+Music on/off
                     FS_MusicPlay(NULL);
                     g_console->printf(COLOR_SYS_FAIL, _("Music OFF") );

@@ -2311,6 +2311,7 @@ void gameloop()
                         }
                     }
                     break;
+                case KEY_PRTSCR:
                 case KEY_F12:
                     if (askmenu( _("SCREEN-SNAPSHOT") )) {
                         savescreen();
