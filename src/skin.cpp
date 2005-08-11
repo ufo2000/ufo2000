@@ -421,11 +421,11 @@ void Skin::draw_lua()
 
     if (state == MARCH) {
         if (phase < 4)
-            draw_sprite(screen2, image, gx + phase * 2 * ox, gy - phase * oy);
+            draw_sprite(screen2, image, gx + phase * 2 * ox, gy - phase * oy - 6);
         else
-            draw_sprite(screen2, image, gx + (phase - 8) * 2 * ox, gy - (phase - 8) * oy);
+            draw_sprite(screen2, image, gx + (phase - 8) * 2 * ox, gy - (phase - 8) * oy - 6);
     } else {
-        draw_sprite(screen2, image, gx, gy);
+        draw_sprite(screen2, image, gx, gy - 6);
     }
 }
 

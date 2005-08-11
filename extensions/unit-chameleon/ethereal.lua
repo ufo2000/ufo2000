@@ -1,4 +1,5 @@
 local frames = pck_image_set("$(xcom)/units/ethereal.pck", 0, 8 * 9 + 3)
+if not frames[1] then return end -- check if the user actually has this pck file
 
 local function sprite_renderer(img, dir, phase, info)
     if info.collapse then
