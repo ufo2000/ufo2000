@@ -37,7 +37,15 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "mouse.h"
 
 /**
- * Routines for Network-play (LAN, Internet)
+ * @file connect.cpp
+ * @brief Routines for Network-play (LAN, Internet)
+ */
+
+/**
+ * Synchronizing of client versions for network game
+ *
+ * @todo remove all the unneeded stuff here, this function does not need 
+ *       displaying any graphics at all
  */
 int Connect::do_chat()
 {
@@ -53,8 +61,6 @@ int Connect::do_chat()
     BITMAP *scr = create_bitmap(320, 200); clear(scr);
     BITMAP *backscr = create_bitmap(640, 400);
     SPK *back09 = new SPK("$(xcom)/geograph/back09.scr");      //gamepal used
-
-    install_int_ex(drawit_timer, BPS_TO_TIMER(10));      //ticks each second
 
     back09->show(scr, 0, 0);
     stretch_blit(scr, screen,  0, 0, 320, 200, 0, 0, 640, 400);
@@ -156,7 +162,6 @@ int Connect::do_chat()
         }
     }
 
-    remove_int(drawit_timer);
     delete back09;
     delete local_win;  local_win  = NULL;
     delete remote_win; remote_win = NULL;
@@ -485,25 +490,4 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
     g_console->resize(SCREEN_W, SCREEN_H - SCREEN2H);
     g_console->set_full_redraw();
     return net->SEND;
-}
-
-/**
- * Show sum of points for all selected men
- */
-// ?? does not account for stamina, strength, armor ??
-void Connect::draw_pd_info(void *_pd, int gx, int gy)
-{
-    PLAYERDATA *pd = (PLAYERDATA *)_pd;
-
-    textout(screen2, g_small_font, _("INFO"), gx, gy, COLOR_WHITE);
-    int i;
-    int points = 0;
-    for (i = 0; i < pd->size; i++) {
-        points += pd->md[i].TimeUnits +
-                  pd->md[i].Health +
-                  pd->md[i].Firing +
-                  pd->md[i].Throwing;
-    }
-    textprintf(screen2, g_small_font, gx, gy + 10, COLOR_WHITE, 
-               _("Total men points=%d"), points);
 }

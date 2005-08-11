@@ -146,14 +146,6 @@ bool Editor::handle_mouse_leftclick()
         edit_soldier();
         return false;
     } 
-/*
-    // Mouse click in item info panel (right bottom part of the screen) - 
-    // change equipment dialog (Standard=all weapons/No explosives/No alien weapons/...)
-    if (mouse_inside(320, 200, 639, 400)) {  // ?? disable this
-        change_equipment();
-        return false;
-    }
-*/
     // Mouse click on text "ARMORY": change equipment dialog 
     if (mouse_inside(0, 200, 105, 220)) {
         change_equipment();
@@ -163,21 +155,18 @@ bool Editor::handle_mouse_leftclick()
     if ((sel_item == NULL) || (dup_item != NULL)) {
         if (mouse_inside(237, 1, 271, 22)) {  // ok-button
             return true;
-        } else
-            if (mouse_inside(273, 1, 295, 22)) {  // <
-                man = man->prevman();
-            } else
-                if (mouse_inside(297, 1, 319, 22)) {  // >
-                    man = man->nextman();
-                }
+        } else if (mouse_inside(273, 1, 295, 22)) {  // <
+            man = man->prevman();
+        } else if (mouse_inside(297, 1, 319, 22)) {  // >
+            man = man->nextman();
+        }
     }
 
     if (mouse_inside(288, 137, 319, 151)) {  // -->
         man->place(P_MAP)->scroll_right();
-    } else
-        if (mouse_inside(255, 137, 286, 151)) {  // <--
-            man->place(P_MAP)->scroll_left();
-        }
+    } else if (mouse_inside(255, 137, 286, 151)) {  // <--
+        man->place(P_MAP)->scroll_left();
+    }
 
     if (sel_item == NULL) {  // Pick up item from soldier
         for (i = 0; i < NUMBER_OF_PLACES; i++) {
@@ -238,78 +227,6 @@ bool Editor::handle_mouse_leftclick()
     return false;
 };
 
-static char *names_A[] = {
-    ("Aaron"),
-    ("Abe"),
-    ("Achim"),
-    ("Adam"),
-    ("Ajo"),
-    ("Akim"),
-    ("Alexandra"),
-    ("Ali"),
-    ("Alfonso"),
-    ("Andrea"),
-    ("Anne"),
-    ("Antonio"),
-    ("Apollo"),
-    ("Arnold"),
-    ("Attila"),
-    ("Axel"),
-    NULL
-};
-
-/**
- * Test for selectbox / Soldier-names
- */
-int select_name()
-{
-    int result = -1;
-    std::vector<std::string> gui_list;
-    for (int i = 0; names_A[i] != NULL; i++)
-        gui_list.push_back(names_A[i]);
-  //for (int i = 0; names[i] != NULL; i++)
-  //    gui_list.push_back(names[i]);
-
-    if (gui_list.size() > 1)
-        result = gui_select_from_list(
-            300, 200, _("Select Name"), 
-            gui_list, 0);
-    return result;
-};
-
-static std::vector<std::string> quicksetup;
-
-void change_quicksetup_callback(const char *desc)
-{
-    quicksetup.push_back(desc);
-}
-
-/**
- * Test for selectbox / Config for F5..F8
- */
-const char *select_setup(const char *prompt)
-{
-    // Get list of available quicksetup-configurations:
-    quicksetup.clear();
-    LUA_REGISTER_FUNCTION(L, change_quicksetup_callback);
-    lua_safe_dostring(L, "for desc in SoldierSetupTable do change_quicksetup_callback(desc) end");
-    std::sort(quicksetup.begin(), quicksetup.end());
-
-    int result = gui_select_from_list(
-        300, 200, prompt, 
-        quicksetup, 0);
-    const char *sel = quicksetup[result].c_str();
-    return sel;
-/*
-    // Todo: use selected quicksetup-config in prep_soldier()
-
-    lua_pushstring(L, "SetEquipment");
-    lua_gettable(L, LUA_GLOBALSINDEX);
-    lua_pushstring(L, setup_sets[result].c_str());
-    lua_safe_call(L, 1, 0);
-*/
-};
-
 /**
  * Activate unit stats and inventory edit screen
  * Draw soldier's inventory when in mission-planner
@@ -340,15 +257,7 @@ void Editor::show()
     int mouse_leftr = 1, mouse_rightr = 1;
     int i;
     int color = COLOR_LT_OLIVE;
-    int b1 = 0;
-    int nr = 0;
     int A1 = 0, A2 = 0;
-  //int NID = 0;
-  //char test[128];
-    char test1[128];
-    char test2[128];
-  //char name[26];
-  //int NameScheme = 0;
 
     while (mouse_b & 3) rest(1);
 
@@ -563,19 +472,6 @@ void Editor::show()
                         paste_soldier(man);
                         break;
                     }
-                    
-                      // Test:
-                      //change_equipment();
-                      //setup_f5 = select_setup( _("Select setup for F5") );
-
-                        nr = select_name();
-                      //nr = select_name( names_A );
-                        sprintf( test1, "%d", nr );
-                        sprintf( test2, "%s", "" );
-                        if ( nr >= 0 )
-                           sprintf( test2,  "%s", names_A[nr] );
-                        b1 = alert( "Selected:", test1, test2, "OK", NULL, 0, 0 );
-
                     break;
                 case KEY_DEL:  // Todo: store the deleted items (where?) for KEY_INSERT
                     if ((key[KEY_LSHIFT]) || (key[KEY_RSHIFT]) ) { // Shift-DEL:
@@ -699,8 +595,6 @@ int Editor::load_clip()
 #define D_STRENGTH     D_TIME+14
 
 static int d_agup_slider_pro2(int msg, DIALOG *d, int c);
-//static char slider_text[8][32];
-//static char label_text[ 4][32];
 
 static int points;
 static char points_str[100];
@@ -768,7 +662,7 @@ static const char *appearance_names_chameleon[512];
 static const char **appearance_names = NULL;
 
 /**
- * !!! Hack, should be removed on proper units modding implementation
+ * !!! Hack, should be removed after proper units modding implementation
  */
 static void init_chameleon_appearances()
 {

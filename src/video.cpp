@@ -42,13 +42,6 @@ BITMAP *screen2;
 
 int SCREEN2W = 320, SCREEN2H = 200;
 
-volatile int DRAWIT = 0;
-void drawit_timer()
-{
-    DRAWIT++;
-}
-END_OF_FUNCTION(drawit_timer);
-
 //! Counter for number of switches to ufo2000 from other programs
 volatile int g_switch_in_counter;
 
@@ -65,8 +58,6 @@ END_OF_FUNCTION(switch_in_callback);
 
 void initvideo()
 {
-    LOCK_VARIABLE(DRAWIT);
-    LOCK_FUNCTION(drawit_timer);
     LOCK_VARIABLE(g_switch_in_counter);
     LOCK_FUNCTION(switch_in_callback);
 

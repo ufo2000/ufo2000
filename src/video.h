@@ -28,10 +28,6 @@ extern int SCREEN2W, SCREEN2H;
 extern BITMAP *mouser;
 extern std::vector<BITMAP *> selector;
 
-extern volatile int DRAWIT;
-
-extern void drawit_timer();
-
 void initvideo();
 void closevideo();
 void change_screen_mode();
@@ -53,10 +49,10 @@ void resize_screen2(int vw, int vh);
 int askmenu(const char *mess);
 
 int gui_select_from_list(
-	int width, int height,
-	const std::string &title, 
-	const std::vector<std::string> &data,
-	int default_value = 0);
+    int width, int height,
+    const std::string &title, 
+    const std::vector<std::string> &data,
+    int default_value = 0);
 
 std::string gui_file_select(
     int width, int height,
@@ -92,5 +88,5 @@ extern unsigned long FLAGS;
 #define F_SECONDSIT         0x00200000
 #define F_REACTINFO         0x00400000
 #define F_CONVERT_XCOM_DATA 0x00800000
-#define F_SHOWNIGHT			0x01000000
+#define F_SHOWNIGHT         0x01000000
 #endif

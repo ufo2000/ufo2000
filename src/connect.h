@@ -24,12 +24,10 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 class Connect
 {
 public:
-	int do_chat();
-	void reset_uds();
-	void swap_uds();
-	int do_planner(int F10ALLOWED, int map_change_allowed = 1);
-
-	void draw_pd_info(void *_pd, int gx, int gy);
+    int do_chat();
+    void reset_uds();
+    void swap_uds();
+    int do_planner(int F10ALLOWED, int map_change_allowed = 1);
 };
 
 #endif
