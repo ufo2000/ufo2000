@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002-2004  ufo2000 development team
+Copyright (C) 2002-2005  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "text.h"
 #include "mouse.h"
 #include "multiplay.h"
+#include "script_api.h"
 
 /**
  * Returns true if the weapon can be used. The weapon will be colored darkgray
@@ -502,6 +503,12 @@ void Editor::show()
                     man = man->nextman();
                     break;     
 
+                 case KEY_PGUP:
+                    scroll_equipment(-1);
+                    break;
+                 case KEY_PGDN:
+                    scroll_equipment(+1);
+                    break;
               //case KEY_ASTERISK:   // Test
               //    Editor::do_mapedit();
               //    break;
@@ -963,13 +970,6 @@ void Editor::edit_soldier()
     ::sol_dialog = NULL;
 }
 
-static std::vector<std::string> eqsets;
-
-void change_equipment_callback(const char *name)
-{
-    eqsets.push_back(name);
-}
-
 void Editor::copy_soldier(Soldier *src)
 {
     buffer.empty = false;
@@ -1005,21 +1005,28 @@ void Editor::paste_soldier(Soldier *dest)
  */
 void Editor::change_equipment()
 {
-    // Get list of available equipment sets
-    eqsets.clear();
-    LUA_REGISTER_FUNCTION(L, change_equipment_callback);
-    lua_safe_dostring(L, "for name, data in EquipmentTable do if data.enabled then change_equipment_callback(name) end end");
-
+    std::vector<std::string> eqsets;
+    int index = query_equipment_sets(eqsets);
     if (eqsets.size() > 0) {
         int result = gui_select_from_list(
             300, 200, _("Select equipment set"), 
-            eqsets, 0);
+            eqsets, index != -1 ? index : 0);
 
-        lua_pushstring(L, "SetEquipment");
-        lua_gettable(L, LUA_GLOBALSINDEX);
-        lua_pushstring(L, eqsets[result].c_str());
-        lua_safe_call(L, 1, 0);
+        if (set_current_equipment_name(eqsets[result].c_str()))
+            net->send_equipment_choice();
+
     } else {
-        alert( "", _("Remote player does not have any of your equipment sets"), "", _("OK"), NULL, 0, 0);
+        alert( "", _("Remote player does not have any of your weaponsets"), "", _("OK"), NULL, 0, 0);
     }
+}
+
+void Editor::scroll_equipment(int delta)
+{
+    std::vector<std::string> eqsets;
+    int index = query_equipment_sets(eqsets);
+    if (eqsets.size() == 0) return;
+    int new_index = index != -1 ? index : 0;
+    new_index = (eqsets.size() + new_index + delta) % eqsets.size();
+    if (new_index != index && set_current_equipment_name(eqsets[new_index].c_str()))
+        net->send_equipment_choice();
 }

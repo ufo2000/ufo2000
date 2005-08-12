@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002       ufo2000 development team
+Copyright (C) 2002-2005  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "colors.h"
 #include "text.h"
 #include "random.h"
+#include "script_api.h"
 
 static std::list<std::string> g_hotseat_cmd_queue;
 
@@ -379,8 +380,11 @@ void Net::check()
         case CMD_OPTIONS:
             recv_options();
             break;
-        case CMD_EQUIPMENT:
-            recv_equipment();
+        case CMD_EQUIPMENT_LIST:
+            recv_equipment_list();
+            break;
+        case CMD_EQUIPMENT_CHOICE:
+            recv_equipment_choice();
             break;
         case CMD_PANIC:
             recv_panic();
@@ -1268,10 +1272,10 @@ int Net::recv_terrain_crc32()
     return 1;
 }
 
-void Net::send_equipment()
+void Net::send_equipment_list()
 {
     if (!SEND) return;
-    pkt.create(CMD_EQUIPMENT);
+    pkt.create(CMD_EQUIPMENT_LIST);
     lua_pushstring(L, "QueryEquipmentInfo");
     lua_gettable(L, LUA_GLOBALSINDEX);
     lua_safe_call(L, 0, 1);
@@ -1281,7 +1285,7 @@ void Net::send_equipment()
     send(pkt.str(), pkt.str_len());
 }
 
-int Net::recv_equipment()
+int Net::recv_equipment_list()
 {
     std::string data;
     
@@ -1295,6 +1299,40 @@ int Net::recv_equipment()
     return 1;
 }
 
+void Net::send_equipment_choice()
+{
+    if (!SEND) return;
+    pkt.create(CMD_EQUIPMENT_CHOICE);
+    const char *current_equipment_name = get_current_equipment_name();
+    if (!current_equipment_name) {
+        // No valid weaponset available, send just an empty string
+        current_equipment_name = "";
+    }
+    ASSERT(current_equipment_name);
+    pkt << current_equipment_name;
+    send(pkt.str(), pkt.str_len());
+
+    local.SEND = local.START = remote.SEND = remote.START = 0;
+}
+
+int Net::recv_equipment_choice()
+{
+    CHANGE = 1;
+
+    std::string data;
+    
+    pkt >> data;
+
+    if (!set_current_equipment_name(data.c_str()) && data != "") {
+        // We are in a trouble, remote client thinks
+        // that we can use this weaponset but we don't
+        ASSERT(false);
+    }
+
+    local.SEND = local.START = remote.SEND = remote.START = 0;
+
+    return 1;
+}
 
 void Net::send_scenario()
 {

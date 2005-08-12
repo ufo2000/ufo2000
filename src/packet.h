@@ -40,8 +40,9 @@ enum Command {CMD_MESSAGE = -2, CMD_NONE = -1,
               CMD_USE_ELEVATOR,
               CMD_SCENARIO, CMD_RULES, CMD_OPTIONS,
               CMD_PANIC, CMD_MORALE, CMD_RESTIME, CMD_P2_ISSIT,
-              CMD_EQUIPMENT, CMD_TIE, CMD_INITRAND,
+              CMD_EQUIPMENT_LIST, CMD_TIE, CMD_INITRAND,
               CMD_RECOVERY_STOP, CMD_START_VISIBLE_RECOVERY,
+              CMD_EQUIPMENT_CHOICE,
               COMMAND_NUM // COMMAND_NUM - Should be the last command!
              };
 
@@ -53,51 +54,51 @@ enum Command {CMD_MESSAGE = -2, CMD_NONE = -1,
 class Packet
 {
 private:
-	char data[1000];
-	int cur, size;
-	static char *strCommand[COMMAND_NUM];
+    char data[1000];
+    int cur, size;
+    static char *strCommand[COMMAND_NUM];
 public:
-	int Position; //!< 1 - the sender is a player going first, 2 - second
-	Packet();
-	void reset();
-	void create(char *header);
-	void create(Command cmd);
-	Command command(char *buf, int buf_size);
+    int Position; //!< 1 - the sender is a player going first, 2 - second
+    Packet();
+    void reset();
+    void create(char *header);
+    void create(Command cmd);
+    Command command(char *buf, int buf_size);
 
-	inline char *str() { return data; }
-	inline int str_len() { return size; }
-	void push(char *buf, int buf_size);
-	void pop(char *buf, int buf_size);
+    inline char *str() { return data; }
+    inline int str_len() { return size; }
+    void push(char *buf, int buf_size);
+    void pop(char *buf, int buf_size);
 
-	Packet &operator<<(int i);
-	Packet &operator>>(int &i);
+    Packet &operator<<(int i);
+    Packet &operator>>(int &i);
 
-	Packet &operator<<(uint32 i);
-	Packet &operator>>(uint32 &i);
+    Packet &operator<<(uint32 i);
+    Packet &operator>>(uint32 &i);
 
-	Packet &operator<<(REAL i);
-	Packet &operator>>(REAL &i);
+    Packet &operator<<(REAL i);
+    Packet &operator>>(REAL &i);
 
-	Packet &operator<<(char *i);
-	Packet &operator>>(char *i);
+    Packet &operator<<(char *i);
+    Packet &operator>>(char *i);
 
-	Packet &operator<<(const std::string &i);
-	Packet &operator>>(std::string &i);
+    Packet &operator<<(const std::string &i);
+    Packet &operator>>(std::string &i);
 };
 
 class BQ
 {
 private:
-	std::list<std::string> bq;
+    std::list<std::string> bq;
 
 public:
-	BQ(int sz);
-	~BQ();
+    BQ(int sz);
+    ~BQ();
 
-	void put(const std::string &str);
-	void put(char *buf, int buf_size);
-	int get(std::string &str);
-	int get(char *buf, int &buf_size);
+    void put(const std::string &str);
+    void put(char *buf, int buf_size);
+    int get(std::string &str);
+    int get(char *buf, int &buf_size);
 };
 
 #endif

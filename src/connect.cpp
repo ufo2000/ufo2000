@@ -35,6 +35,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "colors.h"
 #include "text.h"
 #include "mouse.h"
+#include "script_api.h"
 
 /**
  * @file connect.cpp
@@ -254,7 +255,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 
     if (net->is_network_game()) {
         // synchronize available equipment with remote machine
-        net->send_equipment();
+        net->send_equipment_list();
     } else {
         // synchronize available equipment with ourselves :)
         lua_pushstring(L, "SyncEquipmentInfo");
@@ -305,16 +306,23 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
         Map::new_GEODATA(&mapdata);
     }
 
-    // Try to set standard equipment
-    lua_safe_dostring(L, "SetEquipment('Standard')");
+    // Try to set the last weaponset or use the first one from the list of available
+    // In the worst case we will have just empty armoury
+    if (!set_current_equipment_name(g_default_weaponset.c_str())) {
+        std::vector<std::string> weaponsets;
+        query_equipment_sets(weaponsets);
+        if (weaponsets.size() > 0) set_current_equipment_name(weaponsets[0].c_str());
+    }
 
     mapdata.load_game = 77;
 
     if (HOST && !g_game_receiving) {
+        // HOST player sets initial map, scenario and weaponset
         int i;
         net->send_map_data(&mapdata);
         net->send_time_limit(g_time_limit);
         net->send_scenario();
+        net->send_equipment_choice();
         for (i = 0; i < 5; i++)
             net->send_rules(i, scenario->rules[i]);
         for (i = 0; i < SCENARIO_NUMBER; i++)

@@ -358,10 +358,7 @@ extern std::string g_server_password;
 extern std::string g_server_proxy_login;
 extern int         g_server_autologin;
 
-extern std::string g_setup_f5;
-extern std::string g_setup_f6;
-extern std::string g_setup_f7;
-extern std::string g_setup_f8;
+extern std::string g_default_weaponset;
 
 int initgame();
 void gameloop();

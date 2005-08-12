@@ -29,6 +29,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "colors.h"
 #include "text.h"
 #include "explo.h"
+#include "script_api.h"
 
 IMPLEMENT_PERSISTENCE(Place, "Place");
 
@@ -312,23 +313,6 @@ void Place::draw(int gx, int gy)
     map->drawitem(gt->obdata_pMap(), gx, gy);
 }
 
-// moved to text.cpp :
-/*
-static char *place_name[11] = {
-    ("RIGHT SHOULDER"),
-    ("LEFT SHOULDER"),
-    ("RIGHT HAND"),
-    ("LEFT HAND"),
-    ("RIGHT LEG"),
-    ("LEFT LEG"),
-    ("BACK PACK"),
-    ("BELT"),
-    ("GROUND"),
-    ("ARMOURY"),
-    ("COMMON POOL")
-};
-*/
-
 /**
  * Draw inventory-grid for belt, backpack, armory etc.
  */
@@ -336,10 +320,14 @@ void Place::drawgrid(BITMAP *dest, int PLACE_NUM)
 {
     ASSERT((PLACE_NUM >= 0) && (PLACE_NUM <= NUMBER_OF_PLACES));
 
-    if (PLACE_NUM == P_ARMOURY)
-        textout(dest, large,        place_name[PLACE_NUM], gx, gy + 1 - text_height(large), COLOR_LT_OLIVE);
-    else
+    if (PLACE_NUM == P_ARMOURY) {
+        const char *eqname = get_current_equipment_name();
+        if (!eqname) eqname = _"(none, remote player doesn't have any of your weaposets)";
+        textprintf(dest, g_small_font, gx, gy + 1 - text_height(g_small_font), COLOR_WHITE, 
+            "Weapon set: %s", eqname);
+    } else {
         textout(dest, g_small_font, place_name[PLACE_NUM], gx, gy + 1 - text_height(g_small_font), COLOR_LT_OLIVE);
+    }
 
     if (!ishand()) {
         int dx = 0, dy = 0;

@@ -33,9 +33,9 @@ class Item;
 
 struct Buffer
 {
-	bool empty;
-	MANDATA md;
-	ITEMDATA id;
+    bool empty;
+    MANDATA md;
+    ITEMDATA id;
 }; 
 
 /** 
@@ -47,42 +47,43 @@ struct Buffer
 class Editor
 { 
 private:
-	Place   *m_armoury;
-	Soldier *man;
-	Platoon *m_plt;
+    Place   *m_armoury;
+    Soldier *man;
+    Platoon *m_plt;
 
-	SPK     *tac01;
-	BITMAP  *b123, *b4, *b5;
+    SPK     *tac01;
+    BITMAP  *b123, *b4, *b5;
 
-	Item    *sel_item;
-	Item    *dup_item;
-	int     sel_item_place;
+    Item    *sel_item;
+    Item    *dup_item;
+    int     sel_item_place;
 
-	Buffer buffer;
+    Buffer buffer;
 
-	int load_clip();
-	bool handle_mouse_leftclick();
+    int load_clip();
+    bool handle_mouse_leftclick();
 
-	void copy_soldier(Soldier *src);
-	void paste_soldier(Soldier *dest);
-	
-	void change_equipment();
+    void copy_soldier(Soldier *src);
+    void paste_soldier(Soldier *dest);
+    
+    void change_equipment();
+    void scroll_equipment(int delta);
 
 public:
-	Editor();
-	~Editor();
+    Editor();
+    ~Editor();
 
-	void load();
-	void save();
-	void show();
+    void load();
+    void save();
+    void show();
 
-	int set_man(char *name);
+    int set_man(char *name);
 
-	void build_Units(Units &local) { m_plt->build_Units(local);	}
-	void send_Units(Units &local) { m_plt->send_Units(local); }
-	Platoon *platoon() { return m_plt; };
+    void build_Units(Units &local) { m_plt->build_Units(local); }
+    void send_Units(Units &local) { m_plt->send_Units(local); }
+    Platoon *platoon() { return m_plt; };
 
-	void edit_soldier();
+    void edit_soldier();
 };
 
 #endif

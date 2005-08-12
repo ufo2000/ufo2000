@@ -343,6 +343,11 @@ end
 local CurrentEquipmentTable
 local CurrentEquipmentName
 
+-- return current equipment name
+function GetCurrentEquipmentName()
+    return CurrentEquipmentName
+end
+
 -- fill armoury with the specified equipment set
 function SetEquipment(name)
     CurrentEquipmentTable = {}
@@ -353,6 +358,7 @@ function SetEquipment(name)
             CurrentEquipmentTable[v[3]] = true
         end
         CurrentEquipmentName = name
+        return true
     end
 end
 

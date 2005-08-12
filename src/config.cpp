@@ -62,11 +62,6 @@ static std::string endturn_image_file_name;
 static std::string win_image_file_name;
 static std::string lose_image_file_name;
 
-std::string g_setup_f5;
-std::string g_setup_f6;
-std::string g_setup_f7;
-std::string g_setup_f8;
-
 std::string g_server_host;
 std::string g_server_login;
 std::string g_server_password;
@@ -76,6 +71,8 @@ int         g_server_autologin;
 
 static std::string console_font_file;
 static int music_volume;
+
+std::string g_default_weaponset;
 
 const char *cfg_get_console_font_file()
 {
@@ -110,11 +107,6 @@ const char *cfg_get_endturn_image_file_name() { return endturn_image_file_name.c
 const char *cfg_get_win_image_file_name()     { return win_image_file_name.c_str(); }
 const char *cfg_get_lose_image_file_name()    { return lose_image_file_name.c_str(); }
 
-const std::string &cfg_get_setup_f5()         { return g_setup_f5; }
-const std::string &cfg_get_setup_f6()         { return g_setup_f6; }
-const std::string &cfg_get_setup_f7()         { return g_setup_f7; }
-const std::string &cfg_get_setup_f8()         { return g_setup_f8; }
-
 void loadini()
 {
     set_config_file(F("$(home)/ufo2000.ini"));
@@ -130,14 +122,11 @@ void loadini()
     mapscroll            = get_config_int(gen,       "mapscroll",       10);
     mouse_sens           = get_config_int(gen,       "mouse_sens",      14);
 
-    set_console_font_size(get_config_int(gen, "console_font_size", 12));
+    set_console_font_size(get_config_int(gen,        "console_font_size", 12));
 
     local_platoon_size   = get_config_int(edit,      "platoon_size",     1);
 
-    g_setup_f5           = get_config_string(edit,   "quick_setup_f5", "Rifleman");
-    g_setup_f6           = get_config_string(edit,   "quick_setup_f6", "Scout");
-    g_setup_f7           = get_config_string(edit,   "quick_setup_f7", "HeavyWeapons");
-    g_setup_f8           = get_config_string(edit,   "quick_setup_f8", "Marksman");
+    g_default_weaponset  = get_config_string(edit,   "weaponset", "Standard");
 
     g_time_limit         = get_config_int(gen,       "time_limit", -1);
 
@@ -189,10 +178,7 @@ void saveini()
     
     set_config_int(edit,    "platoon_size",    local_platoon_size);
 
-    set_config_string(edit, "quick_setup_f5",  g_setup_f5.c_str() );
-    set_config_string(edit, "quick_setup_f6",  g_setup_f6.c_str() );
-    set_config_string(edit, "quick_setup_f7",  g_setup_f7.c_str() );
-    set_config_string(edit, "quick_setup_f8",  g_setup_f8.c_str() );
+    set_config_string(edit, "weaponset", g_default_weaponset.c_str());
 
     set_config_string(serv, "host",            g_server_host.c_str());
     set_config_string(serv, "login",           g_server_login.c_str());
