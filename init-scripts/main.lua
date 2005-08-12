@@ -269,8 +269,14 @@ end
 
 -- adds new item
 function AddXcomItem(item)
+    item.index = UpdateCrc32(0, item.name)
+    if ItemsTable[item.index] and ItemsTable[item.index].name ~= item.name then
+        Error("AddXcomItem: impossible happened, crc32 collision for items '%s' and '%s'", 
+            item.name, ItemsTable[item.index].name)
+    end
     if ItemsTable[item.index] then Warning("Duplicate item with index %d - ignored", item.index) return end
     if ItemsTable[item.name] then Warning("Duplicate item with name '%s' - ignored", item.name) return end
+
     if not item.pInv then Warning("Invalid 'pInv' property for item '%s' - ignored", item.name) return end
     if not item.pMap then Warning("Invalid 'pMap' property for item '%s' - ignored", item.name) return end
     if type(item.pHeld) ~= "table" then Warning("Invalid 'pHeld' property for item '%s' - ignored", item.name) return end

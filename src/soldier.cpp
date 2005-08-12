@@ -306,13 +306,13 @@ void Soldier::process_ITEMDATA()
         if (id.place[i] == 0xFF) //clip
         {
             ASSERT(it != NULL);
-            Item *clip = new Item(id.type[i]);
+            Item *clip = new Item(intel_uint32(id.item_type[i]));
             int v = it->loadclip(clip);
             ASSERT(v);
         } else {
             Place *pp = place(id.place[i]);
             ASSERT(pp != NULL);
-            it = new Item(id.type[i]);
+            it = new Item(intel_uint32(id.item_type[i]));
             int v = pp->put(it, id.x[i], id.y[i]);
             ASSERT(v);
         }
@@ -1500,20 +1500,21 @@ void Soldier::die()
     for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
         m_place[i]->dropall(z, x, y);
 
-    /////////type of corpse
-    int ctype;
+    const char *ctype;
     if (md.SkinType == S_XCOM_0)
-        ctype = CORPSE;
+        ctype = "CORPSE";
     else if (md.SkinType == S_XCOM_1)
-        ctype = CORPSE_ARMOUR;
+        ctype = "CORPSE & ARMOUR";
     else if ((md.SkinType == S_XCOM_2) || (md.SkinType == S_XCOM_3))
-        ctype = CORPSE_POWER_SUIT;
+        ctype = "CORPSE & POWER SUIT";
     else if (md.SkinType == S_SECTOID)
-        ctype = Sectoid_Corpse;
+        ctype = "Sectoid Corpse";
     else
-        ctype = Muton_Corpse;
+        ctype = "Muton Corpse";
 
-    map->place(z, x, y)->put(new Item(ctype));
+    Item *it = create_item(ctype);
+    ASSERT(it);
+    g_map->place(z, x, y)->put(it);
     
     //m_platoon->change_morale(-(100 / (m_platoon->num_of_men() + 1)), false);
 
@@ -1533,21 +1534,21 @@ void Soldier::stun()
     for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
         m_place[i]->dropall(z, x, y);
 
-    /////////type of body
-    int ctype;
+    const char *ctype;
     if (md.SkinType == S_XCOM_0)
-        ctype = CORPSE;
+        ctype = "CORPSE";
     else if (md.SkinType == S_XCOM_1)
-        ctype = CORPSE_ARMOUR;
+        ctype = "CORPSE & ARMOUR";
     else if ((md.SkinType == S_XCOM_2) || (md.SkinType == S_XCOM_3))
-        ctype = CORPSE_POWER_SUIT;
+        ctype = "CORPSE & POWER SUIT";
     else if (md.SkinType == S_SECTOID)
-        ctype = Sectoid_Corpse;
+        ctype = "Sectoid Corpse";
     else
-        ctype = Muton_Corpse;
+        ctype = "Muton Corpse";
 
-    m_body = new Item(ctype);
-    map->place(z, x, y)->put(m_body);
+    Item *it = create_item(ctype);
+    ASSERT(it);
+    g_map->place(z, x, y)->put(it);
 
     x = -1;
     y = -1;

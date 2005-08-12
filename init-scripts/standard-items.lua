@@ -3,7 +3,6 @@
 ------------------------------------------------------------------------------
 
 AddXcomItem {
-	index = 0,
 	cost = 70,
 	name = "PISTOL",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -24,7 +23,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 1,
 	cost = 15,
 	name = "PISTOL CLIP",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 4),
@@ -46,7 +44,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 2,
 	cost = 70,
 	name = "RIFLE",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 1),
@@ -69,7 +66,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 3,
 	cost = 20,
 	name = "RIFLE CLIP",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 2),
@@ -91,7 +87,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 4,
 	cost = 80,
 	name = "HEAVY CANNON",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 11),
@@ -113,7 +108,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 5,
 	cost = 60,
 	name = "CANNON AP-AMMO",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 12),
@@ -135,7 +129,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 6,
 	cost = 80,
 	name = "CANNON HE-AMMO",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 13),
@@ -160,7 +153,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 7,
 	cost = 70,
 	name = "CANNON I-AMMO",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 14),
@@ -185,7 +177,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 8,
 	cost = 100,
 	name = "AUTO-CANNON",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 7),
@@ -208,7 +199,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 9,
 	cost = 80,
 	name = "AUTO-CANNON AP-AMMO",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 8),
@@ -230,7 +220,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 10,
 	cost = 100,
 	name = "AUTO-CANNON HE-AMMO",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 9),
@@ -255,7 +244,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 11,
 	cost = 90,
 	name = "AUTO-CANNON I-AMMO",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 10),
@@ -280,7 +268,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 12,
 	cost = 100,
 	name = "ROCKET LAUNCHER",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 15),
@@ -302,7 +289,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 13,
 	cost = 200,
 	name = "SMALL ROCKET",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 16),
@@ -327,7 +313,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 14,
 	cost = 300,
 	name = "LARGE ROCKET",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 17),
@@ -352,7 +337,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 15,
 	cost = 250,
 	name = "INCENDIARY ROCKET",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 18),
@@ -377,7 +361,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 16,
 	cost = 150,
 	name = "LASER PISTOL",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 5),
@@ -401,7 +384,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 17,
 	cost = 250,
 	name = "LASER RIFLE",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 0),
@@ -426,7 +408,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 18,
 	cost = 300,
 	name = "HEAVY LASER",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 6),
@@ -450,7 +431,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 19,
 	cost = 70,
 	name = "GRENADE",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 19),
@@ -472,7 +452,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 20,
 	cost = 20,
 	name = "SMOKE GRENADE",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 20),
@@ -492,7 +471,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 21,
 	cost = 80,
 	name = "PROXIMITY GRENADE",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 21),
@@ -515,7 +493,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 22,
 	cost = 95,
 	name = "HIGH EXPLOSIVE",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 22),
@@ -538,7 +515,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 23,
 	cost = 0,
 	name = "MOTION SCANNER",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 23),
@@ -553,7 +529,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 24,
 	cost = 0,
 	name = "MEDI-KIT",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 24),
@@ -568,7 +543,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 25,
 	cost = 0,
 	name = "PSI-AMP",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 33),
@@ -583,7 +557,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 26,
 	cost = 100,
 	name = "STUN ROD",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 26),
@@ -604,7 +577,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 27,
 	cost = 0,
 	name = "FLARE",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 55),
@@ -618,7 +590,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 28,
 	cost = 400,
 	name = "LASER MINIGUN",
 	pInv = png_image("$(ufo2000)/arts/laserminigun.png", 3),
@@ -643,7 +614,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 29,
 	cost = 75,
 	name = "SMOKE ROCKET",
 	pInv = png_image("$(ufo2000)/arts/smokem.png", 3),
@@ -668,7 +638,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 30,
 	cost = 75,
 	name = "INCENDIARY GRENADE",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 27),
@@ -690,7 +659,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 31,
 	cost = 0,
 	name = "CORPSE",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 45),
@@ -705,7 +673,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 32,
 	cost = 0,
 	name = "CORPSE & ARMOUR",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 28),
@@ -720,7 +687,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 33,
 	cost = 0,
 	name = "CORPSE & POWER SUIT",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 44),
@@ -735,7 +701,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 34,
 	cost = 300,
 	name = "HEAVY PLASMA",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 30),
@@ -757,7 +722,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 35,
 	cost = 75,
 	name = "HEAVY PLASMA CLIP",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 25),
@@ -779,7 +743,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 36,
 	cost = 400,
 	name = "PLASMA RIFLE",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 31),
@@ -802,7 +765,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 37,
 	cost = 100,
 	name = "PLASMA RIFLE CLIP",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 41),
@@ -824,7 +786,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 38,
 	cost = 170,
 	name = "PLASMA PISTOL",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 32),
@@ -846,7 +807,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 39,
 	cost = 40,
 	name = "PLASMA PISTOL CLIP",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 34),
@@ -868,7 +828,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 40,
 	cost = 0,
 	name = "BLASTER LAUNCHER",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 35),
@@ -888,7 +847,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 41,
 	cost = 0,
 	name = "BLASTER BOMB",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 36),
@@ -912,7 +870,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 42,
 	cost = 500,
 	name = "SMALL LAUNCHER",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 37),
@@ -934,7 +891,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 43,
 	cost = 80,
 	name = "STUN BOMB",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 38),
@@ -958,7 +914,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 44,
 	cost = 125,
 	name = "ALIEN GRENADE",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 39),
@@ -982,7 +937,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 45,
 	cost = 0,
 	name = "ELERIUM-115",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 56),
@@ -997,7 +951,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 46,
 	cost = 0,
 	name = "MIND PROBE",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 29),
@@ -1011,7 +964,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 47,
 	cost = 50,
 	name = "KNIFE",
 	pInv = png_image("$(ufo2000)/arts/knife.png"),
@@ -1031,7 +983,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-    index = 48,
     cost = 100,
     name = "SUBMACHINE GUN",
     pInv = png_image("$(ufo2000)/arts/smg.png"),
@@ -1054,7 +1005,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-    index = 49,
     cost = 30,
     name = "SUBMACHINE GUN CLIP",
     pInv = png_image("$(ufo2000)/arts/smg_clip.png"),
@@ -1076,7 +1026,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 50,
 	cost = 0,
 	name = "Sectoid Corpse",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 46),
@@ -1091,7 +1040,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 51,
 	cost = 0,
 	name = "Snakeman Corpse",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 50),
@@ -1106,7 +1054,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 52,
 	cost = 0,
 	name = "Ethereal Corpse",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 49),
@@ -1121,7 +1068,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 53,
 	cost = 0,
 	name = "Muton Corpse",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 48),
@@ -1136,7 +1082,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 54,
 	cost = 0,
 	name = "Floater Corpse",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 52),
@@ -1151,7 +1096,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 55,
 	cost = 0,
 	name = "Celatid Corpse",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 47),
@@ -1166,7 +1110,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 56,
 	cost = 0,
 	name = "Silacoid Corpse",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 51),
@@ -1181,7 +1124,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 57,
 	cost = 0,
 	name = "Chryssalid Corpse",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 53),
@@ -1196,7 +1138,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 58,
 	cost = 0,
 	name = "reaper corpse 1",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 53),
@@ -1210,7 +1151,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 59,
 	cost = 0,
 	name = "reaper corpse 2",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 49),
@@ -1224,7 +1164,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 60,
 	cost = 0,
 	name = "reaper corpse 3",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -1238,7 +1177,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 61,
 	cost = 0,
 	name = "reaper corpse 4",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -1252,7 +1190,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 62,
 	cost = 0,
 	name = "cyber 1",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -1266,7 +1203,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 63,
 	cost = 0,
 	name = "cyber 2",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -1280,7 +1216,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 64,
 	cost = 0,
 	name = "cyber 3",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -1294,7 +1229,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 65,
 	cost = 0,
 	name = "cyber 4",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -1308,7 +1242,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 66,
 	cost = 0,
 	name = "secto 1",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -1322,7 +1255,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 67,
 	cost = 0,
 	name = "secto 2",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -1336,7 +1268,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 68,
 	cost = 0,
 	name = "secto 3",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -1350,7 +1281,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 69,
 	cost = 0,
 	name = "secto 4",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -1364,7 +1294,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 70,
 	cost = 0,
 	name = "hover 1",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -1378,7 +1307,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 71,
 	cost = 0,
 	name = "hover 2",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -1392,7 +1320,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 72,
 	cost = 0,
 	name = "hover 3",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -1406,7 +1333,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 73,
 	cost = 0,
 	name = "hover 4",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -1420,7 +1346,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 74,
 	cost = 0,
 	name = "TANK1",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -1434,7 +1359,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 75,
 	cost = 0,
 	name = "TANK 2",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -1448,7 +1372,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 76,
 	cost = 0,
 	name = "TANK 3",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -1462,7 +1385,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 77,
 	cost = 0,
 	name = "TANK 4",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -1476,7 +1398,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 78,
 	cost = 0,
 	name = "CIVM",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -1491,7 +1412,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	index = 79,
 	cost = 0,
 	name = "CIVF",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),

@@ -31,11 +31,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //Some items have an 0x08 or other values in the Hit Type.  This appears
 //to be vestigal from the original HIT option...
 
-//#define PT_None      0x00
-//#define PT_Grenade   0x01
-//#define PT_Smoke     0x02
-//#define PT_Proximity 0x03
-
 #include "sound.h"
 
 class Place;
@@ -53,9 +48,9 @@ class Item: public persist::BaseObject
     DECLARE_PERSISTENCE(Item);
 private:
 
-    int  m_type;
-    int  m_x, m_y;
-    Item *m_next, *m_prev;
+    uint32 m_type;
+    int    m_x, m_y;
+    Item  *m_next, *m_prev;
     Place *m_place;
 
     int  m_rounds;
@@ -73,10 +68,10 @@ private:
 public:
     static void od_info(int type, int gx, int gy, int gcol);
 
-    static int obdata_get_int(int item_index, const char *property_name);
-    static int obdata_get_array_int(int item_index, const char *property_name, int index);
-    static BITMAP *obdata_get_bitmap(int item_index, const char *property_name, int bitmap_index = -1);
-    static std::string obdata_get_string(int item_index, const char *property_name);
+    static int obdata_get_int(uint32 item_index, const char *property_name);
+    static int obdata_get_array_int(uint32 item_index, const char *property_name, int index);
+    static BITMAP *obdata_get_bitmap(uint32 item_index, const char *property_name, int bitmap_index = -1);
+    static std::string obdata_get_string(uint32 item_index, const char *property_name);
 
     static int obdata_maxHealth(int index) { return obdata_get_int(index, "health"); }
     static int obdata_damage(int index) { return obdata_get_int(index, "damage"); }
@@ -115,11 +110,11 @@ public:
 
     //! Laser damage
     int is_laser() { return ((obdata_damageType(m_type) == DT_LAS) && obdata_isGun(m_type)); }
-	//! Hand-to-hand weapon
+    //! Hand-to-hand weapon
     int is_hand_to_hand() { return obdata_isHandToHand(m_type); }
-	//! Stun damage
+    //! Stun damage
     int is_stun_weapon() { return (obdata_damageType(m_type) == DT_STUN); }
-	//! Check if this is a grenade (something explosive that needs to be thrown)
+    //! Check if this is a grenade (something explosive that needs to be thrown)
     int is_grenade() { return obdata_isGrenade(m_type); }
     //! Check if it is high explosive (explosion triggered by timer)
     int is_high_explosive() { return obdata_isHighExplosive(m_type); }
@@ -222,28 +217,7 @@ struct Target
     int    place;
 };
 
-//#define PISTOL_CLIP         0x01
-//#define CANNON_HE_AMMO      0x06
-//#define CANNON_I_AMMO       0x07
-//#define AUTO_CANNON_AP_AMMO 0x09
-//#define AUTO_CANNON_HE_AMMO 0x0a
-//#define AUTO_CANNON_I_AMMO  0x0b
-//#define SMALL_ROCKET        0x0d
-//#define LARGE_ROCKET        0x0e
-//#define INCENDIARY_ROCKET   0x0f
-//#define GRENADE             0x13
-//#define SMOKE_GRENADE       0x14
-//#define PROXIMITY_GRENADE   0x15
-//#define HIGH_EXPLOSIVE      0x16
-//#define STUN_ROD            0x1a
-#define CORPSE              0x1f
-#define CORPSE_ARMOUR       0x20
-#define CORPSE_POWER_SUIT   0x21
-//#define SMALL_LAUNCHER      0x2a
-//#define STUN_MISSILE        0x2b
-//#define ALIEN_GRENADE       0x2c
-#define Sectoid_Corpse      0x32
-#define Muton_Corpse        0x35
+Item *create_item(const char *item_name);
 
 bool is_item_allowed(int type);
 
