@@ -768,6 +768,22 @@ bool Scenario::platoon_common (long points, Platoon *platoon, PanPos pos)
         return false;
     }
 
+    // Check for the weapons which are not loaded and warn the player
+    for (int i = 0; i < platoon->num_of_men(); i++) {
+        std::vector<Item *> items;
+        platoon->findnum(i)->get_inventory_list(items);
+        platoon->findnum(i)->place(P_MAP)->get_items_list(items);
+        for (int j = 0; j < (int)items.size(); j++) {
+            std::vector<std::string> ammo;
+            Item::get_ammo_list(items[j]->name(), ammo);
+            if (ammo.size() > 0 && !items[j]->haveclip()) {
+                g_console->printf(COLOR_RED04, _("%s does not have his %s loaded!"), 
+                    platoon->findnum(i)->md.Name, items[j]->name().c_str());
+                return false;
+            }
+        }
+    }
+
     if (!rules[4]) {
         std::vector<Item *> items;
 
