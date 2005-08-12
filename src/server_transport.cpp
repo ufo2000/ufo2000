@@ -262,7 +262,7 @@ void ServerDispatch::Run(NLsocket sock)
 
             if (readlen == NL_INVALID) {
                 NLenum err = nlGetError();
-                if (err == NL_SOCK_DISCONNECT) {
+                if (err == NL_SOCK_DISCONNECT || err == NL_MESSAGE_END) {
                     client->m_error = true;
                 } else {
                     server_log("socket read error %d: user '%s' from %s\n",
@@ -484,7 +484,7 @@ int ClientServer::recv_packet(NLuint &id, std::string &packet)
     if (stream_size_before == m_stream.size() && readlen == NL_INVALID)
     {
         NLenum err = nlGetError();
-        if (err == NL_SOCK_DISCONNECT)
+        if (err == NL_SOCK_DISCONNECT || err == NL_MESSAGE_END)
             return -1;
     }
 
