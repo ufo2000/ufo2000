@@ -154,6 +154,8 @@ if env["CC"] == "gcc":
     env.Append(CCFLAGS = ["-funsigned-char", "-Wall", "-Wno-deprecated-declarations"])
     if debug_build:
         env.Append(CCFLAGS = ["-g"])
+    else:
+        env.Append(CCFLAGS = ["-O2"])
 
 if env["CC"] == "cl":
     env.Append(CPPFLAGS = ["-O2", "-J", "-GX", "-MT"])

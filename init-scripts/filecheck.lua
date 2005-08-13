@@ -99,11 +99,6 @@ FilesTable = {
     ["$(xcom)/ufograph/unibord.pck"]  = { Crc32 = X("0x94576591") },
     ["$(xcom)/ufograph/scanbord.pck"] = { Crc32 = X("0xE3F32D10") },
 
-    ["$(xcom)/units/handob.pck"]      = { Crc32 = X("0x3EE61F8E") },
-    ["$(xcom)/units/handob.tab"]      = { Crc32 = X("0x6EFF9E62") },
-    ["$(xcom)/units/floorob.pck"]     = { Crc32 = X("0xDF863538") },
-    ["$(xcom)/units/floorob.tab"]     = { Crc32 = X("0x833AC878") },
-
     ["$(xcom)/units/xcom_0.pck"] = { Crc32 = X("0x8681EF39"), 
         Fallback = "$(xcom)/units/xcom_1.pck" },
     ["$(xcom)/units/xcom_0.tab"] = { Crc32 = X("0x68930DB8"), 
@@ -133,9 +128,6 @@ FilesTable = {
 
     ["$(xcom)/geodata/loftemps.dat"] = { Crc32 = X("0x7B354479") },
     ["$(xcom)/geodata/scang.dat"]    = { Crc32 = X("0x26C1BD1B") },
-
-    ["$(xcom)/units/bigobs.pck"]     = { Crc32 = X("0xBB5FB17D") },
-    ["$(xcom)/units/bigobs.tab"]     = { Crc32 = X("0x422CC4A5") },
 
     ["$(xcom)/ufograph/tac00.scr"]   = { Crc32 = X("0x226E61A0") },
     ["$(xcom)/ufograph/tac01.scr"]   = { Crc32 = X("0x00000000") },
