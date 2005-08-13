@@ -307,6 +307,9 @@ Item::Item(int _type)
 
 Item::~Item()
 {
+    ASSERT(m_prev == NULL);
+    ASSERT(m_next == NULL);
+    ASSERT(m_place == NULL);
     if (m_ammo != NULL) {
         ASSERT(m_ammo->m_next == NULL);
         ASSERT(m_ammo->m_prev == NULL);
@@ -399,6 +402,19 @@ char* Item::get_damage_name()
     if (haveclip() && damage_type >= 0 && damage_type < 8)
         return damage_names[damage_type];
     return damage_names[7];
+}
+
+/**
+ * Create an exact copy of the item including loaded clip
+ */
+Item *Item::create_duplicate()
+{
+    Item *it = new Item(m_type);
+    if (haveclip()) {
+        Item *ammo = new Item(clip()->m_type);
+        it->loadclip(ammo);
+    }
+    return it;
 }
 
 /**

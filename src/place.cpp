@@ -54,6 +54,7 @@ Place::~Place()
     Item *t1 = m_item, *t2 = NULL;
     while (t1 != NULL) {
         t2 = t1->m_next;
+        t1->unlink();
         delete t1;
         t1 = t2;
     }
@@ -450,13 +451,31 @@ void Place::save_to_file(const char *fn, const char *prefix)
     fclose(fh);
 }
 
-bool Place::add_item(int x, int y, const char *item_name)
+/**
+ * Add item to a place (armoury, unit body parts, etc.)
+ * @param x         x coordinate of an item inside of place
+ * @param y         y coordinate of an item inside of place
+ * @param item_name symbolic name of item
+ * @param item_name symbolic name of item
+ * @param autoload  boolean flag, if set to true, the game tries to automatically 
+ *                  load the weapon (if it does not have ammo choice)
+ * @returns         success or failure
+ */
+bool Place::add_item(int x, int y, const char *item_name, bool autoload)
 {
     Item *it = create_item(item_name);
     if (!it) return false;
 
     // Trying to put item here
-    if (put(it, x, y)) return true;
+    if (put(it, x, y)) {
+        std::vector<std::string> ammo;
+        Item::get_ammo_list(item_name, ammo);
+
+        if (!autoload || ammo.size() != 1) return true;
+
+        it = create_item(ammo[0].c_str());
+        if (!it) return true;
+    }
 
     // Maybe it is ammo for already added weapon?
     Item *weapon = get(x, y);
@@ -627,6 +646,7 @@ void Place::destroy_all_items()
     t = m_item;
     while (t != NULL) {
         t2 = t->m_next;
+        t->unlink();
         delete t;
         t = t2;
     }

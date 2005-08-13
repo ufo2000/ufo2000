@@ -29,6 +29,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "colors.h"
 #include "text.h"
 #include "mouse.h"
+#include "sound.h"
 #include "multiplay.h"
 #include "script_api.h"
 
@@ -72,7 +73,7 @@ Editor::Editor()
     man = m_plt->captain();
 
     sel_item = NULL;
-    dup_item = NULL;    
+    //dup_item = NULL;    
     buffer.empty = true;
 }
 
@@ -153,7 +154,7 @@ bool Editor::handle_mouse_leftclick()
         return false;
     }
 
-    if ((sel_item == NULL) || (dup_item != NULL)) {
+    if (sel_item == NULL) {
         if (mouse_inside(237, 1, 271, 22)) {  // ok-button
             return true;
         } else if (mouse_inside(273, 1, 295, 22)) {  // <
@@ -180,51 +181,62 @@ bool Editor::handle_mouse_leftclick()
         if (sel_item == NULL) {  // Pick up item from armory
             sel_item = m_armoury->mselect(0, 0);
             if (sel_item != NULL) {
-                if (is_item_allowed(sel_item->m_type)) {
-                    sel_item_place = P_ARMOURY;
-                    dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
-                } else {
+                sel_item_place = P_ARMOURY;
+                if (is_item_allowed(sel_item->m_type))
                     m_armoury->put(sel_item, sel_item->m_x, sel_item->m_y);
-                    sel_item = NULL;
-                }
+                sel_item = sel_item->create_duplicate();
             }
         }
+        soundSystem::getInstance()->play(SS_ITEM_GET);
     } else {
-        if (dup_item != NULL) {
-            for (i = 0; i < NUMBER_OF_PLACES; i++) {
-                if (man->place(i)->mdeselect(dup_item, 0, 0)) {
-                    dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
-                    break;
-                }
-            }
-        } else {
+        // Try to drop item to the soldier inventory
+        if (is_item_allowed(sel_item->m_type)) {
             for (i = 0; i < NUMBER_OF_PLACES; i++) {
                 if (man->place(i)->mdeselect(sel_item, 0, 0)) {
                     sel_item = NULL;
-                    break;
+                    soundSystem::getInstance()->play(SS_ITEM_PUT);
+                    return false;
                 }
             }
         }
 
-        if (sel_item != NULL) {
-            if (dup_item != NULL) {
-                if (m_armoury->mdeselect(sel_item, 0, 0)) {
-                    sel_item = NULL;
-                    delete dup_item;
-                    dup_item = NULL;
+        // Drop item to armoury
+        if (m_armoury->mdeselect(sel_item, 0, 0)) {
+            // Delete all the duplicates of such item in the armoury
+            while (true) {
+                std::vector<Item *> items;
+                m_armoury->get_items_list(items);
+                int i;
+                for (i = 0; i < (int)items.size(); i++) {
+                    if (items[i] != sel_item && items[i]->m_place == m_armoury && 
+                        items[i]->m_type == sel_item->m_type) {
+                        // Do not delete item here as some pointers it items vector may
+                        // become invalid (pointers to ammo in the case of deleted gun),
+                        // so we just delete a single item and start the search for the
+                        // next duplicate from the very beginning
+                        break;
+                    }
                 }
-            } else {
-                if (m_armoury->mdeselect(sel_item, 0, 0)) {
-                    Item *del = m_armoury->get(sel_item->m_x, sel_item->m_y);
-                    ASSERT(del != NULL);
-                    delete del;
-                    sel_item = NULL;
-                }
+                if (i == (int)items.size()) break;
+                items[i]->unlink();
+                delete items[i];
             }
+            soundSystem::getInstance()->play(SS_ITEM_PUT);
+            sel_item = NULL;
+            return false;
         }
+
+        // Try to load this item as a clip
+        if (load_clip()) {
+            soundSystem::getInstance()->play(SS_CLIP_LOAD);
+            return false;
+        }
+
+        // Can't find proper place for this item
+        if (!is_item_allowed(sel_item->m_type))
+            g_console->printf(COLOR_RED04, _("This item is not allowed for currently selected weapon set, right-click to get rid of it"));
+        soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
     }
-    if (sel_item != NULL)
-        load_clip();
     return false;
 };
 
@@ -290,16 +302,12 @@ void Editor::show()
 
             man->draw_unibord(320, 0);  // Attribute-Barchart
             if (sel_item != NULL) {
-                if (dup_item != NULL)
+                if (sel_item_place == P_ARMOURY)
                     sel_item->od_info(330, 220, COLOR_WHITE);
                 else
                     sel_item->od_info(330, 220, COLOR_OLIVE);
 
-                //textprintf(screen2, font, 129, 141, color, "%s", sel_item->data()->name);
-                if (dup_item == NULL)
-                    textprintf(screen2, g_small_font, 128, 140, COLOR_GREEN,  "%s", sel_item->name().c_str());
-                else
-                    textprintf(screen2, g_small_font, 128, 208, COLOR_GRAY03, "%s", sel_item->name().c_str());
+                textprintf(screen2, g_small_font, 128, 140, COLOR_GREEN,  "%s", sel_item->name().c_str());
 
                 if (sel_item->haveclip()) {
                     //textprintf(screen2, font, 272, 80, color, "%d", sel_item->roundsremain());
@@ -376,24 +384,20 @@ void Editor::show()
             mouse_rightr = 0;
             CHANGE = 1;
             if (sel_item != NULL) {
-                if (sel_item_place == 9) {
-                    m_armoury->put(sel_item, sel_item->m_x, sel_item->m_y);
-                    delete dup_item;
-                    dup_item = NULL;
-                } else
-                    man->putitem(sel_item, sel_item_place, sel_item->m_x, sel_item->m_y);
-
-                sel_item = NULL;
-            } else {
-                for (i = 0; i < NUMBER_OF_PLACES; i++) {
-                    sel_item = man->place(i)->mselect(0, 0);
-                    if (sel_item != NULL) {
-                        break;
-                    }
-                }
-                if (sel_item != NULL) {
-                    delete(sel_item);
+                if (sel_item_place == P_ARMOURY) {
+                    // If item was taken from the armoury - just delete it
+                    delete sel_item;
                     sel_item = NULL;
+                } else {
+                    // If item was taken from the the soldier - put it back
+                    man->putitem(sel_item, sel_item_place, sel_item->m_x, sel_item->m_y);
+                    sel_item = NULL;
+                }
+            } else {
+                // Delete item under mouse cursor
+                for (i = 0; i < NUMBER_OF_PLACES; i++) {
+                    Item *it = man->place(i)->mselect(0, 0);
+                    if (it != NULL) delete(it);
                 }
             }
         }
@@ -509,9 +513,6 @@ void Editor::show()
                  case KEY_PGDN:
                     scroll_equipment(+1);
                     break;
-              //case KEY_ASTERISK:   // Test
-              //    Editor::do_mapedit();
-              //    break;
                 case KEY_PRTSCR:
                     if (askmenu(_("SCREEN-SNAPSHOT"))) {
                         savescreen();
@@ -544,22 +545,10 @@ void Editor::show()
  */
 int Editor::load_clip()
 {
-    Item * it;
-    int i;
-
-    if (dup_item != NULL) {     // items from armory are duplicated
-        for (i = 0; i < NUMBER_OF_PLACES; i++) {
-            it = man->place(i)->item_under_mouse(0, 0);
-            if ((it != NULL) && it->loadclip(dup_item)) {
-                dup_item = new Item(sel_item->m_type);      //!!!!!!!!!!!!
-                return 1;
-            }
-        }
-    } else {            // other items are moved
-        for (i = 0; i < NUMBER_OF_PLACES; i++) {
-            it = man->place(i)->item_under_mouse(0, 0);
+    if (sel_item != NULL) {
+        for (int i = 0; i < NUMBER_OF_PLACES; i++) {
+            Item *it = man->place(i)->item_under_mouse(0, 0);
             if ((it != NULL) && it->loadclip(sel_item)) {
-                //sel_item = NULL;
                 return 1;
             }
         }

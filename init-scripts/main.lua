@@ -260,8 +260,8 @@ function LoadSquad(squad_data, squad_object)
             local place = soldier:find_place(place_id)
             place:destroy_all_items()
             for _, v in ipairs(place_data) do
-                place:add_item(v[1], v[2], v[3])
-                if v[4] then place:add_item(v[1], v[2], v[4]) end
+                place:add_item(v[1], v[2], v[3], false)
+                if v[4] then place:add_item(v[1], v[2], v[4], false) end
             end
         end
     end
@@ -354,7 +354,7 @@ function SetEquipment(name)
     Armoury:destroy_all_items()
     if EquipmentTable[name] and EquipmentTable[name].enabled then
         for k, v in EquipmentTable[name].Layout do
-            Armoury:add_item(v[1], v[2], v[3])
+            Armoury:add_item(v[1], v[2], v[3], true)
             CurrentEquipmentTable[v[3]] = true
         end
         CurrentEquipmentName = name

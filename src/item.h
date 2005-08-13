@@ -174,6 +174,8 @@ public:
     int delay_time() { return m_delay_time; }
     int is_explo();
 
+    Item *create_duplicate();
+
     SoundSym_e_t get_sound()
     { 
         return m_sound; 

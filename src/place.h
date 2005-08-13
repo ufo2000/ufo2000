@@ -34,74 +34,74 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 class Place: public persist::BaseObject
 {
-	DECLARE_PERSISTENCE(Place);
+    DECLARE_PERSISTENCE(Place);
 private:
-	friend class Item;
+    friend class Item;
 
-	int gx, gy;
+    int gx, gy;
 
-	int width, height;
-	int viscol;
+    int width, height;
+    int viscol;
 
-	Item *m_item;
+    Item *m_item;
     Cell* m_cell;
 
-	void set(int x, int y, int w, int h);
+    void set(int x, int y, int w, int h);
 
 public:
-	Place(int x, int y, int w, int h);
+    Place(int x, int y, int w, int h);
     Place(int x, int y, int w, int h, Cell* cell);
-	virtual ~Place();
+    virtual ~Place();
 
-	void draw(int gx, int gy);
-	void drawgrid(BITMAP *dest, int PLACE_NUM);
+    void draw(int gx, int gy);
+    void drawgrid(BITMAP *dest, int PLACE_NUM);
 
-	Item *mselect(int scr_x, int scr_y);
-	int mdeselect(Item *it, int scr_x, int scr_y);
+    Item *mselect(int scr_x, int scr_y);
+    int mdeselect(Item *it, int scr_x, int scr_y);
 
-	int put(Item *it);
-	int put(Item *it, int xx, int yy);
-	Item *get(int ax, int ay);
-	int destroy(Item *it);
+    int put(Item *it);
+    int put(Item *it, int xx, int yy);
+    Item *get(int ax, int ay);
+    int destroy(Item *it);
 
-	int isfree(int xx, int yy);
-	int ishand();
-	int isfit(Item *it, int xx, int yy);
-	void dropall(int lev, int col, int row);
-	int outside_belt(int x, int y);
-	Item *item_under_mouse(int scr_x, int scr_y);
-	int isthere(Item *it);
+    int isfree(int xx, int yy);
+    int ishand();
+    int isfit(Item *it, int xx, int yy);
+    void dropall(int lev, int col, int row);
+    int outside_belt(int x, int y);
+    Item *item_under_mouse(int scr_x, int scr_y);
+    int isthere(Item *it);
 
-	bool add_item(int x, int y, const char *item_name);
+    bool add_item(int x, int y, const char *item_name, bool autoload);
 
-	void save_to_file(const char *filename, const char *prefix);
-	void save_to_string(std::string &str);
+    void save_to_file(const char *filename, const char *prefix);
+    void save_to_string(std::string &str);
 
-	int save_items(char *fs, int _z, int _x, int _y, char *txt);
-	int eot_save(int ip, char *txt);
+    int save_items(char *fs, int _z, int _x, int _y, char *txt);
+    int eot_save(int ip, char *txt);
 
-	int count_weight();
-	int has_forbidden_equipment();
+    int count_weight();
+    int has_forbidden_equipment();
 
-	void scroll_left();
-	void scroll_right();
+    void scroll_left();
+    void scroll_right();
 
-	Item *item(int ix, int iy);
-	Item *item() { return m_item; }
-	Item *top_item();
+    Item *item(int ix, int iy);
+    Item *item() { return m_item; }
+    Item *top_item();
     void set_item(Item *it);
 
-	void build_ITEMDATA(int ip, ITEMDATA *id);
-	void build_items_stats(char *buf, int &len);
-	int  get_items_list(std::vector<Item *> &items);
+    void build_ITEMDATA(int ip, ITEMDATA *id);
+    void build_items_stats(char *buf, int &len);
+    int  get_items_list(std::vector<Item *> &items);
 
-	void destroy_all_items();
-	void damage_items(int dam);
-	bool check_mine();
-	void draw_deselect_time(BITMAP *dest, int PLACE_NUM, int time);
+    void destroy_all_items();
+    void damage_items(int dam);
+    bool check_mine();
+    void draw_deselect_time(BITMAP *dest, int PLACE_NUM, int time);
 
-	virtual bool Write(persist::Engine &archive) const;
-	virtual bool Read(persist::Engine &archive);
+    virtual bool Write(persist::Engine &archive) const;
+    virtual bool Read(persist::Engine &archive);
 };
 
 #endif
