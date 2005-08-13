@@ -27,14 +27,14 @@ HUFFMAN_TABLE _jpeg_huffman_dc_table[4];
 IO_BUFFER _jpeg_io;
 
 const unsigned char _jpeg_zigzag_scan[64] = {
-	 0, 1, 5, 6,14,15,27,28,
-	 2, 4, 7,13,16,26,29,42,
-	 3, 8,12,17,25,30,41,43,
-	 9,11,18,24,31,40,44,53,
-	10,19,23,32,39,45,52,54,
-	20,22,33,38,46,51,55,60,
-	21,34,37,47,50,56,59,61,
-	35,36,48,49,57,58,62,63
+     0, 1, 5, 6,14,15,27,28,
+     2, 4, 7,13,16,26,29,42,
+     3, 8,12,17,25,30,41,43,
+     9,11,18,24,31,40,44,53,
+    10,19,23,32,39,45,52,54,
+    20,22,33,38,46,51,55,60,
+    21,34,37,47,50,56,59,61,
+    35,36,48,49,57,58,62,63
 };
 
 const char *_jpeg_component_name[] = { "Y", "Cb", "Cr" };
@@ -49,14 +49,14 @@ void
 _jpeg_trace(const char *msg, ...)
 {
 #ifdef DEBUG
-	va_list ap;
-	
-	va_start(ap, msg);
-	vfprintf(stderr, msg, ap);
-	va_end(ap);
-	fprintf(stderr, "\n");
+    va_list ap;
+    
+    va_start(ap, msg);
+    vfprintf(stderr, msg, ap);
+    va_end(ap);
+    fprintf(stderr, "\n");
 #else
-	(void)msg;
+    (void)msg;
 #endif
 }
 
@@ -68,17 +68,17 @@ _jpeg_trace(const char *msg, ...)
 static void *
 load_datafile_jpg(PACKFILE *f, long size)
 {
-	BITMAP *bmp;
-	char *buffer;
-	
-	buffer = (char *)malloc(size);
-	if (!buffer)
-		return NULL;
-	pack_fread(buffer, size, f);
-	bmp = load_memory_jpg(buffer, size, NULL);
-	free(buffer);
-	
-	return (void *)bmp;
+    BITMAP *bmp;
+    char *buffer;
+    
+    buffer = (char *)malloc(size);
+    if (!buffer)
+        return NULL;
+    pack_fread(buffer, size, f);
+    bmp = load_memory_jpg(buffer, size, NULL);
+    free(buffer);
+    
+    return (void *)bmp;
 }
 
 
@@ -88,8 +88,8 @@ load_datafile_jpg(PACKFILE *f, long size)
 static void
 destroy_datafile_jpg(void *data)
 {
-	if (data)
-		destroy_bitmap((BITMAP *)data);
+    if (data)
+        destroy_bitmap((BITMAP *)data);
 }
 
 
@@ -100,11 +100,11 @@ destroy_datafile_jpg(void *data)
 int
 jpgalleg_init(void)
 {
-	register_datafile_object(DAT_JPEG, load_datafile_jpg, destroy_datafile_jpg);
-	register_bitmap_file_type("jpg", load_jpg, save_jpg);
-	jpgalleg_error = JPG_ERROR_NONE;
-	
-	return 0;
+    register_datafile_object(DAT_JPEG, load_datafile_jpg, destroy_datafile_jpg);
+    register_bitmap_file_type("jpg", load_jpg, save_jpg);
+    jpgalleg_error = JPG_ERROR_NONE;
+    
+    return 0;
 }
 
 
@@ -114,7 +114,7 @@ jpgalleg_init(void)
 BITMAP *
 load_jpg(AL_CONST char *filename, RGB *palette)
 {
-	return load_jpg_ex(filename, palette, NULL);
+    return load_jpg_ex(filename, palette, NULL);
 }
 
 
@@ -124,38 +124,38 @@ load_jpg(AL_CONST char *filename, RGB *palette)
 BITMAP *
 load_jpg_ex(AL_CONST char *filename, RGB *palette, void (*callback)(int progress))
 {
-	PACKFILE *f;
-	BITMAP *bmp;
-	PALETTE pal;
-	int size;
-	
-	if (!palette)
-		palette = pal;
-	
-	size = file_size(filename);
-	_jpeg_io.buffer = _jpeg_io.buffer_start = (unsigned char *)malloc(size);
-	_jpeg_io.buffer_end = _jpeg_io.buffer_start + size;
-	if (!_jpeg_io.buffer) {
-		TRACE("Out of memory");
-		jpgalleg_error = JPG_ERROR_OUT_OF_MEMORY;
-		return NULL;
-	}
-	f = pack_fopen(filename, F_READ);
-	if (!f) {
-		TRACE("Cannot open %s for reading", filename);
-		jpgalleg_error = JPG_ERROR_READING_FILE;
-		free(_jpeg_io.buffer);
-		return NULL;
-	}
-	pack_fread(_jpeg_io.buffer, size, f);
-	pack_fclose(f);
-	
-	TRACE("Loading JPG from file %s", filename);
-	
-	bmp = _jpeg_decode(palette, callback);
-	
-	free(_jpeg_io.buffer_start);
-	return bmp;
+    PACKFILE *f;
+    BITMAP *bmp;
+    PALETTE pal;
+    int size;
+    
+    if (!palette)
+        palette = pal;
+    
+    size = file_size(filename);
+    _jpeg_io.buffer = _jpeg_io.buffer_start = (unsigned char *)malloc(size + 1);
+    _jpeg_io.buffer_end = _jpeg_io.buffer_start + size;
+    if (!_jpeg_io.buffer) {
+        TRACE("Out of memory");
+        jpgalleg_error = JPG_ERROR_OUT_OF_MEMORY;
+        return NULL;
+    }
+    f = pack_fopen(filename, F_READ);
+    if (!f) {
+        TRACE("Cannot open %s for reading", filename);
+        jpgalleg_error = JPG_ERROR_READING_FILE;
+        free(_jpeg_io.buffer);
+        return NULL;
+    }
+    pack_fread(_jpeg_io.buffer, size, f);
+    pack_fclose(f);
+    
+    TRACE("Loading JPG from file %s", filename);
+    
+    bmp = _jpeg_decode(palette, callback);
+    
+    free(_jpeg_io.buffer_start);
+    return bmp;
 }
 
 
@@ -166,7 +166,7 @@ load_jpg_ex(AL_CONST char *filename, RGB *palette, void (*callback)(int progress
 BITMAP *
 load_memory_jpg(void *buffer, int size, RGB *palette)
 {
-	return load_memory_jpg_ex(buffer, size, palette, NULL);
+    return load_memory_jpg_ex(buffer, size, palette, NULL);
 }
 
 
@@ -176,20 +176,20 @@ load_memory_jpg(void *buffer, int size, RGB *palette)
 BITMAP *
 load_memory_jpg_ex(void *buffer, int size, RGB *palette, void (*callback)(int progress))
 {
-	BITMAP *bmp;
-	PALETTE pal;
-	
-	if (!palette)
-		palette = pal;
-	
-	_jpeg_io.buffer = _jpeg_io.buffer_start = buffer;
-	_jpeg_io.buffer_end = _jpeg_io.buffer_start + size;
-	
-	TRACE("Loading JPG from memory buffer at %p (size = %d)", buffer, size);
-	
-	bmp = _jpeg_decode(palette, callback);
+    BITMAP *bmp;
+    PALETTE pal;
+    
+    if (!palette)
+        palette = pal;
+    
+    _jpeg_io.buffer = _jpeg_io.buffer_start = buffer;
+    _jpeg_io.buffer_end = _jpeg_io.buffer_start + size;
+    
+    TRACE("Loading JPG from memory buffer at %p (size = %d)", buffer, size);
+    
+    bmp = _jpeg_decode(palette, callback);
 
-	return bmp;
+    return bmp;
 }
 
 
@@ -200,7 +200,7 @@ load_memory_jpg_ex(void *buffer, int size, RGB *palette, void (*callback)(int pr
 int
 save_jpg(AL_CONST char *filename, BITMAP *bmp, AL_CONST RGB *palette)
 {
-	return save_jpg_ex(filename, bmp, palette, DEFAULT_QUALITY, DEFAULT_FLAGS, NULL);
+    return save_jpg_ex(filename, bmp, palette, DEFAULT_QUALITY, DEFAULT_FLAGS, NULL);
 }
 
 
@@ -211,38 +211,38 @@ save_jpg(AL_CONST char *filename, BITMAP *bmp, AL_CONST RGB *palette)
 int
 save_jpg_ex(AL_CONST char *filename, BITMAP *bmp, AL_CONST RGB *palette, int quality, int flags, void (*callback)(int progress))
 {
-	PACKFILE *f;
-	PALETTE pal;
-	int result, size;
-	
-	if (!palette)
-		palette = pal;
-	
-	size = (bmp->w * bmp->h * 3) + 1000;    /* This extimation should be more than enough in all cases */
-	_jpeg_io.buffer = _jpeg_io.buffer_start = (unsigned char *)malloc(size);
-	_jpeg_io.buffer_end = _jpeg_io.buffer_start + size;
-	if (!_jpeg_io.buffer) {
-		TRACE("Out of memory");
-		jpgalleg_error = JPG_ERROR_OUT_OF_MEMORY;
-		return -1;
-	}
-	f = pack_fopen(filename, F_WRITE);
-	if (!f) {
-		TRACE("Cannot open %s for writing", filename);
-		jpgalleg_error = JPG_ERROR_WRITING_FILE;
-		free(_jpeg_io.buffer);
-		return -1;
-	}
-	
-	TRACE("Saving JPG to file %s", filename);
-	
-	result = _jpeg_encode(bmp, palette, quality, flags, callback);
-	if (!result)
-		pack_fwrite(_jpeg_io.buffer_start, _jpeg_io.buffer - _jpeg_io.buffer_start, f);
-	
-	free(_jpeg_io.buffer_start);
-	pack_fclose(f);
-	return result;
+    PACKFILE *f;
+    PALETTE pal;
+    int result, size;
+    
+    if (!palette)
+        palette = pal;
+    
+    size = (bmp->w * bmp->h * 3) + 1000;    /* This extimation should be more than enough in all cases */
+    _jpeg_io.buffer = _jpeg_io.buffer_start = (unsigned char *)malloc(size);
+    _jpeg_io.buffer_end = _jpeg_io.buffer_start + size;
+    if (!_jpeg_io.buffer) {
+        TRACE("Out of memory");
+        jpgalleg_error = JPG_ERROR_OUT_OF_MEMORY;
+        return -1;
+    }
+    f = pack_fopen(filename, F_WRITE);
+    if (!f) {
+        TRACE("Cannot open %s for writing", filename);
+        jpgalleg_error = JPG_ERROR_WRITING_FILE;
+        free(_jpeg_io.buffer);
+        return -1;
+    }
+    
+    TRACE("Saving JPG to file %s", filename);
+    
+    result = _jpeg_encode(bmp, palette, quality, flags, callback);
+    if (!result)
+        pack_fwrite(_jpeg_io.buffer_start, _jpeg_io.buffer - _jpeg_io.buffer_start, f);
+    
+    free(_jpeg_io.buffer_start);
+    pack_fclose(f);
+    return result;
 }
 
 
@@ -253,7 +253,7 @@ save_jpg_ex(AL_CONST char *filename, BITMAP *bmp, AL_CONST RGB *palette, int qua
 int
 save_memory_jpg(void *buffer, int *size, BITMAP *bmp, AL_CONST RGB *palette)
 {
-	return save_memory_jpg_ex(buffer, size, bmp, palette, DEFAULT_QUALITY, DEFAULT_FLAGS, NULL);
+    return save_memory_jpg_ex(buffer, size, bmp, palette, DEFAULT_QUALITY, DEFAULT_FLAGS, NULL);
 }
 
 
@@ -264,22 +264,22 @@ save_memory_jpg(void *buffer, int *size, BITMAP *bmp, AL_CONST RGB *palette)
 int
 save_memory_jpg_ex(void *buffer, int *size, BITMAP *bmp, AL_CONST RGB *palette, int quality, int flags, void (*callback)(int progress))
 {
-	int result;
-	
-	if (!buffer) {
-		TRACE("Invalid buffer pointer");
-		return -1;
-	}
-	
-	TRACE("Saving JPG to memory buffer at %p (size = %d)", buffer, *size);
-	
-	_jpeg_io.buffer = _jpeg_io.buffer_start = buffer;
-	_jpeg_io.buffer_end = _jpeg_io.buffer_start + *size;
-	*size = 0;
-	
-	result = _jpeg_encode(bmp, palette, quality, flags, callback);
-	
-	if (result == 0)
-		*size = _jpeg_io.buffer - _jpeg_io.buffer_start;
-	return result;
+    int result;
+    
+    if (!buffer) {
+        TRACE("Invalid buffer pointer");
+        return -1;
+    }
+    
+    TRACE("Saving JPG to memory buffer at %p (size = %d)", buffer, *size);
+    
+    _jpeg_io.buffer = _jpeg_io.buffer_start = buffer;
+    _jpeg_io.buffer_end = _jpeg_io.buffer_start + *size;
+    *size = 0;
+    
+    result = _jpeg_encode(bmp, palette, quality, flags, callback);
+    
+    if (result == 0)
+        *size = _jpeg_io.buffer - _jpeg_io.buffer_start;
+    return result;
 }
