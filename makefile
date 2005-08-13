@@ -236,27 +236,23 @@ clean:
 # Update the translations of game messages to different languages 
 # using gettext tools - see manual at
 # http://www.gnu.org/software/gettext/manual/gettext.html
-lng-de: $(SRCS)
+lng-deu: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
-	msgmerge --update translations/ufo2000-de.po translations/ufo2000.pot
+	msgmerge --update translations/ufo2000-deu.po translations/ufo2000.pot
 
-lng-es: $(SRCS)
+lng-spa: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
-	msgmerge --update translations/ufo2000-es.po translations/ufo2000.pot
+	msgmerge --update translations/ufo2000-spa.po translations/ufo2000.pot
 
-lng-fr: $(SRCS)
+lng-rus: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
-	msgmerge --update translations/ufo2000-fr.po translations/ufo2000.pot
+	msgmerge --update translations/ufo2000-rus.po translations/ufo2000.pot
 
-lng-ru: $(SRCS)
+lng-bel: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
-	msgmerge --update translations/ufo2000-ru.po translations/ufo2000.pot
-
-lng-be: $(SRCS)
-	xgettext -o translations/ufo2000.pot --keyword=_ $^
-	msgmerge --update translations/ufo2000-be.po translations/ufo2000.pot
+	msgmerge --update translations/ufo2000-bel.po translations/ufo2000.pot
 	
-lng-all: lng-de lng-es lng-fr lng-ru lng-be
+lng-all: lng-deu lng-spa lng-rus lng-bel
 
 binary-gz: all server
 # create linux binary distributive

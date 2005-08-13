@@ -29,6 +29,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "colors.h"
 #include "text.h"
 #include "mouse.h"
+#include "script_api.h"
 
 extern void install_timers(int _speed_unit, int _speed_bullet, int _speed_mapscroll);
 extern void uninstall_timers();
@@ -262,25 +263,11 @@ static int d_slider_pro2(int msg, DIALOG *d, int c)
     return v;
 }                                                   
 
-// Todo: automatic detection of available languages
-std::vector<std::string> language_codes;
 std::vector<std::string> language_names;
-
-inline void add_lng(std::string code, std::string name)
-{
-    language_codes.push_back(code);
-    language_names.push_back(name);
-}
 
 void init_languages()
 {
-    language_codes.clear(); language_names.clear();
-    add_lng("be", "Byelorussian");
-    add_lng("en", "English");
-    //add_lng("fr", "French");  // actually no translation, though ufo2000-fr.po is present
-    add_lng("de", "German");
-    add_lng("ru", "Russian");
-    add_lng("es", "Spanish");
+    query_languages(language_names);
 }
 
 static int lang_change_button_proc(int msg, DIALOG *d, int c)
@@ -288,10 +275,10 @@ static int lang_change_button_proc(int msg, DIALOG *d, int c)
     int result = d_button_proc(msg, d, c);
     if (result == D_CLOSE) {
         if (language_names.size() > 1)
-            d->d1 = gui_select_from_list(180, 120, "Language:", language_names, d->d1);
+            d->d1 = gui_select_from_list(320, 200, "Language:", language_names, d->d1);
 
-        char *temp = new char[strlen(language_codes[d->d1].c_str())];
-        strcpy(temp, language_codes[d->d1].c_str());
+        char *temp = new char[strlen(language_names[d->d1].c_str())];
+        strcpy(temp, language_names[d->d1].c_str());
 
         d->w = text_length(font, temp) + 6;
         d->dp = (void *)temp;
@@ -308,8 +295,8 @@ void configure()
 {
     set_config_file(F("$(home)/ufo2000.ini"));
     init_languages();
-    char *temp = new char[strlen(get_config_string("System", "language", "en"))];
-    strcpy(temp, get_config_string("System", "language", "en"));
+    char *temp = new char[strlen(get_config_string("System", "language", "English"))];
+    strcpy(temp, get_config_string("System", "language", "English"));
 
     MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
     DIALOG config_dlg[] = {
@@ -326,7 +313,7 @@ void configure()
         { d_check_proc,    340,  40, 192,  16, FG, BG, 0, 0, 1, 0, (void *)_("end turn sound"), NULL, NULL },
         { d_check_proc,    340,  64, 192,  16, FG, BG, 0, 0, 1, 0, (void *)_("start sitting if second"), NULL, NULL },
         { d_check_proc,    340,  88, 192,  16, FG, BG, 0, 0, 1, 0, (void *)_("icon panel tooltips"), NULL, NULL },
-        { lang_change_button_proc, 340, 132, 100, 16, FG, BG, 0, D_EXIT, -1, 0, (void *)temp, NULL, NULL },
+        { lang_change_button_proc, 340, 112, 100, 16, FG, BG, 0, D_EXIT, -1, 0, (void *)temp, NULL, NULL },
         { d_button_proc,   400, 200,  64,  16, FG, BG, 0, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL },
         { d_button_proc,   472, 200,  64,  16, FG, BG, 0, D_EXIT | D_GOTFOCUS, 0, 0, (void *)_("Cancel"), NULL, NULL },
         { d_text_proc,     176,  44,  88,  16, FG, BG, 0, 0, 0, 0, (void *)_("movement speed"), NULL, NULL },
@@ -336,7 +323,6 @@ void configure()
         { d_text_proc,     176, 140, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("music volume"), NULL, NULL },
         { d_text_proc,     176, 164, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("console font size"), NULL, NULL },
         { d_text_proc,     176, 188, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("mouse sensitivity"), NULL, NULL },
-        { d_text_proc,     372, 137, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("language"), NULL, NULL },
         { d_yield_proc,      0,   0,   0,   0,  0,  0, 0, 0, 0, 0, NULL, NULL, NULL},
         { NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL }
     };
@@ -379,7 +365,7 @@ void configure()
         else FLAGS &= ~F_TOOLTIPS;
 
         if (config_dlg[LANG].d1 != -1) {
-            std::string lang = language_codes[config_dlg[LANG].d1];
+            std::string lang = language_names[config_dlg[LANG].d1];
             set_config_string("System", "language", lang.c_str());
             set_language(lang.c_str());
         }

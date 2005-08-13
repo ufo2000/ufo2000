@@ -46,4 +46,9 @@ bool set_current_equipment_name(const char *equipment_name);
  */
 int query_equipment_sets(std::vector<std::string> &eqsets);
 
+/**
+ * Query the list of supported languages
+ */
+int query_languages(std::vector<std::string> &languages);
+
 #endif

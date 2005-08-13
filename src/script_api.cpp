@@ -102,3 +102,23 @@ int query_equipment_sets(std::vector<std::string> &eqsets)
 
     return -1;
 }
+
+int query_languages(std::vector<std::string> &languages)
+{
+    languages.clear();
+    int stack_top = lua_gettop(L);
+    lua_pushstring(L, "LanguagesList");
+    lua_gettable(L, LUA_GLOBALSINDEX);
+    ASSERT(lua_istable(L, -1)); 
+    lua_pushnil(L);
+    while (lua_next(L, -2) != 0) {
+        ASSERT(lua_isstring(L, -2));
+        ASSERT(lua_isstring(L, -1));
+        languages.push_back(lua_tostring(L, -2));
+        lua_pop(L, 1);
+    }
+    lua_settop(L, stack_top);
+
+    std::sort(languages.begin(), languages.end());
+    return languages.size();
+}

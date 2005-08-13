@@ -235,7 +235,7 @@ function GetDataFileName(x)
             Message("GetDataFileName: '%s' resolved as '%s' and cached for future use", x, fname)
         end
     else
-        Warning("GetDataFileName: '%s' resolved as '%s' but not found on disk", x, fname)
+        Message("GetDataFileName: '%s' resolved as '%s' but not found on disk", x, fname)
     end
 
     FilesTable[x] = { FileName = fname }

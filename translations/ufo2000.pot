@@ -1,2169 +1,2344 @@
-# UFO2000 - Language-File: FR=French
-# Copyright (C) 2001-2004 ufo2000 development team
-# This file is distributed under the same license as the UFO2000 package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2004.
-# ##
-# !! Comments for an entry have to be placed before its "msgid"-line, 
-# !! and must start with "# ".
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: UFO2000\n"
-"POT-Creation-Date: 2004-12-06 20:36+0200\n"
-"PO-Revision-Date: unknown\n"
-"Last-Translator: unknown\n"
-"Language-Team: French\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-08-14 00:43+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/config.cpp:247
-msgid "Configuration"
+#: src/config.cpp:307 src/text.cpp:335 src/units.cpp:332
+msgid "Options"
 msgstr ""
 
-#: src/config.cpp:252 src/connect.cpp:275 src/editor.cpp:1232
-#: src/editor.cpp:1400 src/main.cpp:1877 src/main.cpp:2029
-#: src/server_gui.cpp:309 src/video.cpp:363
+#: src/config.cpp:315
+msgid "end turn sound"
+msgstr ""
+
+#: src/config.cpp:316
+msgid "start sitting if second"
+msgstr ""
+
+#: src/config.cpp:317
+msgid "icon panel tooltips"
+msgstr ""
+
+#: src/config.cpp:319 src/connect.cpp:291 src/editor.cpp:100
+#: src/editor.cpp:831 src/editor.cpp:1008 src/main.cpp:2275 src/main.cpp:2494
+#: src/main.cpp:2532 src/main.cpp:2537 src/server_gui.cpp:320
+#: src/video.cpp:352
 msgid "OK"
 msgstr ""
 
-#: src/config.cpp:253 src/icon.cpp:647 src/server_gui.cpp:310
-#: src/video.cpp:363
+#: src/config.cpp:320 src/icon.cpp:667 src/server_gui.cpp:321
+#: src/video.cpp:352
 msgid "Cancel"
 msgstr ""
 
-#: src/config.cpp:254
+#: src/config.cpp:321
 msgid "movement speed"
 msgstr ""
 
-#: src/config.cpp:255
+#: src/config.cpp:322
 msgid "fire speed"
 msgstr ""
 
-#: src/config.cpp:256
+#: src/config.cpp:323
 msgid "scroll speed"
 msgstr ""
 
-#: src/config.cpp:257
+#: src/config.cpp:324
 msgid "mapscroll points"
 msgstr ""
 
-#: src/connect.cpp:81
+#: src/config.cpp:325
+msgid "music volume"
+msgstr ""
+
+#: src/config.cpp:326
+msgid "console font size"
+msgstr ""
+
+#: src/config.cpp:327
+msgid "mouse sensitivity"
+msgstr ""
+
+#: src/connect.cpp:88
 msgid "Comparing local and remote UFO2000 versions..."
 msgstr ""
 
-#: src/connect.cpp:82
+#: src/connect.cpp:89
 msgid "Press ESC to cancel"
 msgstr ""
 
-#: src/connect.cpp:134
+#: src/connect.cpp:141
 msgid "connection closed"
 msgstr ""
 
-#: src/connect.cpp:219
+#: src/connect.cpp:229
 msgid "Welcome to the mission-planner !"
 msgstr ""
 
-#: src/connect.cpp:274
+#: src/connect.cpp:290
 msgid "Remote player does not have any of your maps"
 msgstr ""
 
-#: src/connect.cpp:313
+#: src/connect.cpp:338
 msgid "You can select a map and change the match-settings."
 msgstr ""
 
-#: src/connect.cpp:315
+#: src/connect.cpp:340
 msgid "The map is already set for this game, and cannot be changed."
 msgstr ""
 
-#: src/connect.cpp:316
+#: src/connect.cpp:341
 msgid "To edit a soldier, CTRL-click on his name."
 msgstr ""
 
-#: src/connect.cpp:317
+#: src/connect.cpp:342
 msgid "Left-click to place a soldier on the map, right-click to remove him."
 msgstr ""
 
-#: src/connect.cpp:318
+#: src/connect.cpp:343
 msgid "When finished, click SEND, then START.  Press ESC to quit, F1 for help."
 msgstr ""
 
-#: src/connect.cpp:382
+#: src/connect.cpp:413
 msgid "PREPARATIONS FOR MISSION FINISHED"
 msgstr ""
 
-#: src/connect.cpp:440 src/main.cpp:1482 src/main.cpp:1814
-#: src/server_gui.cpp:596
+#: src/connect.cpp:466 src/editor.cpp:517 src/main.cpp:2316
+msgid "SCREEN-SNAPSHOT"
+msgstr ""
+
+#: src/connect.cpp:472 src/main.cpp:1789 src/main.cpp:2213
+#: src/server_gui.cpp:639
 msgid "Music OFF"
 msgstr ""
 
-#: src/connect.cpp:444 src/connect.cpp:448 src/main.cpp:1486 src/main.cpp:1490
-#: src/main.cpp:1818 src/main.cpp:1822
-#, c-format
-msgid "Music Volume: %d"
-msgstr ""
-
-#: src/connect.cpp:451
+#: src/connect.cpp:475
 msgid "EXIT MISSION-PLANNER"
 msgstr ""
 
-#: src/connect.cpp:469
-msgid "ok."
+#: src/editor.cpp:97
+msgid "Load squad (*.squad files)"
 msgstr ""
 
-#: src/connect.cpp:489
-msgid "INFO"
+#: src/editor.cpp:100
+msgid "No saved squads found!"
 msgstr ""
 
-#: src/connect.cpp:499
-#, c-format
-msgid "Total men points=%d"
+#: src/editor.cpp:115
+msgid "Save squad (*.squad file)"
 msgstr ""
 
-#: src/editor.cpp:134
-msgid "LOAD UNITS DATA"
+#: src/editor.cpp:237
+msgid ""
+"This item is not allowed for currently selected weapon set, right-click to "
+"get rid of it"
 msgstr ""
 
-#: src/editor.cpp:149
-msgid "SAVE UNITS DATA"
-msgstr ""
-
-#: src/editor.cpp:542
-msgid "Select Name"
-msgstr ""
-
-#: src/editor.cpp:600
+#: src/editor.cpp:264
 msgid ""
 "Click-and-drop weapons from the armory to the soldier, right-click to remove"
 msgstr ""
 
-#: src/editor.cpp:601
-msgid "F1 Help   F2 Save Team   F3 Load Team   F4 Edit Attributes"
-msgstr ""
-
-#: src/editor.cpp:653 src/editor.cpp:661 src/inventory.cpp:95
-#: src/inventory.cpp:106
+#: src/editor.cpp:314 src/editor.cpp:322 src/inventory.cpp:104
+#: src/inventory.cpp:112
 msgid "AMMO:"
 msgstr ""
 
-#: src/editor.cpp:654 src/editor.cpp:662 src/inventory.cpp:96
-#: src/inventory.cpp:107
+#: src/editor.cpp:315 src/editor.cpp:323 src/inventory.cpp:105
+#: src/inventory.cpp:113
 msgid "ROUNDS"
 msgstr ""
 
-#: src/editor.cpp:655 src/editor.cpp:663 src/inventory.cpp:86
-#: src/inventory.cpp:97 src/inventory.cpp:108
+#: src/editor.cpp:316 src/editor.cpp:324 src/inventory.cpp:96
+#: src/inventory.cpp:106 src/inventory.cpp:114
 msgid "LEFT="
 msgstr ""
 
-#: src/editor.cpp:680
-msgid "Use keys with shift to configure them:"
+#: src/editor.cpp:342
+msgid "       F1: Help"
 msgstr ""
 
-#: src/editor.cpp:687
-msgid "Name-generator"
+#: src/editor.cpp:343
+msgid "    F2/F3: Save/load team"
 msgstr ""
 
-#: src/editor.cpp:689
-msgid "Cycle thru Appearances"
+#: src/editor.cpp:344
+msgid "       F4: Edit attributes"
 msgstr ""
 
-#: src/editor.cpp:690
-msgid "Cycle thru Armor-types"
+#: src/editor.cpp:345
+msgid "       F5: Change weaponset"
 msgstr ""
 
-#: src/editor.cpp:692
-msgid "Delete Equipment of current man"
+#: src/editor.cpp:347
+msgid " Ctrl+Ins: Copy current soldier"
 msgstr ""
 
-#: src/editor.cpp:693
-msgid "Next soldier"
+#: src/editor.cpp:348
+msgid "Shift+Ins: Paste on current soldier"
 msgstr ""
 
-#: src/editor.cpp:700 src/soldier.cpp:875
+#: src/editor.cpp:349
+msgid "      Del: Delete items of current man"
+msgstr ""
+
+#: src/editor.cpp:350
+msgid "Shift+Del: Drop items of current man"
+msgstr ""
+
+#: src/editor.cpp:351
+msgid "      F11: Cycle through appearences"
+msgstr ""
+
+#: src/editor.cpp:352
+msgid "      F12: Cycle through human armours"
+msgstr ""
+
+#: src/editor.cpp:353
+msgid "Shift+F12: Cycle through alien races"
+msgstr ""
+
+#: src/editor.cpp:354
+msgid "      Tab: Next soldier"
+msgstr ""
+
+#: src/editor.cpp:355
+msgid "Shift+Tab: Previous soldier"
+msgstr ""
+
+#: src/editor.cpp:362
 #, c-format
-msgid "Equipment weight: %d/%2d"
+msgid "Equipment weight: %2d/%2d"
 msgstr ""
 
-#: src/editor.cpp:704
+#: src/editor.cpp:366
 msgid "Equipment cost"
 msgstr ""
 
-#: src/editor.cpp:783
-msgid "Select setup for F5"
-msgstr ""
-
-#: src/editor.cpp:795
-msgid "Select setup for F6"
-msgstr ""
-
-#: src/editor.cpp:804
-msgid "Select setup for F7"
-msgstr ""
-
-#: src/editor.cpp:813
-msgid "Select setup for F8"
-msgstr ""
-
-#: src/editor.cpp:1117
+#: src/editor.cpp:713
 msgid "Select unit race"
 msgstr ""
 
-#: src/editor.cpp:1122
+#: src/editor.cpp:718
 msgid "Select unit armour"
 msgstr ""
 
-#: src/editor.cpp:1127
+#: src/editor.cpp:723
 msgid "Select unit appearance"
 msgstr ""
 
-#: src/editor.cpp:1181 src/editor.cpp:1284
+#: src/editor.cpp:777 src/editor.cpp:883
 #, c-format
 msgid "Points remain: %2d "
 msgstr ""
 
-#: src/editor.cpp:1233
+#: src/editor.cpp:832
 msgid "Name:"
 msgstr ""
 
-#: src/editor.cpp:1237
+#: src/editor.cpp:836
 msgid "Race:"
 msgstr ""
 
-#: src/editor.cpp:1240
+#: src/editor.cpp:839
 msgid "Armour:"
 msgstr ""
 
-#: src/editor.cpp:1243
+#: src/editor.cpp:842
 msgid "Appearance:"
 msgstr ""
 
-#: src/editor.cpp:1246
+#: src/editor.cpp:845
 msgid "Time Units"
 msgstr ""
 
-#: src/editor.cpp:1248
+#: src/editor.cpp:847
 msgid "Stamina"
 msgstr ""
 
-#: src/editor.cpp:1250
+#: src/editor.cpp:849
 msgid "Health"
 msgstr ""
 
-#: src/editor.cpp:1252
+#: src/editor.cpp:851
 msgid "Bravery"
 msgstr ""
 
-#: src/editor.cpp:1254
+#: src/editor.cpp:853
 msgid "Reactions"
 msgstr ""
 
-#: src/editor.cpp:1256
+#: src/editor.cpp:855
 msgid "Firing"
 msgstr ""
 
-#: src/editor.cpp:1258
+#: src/editor.cpp:857
 msgid "Throwing"
 msgstr ""
 
-#: src/editor.cpp:1260
+#: src/editor.cpp:859
 msgid "Strength"
 msgstr ""
 
-#: src/editor.cpp:1392
+#: src/editor.cpp:1001
 msgid "Select equipment set"
 msgstr ""
 
-#: src/editor.cpp:1400
-msgid "Remote player does not have any of your equipment sets"
-msgstr ""
-
-#: src/icon.cpp:512
-msgid "CANCEL"
-msgstr ""
-
-#: src/icon.cpp:519
-#, c-format
-msgid "THROW       ACC>%02d%% TUs>%02d"
-msgstr ""
-
-#: src/icon.cpp:531
-#, c-format
-msgid "STUN        ACC>%02d%% TUs>%02d"
-msgstr ""
-
-#: src/icon.cpp:533
-#, c-format
-msgid "PUNCH       ACC>%02d%% TUs>%02d"
+#: src/editor.cpp:1008
+msgid "Remote player does not have any of your weaponsets"
 msgstr ""
 
 #: src/icon.cpp:542
 #, c-format
-msgid "AIMED THROW ACC>%02d%% TUs>%02d"
+msgid "CANCEL"
 msgstr ""
 
-#: src/icon.cpp:554
+#: src/icon.cpp:549
+#, c-format
+msgid "THROW       ACC>%02d%% TUs>%02d"
+msgstr ""
+
+#: src/icon.cpp:562
+#, c-format
+msgid "STUN                TUs>%02d"
+msgstr ""
+
+#: src/icon.cpp:564
+#, c-format
+msgid "PUNCH               TUs>%02d"
+msgstr ""
+
+#: src/icon.cpp:575
 #, c-format
 msgid "PRIME EXPLOSIVE     TUs>%02d"
 msgstr ""
 
-#: src/icon.cpp:561
+#: src/icon.cpp:582
 #, c-format
 msgid "PRIME GRENADE       TUs>%02d"
 msgstr ""
 
-#: src/icon.cpp:574
+#: src/icon.cpp:595
 #, c-format
 msgid "AUTO SHOT   ACC>%02d%% TUs>%02d"
 msgstr ""
 
-#: src/icon.cpp:585
+#: src/icon.cpp:605
 #, c-format
 msgid "SNAP SHOT   ACC>%02d%% TUs>%02d"
 msgstr ""
 
-#: src/icon.cpp:595
+#: src/icon.cpp:615
 #, c-format
 msgid "AIMED SHOT  ACC>%02d%% TUs>%02d"
 msgstr ""
 
-#: src/inventory.cpp:84
+#: src/icon.cpp:824 src/main.cpp:2205
+#, c-format
+msgid "%s is panicking and can't access inventory."
+msgstr ""
+
+#: src/inventory.cpp:94
 msgid "DELAY"
 msgstr ""
 
-#: src/inventory.cpp:85
+#: src/inventory.cpp:95
 msgid "TIME:"
 msgstr ""
 
-#: src/item.cpp:219
+#: src/item.cpp:187
 msgid "Firing-Type"
 msgstr ""
 
-#: src/item.cpp:219
+#: src/item.cpp:187
 msgid "Accuracy"
 msgstr ""
 
-#: src/item.cpp:219
+#: src/item.cpp:187
 msgid "TU cost"
 msgstr ""
 
-#: src/item.cpp:223
+#: src/item.cpp:191
 msgid "Auto"
 msgstr ""
 
-#: src/item.cpp:229
+#: src/item.cpp:197
 msgid "Snap"
 msgstr ""
 
-#: src/item.cpp:235
+#: src/item.cpp:203
 msgid "Aimed"
 msgstr ""
 
-#: src/item.cpp:243
+#: src/item.cpp:212
+msgid "Hand-to-hand weapon"
+msgstr ""
+
+#: src/item.cpp:217
 msgid "Two-handed weapon"
 msgstr ""
 
-#: src/item.cpp:249 src/main.cpp:1399 src/main.cpp:1401 src/main.cpp:1405
+#: src/item.cpp:226
+msgid "Usage TU cost"
+msgstr ""
+
+#: src/item.cpp:232 src/main.cpp:1707 src/main.cpp:1709 src/main.cpp:1713
 msgid "Damage"
 msgstr ""
 
-#: src/item.cpp:250
+#: src/item.cpp:233
 msgid "Ammo-Type"
 msgstr ""
 
-#: src/item.cpp:256
+#: src/item.cpp:239
 msgid "Rounds"
 msgstr ""
 
-#: src/item.cpp:265
+#: src/item.cpp:245
+msgid "Blast range"
+msgstr ""
+
+#: src/item.cpp:251
+msgid "Smoke range"
+msgstr ""
+
+#: src/item.cpp:257
+msgid "Smoke time"
+msgstr ""
+
+#: src/item.cpp:266
 msgid "Ammo#"
 msgstr ""
 
-#: src/item.cpp:270
+#: src/item.cpp:271
 msgid "Weight"
 msgstr ""
 
-#: src/item.cpp:273
+#: src/item.cpp:274
 msgid "Cost"
 msgstr ""
 
-#: src/main.cpp:82
+#: src/main.cpp:107
 #, c-format
 msgid "Time left: %d"
 msgstr ""
 
-#: src/main.cpp:819 src/main.cpp:822
+#: src/main.cpp:992 src/main.cpp:995
 msgid "wrong wholeCRC"
 msgstr ""
 
-#: src/main.cpp:870 src/main.cpp:871
+#: src/main.cpp:1083 src/main.cpp:1084
 msgid "Turn end"
 msgstr ""
 
-#: src/main.cpp:904
+#: src/main.cpp:1112
 msgid "  NEXT TURN  "
 msgstr ""
 
-#: src/main.cpp:905 src/multiplay.cpp:131 src/multiplay.cpp:139
-#: src/server_gui.cpp:386 src/server_gui.cpp:392 src/server_gui.cpp:443
+#: src/main.cpp:1113 src/multiplay.cpp:129 src/multiplay.cpp:137
+#: src/server_gui.cpp:399 src/server_gui.cpp:405 src/server_gui.cpp:459
 msgid "    OK    "
 msgstr ""
 
-#: src/main.cpp:939
+#: src/main.cpp:1164
 #, c-format
 msgid "Next turn. local = %d, remote = %d soldiers"
 msgstr ""
 
-#: src/main.cpp:945
+#: src/main.cpp:1170
 msgid "Next turn"
 msgstr ""
 
-#: src/main.cpp:997
+#: src/main.cpp:1245
 msgid "WATCH"
 msgstr ""
 
-#: src/main.cpp:1279 src/main.cpp:1301
+#: src/main.cpp:1248
+msgid "PAUSE (press shift+space to resume)"
+msgstr ""
+
+#: src/main.cpp:1587 src/main.cpp:1609
 msgid "DRAW!"
 msgstr ""
 
-#: src/main.cpp:1284 src/main.cpp:1288
+#: src/main.cpp:1592 src/main.cpp:1596
 msgid "PLAYER 2 WINS!"
 msgstr ""
 
-#: src/main.cpp:1285 src/main.cpp:1287
+#: src/main.cpp:1593 src/main.cpp:1595
 msgid "PLAYER 1 WINS!"
 msgstr ""
 
-#: src/main.cpp:1296
+#: src/main.cpp:1604
 msgid "YOU WIN!"
 msgstr ""
 
-#: src/main.cpp:1300
+#: src/main.cpp:1608
 msgid "YOU LOSE!"
 msgstr ""
 
-#: src/main.cpp:1310
+#: src/main.cpp:1618
 msgid "Summary"
 msgstr ""
 
-#: src/main.cpp:1321 src/main.cpp:1371 src/main.cpp:1379 src/main.cpp:1387
-#: src/units.cpp:334
+#: src/main.cpp:1629 src/main.cpp:1679 src/main.cpp:1687 src/main.cpp:1695
+#: src/units.cpp:319
 msgid "Player 1"
 msgstr ""
 
-#: src/main.cpp:1322 src/main.cpp:1371 src/main.cpp:1379 src/main.cpp:1387
-#: src/units.cpp:340
+#: src/main.cpp:1630 src/main.cpp:1679 src/main.cpp:1687 src/main.cpp:1695
+#: src/units.cpp:325
 msgid "Player 2"
 msgstr ""
 
-#: src/main.cpp:1327
+#: src/main.cpp:1635
 msgid "Your Platoon"
 msgstr ""
 
-#: src/main.cpp:1328
+#: src/main.cpp:1636
 msgid "Remote Platoon"
 msgstr ""
 
-#: src/main.cpp:1335
+#: src/main.cpp:1643
 msgid "Total Kills:"
 msgstr ""
 
-#: src/main.cpp:1340 src/main.cpp:1404
+#: src/main.cpp:1648 src/main.cpp:1712
 msgid "Player"
 msgstr ""
 
-#: src/main.cpp:1343
+#: src/main.cpp:1651
 msgid "Death:"
 msgstr ""
 
-#: src/main.cpp:1350
+#: src/main.cpp:1658
 msgid "Total Damage Inflicted:"
 msgstr ""
 
-#: src/main.cpp:1357
+#: src/main.cpp:1665
 msgid "Total Damage Taken:"
 msgstr ""
 
-#: src/main.cpp:1368
+#: src/main.cpp:1676
 msgid "Most Valuable Soldier:"
 msgstr ""
 
-#: src/main.cpp:1369
+#: src/main.cpp:1677
 #, c-format
 msgid "%s (%s, %d kills)"
 msgstr ""
 
-#: src/main.cpp:1371 src/main.cpp:1379 src/main.cpp:1387
+#: src/main.cpp:1679 src/main.cpp:1687 src/main.cpp:1695
 msgid "Remote"
 msgstr ""
 
-#: src/main.cpp:1371 src/main.cpp:1379 src/main.cpp:1387
+#: src/main.cpp:1679 src/main.cpp:1687 src/main.cpp:1695
 msgid "Local"
 msgstr ""
 
-#: src/main.cpp:1376
+#: src/main.cpp:1684
 msgid "Most Devastating Soldier:"
 msgstr ""
 
-#: src/main.cpp:1377 src/main.cpp:1385
+#: src/main.cpp:1685 src/main.cpp:1693
 #, c-format
 msgid "%s (%s, %d damage inflicted)"
 msgstr ""
 
-#: src/main.cpp:1384
+#: src/main.cpp:1692
 msgid "Most Cowardly Soldier:"
 msgstr ""
 
-#: src/main.cpp:1399 src/main.cpp:1401 src/main.cpp:1405
+#: src/main.cpp:1707 src/main.cpp:1709 src/main.cpp:1713
 msgid "Name"
 msgstr ""
 
-#: src/main.cpp:1399 src/main.cpp:1401 src/main.cpp:1405
+#: src/main.cpp:1707 src/main.cpp:1709 src/main.cpp:1713
 msgid "Kills"
 msgstr ""
 
-#: src/main.cpp:1403
+#: src/main.cpp:1711
 msgid "Details"
 msgstr ""
 
-#: src/main.cpp:1440
+#: src/main.cpp:1748
 msgid "End"
 msgstr ""
 
-#: src/main.cpp:1449
+#: src/main.cpp:1757
 msgid "You can chat here.  Press ESC when finished."
 msgstr ""
 
-#: src/main.cpp:1470
+#: src/main.cpp:1777
 msgid "EXIT TO MAIN MENU"
 msgstr ""
 
-#: src/main.cpp:1565
+#: src/main.cpp:1908
 msgid "Welcome to the battlescape of UFO2000 !"
 msgstr ""
 
-#: src/main.cpp:1566
+#: src/main.cpp:1909
 msgid "Press F1 for help."
 msgstr ""
 
-#: src/main.cpp:1568
+#: src/main.cpp:1911
 msgid "Battlereport"
 msgstr ""
 
-#: src/main.cpp:1864
+#: src/main.cpp:2262
 msgid "SAVE GAME"
 msgstr ""
 
-#: src/main.cpp:1867 src/main.cpp:1869
+#: src/main.cpp:2265 src/main.cpp:2267
 msgid "Game saved"
 msgstr ""
 
-#: src/main.cpp:1873 src/main.cpp:1875 src/main.cpp:1880 src/main.cpp:2032
+#: src/main.cpp:2271 src/main.cpp:2273 src/main.cpp:2278 src/main.cpp:2497
 msgid "LOAD GAME"
 msgstr ""
 
-#: src/main.cpp:1875
+#: src/main.cpp:2273
 msgid "failed"
 msgstr ""
 
-#: src/main.cpp:1877
+#: src/main.cpp:2275
 msgid "Saved game not found"
 msgstr ""
 
-#: src/main.cpp:1880
+#: src/main.cpp:2278
 msgid "success"
 msgstr ""
 
-#: src/main.cpp:1890
+#: src/main.cpp:2288
 msgid "Tooltips OFF"
 msgstr ""
 
-#: src/main.cpp:1893
+#: src/main.cpp:2291
 msgid "Tooltips ON."
 msgstr ""
 
-#: src/main.cpp:1907
+#: src/main.cpp:2305
 msgid "STOP NOTIFY"
 msgstr ""
 
-#: src/main.cpp:1910
+#: src/main.cpp:2308
 msgid "START NOTIFY"
 msgstr ""
 
-#: src/main.cpp:1917
-msgid "SCREEN-SNAPSHOT"
-msgstr ""
-
-#: src/main.cpp:1930
+#: src/main.cpp:2330
 msgid "ABORT MISSION ?"
 msgstr ""
 
-#: src/main.cpp:1931
+#: src/main.cpp:2330
 msgid "YES=RESIGN"
 msgstr ""
 
-#: src/main.cpp:1931
+#: src/main.cpp:2331
+msgid "RECALL DRAW OFFER"
+msgstr ""
+
+#: src/main.cpp:2332
+msgid "ACCEPT DRAW OFFER"
+msgstr ""
+
+#: src/main.cpp:2333
+msgid "OFFER DRAW"
+msgstr ""
+
+#: src/main.cpp:2333
 msgid "NO=CONTINUE"
 msgstr ""
 
-#: src/main.cpp:1935
+#: src/main.cpp:2335
+msgid "EXIT FROM REPLAY?"
+msgstr ""
+
+#: src/main.cpp:2340
 msgid "Game aborted"
 msgstr ""
 
-#: src/main.cpp:2029
+#: src/main.cpp:2345
+msgid "You: Draw offer accepted"
+msgstr ""
+
+#: src/main.cpp:2347
+msgid "You: Draw offered"
+msgstr ""
+
+#: src/main.cpp:2349
+msgid "You: Draw offer recalled"
+msgstr ""
+
+#: src/main.cpp:2382
+msgid "Save replay?"
+msgstr ""
+
+#: src/main.cpp:2384
+msgid "Save replay (*.replay file)"
+msgstr ""
+
+#: src/main.cpp:2389
+#, c-format
+msgid "Unable to delete existing file %s!"
+msgstr ""
+
+#: src/main.cpp:2395
+#, c-format
+msgid "Replay saved as %s"
+msgstr ""
+
+#: src/main.cpp:2397
+#, c-format
+msgid "Unable to save %s!"
+msgstr ""
+
+#: src/main.cpp:2405
+#, c-format
+msgid "Unable to delete temporary file %s!"
+msgstr ""
+
+#: src/main.cpp:2494
 msgid "Saved game not available"
 msgstr ""
 
-#: src/main.cpp:2183
+#: src/main.cpp:2529
+msgid "Load replay (*.replay files)"
+msgstr ""
+
+#: src/main.cpp:2532
+msgid "No saved replays found!"
+msgstr ""
+
+#: src/main.cpp:2537
+msgid "Replay is invalid!"
+msgstr ""
+
+#: src/main.cpp:2537
+msgid "(Probably it was saved by incompatible version)."
+msgstr ""
+
+#: src/main.cpp:2541
+msgid "START REPLAY"
+msgstr ""
+
+#: src/main.cpp:2694
 #, c-format
 msgid "UFO2000 v%s.%s - a free and opensource multiplayer game"
 msgstr ""
 
-#: src/main.cpp:2186
+#: src/main.cpp:2697
 msgid "inspired by 'X-COM: UFO Defense', see http://ufo2000.sf.net."
 msgstr ""
 
-#: src/main.cpp:2188
+#: src/main.cpp:2699
 msgid " &MORE "
 msgstr ""
 
-#: src/main.cpp:2188
+#: src/main.cpp:2699
 msgid " OK "
 msgstr ""
 
-#: src/mainmenu.cpp:210
+#: src/mainmenu.cpp:211
 msgid "connect to internet server"
 msgstr ""
 
-#: src/mainmenu.cpp:211
+#: src/mainmenu.cpp:212
 msgid "start hotseat game"
 msgstr ""
 
-#: src/mainmenu.cpp:212
-msgid "editor"
-msgstr ""
-
 #: src/mainmenu.cpp:213
-msgid "load saved game"
+msgid "show geoscape demo"
 msgstr ""
 
 #: src/mainmenu.cpp:214
-msgid "about"
+msgid "load saved game"
 msgstr ""
 
 #: src/mainmenu.cpp:215
-msgid "tip of the day"
+msgid "load a replay"
+msgstr ""
+
+#: src/mainmenu.cpp:216
+msgid "options"
+msgstr ""
+
+#: src/mainmenu.cpp:217
+msgid "about"
 msgstr ""
 
 #: src/mainmenu.cpp:218
+msgid "tip of the day"
+msgstr ""
+
+#: src/mainmenu.cpp:221
 msgid "quit"
 msgstr ""
 
-#: src/map.cpp:1995
+#: src/map.cpp:2346
 msgid "Select terrain type"
 msgstr ""
 
-#: src/multiplay.cpp:131
+#: src/multiplay.cpp:129
 msgid "  NEXT PLAYER  "
 msgstr ""
 
-#: src/multiplay.cpp:139
+#: src/multiplay.cpp:137
 msgid "  GAME START  "
 msgstr ""
 
-#: src/multiplay.cpp:189
+#: src/multiplay.cpp:195
 #, c-format
 msgid "send:[%s]"
 msgstr ""
 
-#: src/multiplay.cpp:246
+#: src/multiplay.cpp:265
 #, c-format
 msgid "put:[%d]"
 msgstr ""
 
-#: src/multiplay.cpp:257
+#: src/multiplay.cpp:276
 #, c-format
 msgid "get:[%d]"
 msgstr ""
 
-#: src/multiplay.cpp:1346
+#: src/multiplay.cpp:1231
 #, c-format
 msgid ""
 "Remote player has the following %d maps that can be used for network game:\n"
 msgstr ""
 
-#: src/multiplay.cpp:1371
+#: src/multiplay.cpp:1256
+#, c-format
 msgid ""
 "The following maps can not be used, they are modified or just not installed "
 "by remote player:\n"
 msgstr ""
 
-#: src/scenario.cpp:78
+#: src/multiplay.cpp:1522
+msgid "Opponent: Draw offer accepted"
+msgstr ""
+
+#: src/multiplay.cpp:1524
+msgid "Opponent: Draw offered"
+msgstr ""
+
+#: src/multiplay.cpp:1526
+msgid "Opponent: Draw offer recalled"
+msgstr ""
+
+#: src/place.cpp:326
+msgid "(none, remote player doesn't have any of your weaposets)"
+msgstr ""
+
+#: src/scenario.cpp:74
 msgid "Kill 'em all!"
 msgstr ""
 
-#: src/scenario.cpp:89
+#: src/scenario.cpp:85
 msgid "You must get your leader (first selected soldier)"
 msgstr ""
 
-#: src/scenario.cpp:90
+#: src/scenario.cpp:86
 msgid "to the opposite edge of the map to win.          "
 msgstr ""
 
-#: src/scenario.cpp:91
+#: src/scenario.cpp:87
 msgid "Your leader is always visible on your opponent's "
 msgstr ""
 
-#: src/scenario.cpp:92
+#: src/scenario.cpp:88
 msgid "minimap."
 msgstr ""
 
-#: src/scenario.cpp:94 src/scenario.cpp:140
+#: src/scenario.cpp:90 src/scenario.cpp:136
 msgid "You must kill enemy leader (first selected       "
 msgstr ""
 
-#: src/scenario.cpp:95
+#: src/scenario.cpp:91
 msgid "soldier) before he gets to your edge of the map. "
 msgstr ""
 
-#: src/scenario.cpp:96
+#: src/scenario.cpp:92
 msgid "Leader is always visible on your minimap.        "
 msgstr ""
 
-#: src/scenario.cpp:98 src/scenario.cpp:148
+#: src/scenario.cpp:94 src/scenario.cpp:144
 msgid "Leader can use two-handed weapons"
 msgstr ""
 
-#: src/scenario.cpp:98 src/scenario.cpp:148
+#: src/scenario.cpp:94 src/scenario.cpp:144
 msgid "Leader can't use two-handed weapons"
 msgstr ""
 
-#: src/scenario.cpp:107
+#: src/scenario.cpp:103
 msgid "You must place high explosives at places which   "
 msgstr ""
 
-#: src/scenario.cpp:108
+#: src/scenario.cpp:104
 msgid "are indicated on your minimap. You can have high "
 msgstr ""
 
-#: src/scenario.cpp:109
+#: src/scenario.cpp:105
 msgid "explosives even if they aren't allowed by rules  "
 msgstr ""
 
-#: src/scenario.cpp:110
+#: src/scenario.cpp:106
 msgid "of the match.                                    "
 msgstr ""
 
-#: src/scenario.cpp:112
+#: src/scenario.cpp:108
 msgid "You must kill all enemy soldiers before they     "
 msgstr ""
 
-#: src/scenario.cpp:113
+#: src/scenario.cpp:109
 msgid "plant explosives at places which are indicated on"
 msgstr ""
 
-#: src/scenario.cpp:114
+#: src/scenario.cpp:110
 msgid "the minimap.                                     "
 msgstr ""
 
-#: src/scenario.cpp:125
+#: src/scenario.cpp:121
 msgid "You must control the 10x10 area in the centre of "
 msgstr ""
 
-#: src/scenario.cpp:126
+#: src/scenario.cpp:122
 msgid "the map for number of successive half-turns set  "
 msgstr ""
 
-#: src/scenario.cpp:127
+#: src/scenario.cpp:123
 msgid "in the \"Options\" section.                      "
 msgstr ""
 
-#: src/scenario.cpp:128
+#: src/scenario.cpp:124
 msgid "To control an area you have to have in it more   "
 msgstr ""
 
-#: src/scenario.cpp:129
+#: src/scenario.cpp:125
 msgid "soldiers than your opponent.                     "
 msgstr ""
 
-#: src/scenario.cpp:131
+#: src/scenario.cpp:127
 msgid "Half-turns to control the area"
 msgstr ""
 
-#: src/scenario.cpp:141
+#: src/scenario.cpp:137
 msgid "soldier). Enemy leader is always visible on your "
 msgstr ""
 
-#: src/scenario.cpp:142
+#: src/scenario.cpp:138
 msgid "minimap.                                         "
 msgstr ""
 
-#: src/scenario.cpp:144
+#: src/scenario.cpp:140
 msgid "You must save your leader (first selected        "
 msgstr ""
 
-#: src/scenario.cpp:145
+#: src/scenario.cpp:141
 msgid "soldier). He is always visible for your opponent "
 msgstr ""
 
-#: src/scenario.cpp:146
+#: src/scenario.cpp:142
 msgid "on the minimap.                                  "
 msgstr ""
 
-#: src/scenario.cpp:157
+#: src/scenario.cpp:153
 msgid "You must save at least half of your squad        "
 msgstr ""
 
-#: src/scenario.cpp:158 src/scenario.cpp:162
+#: src/scenario.cpp:154 src/scenario.cpp:158
 msgid "(rounded down) until the end of the match (number"
 msgstr ""
 
-#: src/scenario.cpp:159 src/scenario.cpp:163
+#: src/scenario.cpp:155 src/scenario.cpp:159
 msgid "of turns is set in the \"Options\" section).       "
 msgstr ""
 
-#: src/scenario.cpp:161 src/scenario.cpp:179
+#: src/scenario.cpp:157 src/scenario.cpp:175
 msgid "You must kill more than half of enemy squad      "
 msgstr ""
 
-#: src/scenario.cpp:165
+#: src/scenario.cpp:161
 msgid "Half-turns to hold (match length)"
 msgstr ""
 
-#: src/scenario.cpp:166 src/scenario.cpp:184
+#: src/scenario.cpp:162 src/scenario.cpp:180
 msgid "\"Surrounded\" deployment"
 msgstr ""
 
-#: src/scenario.cpp:166 src/scenario.cpp:184
+#: src/scenario.cpp:162 src/scenario.cpp:180
 msgid "Standard deployment"
 msgstr ""
 
-#: src/scenario.cpp:174
+#: src/scenario.cpp:170
 msgid "You must bring at least half of your squad       "
 msgstr ""
 
-#: src/scenario.cpp:175
+#: src/scenario.cpp:171
 msgid "(rounded up) to the opposite edge of the map if  "
 msgstr ""
 
-#: src/scenario.cpp:176
+#: src/scenario.cpp:172
 msgid "standard deployment is selected or to any edge if"
 msgstr ""
 
-#: src/scenario.cpp:177
+#: src/scenario.cpp:173
 msgid "\"surrounded\" deployment is selected.             "
 msgstr ""
 
-#: src/scenario.cpp:180
+#: src/scenario.cpp:176
 msgid "(rounded up) before they get to your edge of the "
 msgstr ""
 
-#: src/scenario.cpp:181
+#: src/scenario.cpp:177
 msgid "map if standard deployment is selected or to any "
 msgstr ""
 
-#: src/scenario.cpp:182
+#: src/scenario.cpp:178
 msgid "edge if \"surrounded\" deployment is selected.     "
 msgstr ""
 
-#: src/scenario.cpp:193
+#: src/scenario.cpp:189
 msgid "You must capture enemy leader (first selected    "
 msgstr ""
 
-#: src/scenario.cpp:194
+#: src/scenario.cpp:190
 msgid "soldier). To do this you must stun him and bring "
 msgstr ""
 
-#: src/scenario.cpp:195
+#: src/scenario.cpp:191
 msgid "to your edge of the map. Leader is always visible"
 msgstr ""
 
-#: src/scenario.cpp:196
+#: src/scenario.cpp:192
 msgid "on your minimap.                                 "
 msgstr ""
 
-#: src/scenario.cpp:198
+#: src/scenario.cpp:194
 msgid "You must save your leader (first selected man)   "
 msgstr ""
 
-#: src/scenario.cpp:199
+#: src/scenario.cpp:195
 msgid "from capturing by enemy. He is always visible on "
 msgstr ""
 
-#: src/scenario.cpp:200
+#: src/scenario.cpp:196
 msgid "your opponent's minimap.                         "
 msgstr ""
 
-#: src/scenario.cpp:202
+#: src/scenario.cpp:198
 msgid "Leader can have two-handed weapons"
 msgstr ""
 
-#: src/scenario.cpp:202
+#: src/scenario.cpp:198
 msgid "Leader can't have two-handed weapons"
 msgstr ""
 
-#: src/scenario.cpp:484
+#: src/scenario.cpp:480
 #, c-format
 msgid "Player 1 is controlling the target area for %d turn(s)."
 msgstr ""
 
-#: src/scenario.cpp:492
+#: src/scenario.cpp:488
 #, c-format
 msgid "Player 2 is controlling the target area for %d turn(s)."
 msgstr ""
 
-#: src/scenario.cpp:497
+#: src/scenario.cpp:493
 msgid "Nobody is controlling the target area."
 msgstr ""
 
-#: src/scenario.cpp:776
-#, c-format
-msgid "%s isn't allowed."
-msgstr ""
-
-#: src/scenario.cpp:786
+#: src/scenario.cpp:767
 #, c-format
 msgid "%d points limit exceeded!"
 msgstr ""
 
-#: src/scenario.cpp:799
+#: src/scenario.cpp:780
+#, c-format
+msgid "%s does not have his %s loaded!"
+msgstr ""
+
+#: src/scenario.cpp:794
 #, c-format
 msgid ""
 "Items on the ground aren't allowed (you have: %d, including unselected "
 "soldiers)."
 msgstr ""
 
-#: src/scenario.cpp:823 src/scenario.cpp:867 src/scenario.cpp:929
+#: src/scenario.cpp:806 src/scenario.cpp:837 src/scenario.cpp:882
 msgid "Soldier #1 can't have two-handed weapons!"
 msgstr ""
 
-#: src/scenario.cpp:843
+#: src/scenario.cpp:825
 msgid "You must have at least 2 high explosives."
 msgstr ""
 
-#: src/scenario.cpp:911
-msgid "You must have at least one stun rod or one loaded stun launcher."
+#: src/scenario.cpp:876
+msgid "You must have at least one stun weapon."
 msgstr ""
 
-#: src/scenario.cpp:1078 src/scenario.cpp:1092
+#: src/scenario.cpp:1030 src/scenario.cpp:1044
 msgid "Leader can't use two-handed weapons."
 msgstr ""
 
-#: src/server_gui.cpp:303
+#: src/server_gui.cpp:313
 msgid "Server:"
 msgstr ""
 
-#: src/server_gui.cpp:305
+#: src/server_gui.cpp:315
 msgid "Login:"
 msgstr ""
 
-#: src/server_gui.cpp:307
+#: src/server_gui.cpp:317
 msgid "Password:"
 msgstr ""
 
-#: src/server_gui.cpp:380
+#: src/server_gui.cpp:319
+msgid "Autologin"
+msgstr ""
+
+#: src/server_gui.cpp:393
 msgid "Connecting to server..."
 msgstr ""
 
-#: src/server_gui.cpp:401
+#: src/server_gui.cpp:415
 msgid "ufo2000 internet server ("
 msgstr ""
 
-#: src/server_gui.cpp:405
+#: src/server_gui.cpp:419
 msgid "users online"
 msgstr ""
 
-#: src/server_gui.cpp:409
+#: src/server_gui.cpp:423
 msgid "You have just connected to ufo2000 internet server"
 msgstr ""
 
-#: src/server_gui.cpp:410
+#: src/server_gui.cpp:424
 msgid "There are two windows here: chat console in the left window"
 msgstr ""
 
-#: src/server_gui.cpp:411
+#: src/server_gui.cpp:425
 msgid "and the list of online players in the right"
 msgstr ""
 
-#: src/server_gui.cpp:413
+#: src/server_gui.cpp:427
 msgid "white player name - that's your own name"
 msgstr ""
 
-#: src/server_gui.cpp:414
+#: src/server_gui.cpp:428
 msgid "gray player name - available for chat"
 msgstr ""
 
-#: src/server_gui.cpp:415
+#: src/server_gui.cpp:429
 msgid "yellow player name - you have sent a challenge to this player"
 msgstr ""
 
-#: src/server_gui.cpp:416
+#: src/server_gui.cpp:430
 msgid "green player name - you can accept a challenge from this player"
 msgstr ""
 
-#: src/server_gui.cpp:417
+#: src/server_gui.cpp:431
 msgid "red player name - the player is busy playing with someone else"
 msgstr ""
 
-#: src/server_gui.cpp:419
+#: src/server_gui.cpp:433
 msgid "You can left click on player names to select them as your opponents"
 msgstr ""
 
-#: src/server_gui.cpp:434
+#: src/server_gui.cpp:435
+msgid ""
+"If you have an unfinished game at the server you can press F3 to continue it."
+msgstr ""
+
+#: src/server_gui.cpp:450
 msgid "Connected to server"
 msgstr ""
 
-#: src/server_gui.cpp:435
+#: src/server_gui.cpp:451
 msgid "as user"
 msgstr ""
 
-#: src/server_gui.cpp:443 src/server_gui.cpp:444
+#: src/server_gui.cpp:459 src/server_gui.cpp:460
 msgid "  Connection lost  "
 msgstr ""
 
-#: src/server_gui.cpp:456
+#: src/server_gui.cpp:472
 #, c-format
 msgid "%s is back from a game"
 msgstr ""
 
-#: src/server_gui.cpp:458
+#: src/server_gui.cpp:474
 #, c-format
 msgid "%s is here"
 msgstr ""
 
-#: src/server_gui.cpp:465
+#: src/server_gui.cpp:481
 #, c-format
 msgid "%s disconnected"
 msgstr ""
 
-#: src/server_gui.cpp:483
+#: src/server_gui.cpp:499
 #, c-format
 msgid "%s left chat to play a game"
 msgstr ""
 
-#: src/server_gui.cpp:495
+#: src/server_gui.cpp:513
 msgid "Start networkgame with"
 msgstr ""
 
-#: src/server_gui.cpp:520
+#: src/server_gui.cpp:540 src/server_gui.cpp:569
 msgid "Join networkgame with"
 msgstr ""
 
-#: src/server_gui.cpp:609 src/server_gui.cpp:611 src/server_gui.cpp:634
+#: src/server_gui.cpp:655 src/server_gui.cpp:657 src/server_gui.cpp:683
 msgid "DISCONNECT FROM SERVER"
 msgstr ""
 
-#: src/soldier.cpp:884
+#: src/soldier.cpp:619
+#, c-format
+msgid "Equipment weight: %d/%2d"
+msgstr ""
+
+#: src/soldier.cpp:628
 msgid "TUs>"
 msgstr ""
 
-#: src/soldier.cpp:906
+#: src/soldier.cpp:650
 msgid "Health>"
 msgstr ""
 
-#: src/soldier.cpp:941
+#: src/soldier.cpp:681
 msgid "TIME UNITS"
 msgstr ""
 
-#: src/soldier.cpp:942
+#: src/soldier.cpp:682
 msgid "ENERGY"
 msgstr ""
 
-#: src/soldier.cpp:943
+#: src/soldier.cpp:683
 msgid "HEALTH"
 msgstr ""
 
-#: src/soldier.cpp:944
+#: src/soldier.cpp:684
 msgid "FATAL WOUNDS"
 msgstr ""
 
-#: src/soldier.cpp:945
+#: src/soldier.cpp:685
 msgid "BRAVERY"
 msgstr ""
 
-#: src/soldier.cpp:946
+#: src/soldier.cpp:686
 msgid "MORALE"
 msgstr ""
 
-#: src/soldier.cpp:947
+#: src/soldier.cpp:687
 msgid "REACTIONS"
 msgstr ""
 
-#: src/soldier.cpp:948
+#: src/soldier.cpp:688
 msgid "FIRING ACCURACY"
 msgstr ""
 
-#: src/soldier.cpp:949
+#: src/soldier.cpp:689
 msgid "THROWING ACCURACY"
 msgstr ""
 
-#: src/soldier.cpp:950
+#: src/soldier.cpp:690
 msgid "STRENGTH"
 msgstr ""
 
-#: src/soldier.cpp:953
+#: src/soldier.cpp:693
 msgid "FRONT ARMOUR"
 msgstr ""
 
-#: src/soldier.cpp:954
+#: src/soldier.cpp:694
 msgid "LEFT ARMOUR"
 msgstr ""
 
-#: src/soldier.cpp:955
+#: src/soldier.cpp:695
 msgid "RIGHT ARMOUR"
 msgstr ""
 
-#: src/soldier.cpp:956
+#: src/soldier.cpp:696
 msgid "REAR ARMOUR"
 msgstr ""
 
-#: src/soldier.cpp:957
+#: src/soldier.cpp:697
 msgid "UNDER ARMOUR"
 msgstr ""
 
-#: src/soldier.cpp:1338
+#: src/soldier.cpp:1010
 msgid "Time units are reserved for snap shot."
 msgstr ""
 
-#: src/soldier.cpp:1345
+#: src/soldier.cpp:1017
 msgid "Time units are reserved for aimed shot."
 msgstr ""
 
-#: src/soldier.cpp:1352
+#: src/soldier.cpp:1024
 msgid "Time units are reserved for auto shot."
 msgstr ""
 
-#: src/soldier.cpp:1359
+#: src/soldier.cpp:1031
 msgid "Time units are reserved for grenade throw."
 msgstr ""
 
-#: src/soldier.cpp:1839
+#: src/soldier.cpp:1522
 msgid "killed"
 msgstr ""
 
-#: src/soldier.cpp:1882
+#: src/soldier.cpp:1563
 msgid "stunned"
 msgstr ""
 
-#: src/soldier.cpp:1941
+#: src/soldier.cpp:1634
+#, c-format
+msgid "%s has panicked."
+msgstr ""
+
+#: src/soldier.cpp:1636
+msgid "(can't access inventory but moves faster)"
+msgstr ""
+
+#: src/soldier.cpp:1638
 msgid "Panicked"
 msgstr ""
 
-#: src/text.cpp:196 src/text.cpp:473
+#: src/text.cpp:210 src/text.cpp:487
 msgid "  CLOSE  "
 msgstr ""
 
-#: src/text.cpp:197
+#: src/text.cpp:211
 msgid "&RANDOM TIP"
 msgstr ""
 
-#: src/text.cpp:198
+#: src/text.cpp:212
 msgid "&NEXT TIP"
 msgstr ""
 
-#: src/text.cpp:199
+#: src/text.cpp:213
 msgid "RANDOM TIP"
 msgstr ""
 
-#: src/text.cpp:200
+#: src/text.cpp:214
 msgid "NEXT TIP"
 msgstr ""
 
-#: src/text.cpp:242
+#: src/text.cpp:256
 msgid "Tip"
 msgstr ""
 
-#: src/text.cpp:280
+#: src/text.cpp:294
 msgid "RIGHT SHOULDER"
 msgstr ""
 
-#: src/text.cpp:281
+#: src/text.cpp:295
 msgid "LEFT SHOULDER"
 msgstr ""
 
-#: src/text.cpp:282
+#: src/text.cpp:296
 msgid "RIGHT HAND"
 msgstr ""
 
-#: src/text.cpp:283
+#: src/text.cpp:297
 msgid "LEFT HAND"
 msgstr ""
 
-#: src/text.cpp:284
+#: src/text.cpp:298
 msgid "RIGHT LEG"
 msgstr ""
 
-#: src/text.cpp:285
+#: src/text.cpp:299
 msgid "LEFT LEG"
 msgstr ""
 
-#: src/text.cpp:286
+#: src/text.cpp:300
 msgid "BACK PACK"
 msgstr ""
 
-#: src/text.cpp:287
+#: src/text.cpp:301
 msgid "BELT"
 msgstr ""
 
-#: src/text.cpp:288
+#: src/text.cpp:302
 msgid "GROUND"
 msgstr ""
 
-#: src/text.cpp:289
+#: src/text.cpp:303
 msgid "ARMOURY"
 msgstr ""
 
-#: src/text.cpp:290
+#: src/text.cpp:304
 msgid "COMMON POOL"
 msgstr ""
 
-#: src/text.cpp:305
+#: src/text.cpp:319
 msgid "Move up one level"
 msgstr ""
 
-#: src/text.cpp:306
+#: src/text.cpp:320
 msgid "Move down one level"
 msgstr ""
 
-#: src/text.cpp:308
+#: src/text.cpp:322
 msgid "View up one level"
 msgstr ""
 
-#: src/text.cpp:309
+#: src/text.cpp:323
 msgid "View down one level"
 msgstr ""
 
-#: src/text.cpp:311
+#: src/text.cpp:325
 msgid "Show Map"
 msgstr ""
 
-#: src/text.cpp:312
+#: src/text.cpp:326
 msgid "Stand up / Crouch"
 msgstr ""
 
-#: src/text.cpp:314 src/text.cpp:377
+#: src/text.cpp:328 src/text.cpp:391
+#, c-format
 msgid "Inventory"
 msgstr ""
 
-#: src/text.cpp:315
+#: src/text.cpp:329
 msgid "CenterView"
 msgstr ""
 
-#: src/text.cpp:317
+#: src/text.cpp:331
 msgid "Jump to Next Man"
 msgstr ""
 
-#: src/text.cpp:318
+#: src/text.cpp:332
 msgid "Done with this man"
 msgstr ""
 
-#: src/text.cpp:320
+#: src/text.cpp:334
 msgid "Toggle Roof"
 msgstr ""
 
-#: src/text.cpp:321 src/units.cpp:347
-msgid "Options"
-msgstr ""
-
-#: src/text.cpp:324
+#: src/text.cpp:338
 msgid "Done with turn"
 msgstr ""
 
-#: src/text.cpp:325
+#: src/text.cpp:339
 msgid "Exit Game"
 msgstr ""
 
-#: src/text.cpp:327
+#: src/text.cpp:341
 msgid "Show Stats of man"
 msgstr ""
 
-#: src/text.cpp:328
+#: src/text.cpp:342
 msgid "Switch Barchart"
 msgstr ""
 
-#: src/text.cpp:331
+#: src/text.cpp:345
 msgid "Reserve Time: None"
 msgstr ""
 
-#: src/text.cpp:334
+#: src/text.cpp:348
 msgid "Reserve Time: Aimed shot"
 msgstr ""
 
-#: src/text.cpp:337
+#: src/text.cpp:351
 msgid "Reserve Time: Snapshot"
 msgstr ""
 
-#: src/text.cpp:340
+#: src/text.cpp:354
 msgid "Reserve Time: Autoshot"
 msgstr ""
 
-#: src/text.cpp:374
+#: src/text.cpp:388
+#, c-format
 msgid "Introduction"
 msgstr ""
 
-#: src/text.cpp:375
+#: src/text.cpp:389
+#, c-format
 msgid "Battlescape"
 msgstr ""
 
-#: src/text.cpp:376
+#: src/text.cpp:390
+#, c-format
 msgid "Mapview"
 msgstr ""
 
-#: src/text.cpp:378
+#: src/text.cpp:392
+#, c-format
 msgid "Stats-View"
 msgstr ""
 
-#: src/text.cpp:379
+#: src/text.cpp:393
+#, c-format
 msgid "Endgame-Stats"
 msgstr ""
 
-#: src/text.cpp:380
+#: src/text.cpp:394
+#, c-format
 msgid "Network"
 msgstr ""
 
-#: src/text.cpp:381
+#: src/text.cpp:395
+#, c-format
 msgid "Mission-Planner"
 msgstr ""
 
-#: src/text.cpp:382
+#: src/text.cpp:396
+#, c-format
 msgid "Scenarios"
 msgstr ""
 
-#: src/text.cpp:403
+#: src/text.cpp:417
 msgid "Select Help-Page"
 msgstr ""
 
-#: src/text.cpp:470
+#: src/text.cpp:484
 msgid "HELP-&INDEX"
 msgstr ""
 
-#: src/text.cpp:471
+#: src/text.cpp:485
 msgid "&PREV PAGE"
 msgstr ""
 
-#: src/text.cpp:472
+#: src/text.cpp:486
 msgid "&NEXT PAGE"
 msgstr ""
 
-#: src/text.cpp:475
+#: src/text.cpp:489
 msgid "To leave, press ESC."
 msgstr ""
 
-#: src/text.cpp:501
+#: src/text.cpp:515
 msgid "UFO2000 is a multiplayer game in the spirit of 'X-COM: UFO Defense'."
 msgstr ""
 
-#: src/text.cpp:502
+#: src/text.cpp:516
 msgid "At the moment, only the tactical part of the game is playable,"
 msgstr ""
 
-#: src/text.cpp:503
+#: src/text.cpp:517
 msgid "e.g. two teams of soldiers and/or aliens fighting each other."
 msgstr ""
 
-#: src/text.cpp:507
+#: src/text.cpp:521
 msgid "UFO2000 needs data (graphics, sound, maps) from an original XCOM-game."
 msgstr ""
 
-#: src/text.cpp:508
+#: src/text.cpp:522
 msgid "Files from the XCOM-Demo can be used if you don't own XCOM-1,"
 msgstr ""
 
-#: src/text.cpp:509
+#: src/text.cpp:523
 msgid "but this demo only has a few of the maps and aliens."
 msgstr ""
 
-#: src/text.cpp:513
+#: src/text.cpp:527
 msgid "If you also have Terror-from-the-Deep (aka UFO-2) or the TFTD-demo,"
 msgstr ""
 
-#: src/text.cpp:514
+#: src/text.cpp:528
 msgid "some additional maps from this game can be used."
 msgstr ""
 
-#: src/text.cpp:515
+#: src/text.cpp:529
 msgid "(But XCOM-1 is always required)"
 msgstr ""
 
-#: src/text.cpp:519
+#: src/text.cpp:533
 msgid "UFO2000 can be played hotseat (solo, or 2 players on 1 computer),"
 msgstr ""
 
-#: src/text.cpp:520
+#: src/text.cpp:534
 msgid "or via LAN or internet.  The offical server runs on lxnt.info:2001."
 msgstr ""
 
-#: src/text.cpp:521
+#: src/text.cpp:535
 msgid "There is no AI implemented yet."
 msgstr ""
 
-#: src/text.cpp:530
+#: src/text.cpp:544
 msgid "UFO2000 is controlled mainly with the mouse, and these keys:"
 msgstr ""
 
-#: src/text.cpp:531
-msgid "F1: Help, F2+F3: Save+Load, F9: Keymap, F10: Window/Fullscreen"
+#: src/text.cpp:545
+msgid ""
+"F1: Help, F2+F3: Save+Load, F9: Keymap, F10: Window/Fullscreen, F12: "
+"Screenshot"
 msgstr ""
 
-#: src/text.cpp:532
-msgid "F12: Screenshot, Keypad+/-: adjust Music-Volume, ESC: Quit."
-msgstr ""
-
-#: src/text.cpp:536
-msgid "The active soldier is highlighted by a yellow arrow above him."
-msgstr ""
-
-#: src/text.cpp:537
-msgid "Click on any of your soldiers to make him active."
-msgstr ""
-
-#: src/text.cpp:542
-msgid "To move the active soldier, left-click on the map."
-msgstr ""
-
-#: src/text.cpp:543
-msgid "Right-click turns him towards the cursor, opens doors,"
-msgstr ""
-
-#: src/text.cpp:544
-msgid "and stops movement (e.g. in case of a mis-click)."
-msgstr ""
-
-#: src/text.cpp:548
-msgid "To fire a gun, click on the weapon in the left or right hand,"
-msgstr ""
-
-#: src/text.cpp:549
-msgid "select the fire-mode (aimed, snapshot, autoshot), then click"
+#: src/text.cpp:546
+msgid "Keypad+/-: adjust Music-Volume, Shift+space: Pause, ESC: Quit."
 msgstr ""
 
 #: src/text.cpp:550
-msgid "on the target.  Use the up&&down-buttons to aim at other levels."
+msgid "The active soldier is highlighted by a yellow arrow above him."
 msgstr ""
 
-#: src/text.cpp:554
-msgid "Grenades should be primed before they are thrown."
-msgstr ""
-
-#: src/text.cpp:555
-msgid "The delay is the number of rounds before they go off."
+#: src/text.cpp:551
+msgid "Click on any of your soldiers to make him active."
 msgstr ""
 
 #: src/text.cpp:556
-msgid "Zero delay means they explode at the end of your turn."
+msgid "To move the active soldier, left-click on the map."
 msgstr ""
 
-#: src/text.cpp:560
-msgid "While you hold a grenade in your hand, it does not countdown,"
+#: src/text.cpp:557
+msgid "Right-click turns him towards the cursor, opens doors,"
 msgstr ""
 
-#: src/text.cpp:561
-msgid "but a high-explosive does !"
+#: src/text.cpp:558
+msgid "and stops movement (e.g. in case of a mis-click)."
 msgstr ""
 
 #: src/text.cpp:562
-msgid "Primed proxy-grenades get hot when thrown or put on the ground."
+msgid "To fire a gun, click on the weapon in the left or right hand,"
 msgstr ""
 
-#: src/text.cpp:567
-msgid "The control-panel at the bottom of the screen:"
+#: src/text.cpp:563
+msgid "select the fire-mode (aimed, snapshot, autoshot), then click"
+msgstr ""
+
+#: src/text.cpp:564
+msgid "on the target.  Use the up&&down-buttons to aim at other levels."
 msgstr ""
 
 #: src/text.cpp:568
-msgid "The boxes at the left and right show the items in hand, e.g. weapons."
+msgid "Grenades should be primed before they are thrown."
 msgstr ""
 
 #: src/text.cpp:569
-msgid "Between them are some buttons and a small status-display."
+msgid "The delay is the number of rounds before they go off."
 msgstr ""
 
-#: src/text.cpp:573
-msgid "Control-panel:  Buttons in column 1:"
+#: src/text.cpp:570
+msgid "Zero delay means they explode at the end of your turn."
 msgstr ""
 
 #: src/text.cpp:574
-msgid "Climb up && down a level."
+msgid "While you hold a grenade in your hand, it does not countdown,"
 msgstr ""
 
 #: src/text.cpp:575
-msgid "This works only when standing on a gravlift."
+msgid "but a high-explosive does !"
 msgstr ""
 
-#: src/text.cpp:579
-msgid "Control-panel:  Buttons in column 2 (Ladder-symbol):"
-msgstr ""
-
-#: src/text.cpp:580
-msgid "Change level up && down: Look (and aim) at other levels."
+#: src/text.cpp:576
+msgid "Primed proxy-grenades get hot when thrown or put on the ground."
 msgstr ""
 
 #: src/text.cpp:581
-msgid "Maps have 4 levels.  Keyboard-shortcut: PgUp && PgDn-Keys."
+msgid "The control-panel at the bottom of the screen:"
 msgstr ""
 
-#: src/text.cpp:585
-msgid "Control-panel:  Buttons in column 3:"
+#: src/text.cpp:582
+msgid "The boxes at the left and right show the items in hand, e.g. weapons."
 msgstr ""
 
-#: src/text.cpp:586
-msgid "Map-Display: Invoke the map-viewer for a small overhead-view."
+#: src/text.cpp:583
+msgid "Between them are some buttons and a small status-display."
 msgstr ""
 
 #: src/text.cpp:587
-msgid "Stand up / Kneel:  Kneeling improves aiming (10%)."
+msgid "Control-panel:  Buttons in column 1:"
 msgstr ""
 
-#: src/text.cpp:591
-msgid "Control-panel:  Buttons in column 4:"
+#: src/text.cpp:588
+msgid "Climb up && down a level."
 msgstr ""
 
-#: src/text.cpp:592
-msgid "Inventory: access your belt, backpack etc., and items on the ground."
+#: src/text.cpp:589
+msgid "This works only when standing on a gravlift."
 msgstr ""
 
 #: src/text.cpp:593
-msgid "Center view: scroll map-display to center around the current man."
+msgid "Control-panel:  Buttons in column 2 (Ladder-symbol):"
 msgstr ""
 
-#: src/text.cpp:597
-msgid "Control-panel:  Buttons in column 5:"
+#: src/text.cpp:594
+msgid "Change level up && down: Look (and aim) at other levels."
 msgstr ""
 
-#: src/text.cpp:598
-msgid "Switch to next man, who still has TUs left.      "
+#: src/text.cpp:595
+msgid "Maps have 4 levels.  Keyboard-shortcut: PgUp && PgDn-Keys."
 msgstr ""
 
 #: src/text.cpp:599
-msgid "Switch to next man, and mark current man as done."
+msgid "Control-panel:  Buttons in column 3:"
 msgstr ""
 
-#: src/text.cpp:603
-msgid "Control-panel:  Buttons in column 6:"
+#: src/text.cpp:600
+msgid "Map-Display: Invoke the map-viewer for a small overhead-view."
 msgstr ""
 
-#: src/text.cpp:604
-msgid "Show/hide other levels (e.g. show roof of buildings etc.)"
+#: src/text.cpp:601
+msgid "Stand up / Kneel:  Kneeling improves aiming (10%)."
 msgstr ""
 
 #: src/text.cpp:605
-msgid "Config-Dialog: adjust movement speed, scrolling speed etc."
+msgid "Control-panel:  Buttons in column 4:"
 msgstr ""
 
-#: src/text.cpp:609
-msgid "Control-panel:  Buttons in column 7:"
+#: src/text.cpp:606
+msgid "Inventory: access your belt, backpack etc., and items on the ground."
 msgstr ""
 
-#: src/text.cpp:610
-msgid "End your turn."
+#: src/text.cpp:607
+msgid "Center view: scroll map-display to center around the current man."
 msgstr ""
 
 #: src/text.cpp:611
-msgid "Quit: abort mission (same as ESC)."
+msgid "Control-panel:  Buttons in column 5:"
 msgstr ""
 
-#: src/text.cpp:615
-msgid "Control-panel:  green&&red buttons at the lower left:"
+#: src/text.cpp:612
+msgid "Switch to next man, who still has TUs left.      "
 msgstr ""
 
-#: src/text.cpp:616
-msgid "Green: Reserve no time, move freely.                   "
+#: src/text.cpp:613
+msgid "Switch to next man, and mark current man as done."
 msgstr ""
 
 #: src/text.cpp:617
-msgid "Red:   Reserve time for aimed shot, snapshot, autofire."
+msgid "Control-panel:  Buttons in column 6:"
 msgstr ""
 
-#: src/text.cpp:621
-msgid "Control-panel:  big brown button in the center"
+#: src/text.cpp:618
+msgid "Show/hide other levels (e.g. show roof of buildings etc.)"
 msgstr ""
 
-#: src/text.cpp:622
-msgid "(shows turn-number):"
+#: src/text.cpp:619
+msgid "Config-Dialog: adjust movement speed, scrolling speed etc."
 msgstr ""
 
 #: src/text.cpp:623
+msgid "Control-panel:  Buttons in column 7:"
+msgstr ""
+
+#: src/text.cpp:624
+msgid "End your turn."
+msgstr ""
+
+#: src/text.cpp:625
+msgid "Quit: abort mission (same as ESC)."
+msgstr ""
+
+#: src/text.cpp:629
+msgid "Control-panel:  green&&red buttons at the lower left:"
+msgstr ""
+
+#: src/text.cpp:630
+msgid "Green: Reserve no time, move freely.                   "
+msgstr ""
+
+#: src/text.cpp:631
+msgid "Red:   Reserve time for aimed shot, snapshot, autofire."
+msgstr ""
+
+#: src/text.cpp:635
+msgid "Control-panel:  big brown button in the center"
+msgstr ""
+
+#: src/text.cpp:636
+msgid "(shows turn-number):"
+msgstr ""
+
+#: src/text.cpp:637
 msgid "Invoke statistics-display for current man."
 msgstr ""
 
-#: src/text.cpp:632
+#: src/text.cpp:646
 msgid "The map-viewer shows a small overhead-view of the map."
 msgstr ""
 
-#: src/text.cpp:633
+#: src/text.cpp:647
 msgid "To look at other levels, use the up&&down-buttons at the left."
 msgstr ""
 
-#: src/text.cpp:634
+#: src/text.cpp:648
 msgid "To leave, click on the red OK-button, or press ESC."
 msgstr ""
 
-#: src/text.cpp:638
+#: src/text.cpp:652
 msgid "A click on the map-area centers the view to this spot."
 msgstr ""
 
-#: src/text.cpp:640
+#: src/text.cpp:654
 msgid "Unexplored areas are shown as black."
 msgstr ""
 
-#: src/text.cpp:644
+#: src/text.cpp:658
 msgid "Yellow dots: your men.             "
 msgstr ""
 
-#: src/text.cpp:645
+#: src/text.cpp:659
 msgid "Red dots   : enemy soldiers.       "
 msgstr ""
 
-#: src/text.cpp:646
+#: src/text.cpp:660
 msgid "Blue dots  : map-tiles with damage."
 msgstr ""
 
-#: src/text.cpp:740
+#: src/text.cpp:754
 msgid "Inventory: here you can manage the weapons"
 msgstr ""
 
-#: src/text.cpp:741
+#: src/text.cpp:755
 msgid "and equipment of your soldier."
 msgstr ""
 
-#: src/text.cpp:742
+#: src/text.cpp:756
 msgid "To leave, press the OK-button, or goto the next/previous man."
 msgstr ""
 
-#: src/text.cpp:746
+#: src/text.cpp:760
 msgid "In the mission-planner, you can use F2 && F3"
 msgstr ""
 
-#: src/text.cpp:747
+#: src/text.cpp:761
 msgid "to save && load a team of soldiers."
 msgstr ""
 
-#: src/text.cpp:752
+#: src/text.cpp:766
 msgid "Use the mouse to move items between the slots"
 msgstr ""
 
-#: src/text.cpp:753
+#: src/text.cpp:767
 msgid "for hands, belt, backpack etc."
 msgstr ""
 
-#: src/text.cpp:754
+#: src/text.cpp:768
 msgid "Note: during battle, each such move costs time."
 msgstr ""
 
-#: src/text.cpp:758
+#: src/text.cpp:772
 msgid "To unload a weapon, move it over the clip-button"
 msgstr ""
 
-#: src/text.cpp:759
+#: src/text.cpp:773
 msgid "(top right, below the arrow-buttons) and click there."
 msgstr ""
 
-#: src/text.cpp:760
+#: src/text.cpp:774
 msgid "You must have your second hand free."
 msgstr ""
 
-#: src/text.cpp:764
+#: src/text.cpp:778
 msgid "To load an empty weapon, hold it in one hand,"
 msgstr ""
 
-#: src/text.cpp:765
+#: src/text.cpp:779
 msgid "and move ammo of the matching type into the weapon-slot."
 msgstr ""
 
-#: src/text.cpp:771
+#: src/text.cpp:785
 msgid "The armor cannot be changed during a battle."
 msgstr ""
 
-#: src/text.cpp:772
+#: src/text.cpp:786
 msgid "Flying armor does not work yet (it only has stronger armor)."
 msgstr ""
 
-#: src/text.cpp:773
+#: src/text.cpp:787
 msgid "Click on the picture of the soldier to get to his stats."
 msgstr ""
 
-#: src/text.cpp:779
+#: src/text.cpp:793
 msgid "Quick-Setup: (experimental feature)"
 msgstr ""
 
-#: src/text.cpp:780
+#: src/text.cpp:794
 msgid "With F5..F8 a predefined soldier-type can be selected."
 msgstr ""
 
-#: src/text.cpp:781
+#: src/text.cpp:795
 msgid "Shift-F5..F8 set up these keys."
 msgstr ""
 
-#: src/text.cpp:785 src/text.cpp:791 src/text.cpp:797
+#: src/text.cpp:799 src/text.cpp:805 src/text.cpp:811
 msgid "Quick-Setup:"
 msgstr ""
 
-#: src/text.cpp:786
+#: src/text.cpp:800
 msgid "DEL: delete equipment of the current soldier."
 msgstr ""
 
-#: src/text.cpp:787
+#: src/text.cpp:801
 msgid "TAB/Shift-TAB: jump to next/previous soldier."
 msgstr ""
 
-#: src/text.cpp:792
+#: src/text.cpp:806
 msgid "F9: generate a name for the current soldier."
 msgstr ""
 
-#: src/text.cpp:793
+#: src/text.cpp:807
 msgid "Shift-F9: configure the name-generator."
 msgstr ""
 
-#: src/text.cpp:798
+#: src/text.cpp:812
 msgid "F11: cycle thru apperances of the current soldier. "
 msgstr ""
 
-#: src/text.cpp:799
+#: src/text.cpp:813
 msgid "F12: cycle thru armor-types of the current soldier."
 msgstr ""
 
-#: src/text.cpp:808
+#: src/text.cpp:822
 msgid "Stats-Display: the current attributes of the soldier."
 msgstr ""
 
-#: src/text.cpp:810
+#: src/text.cpp:824
 msgid "To leave, press ESC or click a mousebutton."
 msgstr ""
 
-#: src/text.cpp:814 src/text.cpp:820 src/text.cpp:826 src/text.cpp:832
-#: src/text.cpp:838 src/text.cpp:844 src/text.cpp:850 src/text.cpp:856
-#: src/text.cpp:862
+#: src/text.cpp:828 src/text.cpp:834 src/text.cpp:840 src/text.cpp:846
+#: src/text.cpp:852 src/text.cpp:858 src/text.cpp:864 src/text.cpp:870
+#: src/text.cpp:876
 msgid "Stats:"
 msgstr ""
 
-#: src/text.cpp:815
+#: src/text.cpp:829
 msgid "Time-Units: every action costs time."
 msgstr ""
 
-#: src/text.cpp:816
+#: src/text.cpp:830
 msgid "Energy: some actions also cost energy (e.g. walking)."
 msgstr ""
 
-#: src/text.cpp:821
+#: src/text.cpp:835
 msgid "Health: when this reaches zero, the soldier dies."
 msgstr ""
 
-#: src/text.cpp:822
+#: src/text.cpp:836
 msgid "Fatal Wounds: amount of health-loss each round."
 msgstr ""
 
-#: src/text.cpp:827
+#: src/text.cpp:841
 msgid "Stun: shown as an overlay to health. When the stun-value"
 msgstr ""
 
-#: src/text.cpp:828
+#: src/text.cpp:842
 msgid "reaches the value of health, the soldier gets unconscious."
 msgstr ""
 
-#: src/text.cpp:833
+#: src/text.cpp:847
 msgid "Bravery: (not yet implemented - same for all man)"
 msgstr ""
 
-#: src/text.cpp:834
+#: src/text.cpp:848
 msgid "Morale: current morale. Goes down when own men die."
 msgstr ""
 
-#: src/text.cpp:839
+#: src/text.cpp:853
 msgid "Reactions: chance for firing at an enemy during their round."
 msgstr ""
 
-#: src/text.cpp:840
+#: src/text.cpp:854
 msgid "This needs time for at least a snapshot."
 msgstr ""
 
-#: src/text.cpp:845
+#: src/text.cpp:859
 msgid "Firing accuracy: for pistols and guns."
 msgstr ""
 
-#: src/text.cpp:846
+#: src/text.cpp:860
 msgid "Throwing accuracy: for grenades."
 msgstr ""
 
-#: src/text.cpp:851
+#: src/text.cpp:865
 msgid "Strength: this determines how much the soldier can carry."
 msgstr ""
 
-#: src/text.cpp:852
+#: src/text.cpp:866
 msgid "When overloaded, he gets less TU each round."
 msgstr ""
 
-#: src/text.cpp:857
+#: src/text.cpp:871
 msgid "PSI-Strength: (not yet implemented)"
 msgstr ""
 
-#: src/text.cpp:863
+#: src/text.cpp:877
 msgid "Armor: protection-value on all sides of the soldier."
 msgstr ""
 
-#: src/text.cpp:864
+#: src/text.cpp:878
 msgid "Under-armor protects against nearby explosions."
 msgstr ""
 
-#: src/text.cpp:873 src/text.cpp:879
+#: src/text.cpp:887 src/text.cpp:893
 msgid "Endgame-Statistics:"
 msgstr ""
 
-#: src/text.cpp:875
+#: src/text.cpp:889
 msgid "A summary of kills and damage for both teams."
 msgstr ""
 
-#: src/text.cpp:880
+#: src/text.cpp:894
 msgid "You can stay here to chat in private with your partner."
 msgstr ""
 
-#: src/text.cpp:890
+#: src/text.cpp:904
 msgid "Connect to an UFO2000-Server on your LAN (e.g. 192.168.1.2:2000)"
 msgstr ""
 
-#: src/text.cpp:891
+#: src/text.cpp:905
 msgid "or on the Internet (e.g. the offical server lxnt.info:2001)."
 msgstr ""
 
-#: src/text.cpp:896
+#: src/text.cpp:910
 msgid "To get a valid login-name at the official server,"
 msgstr ""
 
-#: src/text.cpp:897
+#: src/text.cpp:911
 msgid "register at http://ufo2000.lxnt.info/admin.php"
 msgstr ""
 
-#: src/text.cpp:898
+#: src/text.cpp:912
 msgid "Registration is free, and no personal data is required."
 msgstr ""
 
-#: src/text.cpp:902
+#: src/text.cpp:916
 msgid "To chat, just type your message, and press ENTER."
 msgstr ""
 
-#: src/text.cpp:903
+#: src/text.cpp:917
 msgid "To challenge another player, or accept his/her challenge,"
 msgstr ""
 
-#: src/text.cpp:904
+#: src/text.cpp:918
 msgid "click on his/her name in the player-list at the right."
 msgstr ""
 
-#: src/text.cpp:908
+#: src/text.cpp:922
 msgid "Colors of the playernames:"
 msgstr ""
 
-#: src/text.cpp:909
+#: src/text.cpp:923
 msgid "White: You.                             "
 msgstr ""
 
-#: src/text.cpp:910
+#: src/text.cpp:924
 msgid "Gray : Someone else, available for chat."
 msgstr ""
 
-#: src/text.cpp:914
+#: src/text.cpp:928
 msgid "Red   : He/she is busy, playing with someone else."
 msgstr ""
 
-#: src/text.cpp:915
+#: src/text.cpp:929
 msgid "Yellow: You have sent a challenge to him/her.     "
 msgstr ""
 
-#: src/text.cpp:916
+#: src/text.cpp:930
 msgid "Green : You can accept a challenge from him/her.  "
 msgstr ""
 
-#: src/text.cpp:925
+#: src/text.cpp:939
 msgid "Mission-Planner: here you can select a map and a scenario,"
 msgstr ""
 
-#: src/text.cpp:926
+#: src/text.cpp:940
 msgid "set the game-rules, and select soldiers for a mission."
 msgstr ""
 
-#: src/text.cpp:927
+#: src/text.cpp:941
 msgid "When finished, press SEND, then START. To leave, press ESC."
 msgstr ""
 
-#: src/text.cpp:931
+#: src/text.cpp:945
 msgid "To edit one of your soldiers, CTRL-click on his name."
 msgstr ""
 
-#: src/text.cpp:932
+#: src/text.cpp:946
 msgid "Left-click to place a soldier on the map (your side only),"
 msgstr ""
 
-#: src/text.cpp:933
+#: src/text.cpp:947
 msgid "right-click to remove him."
 msgstr ""
 
-#: src/text.cpp:937
+#: src/text.cpp:951
 msgid "SAVE && LOAD for a team can be found on the soldier-edit-screen."
 msgstr ""
 
-#: src/text.cpp:943
+#: src/text.cpp:957
 msgid "To change the scenario, click on the text below 'MATCH SETTINGS'."
 msgstr ""
 
-#: src/text.cpp:944
+#: src/text.cpp:958
 msgid "To generate a new map, click on the terrain-name,"
 msgstr ""
 
-#: src/text.cpp:945
+#: src/text.cpp:959
 msgid "then click on LOAD, NEW or select a new size (4*4, 5*5, 6*6)."
 msgstr ""
 
-#: src/text.cpp:949
+#: src/text.cpp:963
 msgid "Click on 'Game rules' for fine-tuning the settings:"
 msgstr ""
 
-#: src/text.cpp:950
+#: src/text.cpp:964
 msgid "Explosives, Pointlimit, Turnlimit, Timelimit, FOW, Items on Ground."
 msgstr ""
 
-#: src/text.cpp:951
+#: src/text.cpp:965
 msgid "You should negotiate them via chat with your partner."
 msgstr ""
 
-#: src/text.cpp:955
+#: src/text.cpp:969
 msgid "Gamerules - Explosives:"
 msgstr ""
 
-#: src/text.cpp:956
+#: src/text.cpp:970
 msgid "What kind of grenades and rockets are allowed."
 msgstr ""
 
-#: src/text.cpp:957
+#: src/text.cpp:971
 msgid "(0=no explosives .. 3=everything allowed)"
 msgstr ""
 
-#: src/text.cpp:961
+#: src/text.cpp:975
 msgid "Gamerules - Pointlimit:"
 msgstr ""
 
-#: src/text.cpp:962
+#: src/text.cpp:976
 msgid "How many points you can spend on your soldiers,"
 msgstr ""
 
-#: src/text.cpp:963
+#: src/text.cpp:977
 msgid "their attributes, armor, weapons and equipment."
 msgstr ""
 
-#: src/text.cpp:967
+#: src/text.cpp:981
 msgid "Gamerules - Turnlimit:"
 msgstr ""
 
-#: src/text.cpp:968
+#: src/text.cpp:982
 msgid "How many turns the match will last."
 msgstr ""
 
-#: src/text.cpp:973
+#: src/text.cpp:987
 msgid "Gamerules - Timelimit:"
 msgstr ""
 
-#: src/text.cpp:974
+#: src/text.cpp:988
 msgid "How many seconds each turn lasts."
 msgstr ""
 
-#: src/text.cpp:975
+#: src/text.cpp:989
 msgid "This is for fast, blitz-type games."
 msgstr ""
 
-#: src/text.cpp:979
+#: src/text.cpp:993
 msgid "Gamerules - Map Exploration Level at start of game:"
 msgstr ""
 
-#: src/text.cpp:980
+#: src/text.cpp:994
 msgid ""
 "0: map not explored, 1: deployment-area explored, 2: whole map explored."
 msgstr ""
 
-#: src/text.cpp:981
+#: src/text.cpp:995
 msgid "Unexplored (not yet seen) parts of the map are shown as black."
 msgstr ""
 
-#: src/text.cpp:985
+#: src/text.cpp:999
 msgid "Gamerules - Ground"
 msgstr ""
 
-#: src/text.cpp:986
+#: src/text.cpp:1000
 msgid "If this is off, you cannot leave the editor while items"
 msgstr ""
 
-#: src/text.cpp:987
+#: src/text.cpp:1001
 msgid "are on the ground (e.g. heavy rockets to take on the mission)."
 msgstr ""
 
-#: src/text.cpp:994
+#: src/text.cpp:1008
 msgid "There are several scenario-types available:"
 msgstr ""
 
-#: src/text.cpp:995
+#: src/text.cpp:1009
 msgid "Deathmatch, Escape, Control, Sabotage, Capture ..."
 msgstr ""
 
-#: src/text.cpp:1001
+#: src/text.cpp:1015
 msgid "Deathmatch - the most basic scenario:"
 msgstr ""
 
-#: src/text.cpp:1002
+#: src/text.cpp:1016
 msgid "To win, you just have to survive,"
 msgstr ""
 
-#: src/text.cpp:1003
+#: src/text.cpp:1017
 msgid "and kill or stun everybody else."
 msgstr ""
 
-#: src/text.cpp:1009
+#: src/text.cpp:1023
 msgid "(to be continued)"
 msgstr ""
 
-#: src/units.cpp:225
+#: src/units.cpp:223
 msgid "MATCH SETTINGS"
 msgstr ""
 
-#: src/units.cpp:231
+#: src/units.cpp:229
 msgid "Game rules:"
 msgstr ""
 
-#: src/units.cpp:270
+#: src/units.cpp:255
 #, c-format
 msgid "Total points=%d (of %d)"
 msgstr ""
 
-#: src/units.cpp:386
+#: src/units.cpp:371
 msgid "NEW"
 msgstr ""
 
-#: src/units.cpp:387
+#: src/units.cpp:372
 msgid "LOAD"
 msgstr ""
 
-#: src/units.cpp:388
+#: src/units.cpp:373
 msgid "SAVE"
 msgstr ""
 
-#: src/units.cpp:400
+#: src/units.cpp:385
 #, c-format
-msgid "Explosives level: %d"
+msgid "Light level: %d"
 msgstr ""
 
-#: src/units.cpp:401
+#: src/units.cpp:386
 #, c-format
 msgid "Points limit: %d000"
 msgstr ""
 
-#: src/units.cpp:402
+#: src/units.cpp:387
 msgid "No turns limit"
 msgstr ""
 
-#: src/units.cpp:402
+#: src/units.cpp:387
 #, c-format
 msgid "Turns limit: %d"
 msgstr ""
 
-#: src/units.cpp:403
+#: src/units.cpp:388
 msgid "No time limit"
 msgstr ""
 
-#: src/units.cpp:403
+#: src/units.cpp:388
 #, c-format
 msgid "Time limit: %d sec"
 msgstr ""
 
-#: src/units.cpp:404
+#: src/units.cpp:389
 #, c-format
 msgid "Exploration level: %d"
 msgstr ""
 
-#: src/units.cpp:405
+#: src/units.cpp:390
 msgid "Editor: ground on"
 msgstr ""
 
-#: src/units.cpp:405
+#: src/units.cpp:390
 msgid "Editor: ground off"
 msgstr ""
 
+#: src/units.cpp:413
+msgid "Night."
+msgstr ""
+
+#: src/units.cpp:414
+msgid "Low visibility."
+msgstr ""
+
+#: src/units.cpp:419
+msgid "Twilight."
+msgstr ""
+
+#: src/units.cpp:420
+msgid "Medium visibility."
+msgstr ""
+
+#: src/units.cpp:425
+msgid "Day."
+msgstr ""
+
 #: src/units.cpp:426
-msgid "All explosives are prohibited."
+msgid "Good visibility."
 msgstr ""
 
-#: src/units.cpp:430
-msgid "High explosives, all rockets and"
-msgstr ""
-
-#: src/units.cpp:431
-msgid "alien grenades are prohibited."
-msgstr ""
-
-#: src/units.cpp:435
-msgid "Large rockets and alien grenades"
-msgstr ""
-
-#: src/units.cpp:436
-msgid "are prohibited."
-msgstr ""
-
-#: src/units.cpp:440
-msgid "All explosives are allowed."
-msgstr ""
-
-#: src/units.cpp:472 src/units.cpp:488
+#: src/units.cpp:458 src/units.cpp:474
 msgid "no"
 msgstr ""
 
-#: src/units.cpp:511
+#: src/units.cpp:497
 msgid "Map isn't explored at all."
 msgstr ""
 
-#: src/units.cpp:515
+#: src/units.cpp:501
 msgid "Deployment area is explored."
 msgstr ""
 
-#: src/units.cpp:519
+#: src/units.cpp:505
 msgid "The entire map is explored."
 msgstr ""
 
-#: src/units.cpp:636
-#, c-format
-msgid "Total points=%d"
+#: src/units.cpp:603
+msgid "Ready to play!"
 msgstr ""
 
-#: src/units.cpp:652
+#: src/units.cpp:619
 msgid "SERVER"
 msgstr ""
 
-#: src/units.cpp:655
+#: src/units.cpp:622
 msgid "CLIENT"
 msgstr ""
 
-#: src/units.cpp:662
+#: src/units.cpp:629
 msgid "SEND"
 msgstr ""
 
-#: src/units.cpp:669
+#: src/units.cpp:636
 msgid "START"
 msgstr ""
 
-#: src/units.cpp:812
+#: src/units.cpp:770
 msgid ""
 "Some of the soldiers selected for battle are equipped with forbidden weapons"
 msgstr ""
 
-#: src/units.cpp:1020
-msgid "Load GEODATA.lua file"
+#: src/units.cpp:976
+msgid "Load map"
 msgstr ""
 
-#: src/units.cpp:1024
+#: src/units.cpp:982
 msgid "Invalid map file."
 msgstr ""
 
-#: src/units.cpp:1038
-msgid "Save GEODATA.lua file"
+#: src/units.cpp:995
+msgid "Save map"
 msgstr ""
 
-#: src/units.cpp:1040
-msgid "Can't save geodata."
+#: src/units.cpp:999
+msgid "Can't save map file."
 msgstr ""
 
-#: src/video.cpp:296
+#: src/video.cpp:285
 #, c-format
 msgid "Screenshot saved as %s"
 msgstr ""
