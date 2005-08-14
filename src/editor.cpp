@@ -120,6 +120,16 @@ void Editor::save()
     }
 }
 
+void Editor::export_weaponset()
+{
+    std::string filename = "equipment.lua";
+    
+    if (!filename.empty()) {
+        m_armoury->export_as_weaponset(filename.c_str());
+        g_console->printf(COLOR_RED04, _("Armoury layout exported as weapon set template to %s"), F(filename.c_str()));
+    }
+}
+
 int Editor::set_man(char *name)
 {
     Soldier * ss = m_plt->findman(name);
@@ -343,6 +353,7 @@ void Editor::show()
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("    F2/F3: Save/load team")); ty += 10;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("       F4: Edit attributes")); ty += 10;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("       F5: Change weaponset")); ty += 15;
+                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("       F6: Save as weapon set template")); ty += 15;
 
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _(" Ctrl+Ins: Copy current soldier")); ty += 10;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("Shift+Ins: Paste on current soldier")); ty += 15;
@@ -437,6 +448,10 @@ void Editor::show()
 
                 case KEY_F5:
                     change_equipment();
+                    break;
+
+                case KEY_F6:
+                    export_weaponset();
                     break;
 
                 case KEY_F10:

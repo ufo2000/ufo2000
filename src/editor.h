@@ -78,6 +78,8 @@ public:
     void save();
     void show();
 
+    void export_weaponset();
+
     int set_man(char *name);
 
     void build_Units(Units &local) { m_plt->build_Units(local); }

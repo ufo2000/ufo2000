@@ -438,16 +438,25 @@ int Place::isthere(Item *it)
     return 0;
 }
 
-void Place::save_to_file(const char *fn, const char *prefix)
+/**
+ * Save current place in a lua format compatible with weaponset description
+ */
+void Place::export_as_weaponset(const char *fn)
 {
     FILE *fh = fopen(F(fn), "wt");
     ASSERT(fh != NULL);
 
+    fprintf(fh, "AddEquipment {\n");
+    fprintf(fh, "    Name = \"%s\",\n", fn);
+    fprintf(fh, "    Layout = {\n");
     Item *it = m_item;
     while (it != NULL) {
-        fprintf(fh, "%s:add_item(%d, %d, \"%s\")\n", prefix, it->m_x, it->m_y, it->name().c_str());
+        if (it->m_place == this)
+            fprintf(fh, "        {%02d, %02d, \"%s\"},\n", it->m_x, it->m_y, it->name().c_str());
         it = it->m_next;
     }
+    fprintf(fh, "    }\n");
+    fprintf(fh, "}\n");
     fclose(fh);
 }
 

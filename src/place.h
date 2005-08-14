@@ -74,7 +74,7 @@ public:
 
     bool add_item(int x, int y, const char *item_name, bool autoload);
 
-    void save_to_file(const char *filename, const char *prefix);
+    void export_as_weaponset(const char *fn);
     void save_to_string(std::string &str);
 
     int save_items(char *fs, int _z, int _x, int _y, char *txt);

@@ -355,7 +355,9 @@ function SetEquipment(name)
     if EquipmentTable[name] and EquipmentTable[name].enabled then
         for k, v in EquipmentTable[name].Layout do
             Armoury:add_item(v[1], v[2], v[3], true)
-            CurrentEquipmentTable[v[3]] = true
+            if not EquipmentTable[name].isTrash then
+                CurrentEquipmentTable[v[3]] = true
+            end
         end
         CurrentEquipmentName = name
         return true
@@ -368,11 +370,95 @@ function IsItemAllowed(item)
 end
 
 -------------------------------------------------------------------------------
+-- Search for lost items (not assigned to any weaponsets), they are collected
+-- in a special new weaponset
+-------------------------------------------------------------------------------
+
+local function CreateTrashWeaponset(name)
+    local armoury_width = 20
+    local armoury_height = 11
+    local count = 0
+    local lost_items = {}
+    -- all items are potential candidates to be lost
+    for k in ItemsTable do
+        if type(k) == "string" then lost_items[k] = 1 end
+    end
+    -- remove items which are assigned to weaponsets
+    for name, data in EquipmentTable do
+        for k, v in ipairs(data.Layout) do lost_items[v[3]] = nil end
+    end
+    local equipment_set = {
+        Name = name,
+        isTrash = true,
+        Layout = {}
+    }
+    local grid = {}
+    for i = 0, armoury_width - 1 do
+        grid[i] = {}
+        for j = 0, armoury_height - 1 do
+            grid[i][j] = false
+        end
+    end
+    local function search_place(width, height)
+        local function try(x, y, width, height)
+            for i = 0, width - 1 do
+                for j = 0, height - 1 do
+                    if x + i >= armoury_width or y + j >= armoury_height or grid[x + i][y + j] then 
+                        return false 
+                    end
+                end
+            end
+            return true
+        end
+        local function fill(x, y, width, height)
+            for i = 0, width - 1 do
+                for j = 0, height - 1 do
+                    grid[x + i][y + j] = true
+                end
+            end
+        end
+        for j = 0, armoury_height - 1 do
+            for i = 0, armoury_width - 1 do
+                if try(i, j, width, height) then
+                    fill(i, j, width, height)
+                    return i, j
+                end
+            end
+        end
+    end
+    for k in lost_items do
+        local it = ItemsTable[k]
+        local x, y = search_place(it.width, it.height)
+        if x then
+            count = count + 1
+            table.insert(equipment_set.Layout, {x, y, k})
+        end
+    end
+    if count > 0 then
+        AddEquipment(equipment_set)
+        return count
+    end
+end
+
+-------------------------------------------------------------------------------
 -- Get a string with all the information about equipment sets on local       --
 -- computer                                                                  --
 -------------------------------------------------------------------------------
 
+local scan_lost_flag = false
+
 function QueryEquipmentInfo()
+    -- on the first run collect information about all items not assigned to
+    -- any equipment sets, if such items are found, create a special equipment
+    -- sets for trash
+    if not scan_lost_flag then
+        local index = 1
+        while CreateTrashWeaponset(string.format("Trash #%d (items do not belong to any valid weapon set)", index)) do
+            index = index + 1
+        end
+        scan_lost_flag = true
+    end
+
     local tmp = ""
     for name, data in EquipmentTable do
         if name == "" then name = "?" end

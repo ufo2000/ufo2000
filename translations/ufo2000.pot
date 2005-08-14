@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-08-14 00:43+0300\n"
+"POT-Creation-Date: 2005-08-14 03:04+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,59 +16,59 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/config.cpp:307 src/text.cpp:335 src/units.cpp:332
+#: src/config.cpp:305 src/text.cpp:335 src/units.cpp:332
 msgid "Options"
 msgstr ""
 
-#: src/config.cpp:315
+#: src/config.cpp:313
 msgid "end turn sound"
 msgstr ""
 
-#: src/config.cpp:316
+#: src/config.cpp:314
 msgid "start sitting if second"
 msgstr ""
 
-#: src/config.cpp:317
+#: src/config.cpp:315
 msgid "icon panel tooltips"
 msgstr ""
 
-#: src/config.cpp:319 src/connect.cpp:291 src/editor.cpp:100
-#: src/editor.cpp:831 src/editor.cpp:1008 src/main.cpp:2275 src/main.cpp:2494
+#: src/config.cpp:317 src/connect.cpp:291 src/editor.cpp:100
+#: src/editor.cpp:846 src/editor.cpp:1023 src/main.cpp:2275 src/main.cpp:2494
 #: src/main.cpp:2532 src/main.cpp:2537 src/server_gui.cpp:320
 #: src/video.cpp:352
 msgid "OK"
 msgstr ""
 
-#: src/config.cpp:320 src/icon.cpp:667 src/server_gui.cpp:321
+#: src/config.cpp:318 src/icon.cpp:665 src/server_gui.cpp:321
 #: src/video.cpp:352
 msgid "Cancel"
 msgstr ""
 
-#: src/config.cpp:321
+#: src/config.cpp:319
 msgid "movement speed"
 msgstr ""
 
-#: src/config.cpp:322
+#: src/config.cpp:320
 msgid "fire speed"
 msgstr ""
 
-#: src/config.cpp:323
+#: src/config.cpp:321
 msgid "scroll speed"
 msgstr ""
 
-#: src/config.cpp:324
+#: src/config.cpp:322
 msgid "mapscroll points"
 msgstr ""
 
-#: src/config.cpp:325
+#: src/config.cpp:323
 msgid "music volume"
 msgstr ""
 
-#: src/config.cpp:326
+#: src/config.cpp:324
 msgid "console font size"
 msgstr ""
 
-#: src/config.cpp:327
+#: src/config.cpp:325
 msgid "mouse sensitivity"
 msgstr ""
 
@@ -116,7 +116,7 @@ msgstr ""
 msgid "PREPARATIONS FOR MISSION FINISHED"
 msgstr ""
 
-#: src/connect.cpp:466 src/editor.cpp:517 src/main.cpp:2316
+#: src/connect.cpp:466 src/editor.cpp:532 src/main.cpp:2316
 msgid "SCREEN-SNAPSHOT"
 msgstr ""
 
@@ -141,212 +141,221 @@ msgstr ""
 msgid "Save squad (*.squad file)"
 msgstr ""
 
-#: src/editor.cpp:237
+#: src/editor.cpp:129
+#, c-format
+msgid "Armoury layout exported as weapon set template to %s"
+msgstr ""
+
+#: src/editor.cpp:247
 msgid ""
 "This item is not allowed for currently selected weapon set, right-click to "
 "get rid of it"
 msgstr ""
 
-#: src/editor.cpp:264
+#: src/editor.cpp:274
 msgid ""
 "Click-and-drop weapons from the armory to the soldier, right-click to remove"
 msgstr ""
 
-#: src/editor.cpp:314 src/editor.cpp:322 src/inventory.cpp:104
+#: src/editor.cpp:324 src/editor.cpp:332 src/inventory.cpp:104
 #: src/inventory.cpp:112
 msgid "AMMO:"
 msgstr ""
 
-#: src/editor.cpp:315 src/editor.cpp:323 src/inventory.cpp:105
+#: src/editor.cpp:325 src/editor.cpp:333 src/inventory.cpp:105
 #: src/inventory.cpp:113
 msgid "ROUNDS"
 msgstr ""
 
-#: src/editor.cpp:316 src/editor.cpp:324 src/inventory.cpp:96
+#: src/editor.cpp:326 src/editor.cpp:334 src/inventory.cpp:96
 #: src/inventory.cpp:106 src/inventory.cpp:114
 msgid "LEFT="
 msgstr ""
 
-#: src/editor.cpp:342
+#: src/editor.cpp:352
 msgid "       F1: Help"
 msgstr ""
 
-#: src/editor.cpp:343
+#: src/editor.cpp:353
 msgid "    F2/F3: Save/load team"
 msgstr ""
 
-#: src/editor.cpp:344
+#: src/editor.cpp:354
 msgid "       F4: Edit attributes"
 msgstr ""
 
-#: src/editor.cpp:345
+#: src/editor.cpp:355
 msgid "       F5: Change weaponset"
 msgstr ""
 
-#: src/editor.cpp:347
+#: src/editor.cpp:356
+msgid "       F6: Save as weapon set template"
+msgstr ""
+
+#: src/editor.cpp:358
 msgid " Ctrl+Ins: Copy current soldier"
 msgstr ""
 
-#: src/editor.cpp:348
+#: src/editor.cpp:359
 msgid "Shift+Ins: Paste on current soldier"
 msgstr ""
 
-#: src/editor.cpp:349
+#: src/editor.cpp:360
 msgid "      Del: Delete items of current man"
 msgstr ""
 
-#: src/editor.cpp:350
+#: src/editor.cpp:361
 msgid "Shift+Del: Drop items of current man"
 msgstr ""
 
-#: src/editor.cpp:351
+#: src/editor.cpp:362
 msgid "      F11: Cycle through appearences"
 msgstr ""
 
-#: src/editor.cpp:352
+#: src/editor.cpp:363
 msgid "      F12: Cycle through human armours"
 msgstr ""
 
-#: src/editor.cpp:353
+#: src/editor.cpp:364
 msgid "Shift+F12: Cycle through alien races"
 msgstr ""
 
-#: src/editor.cpp:354
+#: src/editor.cpp:365
 msgid "      Tab: Next soldier"
 msgstr ""
 
-#: src/editor.cpp:355
+#: src/editor.cpp:366
 msgid "Shift+Tab: Previous soldier"
 msgstr ""
 
-#: src/editor.cpp:362
+#: src/editor.cpp:373
 #, c-format
 msgid "Equipment weight: %2d/%2d"
 msgstr ""
 
-#: src/editor.cpp:366
+#: src/editor.cpp:377
 msgid "Equipment cost"
 msgstr ""
 
-#: src/editor.cpp:713
+#: src/editor.cpp:728
 msgid "Select unit race"
 msgstr ""
 
-#: src/editor.cpp:718
+#: src/editor.cpp:733
 msgid "Select unit armour"
 msgstr ""
 
-#: src/editor.cpp:723
+#: src/editor.cpp:738
 msgid "Select unit appearance"
 msgstr ""
 
-#: src/editor.cpp:777 src/editor.cpp:883
+#: src/editor.cpp:792 src/editor.cpp:898
 #, c-format
 msgid "Points remain: %2d "
 msgstr ""
 
-#: src/editor.cpp:832
+#: src/editor.cpp:847
 msgid "Name:"
 msgstr ""
 
-#: src/editor.cpp:836
+#: src/editor.cpp:851
 msgid "Race:"
 msgstr ""
 
-#: src/editor.cpp:839
+#: src/editor.cpp:854
 msgid "Armour:"
 msgstr ""
 
-#: src/editor.cpp:842
+#: src/editor.cpp:857
 msgid "Appearance:"
 msgstr ""
 
-#: src/editor.cpp:845
+#: src/editor.cpp:860
 msgid "Time Units"
 msgstr ""
 
-#: src/editor.cpp:847
+#: src/editor.cpp:862
 msgid "Stamina"
 msgstr ""
 
-#: src/editor.cpp:849
+#: src/editor.cpp:864
 msgid "Health"
 msgstr ""
 
-#: src/editor.cpp:851
+#: src/editor.cpp:866
 msgid "Bravery"
 msgstr ""
 
-#: src/editor.cpp:853
+#: src/editor.cpp:868
 msgid "Reactions"
 msgstr ""
 
-#: src/editor.cpp:855
+#: src/editor.cpp:870
 msgid "Firing"
 msgstr ""
 
-#: src/editor.cpp:857
+#: src/editor.cpp:872
 msgid "Throwing"
 msgstr ""
 
-#: src/editor.cpp:859
+#: src/editor.cpp:874
 msgid "Strength"
 msgstr ""
 
-#: src/editor.cpp:1001
+#: src/editor.cpp:1016
 msgid "Select equipment set"
 msgstr ""
 
-#: src/editor.cpp:1008
+#: src/editor.cpp:1023
 msgid "Remote player does not have any of your weaponsets"
 msgstr ""
 
-#: src/icon.cpp:542
+#: src/icon.cpp:540
 #, c-format
 msgid "CANCEL"
 msgstr ""
 
-#: src/icon.cpp:549
+#: src/icon.cpp:547
 #, c-format
 msgid "THROW       ACC>%02d%% TUs>%02d"
 msgstr ""
 
-#: src/icon.cpp:562
+#: src/icon.cpp:560
 #, c-format
 msgid "STUN                TUs>%02d"
 msgstr ""
 
-#: src/icon.cpp:564
+#: src/icon.cpp:562
 #, c-format
 msgid "PUNCH               TUs>%02d"
 msgstr ""
 
-#: src/icon.cpp:575
+#: src/icon.cpp:573
 #, c-format
 msgid "PRIME EXPLOSIVE     TUs>%02d"
 msgstr ""
 
-#: src/icon.cpp:582
+#: src/icon.cpp:580
 #, c-format
 msgid "PRIME GRENADE       TUs>%02d"
 msgstr ""
 
-#: src/icon.cpp:595
+#: src/icon.cpp:593
 #, c-format
 msgid "AUTO SHOT   ACC>%02d%% TUs>%02d"
 msgstr ""
 
-#: src/icon.cpp:605
+#: src/icon.cpp:603
 #, c-format
 msgid "SNAP SHOT   ACC>%02d%% TUs>%02d"
 msgstr ""
 
-#: src/icon.cpp:615
+#: src/icon.cpp:613
 #, c-format
 msgid "AIMED SHOT  ACC>%02d%% TUs>%02d"
 msgstr ""
 
-#: src/icon.cpp:824 src/main.cpp:2205
+#: src/icon.cpp:822 src/main.cpp:2205
 #, c-format
 msgid "%s is panicking and can't access inventory."
 msgstr ""
