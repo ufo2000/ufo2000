@@ -578,14 +578,21 @@ local function load_translated_messages(tbl, filename)
         end
     end
 
+    local fuzzy_flag = false
+    local skip_translation_flag = false
+
     for l in io.lines(filename) do
+        if string.find(l, "^#.*fuzzy") then fuzzy_flag = true end
         if string.find(l, "^%s*msgid") then
             assert(mode == nil or mode == "msgstr")
-            add_translation_string(key, str)
+            if not skip_translation_flag then add_translation_string(key, str) end
+            skip_translation_flag = false
             mode = "msgid"
             str = ""
+            if fuzzy_flag then skip_translation_flag = true end
         elseif string.find(l, "^%s*msgstr") then
             assert(mode == "msgid")
+            fuzzy_flag = false
             mode = "msgstr"
             key = str
             str = ""

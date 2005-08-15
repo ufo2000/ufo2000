@@ -1,5 +1,4 @@
 AddXcomItem {
-    index = 200,
     cost = 50,
     name = "ZAP PISTOL",
     pInv = png_image("$(extension)/galactic/pInv/zp.png" ),
@@ -28,7 +27,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-    index = 201,
     cost = 20,
     name = "ZAP PISTOL CHARGE",
     pInv = png_image("$(extension)/galactic/pInv/zpc.png" ),
@@ -60,7 +58,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-    index = 202,
     cost = 70,
     name = "ZAP RIFLE",
     pInv = png_image("$(extension)/galactic/pInv/zr.png" ),
@@ -91,7 +88,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-    index = 203,
     cost = 25,
     name = "ZAP RIFLE CHARGE",
     pInv = png_image("$(extension)/galactic/pInv/zrc.png", 4),
@@ -124,7 +120,6 @@ AddXcomItem {
 
 
 AddXcomItem {
-    index = 204,
     cost = 150,
       name = "LIGHT PHASER",
     pInv = png_image("$(extension)/galactic/pInv/lp.png", 3),
@@ -156,7 +151,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 205,
       cost = 300,
       name = "PULSE PHASER",
       pInv = png_image("$(extension)/galactic/pInv/pp.png", 5),
@@ -189,7 +183,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 207,
       cost = 550,
       name = "HEAVY PHASER",
       pInv = png_image("$(extension)/galactic/pInv/hp.png", 3),
@@ -221,7 +214,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-    index = 208,
     cost = 400,
     name = "PHASER CANNON",
     pInv = png_image("$(extension)/galactic/pInv/pc.png", 3),
@@ -256,7 +248,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 209,
       cost = 150,
       name = "MEZON PISTOL",
       pInv = png_image("$(extension)/galactic/pInv/mp.png", 32),
@@ -286,7 +277,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 210,
       cost = 60,
       name = "MEZON PISTOL CHARGE",
       pInv = png_image("$(extension)/galactic/pInv/mpc.png", 34),
@@ -317,7 +307,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 211,
       cost = 400,
       name = "MEZON RIFLE",
       pInv = png_image("$(extension)/galactic/pInv/mr.png", 32),
@@ -348,7 +337,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 212,
       cost = 100,
       name = "MEZON RIFLE CHARGE",
       pInv = png_image("$(extension)/galactic/pInv/mrc.png", 34),
@@ -379,7 +367,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 213,
       cost = 300,
       name = "HEAVY MEZON",
       pInv = png_image("$(extension)/galactic/pInv/hm.png", 32),
@@ -410,7 +397,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 214,
       cost = 75,
       name = "HEAVY MEZON CHARGE",
       pInv = png_image("$(extension)/galactic/pInv/hmc.png", 34),
@@ -441,7 +427,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 215,
       cost = 250,
       name = "ANTI-MATTER GUN",
       pInv = png_image("$(extension)/galactic/pInv/amg.png", 32),
@@ -471,7 +456,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 216,
       cost = 150,
       name = "ANTI-MATTER GUN CHARGE",
       pInv = png_image("$(extension)/galactic/pInv/amgc.png", 34),
@@ -505,7 +489,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 217,
       cost = 500,
       name = "ANTI-MATTER BLASTER",
       pInv = png_image("$(extension)/galactic/pInv/amb.png", 32),
@@ -535,7 +518,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 218,
       cost = 300,
       name = "ANTI-MATTER BLASTER CHARGE",
       pInv = png_image("$(extension)/galactic/pInv/ambc.png", 34),
@@ -569,7 +551,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 219,
       cost = 200,
       name = "OMEGA LAUNCHER",
       pInv = png_image("$(extension)/galactic/pInv/ol.png", 38),
@@ -600,7 +581,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 220,
       cost = 400,
       name = "ALIEN MISSILE",
       pInv = png_image("$(extension)/galactic/pInv/olm.png", 38),
@@ -633,7 +613,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 221,
       cost = 300,
       name = "ALIEN MISSILE POD",
       pInv = png_image("$(extension)/galactic/pInv/olp.png", 38),
@@ -666,7 +645,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 222,
       cost = 125,
       name = "ALIEN SMOKE POD",
       pInv = png_image("$(extension)/galactic/pInv/olsm.png", 3),
@@ -699,7 +677,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 223,
       cost = 100,
       name = "ELECTRIC KNIFE",
       pInv = png_image("$(extension)/galactic/pInv/ek.png", 4),
@@ -727,7 +704,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 224,
       cost = 100,
       name = "PLASMA KNIFE",
       pInv = png_image("$(extension)/galactic/pInv/pk.png", 4),
@@ -755,7 +731,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 225,
       cost = 150,
       name = "BEAM BLADE",
       pInv = png_image("$(extension)/galactic/pInv/bb.png", 4),
@@ -783,7 +758,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 226,
       cost = 500,
       name = "DISC LAUNCHER",
       pInv = png_image("$(extension)/galactic/pInv/dl.png", 38),
@@ -813,7 +787,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-    index = 227,
     cost = 125,
     name = "PHAZED DISC",
       pInv = png_image("$(extension)/galactic/pInv/pd.png", 4),
@@ -846,7 +819,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-    index = 228,
     cost = 60,
     name = "MAGMIZE DISC",
       pInv = png_image("$(extension)/galactic/pInv/md.png", 4),
@@ -879,7 +851,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-    index = 229,
     cost = 30,
     name = "CLOAKED DISC MINE",
       pInv = png_image("$(extension)/galactic/pInv/cdm.png", 4),
@@ -911,7 +882,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-    index = 230,
     cost = 20,
     name = "FOG DISC",
       pInv = png_image("$(extension)/galactic/pInv/fd.png", 4),
@@ -942,7 +912,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 231,
       cost = 75,
       name = "SPARK-WAVE DISC",
       pInv = png_image("$(extension)/galactic/pInv/swd.png", 4),
@@ -975,7 +944,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-    index = 232,
     cost = 95,
     name = "HYPER DISC",
       pInv = png_image("$(extension)/galactic/pInv/hd.png", 4),
@@ -1007,7 +975,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-      index = 233,
       cost = 300,
       name = "PF DISC",
       pInv = png_image("$(extension)/galactic/pInv/pfd.png", 4),
