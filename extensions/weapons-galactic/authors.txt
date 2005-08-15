@@ -1,0 +1,36 @@
+-------------------------------Authors---------------------------------
+Founder:
+     Kratos
+        * Created set name as well as weapon names
+        * Statistics and Balances
+        * Lua coding/managing/organizing
+        * Applying artists' art to set
+        * Constant testing
+Artists:
+     Sporb
+        * Zap pistol/rifle/ammunition                   - Inventory/Map/Held
+        * Light/pulse/heavy/cannon phasers              - Inventory/Map/Held
+        * Meson pistol/rifle/heavy/ammunition               - Inventory/Map/Held
+        * Anti-Matter gun/blaster/ammunition                - Inventory/Map/Held
+        * Omega launcher                        - Inventory/Map/Held
+        * Disc launcher and hyper disc                  - Inventory/Map/Held
+        * Beam blade                            - Inventory/Map/Held
+        * Phazed/magmize/cloaked/fog/spark-wave discs           - Map/Held
+        * Electric/plasma knife                     - Map/Held
+        * Omega launcher ammunition                 - Map/Held
+     Jezulkim
+        * Phazed/magmize/cloaked/fog/spark-wave discs           - Inventory
+        * Electric knife and part of plasma knife           - Inventory
+        * Omega launcher ammunition                 - Inventory
+     Kratos
+        * Part of plasma knife                      - Inventory
+Other:
+     Hobbes
+        * Testing
+        * Idea of beam blade
+        * Helped with set name and other weapon names
+     Abyssion
+        * Constant testing
+        * Idea of omega launcher
+     Blehm
+        * Constant testing
