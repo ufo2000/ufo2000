@@ -36,7 +36,7 @@ msgstr "Tonsignal bei Zugende"
 
 #: src/config.cpp:314
 msgid "start sitting if second"
-msgstr "SP2 Soldaten geduckt"
+msgstr "Als 2. kniend starten"
 
 #: src/config.cpp:315
 msgid "icon panel tooltips"
@@ -118,8 +118,7 @@ msgstr "Mit Strg-Klick auf einen Namen kann ein Soldat editiert werden."
 #: src/connect.cpp:342
 msgid "Left-click to place a soldier on the map, right-click to remove him."
 msgstr ""
-"Ein Links-Klick setzt einen Soldaten auf die Karte,ein Rechts-Klick
-"entfernt ihn."
+"Links-Klick auf Soldaten zum platzieren, Rechts-Klick zum Entfernen"
 
 #: src/connect.cpp:343
 msgid "When finished, click SEND, then START.  Press ESC to quit, F1 for help."
@@ -197,7 +196,7 @@ msgstr "      F1: Hilfe"
 
 #: src/editor.cpp:353
 msgid "    F2/F3: Save/load team"
-msgstr "      F2/F3: Team speichern/laden"
+msgstr "   F2/F3: Team speichern/laden"
 
 #: src/editor.cpp:354
 msgid "       F4: Edit attributes"
@@ -250,7 +249,6 @@ msgid "Shift+Tab: Previous soldier"
 msgstr "Shift-TAB: Vorheriger Soldat"
 
 #: src/editor.cpp:373
-#, fuzzy, c-format
 msgid "Equipment weight: %2d/%2d"
 msgstr "Gewicht der Ausrüstung: %d/%2d"
 
@@ -324,12 +322,10 @@ msgid "Strength"
 msgstr "Stärke"
 
 #: src/editor.cpp:1016
-#, fuzzy
 msgid "Select equipment set"
 msgstr "Ausrüstungs-Set wählen"
 
 #: src/editor.cpp:1023
-#, fuzzy
 msgid "Remote player does not have any of your weaponsets"
 msgstr "Der andere Spieler hat keines Ihrer Waffensets!"
 
@@ -344,12 +340,10 @@ msgid "THROW       ACC>%02d%% TUs>%02d"
 msgstr "WERFEN         Gen>%02d%% ZE>%02d"
 
 #: src/icon.cpp:560
-#, fuzzy, c-format
 msgid "STUN                TUs>%02d"
 msgstr "BETÄUBEN      Gen>%02d%% ZE>%02d"
 
 #: src/icon.cpp:562
-#, fuzzy, c-format
 msgid "PUNCH               TUs>%02d"
 msgstr "NAHKAMPF       Gen>%02d%% ZE>%02d"
 
@@ -426,9 +420,8 @@ msgid "Two-handed weapon"
 msgstr "Zweihändige Waffe"
 
 #: src/item.cpp:226
-#, fuzzy
 msgid "Usage TU cost"
-msgstr "Zeitbedarf"
+msgstr "ZE-Bedarf"
 
 #: src/item.cpp:232 src/main.cpp:1707 src/main.cpp:1709 src/main.cpp:1713
 msgid "Damage"
@@ -436,7 +429,7 @@ msgstr "Schaden"
 
 #: src/item.cpp:233
 msgid "Ammo-Type"
-msgstr "Munitions-Typ"
+msgstr ", Typ"
 
 #: src/item.cpp:239
 msgid "Rounds"
@@ -733,7 +726,6 @@ msgid "Unable to delete existing file %s!"
 msgstr "Kann Datei %s nicht löschen!"
 
 #: src/main.cpp:2395
-#, fuzzy, c-format
 msgid "Replay saved as %s"
 msgstr "Replay gespeichert als %s"
 
@@ -809,7 +801,6 @@ msgid "load a replay"
 msgstr "Replay ansehen"
 
 #: src/mainmenu.cpp:216
-#, fuzzy
 msgid "options"
 msgstr "Optionen"
 
@@ -880,7 +871,6 @@ msgid "Opponent: Draw offer recalled"
 msgstr "Gegner zieht Angebot zurück"
 
 #: src/place.cpp:326
-#, fuzzy
 msgid "(none, remote player doesn't have any of your weaposets)"
 msgstr "Der andere Spieler hat keine Ihrer Waffensets"
 
@@ -917,12 +907,10 @@ msgid "Leader is always visible on your minimap.        "
 msgstr "Seine Position ist auf Ihrer Karte sichtbar."
 
 #: src/scenario.cpp:94 src/scenario.cpp:144
-#, fuzzy
 msgid "Leader can use two-handed weapons"
 msgstr "Anführer darf Zweihandwaffen tragen"
 
 #: src/scenario.cpp:94 src/scenario.cpp:144
-#, fuzzy
 msgid "Leader can't use two-handed weapons"
 msgstr "Anführer darf KEINE Zweihandwaffen tragen."
 
@@ -1083,12 +1071,10 @@ msgid "your opponent's minimap.                         "
 msgstr "Er weiss allerdings immer, wo er ist!"
 
 #: src/scenario.cpp:198
-#, fuzzy
 msgid "Leader can have two-handed weapons"
 msgstr "Anführer darf Zweihandwaffen tragen"
 
 #: src/scenario.cpp:198
-#, fuzzy
 msgid "Leader can't have two-handed weapons"
 msgstr "Anführer darf KEINE Zweihandwaffen tragen"
 
@@ -1134,7 +1120,6 @@ msgid "You must have at least 2 high explosives."
 msgstr "Sie brauchen mindestens 2 Sprengladungen."
 
 #: src/scenario.cpp:876
-#, fuzzy
 msgid "You must have at least one stun weapon."
 msgstr "Sie müssen was zum Betäuben mitnehmen!"
 
@@ -1155,7 +1140,6 @@ msgid "Password:"
 msgstr "Passwort:"
 
 #: src/server_gui.cpp:319
-#, fuzzy
 msgid "Autologin"
 msgstr "Auto-Login"
 
@@ -1213,7 +1197,6 @@ msgid ""
 msgstr "Durch Fehler abgebrochene Spiele können mit F3 wieder aufgenommen werden."
 
 #: src/server_gui.cpp:450
-#, fuzzy
 msgid "Connected to server"
 msgstr "Verbunden mit Server"
 
@@ -1633,7 +1616,6 @@ msgstr ""
 "UFO2000 wird hauptsächlich mit der Maus gesteuert, und folgenden Tasten:"
 
 #: src/text.cpp:545
-#, fuzzy
 msgid ""
 "F1: Help, F2+F3: Save+Load, F9: Keymap, F10: Window/Fullscreen, F12: "
 "Screenshot"
@@ -1641,7 +1623,6 @@ msgstr ""
 "F1: Hilfe, F2+F3: Sichern+Laden, F9: Tastenumschaltung, F12: Bildschirmfoto,"
 
 #: src/text.cpp:546
-#, fuzzy
 msgid "Keypad+/-: adjust Music-Volume, Shift+space: Pause, ESC: Quit."
 msgstr "F10: Fenster/Vollbildschirm, Keypad+/-: Musik-Lautstärke, ESC: Ende."
 
@@ -2136,11 +2117,11 @@ msgstr "Mit Strg-Klick auf einen Namen kann ein Soldat editiert werden."
 
 #: src/text.cpp:946
 msgid "Left-click to place a soldier on the map (your side only),"
-msgstr "Ein Links-Klick setzt einen Soldaten auf die Karte,"
+msgstr "(---only next line appears---)"
 
 #: src/text.cpp:947
 msgid "right-click to remove him."
-msgstr "ein Rechts-Klick entfernt ihn."
+msgstr "Soldaten platzieren mit Linksklick, Rechtsklick zum Entfernen"
 
 #: src/text.cpp:951
 msgid "SAVE && LOAD for a team can be found on the soldier-edit-screen."
@@ -2290,7 +2271,6 @@ msgid "SAVE"
 msgstr "SPEICHERN"
 
 #: src/units.cpp:385
-#, fuzzy, c-format
 msgid "Light level: %d"
 msgstr "Tageslicht: %d"
 
@@ -2331,7 +2311,6 @@ msgid "Editor: ground off"
 msgstr "Ausr. auf Boden: NEIN"
 
 #: src/units.cpp:413
-#, fuzzy
 msgid "Night."
 msgstr "Nacht"
 
@@ -2409,9 +2388,8 @@ msgid "Save map"
 msgstr "Map speichern"
 
 #: src/units.cpp:999
-#, fuzzy
 msgid "Can't save map file."
-msgstr "Karte kann nicht gespeichert werden"
+msgstr "Karte kann nicht gespeichert werden."
 
 #: src/video.cpp:285
 #, c-format
@@ -2451,7 +2429,6 @@ msgstr "Konfiguration"
 #~ msgid "Cycle thru Armor-types"
 #~ msgstr "Panzerung umschalten"
 
-#, fuzzy
 #~ msgid "Remote player does not have any of your equipment sets"
 #~ msgstr "Der andere Spieler hat keines ihrer waffensets!"
 
@@ -2490,7 +2467,6 @@ msgstr "Konfiguration"
 #~ msgid "Total points=%d"
 #~ msgstr "Gesamtpunkte=%d"
 
-#, fuzzy
 #~ msgid "Load GEODATA.lua file"
 #~ msgstr "Karte laden"
 
