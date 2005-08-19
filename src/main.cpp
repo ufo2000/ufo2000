@@ -780,7 +780,6 @@ void initmain(int argc, char *argv[])
     gui_text_list_proc = d_agup_text_list_proc;
 
     lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-items.lua");
-    lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-equipment.lua");
     lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-images.lua");
 
     // Load standard and custom maps
