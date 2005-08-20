@@ -270,6 +270,12 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &packet)
 
             server_log("login ok\n");
 
+            db_conn.executenonquery("update ufo2000_users set last_login=julianday('now') where name='%s'", 
+                login.c_str());
+
+            db_conn.executenonquery("commit;");
+            db_conn.executenonquery("begin transaction;");
+
             m_name = login;
             send_packet_back(SRV_OK, "login ok");
         // send user list to a newly created user

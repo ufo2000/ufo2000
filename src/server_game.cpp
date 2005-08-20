@@ -108,8 +108,9 @@ void Server_Game_UFO::DeactivatePlayer(ServerClientUfo* player)
 
 void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, const std::string &packet) {
     try {
-        if(packet == "result:victory") {
-            if(sender -> position == 1)
+        // TODO: require the results to be confirmed by both players before registering in the database
+        if (packet == "result:victory") {
+            if (sender->position == 1)
                 db_conn.executenonquery("update ufo2000_games set is_finished='Y', result=1 where id=%d;",game_id);
             else
                 db_conn.executenonquery("update ufo2000_games set is_finished='Y', result=2 where id=%d;",game_id);
@@ -130,12 +131,17 @@ void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, c
             else
                 k = 16;
             db_conn.executenonquery("update ufo2000_users set elo_score=%f where name='%s';", looser_score + (k * (0 - looser_expected)), looser.c_str());
+            db_conn.executenonquery("update ufo2000_users set defeats=defeats+1 where name='%s';", looser.c_str());
+            db_conn.executenonquery("update ufo2000_users set victories=victories+1 where name='%s';", winner.c_str());
             db_conn.executenonquery("commit; ");
             db_conn.executenonquery("begin transaction;");
+        } else if (packet == "result:draw") {
+            db_conn.executenonquery("update ufo2000_games set is_finished='Y', result=3 where id=%d;",game_id);
+            std::string p = db_conn.executestring("select p.player from ufo2000_games g,ufo2000_game_players p where g.id=%d and g.id=p.game and p.position=%d;", 
+                game_id, sender->position);
+            db_conn.executenonquery("update ufo2000_users set draws=draws+1 where name='%s';", p.c_str());
         }
-        if(packet == "result:draw")
-            if(sender -> position == 1)
-                db_conn.executenonquery("update ufo2000_games set is_finished='Y', result=3 where id=%d;",game_id);
+
         if(strstr(packet.c_str(), "UFO2000 REVISION OF YOUR OPPONENT: ")) {
             db_conn.executenonquery("update ufo2000_games set client_version='%s' where id=%d;",packet.c_str()+strlen("UFO2000 REVISION OF YOUR OPPONENT: "), game_id);
             db_conn.executenonquery("commit; ");
@@ -159,38 +165,33 @@ void Server_Game_UFO::PacketToServer(ServerClientUfo* sender, int packet_type, c
             last_received_packed, game_id, sender->m_name.c_str());
         //db_conn.executenonquery("commit;");
 
-        time_t now = time(NULL);
-        struct tm * t = localtime(&now);
-        char timebuf[1000];
-        strftime(timebuf, 1000, "%d/%m/%Y %H:%M:%S", t);
-
-		sqlite3::command sql_cmd(db_conn, "\
+        sqlite3::command sql_cmd(db_conn, "\
             insert into ufo2000_game_packets\
             (game, id, sender, time, command, packet_type, session) values \
             (?, ?, ?, julianday('now'), ?, ?, ?);");
         sql_cmd.parameters.push_back(sqlite3::parameter(1, (long long int)game_id));
         sql_cmd.parameters.push_back(sqlite3::parameter(2, (int)last_received_packed));
         sql_cmd.parameters.push_back(sqlite3::parameter(3, (int)sender->position));
-		sql_cmd.parameters.push_back(sqlite3::parameter(4, (void*) packet.c_str(), packet.size()));
-		sql_cmd.parameters.push_back(sqlite3::parameter(5, (int)packet_type));
-		sql_cmd.parameters.push_back(sqlite3::parameter(6, (long long int)sender->session_id));
-		sql_cmd.executenonquery();
+        sql_cmd.parameters.push_back(sqlite3::parameter(4, (void*) packet.c_str(), packet.size()));
+        sql_cmd.parameters.push_back(sqlite3::parameter(5, (int)packet_type));
+        sql_cmd.parameters.push_back(sqlite3::parameter(6, (long long int)sender->session_id));
+        sql_cmd.executenonquery();
 
         if (packet_type == SRV_DEBUG_MESSAGE) {
             std::string param, val;
             split_with_colon(packet, param, val);
 
-       		sqlite3::command sql_cmd(db_conn, "\
+            sqlite3::command sql_cmd(db_conn, "\
             insert into ufo2000_debug_packets\
             (game, id, sender, time, param, value, session) values \
             (?, ?, ?, julianday('now'), ?, ?, ?);");
             sql_cmd.parameters.push_back(sqlite3::parameter(1, (long long int)game_id));
             sql_cmd.parameters.push_back(sqlite3::parameter(2, (int)last_received_packed));
             sql_cmd.parameters.push_back(sqlite3::parameter(3, (int)sender->position));
-		    sql_cmd.parameters.push_back(sqlite3::parameter(4, param.c_str(), param.size()));
-    		sql_cmd.parameters.push_back(sqlite3::parameter(5, val.c_str(), val.size()));
-	   	    sql_cmd.parameters.push_back(sqlite3::parameter(6, (long long int)sender->session_id));
-	       	sql_cmd.executenonquery();
+            sql_cmd.parameters.push_back(sqlite3::parameter(4, param.c_str(), param.size()));
+            sql_cmd.parameters.push_back(sqlite3::parameter(5, val.c_str(), val.size()));
+            sql_cmd.parameters.push_back(sqlite3::parameter(6, (long long int)sender->session_id));
+            sql_cmd.executenonquery();
         }
 
         ServerClientUfo* recipient = players[2-sender->position];

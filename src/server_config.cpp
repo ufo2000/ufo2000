@@ -41,7 +41,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define SERVER_LOG_FILENAME "ufo2000-srv.log"
 #endif
 
-sqlite3::connection db_conn(DB_FILENAME, 1000);
+sqlite3::connection db_conn(DB_FILENAME, 60 * 1000);
 
 static std::map<std::string, unsigned long *> config_variables;
 

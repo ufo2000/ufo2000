@@ -8,6 +8,30 @@ end
 db = sqlite3.open(arg[1])
 
 ------------------------------------------------------------------------------
+-- function that formats time
+------------------------------------------------------------------------------
+
+function timestring(x)
+    local hours = math.floor(x / 3600)
+    local minutes = math.floor((x - hours * 3600) / 60)
+    local seconds = math.floor(x - hours * 3600 - minutes * 60)
+    local result = ""
+    if hours > 0 then
+        result = result .. hours .. "h "
+    end
+    if hours > 0 or minutes > 0 then
+        result = result .. minutes .. "m "
+    end
+
+    return result .. seconds .. "s"
+end
+
+local function convert_julian_day(julian_day)
+    if not julian_day then return end
+    return (julian_day - 2440587.5) * 86400.0 + 0.5
+end
+    
+------------------------------------------------------------------------------
 -- start making html report
 ------------------------------------------------------------------------------
 
@@ -24,29 +48,26 @@ table {
 --></style><meta http-equiv="content-type" content="text/html; charset=UTF-8">
 </head><body>]])
 
-io.write("<br> <b>UFO2000 players rating table</b><br>")
+io.write("<br> <b>UFO2000 top 25 players (only active during last month are listed)</b><br>")
 io.write("<table border=1>")
-io.write("<tr><td>pos<td>name<td>games played<td>games won<td>ELO score")
+io.write("<tr><td>pos<td>name<td>victories<td>draws<td>defeats<td>ELO score<td>last login")
 
 local pos = 1
 
-for name, played, won, elo_score in db:cols([[
-	select name, played, won, elo_score from 
-	( 
-	select name, 
-	(select count(*) from ufo2000_game_players p,ufo2000_games g 
-	where p.player=u.name and p.game=g.id and g.is_finished='Y') played, 
-	(select count(*) from ufo2000_game_players p,ufo2000_games g 
-	where p.player=u.name and p.game=g.id and g.is_finished='Y' and g.result=p.position) won, 
-	elo_score 
-	from ufo2000_users u 
-	) 
-	where won>0 
-	order by elo_score desc 
-	]]) 
+for name, elo_score, victories, defeats, draws, last_login in db:cols([[
+    SELECT name, elo_score, victories, defeats, draws, last_login FROM ufo2000_users
+    ORDER BY elo_score DESC LIMIT 25]]) 
 do
-    if elo_score then
-        io.write("<tr><td>", pos, "<td>", name, "<td>", played ,"<td>", won, "<td>", math.floor(elo_score or 0), "\n")
+    local timediff = 0
+    local timediff_string = "today"
+    if last_login then
+        timediff = math.floor((os.time() - convert_julian_day(last_login)) / (24 * 60 * 60))
+        if timediff > 0 then timediff_string = string.format("%d days ago", timediff) end
+    end
+
+    if timediff <= 30 then
+        elo_score = elo_score or 1500
+        io.write("<tr><td>", pos, "<td>", name, "<td>", victories or 0, "<td>", draws or 0, "<td>", defeats or 0, "<td>", math.floor(elo_score or 0), "<td>", timediff_string, "\n")
         pos = pos + 1
     end
 end
@@ -89,11 +110,6 @@ local get_game_start_time_request = db:prepare([[
 local get_game_end_time_request = db:prepare([[
     SELECT time FROM ufo2000_game_packets WHERE game=? ORDER BY id DESC LIMIT 1]])
 
-local function convert_julian_day(julian_day)
-    if not julian_day then return end
-    return (julian_day - 2440587.5) * 86400.0 + 0.5
-end
-    
 local function get_game_time(game_id)
     if not get_game_start_time_request:bind(game_id) then return end
     if not get_game_end_time_request:bind(game_id) then return end
@@ -106,33 +122,17 @@ local function get_game_time(game_id)
     return start_time, duration
 end
     
--- function that formats time
-function timestring(x)
-    local hours = math.floor(x / 3600)
-    local minutes = math.floor((x - hours * 3600) / 60)
-    local seconds = math.floor(x - hours * 3600 - minutes * 60)
-    local result = ""
-    if hours > 0 then
-        result = result .. hours .. "h "
-    end
-    if hours > 0 or minutes > 0 then
-        result = result .. minutes .. "m "
-    end
-
-    return result .. seconds .. "s"
-end
-
 io.write("<br> <b>UFO2000 recent games statistics</b><br>")
 io.write("<table border=1>\n")
 io.write("<tr><td>id<td>version<td>date<td>player1<td>player2<td>time<td>result<td>comment<td></tr>\n")
 for id, ver, pl1, pl2, result in db:cols([[
-	select id, ver, pl1, pl2, result from 
-	(select id,ifnull(g.client_version, "") ver,p1.player pl1, p2.player pl2, case when g.result=1 then p1.player||" won" when g.result=2 then p2.player||" won" when g.result=3 then "draw" else "not finished" end result,ifnull(g.errors,"") errors 
-	from ufo2000_games g, ufo2000_game_players p1, ufo2000_game_players p2 
-	where g.id=p1.game and g.id=p2.game and p1.position=1 and p2.position=2) 
-	order by id desc 
-	limit 100 
-	]]) 
+    select id, ver, pl1, pl2, result from 
+    (select id,ifnull(g.client_version, "") ver,p1.player pl1, p2.player pl2, case when g.result=1 then p1.player||" won" when g.result=2 then p2.player||" won" when g.result=3 then "draw" else "not finished" end result,ifnull(g.errors,"") errors 
+    from ufo2000_games g, ufo2000_game_players p1, ufo2000_game_players p2 
+    where g.id=p1.game and g.id=p2.game and p1.position=1 and p2.position=2) 
+    order by id desc 
+    limit 100 
+    ]]) 
 do
     local comment = ""
     
