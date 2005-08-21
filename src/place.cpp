@@ -325,7 +325,7 @@ void Place::drawgrid(BITMAP *dest, int PLACE_NUM)
         const char *eqname = get_current_equipment_name();
         if (!eqname) eqname = _("(none, remote player doesn't have any of your weaposets)");
         textprintf(dest, g_small_font, gx, gy + 1 - text_height(g_small_font), COLOR_WHITE, 
-            "Weapon set: %s", eqname);
+            _("Weapon set: %s"), eqname);
     } else {
         textout(dest, g_small_font, place_name[PLACE_NUM], gx, gy + 1 - text_height(g_small_font), COLOR_LT_OLIVE);
     }

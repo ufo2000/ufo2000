@@ -83,20 +83,32 @@ FilesTable = {
     ["$(xcom)/ufograph/man_0m3.spk"] = { Crc32 = X("0xBC57FC2E"),
         Fallback = "$(xcom)/ufograph/man_1m3.spk" },
 
-    ["$(xcom)/ufograph/man_1f0.spk"]  = { Crc32 = X("0xF87390C0") },
-    ["$(xcom)/ufograph/man_1f1.spk"]  = { Crc32 = X("0x02CB471C") },
-    ["$(xcom)/ufograph/man_1f2.spk"]  = { Crc32 = X("0x7E91A5E0") },
-    ["$(xcom)/ufograph/man_1f3.spk"]  = { Crc32 = X("0xF050BD04") },
-    ["$(xcom)/ufograph/man_1m0.spk"]  = { Crc32 = X("0xD919B6A5") },
-    ["$(xcom)/ufograph/man_1m1.spk"]  = { Crc32 = X("0x3AD7592B") },
-    ["$(xcom)/ufograph/man_1m2.spk"]  = { Crc32 = X("0x2A0840E1") },
-    ["$(xcom)/ufograph/man_1m3.spk"]  = { Crc32 = X("0x47D7ACCB") },
+    ["$(xcom)/ufograph/man_1f0.spk"]  = { Crc32 = X("0xF87390C0"),
+        Fallback = "$(ufo2000)/arts/empty.spk" },
+    ["$(xcom)/ufograph/man_1f1.spk"]  = { Crc32 = X("0x02CB471C"),
+        Fallback = "$(ufo2000)/arts/empty.spk" },
+    ["$(xcom)/ufograph/man_1f2.spk"]  = { Crc32 = X("0x7E91A5E0"),
+        Fallback = "$(ufo2000)/arts/empty.spk" },
+    ["$(xcom)/ufograph/man_1f3.spk"]  = { Crc32 = X("0xF050BD04"),
+        Fallback = "$(ufo2000)/arts/empty.spk" },
+    ["$(xcom)/ufograph/man_1m0.spk"]  = { Crc32 = X("0xD919B6A5"),
+        Fallback = "$(ufo2000)/arts/empty.spk" },
+    ["$(xcom)/ufograph/man_1m1.spk"]  = { Crc32 = X("0x3AD7592B"),
+        Fallback = "$(ufo2000)/arts/empty.spk" },
+    ["$(xcom)/ufograph/man_1m2.spk"]  = { Crc32 = X("0x2A0840E1"),
+        Fallback = "$(ufo2000)/arts/empty.spk" },
+    ["$(xcom)/ufograph/man_1m3.spk"]  = { Crc32 = X("0x47D7ACCB"),
+        Fallback = "$(ufo2000)/arts/empty.spk" },
 
-    ["$(xcom)/ufograph/man_2.spk"]    = { Crc32 = X("0x890C3076") },
-    ["$(xcom)/ufograph/man_3.spk"]    = { Crc32 = X("0xA8BB9C04") },
+    ["$(xcom)/ufograph/man_2.spk"]    = { Crc32 = X("0x890C3076"),
+        Fallback = "$(ufo2000)/arts/empty.spk" },
+    ["$(xcom)/ufograph/man_3.spk"]    = { Crc32 = X("0xA8BB9C04"),
+        Fallback = "$(ufo2000)/arts/empty.spk" },
 
-    ["$(xcom)/ufograph/unibord.pck"]  = { Crc32 = X("0x94576591") },
-    ["$(xcom)/ufograph/scanbord.pck"] = { Crc32 = X("0xE3F32D10") },
+    ["$(xcom)/ufograph/unibord.pck"]  = { Crc32 = X("0x94576591"),
+        Fallback = "$(ufo2000)/arts/empty.spk" },
+    ["$(xcom)/ufograph/scanbord.pck"] = { Crc32 = X("0xE3F32D10"),
+        Fallback = "$(ufo2000)/arts/empty.spk" },
 
     ["$(xcom)/units/xcom_0.pck"] = { Crc32 = X("0x8681EF39"), 
         Fallback = "$(xcom)/units/xcom_1.pck" },
@@ -128,8 +140,10 @@ FilesTable = {
     ["$(xcom)/geodata/loftemps.dat"] = { Crc32 = X("0x7B354479") },
     ["$(xcom)/geodata/scang.dat"]    = { Crc32 = X("0x26C1BD1B") },
 
-    ["$(xcom)/ufograph/tac00.scr"]   = { Crc32 = X("0x226E61A0") },
-    ["$(xcom)/ufograph/tac01.scr"]   = { Crc32 = X("0x00000000") },
+    ["$(xcom)/ufograph/tac00.scr"]   = { Crc32 = X("0x226E61A0"),
+        Fallback = "$(ufo2000)/arts/empty.spk" },
+    ["$(xcom)/ufograph/tac01.scr"]   = { Crc32 = X("0x00000000"),
+        Fallback = "$(ufo2000)/arts/empty.spk" },
 }
 
 ------------------------------------------------------------------------------
@@ -187,12 +201,13 @@ local function CheckDataFiles()
         local name = LocateFile(key)
         local errmsg = CheckSingleDataFile(name, info)
 
-        if errmsg and info.Fallback then
+        local _key, _info = key, info
+
+        while errmsg and _info.Fallback do
             errmsg = nil
-            name = LocateFile(info.Fallback)
-            if FilesTable[info.Fallback] then
-                errmsg = CheckSingleDataFile(name, FilesTable[info.Fallback])
-            end
+            _key, _info = _info.Fallback, (FilesTable[_info.Fallback] or {})
+            name = LocateFile(_key)
+            errmsg = CheckSingleDataFile(name, _info)
         end
 
         if errmsg then
@@ -231,10 +246,10 @@ function GetDataFileName(x)
     if fh then
         fh:close()
         if x ~= fname then
-            Message("GetDataFileName: '%s' resolved as '%s' and cached for future use", x, fname)
+--            Message("GetDataFileName: '%s' resolved as '%s' and cached for future use", x, fname)
         end
     else
-        Message("GetDataFileName: '%s' resolved as '%s' but not found on disk", x, fname)
+--        Message("GetDataFileName: '%s' resolved as '%s' but not found on disk", x, fname)
     end
 
     FilesTable[x] = { FileName = fname }

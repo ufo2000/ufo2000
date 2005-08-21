@@ -274,8 +274,8 @@ function AddXcomItem(item)
         Error("AddXcomItem: impossible happened, crc32 collision for items '%s' and '%s'", 
             item.name, ItemsTable[item.index].name)
     end
-    if ItemsTable[item.index] then Warning("Duplicate item with index %d - ignored", item.index) return end
     if ItemsTable[item.name] then Warning("Duplicate item with name '%s' - ignored", item.name) return end
+    if ItemsTable[item.index] then Warning("Duplicate item with index %d - ignored", item.index) return end
 
     if not item.pInv then Warning("Invalid 'pInv' property for item '%s' - ignored", item.name) return end
     if not item.pMap then Warning("Invalid 'pMap' property for item '%s' - ignored", item.name) return end
