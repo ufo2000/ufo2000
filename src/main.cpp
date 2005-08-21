@@ -140,6 +140,8 @@ volatile int MAPSCROLL = 1;
 volatile int REPLAYIT = 0;
 int NOTICEremote = 0;
 int NOTICEdemon = 0;
+volatile int g_fps = 0;
+volatile int g_fps_counter = 0;
 
 void mouser_proc(int flags)
 {
@@ -163,6 +165,8 @@ END_OF_FUNCTION(timer_handler2);
 void timer_1s()
 {
     if (g_time_left > 0) g_time_left--;
+    g_fps = g_fps_counter;
+    g_fps_counter = 0;
     NOTICE++;
 }
 END_OF_FUNCTION(timer_1s);
@@ -313,7 +317,7 @@ void restartgame()
 
     //sel_man = NULL;
     sel_man = platoon_local->captain();
-    if (sel_man != NULL) map->center(sel_man);
+    if (sel_man != NULL) g_map->center(sel_man);
     DONE = 0; TARGET = 0; turn = 0;
 }
 
@@ -945,7 +949,7 @@ int build_crc()
     
     p1->eot_save(buf, buf_size);
     p2->eot_save(buf, buf_size);
-    map->eot_save(buf, buf_size);
+    g_map->eot_save(buf, buf_size);
         
     int crc = crc16(buf);
     g_eot_save[crc] = std::string(buf, buf_size);
@@ -1009,7 +1013,7 @@ void switch_turn()
     CONFIRM_REQUESTED = 0; // ???
 
     turn++;
-    map->step();
+    g_map->step();
 
 //  Still did not test where this code would be better to put
     switch (scenario->check_conditions()) {
@@ -1036,14 +1040,14 @@ void switch_turn()
 void update_visibility()
 {
     int32 visible_enemies = platoon_local->get_visible_enemies();
-    int32 new_visible_enemies = map->update_vision_matrix(platoon_local);
+    int32 new_visible_enemies = g_map->update_vision_matrix(platoon_local);
     
     if( (new_visible_enemies &= (~visible_enemies)) ) {
         if( MODE == WATCH ){
             Soldier* ss = platoon_remote->findnum(0);
             while (ss != NULL) {
                 if( ss->get_vision_mask() & new_visible_enemies ) {
-                    map->center(ss);
+                    g_map->center(ss);
                     break;
                 }
                 ss = ss->next();
@@ -1061,8 +1065,8 @@ void update_visibility()
         }
     }
 
-    map->update_vision_matrix(platoon_remote);
-    map->clear_changed_cells();
+    g_map->update_vision_matrix(platoon_remote);
+    g_map->clear_changed_cells();
 
 }
 
@@ -1097,7 +1101,7 @@ void send_turn()
         icon->show_eot();
         loadgame(F("$(home)/ufo2000.tmp"));
 
-        map->m_minimap_area->set_full_redraw();
+        g_map->m_minimap_area->set_full_redraw();
         g_console->set_full_redraw();
 
         Platoon *pt = platoon_local;
@@ -1105,7 +1109,7 @@ void send_turn()
         platoon_remote = pt;
 
         sel_man = platoon_local->captain();
-        if (sel_man != NULL) map->center(sel_man);
+        if (sel_man != NULL) g_map->center(sel_man);
 
         MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
         alert(" ", _("  NEXT TURN  "), " ", 
@@ -1149,7 +1153,7 @@ void recv_turn(int crc)
 
     if (net->gametype == GAME_TYPE_HOTSEAT) {
         savegame(F("$(home)/ufo2000.tmp"));
-        map->m_minimap_area->set_full_redraw();
+        g_map->m_minimap_area->set_full_redraw();
     }
 
     platoon_local->check_morale();
@@ -1200,12 +1204,12 @@ void build_screen(int & select_y)
 
     int show_cursor = (MODE == MAP3D || MODE == WATCH) && (!icon->inside(mouse_x, mouse_y));
 
-    map->set_sel(mouse_x, mouse_y);
-    map->draw(show_cursor);
+    g_map->set_sel(mouse_x, mouse_y);
+    g_map->draw(show_cursor);
 
     if(sel_man && !sel_man->ismoving() && (MODE == MAP3D || MODE == WATCH)) {
         if(key[KEY_LCONTROL])
-            map->draw_path_from(sel_man);
+            g_map->draw_path_from(sel_man);
         else if(key[KEY_ALT])
             sel_man->draw_bullet_way();
     }
@@ -1241,7 +1245,9 @@ void build_screen(int & select_y)
     draw_stats();
 
     if (MODE == WATCH)
-        textprintf(screen2, font, 0, 0, COLOR_WHITE, _("WATCH") );
+        textprintf(screen2, font, 0, 0, COLOR_WHITE, _("WATCH"));
+    else
+        textprintf(screen2, font, 0, 0, COLOR_WHITE, _("FPS: %d"), g_fps);
 
     if (g_pause)
         textprintf_right(screen2, font, SCREEN2W - 1, 0, COLOR_WHITE, _("PAUSE (press shift+space to resume)") );
@@ -1265,7 +1271,7 @@ void build_screen(int & select_y)
     }
             
     if (MODE == MAP2D) {
-        map->draw2d();
+        g_map->draw2d();
     } else if (MODE == MAN) {
         if (sel_man != NULL) {
             inventory->draw(SCREEN2W / 2 - 160, SCREEN2H / 2 - 100);
@@ -1279,10 +1285,10 @@ void build_screen(int & select_y)
             MODE = MAP3D;
     }
     
-    if (FLAGS & F_SHOWLOFCELL) map->show_lof_cell();
+    if (FLAGS & F_SHOWLOFCELL) g_map->show_lof_cell();
     draw_sprite(screen2, mouser, mouse_x, mouse_y);
     blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
-    map->svga2d();      // Minimap
+    g_map->svga2d();      // Minimap
 }
 
 
@@ -1859,8 +1865,8 @@ void report_game_error(int chk)
  */
 void view_level_up()
 {
-    if (map->sel_lev < map->level - 1) {
-        map->sel_lev++;
+    if (g_map->sel_lev < g_map->level - 1) {
+        g_map->sel_lev++;
         position_mouse(mouse_x, mouse_y - CELL_SCR_Z);
     }
 }
@@ -1870,8 +1876,8 @@ void view_level_up()
  */
 void view_level_down()
 {
-    if (map->sel_lev > 0) {
-        map->sel_lev--;
+    if (g_map->sel_lev > 0) {
+        g_map->sel_lev--;
         position_mouse(mouse_x, mouse_y + CELL_SCR_Z);
     }
 }
@@ -1981,9 +1987,9 @@ void gameloop()
 
         while (MOVEIT > 0 && !g_pause ) {
             if (FLAGS & F_CLEARSEEN)
-                map->clearseen();
+                g_map->clearseen();
 
-            map->smoker();
+            g_map->smoker();
             platoon_remote->move(0);
             platoon_local->move(1);      //!!sel_man may die
            
@@ -1997,15 +2003,17 @@ void gameloop()
         }
 
         if (CHANGE) {
-            if (!g_fast_forward)
+            if (!g_fast_forward) {
                 build_screen(select_y);
+                g_fps_counter++;
+            }
 //          g_console->printf(COLOR_SYS_INFO, "*"); // temp - for debugging
             CHANGE = 0;
         }
 
         if (MAPSCROLL) {
             if ((MODE == MAP3D) || (MODE == WATCH)) {
-                if (map->scroll(mouse_x, mouse_y)) CHANGE = 1;
+                if (g_map->scroll(mouse_x, mouse_y)) CHANGE = 1;
             }
             MAPSCROLL = 0;
         }
@@ -2042,7 +2050,7 @@ void gameloop()
                     }
                     break;
                 case MAP2D:
-                    if (map->center2d(mouse_x, mouse_y))
+                    if (g_map->center2d(mouse_x, mouse_y))
                         MODE = MAP3D;
                     break;
                 case MAP3D:
@@ -2067,15 +2075,15 @@ void gameloop()
                     } 
                     
                     if (sel_man != NULL) {
-                        Soldier *ssman = map->sel_man();
+                        Soldier *ssman = g_map->sel_man();
                         if (ssman == NULL) {
                             if (!sel_man->ismoving() && sel_man->standup()) {
-                                sel_man->wayto(map->sel_lev, map->sel_col, map->sel_row);
+                                sel_man->wayto(g_map->sel_lev, g_map->sel_col, g_map->sel_row);
                             }
                         } else {
                             if (!platoon_local->belong(ssman)) {
                                 if (!sel_man->ismoving()) {
-                                    sel_man->wayto(map->sel_lev, map->sel_col, map->sel_row);
+                                    sel_man->wayto(g_map->sel_lev, g_map->sel_col, g_map->sel_row);
                                 }
                             }
 
@@ -2087,7 +2095,7 @@ void gameloop()
                                 sel_man = ssman;
                         }
                     } else {
-                        Soldier *ss = map->sel_man();
+                        Soldier *ss = g_map->sel_man();
                         if ((ss != NULL) && (platoon_local->belong(ss)))
                             sel_man = ss;
                         //net_send("_sel_man");
@@ -2114,7 +2122,7 @@ void gameloop()
                 case WATCH:
                     break;
                 case MAP2D:
-                    map->center2d(mouse_x, mouse_y);
+                    g_map->center2d(mouse_x, mouse_y);
                     MODE = MAP3D;
                     break;
                 case MAP3D:
@@ -2130,7 +2138,7 @@ void gameloop()
                             if (!platoon_remote->nomoves()) break;
 
                             if (!sel_man->ismoving()) {
-                                sel_man->faceto(map->sel_col, map->sel_row);
+                                sel_man->faceto(g_map->sel_col, g_map->sel_row);
 
                                 //if (sel_man->curway == -1)
                                 //  sel_man->open_door();
@@ -2192,14 +2200,14 @@ void gameloop()
                     if (sel_man == NULL) {
                         sel_man = platoon_local->captain();
                         if (sel_man != NULL)
-                            map->center(sel_man);
+                            g_map->center(sel_man);
                     } else if (!sel_man->ismoving()) {
                         Soldier *s = sel_man;
                         if (inventory->get_sel_item() != NULL)
                             inventory->backput();
                         sel_man = platoon_local->next_not_moved_man(sel_man);
                         if (s != sel_man)
-                            map->center(sel_man);
+                            g_map->center(sel_man);
                         if (sel_man->is_panicking()) {
                             g_console->printf(COLOR_SYS_FAIL, _("%s is panicking and can't access inventory."), sel_man->md.Name);
                             inventory->close();
@@ -2213,24 +2221,24 @@ void gameloop()
                     break;
                 case KEY_LEFT:
                     if (!key[KEY_LSHIFT])
-                        map->move(mapscroll, 0);
+                        g_map->move(mapscroll, 0);
                     else
                         //resize_screen2(-10, 0);
                         if (SCREEN2W == screen->w) {
-                            int wth = map->m_minimap_area->get_minimap_width();
+                            int wth = g_map->m_minimap_area->get_minimap_width();
                             wth += wth >= STAT_PANEL_W ? 0 : STAT_PANEL_W - wth;
                             resize_screen2(-(wth + 10), 0);
                         }
                     break;
                 case KEY_UP:
                     if (!key[KEY_LSHIFT])
-                        map->move(0, mapscroll);
+                        g_map->move(0, mapscroll);
                     else
                         resize_screen2(0, -10);
                     break;
                 case KEY_RIGHT:
                     if (!key[KEY_LSHIFT])
-                        map->move(-mapscroll, 0);
+                        g_map->move(-mapscroll, 0);
                     else
                         //resize_screen2(10, 0);
                         if (SCREEN2W < screen->w)
@@ -2238,7 +2246,7 @@ void gameloop()
                     break;
                 case KEY_DOWN:
                     if (!key[KEY_LSHIFT])
-                        map->move(0, -mapscroll);
+                        g_map->move(0, -mapscroll);
                     else
                         resize_screen2(0, 10);
                     break;
@@ -2466,7 +2474,7 @@ void faststart()
     lua_safe_dostring(L, "SetEquipment('Standard')");
 
     sel_man = platoon_local->captain();
-    if (sel_man != NULL) map->center(sel_man);
+    if (sel_man != NULL) g_map->center(sel_man);
     DONE = 0; TARGET = 0; turn = 0;
 
     clear_to_color(screen, 58);      //!!!!!
@@ -2497,7 +2505,7 @@ game have been played before. I don't know how to fix it in other way.*/
 
     inithotseatgame();
 
-    map->center(sel_man);
+    g_map->center(sel_man);
     DONE = 0;
 
     clear_to_color(screen, COLOR_GREEN10);
