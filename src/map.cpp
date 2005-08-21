@@ -292,7 +292,16 @@ void Map::draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type,
         frame = frames[7];
 
     ASSERT(frame);
-    PCK::showpck(_dest, frame, _x, _y);
+
+    int light_level = m_cell[_lev][_col][_row]->m_light;
+
+    if (light_level < 16 && (FLAGS & F_SHOWNIGHT)) {
+        // TODO: Some kind of cache for darkened sprites
+        set_trans_blender(0, 0, 0, 0);
+        draw_lit_sprite(_dest, frame, _x, _y - 6, 255 * (17 - light_level) / 16);
+    } else {
+        draw_sprite(_dest, frame, _x, _y - 6);
+    }
 }
 
 extern volatile unsigned int ANIMATION;
@@ -320,24 +329,13 @@ void Map::draw(int show_cursor)
     else
         l2 = sel_lev;
         
-    BITMAP *cell_bmp = create_bitmap(32, 48);
-
     for (int lev = l1; lev <= l2; lev++) {
         // Draw floor sprites first (otherwise they can overlap unit animation)
         for (int row = r1; row <= r2; row++) {
             for (int col = c2; col >= c1; col--) {
                 sx = x + CELL_SCR_X * col + CELL_SCR_X * row;
                 sy = y - (col) * CELL_SCR_Y + CELL_SCR_Y * row - 26 - lev * CELL_SCR_Z - 1;
-
-                clear_to_color(cell_bmp, makecol(255, 0, 255));
-                draw_cell_pck(0, 6, lev, col, row, 0, platoon_local->is_seen(lev, col, row), cell_bmp);
-
-                if (m_cell[lev][col][row]->m_light < 16 && FLAGS & F_SHOWNIGHT) {
-                    set_trans_blender(0, 0, 0, 0);
-                    draw_lit_sprite(screen2, cell_bmp, sx, sy - 6, 255 * (17 - m_cell[lev][col][row]->m_light) / 16);
-                } else {
-                    draw_sprite(screen2, cell_bmp, sx, sy - 6);
-                }
+                draw_cell_pck(sx, sy, lev, col, row, 0, platoon_local->is_seen(lev, col, row), screen2);
             }
         }
         // Draw all the remaining sprites
@@ -347,8 +345,6 @@ void Map::draw(int show_cursor)
                 sy = y - (col) * CELL_SCR_Y + CELL_SCR_Y * row - 26 - lev * CELL_SCR_Z - 1;
 
                 if ((sx > -32) && (sx < SCREEN2W) && (sy >= -34) && (sy < SCREEN2H)) {
-                    clear_to_color(cell_bmp, makecol(255, 0, 255));
-
                     if (m_cell[sel_lev][col][row]->MOUSE && show_cursor) {
                         if (lev == sel_lev) {
                             if ((m_cell[lev][col][row]->soldier_here()) && (platoon_local->is_visible(lev, col, row)))
@@ -363,29 +359,22 @@ void Map::draw(int show_cursor)
                     }
 
                     if (platoon_local->is_seen(lev, col, row)) {
-                        draw_cell_pck(0, 6, lev, col, row, 1, 1, cell_bmp);
-                        draw_cell_pck(0, 6, lev, col, row, 2, 1, cell_bmp);
+                        draw_cell_pck(sx, sy, lev, col, row, 1, 1, screen2);
+                        draw_cell_pck(sx, sy, lev, col, row, 2, 1, screen2);
                     } else if ((mcd(lev, col, row, 1)->Door || mcd(lev, col, row, 1)->UFO_Door) &&
                                (row > 0) && platoon_local->is_seen(lev, col, row - 1)) {
-                        draw_cell_pck(0, 6, lev, col, row, 1, 1, cell_bmp);
-                        draw_cell_pck(0, 6, lev, col, row, 2, 0, cell_bmp);
+                        draw_cell_pck(sx, sy, lev, col, row, 1, 1, screen2);
+                        draw_cell_pck(sx, sy, lev, col, row, 2, 0, screen2);
                     } else if ((mcd(lev, col, row, 2)->Door || mcd(lev, col, row, 2)->UFO_Door) &&
                                (col < width * 10 - 1) && platoon_local->is_seen(lev, col + 1, row)) {
-                        draw_cell_pck(0, 6, lev, col, row, 1, 0, cell_bmp);
-                        draw_cell_pck(0, 6, lev, col, row, 2, 1, cell_bmp);
+                        draw_cell_pck(sx, sy, lev, col, row, 1, 0, screen2);
+                        draw_cell_pck(sx, sy, lev, col, row, 2, 1, screen2);
                     } else {
-                        draw_cell_pck(0, 6, lev, col, row, 1, 0, cell_bmp);
-                        draw_cell_pck(0, 6, lev, col, row, 2, 0, cell_bmp);
+                        draw_cell_pck(sx, sy, lev, col, row, 1, 0, screen2);
+                        draw_cell_pck(sx, sy, lev, col, row, 2, 0, screen2);
                     }
 
-                    draw_cell_pck(0, 6, lev, col, row, 3, platoon_local->is_seen(lev, col, row), cell_bmp);
-
-                    if (m_cell[lev][col][row]->m_light < 16 && FLAGS & F_SHOWNIGHT) {
-                        set_trans_blender(0, 0, 0, 0);
-                        draw_lit_sprite(screen2, cell_bmp, sx, sy - 6, 255 * (17 - m_cell[lev][col][row]->m_light) / 16);
-                    } else {
-                        draw_sprite(screen2, cell_bmp, sx, sy - 6);
-                    }
+                    draw_cell_pck(sx, sy, lev, col, row, 3, platoon_local->is_seen(lev, col, row), screen2);
 
                     // draw item
                     if (platoon_local->is_seen(lev, col, row)) {
@@ -454,8 +443,6 @@ void Map::draw(int show_cursor)
             }
         }
     }
-    
-    destroy_bitmap(cell_bmp);
                                    
     //explosions have to be drawn over all other sprites
     std::vector<effect>::iterator exp;  
@@ -1532,7 +1519,7 @@ void Map::update_vision_matrix(Soldier *watcher)
                 vision_matrix[vz * width * 10 * height * 10 + vx * height * 10 + vy] |= vision_mask;
                 pplatoon->set_seen(vz, vx, vy, 1);
                 
-                Item* item = map->place(vz, vx, vy)->top_item();
+                Item* item = place(vz, vx, vy)->top_item();
                 int itemtype = (item != NULL) ? item->itemtype() : -1;
                 pplatoon->set_seen_item_index(vz, vx, vy,itemtype);
     
@@ -1577,7 +1564,7 @@ int32 Map::update_vision_matrix(Platoon* platoon)
         // Recalculate visibile cells for soldiers whose vision has changed.
         while (ss != NULL) {
             if ( (ss->is_active()) && (ss->get_vision_mask() & soldiers_affected) )
-                map->update_vision_matrix(ss);
+                update_vision_matrix(ss);
             ss = ss->next();
         }
     }
@@ -1590,7 +1577,7 @@ int32 Map::update_vision_matrix(Platoon* platoon)
  */
 void Map::update_seen_item(Position p)
 {
-    Item* item = map->place(p.level(), p.column(), p.row())->top_item();
+    Item* item = place(p.level(), p.column(), p.row())->top_item();
     int itemtype = (item != NULL) ? item->itemtype() : -1;
     
     if( platoon_local != NULL)
