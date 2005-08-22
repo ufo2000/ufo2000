@@ -205,8 +205,9 @@ local function CheckDataFiles()
 
         while errmsg and _info.Fallback do
             errmsg = nil
-            _key, _info = _info.Fallback, (FilesTable[_info.Fallback] or {})
+            _key, _info = _info.Fallback, FilesTable[_info.Fallback]
             name = LocateFile(_key)
+            if not _info then break end
             errmsg = CheckSingleDataFile(name, _info)
         end
 

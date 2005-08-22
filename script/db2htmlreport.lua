@@ -56,7 +56,7 @@ local pos = 1
 
 for name, elo_score, victories, defeats, draws, last_login in db:cols([[
     SELECT name, elo_score, victories, defeats, draws, last_login FROM ufo2000_users
-    ORDER BY elo_score DESC LIMIT 25]]) 
+    ORDER BY elo_score DESC]]) 
 do
     if last_login then
         local timediff = 0
@@ -70,6 +70,7 @@ do
             pos = pos + 1
         end
     end
+    if pos > 25 then break end
 end
 
 io.write("</table>")
