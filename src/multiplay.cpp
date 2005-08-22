@@ -141,8 +141,8 @@ int Net::init()
             close();
             return 0;
         }
-        net->send_debug_message("terrain:%s", 
-            terrain_set->get_terrain_name(mapdata.terrain).c_str());
+        net->send_debug_message("terrain:%s", terrain_set->get_terrain_name(mapdata.terrain).c_str());
+        net->send_debug_message("equipment:%s", get_current_equipment_name());
     }
     
     return 1;

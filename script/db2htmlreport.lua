@@ -48,7 +48,7 @@ table {
 --></style><meta http-equiv="content-type" content="text/html; charset=UTF-8">
 </head><body>]])
 
-io.write("<br> <b>UFO2000 top 25 players (only active during last month are listed)</b><br>")
+io.write("<br> <b>UFO2000 top 25 players (only players active during last month are listed)</b><br>")
 io.write("<table border=1>")
 io.write("<tr><td>pos<td>name<td>victories<td>draws<td>defeats<td>ELO score<td>last login")
 
@@ -58,17 +58,17 @@ for name, elo_score, victories, defeats, draws, last_login in db:cols([[
     SELECT name, elo_score, victories, defeats, draws, last_login FROM ufo2000_users
     ORDER BY elo_score DESC LIMIT 25]]) 
 do
-    local timediff = 0
-    local timediff_string = "today"
     if last_login then
+        local timediff = 0
+        local timediff_string = "today"
         timediff = math.floor((os.time() - convert_julian_day(last_login)) / (24 * 60 * 60))
         if timediff > 0 then timediff_string = string.format("%d days ago", timediff) end
-    end
 
-    if timediff <= 30 then
-        elo_score = elo_score or 1500
-        io.write("<tr><td>", pos, "<td>", name, "<td>", victories or 0, "<td>", draws or 0, "<td>", defeats or 0, "<td>", math.floor(elo_score or 0), "<td>", timediff_string, "\n")
-        pos = pos + 1
+        if timediff <= 30 then
+            elo_score = elo_score or 1500
+            io.write("<tr><td>", pos, "<td>", name, "<td>", victories or 0, "<td>", draws or 0, "<td>", defeats or 0, "<td>", math.floor(elo_score or 0), "<td>", timediff_string, "\n")
+            pos = pos + 1
+        end
     end
 end
 
@@ -172,6 +172,18 @@ do
     end
 end
 
+local equipment_games_table = {}
+local equipment_table = {}
+
+for game, equipment in db:cols([[
+    SELECT game, value FROM ufo2000_debug_packets WHERE param="equipment" ORDER BY id DESC]])
+do
+    if not equipment_games_table[game] then 
+        equipment_table[equipment] = (equipment_table[equipment] or 0) + 1
+        equipment_games_table[game] = 1
+    end
+end
+
 -- display terrain types popularity statistics
 io.write("<br>")
 io.write("<b>Terrain types statistics table</b><br>")
@@ -186,6 +198,24 @@ table.sort(terrain_table, function (a, b) return a[2] > b[2] end)
 io.write("<table border=1>")
 io.write("<tr><td>terrain type<td>number of times used<td>percent share\n") 
 for k, v in ipairs(terrain_table) do
+    io.write(string.format("<tr><td>%s<td>%d<td>%.1f%%", v[1], v[2], v[2] / count * 100))
+end
+io.write("</table>")
+
+-- display equipment types popularity statistics
+io.write("<br>")
+io.write("<b>Weapon set types statistics table</b><br>")
+local count = 0
+local tmp = {}
+for k, v in equipment_table do
+    count = count + v 
+    table.insert(tmp, {k, v}) 
+end 
+equipment_table = tmp
+table.sort(equipment_table, function (a, b) return a[2] > b[2] end)
+io.write("<table border=1>")
+io.write("<tr><td>weapon set<td>number of times used<td>percent share\n") 
+for k, v in ipairs(equipment_table) do
     io.write(string.format("<tr><td>%s<td>%d<td>%.1f%%", v[1], v[2], v[2] / count * 100))
 end
 io.write("</table>")
