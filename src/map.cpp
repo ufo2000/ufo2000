@@ -312,7 +312,7 @@ extern volatile unsigned int ANIMATION;
  * @todo optimize performance, some caching is needed in order to 
  *       avoid doing extra blit operations
  */
-void Map::draw(int show_cursor)
+void Map::draw(int show_cursor, int battleview_width, int battleview_height)
 {
     m_animation_cycle = (ANIMATION / 3) % 8;
 
@@ -344,7 +344,7 @@ void Map::draw(int show_cursor)
                 sx = x + CELL_SCR_X * col + CELL_SCR_X * row;
                 sy = y - (col) * CELL_SCR_Y + CELL_SCR_Y * row - 26 - lev * CELL_SCR_Z - 1;
 
-                if ((sx > -32) && (sx < SCREEN2W) && (sy >= -34) && (sy < SCREEN2H)) {
+                if ((sx > -32) && (sx < battleview_width) && (sy >= -34) && (sy < battleview_height)) {
                     if (m_cell[sel_lev][col][row]->MOUSE && show_cursor) {
                         if (lev == sel_lev) {
                             if ((m_cell[lev][col][row]->soldier_here()) && (platoon_local->is_visible(lev, col, row)))
@@ -541,6 +541,10 @@ void Map::smoker()
  */
 void Map::set_sel(int mx, int my)
 {
+    if (FLAGS & F_SCALE2X) {
+        mx /= 2;
+        my /= 2;
+    }
     my += sel_lev * CELL_SCR_Z;      //!!
     sel_col = mx - x - 2 * (my - 3) + 2 * y - 16 + 2 * Cy - Cx ;
     sel_row = (my - 3) - y + 8 - Cy + sel_col / 4;
@@ -564,6 +568,10 @@ void Map::move(int ofs_x, int ofs_y)
 
     int mx = SCREEN2W / 2;
     int my = SCREEN2H / 2;
+    if (FLAGS & F_SCALE2X) {
+        mx /= 2;
+        my /= 2;
+    }
 
     int old_center_col = mx - sx - 2 * (my - 3) + 2 * sy - 16 + 2 * Cy - Cx;
     int old_center_row = (my - 3) - sy + 8 - Cy + old_center_col / 4;
@@ -716,8 +724,13 @@ void Map::unhide()
 void Map::center(int lev, int col, int row)
 {
     sel_lev = lev;
-    x = SCREEN2W / 2 - CELL_SCR_X - CELL_SCR_X * col - CELL_SCR_X * row;          //320  320/2-20
-    y = SCREEN2H / 2 + CELL_SCR_Y * (col + 1) - CELL_SCR_Y * row + CELL_SCR_Z * lev;          //200  200/2-8
+    if (FLAGS & F_SCALE2X) {
+        x = SCREEN2W / 4 - CELL_SCR_X - CELL_SCR_X * col - CELL_SCR_X * row;
+        y = SCREEN2H / 4 + CELL_SCR_Y * (col + 1) - CELL_SCR_Y * row + CELL_SCR_Z * lev;
+    } else {
+        x = SCREEN2W / 2 - CELL_SCR_X - CELL_SCR_X * col - CELL_SCR_X * row;
+        y = SCREEN2H / 2 + CELL_SCR_Y * (col + 1) - CELL_SCR_Y * row + CELL_SCR_Z * lev;
+    }
 }
 
 int Map::stopLOS_level(int dx, int dy, int lev, int col, int row)

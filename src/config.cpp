@@ -189,6 +189,7 @@ void saveini()
     set_config_int(flag,    "F_ENDTURNSND",    FLAGS & F_ENDTURNSND ? 1 : 0);
     set_config_int(flag,    "F_SECONDSIT",     FLAGS & F_SECONDSIT ? 1 : 0);
     set_config_int(flag,    "F_TOOLTIPS",      FLAGS & F_TOOLTIPS ? 1 : 0);
+    set_config_int(flag,    "F_SCALE2X",       FLAGS & F_SCALE2X ? 1 : 0);
 }
 
 int sethotseatplay()

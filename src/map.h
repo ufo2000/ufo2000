@@ -157,7 +157,7 @@ public:
 
     void drawitem(BITMAP *itype, int gx, int gy);
     void draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type, int _seen, BITMAP *_dest);
-    void draw(int show_cursor);
+    void draw(int show_cursor, int battleview_width, int battleview_height);
     void draw2d();
     void svga2d();
     BITMAP *create_bitmap_of_map(int max_lev);

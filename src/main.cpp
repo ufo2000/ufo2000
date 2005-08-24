@@ -57,6 +57,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #endif
 
 #include "sysworkarounds.h"
+extern "C" {
+#include "scale2x/scale2x.h"
+}
 
 //#define DEBUG
 #define MSCROLL 10
@@ -725,6 +728,7 @@ void initmain(int argc, char *argv[])
     if (get_config_int("Flags", "F_REACTINFO", 0)) FLAGS |= F_REACTINFO;      // show debug info on reaction fire
     if (get_config_int("Flags", "F_CONVERT_XCOM_DATA", 0)) FLAGS |= F_CONVERT_XCOM_DATA; // convert x-com resources to a more conventional and readable format for debugging
     if (get_config_int("Flags", "F_SHOWNIGHT", 1)) FLAGS |= F_SHOWNIGHT;      // shade tile using the light level
+    if (get_config_int("Flags", "F_SCALE2X", 0)) FLAGS |= F_SCALE2X;          // scale battlescape image twice
 
     debug_save_state_sender = get_config_int("Debug", "save_state_sender", -1);
     debug_save_state_id = get_config_int("Debug", "save_state_id", -1);
@@ -1194,18 +1198,101 @@ void draw_stats()
     destroy_bitmap(stat_panel);
 }
 
+void scale2x(BITMAP *dst, BITMAP *src, int size_x, int size_y)
+{
+    ASSERT(size_x <= src->w);
+    ASSERT(size_x <= dst->w / 2);
+    ASSERT(size_y <= src->h);
+    ASSERT(size_y <= dst->h / 2);
+
+    switch (bitmap_color_depth(dst)) {
+        case 16: {
+            scale2x_16_def(
+                (scale2x_uint16*)dst->line[0], 
+                (scale2x_uint16*)dst->line[1], 
+                (scale2x_uint16*)src->line[0], 
+                (scale2x_uint16*)src->line[0], 
+                (scale2x_uint16*)src->line[1], 
+                size_x);
+
+            for (int i = 1; i < size_y - 1; i++)
+                scale2x_16_def(
+                    (scale2x_uint16*)dst->line[i * 2], 
+                    (scale2x_uint16*)dst->line[i * 2 + 1], 
+                    (scale2x_uint16*)src->line[i - 1], 
+                    (scale2x_uint16*)src->line[i], 
+                    (scale2x_uint16*)src->line[i + 1], 
+                    size_x);
+
+            scale2x_16_def(
+                (scale2x_uint16*)dst->line[size_y * 2 - 2], 
+                (scale2x_uint16*)dst->line[size_y * 2 - 1], 
+                (scale2x_uint16*)src->line[size_y - 2], 
+                (scale2x_uint16*)src->line[size_y - 1], 
+                (scale2x_uint16*)src->line[size_y - 1], 
+                size_x);
+
+            break;
+        }
+        case 32: {
+            scale2x_32_def(
+                (scale2x_uint32*)dst->line[0], 
+                (scale2x_uint32*)dst->line[1], 
+                (scale2x_uint32*)src->line[0], 
+                (scale2x_uint32*)src->line[0], 
+                (scale2x_uint32*)src->line[1], 
+                size_x);
+            
+            for (int i = 1; i < size_y - 1; i++)
+                scale2x_32_def(
+                    (scale2x_uint32*)dst->line[i * 2], 
+                    (scale2x_uint32*)dst->line[i * 2 + 1], 
+                    (scale2x_uint32*)src->line[i - 1], 
+                    (scale2x_uint32*)src->line[i], 
+                    (scale2x_uint32*)src->line[i + 1], 
+                    size_x);
+
+            scale2x_32_def(
+                (scale2x_uint32*)dst->line[size_y * 2 - 2], 
+                (scale2x_uint32*)dst->line[size_y * 2 - 1], 
+                (scale2x_uint32*)src->line[size_y - 2], 
+                (scale2x_uint32*)src->line[size_y - 1], 
+                (scale2x_uint32*)src->line[size_y - 1], 
+                size_x);
+            
+            break;
+        }
+        default: {
+            stretch_blit(src, dst, 0, 0, size_x, size_y, 0, 0, size_x * 2, size_y * 2);
+            break;
+        }
+    }
+}
+
 /**
  * Redraw battlescape and minimap on the screen
  */
 void build_screen(int & select_y)
 {
     int icon_nr = -9;
-    clear_to_color(screen2, BACKCOLOR);
 
     int show_cursor = (MODE == MAP3D || MODE == WATCH) && (!icon->inside(mouse_x, mouse_y));
 
+    int battleview_width = (FLAGS & F_SCALE2X) ? SCREEN2W / 2 : SCREEN2W;
+    int battleview_height = (FLAGS & F_SCALE2X) ? SCREEN2H / 2 : SCREEN2H;
+
+    BITMAP *old_screen2 = screen2;
+    BITMAP *battleview_bitmap = screen2;
+    if (FLAGS & F_SCALE2X) {
+        battleview_bitmap = create_bitmap(battleview_width, battleview_height);
+        clear_to_color(battleview_bitmap, BACKCOLOR);
+        screen2 = battleview_bitmap;
+    } else {
+        clear_to_color(screen2, BACKCOLOR);
+    }
+
     g_map->set_sel(mouse_x, mouse_y);
-    g_map->draw(show_cursor);
+    g_map->draw(show_cursor, battleview_width, battleview_height);
 
     if(sel_man && !sel_man->ismoving() && (MODE == MAP3D || MODE == WATCH)) {
         if(key[KEY_LCONTROL])
@@ -1226,6 +1313,12 @@ void build_screen(int & select_y)
     
     platoon_local->draw_enemy_indicators();
     
+    screen2 = old_screen2;
+    if (FLAGS & F_SCALE2X) {
+        scale2x(screen2, battleview_bitmap, battleview_width, battleview_height);
+        destroy_bitmap(battleview_bitmap);
+    }
+
     icon->draw();
     
     if (net->gametype == GAME_TYPE_REPLAY) {
@@ -2214,10 +2307,9 @@ void gameloop()
                         }
                     }
                     break;
-                case KEY_ASTERISK:   // ?? ToDo: Sound+Music on/off
-                    //soundSystem::getInstance()->play(SS_WINDOW_OPEN_2);
-                    FS_MusicPlay(NULL);
-                    g_console->printf(COLOR_SYS_FAIL, _("Music OFF") );
+                case KEY_ASTERISK:
+                    FLAGS ^= F_SCALE2X;
+                    g_map->center(g_map->sel_lev, g_map->sel_col, g_map->sel_row);
                     break;
                 case KEY_LEFT:
                     if (!key[KEY_LSHIFT])
