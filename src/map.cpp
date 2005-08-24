@@ -1124,52 +1124,11 @@ int Map::open_door(int z, int x, int y, int dir)
     return 0;
 }
 
-
-void Map::build_lof_cell(int _z, int _x, int _y, uint16 *lof_cell)
-{
-    memset(lof_cell, 0, 2 * 16 * 12);
-
-    for (int lev = 0; lev < 12; lev++) {
-        for (int part = 0; part < 4; part++) {
-            int ct = m_cell[_z][_x][_y]->type[part];
-            if (!ct)
-                continue;
-
-            int mcd = m_terrain->m_mcd[ct].LOFT[lev];
-
-            for (int i = 0; i < 16; i++) {
-                lof_cell[lev * 16 + i] |= m_loftemp[mcd * 16 + i];
-            }
-        }
-    }
-}
-
-void Map::build_lof_cell_part(int _z, int _x, int _y, int _part, uint16 *lof_cell)
-{
-    memset(lof_cell, 0, 2 * 16 * 12);
-
-    for (int lev = 0; lev < 12; lev++) {
-        int ct = m_cell[_z][_x][_y]->type[_part];
-        if (!ct)
-            continue;
-
-        int mcd = m_terrain->m_mcd[ct].LOFT[lev];
-
-        for (int i = 0; i < 16; i++) {
-            lof_cell[lev * 16 + i] |= m_loftemp[mcd * 16 + i];
-        }
-
-    }
-}
-
 /**
  * Prepare bitmap with a cell shape image (used for precise aiming)
  */
 BITMAP *Map::create_lof_bitmap(int lev, int col, int row)
 {
-    uint16 lof_cell[16 * 12];
-    build_lof_cell(lev, col, row, lof_cell);
-
     BITMAP *bmp = create_bitmap(20 * 4, 20 * 3);
     clear_to_color(bmp, COLOR_BLACK1);
 
@@ -1185,28 +1144,22 @@ BITMAP *Map::create_lof_bitmap(int lev, int col, int row)
 
     for (int j = 0; j < 12; j++) {
         for (int i = 0; i < 16; i++) {
-            uint16 l = lof_cell[j * 16 + i];
             for (int k = 0; k < 16; k++) {
                 if (dir != -1) {
                     if (Skin::m_bof[s][dir][j][i][15 - k])
                         putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, COLOR_GREEN04);
-                    else if (l & 0x8000) {
-                        ASSERT(!pass_lof_cell_fast(lev * 12 + j, col * 16 + (15 - i), row * 16 + k));
+                    else if (!pass_lof_cell(lev * 12 + j, col * 16 + (15 - i), row * 16 + k)) {
                         putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, COLOR_WHITE);
                     } else {
-                        ASSERT(pass_lof_cell_fast(lev * 12 + j, col * 16 + (15 - i), row * 16 + k));
                         putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, COLOR_GRAY10);
                     }
                 } else {
-                    if (l & 0x8000) {
-                        ASSERT(!pass_lof_cell_fast(lev * 12 + j, col * 16 + (15 - i), row * 16 + k));
+                    if (!pass_lof_cell(lev * 12 + j, col * 16 + (15 - i), row * 16 + k)) {
                         putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, COLOR_WHITE);
                     } else {
-                        ASSERT(pass_lof_cell_fast(lev * 12 + j, col * 16 + (15 - i), row * 16 + k));
                         putpixel(bmp, 2 + k + (j / 3) * 20, 2 + i + (2 - j % 3) * 20, COLOR_GRAY10);
                     }
                 }
-                l <<= 1;
             }
         }
 
@@ -1231,32 +1184,6 @@ void Map::show_lof_cell()
  */
 int Map::pass_lof_cell(int _z, int _x, int _y)
 {
-    int lev = _z / 12;
-    int col = _x / 16;
-    int row = _y / 16;
-
-    uint16 lof_cell[16 * 12];
-    build_lof_cell(lev, col, row, lof_cell);
-
-    lev = _z % 12;
-    col = _x % 16;
-    row = _y % 16;
-
-    int v = lof_cell[lev * 16 + (15 - col)] << row;
-    if (v & 0x8000) {
-        ASSERT(pass_lof_cell_fast(_z, _x, _y) == 0);
-        return 0;
-    }
-
-    ASSERT(pass_lof_cell_fast(_z, _x, _y) == 1);
-    return 1;
-}
-
-/**
- * A faster version of Map::pass_lof_cell
- */ 
-int Map::pass_lof_cell_fast(int _z, int _x, int _y)
-{
     Cell *cell = m_cell[_z / 12][_x / 16][_y / 16];
 
     int z = _z % 12;
@@ -1274,19 +1201,14 @@ int Map::pass_lof_cell_fast(int _z, int _x, int _y)
 
 int Map::pass_lof_cell_part(int _z, int _x, int _y, int _part)
 {
-    int lev = _z / 12;
-    int col = _x / 16;
-    int row = _y / 16;
+    Cell *cell = m_cell[_z / 12][_x / 16][_y / 16];
 
-    uint16 lof_cell[16 * 12];
-    build_lof_cell_part(lev, col, row, _part, lof_cell);
+    int z = _z % 12;
+    int x = _x % 16;
+    int y = _y % 16;
 
-    lev = _z % 12;
-    col = _x % 16;
-    row = _y % 16;
-
-    int v = lof_cell[lev * 16 + (15 - col)] << row;
-    if (v & 0x8000)
+    int ct = cell->type[_part];
+    if (ct != 0 && m_terrain->is_solid_voxel(ct, z, x, y))
         return 0;
 
     return 1;
