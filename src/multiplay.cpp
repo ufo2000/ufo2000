@@ -1158,7 +1158,12 @@ int Net::recv_map_data()
     ASSERT((int)map_data.size() == mapdata.x_size * mapdata.y_size);
     memcpy(&mapdata.mapdata, map_data.data(), map_data.size());
     mapdata.terrain = terrain_set->get_terrain_id(map_name);
-    ASSERT(mapdata.terrain >= 0);
+    if (mapdata.terrain < 0) {
+        // TODO: In getreplay mode we need to just return to the server chat
+        display_error_message(
+            "Received request to set '" + map_name + "' terrain from the remote player\n"
+            "Don't have it installed");
+    }
 
     mapdata.load_game = 77;
     scenario->new_coords();
@@ -1326,7 +1331,11 @@ int Net::recv_equipment_choice()
     if (!set_current_equipment_name(data.c_str()) && data != "") {
         // We are in a trouble, remote client thinks
         // that we can use this weaponset but we don't
-        ASSERT(false);
+        //
+        // TODO: In getreplay mode we need to just return to the server chat
+        display_error_message(
+            "Received request to set '" + data + "' weapon set from the remote player\n"
+            "Don't have it installed");
     }
 
     local.SEND = local.START = remote.SEND = remote.START = 0;
