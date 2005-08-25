@@ -1050,7 +1050,7 @@ void update_visibility()
         if( MODE == WATCH ){
             Soldier* ss = platoon_remote->findnum(0);
             while (ss != NULL) {
-                if( ss->get_vision_mask() & new_visible_enemies ) {
+                if( (ss->get_vision_mask() & new_visible_enemies) && (FLAGS & F_CENTER_ON_ENEMY) ) {
                     g_map->center(ss);
                     break;
                 }
