@@ -763,6 +763,66 @@ AddXcomItem {
 	reloadTime = 15,
 }
 
+AddXcomItem {
+	cost = 80,
+	name = "VIBROBLADE",
+	pInv = pck_image_ex(true, 32, 48, "$(tftd)/units/bigobs.pck", 60),
+	pMap = pck_image_ex(true, 32, 48, "$(tftd)/units/floorob.pck", 75),
+	health = 999,
+	dDeviation = 100,
+	importance = 10,
+	width = 2,
+	height = 3,
+	pHeld = pck_image_set_ex(true, 32, 40, "$(tftd)/units/handob.pck", 168, 8),
+	damageType = 0,
+	damage = 80,
+	weight = 10,
+	isWeapon = 1,
+	useTime = 25,
+	isHandToHand = 1,
+	twoHanded = 1, 
+}
+
+AddXcomItem {
+	cost = 110,
+	name = "THERMIC LANCE",
+	pInv = pck_image_ex(true, 32, 48, "$(tftd)/units/bigobs.pck", 59),
+	pMap = pck_image_ex(true, 32, 48, "$(tftd)/units/floorob.pck", 74),
+	health = 999,
+	dDeviation = 100,
+	importance = 12,
+	width = 2,
+	height = 3,
+	pHeld = pck_image_set_ex(true, 32, 40, "$(tftd)/units/handob.pck", 176, 8),
+	damageType = 4,
+	damage = 110,
+	weight = 10,
+	isWeapon = 1,
+	useTime = 25,
+	isHandToHand = 1,
+	twoHanded = 1, 
+}
+
+AddXcomItem {
+	cost = 150,
+	name = "HEAVY THERMIC LANCE",
+	pInv = pck_image_ex(true, 32, 48, "$(tftd)/units/bigobs.pck", 58),
+	pMap = pck_image_ex(true, 32, 48, "$(tftd)/units/floorob.pck", 73),
+	health = 999,
+	dDeviation = 100,
+	importance = 14,
+	width = 2,
+	height = 3,
+	pHeld = pck_image_set_ex(true, 32, 40, "$(tftd)/units/handob.pck", 184, 8),
+	damageType = 4,
+	damage = 150,
+	weight = 15,
+	isWeapon = 1,
+	useTime = 25,
+	isHandToHand = 1,
+	twoHanded = 1, 
+}
+
 AddEquipment {
 	Name = "Original TFTD Weapon Set",
 	Layout = {
@@ -802,5 +862,8 @@ AddEquipment {
 		{03, 00, "GAUSS PISTOL CLIP"},
 		{04, 00, "GAUSS RIFLE CLIP"},
 		{05, 00, "GAUSS CANNON CLIP"},
+		{18, 02, "VIBROBLADE"},
+		{16, 06, "THERMIC LANCE"},
+		{18, 06, "HEAVY THERMIC LANCE"},
 	}
 }

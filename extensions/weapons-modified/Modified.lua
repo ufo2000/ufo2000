@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
--- Modified X-Com Weapons Set (by Hobbes)
+-- Modified X-Com Weapons Set (by Hobbes, Twillight Owl, DiversanT and others)
 ------------------------------------------------------------------------------
 
 AddXcomItem {
@@ -526,30 +526,6 @@ AddXcomItem {
 }
 
 AddXcomItem {
-	cost = 400,
-	name = "Laser Minigun",
-	pInv = png_image("$(ufo2000)/arts/laserminigun.png", 3),
-	pMap = png_image("$(ufo2000)/arts/laserminigun_f.png", 3),
-	health = 70,
-	damage = 65,
-	dDeviation = 50,
-	importance = 7,
-	width = 2,
-	height = 3,
-	pHeld = png_image_set("$(ufo2000)/arts/laserminigun_h/32x40", 1, 8),
-	damageType = 3,
-	accuracy = {36, 50, 0},
-	time = {10, 50, 0},
-	autoShots = 3,
-	rounds = 10,
-	weight = 30,
-	isGun = 1,
-	minimapMark = 1,
-	twoHanded = 1,
-	sound = "laser-heavy-shot",
-}
-
-AddXcomItem {
 	cost = 75,
 	name = "Smoke Rocket",
 	pInv = png_image("$(ufo2000)/arts/smokem.png", 3),
@@ -874,7 +850,6 @@ AddEquipment {
 		{14, 01, "Alien Grenade"},
 		{14, 00, "Grenade"},
 		{12, 06, "Incendiary Rocket"},
-		{15, 06, "Laser Minigun"},
 		{15, 00, "Proximity Grenade"},
 		{15, 02, "Knife"},
 		{16, 02, "Stun Rod"},
@@ -919,7 +894,6 @@ AddEquipment {
 --		{14, 01, "Alien Grenade"},
 --		{14, 00, "Grenade"},
 --		{12, 06, "Incendiary Rocket"},
-		{15, 06, "Laser Minigun"},
 --		{15, 00, "Proximity Grenade"},
 		{15, 02, "Knife"},
 		{16, 02, "Stun Rod"},
@@ -964,7 +938,6 @@ AddEquipment {
 --		{14, 01, "Alien Grenade"},
 		{14, 00, "Grenade"},
 		{12, 06, "Incendiary Rocket"},
-		{15, 06, "Laser Minigun"},
 		{15, 00, "Proximity Grenade"},
 		{15, 02, "Knife"},
 		{16, 02, "Stun Rod"},
@@ -1009,7 +982,6 @@ AddEquipment {
 --		{14, 01, "Alien Grenade"},
 		{14, 00, "Grenade"},
 		{12, 06, "Incendiary Rocket"},
---		{15, 06, "Laser Minigun"},
 		{15, 00, "Proximity Grenade"},
 		{15, 02, "Knife"},
 		{16, 02, "Stun Rod"},
@@ -1054,7 +1026,6 @@ AddEquipment {
 --		{14, 01, "Alien Grenade"},
 --		{14, 00, "Grenade"},
 --		{12, 06, "Incendiary Rocket"},
-		{15, 06, "Laser Minigun"},
 --		{15, 00, "Proximity Grenade"},
 		{15, 02, "Knife"},
 		{16, 02, "Stun Rod"},
