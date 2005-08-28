@@ -499,6 +499,7 @@ function pck_image_set(filename, start, count)
     local tbl = {}
     for i = 1, count do
         tbl[i] = pck_image(filename, start + i - 1)
+        if not tbl[i] then return nil end
     end
     return tbl
 end
@@ -508,6 +509,7 @@ function pck_image_set_ex(a, b, c, filename, start, count)
     local tbl = {}
     for i = 1, count do
         tbl[i] = pck_image_ex(a, b, c, filename, start + i - 1)
+        if not tbl[i] then return nil end
     end
     return tbl
 end
