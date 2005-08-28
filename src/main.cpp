@@ -1198,6 +1198,9 @@ void draw_stats()
     destroy_bitmap(stat_panel);
 }
 
+/**
+ * Scale allegro bitmap twice using scale2x library
+ */
 void scale2x(BITMAP *dst, BITMAP *src, int size_x, int size_y)
 {
     ASSERT(size_x <= src->w);
@@ -1205,9 +1208,25 @@ void scale2x(BITMAP *dst, BITMAP *src, int size_x, int size_y)
     ASSERT(size_y <= src->h);
     ASSERT(size_y <= dst->h / 2);
 
+    void (*scale2x_16)(
+        scale2x_uint16* dst0, scale2x_uint16* dst1, 
+        const scale2x_uint16* src0, const scale2x_uint16* src1, const scale2x_uint16* src2, 
+        unsigned count) = scale2x_16_def;
+
+    void (*scale2x_32)(scale2x_uint32* dst0, scale2x_uint32* dst1, 
+        const scale2x_uint32* src0, const scale2x_uint32* src1, const scale2x_uint32* src2, 
+        unsigned count) = scale2x_32_def;
+
+#if defined(__GNUC__) && defined(__i386__)
+    if (cpu_capabilities & CPU_MMX) {
+        scale2x_16 = scale2x_16_mmx;
+        scale2x_32 = scale2x_32_mmx;
+    }
+#endif
+
     switch (bitmap_color_depth(dst)) {
         case 16: {
-            scale2x_16_def(
+            scale2x_16(
                 (scale2x_uint16*)dst->line[0], 
                 (scale2x_uint16*)dst->line[1], 
                 (scale2x_uint16*)src->line[0], 
@@ -1216,7 +1235,7 @@ void scale2x(BITMAP *dst, BITMAP *src, int size_x, int size_y)
                 size_x);
 
             for (int i = 1; i < size_y - 1; i++)
-                scale2x_16_def(
+                scale2x_16(
                     (scale2x_uint16*)dst->line[i * 2], 
                     (scale2x_uint16*)dst->line[i * 2 + 1], 
                     (scale2x_uint16*)src->line[i - 1], 
@@ -1224,7 +1243,7 @@ void scale2x(BITMAP *dst, BITMAP *src, int size_x, int size_y)
                     (scale2x_uint16*)src->line[i + 1], 
                     size_x);
 
-            scale2x_16_def(
+            scale2x_16(
                 (scale2x_uint16*)dst->line[size_y * 2 - 2], 
                 (scale2x_uint16*)dst->line[size_y * 2 - 1], 
                 (scale2x_uint16*)src->line[size_y - 2], 
@@ -1235,7 +1254,7 @@ void scale2x(BITMAP *dst, BITMAP *src, int size_x, int size_y)
             break;
         }
         case 32: {
-            scale2x_32_def(
+            scale2x_32(
                 (scale2x_uint32*)dst->line[0], 
                 (scale2x_uint32*)dst->line[1], 
                 (scale2x_uint32*)src->line[0], 
@@ -1244,7 +1263,7 @@ void scale2x(BITMAP *dst, BITMAP *src, int size_x, int size_y)
                 size_x);
             
             for (int i = 1; i < size_y - 1; i++)
-                scale2x_32_def(
+                scale2x_32(
                     (scale2x_uint32*)dst->line[i * 2], 
                     (scale2x_uint32*)dst->line[i * 2 + 1], 
                     (scale2x_uint32*)src->line[i - 1], 
@@ -1252,7 +1271,7 @@ void scale2x(BITMAP *dst, BITMAP *src, int size_x, int size_y)
                     (scale2x_uint32*)src->line[i + 1], 
                     size_x);
 
-            scale2x_32_def(
+            scale2x_32(
                 (scale2x_uint32*)dst->line[size_y * 2 - 2], 
                 (scale2x_uint32*)dst->line[size_y * 2 - 1], 
                 (scale2x_uint32*)src->line[size_y - 2], 
@@ -1267,6 +1286,10 @@ void scale2x(BITMAP *dst, BITMAP *src, int size_x, int size_y)
             break;
         }
     }
+
+#if defined(__GNUC__) && defined(__i386__)
+    if (cpu_capabilities & CPU_MMX) scale2x_mmx_emms();
+#endif
 }
 
 /**
