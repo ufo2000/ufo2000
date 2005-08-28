@@ -1,0 +1,281 @@
+<style type="text/css" media=screen><!--
+.comment {color: #00B0D0; font-style: oblique; font-family: monospace}
+.string {font-family: monospace; color: #60bf30 }
+.number {font-family: monospace; color: #609f20 }
+.function { color: #0000b0; }
+pre {background: #F0F0FF; }
+table.source {
+  empty-cells: show;
+  white-space: nowrap;
+}
+table.props {
+  border-collapse: collapse;
+  empty-cells: show;
+  font-family: arial;
+  font-size: small;
+  white-space: nowrap;
+  background: #F0F0F0;
+}
+--></style>
+
+<h1>UFO2000 New weapons modding FAQ/tutorial</h1>
+
+<h3>1. Drawing weapons/items</h3>
+
+You'll need a paint program that can make pictures transparent.
+
+<h3>2. Lua files</h3>
+
+Additional weapon sets are installed as game extensions. That means they all go
+to the 'extensions' directory and are placed inside their own directories there.
+
+You have to edit standard-items.lua and standard-equipment.lua, you can find these files in init-scripts folder.
+
+standard-equipment.lua:
+
+this file tells ufo2000 where the weapons are placed in soldier editor. The numbers are x,y
+so 00, 00 is the upper left corner. 
+
+standard-items.lua:
+
+This is where you modify the weapon stats.
+
+<@LUA>
+function PROPTABLE(tbl, text)
+    local x = "<table class='props' border=1>"
+    for l in string.gfind(text, "[^\r\n]+") do
+        local _, _, prop, value, comment = string.find(l, "^(.-)%s*=%s*(.-)%s*%-%-%s*(.-)$")
+        x = x .. "<tr><td>" .. prop .. "<td>" .. value .. "<td>" .. comment
+    end
+    return x .. "</table>"
+end
+</@LUA>
+
+Item properties:
+<@PROPTABLE>
+cost = 0, -- how much the weapon costs
+name = "WEAPONS NAME", -- The name of the weapon
+pInv = png_image("$(ufo2000)/folder/new weapon.png", 3), -- tells ufo2000 where to find the inventory image
+pMap = pck_image("$(xcom)/units/floorob.pck", 3), -- tells where to find the floor object image
+health = 0, -- the weapons health (?)
+importance = 0, -- unknown
+width = 0, -- the weapons width
+height = 0, -- the weapons height
+ammo = {"weapons ammo", "other ammo"}, -- what kind of ammo this weapon uses
+pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8), -- tells where to find the hand object image
+accuracy = {0, 0, 0}, -- weapons accuracy, first number auto shot's accuracy, second number snap shot's accuracy, third number aimed shot's accuracy
+time = {0, 0, 0}, -- TU cost 
+rounds = 0, -- amount of the ammo
+weight = 0, -- the weapons weight
+isShootable = 0, -- the weapon is shootable if 1
+isGun = 0, -- the weapon is gun if 1
+sound = "cv-pistol-shot", -- weapons sound, look at soundmap.xml for different sounds
+damage = 0, -- how much damage the weapon makes
+dDeviation = 0, -- explosion damage randomizer (usually 50)
+damageType = 0, -- damage type 0=AP, 1=I , 2=HE, 3=LS(laser), 4=PL(plasma) , 5=ST(stun)
+isAmmo = 0, -- the item is ammo if 1
+reloadTime = 0, -- time to reload the weapon
+twoHanded = 0, -- the weapon/item is two handed if 1
+isHandToHand = 0, -- the weapon is only for close combat if 1
+isHighExplosive = 0, -- the timer doesn't stop when holding grenade in hand
+isGrenade = 0, -- the weapon is grenade if 1
+isProximityGrenade = 0, -- the grenade is prox.grenade if 1
+wayPoints = 0, -- you can put waypoints if 1 (doesn't work)
+autoShots = 0, -- how many auto shots
+</@>
+
+OK, and how to make my first weapon:
+
+THE WEAPON:
+<@LUASOURCE>
+AddXcomItem {
+    index = 0,
+    cost = 50,
+    name = "MP-5",
+    pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
+    pMap = pck_image("$(xcom)/units/floorob.pck", 3),
+    health = 100,
+    importance = 5,
+    width = 1,
+    height = 2,
+    ammo = {"CLIP"},
+    pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
+    accuracy = {67, 0, 0},
+    time = {10, 0, 0},
+    autoShots = 6
+    rounds = 24,
+    weight = 8,
+    isShootable = 1,
+    isWeapon = 1,
+    isGun = 1,
+    sound = "cv-pistol-hit",
+}
+</@>
+
+THE CLIP:
+<@LUASOURCE>
+AddXcomItem {
+    index = 1,
+    cost = 50,
+    name = "CLIP",
+    pInv = pck_image("$(xcom)/units/bigobs.pck", 4),
+    pMap = pck_image("$(xcom)/units/floorob.pck", 4),
+    health = 100,
+    damage = 60,
+    dDeviation = 50,
+    importance = 3,
+    width = 1,
+    height = 1,
+    pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
+    damageType = 0,
+    rounds = 24,
+    disappear = 0,
+    weight = 1,
+    isAmmo = 1,
+    reloadTime = 10,
+    sound = "cv-bullet-hit",
+}
+</@>
+
+And how to make a weapon with infinite ammo:
+Remember, don't add "clip" line
+
+<@LUASOURCE>
+AddXcomItem {
+    index = 126,
+    cost = 600,
+    name = "LASER SNIPER",
+    pInv = png_image("$(ufo2000)/arts/weapons/lsniper.png", 3),
+    pMap = pck_image("$(xcom)/units/floorob.pck", 1),
+    health = 100,
+    damage = 80,
+    dDeviation = 90,
+    importance = 12,
+    width = 1,
+    height = 3,
+    pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
+    autoShots = 2,
+    damageType = 3, -- Important: you have to tell what's the damage type!
+    accuracy = {20, 45, 130},
+    time = {10, 55, 90},
+    weight = 40,
+    isShootable = 1,
+    isWeapon = 1,
+    isGun = 1,
+    twoHanded = 1,
+    sound = "plasma-rifle-shot",
+}
+</@>
+
+Then how to make a grenade:
+
+add this line: 
+
+isGrenade = 1,
+
+And how to make prox. grenade?
+
+add these lines:
+
+isGrenade = 1,
+isProximityGrenade = 1,
+
+---------------------------------------------------
+-Nite's tutorial
+---------------------------------------------------
+
+--------------------Making New Weapons/items FAQ---------------------------
+
+
+first i will define what each variable is (index = **):
+
+
+index = # (this sets a number for the weapon, if two weapons have the
+same index, then something may go wrong. All i know is that you should
+have a different index # than any item/weapon. Normally, you will see
+it in order. This is a must have for defining your weapon/item)
+
+cost = #, (the k points) Again, this is a must have.
+
+name = "***", (replace the asterisks with a name for the weapon/item)
+
+pInv = pck_image("$(xcom)/units/bigobs.pck", #), (pck_image is default,
+you may change this to png_image to use bmp/png files. What this is,
+is the image of the weapon when you put it in your inventory.) Must
+have
+
+You will want to use png/bmp files for the pInv since you don't want to
+have another laser rifle image or any other image that doesn't
+represent the weapon/item. If you are making a new weapon/item make the
+pInv look like this:
+
+pInv = png_image("$(ufo2000)/arts/**.png", #),
+
+pMap = pck_image("$(xcom)/units/floorob.pck", #), (Must have) 
+
+This (when you throw a weapon/item on the ground in battle)
+defines the image when its on the ground...im not sure how to make
+new images for the ground, so just copy the # for what you want it
+to look like from another weapon/item from the list. Ex: i have a
+heavy phaser made, it looks like a pistol so i copied the plasma pistol
+ground image since it looks like a pistol. I do want a new look though.
+
+width = #, (this will be x) (starts at 0, then keeps going up, never -)
+(horizontal) Must have.
+
+height = #, (this will be y) (same thing, but vertical) When you head
+down on the grid, y will add 1. Must have.
+
+for example: my heavy phaser has a width of 1 and height of 3.
+It takes up this many grid squares: x(1), y(3).
+
+
+<h3>3. Some more complicated examples</h3>
+
+Let's suppose we want to make a free replacement graphics for the standard
+weapons from X-COM. When we don't have any files from X-COM, <b>pck_image</b>
+function does not work anymore and returns <b>nil</b>. Fortunately using
+lua <b>or</b> operator we can chain image loading functions so that they 
+are called sequentially until one of them returns non <b>nil</b> value:
+<@LUASOURCE>
+------------------------------------------------------------------------------
+-- Example weapon set which demonstrates use of alternative sprites.
+-- 'Experimental pistol' defined in this set used x-com pistol graphics
+-- if data files from x-com are available and zap pistol from Galactic
+-- weapons if no x-com data files are found
+------------------------------------------------------------------------------
+
+AddXcomItem {
+    cost = 0,
+    name = "Experimantal pistol",
+
+    pInv = pck_image("$(xcom)/units/bigobs.pck", 3) or 
+           png_image("$(ufo2000)/extensions/weapons-galactic/galactic/pInv/zp.png"),
+
+    pMap = pck_image("$(xcom)/units/floorob.pck", 3) or 
+           png_image("$(ufo2000)/extensions/weapons-galactic/galactic/pMap/zp.png"),
+
+    health = 999,
+    importance = 5,
+    width = 1,
+    height = 2,
+
+    pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8) or 
+            png_image_set("$(ufo2000)/extensions/weapons-galactic/galactic/pHeld/zp/32x40", 1, 8),
+
+    accuracy = {0, 60, 78},
+    time = {0, 18, 30},
+    weight = 5,
+    isGun = 1,
+    damageType = 3,
+    minimapMark = 1,
+    sound = "cv-pistol-shot",
+}
+
+AddEquipment {
+    Name = "Experimental",
+    Layout = {
+        {00, 00, "Experimantal pistol"},
+    }
+}
+</@>

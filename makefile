@@ -304,6 +304,9 @@ source-bz2:
 	tar -cjf $(DISTNAME)-src.tar.bz2 $(DISTNAME)
 	svn delete --force $(DISTNAME)
 
+html-docs: tools
+	./lua script/lumikki.lua docs/newweapons.lhtml > docs/newweapons.html
+
 source-docs:
 	sed 's,%REVISION%,$(UFO_VERSION).$(UFO_SVNVERSION),g' < doxygen/doxy-en.conf > doxy-en.conf
 	doxygen doxy-en.conf
