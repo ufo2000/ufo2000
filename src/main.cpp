@@ -1327,21 +1327,22 @@ void build_screen(int & select_y)
     p1->bulldraw();
     p2->bulldraw();
 
-    platoon_remote->draw_blue_selectors();
-
     if (sel_man != NULL) {
         // Todo: adjust select_y for elevation of current tile (e.g. stairs)
         sel_man->draw_selector(select_y);
     }
     
-    platoon_local->draw_enemy_indicators();
-    
+    // Draw blue markers over the heads of seen enemies
+    platoon_local->draw_enemy_indicators(false, true);
+
     screen2 = old_screen2;
     if (FLAGS & F_SCALE2X) {
         scale2x(screen2, battleview_bitmap, battleview_width, battleview_height);
         destroy_bitmap(battleview_bitmap);
     }
 
+    // Draw indicators in the bottom right corner for fast switching to visible enemies
+    platoon_local->draw_enemy_indicators(true, false);
     icon->draw();
     
     if (net->gametype == GAME_TYPE_REPLAY) {

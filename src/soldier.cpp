@@ -742,27 +742,6 @@ void Soldier::draw_selector(int select_y)
     draw_sprite(screen2, selector[num], sx, sy - select_y + calc_z());
 }
 
-/**
- * Draw blue triangle above seen enemy soldier
- */
-// See also: Platoon::draw_blue_selectors()
-void Soldier::draw_blue_selector()
-{
-    if ((FLAGS & F_SELECTENEMY) && platoon_local->is_visible(z, x, y)) {
-        int sx = map->x + CELL_SCR_X * x + CELL_SCR_X * y + 12;
-        int sy = map->y - (x + 1) * CELL_SCR_Y + CELL_SCR_Y * y - 29 - CELL_SCR_Z * z;
-
-        //  Draw blue triangle with its point at sx, sy and height 5
-        sx += 3; sy += 10; int j;
-        for (j = 0; j < 5; j++) {
-            line(screen2,     sx - j, sy - j, sx + j, sy - j, xcom1_color(256 - 48 + 3));  // =211 : COLOR_SKYBLUE03
-            putpixel(screen2, sx - j, sy - j, COLOR_BLACK1);
-            putpixel(screen2, sx + j, sy - j, COLOR_BLACK1);
-        }
-        line(screen2, sx - j, sy - j, sx + j, sy - j, COLOR_BLACK1);
-    }
-}
-
 void Soldier::turnto(int destdir)
 {
     int a = destdir - dir;

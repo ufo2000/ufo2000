@@ -35,85 +35,84 @@ class Statistics;
  */
 class Platoon: public persist::BaseObject
 {
-	DECLARE_PERSISTENCE(Platoon);
+    DECLARE_PERSISTENCE(Platoon);
 private:
-	//! Pointer to current selected soldier in the squad
-	Soldier *man;
+    //! Pointer to current selected soldier in the squad
+    Soldier *man;
     //! Index of currently selected soldier --BSM
     int selected_soldier;
-	//! Squad identifier
-	long     ID;
-	//! Number of soldiers in the squad
-	long     size;
+    //! Squad identifier
+    long     ID;
+    //! Number of soldiers in the squad
+    long     size;
 
     //! Each bit in the vision_matrix is set to 1 if the soldier
     //! with the corresponding vision_mask can see that map cell.
     int32 m_vision_matrix[4 * 10 * 6 * 10 * 6];
         
     //! Map cell that has been explored
-	int m_seen[4][10 * 6][10 * 6];
+    int m_seen[4][10 * 6][10 * 6];
         
     //! Seen items remain visible until you look at them again
-	int m_seen_item_index[4][10 * 6][10 * 6];
+    int m_seen_item_index[4][10 * 6][10 * 6];
         
     //! All visible enemy soldiers
     int32 m_visible_enemies;
         
-	Statistics *m_stats;
+    Statistics *m_stats;
 
 public:
-	Platoon() { memset(m_seen, 0, sizeof(m_seen)); }
-	Platoon(int PID, int num);
-	Platoon(int PID, PLAYERDATA *pd, DeployType dep_type);
-	virtual ~Platoon();
-	void destroy();
+    Platoon() { memset(m_seen, 0, sizeof(m_seen)); }
+    Platoon(int PID, int num);
+    Platoon(int PID, PLAYERDATA *pd, DeployType dep_type);
+    virtual ~Platoon();
+    void destroy();
 
-	Statistics *get_stats() {return m_stats;}
+    Statistics *get_stats() {return m_stats;}
 
-	void move(int ISLOCAL);
+    void move(int ISLOCAL);
         void restore_moved();
-	void restore();
-	void bullmove();
-	void bulldraw();
-	void draw_blue_selectors();
+    void restore();
+    void bullmove();
+    void bulldraw();
 
-	int belong(Soldier *some);
-	int belong(Bullet *some);
-	Soldier *findman(int SID);
-	Soldier *findman(char *sname);
-	Soldier *findnum(int N);
-	Soldier *next_not_moved_man(Soldier *sel_man);
-	Place *find_item(Item *it, int &lev, int &col, int &row);
-	int find_place_coords(Place *pl, int &lev, int &col, int &row);
-	int check_for_hit(int z, int x, int y, Soldier* no_test = NULL);
-	void apply_hit(int sniper, int z, int x, int y, int type, int hitdir);
-	int dist_to_nearest(Soldier *some);
+    int belong(Soldier *some);
+    int belong(Bullet *some);
+    Soldier *findman(int SID);
+    Soldier *findman(char *sname);
+    Soldier *findnum(int N);
+    Soldier *next_not_moved_man(Soldier *sel_man);
+    Place *find_item(Item *it, int &lev, int &col, int &row);
+    int find_place_coords(Place *pl, int &lev, int &col, int &row);
+    int check_for_hit(int z, int x, int y, Soldier* no_test = NULL);
+    void apply_hit(int sniper, int z, int x, int y, int type, int hitdir);
+    int dist_to_nearest(Soldier *some);
         
-	int nobullfly();
-	int nomoves();
+    int nobullfly();
+    int nomoves();
 
-	int realsize();
+    int realsize();
 
-	Soldier *captain()
-	{
-		if (man == NULL) return NULL;
-		return man->is_active() ? man : man->next_active_soldier();
-	}
-	int num_of_men() { ASSERT(size == realsize()); return size; }
-	int calc_platoon_cost();
+    Soldier *captain()
+    {
+        if (man == NULL) return NULL;
+        return man->is_active() ? man : man->next_active_soldier();
+    }
+    int num_of_men() { ASSERT(size == realsize()); return size; }
+    int calc_platoon_cost();
 
-	int check_reaction_fire(Soldier *target);
-	
-	void change_morale(int delta, bool send_to_remote);
-	void check_morale();
+    int check_reaction_fire(Soldier *target);
+    
+    void change_morale(int delta, bool send_to_remote);
+    void check_morale();
 
-	void save_FULLDATA(const char *fn);
-	void load_FULLDATA(const char *fn);
+    void save_FULLDATA(const char *fn);
+    void load_FULLDATA(const char *fn);
 
-	void build_Units(Units &local);
-	void send_Units(Units &local);
+    void build_Units(Units &local);
+    void send_Units(Units &local);
 
-	int eot_save(char *buf, int &buf_size);
+    int eot_save(char *buf, int &buf_size);
 
     //! Visibility calculations for the platoon
     void initialize_vision_matrix();
@@ -128,16 +127,16 @@ public:
     int32 get_visible_enemies(){return m_visible_enemies;}
     void set_visible_enemies(int32 visible_enemies){m_visible_enemies = visible_enemies;}
     int32 update_visible_enemies();
-    void draw_enemy_indicators(); 
+    void draw_enemy_indicators(bool draw_indicators, bool draw_markers); 
     int center_enemy_seen();
         
     void soldier_moved(Soldier* const target);
         
-	void sit_on_start();
-	void save_to_string(std::string &str);
+    void sit_on_start();
+    void save_to_string(std::string &str);
 
-	virtual bool Write(persist::Engine &archive) const;
-	virtual bool Read(persist::Engine &archive);
+    virtual bool Write(persist::Engine &archive) const;
+    virtual bool Read(persist::Engine &archive);
 };
 
 #endif
