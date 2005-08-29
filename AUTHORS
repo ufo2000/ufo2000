@@ -130,6 +130,9 @@ Manual writing and translations:
    Serge Semashko
       * Belarusian translation of in-game messages
 
+   Violazr
+      * German translation of in-game messages
+
 Testing the game, bugreports and valuable suggestions:
    Anton (Zerocool), antonio_neo@chat.ru
    Bunie
@@ -191,6 +194,7 @@ Other:
    Lua        (http://www.lua.org/)
    LuaPlus    (http://wwhiz.com/LuaPlus/)
    Ogg Vorbis (http://www.vorbis.org/)
+   Scale2x    (http://scale2x.sourceforge.net/)
 
 ==============================================================================
 

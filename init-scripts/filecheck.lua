@@ -115,10 +115,10 @@ FilesTable = {
     ["$(xcom)/units/xcom_0.tab"] = { Crc32 = X("0x68930DB8"), 
         Fallback = "$(xcom)/units/xcom_1.tab" },
 
-    ["$(xcom)/units/xcom_1.pck"] = { Crc32 = X("0xF03FB73B") },
-    ["$(xcom)/units/xcom_1.tab"] = { Crc32 = X("0xA3839667") },
-    ["$(xcom)/units/xcom_2.pck"] = { Crc32 = X("0xC49CCBE5") },
-    ["$(xcom)/units/xcom_2.tab"] = { Crc32 = X("0x528354F7") },
+--    ["$(xcom)/units/xcom_1.pck"] = { Crc32 = X("0xF03FB73B") },
+--    ["$(xcom)/units/xcom_1.tab"] = { Crc32 = X("0xA3839667") },
+--    ["$(xcom)/units/xcom_2.pck"] = { Crc32 = X("0xC49CCBE5") },
+--    ["$(xcom)/units/xcom_2.tab"] = { Crc32 = X("0x528354F7") },
 
     ["$(xcom)/units/muton.pck"] = { Crc32 = X("0x00000000"), 
         Fallback = "$(xcom)/units/xcom_1.pck" },

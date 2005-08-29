@@ -90,8 +90,13 @@ void Skin::initpck()
     m_pck = new PCK *[SKIN_NUMBER];
     char fname[100];
     for (int n = 0; n < SKIN_NUMBER; n++) {
+        m_pck[n] = NULL;
         sprintf(fname, "$(xcom)/units/%s", skin_fname[n]);
-        m_pck[n] = new PCK(fname, false, 32, 40);
+        int fh = open(F(fname), O_RDONLY | O_BINARY);
+        if (fh != -1) {
+            close(fh);
+            m_pck[n] = new PCK(fname, false, 32, 40);
+        }
     }
 
     if (FLAGS & F_CONVERT_XCOM_DATA) {
@@ -588,7 +593,12 @@ void Skin::draw()
             draw_lua();
             break;
         default:
-            draw_common();
+            if (m_pck[skin_info.SkinType]) {
+                draw_common();
+            } else {
+                // HACK: no original x-com sprite available, just draw what we have
+                draw_lua();
+            }
             break;
     }
 }
