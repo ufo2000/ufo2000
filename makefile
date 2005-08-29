@@ -306,6 +306,7 @@ source-bz2:
 
 html-docs: tools
 	./lua script/lumikki.lua docs/newweapons.lhtml > docs/newweapons.html
+	./lua script/lumikki.lua docs/newmaps.lhtml > docs/newmaps.html
 
 source-docs:
 	sed 's,%REVISION%,$(UFO_VERSION).$(UFO_SVNVERSION),g' < doxygen/doxy-en.conf > doxy-en.conf

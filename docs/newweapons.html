@@ -1,0 +1,277 @@
+<html><head></head><body>
+
+<style type="text/css" media=screen><!--
+.comment {color: #00B0D0; font-style: oblique; font-family: monospace}
+.string {font-family: monospace; color: #60bf30 }
+.number {font-family: monospace; color: #609f20 }
+.function { color: #0000b0; }
+pre {background: #F0F0FF; }
+table.source {
+  empty-cells: show;
+  white-space: nowrap;
+}
+table.props {
+  border-collapse: collapse;
+  empty-cells: show;
+  font-family: arial;
+  font-size: small;
+  white-space: nowrap;
+  background: #F0F0F0;
+}
+--></style>
+
+<h1>UFO2000 New weapons modding FAQ/tutorial</h1>
+
+<h3>1. Drawing weapons/items</h3>
+
+<p>You'll need a paint program that can make pictures transparent.
+</p>
+
+<h3>2. Lua files</h3>
+
+<p>Additional weapon sets are installed as game extensions. That means they all go
+to the 'extensions' directory and are placed inside their own directories there.
+</p>
+
+<p>You have to edit standard-items.lua and standard-equipment.lua, you can find these files in init-scripts folder.
+</p>
+
+<p>standard-equipment.lua:
+</p>
+
+<p>this file tells ufo2000 where the weapons are placed in soldier editor. The numbers are x,y
+so 00, 00 is the upper left corner. 
+</p>
+
+<p>standard-items.lua:
+</p>
+
+<p>This is where you modify the weapon stats.
+</p>
+
+
+
+<p>Item properties:
+<table class='props' border=1><tr><td>cost<td>0,<td>how much the weapon costs<tr><td>name<td>"WEAPONS NAME",<td>The name of the weapon<tr><td>pInv<td>png_image("$(ufo2000)/folder/new weapon.png", 3),<td>tells ufo2000 where to find the inventory image<tr><td>pMap<td>pck_image("$(xcom)/units/floorob.pck", 3),<td>tells where to find the floor object image<tr><td>health<td>0,<td>the weapons health (?)<tr><td>importance<td>0,<td>unknown<tr><td>width<td>0,<td>the weapons width<tr><td>height<td>0,<td>the weapons height<tr><td>ammo<td>{"weapons ammo", "other ammo"},<td>what kind of ammo this weapon uses<tr><td>pHeld<td>pck_image_set("$(xcom)/units/handob.pck", 96, 8),<td>tells where to find the hand object image<tr><td>accuracy<td>{0, 0, 0},<td>weapons accuracy, first number auto shot's accuracy, second number snap shot's accuracy, third number aimed shot's accuracy<tr><td>time<td>{0, 0, 0},<td>TU cost <tr><td>rounds<td>0,<td>amount of the ammo<tr><td>weight<td>0,<td>the weapons weight<tr><td>isShootable<td>0,<td>the weapon is shootable if 1<tr><td>isGun<td>0,<td>the weapon is gun if 1<tr><td>sound<td>"cv-pistol-shot",<td>weapons sound, look at soundmap.xml for different sounds<tr><td>damage<td>0,<td>how much damage the weapon makes<tr><td>dDeviation<td>0,<td>explosion damage randomizer (usually 50)<tr><td>damageType<td>0,<td>damage type 0=AP, 1=I , 2=HE, 3=LS(laser), 4=PL(plasma) , 5=ST(stun)<tr><td>isAmmo<td>0,<td>the item is ammo if 1<tr><td>reloadTime<td>0,<td>time to reload the weapon<tr><td>twoHanded<td>0,<td>the weapon/item is two handed if 1<tr><td>isHandToHand<td>0,<td>the weapon is only for close combat if 1<tr><td>isHighExplosive<td>0,<td>the timer doesn't stop when holding grenade in hand<tr><td>isGrenade<td>0,<td>the weapon is grenade if 1<tr><td>isProximityGrenade<td>0,<td>the grenade is prox.grenade if 1<tr><td>wayPoints<td>0,<td>you can put waypoints if 1 (doesn't work)<tr><td>autoShots<td>0,<td>how many auto shots</table>
+</p>
+
+<p>OK, and how to make my first weapon:
+</p>
+
+<p>THE WEAPON:
+<table class='source'><tr><td><pre><span class="normal">AddXcomItem</span> <span class="cbracket">{</span>
+    <span class="normal">index</span> <span class="symbol">=</span> <span class="number">0</span><span class="symbol">,</span>
+    <span class="normal">cost</span> <span class="symbol">=</span> <span class="number">50</span><span class="symbol">,</span>
+    <span class="normal">name</span> <span class="symbol">=</span> <span class="string">"MP-5"</span><span class="symbol">,</span>
+    <span class="normal">pInv</span> <span class="symbol">=</span> <span class="function">pck_image</span><span class="symbol">(</span><span class="string">"$(xcom)/units/bigobs.pck"</span><span class="symbol">,</span> <span class="number">3</span><span class="symbol">)</span><span class="symbol">,</span>
+    <span class="normal">pMap</span> <span class="symbol">=</span> <span class="function">pck_image</span><span class="symbol">(</span><span class="string">"$(xcom)/units/floorob.pck"</span><span class="symbol">,</span> <span class="number">3</span><span class="symbol">)</span><span class="symbol">,</span>
+    <span class="normal">health</span> <span class="symbol">=</span> <span class="number">100</span><span class="symbol">,</span>
+    <span class="normal">importance</span> <span class="symbol">=</span> <span class="number">5</span><span class="symbol">,</span>
+    <span class="normal">width</span> <span class="symbol">=</span> <span class="number">1</span><span class="symbol">,</span>
+    <span class="normal">height</span> <span class="symbol">=</span> <span class="number">2</span><span class="symbol">,</span>
+    <span class="normal">ammo</span> <span class="symbol">=</span> <span class="cbracket">{</span><span class="string">"CLIP"</span><span class="cbracket">}</span><span class="symbol">,</span>
+    <span class="normal">pHeld</span> <span class="symbol">=</span> <span class="function">pck_image_set</span><span class="symbol">(</span><span class="string">"$(xcom)/units/handob.pck"</span><span class="symbol">,</span> <span class="number">96</span><span class="symbol">,</span> <span class="number">8</span><span class="symbol">)</span><span class="symbol">,</span>
+    <span class="normal">accuracy</span> <span class="symbol">=</span> <span class="cbracket">{</span><span class="number">67</span><span class="symbol">,</span> <span class="number">0</span><span class="symbol">,</span> <span class="number">0</span><span class="cbracket">}</span><span class="symbol">,</span>
+    <span class="normal">time</span> <span class="symbol">=</span> <span class="cbracket">{</span><span class="number">10</span><span class="symbol">,</span> <span class="number">0</span><span class="symbol">,</span> <span class="number">0</span><span class="cbracket">}</span><span class="symbol">,</span>
+    <span class="normal">autoShots</span> <span class="symbol">=</span> <span class="number">6</span>
+    <span class="normal">rounds</span> <span class="symbol">=</span> <span class="number">24</span><span class="symbol">,</span>
+    <span class="normal">weight</span> <span class="symbol">=</span> <span class="number">8</span><span class="symbol">,</span>
+    <span class="normal">isShootable</span> <span class="symbol">=</span> <span class="number">1</span><span class="symbol">,</span>
+    <span class="normal">isWeapon</span> <span class="symbol">=</span> <span class="number">1</span><span class="symbol">,</span>
+    <span class="normal">isGun</span> <span class="symbol">=</span> <span class="number">1</span><span class="symbol">,</span>
+    <span class="normal">sound</span> <span class="symbol">=</span> <span class="string">"cv-pistol-hit"</span><span class="symbol">,</span>
+<span class="cbracket">}</span>
+</pre></table>
+</p>
+
+<p>THE CLIP:
+<table class='source'><tr><td><pre><span class="normal">AddXcomItem</span> <span class="cbracket">{</span>
+    <span class="normal">index</span> <span class="symbol">=</span> <span class="number">1</span><span class="symbol">,</span>
+    <span class="normal">cost</span> <span class="symbol">=</span> <span class="number">50</span><span class="symbol">,</span>
+    <span class="normal">name</span> <span class="symbol">=</span> <span class="string">"CLIP"</span><span class="symbol">,</span>
+    <span class="normal">pInv</span> <span class="symbol">=</span> <span class="function">pck_image</span><span class="symbol">(</span><span class="string">"$(xcom)/units/bigobs.pck"</span><span class="symbol">,</span> <span class="number">4</span><span class="symbol">)</span><span class="symbol">,</span>
+    <span class="normal">pMap</span> <span class="symbol">=</span> <span class="function">pck_image</span><span class="symbol">(</span><span class="string">"$(xcom)/units/floorob.pck"</span><span class="symbol">,</span> <span class="number">4</span><span class="symbol">)</span><span class="symbol">,</span>
+    <span class="normal">health</span> <span class="symbol">=</span> <span class="number">100</span><span class="symbol">,</span>
+    <span class="normal">damage</span> <span class="symbol">=</span> <span class="number">60</span><span class="symbol">,</span>
+    <span class="normal">dDeviation</span> <span class="symbol">=</span> <span class="number">50</span><span class="symbol">,</span>
+    <span class="normal">importance</span> <span class="symbol">=</span> <span class="number">3</span><span class="symbol">,</span>
+    <span class="normal">width</span> <span class="symbol">=</span> <span class="number">1</span><span class="symbol">,</span>
+    <span class="normal">height</span> <span class="symbol">=</span> <span class="number">1</span><span class="symbol">,</span>
+    <span class="normal">pHeld</span> <span class="symbol">=</span> <span class="function">pck_image_set</span><span class="symbol">(</span><span class="string">"$(xcom)/units/handob.pck"</span><span class="symbol">,</span> <span class="number">120</span><span class="symbol">,</span> <span class="number">8</span><span class="symbol">)</span><span class="symbol">,</span>
+    <span class="normal">damageType</span> <span class="symbol">=</span> <span class="number">0</span><span class="symbol">,</span>
+    <span class="normal">rounds</span> <span class="symbol">=</span> <span class="number">24</span><span class="symbol">,</span>
+    <span class="normal">disappear</span> <span class="symbol">=</span> <span class="number">0</span><span class="symbol">,</span>
+    <span class="normal">weight</span> <span class="symbol">=</span> <span class="number">1</span><span class="symbol">,</span>
+    <span class="normal">isAmmo</span> <span class="symbol">=</span> <span class="number">1</span><span class="symbol">,</span>
+    <span class="normal">reloadTime</span> <span class="symbol">=</span> <span class="number">10</span><span class="symbol">,</span>
+    <span class="normal">sound</span> <span class="symbol">=</span> <span class="string">"cv-bullet-hit"</span><span class="symbol">,</span>
+<span class="cbracket">}</span>
+</pre></table>
+</p>
+
+<p>And how to make a weapon with infinite ammo:
+Remember, don't add "clip" line
+</p>
+
+<table class='source'><tr><td><pre><span class="normal">AddXcomItem</span> <span class="cbracket">{</span>
+    <span class="normal">index</span> <span class="symbol">=</span> <span class="number">126</span><span class="symbol">,</span>
+    <span class="normal">cost</span> <span class="symbol">=</span> <span class="number">600</span><span class="symbol">,</span>
+    <span class="normal">name</span> <span class="symbol">=</span> <span class="string">"LASER SNIPER"</span><span class="symbol">,</span>
+    <span class="normal">pInv</span> <span class="symbol">=</span> <span class="function">png_image</span><span class="symbol">(</span><span class="string">"$(ufo2000)/arts/weapons/lsniper.png"</span><span class="symbol">,</span> <span class="number">3</span><span class="symbol">)</span><span class="symbol">,</span>
+    <span class="normal">pMap</span> <span class="symbol">=</span> <span class="function">pck_image</span><span class="symbol">(</span><span class="string">"$(xcom)/units/floorob.pck"</span><span class="symbol">,</span> <span class="number">1</span><span class="symbol">)</span><span class="symbol">,</span>
+    <span class="normal">health</span> <span class="symbol">=</span> <span class="number">100</span><span class="symbol">,</span>
+    <span class="normal">damage</span> <span class="symbol">=</span> <span class="number">80</span><span class="symbol">,</span>
+    <span class="normal">dDeviation</span> <span class="symbol">=</span> <span class="number">90</span><span class="symbol">,</span>
+    <span class="normal">importance</span> <span class="symbol">=</span> <span class="number">12</span><span class="symbol">,</span>
+    <span class="normal">width</span> <span class="symbol">=</span> <span class="number">1</span><span class="symbol">,</span>
+    <span class="normal">height</span> <span class="symbol">=</span> <span class="number">3</span><span class="symbol">,</span>
+    <span class="normal">pHeld</span> <span class="symbol">=</span> <span class="function">pck_image_set</span><span class="symbol">(</span><span class="string">"$(xcom)/units/handob.pck"</span><span class="symbol">,</span> <span class="number">0</span><span class="symbol">,</span> <span class="number">8</span><span class="symbol">)</span><span class="symbol">,</span>
+    <span class="normal">autoShots</span> <span class="symbol">=</span> <span class="number">2</span><span class="symbol">,</span>
+    <span class="normal">damageType</span> <span class="symbol">=</span> <span class="number">3</span><span class="symbol">,</span> <span class="comment">-- Important: you have to tell what's the damage type!</span>
+    <span class="normal">accuracy</span> <span class="symbol">=</span> <span class="cbracket">{</span><span class="number">20</span><span class="symbol">,</span> <span class="number">45</span><span class="symbol">,</span> <span class="number">130</span><span class="cbracket">}</span><span class="symbol">,</span>
+    <span class="normal">time</span> <span class="symbol">=</span> <span class="cbracket">{</span><span class="number">10</span><span class="symbol">,</span> <span class="number">55</span><span class="symbol">,</span> <span class="number">90</span><span class="cbracket">}</span><span class="symbol">,</span>
+    <span class="normal">weight</span> <span class="symbol">=</span> <span class="number">40</span><span class="symbol">,</span>
+    <span class="normal">isShootable</span> <span class="symbol">=</span> <span class="number">1</span><span class="symbol">,</span>
+    <span class="normal">isWeapon</span> <span class="symbol">=</span> <span class="number">1</span><span class="symbol">,</span>
+    <span class="normal">isGun</span> <span class="symbol">=</span> <span class="number">1</span><span class="symbol">,</span>
+    <span class="normal">twoHanded</span> <span class="symbol">=</span> <span class="number">1</span><span class="symbol">,</span>
+    <span class="normal">sound</span> <span class="symbol">=</span> <span class="string">"plasma-rifle-shot"</span><span class="symbol">,</span>
+<span class="cbracket">}</span>
+</pre></table>
+
+<p>Then how to make a grenade:
+</p>
+
+<p>add this line: 
+</p>
+
+<p>isGrenade = 1,
+</p>
+
+<p>And how to make prox. grenade?
+</p>
+
+<p>add these lines:
+</p>
+
+<p>isGrenade = 1,
+isProximityGrenade = 1,
+</p>
+
+<p>---------------------------------------------------
+-Nite's tutorial
+---------------------------------------------------
+</p>
+
+<p>--------------------Making New Weapons/items FAQ---------------------------
+</p>
+
+
+<p>first i will define what each variable is (index = **):
+</p>
+
+
+<p>index = # (this sets a number for the weapon, if two weapons have the
+same index, then something may go wrong. All i know is that you should
+have a different index # than any item/weapon. Normally, you will see
+it in order. This is a must have for defining your weapon/item)
+</p>
+
+<p>cost = #, (the k points) Again, this is a must have.
+</p>
+
+<p>name = "***", (replace the asterisks with a name for the weapon/item)
+</p>
+
+<p>pInv = pck_image("$(xcom)/units/bigobs.pck", #), (pck_image is default,
+you may change this to png_image to use bmp/png files. What this is,
+is the image of the weapon when you put it in your inventory.) Must
+have
+</p>
+
+<p>You will want to use png/bmp files for the pInv since you don't want to
+have another laser rifle image or any other image that doesn't
+represent the weapon/item. If you are making a new weapon/item make the
+pInv look like this:
+</p>
+
+<p>pInv = png_image("$(ufo2000)/arts/**.png", #),
+</p>
+
+<p>pMap = pck_image("$(xcom)/units/floorob.pck", #), (Must have) 
+</p>
+
+<p>This (when you throw a weapon/item on the ground in battle)
+defines the image when its on the ground...im not sure how to make
+new images for the ground, so just copy the # for what you want it
+to look like from another weapon/item from the list. Ex: i have a
+heavy phaser made, it looks like a pistol so i copied the plasma pistol
+ground image since it looks like a pistol. I do want a new look though.
+</p>
+
+<p>width = #, (this will be x) (starts at 0, then keeps going up, never -)
+(horizontal) Must have.
+</p>
+
+<p>height = #, (this will be y) (same thing, but vertical) When you head
+down on the grid, y will add 1. Must have.
+</p>
+
+<p>for example: my heavy phaser has a width of 1 and height of 3.
+It takes up this many grid squares: x(1), y(3).
+</p>
+
+
+<h3>3. Some more complicated examples</h3>
+
+<p>Let's suppose we want to make a free replacement graphics for the standard
+weapons from X-COM. When we don't have any files from X-COM, <b>pck_image</b>
+function does not work anymore and returns <b>nil</b>. Fortunately using
+lua <b>or</b> operator we can chain image loading functions so that they 
+are called sequentially until one of them returns non <b>nil</b> value:
+<table class='source'><tr><td><pre><span class="comment">------------------------------------------------------------------------------</span>
+<span class="comment">-- Example weapon set which demonstrates use of alternative sprites.</span>
+<span class="comment">-- 'Experimental pistol' defined in this set used x-com pistol graphics</span>
+<span class="comment">-- if data files from x-com are available and zap pistol from Galactic</span>
+<span class="comment">-- weapons if no x-com data files are found</span>
+<span class="comment">------------------------------------------------------------------------------</span>
+
+<span class="normal">AddXcomItem</span> <span class="cbracket">{</span>
+    <span class="normal">cost</span> <span class="symbol">=</span> <span class="number">0</span><span class="symbol">,</span>
+    <span class="normal">name</span> <span class="symbol">=</span> <span class="string">"Experimantal pistol"</span><span class="symbol">,</span>
+
+    <span class="normal">pInv</span> <span class="symbol">=</span> <span class="function">pck_image</span><span class="symbol">(</span><span class="string">"$(xcom)/units/bigobs.pck"</span><span class="symbol">,</span> <span class="number">3</span><span class="symbol">)</span> <span class="keyword">or</span> 
+           <span class="function">png_image</span><span class="symbol">(</span><span class="string">"$(ufo2000)/extensions/weapons-galactic/galactic/pInv/zp.png"</span><span class="symbol">)</span><span class="symbol">,</span>
+
+    <span class="normal">pMap</span> <span class="symbol">=</span> <span class="function">pck_image</span><span class="symbol">(</span><span class="string">"$(xcom)/units/floorob.pck"</span><span class="symbol">,</span> <span class="number">3</span><span class="symbol">)</span> <span class="keyword">or</span> 
+           <span class="function">png_image</span><span class="symbol">(</span><span class="string">"$(ufo2000)/extensions/weapons-galactic/galactic/pMap/zp.png"</span><span class="symbol">)</span><span class="symbol">,</span>
+
+    <span class="normal">health</span> <span class="symbol">=</span> <span class="number">999</span><span class="symbol">,</span>
+    <span class="normal">importance</span> <span class="symbol">=</span> <span class="number">5</span><span class="symbol">,</span>
+    <span class="normal">width</span> <span class="symbol">=</span> <span class="number">1</span><span class="symbol">,</span>
+    <span class="normal">height</span> <span class="symbol">=</span> <span class="number">2</span><span class="symbol">,</span>
+
+    <span class="normal">pHeld</span> <span class="symbol">=</span> <span class="function">pck_image_set</span><span class="symbol">(</span><span class="string">"$(xcom)/units/handob.pck"</span><span class="symbol">,</span> <span class="number">96</span><span class="symbol">,</span> <span class="number">8</span><span class="symbol">)</span> <span class="keyword">or</span> 
+            <span class="function">png_image_set</span><span class="symbol">(</span><span class="string">"$(ufo2000)/extensions/weapons-galactic/galactic/pHeld/zp/32x40"</span><span class="symbol">,</span> <span class="number">1</span><span class="symbol">,</span> <span class="number">8</span><span class="symbol">)</span><span class="symbol">,</span>
+
+    <span class="normal">accuracy</span> <span class="symbol">=</span> <span class="cbracket">{</span><span class="number">0</span><span class="symbol">,</span> <span class="number">60</span><span class="symbol">,</span> <span class="number">78</span><span class="cbracket">}</span><span class="symbol">,</span>
+    <span class="normal">time</span> <span class="symbol">=</span> <span class="cbracket">{</span><span class="number">0</span><span class="symbol">,</span> <span class="number">18</span><span class="symbol">,</span> <span class="number">30</span><span class="cbracket">}</span><span class="symbol">,</span>
+    <span class="normal">weight</span> <span class="symbol">=</span> <span class="number">5</span><span class="symbol">,</span>
+    <span class="normal">isGun</span> <span class="symbol">=</span> <span class="number">1</span><span class="symbol">,</span>
+    <span class="normal">damageType</span> <span class="symbol">=</span> <span class="number">3</span><span class="symbol">,</span>
+    <span class="normal">minimapMark</span> <span class="symbol">=</span> <span class="number">1</span><span class="symbol">,</span>
+    <span class="normal">sound</span> <span class="symbol">=</span> <span class="string">"cv-pistol-shot"</span><span class="symbol">,</span>
+<span class="cbracket">}</span>
+
+<span class="normal">AddEquipment</span> <span class="cbracket">{</span>
+    <span class="normal">Name</span> <span class="symbol">=</span> <span class="string">"Experimental"</span><span class="symbol">,</span>
+    <span class="normal">Layout</span> <span class="symbol">=</span> <span class="cbracket">{</span>
+        <span class="cbracket">{</span><span class="number">00</span><span class="symbol">,</span> <span class="number">00</span><span class="symbol">,</span> <span class="string">"Experimantal pistol"</span><span class="cbracket">}</span><span class="symbol">,</span>
+    <span class="cbracket">}</span>
+<span class="cbracket">}</span>
+</pre></table>
+
+
+
+<hr><p align=center><font size="-3">This page was created by <a href="http://www.sci.fi/~abisoft/lumikki/" target="_blank">Lumikki</a></p>
+</body></html>
