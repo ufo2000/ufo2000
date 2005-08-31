@@ -203,7 +203,16 @@ bool Editor::handle_mouse_leftclick()
         if (is_item_allowed(sel_item->m_type)) {
             for (i = 0; i < NUMBER_OF_PLACES; i++) {
                 if (man->place(i)->mdeselect(sel_item, 0, 0)) {
-                    sel_item = NULL;
+
+                    if (sel_item_place == P_ARMOURY && (key[KEY_LSHIFT]) || (key[KEY_RSHIFT])) {
+                        // While holding SHIFT key, the same item remains selected, so we don't
+                        // drop it to the soldier, but make a copy - useful for equipping with 
+                        // clips or grenades
+                        sel_item = sel_item->create_duplicate();
+                    } else {
+                        sel_item = NULL;
+                    }
+
                     soundSystem::getInstance()->play(SS_ITEM_PUT);
                     return false;
                 }
