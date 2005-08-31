@@ -15,26 +15,26 @@ return {
 		},
 		Inventory = {
 			["RIGHT SHOULDER"] = {
-				{0, 0, "HIGH EXPLOSIVE"},
+				{0, 0, "High Explosive"},
 			},
 			["LEFT SHOULDER"] = {
-				{0, 0, "SMOKE GRENADE"},
-				{1, 0, "SMOKE GRENADE"},
+				{0, 0, "Smoke Grenade"},
+				{1, 0, "Smoke Grenade"},
 			},
 			["RIGHT HAND"] = {
-				{1, 0, "PLASMA RIFLE", "PLASMA RIFLE CLIP"},
+				{1, 0, "Plasma Rifle", "Plasma Rifle Clip"},
 			},
 			["LEFT HAND"] = {
 			},
 			["RIGHT LEG"] = {
-				{0, 0, "PLASMA RIFLE CLIP"},
+				{0, 0, "Plasma Rifle Clip"},
 			},
 			["LEFT LEG"] = {
 			},
 			["BACK PACK"] = {
 			},
 			["BELT"] = {
-				{0, 0, "PLASMA PISTOL", "PLASMA PISTOL CLIP"},
+				{0, 0, "Plasma Pistol", "Plasma Pistol Clip"},
 			},
 			["GROUND"] = {
 			},
@@ -60,7 +60,7 @@ return {
 			["LEFT SHOULDER"] = {
 			},
 			["RIGHT HAND"] = {
-				{0, 0, "ROCKET LAUNCHER", "LARGE ROCKET"},
+				{0, 0, "Rocket Launcher", "Large Rocket"},
 			},
 			["LEFT HAND"] = {
 			},
@@ -69,11 +69,11 @@ return {
 			["LEFT LEG"] = {
 			},
 			["BACK PACK"] = {
-				{0, 0, "LARGE ROCKET"},
-				{1, 0, "LARGE ROCKET"},
+				{0, 0, "Large Rocket"},
+				{1, 0, "Large Rocket"},
 			},
 			["BELT"] = {
-				{0, 0, "PLASMA PISTOL", "PLASMA PISTOL CLIP"},
+				{0, 0, "Plasma Pistol", "Plasma Pistol Clip"},
 			},
 			["GROUND"] = {
 			},
@@ -95,12 +95,12 @@ return {
 		},
 		Inventory = {
 			["RIGHT SHOULDER"] = {
-				{0, 0, "CANNON HE-AMMO"},
+				{0, 0, "Cannon HE-Ammo"},
 			},
 			["LEFT SHOULDER"] = {
 			},
 			["RIGHT HAND"] = {
-				{0, 0, "HEAVY CANNON", "CANNON AP-AMMO"},
+				{0, 0, "Heavy Cannon", "Cannon AP-Ammo"},
 			},
 			["LEFT HAND"] = {
 			},
@@ -132,25 +132,25 @@ return {
 		},
 		Inventory = {
 			["RIGHT SHOULDER"] = {
-				{0, 0, "SMOKE GRENADE"},
-				{1, 0, "SMOKE GRENADE"},
+				{0, 0, "Smoke Grenade"},
+				{1, 0, "Smoke Grenade"},
 			},
 			["LEFT SHOULDER"] = {
-				{0, 0, "ALIEN GRENADE"},
-				{1, 0, "ALIEN GRENADE"},
+				{0, 0, "Alien Grenade"},
+				{1, 0, "Alien Grenade"},
 			},
 			["RIGHT HAND"] = {
-				{0, 0, "PLASMA PISTOL", "PLASMA PISTOL CLIP"},
+				{0, 0, "Plasma Pistol", "Plasma Pistol Clip"},
 			},
 			["LEFT HAND"] = {
-				{0, 0, "ALIEN GRENADE"},
+				{0, 0, "Alien Grenade"},
 			},
 			["RIGHT LEG"] = {
-				{0, 0, "PLASMA PISTOL CLIP"},
+				{0, 0, "Plasma Pistol Clip"},
 			},
 			["LEFT LEG"] = {
-				{1, 0, "PROXIMITY GRENADE"},
-				{0, 0, "SMOKE GRENADE"},
+				{1, 0, "Proximity Grenade"},
+				{0, 0, "Smoke Grenade"},
 			},
 			["BACK PACK"] = {
 			},
@@ -178,17 +178,17 @@ return {
 			["RIGHT SHOULDER"] = {
 			},
 			["LEFT SHOULDER"] = {
-				{1, 0, "ALIEN GRENADE"},
-				{0, 0, "ALIEN GRENADE"},
+				{1, 0, "Alien Grenade"},
+				{0, 0, "Alien Grenade"},
 			},
 			["RIGHT HAND"] = {
-				{0, 0, "HEAVY PLASMA", "HEAVY PLASMA CLIP"},
+				{0, 0, "Heavy Plasma", "Heavy Plasma Clip"},
 			},
 			["LEFT HAND"] = {
 			},
 			["RIGHT LEG"] = {
-				{0, 0, "HEAVY PLASMA CLIP"},
-				{1, 0, "HEAVY PLASMA CLIP"},
+				{0, 0, "Heavy Plasma Clip"},
+				{1, 0, "Heavy Plasma Clip"},
 			},
 			["LEFT LEG"] = {
 			},
@@ -216,25 +216,25 @@ return {
 		},
 		Inventory = {
 			["RIGHT SHOULDER"] = {
-				{1, 0, "ALIEN GRENADE"},
-				{0, 0, "SMOKE GRENADE"},
+				{1, 0, "Alien Grenade"},
+				{0, 0, "Smoke Grenade"},
 			},
 			["LEFT SHOULDER"] = {
-				{1, 0, "ALIEN GRENADE"},
-				{0, 0, "ALIEN GRENADE"},
+				{1, 0, "Alien Grenade"},
+				{0, 0, "Alien Grenade"},
 			},
 			["RIGHT HAND"] = {
-				{0, 0, "PLASMA RIFLE", "PLASMA RIFLE CLIP"},
+				{0, 0, "Plasma Rifle", "Plasma Rifle Clip"},
 			},
 			["LEFT HAND"] = {
 			},
 			["RIGHT LEG"] = {
-				{0, 0, "PLASMA RIFLE CLIP"},
+				{0, 0, "Plasma Rifle Clip"},
 			},
 			["LEFT LEG"] = {
 			},
 			["BACK PACK"] = {
-				{1, 0, "STUN ROD"},
+				{1, 0, "Stun Rod"},
 			},
 			["BELT"] = {
 			},
@@ -258,22 +258,22 @@ return {
 		},
 		Inventory = {
 			["RIGHT SHOULDER"] = {
-				{0, 0, "HIGH EXPLOSIVE"},
+				{0, 0, "High Explosive"},
 			},
 			["LEFT SHOULDER"] = {
-				{1, 0, "ALIEN GRENADE"},
-				{0, 0, "ALIEN GRENADE"},
+				{1, 0, "Alien Grenade"},
+				{0, 0, "Alien Grenade"},
 			},
 			["RIGHT HAND"] = {
-				{1, 0, "PLASMA RIFLE", "PLASMA RIFLE CLIP"},
+				{1, 0, "Plasma Rifle", "Plasma Rifle Clip"},
 			},
 			["LEFT HAND"] = {
 			},
 			["RIGHT LEG"] = {
-				{0, 0, "PLASMA RIFLE CLIP"},
+				{0, 0, "Plasma Rifle Clip"},
 			},
 			["LEFT LEG"] = {
-				{1, 0, "SMOKE GRENADE"},
+				{1, 0, "Smoke Grenade"},
 			},
 			["BACK PACK"] = {
 			},
@@ -299,12 +299,12 @@ return {
 		},
 		Inventory = {
 			["RIGHT SHOULDER"] = {
-				{0, 0, "AUTO-CANNON HE-AMMO"},
+				{0, 0, "Auto-Cannon HE-Ammo"},
 			},
 			["LEFT SHOULDER"] = {
 			},
 			["RIGHT HAND"] = {
-				{0, 0, "AUTO-CANNON", "AUTO-CANNON AP-AMMO"},
+				{0, 0, "Auto-Cannon", "Auto-Cannon AP-Ammo"},
 			},
 			["LEFT HAND"] = {
 			},
@@ -340,7 +340,7 @@ return {
 			["LEFT SHOULDER"] = {
 			},
 			["RIGHT HAND"] = {
-				{0, 1, "SMALL LAUNCHER", "STUN BOMB"},
+				{0, 1, "Small Launcher", "Stun Bomb"},
 			},
 			["LEFT HAND"] = {
 			},
@@ -351,11 +351,11 @@ return {
 			["BACK PACK"] = {
 			},
 			["BELT"] = {
-				{1, 0, "STUN BOMB"},
-				{2, 0, "STUN BOMB"},
-				{3, 0, "STUN BOMB"},
-				{3, 1, "STUN BOMB"},
-				{0, 0, "PLASMA PISTOL", "PLASMA PISTOL CLIP"},
+				{2, 0, "Stun Bomb"},
+				{3, 0, "Stun Bomb"},
+				{3, 1, "Stun Bomb"},
+				{0, 0, "Plasma Pistol", "Plasma Pistol Clip"},
+				{1, 0, "Stun Bomb"},
 			},
 			["GROUND"] = {
 			},
@@ -381,7 +381,7 @@ return {
 			["LEFT SHOULDER"] = {
 			},
 			["RIGHT HAND"] = {
-				{0, 0, "HEAVY LASER"},
+				{0, 0, "Heavy Laser"},
 			},
 			["LEFT HAND"] = {
 			},
@@ -392,7 +392,7 @@ return {
 			["BACK PACK"] = {
 			},
 			["BELT"] = {
-				{0, 0, "LASER PISTOL"},
+				{0, 0, "Laser Pistol"},
 			},
 			["GROUND"] = {
 			},
@@ -418,22 +418,22 @@ return {
 			["LEFT SHOULDER"] = {
 			},
 			["RIGHT HAND"] = {
-				{0, 1, "SMALL LAUNCHER", "STUN BOMB"},
+				{0, 1, "Small Launcher", "Stun Bomb"},
 			},
 			["LEFT HAND"] = {
-				{1, 1, "PLASMA PISTOL", "PLASMA PISTOL CLIP"},
+				{1, 1, "Plasma Pistol", "Plasma Pistol Clip"},
 			},
 			["RIGHT LEG"] = {
 			},
 			["LEFT LEG"] = {
-				{0, 0, "PLASMA PISTOL CLIP"},
+				{0, 0, "Plasma Pistol Clip"},
 			},
 			["BACK PACK"] = {
 			},
 			["BELT"] = {
-				{1, 0, "STUN BOMB"},
-				{0, 0, "STUN BOMB"},
-				{2, 0, "STUN BOMB"},
+				{1, 0, "Stun Bomb"},
+				{0, 0, "Stun Bomb"},
+				{2, 0, "Stun Bomb"},
 			},
 			["GROUND"] = {
 			},
@@ -455,22 +455,22 @@ return {
 		},
 		Inventory = {
 			["RIGHT SHOULDER"] = {
-				{1, 0, "ALIEN GRENADE"},
-				{0, 0, "ALIEN GRENADE"},
+				{1, 0, "Alien Grenade"},
+				{0, 0, "Alien Grenade"},
 			},
 			["LEFT SHOULDER"] = {
-				{1, 0, "ALIEN GRENADE"},
-				{0, 0, "ALIEN GRENADE"},
+				{1, 0, "Alien Grenade"},
+				{0, 0, "Alien Grenade"},
 			},
 			["RIGHT HAND"] = {
-				{1, 0, "PLASMA PISTOL", "PLASMA PISTOL CLIP"},
+				{1, 0, "Plasma Pistol", "Plasma Pistol Clip"},
 			},
 			["LEFT HAND"] = {
-				{0, 1, "ALIEN GRENADE"},
+				{0, 1, "Alien Grenade"},
 			},
 			["RIGHT LEG"] = {
-				{0, 0, "PLASMA PISTOL CLIP"},
-				{1, 0, "ALIEN GRENADE"},
+				{0, 0, "Plasma Pistol Clip"},
+				{1, 0, "Alien Grenade"},
 			},
 			["LEFT LEG"] = {
 			},
@@ -500,16 +500,16 @@ return {
 			["RIGHT SHOULDER"] = {
 			},
 			["LEFT SHOULDER"] = {
-				{0, 0, "HIGH EXPLOSIVE"},
+				{0, 0, "High Explosive"},
 			},
 			["RIGHT HAND"] = {
-				{0, 0, "HEAVY PLASMA", "HEAVY PLASMA CLIP"},
+				{0, 0, "Heavy Plasma", "Heavy Plasma Clip"},
 			},
 			["LEFT HAND"] = {
 			},
 			["RIGHT LEG"] = {
-				{0, 0, "HEAVY PLASMA CLIP"},
-				{1, 0, "HEAVY PLASMA CLIP"},
+				{0, 0, "Heavy Plasma Clip"},
+				{1, 0, "Heavy Plasma Clip"},
 			},
 			["LEFT LEG"] = {
 			},
@@ -537,21 +537,21 @@ return {
 		},
 		Inventory = {
 			["RIGHT SHOULDER"] = {
-				{1, 0, "SMOKE GRENADE"},
+				{1, 0, "Smoke Grenade"},
 			},
 			["LEFT SHOULDER"] = {
-				{0, 0, "SMOKE GRENADE"},
+				{0, 0, "Smoke Grenade"},
 			},
 			["RIGHT HAND"] = {
-				{1, 0, "LASER RIFLE"},
+				{1, 0, "Laser Rifle"},
 			},
 			["LEFT HAND"] = {
 			},
 			["RIGHT LEG"] = {
-				{1, 0, "SMOKE GRENADE"},
+				{1, 0, "Smoke Grenade"},
 			},
 			["LEFT LEG"] = {
-				{0, 0, "SMOKE GRENADE"},
+				{0, 0, "Smoke Grenade"},
 			},
 			["BACK PACK"] = {
 			},
@@ -581,7 +581,7 @@ return {
 			["LEFT SHOULDER"] = {
 			},
 			["RIGHT HAND"] = {
-				{1, 0, "LASER RIFLE"},
+				{1, 0, "Laser Rifle"},
 			},
 			["LEFT HAND"] = {
 			},
@@ -590,7 +590,7 @@ return {
 			["LEFT LEG"] = {
 			},
 			["BACK PACK"] = {
-				{0, 0, "ROCKET LAUNCHER", "LARGE ROCKET"},
+				{0, 0, "Rocket Launcher", "Large Rocket"},
 			},
 			["BELT"] = {
 			},
