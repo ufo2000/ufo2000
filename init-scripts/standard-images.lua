@@ -23,3 +23,12 @@ SetExplosionAnimation {
 AddImage("mouse", png_image("$(ufo2000)/arts/mouse.png"))
 AddImage("mouse_menu", png_image("$(ufo2000)/arts/mouse_menu.png"))
 AddImage("selector", png_image_set("$(ufo2000)/arts/selector/9x9", 1, 4))
+
+-- Our own images
+AddImage("fire_small", png_image_set("$(ufo2000)/arts/fire_frames/32x40", 1, 4))
+AddImage("fire_large", png_image_set("$(ufo2000)/arts/fire_frames/32x40", 5, 4))
+
+-- Original X-Com images (uncomment the following lines to use original images
+-- if available)
+-- AddImage("fire_small", pck_image_set("$(xcom)/ufograph/smoke.pck", 4, 4))
+-- AddImage("fire_large", pck_image_set("$(xcom)/ufograph/smoke.pck", 0, 4))

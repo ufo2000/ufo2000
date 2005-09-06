@@ -39,7 +39,6 @@ class Cell: public persist::BaseObject
 private:
 	int m_smog_state;
 	int m_smog_time;
- 	int m_fire_state;
  	int m_fire_time;
  	int m_light;
     Position m_position;

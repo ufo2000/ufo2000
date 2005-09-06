@@ -122,3 +122,45 @@ int query_languages(std::vector<std::string> &languages)
     std::sort(languages.begin(), languages.end());
     return languages.size();
 }
+
+
+BITMAP *lua_table_image(const char *name)
+{
+    int stack_top = lua_gettop(L);
+    lua_pushstring(L, "ImageTable");
+    lua_gettable(L, LUA_GLOBALSINDEX);
+    ASSERT(lua_istable(L, -1));
+    lua_pushstring(L, name);
+    lua_gettable(L, -2);
+    ASSERT(lua_isuserdata(L, -1));
+    BITMAP *bmp = (BITMAP *)lua_touserdata(L, -1);
+    lua_settop(L, stack_top);
+    
+    return bmp;
+}
+
+std::vector<BITMAP *> lua_table_image_vector(const char *name)
+{
+    std::vector<BITMAP *> res;
+
+    int stack_top = lua_gettop(L);
+    lua_pushstring(L, "ImageTable");
+    lua_gettable(L, LUA_GLOBALSINDEX);
+    ASSERT(lua_istable(L, -1));
+    lua_pushstring(L, name);
+    lua_gettable(L, -2);
+    ASSERT(lua_istable(L, -1));
+    
+    int i = 1;
+    while (true) {
+        lua_pushnumber(L, i);
+        lua_gettable(L, -2);
+        if (!lua_isuserdata(L, -1)) {
+            lua_settop(L, stack_top);
+            return res;
+        }
+        res.push_back((BITMAP *)lua_touserdata(L, -1));
+        lua_pop(L, 1);
+        i++;
+    }
+}

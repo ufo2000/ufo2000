@@ -136,6 +136,7 @@ public:
     MinimapArea *m_minimap_area;
 
     static PCK *smoke;
+    static std::vector<BITMAP *> fire_small, fire_large;
     static void initpck();
     static void freepck();
     //! checks if GEODATA structure is valid
@@ -291,23 +292,6 @@ public:
         m_cell[lev][col][row]->set_soldier(man);
     }
 
-    int fire_state(int lev, int col, int row)
-    {
-        return m_cell[lev][col][row]->m_fire_state; 
-    }
-    void set_fire_state(int lev, int col, int row, int value)
-    {
-        m_cell[lev][col][row]->m_fire_state = value; 
-    }
-    void dec_fire_state(int lev, int col, int row)
-    {
-        m_cell[lev][col][row]->m_fire_state--;
-    }
-    void inc_fire_state(int lev, int col, int row) 
-    {
-        m_cell[lev][col][row]->m_fire_state++; 
-    }
- 
     int fire_time(int lev, int col, int row) 
     {
         return m_cell[lev][col][row]->m_fire_time; 

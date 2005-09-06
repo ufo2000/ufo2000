@@ -32,6 +32,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "text.h"
 #include "mouse.h"
 #include "pck.h"
+#include "script_api.h"
 
 static int old_mouse_x = -1, old_mouse_y = -1;
 
@@ -225,7 +226,7 @@ int do_mainmenu()
     BS_SELECTED.font    = large;
     BS_GOTFOCUS.font    = large;
 
-	BITMAP *mouser2 = get_image_from_lua_table("mouse_menu");
+	BITMAP *mouser2 = lua_table_image("mouse_menu");
 
 	set_mouse_sprite(mouser2);
 	set_palette((RGB *)datafile[DAT_MENUPAL_BMP].dat);

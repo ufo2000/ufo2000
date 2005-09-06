@@ -31,6 +31,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "colors.h"
 #include "text.h"
 #include "mouse.h"
+#include "script_api.h"
 
 unsigned long FLAGS = 0;
 
@@ -61,8 +62,8 @@ void initvideo()
     LOCK_VARIABLE(g_switch_in_counter);
     LOCK_FUNCTION(switch_in_callback);
 
-    mouser   = get_image_from_lua_table("mouse");
-    selector = get_image_vector_from_lua_table("selector");
+    mouser   = lua_table_image("mouse");
+    selector = lua_table_image_vector("selector");
 
     screen2 = create_bitmap(SCREEN2W, SCREEN2H);
     clear(screen2);

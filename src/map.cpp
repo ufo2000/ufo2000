@@ -34,6 +34,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "scenario.h"
 #include "text.h"
 #include "random.h"
+#include "script_api.h"
 
 #define SCANGSIZE 4
 
@@ -41,6 +42,7 @@ uint16 *Map::m_loftemp = NULL;
 int Map::m_loftemp_num = 0;
 SPK *Map::scanbord = NULL;
 PCK *Map::smoke = NULL, *Map::cursor = NULL;
+std::vector<BITMAP *> Map::fire_small, Map::fire_large;
 int Map::m_animation_cycle = 0;
 
 //            dirs      0  1  2  3  4  5  6  7
@@ -107,6 +109,8 @@ void Map::initpck()
     cursor   = new PCK("$(xcom)/ufograph/cursor.pck");
     scanbord = new SPK("$(xcom)/ufograph/scanbord.pck");
     smoke    = new PCK("$(xcom)/ufograph/smoke.pck");
+    fire_small = lua_table_image_vector("fire_small");
+    fire_large = lua_table_image_vector("fire_large");
     int fh = open(F("$(xcom)/geodata/loftemps.dat"), O_RDONLY | O_BINARY);
     ASSERT(fh != -1);
     int fl = filelength(fh);
@@ -430,11 +434,16 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
                     }
                     // Draw smoke
                     if (platoon_local->is_seen(lev, col, row)) {
-                        int s = fire_state(lev, col, row);
-                        if (fire_time(lev,col,row)>0) {
-                            smoke->showpck(8-s, sx, sy);
+                        if (fire_time(lev, col, row) > 0) {
+                            if (fire_time(lev, col, row) > 1) {
+                                int frame = m_animation_cycle % (int)fire_large.size();
+                                draw_sprite(screen2, fire_large[frame], sx, sy - 6);
+                            } else {
+                                int frame = m_animation_cycle % (int)fire_small.size();
+                                draw_sprite(screen2, fire_small[frame], sx, sy - 6);
+                            }
                         } else {
-                            s = smog_state(lev, col, row);
+                            int s = smog_state(lev, col, row);
                             if (smog_time(lev,col,row)>0)
                                 smoke->showpck(s-1, sx, sy);
                         }
@@ -494,12 +503,6 @@ void Map::step()
                         damage_cell_part(k, i, j, h, 25);
                     if (man(k, i, j) != NULL)
                         man(k, i, j)->hit(0, 10, DT_INC, 8); //DAMAGEDIR_UNDER
-                    if (fire_time(k,i,j) > 1)
-                        set_fire_state(k,i,j,1);
-                    if (fire_time(k,i,j) == 1)
-                        set_fire_state(k,i,j,5);
-                    if (fire_time(k,i,j) <= 0)
-                        set_fire_state(k,i,j,0);
                 } else {
                     if (smog_time(k, i, j)>0) {
                         dec_smog_time(k, i, j);
@@ -1687,7 +1690,6 @@ void Map::explocell(int sniper, int lev, int col, int row, int damage, int damag
         if (mcd(lev, col, row, i)->Fuel > smog_time(lev, col, row)) {
             if (mcd(lev, col, row, i)->Armour < damage && damage_type == DT_INC) {
                 set_fire_time(lev, col, row, mcd(lev, col, row, i)->Fuel);
-                set_fire_state(lev, col, row, 4);
             }
         }
         

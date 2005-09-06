@@ -32,6 +32,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "colors.h"
 #include "text.h"
 #include "mouse.h"
+#include "script_api.h"
 
 #define BORDER_COLOR xcom1_color(4)
 #define TITLE_COLOR  xcom1_color(2)
@@ -246,7 +247,7 @@ public:
 
 void lobby_init_mouse()
 {
-    BITMAP *mouser = get_image_from_lua_table("mouse");
+    BITMAP *mouser = lua_table_image("mouse");
     set_mouse_sprite(mouser);
     set_palette((RGB *)datafile[DAT_GAMEPAL_BMP].dat);
     set_mouse_sens(mouse_sens);

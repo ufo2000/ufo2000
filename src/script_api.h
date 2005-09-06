@@ -51,4 +51,10 @@ int query_equipment_sets(std::vector<std::string> &eqsets);
  */
 int query_languages(std::vector<std::string> &languages);
 
+/**
+ * Get images set by AddImage() lua function
+ */ 
+BITMAP *lua_table_image(const char *name);
+std::vector<BITMAP *> lua_table_image_vector(const char *name);
+
 #endif

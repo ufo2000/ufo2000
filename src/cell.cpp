@@ -38,7 +38,6 @@ Cell::Cell( Position p )
 
 	m_smog_state = 0;
 	m_smog_time = 0;
-	m_fire_state = 0;
  	m_fire_time = 0;
  	m_light = scenario->rules[0];
 	memset(visi, 0, sizeof(visi));
@@ -51,22 +50,14 @@ Cell::~Cell()
 
 void Cell::cycle_smoke()
 {
-	if (m_fire_state > 0) {
- 		m_fire_state--;
- 		if ((m_fire_state < 5)&&(m_fire_time > 1))
- 			m_fire_state = 8;
- 		else if (m_fire_state < 1)
- 			m_fire_state = 4;
- 	} else {
- 		if (m_smog_state > 0) {
- 			m_smog_state++;
- 			if ((m_smog_state > 20)&&(m_smog_time > 2))
- 				m_smog_state = 17;
- 			else if ((m_smog_state > 16)&&(m_smog_time == 2))
- 				m_smog_state = 13;
- 			else if ((m_smog_state > 12)&&(m_smog_time < 2))
- 				m_smog_state = 9;
- 		}
+ 	if (m_smog_state > 0) {
+ 		m_smog_state++;
+ 		if ((m_smog_state > 20)&&(m_smog_time > 2))
+ 			m_smog_state = 17;
+ 		else if ((m_smog_state > 16)&&(m_smog_time == 2))
+ 			m_smog_state = 13;
+ 		else if ((m_smog_state > 12)&&(m_smog_time < 2))
+ 			m_smog_state = 9;
  	}
 }
 
