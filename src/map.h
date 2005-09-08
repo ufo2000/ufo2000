@@ -97,7 +97,6 @@ class Map: public persist::BaseObject
 {
     DECLARE_PERSISTENCE(Map)
 private: 
-    static PCK *cursor;
     static PCK *x1;
     static SPK *scanbord;
 
@@ -137,6 +136,7 @@ public:
 
     static PCK *smoke;
     static std::vector<BITMAP *> fire_small, fire_large;
+    static std::vector<BITMAP *> selectbox, aimbox, throwbox;
     static void initpck();
     static void freepck();
     //! checks if GEODATA structure is valid

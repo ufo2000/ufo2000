@@ -41,8 +41,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 uint16 *Map::m_loftemp = NULL;
 int Map::m_loftemp_num = 0;
 SPK *Map::scanbord = NULL;
-PCK *Map::smoke = NULL, *Map::cursor = NULL;
+PCK *Map::smoke = NULL;
 std::vector<BITMAP *> Map::fire_small, Map::fire_large;
+std::vector<BITMAP *> Map::selectbox, Map::aimbox, Map::throwbox;
 int Map::m_animation_cycle = 0;
 
 //            dirs      0  1  2  3  4  5  6  7
@@ -106,11 +107,13 @@ void load_terrain_pck(const std::string &tid, TerraPCK *&terrain_pck)
 
 void Map::initpck()
 {
-    cursor   = new PCK("$(xcom)/ufograph/cursor.pck");
     scanbord = new SPK("$(xcom)/ufograph/scanbord.pck");
     smoke    = new PCK("$(xcom)/ufograph/smoke.pck");
     fire_small = lua_table_image_vector("fire_small");
     fire_large = lua_table_image_vector("fire_large");
+    selectbox = lua_table_image_vector("selectbox");
+    aimbox = lua_table_image_vector("aimbox");
+    throwbox = lua_table_image_vector("throwbox");
     int fh = open(F("$(xcom)/geodata/loftemps.dat"), O_RDONLY | O_BINARY);
     ASSERT(fh != -1);
     int fl = filelength(fh);
@@ -122,7 +125,6 @@ void Map::initpck()
 
 void Map::freepck()
 {
-    delete cursor;
     delete scanbord;
     delete smoke;
 
@@ -351,14 +353,23 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
                 if ((sx > -32) && (sx < battleview_width) && (sy >= -34) && (sy < battleview_height)) {
                     if (m_cell[sel_lev][col][row]->MOUSE && show_cursor) {
                         if (lev == sel_lev) {
-                            if ((m_cell[lev][col][row]->soldier_here()) && (platoon_local->is_visible(lev, col, row)))
-                                mtype = 1;
+                            if ((!TARGET) || (target.action != THROW)) {
+                                if ((m_cell[lev][col][row]->soldier_here()) && (platoon_local->is_visible(lev, col, row)))
+                                    mtype = TARGET ? 1 + ((int)aimbox.size() / 2) + ((ANIMATION / 3) % (((int)aimbox.size() - 2) / 2)) : 4;
+                                else
+                                    mtype = TARGET ? (int)aimbox.size() / 2 : 3;
+                            } else {
+                                mtype = ((int)throwbox.size() / 2) + ((ANIMATION / 3) % ((int)throwbox.size() / 2));
+                            }
+                                
+                            if (!TARGET)
+                                draw_sprite(screen2, selectbox[mtype], sx, sy - 6);
+                            else if (target.action != THROW)
+                                draw_sprite(screen2, aimbox[mtype], sx, sy - 6);
                             else
-                                mtype = 0;
-                            if ((!TARGET) || (target.action == THROW))
-                                cursor->showpck(mtype, sx, sy);
+                                draw_sprite(screen2, throwbox[mtype], sx, sy - 6);
                         } else if (lev < sel_lev) {
-                            cursor->showpck(2, sx, sy);
+                            draw_sprite(screen2, selectbox[5], sx, sy - 6);
                         }
                     }
 
@@ -421,25 +432,33 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
 
                     if (m_cell[sel_lev][col][row]->MOUSE && show_cursor) {
                         if (lev == sel_lev) {
-                            if ((TARGET) && (target.action == THROW))
-                                cursor->showpck(15, sx, sy);
-                            if ((TARGET) && (target.action != THROW))
-                                mtype += 6;
+                            if ((!TARGET) || (target.action != THROW)) {
+                                if ((m_cell[lev][col][row]->soldier_here()) && (platoon_local->is_visible(lev, col, row)))
+                                    mtype = TARGET ? 1 + ((ANIMATION / 3) % (((int)aimbox.size() - 2) / 2)) : 1;
+                                else
+                                    mtype = 0;
+                            } else {
+                                mtype = (ANIMATION / 3) % ((int)throwbox.size() / 2);
+                            }
+                                
+                            if (!TARGET)
+                                draw_sprite(screen2, selectbox[mtype], sx, sy - 6);
+                            else if (target.action != THROW)
+                                draw_sprite(screen2, aimbox[mtype], sx, sy - 6);
                             else
-                                mtype += 3;
-                            cursor->showpck(mtype, sx, sy);
+                                draw_sprite(screen2, throwbox[mtype], sx, sy - 6);
                         } else if (lev < sel_lev) {
-                            cursor->showpck(5, sx, sy);
+                            draw_sprite(screen2, selectbox[2], sx, sy - 6);
                         }
                     }
                     // Draw smoke
                     if (platoon_local->is_seen(lev, col, row)) {
                         if (fire_time(lev, col, row) > 0) {
                             if (fire_time(lev, col, row) > 1) {
-                                int frame = m_animation_cycle % (int)fire_large.size();
+                                int frame = (ANIMATION / 3) % (int)fire_large.size();
                                 draw_sprite(screen2, fire_large[frame], sx, sy - 6);
                             } else {
-                                int frame = m_animation_cycle % (int)fire_small.size();
+                                int frame = (ANIMATION / 3) % (int)fire_small.size();
                                 draw_sprite(screen2, fire_small[frame], sx, sy - 6);
                             }
                         } else {
