@@ -736,7 +736,7 @@ void Soldier::draw_selector(int select_y)
     num ^= (m_state == SIT);
     num ^= (map->place(z, x, y)->item() != NULL) * 2;
     
-    int sx = map->x + CELL_SCR_X * x + CELL_SCR_X * y + 8 + selector[num]->w / 2;
+    int sx = map->x + CELL_SCR_X * x + CELL_SCR_X * y + 16 - selector[num]->w / 2;
     int sy = map->y - (x + 1) * CELL_SCR_Y + CELL_SCR_Y * y - CELL_SCR_Z * z - 20 - selector[num]->h;
 
     draw_sprite(screen2, selector[num], sx, sy - select_y + calc_z());

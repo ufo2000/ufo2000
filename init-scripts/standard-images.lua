@@ -22,7 +22,7 @@ SetExplosionAnimation {
 ------------------------------------------------------------------------------
 AddImage("mouse", png_image("$(ufo2000)/arts/mouse.png"))
 AddImage("mouse_menu", png_image("$(ufo2000)/arts/mouse_menu.png"))
-AddImage("selector", png_image_set("$(ufo2000)/arts/selector/9x9", 1, 4))
+AddImage("selector", png_image_set("$(ufo2000)/arts/selector/19x9", 1, 4))
 
 -- Our own images
 -------------------
