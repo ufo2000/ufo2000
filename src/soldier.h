@@ -125,7 +125,6 @@ public:
 private:
     UNITDATA ud;
 
-    static BITMAP *m_unibord;
     static int dir2ofs[8];
     static char ofs2dir[3][3];
 
@@ -221,7 +220,7 @@ public:
 
     void draw() { m_skin->draw(); }
     void draw_inventory(BITMAP *dest);
-    void draw_unibord(int gx, int gy);
+    void draw_unibord(int abs_pos, int posx, int posy);
     void draw_selector(int select_y);
     void showspk(BITMAP *dest);
     //void showspk() { showspk(screen2); }

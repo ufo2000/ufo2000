@@ -319,7 +319,7 @@ void Editor::show()
                 man->place(i)->drawgrid(screen2, i);
             m_armoury->drawgrid(screen2, P_ARMOURY);
 
-            man->draw_unibord(320, 0);  // Attribute-Barchart
+            man->draw_unibord(1, 320, 0);  // Attribute-Barchart
             if (sel_item != NULL) {
                 if (sel_item_place == P_ARMOURY)
                     sel_item->od_info(330, 220, COLOR_WHITE);
@@ -352,12 +352,12 @@ void Editor::show()
                 Item *it = m_armoury->item_under_mouse(0, 0);
                 if (it != NULL) {
                     if (is_item_allowed(it->m_type))
-                        it->od_info(330, 220, COLOR_GRAY05);
+                        it->od_info(330, 235, COLOR_GRAY05);
                     else
-                        it->od_info(330, 220, COLOR_GRAY10);
+                        it->od_info(330, 235, COLOR_GRAY10);
                 } else {
                     //textprintf(screen2, large, 330, 220, COLOR_LT_BLUE, _("Click here to change equipment set"));
-                    int ty = 220;
+                    int ty = 235;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("       F1: Help")); ty += 10;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("    F2/F3: Save/load team")); ty += 10;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("       F4: Edit attributes")); ty += 10;
@@ -366,8 +366,8 @@ void Editor::show()
 
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _(" Ctrl+Ins: Copy current soldier")); ty += 10;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("Shift+Ins: Paste on current soldier")); ty += 15;
-                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("      Del: Delete items of current man")); ty += 10;
-                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("Shift+Del: Drop items of current man")); ty += 15;
+                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("      Del: Delete items of current man")); /*ty += 10;
+                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("Shift+Del: Drop items of current man"));*/ ty += 15;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("      F11: Cycle through appearences")); ty += 10;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("      F12: Cycle through human armours")); ty += 10;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("Shift+F12: Cycle through alien races")); ty += 15;

@@ -1397,7 +1397,7 @@ void build_screen(int & select_y)
         }           
     } else if (MODE == UNIT_INFO) {
         if (sel_man != NULL)
-            sel_man->draw_unibord(SCREEN2W / 2 - 160, SCREEN2H / 2 - 100);
+            sel_man->draw_unibord(0, SCREEN2W, SCREEN2H - icon->height);
         else
             MODE = MAP3D;
     }
@@ -2113,7 +2113,7 @@ void gameloop()
             if (sel_man == NULL)  // Get cursor back to normal mode in case
                 TARGET = 0;       // the current soldier died while targetting.
 
-            select_y = (select_y + 1) % 3;
+            select_y = (select_y + 1) % 6;
             CHANGE = 1;
 
             MOVEIT--;

@@ -219,7 +219,6 @@ class Icon
 {
 private:
 	int    x, y;
-	int    width, height;
 
 	SPK    *tac00;
 	BITMAP *iconsbmp, *highlbmp, *clearbmp;
@@ -237,6 +236,8 @@ private:
 public:
 	Icon();
 	~Icon();
+	
+	int    width, height;
 
 	void draw();
 	int inside(int mx, int my);

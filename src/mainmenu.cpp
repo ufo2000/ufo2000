@@ -160,7 +160,7 @@ static int d_mainmenu_button_proc(int msg, DIALOG *d, int c)
 //#define MENU_LEFT           (SCREEN_W - 640 + 341)
 //#define MENU_TOP            115
 #define MENU_LEFT           (SCREEN_W - 640 + 358)
-#define MENU_TOP            55 
+#define MENU_TOP            35 
 #define MENU_BTN_STEP       8
 //#define MENU_BTN_W          237
 #define MENU_BTN_W          257

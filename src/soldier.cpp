@@ -41,8 +41,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //uncomment to view some formulas results (reaction fire)
 #define SHOW_DEBUG_INFO
 
-BITMAP *Soldier::m_unibord = NULL;
-
 //                  dirs   0  1  2   3   4   5  6  7
 int Soldier::dir2ofs[8] = {1, 1, 0, -1, -1, -1, 0, 1};
 //                    y  x     -1  0  1
@@ -55,11 +53,6 @@ IMPLEMENT_PERSISTENCE(Soldier, "Soldier");
 void Soldier::initpck()
 {
     Skin::initpck();
-
-    SPK *unibord = new SPK("$(xcom)/ufograph/unibord.pck");
-    m_unibord = create_bitmap(320, 200); clear_to_color(m_unibord, COLOR_BLACK1);
-    unibord->show_pck(m_unibord, 0, 0);
-    delete unibord;
 }
 
 Soldier::Soldier(Platoon *platoon, int _NID)
@@ -656,20 +649,21 @@ void Soldier::draw_inventory(BITMAP *dest)
     map->place(z, x, y)->drawgrid(dest, P_MAP);
 }
 
+inline int graycol(int c)
+{
+    return makecol(c, c, c);
+}
+
 /**
  * Display soldiers attributes, with numbers and barcharts 
  */
-void Soldier::draw_unibord(int gx, int gy)
+void Soldier::draw_unibord(int abs_pos, int posx, int posy)
 {
-    BITMAP *temp = create_bitmap(m_unibord->w, m_unibord->h);
-    clear_bitmap(temp);
-
-    draw_sprite(temp, m_unibord, 0, 0);
-
-    textout_centre(temp, large, md.Name, 160, 11 - (text_height(large) / 2), COLOR_LT_OLIVE);
-
     int fw = ud.HeadWound + ud.TorsoWound + ud.RArmWound +
              ud.LArmWound + ud.RLegWound  + ud.LLegWound;   // Fatal Wounds
+
+    const int row_num = 17, col_num = 9;
+    FONT *name_f = large, *row_f = g_small_font;
 
     struct {
         char *str;
@@ -677,7 +671,7 @@ void Soldier::draw_unibord(int gx, int gy)
         int max;
         int col;
     }
-    param[17] = {
+    param[row_num] = {
         { (char*)_("TIME UNITS"),        ud.CurTU,        ud.MaxTU,      68},
         { (char*)_("ENERGY"),            ud.CurEnergy,    ud.MaxEnergy, 148},
         { (char*)_("HEALTH"),            ud.CurHealth,    ud.MaxHealth,  36},
@@ -690,36 +684,68 @@ void Soldier::draw_unibord(int gx, int gy)
         { (char*)_("STRENGTH"),          ud.MaxStrength,  md.Strength,   52},
         {NULL, 0, 0, 0},
         {NULL, 0, 0, 0},
-        { (char*)_("FRONT ARMOUR"),      ud.CurFront,     ud.MaxFront,   84},
-        { (char*)_("LEFT ARMOUR"),       ud.CurLeft,      ud.MaxLeft,    84},
-        { (char*)_("RIGHT ARMOUR"),      ud.CurRight,     ud.MaxRight,   84},
-        { (char*)_("REAR ARMOUR"),       ud.CurRear,      ud.MaxRear,    84},
-        { (char*)_("UNDER ARMOUR"),      ud.CurUnder,     ud.MaxUnder,   84}
+        { (char*)_("FRONT ARMOUR"),      ud.CurFront,     ud.MaxFront,   87},
+        { (char*)_("LEFT ARMOUR"),       ud.CurLeft,      ud.MaxLeft,    87},
+        { (char*)_("RIGHT ARMOUR"),      ud.CurRight,     ud.MaxRight,   87},
+        { (char*)_("REAR ARMOUR"),       ud.CurRear,      ud.MaxRear,    87},
+        { (char*)_("UNDER ARMOUR"),      ud.CurUnder,     ud.MaxUnder,   87}
     };
+    
+    int width = 320;
+    
+    int name_h = text_height(name_f) + 6, row_h = text_height(row_f) + 3;
+    int height = name_h + 8 + row_h * row_num;
+    
+    BITMAP *temp = create_bitmap(width, height);
+    clear_to_color(temp, makecol(255, 255, 255));
 
+    int c = 128;
+    rect(temp, 0, 0, width - 1, height - 1, graycol(c));
+    for (int i = 1; i < width - 1; i++) {
+        for (int j = 1; j < name_h - 1; j++) {
+            c = 64 + (i * 64 / (width - 2)) + (j * 64 / (name_h - 2));
+            putpixel(temp, i, j, graycol(c));
+        }
+    }
+    textout_centre(temp, name_f, md.Name, width / 2, 4, COLOR_GREEN04);
+
+    int sx[col_num + 1] = {1, 150, 180, 200, 220, 240, 260, 280, 300, width - 1};
+    for (int i = 2; i < col_num; i++)
+        printsmall_center_x(temp, sx[i] + 1, name_h, COLOR_GREEN04, (i - 2) * 20);
+
+    int s = 0;
+    line(temp, 1, name_h + 6, width - 2, name_h + 6, graycol(192));
     for (int i = 0; i < 17; i++) {
+        for (int j = 0; j < col_num; j++)
+            rectfill(temp, sx[j], name_h + 6 + row_h * i + 1, sx[j + 1] - 1, name_h + 6 + row_h * (i + 1), graycol(255 - (16 * (s++ % 2))));
+            
         if (param[i].str != NULL) {
-            textout(temp, g_small_font, param[i].str, 8, 30 + (5 - text_height(g_small_font) / 2) + i * 10, COLOR_GREEN);
-            textprintf(temp, g_small_font, 151, 30 + (5 - text_height(g_small_font) / 2) + i * 10, COLOR_YELLOW02, "%d", param[i].cur);
+            textout_right(temp, row_f, param[i].str, sx[1] - 2, name_h + 6 + row_h * i + 3, COLOR_GREEN00);
+            textprintf_centre(temp, font, 165, name_h + 6 + row_h * i + 3, COLOR_RED02, "%d", param[i].cur);
 
-            rect(temp, 170, 32 + i * 10, 170 + param[i].max, 36 + i * 10, xcom1_color(param[i].col));
+            rect(temp, sx[2], name_h + 6 + row_h * i + 3, sx[2] + param[i].max, name_h + 6 + row_h * i + 10, xcom1_color(param[i].col));
+            if (param[i].max)
+                line(temp, sx[2], name_h + 6 + row_h * i + 4, sx[2], name_h + 6 + row_h * i + 9, xcom1_color(param[i].col - 4));
             if (param[i].cur)
-                rectfill(temp, 170, 33 + i * 10, 170 + param[i].cur - 1, 35 + i * 10, xcom1_color(param[i].col - 4));
+                rectfill(temp, sx[2], name_h + 6 + row_h * i + 4, sx[2] + param[i].cur - 1, name_h + 6 + row_h * i + 9, xcom1_color(param[i].col - 4));
 
             // special case for the health bar
             if (i == 2) // draw stun damage
                 if (ud.CurStun > 0)
                 {
                     if (ud.CurStun < ud.CurHealth)
-                        rectfill(temp, 170, 33 + i * 10, 170 + ud.CurStun - 1, 35 + i * 10, COLOR_WHITE1);
+                        rectfill(temp, sx[2], name_h + 6 + row_h * i + 4, sx[2] + ud.CurStun - 1, name_h + 6 + row_h * i + 9, COLOR_WHITE1);
                     else
-                        rectfill(temp, 170, 33 + i * 10, 170 + ud.CurHealth - 1, 35 + i * 10, COLOR_WHITE1);
+                        rectfill(temp, 170, name_h + 6 + row_h * i + 4, sx[2] + ud.CurHealth - 1, name_h + 6 + row_h * i + 9, COLOR_WHITE1);
                 }
         }
     }
     
     set_trans_blender(0, 0, 0, 192);
-    draw_trans_sprite(screen2, temp, gx, gy);
+    if (abs_pos)
+        draw_trans_sprite(screen2, temp, posx, posy);
+    else
+        draw_trans_sprite(screen2, temp, (posx - width) / 2, (posy - height) / 2);
     destroy_bitmap(temp);
 }
 
@@ -739,7 +765,7 @@ void Soldier::draw_selector(int select_y)
     int sx = map->x + CELL_SCR_X * x + CELL_SCR_X * y + 16 - selector[num]->w / 2;
     int sy = map->y - (x + 1) * CELL_SCR_Y + CELL_SCR_Y * y - CELL_SCR_Z * z - 20 - selector[num]->h;
 
-    draw_sprite(screen2, selector[num], sx, sy - select_y + calc_z());
+    draw_sprite(screen2, selector[num], sx, sy - (select_y / 2) + calc_z());
 }
 
 void Soldier::turnto(int destdir)
