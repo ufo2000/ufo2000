@@ -347,8 +347,9 @@ void Platoon::draw_enemy_indicators(bool draw_indicators, bool draw_markers)
                     rectfill(screen2, x1, y1, x2, y2, (sel_man->get_visible_enemies() & s->get_vision_mask()) ? COLOR_RED07 : COLOR_RED15);
         
                 textout(screen2, font, num, x1 + 5, y1 + 4, COLOR_GOLD);
-                counter++;
             }
+
+            counter++;
             
             // Draw numbers above seen enemies
             if (draw_markers) {
