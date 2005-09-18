@@ -52,13 +52,6 @@ bool is_item_allowed(int type)
 
 Editor::Editor()
 {
-    BITMAP *image = create_bitmap(320, 200); clear(image);
-    tac01 = new SPK("$(xcom)/ufograph/tac01.scr");  // Picture with buttons
-    tac01->show(image, 0, 0);
-    b5 = create_bitmap(32, 15); clear(b5);  // Button for Scroll-left
-    blit(image, b5, 288, 137, 0, 0, 32, 15);
-    destroy_bitmap(image);
-
     m_armoury = new Place(0, 220, 20, 11);
 
     // make armoury object available to lua code
@@ -80,7 +73,6 @@ Editor::Editor()
 Editor::~Editor()
 {
     delete m_plt;
-    delete tac01;
     delete m_armoury;
     // unregister armoury object from lua
     lua_pushstring(L, "Armoury");
@@ -276,8 +268,13 @@ void Editor::show()
     // performance a bit (static image that is never changed)
     BITMAP *editor_bg = create_bitmap(640, 400);
     clear_to_color(editor_bg, COLOR_BLACK1);
+    SPK *tac01 = new SPK("$(xcom)/ufograph/tac01.scr");  // Picture with buttons
     tac01->show(editor_bg, 0, 0); // draw buttons: OK, Next-Man, Prev-Man, Unload-clip, Scroll-right
+    delete tac01;
+    BITMAP *b5 = create_bitmap(32, 15); clear(b5);  // Button for Scroll-left
+    blit(editor_bg, b5, 288, 137, 0, 0, 32, 15);
     draw_sprite_vh_flip(editor_bg, b5, 255, 137); // Button: Scroll-left
+    destroy_bitmap(b5);
     rectfill(editor_bg, 288, 32, 319, 57, COLOR_GRAY15);    //hide unused "unload" button
     text_mode(-1);
     textout(editor_bg, g_small_font, _("Click-and-drop weapons from the armory to the soldier, right-click to remove"), 0, 364 + 22, COLOR_WHITE); 

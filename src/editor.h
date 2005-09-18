@@ -51,9 +51,6 @@ private:
     Soldier *man;
     Platoon *m_plt;
 
-    SPK     *tac01;
-    BITMAP  *b123, *b4, *b5;
-
     //! Currently selected item (drag and drop)
     Item    *sel_item;
     //! Identifier of the place the currently selected item was taken from

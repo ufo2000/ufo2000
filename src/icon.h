@@ -220,7 +220,6 @@ class Icon
 private:
 	int    x, y;
 
-	SPK    *tac00;
 	BITMAP *iconsbmp, *highlbmp, *clearbmp;
 	
 	std::string filename, highl_filename;

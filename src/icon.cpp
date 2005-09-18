@@ -44,7 +44,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 // not used / debug
 void cprintf(char *str)
 {
-	text_mode(0); textprintf(screen, font, 1, 1, COLOR_WHITE, "%s", str);
+    text_mode(0); textprintf(screen, font, 1, 1, COLOR_WHITE, "%s", str);
 }
 
 /**
@@ -54,59 +54,59 @@ void cprintf(char *str)
  */
 Icon::Icon()
 {
-	int i;
-	int j;
+    int i;
+    int j;
 
     //names in .lua file - do not translate !
-	item[I_LEFT].name            = "LeftItem";
-	item[I_RIGHT].name           = "RightItem";
-	
-	button[B_MAN_UP].name        = "ManUp";
-	button[B_MAN_DOWN].name      = "ManDown";
-	button[B_VIEW_UP].name       = "ViewUp";
-	button[B_VIEW_DOWN].name     = "ViewDown";
-	button[B_MAP].name           = "Map";
-	button[B_CROUCH].name        = "Crouch";
-	button[B_INVENTORY].name     = "Inventory";
-	button[B_CENTER_VIEW].name   = "CenterView";
-	button[B_NEXT_MAN].name      = "NextMan";
-	button[B_NEXT_MAN_2].name    = "NextMan2";
-	button[B_TOGGLE_ROOF].name   = "ToggleRoof";
-	button[B_OPTIONS].name       = "Options";
-	button[B_DONE].name          = "Done";
-	button[B_EXIT].name          = "Exit";
+    item[I_LEFT].name            = "LeftItem";
+    item[I_RIGHT].name           = "RightItem";
+    
+    button[B_MAN_UP].name        = "ManUp";
+    button[B_MAN_DOWN].name      = "ManDown";
+    button[B_VIEW_UP].name       = "ViewUp";
+    button[B_VIEW_DOWN].name     = "ViewDown";
+    button[B_MAP].name           = "Map";
+    button[B_CROUCH].name        = "Crouch";
+    button[B_INVENTORY].name     = "Inventory";
+    button[B_CENTER_VIEW].name   = "CenterView";
+    button[B_NEXT_MAN].name      = "NextMan";
+    button[B_NEXT_MAN_2].name    = "NextMan2";
+    button[B_TOGGLE_ROOF].name   = "ToggleRoof";
+    button[B_OPTIONS].name       = "Options";
+    button[B_DONE].name          = "Done";
+    button[B_EXIT].name          = "Exit";
 
-	button[B_MAN_STATS].name     = "ManStats"; 
-	button[B_BARCHART].name      = "BarChart";
+    button[B_MAN_STATS].name     = "ManStats"; 
+    button[B_BARCHART].name      = "BarChart";
 
-	text[T_TURN_NUMBER].name     = "TurnNumber";
-	text[T_MAN_NAME].name        = "ManName";
-	
-	attribute[A_TIME_UNITS].name = "TimeUnits";
-	attribute[A_ENERGY].name     = "Energy";
-	attribute[A_HEALTH].name     = "Health";
-	attribute[A_MORALE].name     = "Morale";
-		
-	reserve[R_TIME_FREE].name    = "ResTimeFree";
-	reserve[R_TIME_AIM].name     = "ResTimeAim";
-	reserve[R_TIME_SNAP].name    = "ResTimeSnap";
-	reserve[R_TIME_AUTO].name    = "ResTimeAuto";
+    text[T_TURN_NUMBER].name     = "TurnNumber";
+    text[T_MAN_NAME].name        = "ManName";
+    
+    attribute[A_TIME_UNITS].name = "TimeUnits";
+    attribute[A_ENERGY].name     = "Energy";
+    attribute[A_HEALTH].name     = "Health";
+    attribute[A_MORALE].name     = "Morale";
+        
+    reserve[R_TIME_FREE].name    = "ResTimeFree";
+    reserve[R_TIME_AIM].name     = "ResTimeAim";
+    reserve[R_TIME_SNAP].name    = "ResTimeSnap";
+    reserve[R_TIME_AUTO].name    = "ResTimeAuto";
 
-	int nc[4];
-	const char *nd;
-	bool custom_icons = false;
-	
-	int stack_top = lua_gettop(L);
-	
-	if (exists(F("$(ufo2000)/init-scripts/icons.lua")))
-		lua_safe_dofile(L, F("$(ufo2000)/init-scripts/icons.lua"));
-	else
-		lua_safe_dofile(L, F("$(ufo2000)/init-scripts/standard-icons.lua"));	
-	
-	//image
-	lua_pushstring(L, "Image");
-	lua_gettable(L, -2);
-	custom_icons = lua_istable(L, -1);
+    int nc[4];
+    const char *nd;
+    bool custom_icons = false;
+    
+    int stack_top = lua_gettop(L);
+    
+    if (exists(F("$(ufo2000)/init-scripts/icons.lua")))
+        lua_safe_dofile(L, F("$(ufo2000)/init-scripts/icons.lua"));
+    else
+        lua_safe_dofile(L, F("$(ufo2000)/init-scripts/standard-icons.lua"));    
+    
+    //image
+    lua_pushstring(L, "Image");
+    lua_gettable(L, -2);
+    custom_icons = lua_istable(L, -1);
     if (custom_icons) {
         lua_pushstring(L, "File");
         lua_gettable(L, -2);
@@ -128,323 +128,321 @@ Icon::Icon()
         trans_level = 255 - (int)lua_tonumber(L, -1);
         lua_pop(L, 1);
     }
-	lua_pop(L, 1);
+    lua_pop(L, 1);
 
-	//items
-	for (i = 0; i < ITEM_NUMBER; i++) {
-   		lua_pushstring(L, item[i].name);
-		lua_gettable(L, -2);
-		ASSERT(lua_istable(L, -1));
+    //items
+    for (i = 0; i < ITEM_NUMBER; i++) {
+        lua_pushstring(L, item[i].name);
+        lua_gettable(L, -2);
+        ASSERT(lua_istable(L, -1));
 
-		lua_pushstring(L, "Button");
-		lua_gettable(L, -2);
-		ASSERT(lua_istable(L, -1));
-	
-		for (j = 1; j <= 4; j++) {
-			lua_pushnumber(L, j);
-			lua_gettable(L, -2);
-			ASSERT(lua_isnumber(L, -1));
-			nc[j - 1] = (int)lua_tonumber(L, -1);
-			lua_pop(L, 1);
-		}
-		
-		item[i].button.set_coords(nc[0], nc[1], nc[2], nc[3]);     
-	
-		lua_pop(L, 1);
-	    
-		lua_pushstring(L, "Image");
-		lua_gettable(L, -2);
-		ASSERT(lua_istable(L, -1));
-	
-		for (j = 1; j <= 2; j++) {
-			lua_pushnumber(L, j);
-			lua_gettable(L, -2);
-			ASSERT(lua_isnumber(L, -1));
-			nc[j - 1] = (int)lua_tonumber(L, -1);
-			lua_pop(L, 1);
-		}
-	
-		item[i].ImageX = nc[0];
-		item[i].ImageY = nc[1];
-	
-		lua_pop(L, 1);
-	
-		lua_pushstring(L, "DigitsCoords");
-		lua_gettable(L, -2);
-		ASSERT(lua_istable(L, -1));
-	
-		for (j = 1; j <= 2; j++) {
-			lua_pushnumber(L, j);
-			lua_gettable(L, -2);
-			ASSERT(lua_isnumber(L, -1));
-			nc[j - 1] = (int)lua_tonumber(L, -1);
-			lua_pop(L, 1);
-		}
-	
-		item[i].DigitsX = nc[0];
-		item[i].DigitsY = nc[1];
-	
-		lua_pop(L, 1);
-		
-		lua_pushstring(L, "DigitsRoundsColor");
-		lua_gettable(L, -2);
-		ASSERT(lua_isnumber(L, -1));
-		nc[0] = (int)lua_tonumber(L, -1);
-		lua_pop(L, 1);
-		
-		item[i].DigitsRoundsColor = nc[0];
-				
-		lua_pushstring(L, "DigitsPrimeColor");
-		lua_gettable(L, -2);
-		ASSERT(lua_isnumber(L, -1));
-		nc[0] = (int)lua_tonumber(L, -1);
-		lua_pop(L, 1);
-		
-		item[i].DigitsPrimeColor = nc[0];
-		
-		lua_pop(L, 1);
-	}
-	
-	//buttons
-	for (i = 0; i < BUTTON_NUMBER; i++) {
-		lua_pushstring(L, button[i].name);
-		lua_gettable(L, -2);
-		ASSERT(lua_istable(L, -1));
-	
-		for (int j = 1; j <= 4; j++) {
-			lua_pushnumber(L, j);
-			lua_gettable(L, -2);
-			ASSERT(lua_isnumber(L, -1));
-			nc[j - 1] = (int)lua_tonumber(L, -1);
-			lua_pop(L, 1);
-		}
-	
-		button[i].set_coords(nc[0], nc[1], nc[2], nc[3]);
-	
-		lua_pop(L, 1);
-	}
-	
-	//texts
-	for (i = 0; i < TEXT_NUMBER; i++) {
-		lua_pushstring(L, text[i].name);
-		lua_gettable(L, -2);
-		ASSERT(lua_istable(L, -1));
-	
-		lua_pushstring(L, "Coords");
-		lua_gettable(L, -2);
-		ASSERT(lua_istable(L, -1));
-	
-		for (j = 1; j <= 2; j++) {
-			lua_pushnumber(L, j);
-			lua_gettable(L, -2);
-			ASSERT(lua_isnumber(L, -1));
-			nc[j - 1] = (int)lua_tonumber(L, -1);
-			lua_pop(L, 1);
-		}
-	
-		text[i].x = nc[0];
-		text[i].y = nc[1];
-		
-		lua_pop(L, 1);
-	
-		lua_pushstring(L, "Color");
-		lua_gettable(L, -2);
-		ASSERT(lua_isnumber(L, -1));
-		nc[0] = (int)lua_tonumber(L, -1);
-		lua_pop(L, 1);
-	
-		text[i].color = nc[0];
-		
-		lua_pushstring(L, "Font");
-		lua_gettable(L, -2);
-		ASSERT(lua_isstring(L, -1));
-		nd = lua_tostring(L, -1);
-		lua_pop(L, 1);
-	
-		if (nd == (std::string)"small")
-			text[i].font = g_small_font;
-		else if (nd == (std::string)"normal")
-			text[i].font = font;
-		else if (nd == (std::string)"large")
-			text[i].font = large;
-		else 
-			ASSERT(false);
-	
-		lua_pop(L, 1);
-	}
-	
-	//attributes	
-	for (i = 0; i < ATTRIBUTE_NUMBER; i++) {
-		lua_pushstring(L, attribute[i].name);
-		lua_gettable(L, -2);
-		ASSERT(lua_istable(L, -1));
-		
-		lua_pushstring(L, "BarZeroCoords");
-		lua_gettable(L, -2);
-		ASSERT(lua_istable(L, -1));
-	
-		for (j = 1; j <= 2; j++) {
-			lua_pushnumber(L, j);
-			lua_gettable(L, -2);
-			ASSERT(lua_isnumber(L, -1));
-			nc[j - 1] = (int)lua_tonumber(L, -1);
-			lua_pop(L, 1);
-		}
-	
-		attribute[i].BarX = nc[0];
-		attribute[i].BarY = nc[1];
-	
-		lua_pop(L, 1);
-	
-		lua_pushstring(L, "BarDirection");
-		lua_gettable(L, -2);
-		ASSERT(lua_isstring(L, -1));
-		nd = lua_tostring(L, -1);
-		lua_pop(L, 1);
-	
-		if (nd == (std::string)"horizontal")
-			attribute[i].BarDirection = dir_hor;
-		else if (nd == (std::string)"vertical")
-			attribute[i].BarDirection = dir_vert;
-		else 
-			ASSERT(false);
-		
-		lua_pushstring(L, "FColor");
-		lua_gettable(L, -2);
-		ASSERT(lua_isnumber(L, -1));
-		nc[0] = (int)lua_tonumber(L, -1);
-		lua_pop(L, 1);
-	
-		attribute[i].FColor = nc[0];
-	
-		lua_pushstring(L, "BColor");
-		lua_gettable(L, -2);
-		ASSERT(lua_isnumber(L, -1));
-		nc[0] = (int)lua_tonumber(L, -1);
-		lua_pop(L, 1);
-	
-		attribute[i].BColor = nc[0];
-	
-		lua_pushstring(L, "DigitsCoords");
-		lua_gettable(L, -2);
-		ASSERT(lua_istable(L, -1));
-	
-		for (j = 1; j <= 2; j++) {
-			lua_pushnumber(L, j);
-			lua_gettable(L, -2);
-			ASSERT(lua_isnumber(L, -1));
-			nc[j - 1] = (int)lua_tonumber(L, -1);
-			lua_pop(L, 1);
-		}
-	
-		attribute[i].DigitsX = nc[0];
-		attribute[i].DigitsY = nc[1];
-	
-		lua_pop(L, 1);
-		
-		lua_pushstring(L, "DigitsColor");
-		lua_gettable(L, -2);
-		ASSERT(lua_isnumber(L, -1));
-		nc[0] = (int)lua_tonumber(L, -1);
-		lua_pop(L, 1);
-		
-		attribute[i].DigitsColor = nc[0];
-		
-		lua_pop(L, 1);
-	}
+        lua_pushstring(L, "Button");
+        lua_gettable(L, -2);
+        ASSERT(lua_istable(L, -1));
+    
+        for (j = 1; j <= 4; j++) {
+            lua_pushnumber(L, j);
+            lua_gettable(L, -2);
+            ASSERT(lua_isnumber(L, -1));
+            nc[j - 1] = (int)lua_tonumber(L, -1);
+            lua_pop(L, 1);
+        }
+        
+        item[i].button.set_coords(nc[0], nc[1], nc[2], nc[3]);     
+    
+        lua_pop(L, 1);
+        
+        lua_pushstring(L, "Image");
+        lua_gettable(L, -2);
+        ASSERT(lua_istable(L, -1));
+    
+        for (j = 1; j <= 2; j++) {
+            lua_pushnumber(L, j);
+            lua_gettable(L, -2);
+            ASSERT(lua_isnumber(L, -1));
+            nc[j - 1] = (int)lua_tonumber(L, -1);
+            lua_pop(L, 1);
+        }
+    
+        item[i].ImageX = nc[0];
+        item[i].ImageY = nc[1];
+    
+        lua_pop(L, 1);
+    
+        lua_pushstring(L, "DigitsCoords");
+        lua_gettable(L, -2);
+        ASSERT(lua_istable(L, -1));
+    
+        for (j = 1; j <= 2; j++) {
+            lua_pushnumber(L, j);
+            lua_gettable(L, -2);
+            ASSERT(lua_isnumber(L, -1));
+            nc[j - 1] = (int)lua_tonumber(L, -1);
+            lua_pop(L, 1);
+        }
+    
+        item[i].DigitsX = nc[0];
+        item[i].DigitsY = nc[1];
+    
+        lua_pop(L, 1);
+        
+        lua_pushstring(L, "DigitsRoundsColor");
+        lua_gettable(L, -2);
+        ASSERT(lua_isnumber(L, -1));
+        nc[0] = (int)lua_tonumber(L, -1);
+        lua_pop(L, 1);
+        
+        item[i].DigitsRoundsColor = nc[0];
+                
+        lua_pushstring(L, "DigitsPrimeColor");
+        lua_gettable(L, -2);
+        ASSERT(lua_isnumber(L, -1));
+        nc[0] = (int)lua_tonumber(L, -1);
+        lua_pop(L, 1);
+        
+        item[i].DigitsPrimeColor = nc[0];
+        
+        lua_pop(L, 1);
+    }
+    
+    //buttons
+    for (i = 0; i < BUTTON_NUMBER; i++) {
+        lua_pushstring(L, button[i].name);
+        lua_gettable(L, -2);
+        ASSERT(lua_istable(L, -1));
+    
+        for (int j = 1; j <= 4; j++) {
+            lua_pushnumber(L, j);
+            lua_gettable(L, -2);
+            ASSERT(lua_isnumber(L, -1));
+            nc[j - 1] = (int)lua_tonumber(L, -1);
+            lua_pop(L, 1);
+        }
+    
+        button[i].set_coords(nc[0], nc[1], nc[2], nc[3]);
+    
+        lua_pop(L, 1);
+    }
+    
+    //texts
+    for (i = 0; i < TEXT_NUMBER; i++) {
+        lua_pushstring(L, text[i].name);
+        lua_gettable(L, -2);
+        ASSERT(lua_istable(L, -1));
+    
+        lua_pushstring(L, "Coords");
+        lua_gettable(L, -2);
+        ASSERT(lua_istable(L, -1));
+    
+        for (j = 1; j <= 2; j++) {
+            lua_pushnumber(L, j);
+            lua_gettable(L, -2);
+            ASSERT(lua_isnumber(L, -1));
+            nc[j - 1] = (int)lua_tonumber(L, -1);
+            lua_pop(L, 1);
+        }
+    
+        text[i].x = nc[0];
+        text[i].y = nc[1];
+        
+        lua_pop(L, 1);
+    
+        lua_pushstring(L, "Color");
+        lua_gettable(L, -2);
+        ASSERT(lua_isnumber(L, -1));
+        nc[0] = (int)lua_tonumber(L, -1);
+        lua_pop(L, 1);
+    
+        text[i].color = nc[0];
+        
+        lua_pushstring(L, "Font");
+        lua_gettable(L, -2);
+        ASSERT(lua_isstring(L, -1));
+        nd = lua_tostring(L, -1);
+        lua_pop(L, 1);
+    
+        if (nd == (std::string)"small")
+            text[i].font = g_small_font;
+        else if (nd == (std::string)"normal")
+            text[i].font = font;
+        else if (nd == (std::string)"large")
+            text[i].font = large;
+        else 
+            ASSERT(false);
+    
+        lua_pop(L, 1);
+    }
+    
+    //attributes    
+    for (i = 0; i < ATTRIBUTE_NUMBER; i++) {
+        lua_pushstring(L, attribute[i].name);
+        lua_gettable(L, -2);
+        ASSERT(lua_istable(L, -1));
+        
+        lua_pushstring(L, "BarZeroCoords");
+        lua_gettable(L, -2);
+        ASSERT(lua_istable(L, -1));
+    
+        for (j = 1; j <= 2; j++) {
+            lua_pushnumber(L, j);
+            lua_gettable(L, -2);
+            ASSERT(lua_isnumber(L, -1));
+            nc[j - 1] = (int)lua_tonumber(L, -1);
+            lua_pop(L, 1);
+        }
+    
+        attribute[i].BarX = nc[0];
+        attribute[i].BarY = nc[1];
+    
+        lua_pop(L, 1);
+    
+        lua_pushstring(L, "BarDirection");
+        lua_gettable(L, -2);
+        ASSERT(lua_isstring(L, -1));
+        nd = lua_tostring(L, -1);
+        lua_pop(L, 1);
+    
+        if (nd == (std::string)"horizontal")
+            attribute[i].BarDirection = dir_hor;
+        else if (nd == (std::string)"vertical")
+            attribute[i].BarDirection = dir_vert;
+        else 
+            ASSERT(false);
+        
+        lua_pushstring(L, "FColor");
+        lua_gettable(L, -2);
+        ASSERT(lua_isnumber(L, -1));
+        nc[0] = (int)lua_tonumber(L, -1);
+        lua_pop(L, 1);
+    
+        attribute[i].FColor = nc[0];
+    
+        lua_pushstring(L, "BColor");
+        lua_gettable(L, -2);
+        ASSERT(lua_isnumber(L, -1));
+        nc[0] = (int)lua_tonumber(L, -1);
+        lua_pop(L, 1);
+    
+        attribute[i].BColor = nc[0];
+    
+        lua_pushstring(L, "DigitsCoords");
+        lua_gettable(L, -2);
+        ASSERT(lua_istable(L, -1));
+    
+        for (j = 1; j <= 2; j++) {
+            lua_pushnumber(L, j);
+            lua_gettable(L, -2);
+            ASSERT(lua_isnumber(L, -1));
+            nc[j - 1] = (int)lua_tonumber(L, -1);
+            lua_pop(L, 1);
+        }
+    
+        attribute[i].DigitsX = nc[0];
+        attribute[i].DigitsY = nc[1];
+    
+        lua_pop(L, 1);
+        
+        lua_pushstring(L, "DigitsColor");
+        lua_gettable(L, -2);
+        ASSERT(lua_isnumber(L, -1));
+        nc[0] = (int)lua_tonumber(L, -1);
+        lua_pop(L, 1);
+        
+        attribute[i].DigitsColor = nc[0];
+        
+        lua_pop(L, 1);
+    }
 
-	//stun bar color	
-	lua_pushstring(L, "StunColor");
-	lua_gettable(L, -2);
-	ASSERT(lua_isnumber(L, -1));
-	nc[0] = (int)lua_tonumber(L, -1);
-	lua_pop(L, 1);
-	
-	//reserve time buttons
-		for (i = 0; i < RESERVE_NUMBER; i++) {
-		lua_pushstring(L, reserve[i].name);
-		lua_gettable(L, -2);
-		ASSERT(lua_istable(L, -1));
-	
-		lua_pushstring(L, "Button");
-		lua_gettable(L, -2);
-		ASSERT(lua_istable(L, -1));
-	
-		for (j = 1; j <= 4; j++) {
-			lua_pushnumber(L, j);
-			lua_gettable(L, -2);
-			ASSERT(lua_isnumber(L, -1));
-			nc[j - 1] = (int)lua_tonumber(L, -1);
-			lua_pop(L, 1);
-		}
-	
-		reserve[i].button.set_coords(nc[0], nc[1], nc[2], nc[3]);
-		
-		lua_pop(L, 1);
-		
-		lua_pushstring(L, "BorderCoords");
-		lua_gettable(L, -2);
-		ASSERT(lua_istable(L, -1));
-	
-		for (j = 1; j <= 4; j++) {
-			lua_pushnumber(L, j);
-			lua_gettable(L, -2);
-			ASSERT(lua_isnumber(L, -1));
-			nc[j - 1] = (int)lua_tonumber(L, -1);
-			lua_pop(L, 1);
-		}
-	
-		reserve[i].BorderX1 = nc[0];
-		reserve[i].BorderY1 = nc[1];
-		reserve[i].BorderX2 = nc[2];
-		reserve[i].BorderY2 = nc[3];
-		
-		lua_pop(L, 1);
-	
-		lua_pushstring(L, "BorderColor");
-		lua_gettable(L, -2);
-		ASSERT(lua_isnumber(L, -1));
-		nc[0] = (int)lua_tonumber(L, -1);
-		lua_pop(L, 1);
-	
-		reserve[i].BorderColor = nc[0];
-		
-		lua_pop(L, 1);
-	}
-	
-	stun_color = nc[0];
-			
-	lua_settop(L, stack_top);
+    //stun bar color    
+    lua_pushstring(L, "StunColor");
+    lua_gettable(L, -2);
+    ASSERT(lua_isnumber(L, -1));
+    nc[0] = (int)lua_tonumber(L, -1);
+    lua_pop(L, 1);
+    
+    //reserve time buttons
+        for (i = 0; i < RESERVE_NUMBER; i++) {
+        lua_pushstring(L, reserve[i].name);
+        lua_gettable(L, -2);
+        ASSERT(lua_istable(L, -1));
+    
+        lua_pushstring(L, "Button");
+        lua_gettable(L, -2);
+        ASSERT(lua_istable(L, -1));
+    
+        for (j = 1; j <= 4; j++) {
+            lua_pushnumber(L, j);
+            lua_gettable(L, -2);
+            ASSERT(lua_isnumber(L, -1));
+            nc[j - 1] = (int)lua_tonumber(L, -1);
+            lua_pop(L, 1);
+        }
+    
+        reserve[i].button.set_coords(nc[0], nc[1], nc[2], nc[3]);
+        
+        lua_pop(L, 1);
+        
+        lua_pushstring(L, "BorderCoords");
+        lua_gettable(L, -2);
+        ASSERT(lua_istable(L, -1));
+    
+        for (j = 1; j <= 4; j++) {
+            lua_pushnumber(L, j);
+            lua_gettable(L, -2);
+            ASSERT(lua_isnumber(L, -1));
+            nc[j - 1] = (int)lua_tonumber(L, -1);
+            lua_pop(L, 1);
+        }
+    
+        reserve[i].BorderX1 = nc[0];
+        reserve[i].BorderY1 = nc[1];
+        reserve[i].BorderX2 = nc[2];
+        reserve[i].BorderY2 = nc[3];
+        
+        lua_pop(L, 1);
+    
+        lua_pushstring(L, "BorderColor");
+        lua_gettable(L, -2);
+        ASSERT(lua_isnumber(L, -1));
+        nc[0] = (int)lua_tonumber(L, -1);
+        lua_pop(L, 1);
+    
+        reserve[i].BorderColor = nc[0];
+        
+        lua_pop(L, 1);
+    }
+    
+    stun_color = nc[0];
+            
+    lua_settop(L, stack_top);
 
-	tac00 = new SPK("$(xcom)/ufograph/tac00.scr");                     
-	
-	if (custom_icons) {
-		BITMAP *custom_image;
-		custom_image = load_bitmap(F(filename.c_str()), NULL);
-		ASSERT(custom_image);
-		width  = custom_image->w;
-		height = custom_image->h;
-		
-		iconsbmp = create_bitmap(width, height);
-		blit(custom_image, iconsbmp, 0, 0, 0, 0, iconsbmp->w, iconsbmp->h);
-		destroy_bitmap(custom_image);
-	} else {
-		SPK *spk = new SPK("$(xcom)/ufograph/icons.pck");
-		BITMAP *image = create_bitmap(320, 200); clear(image);
-		spk->show(image, 0, 0);
-		delete(spk);
-		
-		width  = 320;
-		height =  57;
+    if (custom_icons) {
+        BITMAP *custom_image;
+        custom_image = load_bitmap(F(filename.c_str()), NULL);
+        ASSERT(custom_image);
+        width  = custom_image->w;
+        height = custom_image->h;
+        
+        iconsbmp = create_bitmap(width, height);
+        blit(custom_image, iconsbmp, 0, 0, 0, 0, iconsbmp->w, iconsbmp->h);
+        destroy_bitmap(custom_image);
+    } else {
+        SPK *spk = new SPK("$(xcom)/ufograph/icons.pck");
+        BITMAP *image = create_bitmap(320, 200); clear(image);
+        spk->show(image, 0, 0);
+        delete(spk);
+        
+        width  = 320;
+        height =  57;
 
         iconsbmp = create_bitmap(width, height);
-		blit(image, iconsbmp, 0, 144, 0, 0, iconsbmp->w, iconsbmp->h); 
-		destroy_bitmap(image);
-		
-		trans_level = 255;
-	}
-	
-	if (highl_filename != "") {
+        blit(image, iconsbmp, 0, 144, 0, 0, iconsbmp->w, iconsbmp->h); 
+        destroy_bitmap(image);
+        
+        trans_level = 255;
+    }
+    
+    if (highl_filename != "") {
         BITMAP *highl_image;
         highl_image = load_bitmap(F(highl_filename.c_str()), NULL);
         ASSERT(highl_image);
@@ -452,12 +450,12 @@ Icon::Icon()
         blit(highl_image, highlbmp, 0, 0, 0, 0, highlbmp->w, highlbmp->h);
         destroy_bitmap(highl_image);
     } else highlbmp = NULL;
-	
-	clearbmp = create_bitmap(iconsbmp->w, iconsbmp->h);
-	blit(iconsbmp, clearbmp, 0, 0, 0, 0, iconsbmp->w, iconsbmp->h);
-		
-	x = (SCREEN2W - width) / 2;
-	y = SCREEN2H - height;
+    
+    clearbmp = create_bitmap(iconsbmp->w, iconsbmp->h);
+    blit(iconsbmp, clearbmp, 0, 0, 0, 0, iconsbmp->w, iconsbmp->h);
+        
+    x = (SCREEN2W - width) / 2;
+    y = SCREEN2H - height;
 }
 
 /**
@@ -465,36 +463,44 @@ Icon::Icon()
  */
 Icon::~Icon()
 {
-	destroy_bitmap(iconsbmp);
-	destroy_bitmap(clearbmp);
-	if (highlbmp != NULL) destroy_bitmap(highlbmp);
-	delete(tac00);
+    destroy_bitmap(iconsbmp);
+    destroy_bitmap(clearbmp);
+    if (highlbmp != NULL) destroy_bitmap(highlbmp);
 }
 
 /**
  * Draw plain control-panel / icon-area, 
  * then add infos about currently active soldier
+ *
+ * @todo add some more optimizations as looks like this function
+ *       takes too much time
  */
 void Icon::draw()
 {
-	//blit(iconsbmp, screen2, 0, 0, x, y, iconsbmp->w, iconsbmp->h);
-	set_trans_blender(0, 0, 0, trans_level);
-    blit(clearbmp, iconsbmp, 0, 0, 0, 0, iconsbmp->w, iconsbmp->h);
-    info();
-	draw_trans_sprite(screen2, iconsbmp, x, y);
-	//draw_sprite(screen2, iconsbmp, x, y);
+    if (trans_level == 255) {
+        // No transparency
+        blit(clearbmp, iconsbmp, 0, 0, 0, 0, iconsbmp->w, iconsbmp->h);
+        info();
+        draw_sprite(screen2, iconsbmp, x, y);
+    } else {
+        // Transparency used
+        set_trans_blender(0, 0, 0, trans_level);
+        blit(clearbmp, iconsbmp, 0, 0, 0, 0, iconsbmp->w, iconsbmp->h);
+        info();
+        draw_trans_sprite(screen2, iconsbmp, x, y);
+    }
 }
 
 bool firemenu_dialog_proc_exit = 0;
 
 int firemenu_dialog_proc(int msg, DIALOG * d, int c)
 {
-	if (mouse_b & 2) {
-		while (mouse_b & 2) yield_timeslice();
-		firemenu_dialog_proc_exit = 1;
-	return D_CLOSE;
-	}
-	return d_button_proc(msg, d, c);
+    if (mouse_b & 2) {
+        while (mouse_b & 2) yield_timeslice();
+        firemenu_dialog_proc_exit = 1;
+        return D_CLOSE;
+    }
+    return d_button_proc(msg, d, c);
 }
 
 /**
@@ -503,152 +509,152 @@ int firemenu_dialog_proc(int msg, DIALOG * d, int c)
  */
 void Icon::firemenu(int iplace)
 {
-	TARGET = 0;
+    TARGET = 0;
 
-	if (sel_man == NULL)
-		return ;
-	if (sel_man->ismoving())
-		return ;
+    if (sel_man == NULL)
+        return ;
+    if (sel_man->ismoving())
+        return ;
 
-	Item *it = sel_man->item(iplace);
-	if (it == NULL)
-		return ;
+    Item *it = sel_man->item(iplace);
+    if (it == NULL)
+        return ;
 
-	static char dstr[5][100];
+    static char dstr[5][100];
 
-	static DIALOG the_dialog[] = {
-		//         dialog proc,  x,   y,   w,  h,  fg,  bg, key,  flags, d1, d2,              dp,  dp2,  dp3  
-		{ firemenu_dialog_proc, 41, 150, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[0], NULL, NULL},
-		{ firemenu_dialog_proc, 41, 120, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[1], NULL, NULL},
-		{ firemenu_dialog_proc, 41,  90, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[2], NULL, NULL},
-		{ firemenu_dialog_proc, 41,  60, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[3], NULL, NULL},
-		{ firemenu_dialog_proc, 41,  30, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[4], NULL, NULL},
-		{ d_yield_proc,          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
-		{                 NULL,  0,   0,   0,  0, _FG, _BG,   0,      0,  0,  0,            NULL, NULL, NULL}
-	};
+    static DIALOG the_dialog[] = {
+        //         dialog proc,  x,   y,   w,  h,  fg,  bg, key,  flags, d1, d2,              dp,  dp2,  dp3  
+        { firemenu_dialog_proc, 41, 150, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[0], NULL, NULL},
+        { firemenu_dialog_proc, 41, 120, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[1], NULL, NULL},
+        { firemenu_dialog_proc, 41,  90, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[2], NULL, NULL},
+        { firemenu_dialog_proc, 41,  60, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[3], NULL, NULL},
+        { firemenu_dialog_proc, 41,  30, 237, 25, _FG, _BG,   0, D_EXIT,  0,  0, (void *)dstr[4], NULL, NULL},
+        { d_yield_proc,          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
+        {                 NULL,  0,   0,   0,  0, _FG, _BG,   0,      0,  0,  0,            NULL, NULL, NULL}
+    };
 
-	for (int d = 0; d < 5; d++) {
-		the_dialog[d].x = (SCREEN2W - 237) / 2;
-		the_dialog[d].y = y + 6 - d * 30;
-	}
+    for (int d = 0; d < 5; d++) {
+        the_dialog[d].x = (SCREEN2W - 237) / 2;
+        the_dialog[d].y = y + 6 - d * 30;
+    }
 
-	int waccur[5], wtime[5];
-	Action waction[5];
+    int waccur[5], wtime[5];
+    Action waction[5];
 
-	if (it != NULL && scenario->can_use(sel_man, it)) {
-		int i = 0;
+    if (it != NULL && scenario->can_use(sel_man, it)) {
+        int i = 0;
         sprintf(dstr[i], _("CANCEL") );
-		the_dialog[i].proc = firemenu_dialog_proc;
-		i++;
+        the_dialog[i].proc = firemenu_dialog_proc;
+        i++;
 
-		waccur[i] = sel_man->TAccuracy(100); // !!! no such parameter in obdata.dat
-		wtime[i]  = sel_man->required(25);
-		if (sel_man->havetime(wtime[i]) == OK) {
+        waccur[i] = sel_man->TAccuracy(100); // !!! no such parameter in obdata.dat
+        wtime[i]  = sel_man->required(25);
+        if (sel_man->havetime(wtime[i]) == OK) {
             sprintf(dstr[i], _("THROW       ACC>%02d%% TUs>%02d"), waccur[i], wtime[i]);
-			the_dialog[i].proc = firemenu_dialog_proc;
-			waction[i] = THROW;
-			i++;
-		}
+            the_dialog[i].proc = firemenu_dialog_proc;
+            waction[i] = THROW;
+            i++;
+        }
         
-		if (it->is_hand_to_hand()) {
-			waccur[i] = 100;
-			wtime[i]  = sel_man->required(it->obdata_useTime());
-			if (!wtime[i]) wtime[i] = sel_man->required(25); // some old melee weapons don't have "useTime" property
-			if (sel_man->havetime(wtime[i]) == OK) {
-				// More stun rod hack.
-				if (it->is_stun_weapon())
+        if (it->is_hand_to_hand()) {
+            waccur[i] = 100;
+            wtime[i]  = sel_man->required(it->obdata_useTime());
+            if (!wtime[i]) wtime[i] = sel_man->required(25); // some old melee weapons don't have "useTime" property
+            if (sel_man->havetime(wtime[i]) == OK) {
+                // More stun rod hack.
+                if (it->is_stun_weapon())
                     sprintf(dstr[i], _("STUN                TUs>%02d"), wtime[i]);
                 else
                     sprintf(dstr[i], _("PUNCH               TUs>%02d"), wtime[i]);
-				the_dialog[i].proc = firemenu_dialog_proc;
-				waction[i] = PUNCH;
-				i++;
-			}
-		} else
-			if (it->is_grenade()) {
-				wtime[i] = sel_man->required(24);
-				if (sel_man->havetime(wtime[i]) == OK) {
-					if (it->is_high_explosive()) {
-						if (it->delay_time() == 0) {
+                the_dialog[i].proc = firemenu_dialog_proc;
+                waction[i] = PUNCH;
+                i++;
+            }
+        } else
+            if (it->is_grenade()) {
+                wtime[i] = sel_man->required(24);
+                if (sel_man->havetime(wtime[i]) == OK) {
+                    if (it->is_high_explosive()) {
+                        if (it->delay_time() == 0) {
                             sprintf(dstr[i], _("PRIME EXPLOSIVE     TUs>%02d"), wtime[i]);
-							the_dialog[i].proc = firemenu_dialog_proc;
-							waction[i] = PRIME;
-							i++;
-						}
-					} else {
-						if (it->delay_time() == 0) {
-							sprintf(dstr[i], _("PRIME GRENADE       TUs>%02d"), wtime[i]);
-							the_dialog[i].proc = firemenu_dialog_proc;
-							waction[i] = PRIME;
-							i++;
-						}
-					}
-				}
-			} else {
-				if ((it->obdata_isGun() && it->haveclip()) || it->is_laser()) {
-					if (it->obdata_accuracy(AUTO)) {
-						waccur[i] = sel_man->FAccuracy(it->obdata_accuracy(AUTO), it->obdata_twoHanded());
-						wtime[i] = sel_man->required(it->obdata_time(AUTO));
-						if (sel_man->havetime(wtime[i] * it->obdata_autoShots()) == OK) {
+                            the_dialog[i].proc = firemenu_dialog_proc;
+                            waction[i] = PRIME;
+                            i++;
+                        }
+                    } else {
+                        if (it->delay_time() == 0) {
+                            sprintf(dstr[i], _("PRIME GRENADE       TUs>%02d"), wtime[i]);
+                            the_dialog[i].proc = firemenu_dialog_proc;
+                            waction[i] = PRIME;
+                            i++;
+                        }
+                    }
+                }
+            } else {
+                if ((it->obdata_isGun() && it->haveclip()) || it->is_laser()) {
+                    if (it->obdata_accuracy(AUTO)) {
+                        waccur[i] = sel_man->FAccuracy(it->obdata_accuracy(AUTO), it->obdata_twoHanded());
+                        wtime[i] = sel_man->required(it->obdata_time(AUTO));
+                        if (sel_man->havetime(wtime[i] * it->obdata_autoShots()) == OK) {
                             sprintf(dstr[i], _("AUTO SHOT   ACC>%02d%% TUs>%02d"), waccur[i], wtime[i] * it->obdata_autoShots());
-							the_dialog[i].proc = firemenu_dialog_proc;
-							waction[i] = AUTOSHOT;
-							i++;
-						}
-					}
-					if (it->obdata_accuracy(SNAP)) {
-						waccur[i] = sel_man->FAccuracy(it->obdata_accuracy(SNAP), it->obdata_twoHanded());
-						wtime[i] = sel_man->required(it->obdata_time(SNAP));
-						if (sel_man->havetime(wtime[i]) == OK) {
+                            the_dialog[i].proc = firemenu_dialog_proc;
+                            waction[i] = AUTOSHOT;
+                            i++;
+                        }
+                    }
+                    if (it->obdata_accuracy(SNAP)) {
+                        waccur[i] = sel_man->FAccuracy(it->obdata_accuracy(SNAP), it->obdata_twoHanded());
+                        wtime[i] = sel_man->required(it->obdata_time(SNAP));
+                        if (sel_man->havetime(wtime[i]) == OK) {
                             sprintf(dstr[i], _("SNAP SHOT   ACC>%02d%% TUs>%02d"), waccur[i], wtime[i]);
-							the_dialog[i].proc = firemenu_dialog_proc;
-							waction[i] = SNAPSHOT;
-							i++;
-						}
-					}
-					if (it->obdata_accuracy(AIMED)) {
-						waccur[i] = sel_man->FAccuracy(it->obdata_accuracy(AIMED), it->obdata_twoHanded());
-						wtime[i] = sel_man->required(it->obdata_time(AIMED));
-						if (sel_man->havetime(wtime[i]) == OK) {
+                            the_dialog[i].proc = firemenu_dialog_proc;
+                            waction[i] = SNAPSHOT;
+                            i++;
+                        }
+                    }
+                    if (it->obdata_accuracy(AIMED)) {
+                        waccur[i] = sel_man->FAccuracy(it->obdata_accuracy(AIMED), it->obdata_twoHanded());
+                        wtime[i] = sel_man->required(it->obdata_time(AIMED));
+                        if (sel_man->havetime(wtime[i]) == OK) {
                             sprintf(dstr[i], _("AIMED SHOT  ACC>%02d%% TUs>%02d"), waccur[i], wtime[i]);
-							the_dialog[i].proc = firemenu_dialog_proc;
-							waction[i] = AIMEDSHOT;
-							i++;
-						}
-					}
-				}
-			} 
-			
-		if (i > 1) {                  
-			the_dialog[i].proc = NULL;
-			//set_mouse_sprite(mouser);
-			firemenu_dialog_proc_exit = 0;
-			int sel = do_dialog(the_dialog, -1);
-			//if (sel == i) return;
-			if (firemenu_dialog_proc_exit || sel == 0 || sel == -1) return ;
+                            the_dialog[i].proc = firemenu_dialog_proc;
+                            waction[i] = AIMEDSHOT;
+                            i++;
+                        }
+                    }
+                }
+            } 
+            
+        if (i > 1) {                  
+            the_dialog[i].proc = NULL;
+            //set_mouse_sprite(mouser);
+            firemenu_dialog_proc_exit = 0;
+            int sel = do_dialog(the_dialog, -1);
+            //if (sel == i) return;
+            if (firemenu_dialog_proc_exit || sel == 0 || sel == -1) return ;
 
             // Todo: Fire-commands DROP & USE
 
-			if (waction[sel] != PRIME) {
-				target.accur  = waccur[sel];
-				target.time   = wtime[sel];
-				target.action = waction[sel];
-				target.item   = it;
-				target.place  = iplace;
-				TARGET = 1;
-			} else {
-				target.time = wtime[sel];
+            if (waction[sel] != PRIME) {
+                target.accur  = waccur[sel];
+                target.time   = wtime[sel];
+                target.action = waction[sel];
+                target.item   = it;
+                target.place  = iplace;
+                TARGET = 1;
+            } else {
+                target.time = wtime[sel];
 
-				if (it->is_proximity_grenade()) {
-					sel_man->prime_grenade(iplace, -1, target.time);
-				} else {
-					int delay_time = doprime(it);
-					if (delay_time > 0)
-						sel_man->prime_grenade(iplace, delay_time, target.time);
-				}
-			}
-		}
-	}
+                if (it->is_proximity_grenade()) {
+                    sel_man->prime_grenade(iplace, -1, target.time);
+                } else {
+                    int delay_time = doprime(it);
+                    if (delay_time > 0)
+                        sel_man->prime_grenade(iplace, delay_time, target.time);
+                }
+            }
+        }
+    }
 }
 
 /**
@@ -656,43 +662,43 @@ void Icon::firemenu(int iplace)
  */
 int Icon::doprime(Item *it)
 {
-	int DX = (SCREEN2W - 98) / 2;
-	int DY = y - 119;
-	int DS = 18;
+    int DX = (SCREEN2W - 98) / 2;
+    int DY = y - 119;
+    int DS = 18;
 
-	static DIALOG dPrime[] = {
-		//  dialog proc, x                , y                ,  w,  h,  fg,  bg, key,  flags, d1, d2, dp              ,  dp2,  dp3
+    static DIALOG dPrime[] = {
+        //  dialog proc, x                , y                ,  w,  h,  fg,  bg, key,  flags, d1, d2, dp              ,  dp2,  dp3
         { d_button_proc, DX               , DY - 17          , 98, 15, _FG, _BG,   0, D_EXIT,  0,  0, (void *)_("Cancel"), NULL, NULL},
         { d_button_proc, DX               , DY               , DS, DS, _FG, _BG,  48, D_EXIT,  0,  0, (void *)"&0"     , NULL, NULL},
         { d_button_proc, DX + (DS + 2) * 1, DY               , DS, DS, _FG, _BG,  49, D_EXIT,  0,  0, (void *)"&1"     , NULL, NULL},
         { d_button_proc, DX + (DS + 2) * 2, DY               , DS, DS, _FG, _BG,  50, D_EXIT,  0,  0, (void *)"&2"     , NULL, NULL},
         { d_button_proc, DX + (DS + 2) * 3, DY               , DS, DS, _FG, _BG,  51, D_EXIT,  0,  0, (void *)"&3"     , NULL, NULL},
         { d_button_proc, DX + (DS + 2) * 4, DY               , DS, DS, _FG, _BG,  52, D_EXIT,  0,  0, (void *)"&4"     , NULL, NULL},
-		{ d_button_proc, DX               , DY + (DS + 2) * 1, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"5"     , NULL, NULL},
-		{ d_button_proc, DX + (DS + 2) * 1, DY + (DS + 2) * 1, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"6"     , NULL, NULL},
-		{ d_button_proc, DX + (DS + 2) * 2, DY + (DS + 2) * 1, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"7"     , NULL, NULL},
-		{ d_button_proc, DX + (DS + 2) * 3, DY + (DS + 2) * 1, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"8"     , NULL, NULL},
-		{ d_button_proc, DX + (DS + 2) * 4, DY + (DS + 2) * 1, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"9"     , NULL, NULL},
-		{ d_button_proc, DX               , DY + (DS + 2) * 2, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"10"    , NULL, NULL},
-		{ d_button_proc, DX + (DS + 2) * 1, DY + (DS + 2) * 2, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"11"    , NULL, NULL},
-		{ d_button_proc, DX + (DS + 2) * 2, DY + (DS + 2) * 2, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"12"    , NULL, NULL},
-		{ d_button_proc, DX + (DS + 2) * 3, DY + (DS + 2) * 2, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"13"    , NULL, NULL},
-		{ d_button_proc, DX + (DS + 2) * 4, DY + (DS + 2) * 2, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"14"    , NULL, NULL},
-		{ d_button_proc, DX               , DY + (DS + 2) * 3, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"15"    , NULL, NULL},
-		{ d_button_proc, DX + (DS + 2) * 1, DY + (DS + 2) * 3, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"16"    , NULL, NULL},
-		{ d_button_proc, DX + (DS + 2) * 2, DY + (DS + 2) * 3, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"17"    , NULL, NULL},
-		{ d_button_proc, DX + (DS + 2) * 3, DY + (DS + 2) * 3, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"18"    , NULL, NULL},
-		{ d_button_proc, DX + (DS + 2) * 4, DY + (DS + 2) * 3, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"19"    , NULL, NULL},
-		{ d_button_proc, DX               , DY + (DS + 2) * 4, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"20"    , NULL, NULL},
-		{ d_button_proc, DX + (DS + 2) * 1, DY + (DS + 2) * 4, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"21"    , NULL, NULL},
-		{ d_button_proc, DX + (DS + 2) * 2, DY + (DS + 2) * 4, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"22"    , NULL, NULL},
-		{ d_button_proc, DX + (DS + 2) * 3, DY + (DS + 2) * 4, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"23"    , NULL, NULL},
-		{ d_button_proc, DX + (DS + 2) * 4, DY + (DS + 2) * 4, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"24"    , NULL, NULL},
-		{ d_yield_proc,           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
-		{          NULL, 0                , 0                ,  0,  0,   0,   0,   0,      0,  0,  0, NULL            , NULL, NULL}
-	};
+        { d_button_proc, DX               , DY + (DS + 2) * 1, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"5"     , NULL, NULL},
+        { d_button_proc, DX + (DS + 2) * 1, DY + (DS + 2) * 1, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"6"     , NULL, NULL},
+        { d_button_proc, DX + (DS + 2) * 2, DY + (DS + 2) * 1, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"7"     , NULL, NULL},
+        { d_button_proc, DX + (DS + 2) * 3, DY + (DS + 2) * 1, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"8"     , NULL, NULL},
+        { d_button_proc, DX + (DS + 2) * 4, DY + (DS + 2) * 1, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"9"     , NULL, NULL},
+        { d_button_proc, DX               , DY + (DS + 2) * 2, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"10"    , NULL, NULL},
+        { d_button_proc, DX + (DS + 2) * 1, DY + (DS + 2) * 2, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"11"    , NULL, NULL},
+        { d_button_proc, DX + (DS + 2) * 2, DY + (DS + 2) * 2, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"12"    , NULL, NULL},
+        { d_button_proc, DX + (DS + 2) * 3, DY + (DS + 2) * 2, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"13"    , NULL, NULL},
+        { d_button_proc, DX + (DS + 2) * 4, DY + (DS + 2) * 2, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"14"    , NULL, NULL},
+        { d_button_proc, DX               , DY + (DS + 2) * 3, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"15"    , NULL, NULL},
+        { d_button_proc, DX + (DS + 2) * 1, DY + (DS + 2) * 3, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"16"    , NULL, NULL},
+        { d_button_proc, DX + (DS + 2) * 2, DY + (DS + 2) * 3, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"17"    , NULL, NULL},
+        { d_button_proc, DX + (DS + 2) * 3, DY + (DS + 2) * 3, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"18"    , NULL, NULL},
+        { d_button_proc, DX + (DS + 2) * 4, DY + (DS + 2) * 3, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"19"    , NULL, NULL},
+        { d_button_proc, DX               , DY + (DS + 2) * 4, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"20"    , NULL, NULL},
+        { d_button_proc, DX + (DS + 2) * 1, DY + (DS + 2) * 4, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"21"    , NULL, NULL},
+        { d_button_proc, DX + (DS + 2) * 2, DY + (DS + 2) * 4, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"22"    , NULL, NULL},
+        { d_button_proc, DX + (DS + 2) * 3, DY + (DS + 2) * 4, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"23"    , NULL, NULL},
+        { d_button_proc, DX + (DS + 2) * 4, DY + (DS + 2) * 4, DS, DS, _FG, _BG,   0, D_EXIT,  0,  0, (void *)"24"    , NULL, NULL},
+        { d_yield_proc,           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
+        {          NULL, 0                , 0                ,  0,  0,   0,   0,   0,      0,  0,  0, NULL            , NULL, NULL}
+    };
 
-	return do_dialog(dPrime, -1);
+    return do_dialog(dPrime, -1);
 }
 
 /**
@@ -702,7 +708,7 @@ int Icon::identify(int mx, int my)
 {
     int icon_nr = -1;
     mx -= x; my -= y;
-	int i;
+    int i;
 
     for (i = B_MAN_UP; i <= BUTTON_NUMBER; i++) { 
         if (button[ i ].is_inside(mx, my)) { 
@@ -726,162 +732,162 @@ int Icon::identify(int mx, int my)
  */
 void Icon::execute(int mx, int my)
 {
-	mx -= x; my -= y;
+    mx -= x; my -= y;
     if (item[I_LEFT].button.is_inside(mx, my)) {
-		if (MODE != WATCH)
-			firemenu(P_ARM_LEFT);
-	} else
-	if (item[I_RIGHT].button.is_inside(mx, my)) {
-		if (MODE != WATCH)
-			firemenu(P_ARM_RIGHT);
-	} else
-	if (button[B_MAN_UP].is_inside(mx, my)) {
-		if (MODE != WATCH) {
-		    //Pathfinding version 2:
-		    if (sel_man)
+        if (MODE != WATCH)
+            firemenu(P_ARM_LEFT);
+    } else
+    if (item[I_RIGHT].button.is_inside(mx, my)) {
+        if (MODE != WATCH)
+            firemenu(P_ARM_RIGHT);
+    } else
+    if (button[B_MAN_UP].is_inside(mx, my)) {
+        if (MODE != WATCH) {
+            //Pathfinding version 2:
+            if (sel_man)
                 if(map->cell_inside(sel_man->z + 1, sel_man->x, sel_man->y))
                     sel_man->wayto(sel_man->z + 1, sel_man->x, sel_man->y);
                 
             //Pathfinding version 1:
-			/*if (sel_man->use_elevator(+1))
-			    map->center(sel_man);*/
-			    
-		}
-	} else
-	if (button[B_MAN_DOWN].is_inside(mx, my)) {
-		if (MODE != WATCH) {
-			//Pathfinding version 2:
-			if (sel_man)
+            /*if (sel_man->use_elevator(+1))
+                map->center(sel_man);*/
+                
+        }
+    } else
+    if (button[B_MAN_DOWN].is_inside(mx, my)) {
+        if (MODE != WATCH) {
+            //Pathfinding version 2:
+            if (sel_man)
                 if(map->cell_inside(sel_man->z - 1, sel_man->x, sel_man->y))
                     sel_man->wayto(sel_man->z - 1, sel_man->x, sel_man->y);
-		        
+                
             //Pathfinding version 1:
-			/*if (sel_man->use_elevator(-1))
-			    map->center(sel_man);*/
-			
-		}
-	} else
-	if (button[B_VIEW_UP].is_inside(mx, my)) {
-		if (map->sel_lev < map->level - 1)
-			map->sel_lev++;
-	} else
-	if (button[B_VIEW_DOWN].is_inside(mx, my)) {
-		if (map->sel_lev > 0)
-			map->sel_lev--;
+            /*if (sel_man->use_elevator(-1))
+                map->center(sel_man);*/
+            
+        }
+    } else
+    if (button[B_VIEW_UP].is_inside(mx, my)) {
+        if (map->sel_lev < map->level - 1)
+            map->sel_lev++;
+    } else
+    if (button[B_VIEW_DOWN].is_inside(mx, my)) {
+        if (map->sel_lev > 0)
+            map->sel_lev--;
 //
 // Buttons for reserving time:
 //
-	} else
-	if (reserve[R_TIME_FREE].button.is_inside(mx, my)) {
-		if(sel_man)
-			sel_man->set_reserve_type(RESERVE_FREE); 
-		soundSystem::getInstance()->play(SS_BUTTON_PUSH_1); 
-	} else
-	if (reserve[R_TIME_AIM].button.is_inside(mx, my)) {
-		if(sel_man)		
-			sel_man->set_reserve_type(RESERVE_AIM);
-		soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
-	} else
-	if (reserve[R_TIME_SNAP].button.is_inside(mx, my)) {
-		if(sel_man)
-			sel_man->set_reserve_type(RESERVE_SNAP);
-		soundSystem::getInstance()->play(SS_BUTTON_PUSH_1); 
-	} else
-	if (reserve[R_TIME_AUTO].button.is_inside(mx, my)) {
-		if(sel_man)
-			sel_man->set_reserve_type(RESERVE_AUTO);
-		soundSystem::getInstance()->play(SS_BUTTON_PUSH_2);  
-	} else
-	if (button[B_MAP].is_inside(mx, my)) {
-		if (MODE != WATCH)
-			MODE = MAP2D;
-	} else
-	if (button[B_CROUCH].is_inside(mx, my)) {
-		if (MODE != WATCH) {
-			if ((sel_man != NULL) && (!sel_man->ismoving()) && (!sel_man->is_flying())) {
-				sel_man->change_pose();
-			}
-		}
-	} else
-	if (button[B_MAN_STATS].is_inside(mx, my)) {
-		if (MODE != WATCH)
-			MODE = UNIT_INFO;
+    } else
+    if (reserve[R_TIME_FREE].button.is_inside(mx, my)) {
+        if(sel_man)
+            sel_man->set_reserve_type(RESERVE_FREE); 
+        soundSystem::getInstance()->play(SS_BUTTON_PUSH_1); 
+    } else
+    if (reserve[R_TIME_AIM].button.is_inside(mx, my)) {
+        if(sel_man)     
+            sel_man->set_reserve_type(RESERVE_AIM);
+        soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
+    } else
+    if (reserve[R_TIME_SNAP].button.is_inside(mx, my)) {
+        if(sel_man)
+            sel_man->set_reserve_type(RESERVE_SNAP);
+        soundSystem::getInstance()->play(SS_BUTTON_PUSH_1); 
+    } else
+    if (reserve[R_TIME_AUTO].button.is_inside(mx, my)) {
+        if(sel_man)
+            sel_man->set_reserve_type(RESERVE_AUTO);
+        soundSystem::getInstance()->play(SS_BUTTON_PUSH_2);  
+    } else
+    if (button[B_MAP].is_inside(mx, my)) {
+        if (MODE != WATCH)
+            MODE = MAP2D;
+    } else
+    if (button[B_CROUCH].is_inside(mx, my)) {
+        if (MODE != WATCH) {
+            if ((sel_man != NULL) && (!sel_man->ismoving()) && (!sel_man->is_flying())) {
+                sel_man->change_pose();
+            }
+        }
+    } else
+    if (button[B_MAN_STATS].is_inside(mx, my)) {
+        if (MODE != WATCH)
+            MODE = UNIT_INFO;
 //
 // Test: Toggle Stats-BarChart between normal & alternate version (Todo)
 //
-	} else
-	if (button[B_BARCHART].is_inside(mx, my)) {
-		g_console->printf(COLOR_SYS_OK, "%s", "BarChart");
-		soundSystem::getInstance()->play(SS_BUTTON_PUSH_1); 
+    } else
+    if (button[B_BARCHART].is_inside(mx, my)) {
+        g_console->printf(COLOR_SYS_OK, "%s", "BarChart");
+        soundSystem::getInstance()->play(SS_BUTTON_PUSH_1); 
 //
-	} else
-	if (button[B_INVENTORY].is_inside(mx, my)) {
-		if (MODE != WATCH) {
-			TARGET = 0;
-			if ((sel_man != NULL) && (sel_man->is_panicking())) {
+    } else
+    if (button[B_INVENTORY].is_inside(mx, my)) {
+        if (MODE != WATCH) {
+            TARGET = 0;
+            if ((sel_man != NULL) && (sel_man->is_panicking())) {
                 g_console->printf(COLOR_SYS_FAIL, _("%s is panicking and can't access inventory."), sel_man->md.Name);
-			} else if ((sel_man != NULL) && (!sel_man->ismoving())) {
-				MODE = MAN;
-			}
-		}
-	} else
-	if (button[B_CENTER_VIEW].is_inside(mx, my)) {
-		if (sel_man != NULL) {
-			map->center(sel_man);
-		}
-	} else
-	if (button[B_NEXT_MAN].is_inside(mx, my)) {	
-		TARGET = 0;
-		if (sel_man == NULL) {
-			sel_man = platoon_local->captain();
-			if (sel_man != NULL)
-				map->center(sel_man);
-		} else if (!sel_man->ismoving()) {
-			Soldier *s = sel_man;
-			sel_man = platoon_local->next_not_moved_man(sel_man);
-			if (s != sel_man)
-				map->center(sel_man);
-		}
-	} else
-	if (button[B_NEXT_MAN_2].is_inside(mx, my)) {
-		TARGET = 0;
-		if (sel_man == NULL) {
-			sel_man = platoon_local->captain();
-			if (sel_man != NULL)
-				map->center(sel_man);
-		} else if (!sel_man->ismoving()) {
-			sel_man->MOVED = 1;
-			Soldier *s = sel_man;
-			sel_man = platoon_local->next_not_moved_man(sel_man);
-			if (s != sel_man)
-				map->center(sel_man);
-		}
-	} else
-	if (button[B_TOGGLE_ROOF].is_inside(mx, my)) {	
-		if (FLAGS & F_SHOWLEVELS)
-			FLAGS &= ~F_SHOWLEVELS;
-		else
-			FLAGS |= F_SHOWLEVELS;
-	} else
-	if (button[B_OPTIONS].is_inside(mx, my)) {
+            } else if ((sel_man != NULL) && (!sel_man->ismoving())) {
+                MODE = MAN;
+            }
+        }
+    } else
+    if (button[B_CENTER_VIEW].is_inside(mx, my)) {
+        if (sel_man != NULL) {
+            map->center(sel_man);
+        }
+    } else
+    if (button[B_NEXT_MAN].is_inside(mx, my)) { 
+        TARGET = 0;
+        if (sel_man == NULL) {
+            sel_man = platoon_local->captain();
+            if (sel_man != NULL)
+                map->center(sel_man);
+        } else if (!sel_man->ismoving()) {
+            Soldier *s = sel_man;
+            sel_man = platoon_local->next_not_moved_man(sel_man);
+            if (s != sel_man)
+                map->center(sel_man);
+        }
+    } else
+    if (button[B_NEXT_MAN_2].is_inside(mx, my)) {
+        TARGET = 0;
+        if (sel_man == NULL) {
+            sel_man = platoon_local->captain();
+            if (sel_man != NULL)
+                map->center(sel_man);
+        } else if (!sel_man->ismoving()) {
+            sel_man->MOVED = 1;
+            Soldier *s = sel_man;
+            sel_man = platoon_local->next_not_moved_man(sel_man);
+            if (s != sel_man)
+                map->center(sel_man);
+        }
+    } else
+    if (button[B_TOGGLE_ROOF].is_inside(mx, my)) {  
+        if (FLAGS & F_SHOWLEVELS)
+            FLAGS &= ~F_SHOWLEVELS;
+        else
+            FLAGS |= F_SHOWLEVELS;
+    } else
+    if (button[B_OPTIONS].is_inside(mx, my)) {
         int prev_pause = g_pause;
-		if (MODE == WATCH)
+        if (MODE == WATCH)
             g_pause = 1;
 
         configure();
         
         g_pause = prev_pause;
-	} else
-	if (button[B_DONE].is_inside(mx, my)) {
-		if (MODE != WATCH) {
-			TARGET = 0;
-			if (nomoves())
-				send_turn();
-		}
-	} else
-	if (button[B_EXIT].is_inside(mx, my)) {
-		simulate_keypress(KEY_ESC << 8);
-	}
+    } else
+    if (button[B_DONE].is_inside(mx, my)) {
+        if (MODE != WATCH) {
+            TARGET = 0;
+            if (nomoves())
+                send_turn();
+        }
+    } else
+    if (button[B_EXIT].is_inside(mx, my)) {
+        simulate_keypress(KEY_ESC << 8);
+    }
 }
 
 /**
@@ -895,32 +901,32 @@ void Icon::info()
         if (button[i].is_inside(mouse_x - x, mouse_y - y) && (MODE == MAP3D || MODE == WATCH))
             button[i].Draw(iconsbmp, highlbmp);
 
-	text_mode(-1);
-	if (sel_man != NULL) {
-		sel_man->drawinfo(x, y);
-	}
-	
-	draw_text(T_TURN_NUMBER, (turn / 2) + 1, "%02d");
-		
-	if(sel_man)
-		switch(sel_man->m_ReserveTimeMode) {
-		case RESERVE_FREE:
-			reserve[R_TIME_FREE].Draw(iconsbmp);
-			break;
-		
-		case RESERVE_AIM:
-			reserve[R_TIME_AIM].Draw(iconsbmp);
-			break;
-		
-		case RESERVE_SNAP:
-			reserve[R_TIME_SNAP].Draw(iconsbmp);
-			break;
-		
-		case RESERVE_AUTO:
-			reserve[R_TIME_AUTO].Draw(iconsbmp);
-			break;
-		}
-	else reserve[R_TIME_FREE].Draw(iconsbmp);
+    text_mode(-1);
+    if (sel_man != NULL) {
+        sel_man->drawinfo(x, y);
+    }
+    
+    draw_text(T_TURN_NUMBER, (turn / 2) + 1, "%02d");
+        
+    if(sel_man)
+        switch(sel_man->m_ReserveTimeMode) {
+        case RESERVE_FREE:
+            reserve[R_TIME_FREE].Draw(iconsbmp);
+            break;
+        
+        case RESERVE_AIM:
+            reserve[R_TIME_AIM].Draw(iconsbmp);
+            break;
+        
+        case RESERVE_SNAP:
+            reserve[R_TIME_SNAP].Draw(iconsbmp);
+            break;
+        
+        case RESERVE_AUTO:
+            reserve[R_TIME_AUTO].Draw(iconsbmp);
+            break;
+        }
+    else reserve[R_TIME_FREE].Draw(iconsbmp);
 }
 
 inline bool is_trans(int c)
@@ -935,11 +941,11 @@ inline bool is_trans(int c)
  */
 int Icon::inside(int mx, int my)
 {
-	if ((mx >= x) && (mx <= x + width) && (my >= y) && (my <= y + height) &&
+    if ((mx >= x) && (mx <= x + width) && (my >= y) && (my <= y + height) &&
         !(is_trans(getpixel(iconsbmp, mx - x, my - y))))
-		return 1;
-	else
-		return 0;
+        return 1;
+    else
+        return 0;
 }
 
 /**
@@ -947,9 +953,9 @@ int Icon::inside(int mx, int my)
  */ 
 void Icon::show_eot()
 {
-	BITMAP *eot_back = load_back_image(cfg_get_endturn_image_file_name());
-	stretch_blit(eot_back, screen, 0, 0, eot_back->w, eot_back->h, 0, 0, SCREEN_W, SCREEN_H);
-	destroy_bitmap(eot_back);
+    BITMAP *eot_back = load_back_image(cfg_get_endturn_image_file_name());
+    stretch_blit(eot_back, screen, 0, 0, eot_back->w, eot_back->h, 0, 0, SCREEN_W, SCREEN_H);
+    destroy_bitmap(eot_back);
 }
 
 /**
@@ -957,13 +963,13 @@ void Icon::show_eot()
  */
 void Icon::draw_stun_bar(int x, int y, int val, int maxval)
 {
-	if (attribute[A_HEALTH].BarDirection == dir_hor) {
-		hline(iconsbmp, attribute[A_HEALTH].BarX, y + attribute[A_HEALTH].BarY + 1, x + attribute[A_HEALTH].BarX + val, xcom1_color(stun_color));
-		putpixel(iconsbmp, attribute[A_HEALTH].BarX + maxval + 1, y + attribute[A_HEALTH].BarY + 1, xcom1_color(attribute[A_HEALTH].BColor));
-	} else {
-		vline(iconsbmp, attribute[A_HEALTH].BarX + 1, y + attribute[A_HEALTH].BarY, y + attribute[A_HEALTH].BarY - val, xcom1_color(stun_color));
-		putpixel(iconsbmp, attribute[A_HEALTH].BarX + 1, y + attribute[A_HEALTH].BarY + maxval + 1, xcom1_color(attribute[A_HEALTH].BColor));
-	}
+    if (attribute[A_HEALTH].BarDirection == dir_hor) {
+        hline(iconsbmp, attribute[A_HEALTH].BarX, y + attribute[A_HEALTH].BarY + 1, x + attribute[A_HEALTH].BarX + val, xcom1_color(stun_color));
+        putpixel(iconsbmp, attribute[A_HEALTH].BarX + maxval + 1, y + attribute[A_HEALTH].BarY + 1, xcom1_color(attribute[A_HEALTH].BColor));
+    } else {
+        vline(iconsbmp, attribute[A_HEALTH].BarX + 1, y + attribute[A_HEALTH].BarY, y + attribute[A_HEALTH].BarY - val, xcom1_color(stun_color));
+        putpixel(iconsbmp, attribute[A_HEALTH].BarX + 1, y + attribute[A_HEALTH].BarY + maxval + 1, xcom1_color(attribute[A_HEALTH].BColor));
+    }
 }
 
 /**
@@ -971,7 +977,7 @@ void Icon::draw_stun_bar(int x, int y, int val, int maxval)
  */
 void Icon::draw_attribute(int attr, int val, int maxval)
 {
-	attribute[attr].Draw(iconsbmp, val, maxval);
+    attribute[attr].Draw(iconsbmp, val, maxval);
 }
 
 /**
@@ -979,12 +985,12 @@ void Icon::draw_attribute(int attr, int val, int maxval)
  */
 void Icon::draw_text(int txt, char *val)
 {
-	text[txt].Draw(iconsbmp, val);
+    text[txt].Draw(iconsbmp, val);
 }
 
 void Icon::draw_text(int txt, int val, char *format)
 {
-	text[txt].Draw(iconsbmp, val, format);
+    text[txt].Draw(iconsbmp, val, format);
 }
 
 /**
@@ -994,14 +1000,14 @@ void Icon::draw_text(int txt, int val, char *format)
 void Icon::draw_item(int itm, Item *it, int rounds, int prime, bool primed)
 {
     if (item[itm].button.is_inside(mouse_x - x, mouse_y - y))
-	   item[itm].Draw(iconsbmp, highlbmp, it);
+       item[itm].Draw(iconsbmp, highlbmp, it);
     else
         item[itm].Draw(iconsbmp, it);
         
-	if (rounds != -1)
-		item[itm].DrawDigits(iconsbmp, rounds, dig_round);
-	else if (prime != -1)
-		item[itm].DrawDigits(iconsbmp, prime, dig_count);
-	else if (primed)
-		item[itm].DrawPrimed(iconsbmp);
+    if (rounds != -1)
+        item[itm].DrawDigits(iconsbmp, rounds, dig_round);
+    else if (prime != -1)
+        item[itm].DrawDigits(iconsbmp, prime, dig_count);
+    else if (primed)
+        item[itm].DrawPrimed(iconsbmp);
 }
