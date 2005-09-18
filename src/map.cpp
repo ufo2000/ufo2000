@@ -341,7 +341,9 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
             for (int col = c2; col >= c1; col--) {
                 sx = x + CELL_SCR_X * col + CELL_SCR_X * row;
                 sy = y - (col) * CELL_SCR_Y + CELL_SCR_Y * row - 26 - lev * CELL_SCR_Z - 1;
-                draw_cell_pck(sx, sy, lev, col, row, 0, platoon_local->is_seen(lev, col, row), screen2);
+                if ((sx > -32) && (sx < battleview_width) && (sy >= -34) && (sy < battleview_height)) {
+                    draw_cell_pck(sx, sy, lev, col, row, 0, platoon_local->is_seen(lev, col, row), screen2);
+                }
             }
         }
         // Draw all the remaining sprites

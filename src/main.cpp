@@ -650,8 +650,12 @@ void initmain(int argc, char *argv[])
     char ufo2000_dir[512];
     get_executable_name(ufo2000_dir, sizeof(ufo2000_dir));
     char *p = get_filename(ufo2000_dir);
-    ASSERT(p > ufo2000_dir);
-    *(p - 1) = '\0';
+    ASSERT(p >= ufo2000_dir);
+    if (p == ufo2000_dir) {
+        strcpy(ufo2000_dir, ".");
+    } else {
+        *(p - 1) = '\0';
+    }
 #ifdef WIN32
     // Convert '\\' to '/' even in Windows to keep consistency
     // ('/' is used as path separator everywhere), DOS is dead,
@@ -921,7 +925,7 @@ void closemain()
     allegro_exit();
     
     lua_close(L);
-
+    
     std::cout<<"\nUFO2000 "
              <<g_version_id.c_str()
              <<"\nCompiled with "
@@ -1294,6 +1298,16 @@ void scale2x(BITMAP *dst, BITMAP *src, int size_x, int size_y)
 }
 
 /**
+ * Blit prepared battleview image to screen. Implemented as separate function in 
+ * order to make profiling easier (now we can estimate how much time is spent
+ * on preparing image and how much time it actually takes to flush it to screen).
+ */
+void flush_screen()
+{
+    blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
+}
+
+/**
  * Redraw battlescape and minimap on the screen
  */
 void build_screen(int & select_y)
@@ -1405,8 +1419,8 @@ void build_screen(int & select_y)
     
     if (FLAGS & F_SHOWLOFCELL) g_map->show_lof_cell();
     draw_sprite(screen2, mouser, mouse_x, mouse_y);
-    blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
     g_map->svga2d();      // Minimap
+    flush_screen();
 }
 
 

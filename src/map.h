@@ -323,6 +323,7 @@ public:
             cell_visibility_changed(lev, col, row);
         m_cell[lev][col][row]->m_smog_state = value;
     }
+/*    
     void dec_smog_state(int lev, int col, int row)
     {
         int state = m_cell[lev][col][row]->m_smog_state--;
@@ -335,7 +336,7 @@ public:
         if(state == 0 || state == -1)
             cell_visibility_changed(lev, col, row);
     }
-
+*/
     int smog_time(int lev, int col, int row)
     {
         return m_cell[lev][col][row]->m_smog_time;
