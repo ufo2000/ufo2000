@@ -129,8 +129,6 @@ FilesTable = {
     ["$(xcom)/units/sectoid.tab"] = { Crc32 = X("0x00000000"), 
         Fallback = "$(xcom)/units/xcom_1.tab" },
 
-    ["$(xcom)/ufograph/cursor.pck"]  = { Crc32 = X("0x69DE75D6") },
-    ["$(xcom)/ufograph/cursor.tab"]  = { Crc32 = X("0xF5FCB568") },
     ["$(xcom)/ufograph/hit.pck"]     = { Crc32 = X("0x29C07717") },
     ["$(xcom)/ufograph/hit.tab"]     = { Crc32 = X("0x4FF3EE8F") },
     ["$(xcom)/ufograph/smoke.pck"]   = { Crc32 = X("0x65CB2E8E") },

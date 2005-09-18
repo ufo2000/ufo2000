@@ -435,7 +435,7 @@ public:
 /**
  * Fatal errors: display error message, exit program
  */
-void display_error_message(const std::string &error_text)
+void display_error_message(const std::string &error_text, bool do_not_terminate)
 {
 #ifdef WIN32
     // show errormessage in windows-messagebox:
@@ -443,8 +443,9 @@ void display_error_message(const std::string &error_text)
 #else
     fprintf(stderr, "\n%s\n", error_text.c_str());
 #endif
-    lua_message( std::string("!! Error: ") + error_text.c_str() );
-    exit(1);
+    lua_message(std::string("!! Error: ") + error_text.c_str());
+    if (!do_not_terminate)
+        exit(1);
 }
 
 int file_select_mr(const char *message, char *path, const char *ext)
@@ -456,7 +457,7 @@ int file_select_mr(const char *message, char *path, const char *ext)
 static int assert_handler(const char *msg)
 {
     if (net) net->send_debug_message("assert:%s", msg);
-    display_error_message(msg);
+    display_error_message(msg, true);
     return 0;
 }
 

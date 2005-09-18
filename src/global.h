@@ -347,7 +347,7 @@ void send_turn();
 
 bool nomoves();
 int connect_internet_server();
-void display_error_message(const std::string &error_text);
+void display_error_message(const std::string &error_text, bool do_not_terminate = false);
 int file_select_mr(const char *message, char *path, const char *ext);
 void report_game_error(int chk);
 

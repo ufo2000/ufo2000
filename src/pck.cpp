@@ -24,6 +24,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "global.h"
 #include "video.h"
 #include "pck.h"
+#include "text.h"
 
 #ifdef HAVE_PNG
 #define IMG_FILE_EXT ".png"
@@ -162,7 +163,9 @@ BITMAP *pck_image_ex(bool tftd_flag, int width, int height, const char *filename
     if (g_pck_cache.find(fullname) == g_pck_cache.end())
         g_pck_cache[fullname] = new PCK(fullname.c_str(), tftd_flag, width, height);
     PCK *pck = g_pck_cache[fullname];
-    ASSERT(pck->m_tftd_flag == tftd_flag && width == pck->m_width && height == pck->m_height);
+    if (pck->m_tftd_flag != tftd_flag || width != pck->m_width || height != pck->m_height) {
+        lua_message("Warning: attempt to load the same pck file with different palette or size");
+    }
     return pck->get_image(index);
 }
 
@@ -361,6 +364,8 @@ void PCK::drawpck(int num, BITMAP *dest, int y)
  */
 void PCK::save_as_bmp(const char *fname)
 {
+    if (m_imgnum < 1) return;
+
     int rows = ((m_imgnum + SIZE - 1) / SIZE);
     BITMAP *bmp = create_bitmap_ex(32, m_width * SIZE + SIZE - 1, m_height * rows + rows - 1);
     clear_to_color(bmp, makeacol32(0, 0, 0, 0));
