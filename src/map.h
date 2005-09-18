@@ -311,7 +311,7 @@ public:
             remove_light_source(lev, col, row, FIRE_LIGHT);
     }
 
-
+/*
     int smog_state(int lev, int col, int row)
     {
         return m_cell[lev][col][row]->m_smog_state;
@@ -323,7 +323,6 @@ public:
             cell_visibility_changed(lev, col, row);
         m_cell[lev][col][row]->m_smog_state = value;
     }
-/*    
     void dec_smog_state(int lev, int col, int row)
     {
         int state = m_cell[lev][col][row]->m_smog_state--;
@@ -343,11 +342,15 @@ public:
     }
     void set_smog_time(int lev, int col, int row, int value)
     {
+        int old_value = m_cell[lev][col][row]->m_smog_time;
+        if ((old_value == 0 && value != 0) || (old_value != 0 && value == 0))
+            cell_visibility_changed(lev, col, row);
         m_cell[lev][col][row]->m_smog_time = value;
     }
     void dec_smog_time(int lev, int col, int row)
     {
-        m_cell[lev][col][row]->m_smog_time--;
+        if (--m_cell[lev][col][row]->m_smog_time <= 0)
+            cell_visibility_changed(lev, col, row);
     }
     
     void add_light_source(int lev, int col, int row, int power);

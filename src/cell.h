@@ -35,37 +35,34 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 class Cell: public persist::BaseObject
 {
-	DECLARE_PERSISTENCE(Cell);
+    DECLARE_PERSISTENCE(Cell);
 private:
-	int m_smog_state;
-	int m_smog_time;
- 	int m_fire_time;
- 	int m_light;
+    int m_smog_time;
+    int m_fire_time;
+    int m_light;
     Position m_position;
 
-	int MOUSE;
-	char visi[3][3][3];
+    int MOUSE;
+    char visi[3][3][3];
     Soldier *m_soldier; //!< Soldier standing here
-	Place *m_place;     //!< Stack of items here
+    Place *m_place;     //!< Stack of items here
 public:
     //! Indexes of MCD records for floor, walls and object
-	unsigned char type[4]; 
+    unsigned char type[4]; 
 
-	Soldier *get_soldier() { return m_soldier; }
-	Place *get_place() { return m_place; }
-	void set_soldier(Soldier *soldier) { m_soldier = soldier; }
-	bool soldier_here() { return m_soldier != NULL; }
+    Soldier *get_soldier() { return m_soldier; }
+    Place *get_place() { return m_place; }
+    void set_soldier(Soldier *soldier) { m_soldier = soldier; }
+    bool soldier_here() { return m_soldier != NULL; }
     Position get_position() { return m_position; }
 
-	Cell(Position p);
-	virtual ~Cell();
+    Cell(Position p);
+    virtual ~Cell();
 
-	void cycle_smoke();
+    virtual bool Write(persist::Engine &archive) const;
+    virtual bool Read(persist::Engine &archive);
 
-	virtual bool Write(persist::Engine &archive) const;
-	virtual bool Read(persist::Engine &archive);
-
-	friend class Map;
+    friend class Map;
 };
 
 #endif

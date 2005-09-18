@@ -464,9 +464,14 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
                                 draw_sprite(screen2, fire_small[frame], sx, sy - 6);
                             }
                         } else {
-                            int s = smog_state(lev, col, row);
-                            if (smog_time(lev,col,row)>0)
-                                smoke->showpck(s-1, sx, sy);
+                            int st = smog_time(lev, col, row);
+                            if (st > 0) {
+                                switch (st) {
+                                    case 1: smoke->showpck(8 + (ANIMATION / 10) % 4, sx, sy); break;
+                                    case 2: smoke->showpck(12 + (ANIMATION / 10) % 4, sx, sy); break;
+                                    default: smoke->showpck(16 + (ANIMATION / 10) % 4, sx, sy); break;
+                                }
+                            }
                         }
                     }
                 }
@@ -515,37 +520,25 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
 
 void Map::step()
 {
-    for(int k=0; k<level;k++)
-        for(int i=0; i<10*width;i++)
-            for(int j=0; j<10*height;j++)
-                if (fire_time(k,i,j)>0) {
+    int width_10 = 10 * width;
+    int height_10 = 10 * height;
+    for (int k = 0; k < level; k++)
+        for(int i = 0; i < width_10;i++)
+            for(int j = 0; j < height_10; j++) {
+                if (fire_time(k, i, j) > 0) {
                     dec_fire_time(k,i,j);
-                    for (int h=0; h<4; h++)
+                    for (int h = 0; h < 4; h++)
                         damage_cell_part(k, i, j, h, 25);
                     if (man(k, i, j) != NULL)
                         man(k, i, j)->hit(0, 10, DT_INC, 8); //DAMAGEDIR_UNDER
-                } else {
-                    if (smog_time(k, i, j)>0) {
-                        dec_smog_time(k, i, j);
-                        if (smog_time(k, i, j) > 2)
-                            set_smog_state(k, i, j, 17);
-                        if (smog_time(k, i, j) == 2)
-                            set_smog_state(k, i, j, 13);
-                        if (smog_time(k, i, j) == 1)
-                            set_smog_state(k, i, j, 9);
-                        if (smog_time(k, i, j) == 0)
-                            set_smog_state(k, i, j, 0);
-                    }
+                } else if (smog_time(k, i, j) > 0) {
+                    dec_smog_time(k, i, j);
                 }
+            }
 }
 
 void Map::smoker()
 {
-    for (int k = 0; k < level; k++)
-        for (int i = 0; i < 10 * width; i++)
-            for (int j = 0; j < 10 * height; j++)
-                cell(k, i, j)->cycle_smoke();
-                
     std::vector<effect>::iterator exp = explo_spr_list->begin();
     while (exp != explo_spr_list->end()) {
         exp->state++;
@@ -1493,7 +1486,7 @@ void Map::update_vision_matrix(Soldier *watcher)
 
                 if (!viewable_further(vz, vx, vy)) break;
 
-                if (smog_state(vz, vx, vy) != 0) if (++smokeway > 2) break;
+                if (smog_time(vz, vx, vy) != 0) if (++smokeway > 2) break;
                 lightway += lw_delta; 
             }
         }
@@ -1695,14 +1688,11 @@ bool Map::check_mine(int lev, int col, int row)
 
 void Map::smokecell(int lev, int col, int row, int time)
 { 
-    set_smog_state(lev, col, row, 8);
-    set_smog_time(lev, col, row, 0);
+    set_smog_time(lev, col, row, time);              
 
     for (int i = 0; i < 4; i++)
         if (mcd(lev, col, row, i)->Fuel > smog_time(lev, col, row))
             set_smog_time(lev, col, row, mcd(lev, col, row, i)->Fuel);
-        else
-            set_smog_time(lev, col, row, time);              
 }
 
 void Map::explocell(int sniper, int lev, int col, int row, int damage, int damage_type, int hitdir)

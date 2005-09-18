@@ -30,53 +30,39 @@ IMPLEMENT_PERSISTENCE(Cell, "Cell");
 Cell::Cell( Position p )
     : m_position(p)
 {
-	m_soldier = NULL;
-	MOUSE = 0;
+    m_soldier = NULL;
+    MOUSE = 0;
     m_place = new Place(0, 152, 20 * 10, 3 ,this);
 
-	type[0] = 0; type[1] = 0; type[2] = 0; type[3] = 0;
+    type[0] = 0; type[1] = 0; type[2] = 0; type[3] = 0;
 
-	m_smog_state = 0;
-	m_smog_time = 0;
- 	m_fire_time = 0;
- 	m_light = scenario->rules[0];
-	memset(visi, 0, sizeof(visi));
+    m_smog_time = 0;
+    m_fire_time = 0;
+    m_light = scenario->rules[0];
+    memset(visi, 0, sizeof(visi));
 }
 
 Cell::~Cell()
 {
-	delete m_place;
-}
-
-void Cell::cycle_smoke()
-{
- 	if (m_smog_state > 0) {
- 		m_smog_state++;
- 		if ((m_smog_state > 20)&&(m_smog_time > 2))
- 			m_smog_state = 17;
- 		else if ((m_smog_state > 16)&&(m_smog_time == 2))
- 			m_smog_state = 13;
- 		else if ((m_smog_state > 12)&&(m_smog_time < 2))
- 			m_smog_state = 9;
- 	}
+    delete m_place;
 }
 
 bool Cell::Write(persist::Engine &archive) const
 {
-	PersistWriteBinary(archive, *this);
+    PersistWriteBinary(archive, *this);
 
-	PersistWriteObject(archive, m_soldier);
-	PersistWriteObject(archive, m_place);
+    PersistWriteObject(archive, m_soldier);
+    PersistWriteObject(archive, m_place);
         
-	return true;
+    return true;
 }
 
 bool Cell::Read(persist::Engine &archive)
 {
-	PersistReadBinary(archive, *this);
+    PersistReadBinary(archive, *this);
 
-	PersistReadObject(archive, m_soldier);
-	PersistReadObject(archive, m_place);
+    PersistReadObject(archive, m_soldier);
+    PersistReadObject(archive, m_place);
         
-	return true;
+    return true;
 }
