@@ -190,9 +190,9 @@ ufo2000 = env.Program("#" + exe_name, game_sources_prefixed)
 # Generate Dev-C++ project file
 ##############################################################################
 
-f = open("ufo2000.dev", "w")
-f.write("""
-[Project]
+if ARGUMENTS.get('devcpp', 0):
+    f = open("ufo2000.dev", "w")
+    f.write("""[Project]
 FileName=ufo2000.dev
 Name=ufo2000
 UnitCount=%d
@@ -224,9 +224,9 @@ CompilerSet=0
 CompilerSettings=0000000000000000000000
 """ % len(game_sources))
 
-i = 1
-for filename in game_sources:
-    f.write("""
+    i = 1
+    for filename in game_sources:
+        f.write("""
 [Unit%d]
 FileName=%s
 CompileCpp=1
@@ -237,10 +237,148 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 """ % (i, filename))
-    i += 1
+        i += 1
 
-f.close()
+    f.close()
 
-f = open("makefile.scons", "w")
-f.write("all:\n\tscons debug=1\nclean:\n\tscons -c debug=1")
-f.close()
+    f = open("makefile.scons", "w")
+    f.write("all:\n\tscons debug=1 devcpp=1\nclean:\n\tscons -c debug=1")
+    f.close()
+
+##############################################################################
+# Generate Anjuta IDE project file
+##############################################################################
+
+if ARGUMENTS.get('anjuta', 0):
+    f = open("ufo2000.prj", "w")
+    f.write("""# Anjuta Version 1.2.2 
+Compatibility Level: 1 
+
+<PROJECT_DESCRIPTION_START>
+Some description<PROJECT_DESCRIPTION_END>
+<CONFIG_PROGS_START>
+<CONFIG_PROGS_END>
+<CONFIG_LIBS_START>
+<CONFIG_LIBS_END>
+<CONFIG_HEADERS_START>
+<CONFIG_HEADERS_END>
+<CONFIG_CHARACTERISTICS_START>
+<CONFIG_CHARACTERISTICS_END>
+<CONFIG_LIB_FUNCS_START>
+<CONFIG_LIB_FUNCS_END>
+<CONFIG_ADDITIONAL_START>
+<CONFIG_ADDITIONAL_END>
+<CONFIG_FILES_START>
+<CONFIG_FILES_END>
+<MAKEFILE_AM_START>
+<MAKEFILE_AM_END>
+
+props.file.type=project
+
+anjuta.version=1.2.2
+anjuta.compatibility.level=1
+
+project.name=ufo2000
+project.type=GENERIC
+project.target.type=EXECUTABLE
+project.version=0.7
+project.author=ufo2000 development team
+project.source.target=ufo2000-debug
+project.has.gettext=0
+project.gui.command=
+project.programming.language=C_C++
+project.excluded.modules=.svn obj
+
+project.config.extra.modules.before=
+project.config.extra.modules.after=
+project.config.blocked=1
+project.config.disable.overwriting=1 1 1 1 1 1 1 1 1 
+
+project.menu.entry=ufo2000 Version 0.4.0
+project.menu.group=Application
+project.menu.comment=ufo2000 Version 0.4.0
+project.menu.icon=
+project.menu.need.terminal=0
+
+project.configure.options=
+anjuta.program.arguments=
+preferences.build.option.jobs=0
+preferences.build.option.silent=0
+preferences.build.option.autosave=0
+preferences.anjuta.make.options=valgrind=1 anjuta=1
+preferences.make=scons
+preferences.build.option.keep.going=1
+preferences.build.option.warn.undef=0
+preferences.autoformat.custom.style= -i8 -sc -bli0 -bl0 -cbi0 -ss
+preferences.indent.opening=0
+preferences.autoformat.disable=1
+preferences.indent.automatic=1
+preferences.use.tabs=0
+preferences.indent.size=4
+preferences.tabsize=4
+preferences.indent.closing=0
+
+module.include.name=.
+module.include.type=
+module.include.files=
+
+module.source.name=.
+module.source.type=
+module.source.files=""")
+    for filename in game_sources:
+        f.write("\\\n\t%s" % filename.replace("\\", "/"))
+    f.write("""
+
+module.pixmap.name=.
+module.pixmap.type=
+module.pixmap.files=\\
+    arts/menu.jpg\\
+    arts/text_back.jpg\\
+    arts/installer-welcome.bmp\\
+    arts/installer-logo.bmp\\
+    Seccast.ico
+
+module.data.name=.
+module.data.type=
+module.data.files=
+
+module.help.name=.
+module.help.type=
+module.help.files=
+
+module.doc.name=.
+module.doc.type=
+module.doc.files=\\
+    readme_ru.html\\
+    AUTHORS\\
+    INSTALL\\
+    ChangeLog\\
+    COPYING\\
+    readme_de.txt\\
+    readme_en.txt\\
+    readme_es.txt\\
+    readme_fr.txt\\
+    techinfo.txt
+
+module.po.files=
+
+compiler.options.supports=
+compiler.options.include.paths=\\
+    .\\
+    ..
+compiler.options.library.paths=
+compiler.options.libraries=
+compiler.options.libraries.selected=
+compiler.options.defines=\\
+    HAVE_CONFIG_H
+compiler.options.defines.selected=
+compiler.options.warning.buttons=0 0 1 1 0 1 0 0 0 0 0 0 0 1 0 0 
+compiler.options.optimize.buttons=0 0 1 0 
+compiler.options.other.buttons=1 0 
+compiler.options.other.c.flags=
+compiler.options.other.l.flags=
+compiler.options.other.l.libs=
+
+project.src.paths=
+""")
+    f.close()
