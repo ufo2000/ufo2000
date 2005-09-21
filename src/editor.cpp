@@ -319,9 +319,9 @@ void Editor::show()
             man->draw_unibord(1, 320, 0);  // Attribute-Barchart
             if (sel_item != NULL) {
                 if (sel_item_place == P_ARMOURY)
-                    sel_item->od_info(330, 220, COLOR_WHITE);
+                    sel_item->od_info(330, 235, COLOR_WHITE);
                 else
-                    sel_item->od_info(330, 220, COLOR_OLIVE);
+                    sel_item->od_info(330, 235, COLOR_OLIVE);
 
                 textprintf(screen2, g_small_font, 128, 140, COLOR_GREEN,  "%s", sel_item->name().c_str());
 
