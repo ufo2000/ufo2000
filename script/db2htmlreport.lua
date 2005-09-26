@@ -48,7 +48,7 @@ table {
 --></style><meta http-equiv="content-type" content="text/html; charset=UTF-8">
 </head><body>]])
 
-io.write("<br> <b>UFO2000 top 25 players (only players active during last month are listed)</b><br>")
+io.write("<br> <b>UFO2000 top players (only players active during last 15 days are listed)</b><br>")
 io.write("<table border=1>")
 io.write("<tr><td>pos<td>name<td>victories<td>draws<td>defeats<td>ELO score<td>last login")
 
@@ -63,14 +63,14 @@ do
         local timediff_string = "today"
         timediff = math.floor((os.time() - convert_julian_day(last_login)) / (24 * 60 * 60))
         if timediff > 0 then timediff_string = string.format("%d days ago", timediff) end
+        local games_count = (victories or 0) + (draws or 0) + (defeats or 0)
 
-        if timediff <= 30 then
+        if timediff <= 15 and games_count > 0 then
             elo_score = elo_score or 1500
             io.write("<tr><td>", pos, "<td>", name, "<td>", victories or 0, "<td>", draws or 0, "<td>", defeats or 0, "<td>", math.floor(elo_score or 0), "<td>", timediff_string, "\n")
             pos = pos + 1
         end
     end
-    if pos > 25 then break end
 end
 
 io.write("</table>")
