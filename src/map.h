@@ -130,8 +130,6 @@ private:
     int m_size;
     
 public:
-    static uint16 *m_loftemp;
-    static int m_loftemp_num;
     MinimapArea *m_minimap_area;
 
     static PCK *smoke;
@@ -163,7 +161,6 @@ public:
     void svga2d();
     BITMAP *create_bitmap_of_map(int max_lev);
 
-    void set();
     void move(int ofs_x, int ofs_y);
     void set_sel(int mx, int my);
 
@@ -311,31 +308,6 @@ public:
             remove_light_source(lev, col, row, FIRE_LIGHT);
     }
 
-/*
-    int smog_state(int lev, int col, int row)
-    {
-        return m_cell[lev][col][row]->m_smog_state;
-    }
-    void set_smog_state(int lev, int col, int row, int value)
-    {
-        int state = m_cell[lev][col][row]->m_smog_state;
-        if ( (state == 0 && value != 0) || (state != 0 && value == 0))
-            cell_visibility_changed(lev, col, row);
-        m_cell[lev][col][row]->m_smog_state = value;
-    }
-    void dec_smog_state(int lev, int col, int row)
-    {
-        int state = m_cell[lev][col][row]->m_smog_state--;
-        if( state == 0 || state == 1)
-            cell_visibility_changed(lev, col, row);
-    }
-    void inc_smog_state(int lev, int col, int row)
-    {
-        int state = m_cell[lev][col][row]->m_smog_state++;
-        if(state == 0 || state == -1)
-            cell_visibility_changed(lev, col, row);
-    }
-*/
     int smog_time(int lev, int col, int row)
     {
         return m_cell[lev][col][row]->m_smog_time;

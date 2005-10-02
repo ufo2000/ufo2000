@@ -120,6 +120,7 @@ struct MCD
     BITMAP *FrameBitmap[8];
     BITMAP *FrameBlackBitmap[8];
     BITMAP *ScangBitmap;
+    int     ShapeIndex;
 };
 #pragma pack()
 

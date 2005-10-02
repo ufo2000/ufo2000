@@ -32,6 +32,23 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #undef map
 
+/**
+ * Information about the shape of map cell. Each cell is represented
+ * by 16x16x12 small elements called voxels. Each element is stored as
+ * a single bit, so each map cell shape information takes 384 bytes.
+ * When a bit descriping voxel is set, that part of map is solid
+ * and can block bullets and other projectiles.
+ */
+struct ShapeInfo
+{
+    uint16 data[12][16];
+};
+
+//! Global table which contains all the possible unique 
+//! cell shapes, which can be used with current map, 
+//! MCD::ShapeIndex is a reference in this table
+static std::vector<ShapeInfo> shapes;
+
 TerraPCK::TerraPCK(const char *mcd_name, int tftd_flag)
 {
     add(mcd_name, tftd_flag);
@@ -90,13 +107,16 @@ void TerraPCK::add(const char *mcd_name, int tftd_flag)
         }
     }
         
-
+    // Read x-com terrains shape information
     fh = open(F("$(xcom)/geodata/loftemps.dat"), O_RDONLY | O_BINARY);
     ASSERT(fh != -1);
     int loftemps_size = filelength(fh);
+    ASSERT(loftemps_size % 2 == 0);
     char *loftemps_data = new char[loftemps_size];
     read(fh, loftemps_data, loftemps_size);
     close(fh);
+    for (int i = 0; i < loftemps_size; i += 2)
+        *(uint16 *)(loftemps_data + i) = intel_uint16(*(uint16 *)(loftemps_data + i));
     
     // get pck name
     strcpy(m_fname, mcd_name);
@@ -140,7 +160,7 @@ void TerraPCK::add(const char *mcd_name, int tftd_flag)
     long oldcount = m_mcd.size();
     long newcount = fsize / 62;
     m_mcd.resize(oldcount + newcount);
-    
+
     for (int i = 0; i < newcount; i++) {
         ASSERT(offsetof(MCD, ufo2000_data_start_marker) == 62);
         read(fh, &m_mcd[oldcount + i], 62);
@@ -149,6 +169,26 @@ void TerraPCK::add(const char *mcd_name, int tftd_flag)
             m_mcd[oldcount + i].Alt_MCD += oldcount;
         if (m_mcd[oldcount + i].Die_MCD)
             m_mcd[oldcount + i].Die_MCD += oldcount;
+
+        ShapeInfo s;
+        for (int j = 0; j < 12; j++)
+            memcpy(&s.data[j], loftemps_data + m_mcd[oldcount + i].LOFT[j] * 32, 32);
+
+        int shape_index = -1;
+        for (int j = 0; j < (int)shapes.size(); j++) {
+            if (memcmp(&shapes[j], &s, sizeof(ShapeInfo)) == 0) {
+                shape_index = j;
+                break;
+            }
+        }
+        if (shape_index >= 0) {
+            m_mcd[oldcount + i].ShapeIndex = shape_index;
+        } else {
+            shape_index = shapes.size();
+            shapes.push_back(s);
+            m_mcd[oldcount + i].ShapeIndex = shape_index;
+        }
+
         for (int j = 0; j < 8; j++) {
             BITMAP *bmp = pck_image_ex(tftd_flag, 32, 40, pck_name.c_str(), m_mcd[oldcount + i].Frame[j]);
             m_mcd[oldcount + i].FrameBitmap[j] = bmp;
@@ -180,5 +220,5 @@ void TerraPCK::add(const char *mcd_name, int tftd_flag)
  */
 int TerraPCK::is_solid_voxel(int index, int z, int x, int y)
 {
-    return (Map::m_loftemp[m_mcd[index].LOFT[z] * 16 + (15 - x)] << y) & 0x8000;
+    return (shapes[m_mcd[index].ShapeIndex].data[z][15 - x] << y) & 0x8000;
 }

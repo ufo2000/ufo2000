@@ -38,8 +38,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #define SCANGSIZE 4
 
-uint16 *Map::m_loftemp = NULL;
-int Map::m_loftemp_num = 0;
 SPK *Map::scanbord = NULL;
 PCK *Map::smoke = NULL;
 std::vector<BITMAP *> Map::fire_small, Map::fire_large;
@@ -114,21 +112,12 @@ void Map::initpck()
     selectbox = lua_table_image_vector("selectbox");
     aimbox = lua_table_image_vector("aimbox");
     throwbox = lua_table_image_vector("throwbox");
-    int fh = open(F("$(xcom)/geodata/loftemps.dat"), O_RDONLY | O_BINARY);
-    ASSERT(fh != -1);
-    int fl = filelength(fh);
-    m_loftemp = new uint16[fl / 2];
-    read(fh, m_loftemp, fl);
-    close(fh);
-    m_loftemp_num = fl / 32;
 }
 
 void Map::freepck()
 {
     delete scanbord;
     delete smoke;
-
-    delete [] m_loftemp;
 }
 
 void Map::create(int l, int w, int h)
