@@ -278,18 +278,24 @@ void Map::draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type,
     
     _y -= m_terrain->m_mcd[i].P_Level;
     
-    BITMAP **frames = _seen ? m_terrain->m_mcd[i].FrameBitmap : m_terrain->m_mcd[i].FrameBlackBitmap;
+    if (!_seen) {
+        RLE_SPRITE *frame;
+        if (!m_terrain->m_mcd[i].UFO_Door)
+            frame = m_terrain->m_mcd[i].FrameBlackBitmap[m_animation_cycle];
+        else
+            frame = m_terrain->m_mcd[i].FrameBlackBitmap[7];
+        ASSERT(frame);
+        draw_rle_sprite(_dest, frame, _x, _y - 6);
+        return;
+    }
+
     BITMAP *frame;
-    
     if (!m_terrain->m_mcd[i].UFO_Door)
-        frame = frames[m_animation_cycle];
+        frame = m_terrain->m_mcd[i].FrameBitmap[m_animation_cycle];
     else
-        frame = frames[7];
-
+        frame = m_terrain->m_mcd[i].FrameBitmap[7];
     ASSERT(frame);
-
     int light_level = m_cell[_lev][_col][_row]->m_light;
-
     if (light_level < 16 && (FLAGS & F_SHOWNIGHT)) {
         // TODO: Some kind of cache for darkened sprites
         set_trans_blender(0, 0, 0, 0);

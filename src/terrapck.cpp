@@ -59,14 +59,14 @@ TerraPCK::~TerraPCK()
     for (int i = 0; i < (int)m_mcd.size(); i++) {
         destroy_bitmap(m_mcd[i].ScangBitmap);
     }
-    std::map<BITMAP *, BITMAP *>::iterator it = m_black_bmp.begin();
+    std::map<BITMAP *, RLE_SPRITE *>::iterator it = m_black_bmp.begin();
     while (it != m_black_bmp.end()) {
-        destroy_bitmap(it->second);
+        destroy_rle_sprite(it->second);
         it++;
     }
 }
 
-BITMAP *TerraPCK::create_blackbmp(BITMAP *bmp)
+RLE_SPRITE *TerraPCK::create_blackbmp(BITMAP *bmp)
 {
     BITMAP *black_bmp = create_bitmap(bmp->w, bmp->h);
     clear_to_color(black_bmp, xcom_color(0));
@@ -75,8 +75,10 @@ BITMAP *TerraPCK::create_blackbmp(BITMAP *bmp)
         for (int j = 0; j < bmp->h; j++)
             if (getpixel(bmp, i, j) != bitmap_mask_color(bmp))
                 putpixel(black_bmp, i, j, COLOR_BLACK1);
-                
-    return black_bmp;
+
+    RLE_SPRITE *tmp = get_rle_sprite(black_bmp);
+    destroy_bitmap(black_bmp);
+    return tmp;
 }
 
 void TerraPCK::add(const char *mcd_name, int tftd_flag)

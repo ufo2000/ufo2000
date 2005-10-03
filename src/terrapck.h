@@ -118,7 +118,7 @@ struct MCD
     unsigned char ufo2000_data_start_marker;
 
     BITMAP *FrameBitmap[8];
-    BITMAP *FrameBlackBitmap[8];
+    RLE_SPRITE *FrameBlackBitmap[8];
     BITMAP *ScangBitmap;
     int     ShapeIndex;
 };
@@ -135,8 +135,8 @@ struct MCD
 class TerraPCK
 {
     #undef map
-    std::map<BITMAP *, BITMAP *> m_black_bmp;
-    BITMAP *create_blackbmp(BITMAP *bmp);
+    std::map<BITMAP *, RLE_SPRITE *> m_black_bmp;
+    RLE_SPRITE *create_blackbmp(BITMAP *bmp);
 public:
     std::vector<MCD> m_mcd;
 
