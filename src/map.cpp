@@ -35,6 +35,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "text.h"
 #include "random.h"
 #include "script_api.h"
+#include "sprite.h"
 
 #define SCANGSIZE 4
 
@@ -271,38 +272,25 @@ void Map::drawitem(BITMAP *itype, int gx, int gy)
 
 void Map::draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type, int _seen, BITMAP *_dest)
 {
-    int i = m_cell[_lev][_col][_row]->type[_type];
+    Cell &cell = *m_cell[_lev][_col][_row];
+    int i = cell.type[_type];
     if (i == 0) return;
     
     ASSERT(i < (int)m_terrain->m_mcd.size());
-    
-    _y -= m_terrain->m_mcd[i].P_Level;
-    
-    if (!_seen) {
-        RLE_SPRITE *frame;
-        if (!m_terrain->m_mcd[i].UFO_Door)
-            frame = m_terrain->m_mcd[i].FrameBlackBitmap[m_animation_cycle];
-        else
-            frame = m_terrain->m_mcd[i].FrameBlackBitmap[7];
-        ASSERT(frame);
-        draw_rle_sprite(_dest, frame, _x, _y - 6);
-        return;
-    }
+
+    MCD &mcd = m_terrain->m_mcd[i];
+    _y -= mcd.P_Level;
 
     BITMAP *frame;
-    if (!m_terrain->m_mcd[i].UFO_Door)
-        frame = m_terrain->m_mcd[i].FrameBitmap[m_animation_cycle];
+    if (!mcd.UFO_Door)
+        frame = mcd.FrameBitmap[m_animation_cycle];
     else
-        frame = m_terrain->m_mcd[i].FrameBitmap[7];
+        frame = mcd.FrameBitmap[7];
+
     ASSERT(frame);
-    int light_level = m_cell[_lev][_col][_row]->m_light;
-    if (light_level < 16 && (FLAGS & F_SHOWNIGHT)) {
-        // TODO: Some kind of cache for darkened sprites
-        set_trans_blender(0, 0, 0, 0);
-        draw_lit_sprite(_dest, frame, _x, _y - 6, 255 * (17 - light_level) / 16);
-    } else {
-        draw_sprite(_dest, frame, _x, _y - 6);
-    }
+
+    int light_level = _seen ? cell.m_light * 16 : 0;
+    draw_dark_sprite(_dest, frame, _x, _y - 6, light_level);
 }
 
 extern volatile unsigned int ANIMATION;

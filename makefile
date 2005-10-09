@@ -100,7 +100,7 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
        pck.cpp persist.cpp place.cpp platoon.cpp position.cpp         \
        random.cpp scenario.cpp server_config.cpp server_gui.cpp       \
        server_protocol.cpp server_transport.cpp skin.cpp soldier.cpp  \
-       server_game.cpp                                                \
+       server_game.cpp sprite.cpp                                     \
        sound.cpp spk.cpp stats.cpp terrapck.cpp text.cpp units.cpp    \
        video.cpp wind.cpp geoscape.cpp zfstream.cpp script_api.cpp    \
        sqlite3_command.cpp sqlite3_connection.cpp                     \

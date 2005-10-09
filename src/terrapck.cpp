@@ -28,9 +28,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "colors.h"
 #include "pck.h"
 
-#include "map.h"
 
-#undef map
 
 /**
  * Information about the shape of map cell. Each cell is represented
@@ -59,26 +57,6 @@ TerraPCK::~TerraPCK()
     for (int i = 0; i < (int)m_mcd.size(); i++) {
         destroy_bitmap(m_mcd[i].ScangBitmap);
     }
-    std::map<BITMAP *, RLE_SPRITE *>::iterator it = m_black_bmp.begin();
-    while (it != m_black_bmp.end()) {
-        destroy_rle_sprite(it->second);
-        it++;
-    }
-}
-
-RLE_SPRITE *TerraPCK::create_blackbmp(BITMAP *bmp)
-{
-    BITMAP *black_bmp = create_bitmap(bmp->w, bmp->h);
-    clear_to_color(black_bmp, xcom_color(0));
-    
-    for (int i = 0; i < bmp->w; i++)
-        for (int j = 0; j < bmp->h; j++)
-            if (getpixel(bmp, i, j) != bitmap_mask_color(bmp))
-                putpixel(black_bmp, i, j, COLOR_BLACK1);
-
-    RLE_SPRITE *tmp = get_rle_sprite(black_bmp);
-    destroy_bitmap(black_bmp);
-    return tmp;
 }
 
 void TerraPCK::add(const char *mcd_name, int tftd_flag)
@@ -194,12 +172,6 @@ void TerraPCK::add(const char *mcd_name, int tftd_flag)
         for (int j = 0; j < 8; j++) {
             BITMAP *bmp = pck_image_ex(tftd_flag, 32, 40, pck_name.c_str(), m_mcd[oldcount + i].Frame[j]);
             m_mcd[oldcount + i].FrameBitmap[j] = bmp;
-            if (m_black_bmp.find(bmp) != m_black_bmp.end()) {
-                m_mcd[oldcount + i].FrameBlackBitmap[j] = m_black_bmp[bmp];
-            } else {
-                m_mcd[oldcount + i].FrameBlackBitmap[j] = create_blackbmp(bmp);
-                m_black_bmp[bmp] = m_mcd[oldcount + i].FrameBlackBitmap[j];
-            }
         }
         m_mcd[oldcount + i].ScangBitmap = create_bitmap(4, 4);
         int mt = m_mcd[oldcount + i].ScanG + 35;

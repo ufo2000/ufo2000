@@ -115,10 +115,9 @@ struct MCD
     unsigned char u62;
 
 //! End of X-COM data, ufo2000 specific data comes next
-    unsigned char ufo2000_data_start_marker;
+    unsigned char ufo2000_data_start_marker[2];
 
     BITMAP *FrameBitmap[8];
-    RLE_SPRITE *FrameBlackBitmap[8];
     BITMAP *ScangBitmap;
     int     ShapeIndex;
 };
@@ -134,9 +133,6 @@ struct MCD
  */
 class TerraPCK
 {
-    #undef map
-    std::map<BITMAP *, RLE_SPRITE *> m_black_bmp;
-    RLE_SPRITE *create_blackbmp(BITMAP *bmp);
 public:
     std::vector<MCD> m_mcd;
 
