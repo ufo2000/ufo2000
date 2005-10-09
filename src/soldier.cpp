@@ -1504,7 +1504,7 @@ void Soldier::die()
     z = map->find_ground(z, x, y);
     for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
         m_place[i]->dropall(z, x, y);
-
+/* !!! corpses temporary disabled (to work without x-com resources)
     const char *ctype;
     if (md.SkinType == S_XCOM_0)
         ctype = "CORPSE";
@@ -1520,7 +1520,7 @@ void Soldier::die()
     Item *it = create_item(ctype);
     ASSERT(it);
     g_map->place(z, x, y)->put(it);
-    
+*/    
     //m_platoon->change_morale(-(100 / (m_platoon->num_of_men() + 1)), false);
 
     g_console->printf(COLOR_BLUE, "%s killed.", md.Name);

@@ -133,6 +133,8 @@ struct MCD
  */
 class TerraPCK
 {
+    void add_xcom_tileset(const char *mcd_name, int tftd_flag);
+    void add_ufo2000_tileset(const char *tileset_name);
 public:
     std::vector<MCD> m_mcd;
 

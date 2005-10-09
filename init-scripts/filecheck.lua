@@ -129,14 +129,14 @@ FilesTable = {
     ["$(xcom)/units/sectoid.tab"] = { Crc32 = X("0x00000000"), 
         Fallback = "$(xcom)/units/xcom_1.tab" },
 
-    ["$(xcom)/ufograph/hit.pck"]     = { Crc32 = X("0x29C07717") },
-    ["$(xcom)/ufograph/hit.tab"]     = { Crc32 = X("0x4FF3EE8F") },
-    ["$(xcom)/ufograph/smoke.pck"]   = { Crc32 = X("0x65CB2E8E") },
-    ["$(xcom)/ufograph/smoke.tab"]   = { Crc32 = X("0xEE8E1054") },
-    ["$(xcom)/ufograph/icons.pck"]   = { Crc32 = X("0xD407EF95") },
+--    ["$(xcom)/ufograph/hit.pck"]     = { Crc32 = X("0x29C07717") },
+--    ["$(xcom)/ufograph/hit.tab"]     = { Crc32 = X("0x4FF3EE8F") },
+--    ["$(xcom)/ufograph/smoke.pck"]   = { Crc32 = X("0x65CB2E8E") },
+--    ["$(xcom)/ufograph/smoke.tab"]   = { Crc32 = X("0xEE8E1054") },
+--    ["$(xcom)/ufograph/icons.pck"]   = { Crc32 = X("0xD407EF95") },
 
-    ["$(xcom)/geodata/loftemps.dat"] = { Crc32 = X("0x7B354479") },
-    ["$(xcom)/geodata/scang.dat"]    = { Crc32 = X("0x26C1BD1B") },
+--    ["$(xcom)/geodata/loftemps.dat"] = { Crc32 = X("0x7B354479") },
+--    ["$(xcom)/geodata/scang.dat"]    = { Crc32 = X("0x26C1BD1B") },
 
     ["$(xcom)/ufograph/tac00.scr"]   = { Crc32 = X("0x226E61A0"),
         Fallback = "$(ufo2000)/arts/empty.spk" },

@@ -59,7 +59,10 @@ TerraPCK::~TerraPCK()
     }
 }
 
-void TerraPCK::add(const char *mcd_name, int tftd_flag)
+/**
+ * Load X-COM style tileset
+ */
+void TerraPCK::add_xcom_tileset(const char *mcd_name, int tftd_flag)
 {
     char m_fname[512];
     int fh;
@@ -187,6 +190,113 @@ void TerraPCK::add(const char *mcd_name, int tftd_flag)
     delete [] scang_data;
     delete [] scang_rgb_data;
     delete [] loftemps_data;
+}
+
+/**
+ * Add a new UFO2000 style tileset defined in lua file
+ */
+void TerraPCK::add_ufo2000_tileset(const char *tileset_name)
+{
+    // UFO2000 style tileset
+    int stack_top = lua_gettop(L);
+    // Enter 'TilesetsTable' table
+    lua_pushstring(L, "TilesetsTable");
+    lua_gettable(L, LUA_GLOBALSINDEX);
+    ASSERT(lua_istable(L, -1)); 
+    // Enter [tileset_name] table
+    lua_pushstring(L, tileset_name);
+    lua_gettable(L, -2);
+    ASSERT(lua_istable(L, -1));
+    // Enter 'Tiles' table
+    lua_pushstring(L, "NumberOfTiles");
+    lua_gettable(L, -2);
+    ASSERT(lua_isnumber(L, -1));
+    int newcount = (int)lua_tonumber(L, -1);
+    lua_pop(L, 1);
+    int oldcount = m_mcd.size();
+    m_mcd.resize(oldcount + newcount);
+
+    lua_pushstring(L, "Tiles");
+    lua_gettable(L, -2);
+    ASSERT(lua_istable(L, -1));
+
+    for (int i = 0; i < newcount; i++) {
+        lua_pushnumber(L, i + 1);
+        lua_gettable(L, -2);
+
+        memset(&m_mcd[oldcount + i], 0, sizeof(MCD));
+
+        if (m_mcd[oldcount + i].Alt_MCD)
+            m_mcd[oldcount + i].Alt_MCD += oldcount;
+        if (m_mcd[oldcount + i].Die_MCD)
+            m_mcd[oldcount + i].Die_MCD += oldcount;
+
+        ShapeInfo s;
+        memset(&s, 0, sizeof(s));
+
+        int shape_index = -1;
+        for (int j = 0; j < (int)shapes.size(); j++) {
+            if (memcmp(&shapes[j], &s, sizeof(ShapeInfo)) == 0) {
+                shape_index = j;
+                break;
+            }
+        }
+        if (shape_index >= 0) {
+            m_mcd[oldcount + i].ShapeIndex = shape_index;
+        } else {
+            shape_index = shapes.size();
+            shapes.push_back(s);
+            m_mcd[oldcount + i].ShapeIndex = shape_index;
+        }
+
+        lua_pushstring(L, "IsometricImage");
+        lua_gettable(L, -2);
+        if (lua_islightuserdata(L, -1)) {
+            BITMAP *bmp = (BITMAP *)lua_topointer(L, -1);
+            for (int j = 0; j < 8; j++) {
+                m_mcd[oldcount + i].FrameBitmap[j] = bmp;
+            }
+            lua_pop(L, 1);
+        } else if (lua_istable(L, -1)) {
+            for (int j = 0; j < 8; j++) {
+                lua_pushnumber(L, j + 1);
+                lua_gettable(L, -2);
+                ASSERT(lua_islightuserdata(L, -1));
+                BITMAP *bmp = (BITMAP *)lua_topointer(L, -1);
+                m_mcd[oldcount + i].FrameBitmap[j] = bmp;
+                lua_pop(L, 1);
+            }
+            lua_pop(L, 1);
+        }
+
+        m_mcd[oldcount + i].ScangBitmap = create_bitmap(4, 4);
+
+        lua_pushstring(L, "MinimapImage");
+        lua_gettable(L, -2);
+        ASSERT(lua_isstring(L, -1));
+        const uint8 *scang_data = (const uint8 *)lua_tostring(L, -1);
+
+        for (int k = 0; k < 16; k++) {
+            putpixel(m_mcd[oldcount + i].ScangBitmap, k % 4, k / 4,
+                makecol(scang_data[k * 3 + 0], scang_data[k * 3 + 1], scang_data[k * 3 + 2]));
+        }
+
+        lua_pop(L, 2);
+    }
+
+    lua_settop(L, stack_top);
+}
+
+/**
+ * Load tileset
+ */
+void TerraPCK::add(const char *mcd_name, int tftd_flag)
+{
+    if (tftd_flag != 2) {
+        add_xcom_tileset(mcd_name, tftd_flag);
+    } else {
+        add_ufo2000_tileset(mcd_name);
+    }
 }
 
 /**

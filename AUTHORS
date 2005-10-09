@@ -48,11 +48,16 @@ Programming:
       * More detailed endgame-statistics
 
    Ivan Sergeevich Kazmenko aka Gassa
-      * A few bugfixes and minor improvements
+      * Support for random damages
+      * Numerous bugfixes and other improvements
       * Overall testing of the game
 
    Olegmmm
       * Different types of reaction fire depending on time reserve mode
+
+   Tursiops
+      * Visibility code performance optimization
+      * A few bugfixes and minor improvements
 
 Artwork and other game related data files:
    Munkeylord
@@ -84,6 +89,7 @@ Artwork and other game related data files:
    Nappes
       * New explosion animation
       * New soldier unit skin
+      * New 'Noon Base' tileset graphics
 
    Nachtwolf
       * New icon panel images
