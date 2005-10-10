@@ -30,6 +30,8 @@ inline long get_time_diff(const NLtime &x, const NLtime &y)
     return (y.seconds - x.seconds) * 1000 + (y.mseconds - x.mseconds);
 }
 
+class ServerDispatch;
+
 /**
  * Client side client-server connection
  *
