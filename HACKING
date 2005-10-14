@@ -117,6 +117,25 @@ Note: not all the UFO2000 sources are formatted as described here, this
 is a guide for writing new code and fixing old code when refactoring.
 
 ==============================================================================
+== Some issues that should be taken into account when coding for UFO2000
+==============================================================================
+
+1. Don't use floating point calculations for anything that should be 
+   identically processed on both local and remote computer. Currently the 
+   game sends a command to the remote host and simultaneously executes it on 
+   both computers when making any action. If the results of command
+   execution differ, the game state gets out of sync. Floating point
+   is bad as different hardware implementations can have different precision
+   and rounding mechanics, also different compilers can reorder some 
+   instructions or change them to equivalents but with slightly different
+   precision (see '-ffast-math' option for gcc for example)
+
+   Also see the following article for more explanations:
+   http://web.mit.edu/sunsoft_v6.1/SUNWspro/DOC5.0/lib/locale/C/html/common/ug/goldberg1.doc.html
+
+2. ...
+
+==============================================================================
 == Good rules of programming
 ==============================================================================
 
