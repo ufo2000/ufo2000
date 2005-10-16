@@ -18,3 +18,17 @@ AddUnit {
     pMap  = sprite_renderer,
     pInv  = pck_image("$(xcom)/units/civm.pck", 3),
 }
+
+AddXcomItem {
+    cost = 0,
+    name = "Civilian Corpse",
+    pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
+    pMap = pck_image("$(xcom)/units/floorob.pck", 50),
+    health = 20,
+    importance = 30,
+    width = 1,
+    height = 2,
+    pHeld = pck_image_set("$(xcom)/units/handob.pck", 96, 8),
+    weight = 30,
+    minimapMark = 1,
+}

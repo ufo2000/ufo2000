@@ -34,3 +34,17 @@ AddUnit {
     pMap  = sprite_renderer,
     pInv  = pck_image("$(xcom)/units/ethereal.pck", 3),
 }
+
+AddXcomItem {
+    cost = 0,
+    name = "Ethereal Corpse",
+    pInv = pck_image("$(xcom)/units/bigobs.pck", 49),
+    pMap = pck_image("$(xcom)/units/floorob.pck", 45),
+    health = 5,
+    importance = 35,
+    width = 2,
+    height = 3,
+    pHeld = pck_image_set("$(xcom)/units/handob.pck", 0, 8),
+    weight = 25,
+    minimapMark = 1,
+}
