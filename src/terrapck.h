@@ -24,6 +24,18 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "global.h"
 
 /**
+ * Information about the shape of map cell. Each cell is represented
+ * by 16x16x12 small elements called voxels. Each element is stored as
+ * a single bit, so each map cell shape information takes 384 bytes.
+ * When a bit descriping voxel is set, that part of map is solid
+ * and can block bullets and other projectiles.
+ */
+struct ShapeInfo
+{
+    uint16 data[12][16];
+};
+
+/**
  * Map cell description data. Provides information about cell object
  * shape, ability to walk/see through it, reference to pictures for
  * rendering cell. Map cell is described by 4 MCD records: two walls,
@@ -135,6 +147,8 @@ class TerraPCK
 {
     void add_xcom_tileset(const char *mcd_name, int tftd_flag);
     void add_ufo2000_tileset(const char *tileset_name);
+    int  tileset_get_int(uint32 index, const char *tileset_name, const char *property_name, int defval);
+    int  get_shape_index(const ShapeInfo &s);
 public:
     std::vector<MCD> m_mcd;
 

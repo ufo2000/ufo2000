@@ -152,20 +152,31 @@ function AddTileset(tileset)
     end
 
     for k, v in ipairs(tileset.Tiles) do
-	    local tmp = {}
-	    for pixeldata in string.gfind(v.MinimapImage, "%x%x") do
-	    	table.insert(tmp, tonumber(pixeldata, 16))
-	    end
-	    v.MinimapImage = string.char(unpack(tmp))
-	    if string.len(v.MinimapImage) ~= 16 * 3 then
-	    	Error("string.len(v.MinimapImage) = %d", string.len(v.MinimapImage))
-	    end
-	end
+        local tmp = {}
+        for pixeldata in string.gfind(v.MinimapImage, "%x%x") do
+            table.insert(tmp, tonumber(pixeldata, 16))
+        end
+        v.MinimapImage = string.char(unpack(tmp))
+        if string.len(v.MinimapImage) ~= 16 * 3 then
+            Error("string.len(v.MinimapImage) = %d", string.len(v.MinimapImage))
+        end
+        local tmp = {}
+        local counter = 0
+        for hi, lo in string.gfind(v.Shape, "(%x%x)(%x%x)") do
+            tmp[384 - counter] = tonumber(hi, 16)
+            tmp[383 - counter] = tonumber(lo, 16)
+            counter = counter + 2
+        end
+        v.Shape = string.char(unpack(tmp))
+        if string.len(v.Shape) ~= 12 * 16 * 16 / 8 then
+            Error("string.len(v.Shape) = %d", string.len(v.Shape))
+        end
+    end
 
     tileset.NumberOfTiles = table.getn(tileset.Tiles)
     tileset.Crc32 = UpdateTableCrc32(0, tileset, {"IsometricImage", "MinimapImage"})
     TilesetsTable[tileset.Name] = tileset
-	Warning("Tileset '%s' initialized, crc32 = %08X", tileset.Name, tileset.Crc32)
+    Warning("Tileset '%s' initialized, crc32 = %08X", tileset.Name, tileset.Crc32)
 end
 
 -- adds a new map file to a terrain record
@@ -218,14 +229,14 @@ function AddXcomTerrain(terrain)
     tmp.Crc32    = UpdateCrc32(0, tmp.Name)
 
     for k, v in ipairs(terrain.Tiles) do
-    	if TilesetsTable[v] then
-    		-- UFO2000 style tileset
-    		Message("UFO2000 tileset: %s", v)
+        if TilesetsTable[v] then
+            -- UFO2000 style tileset
+            Message("UFO2000 tileset: %s", v)
             tmp.Crc32 = UpdateCrc32(tmp.Crc32, TilesetsTable[v].Crc32)
             tmp.Tiles[k] = v;
             tmp.Palettes[k] = ufo2000_palette;
-    	else
-			-- X-COM style tileset
+        else
+            -- X-COM style tileset
             local pck_fname = LocateFile(string.gsub(v, "%.[^%.]*$", ".pck"))
             local mcd_fname = LocateFile(string.gsub(v, "%.[^%.]*$", ".mcd"))
             local tab_fname = LocateFile(string.gsub(v, "%.[^%.]*$", ".tab"))
@@ -274,7 +285,7 @@ function AddXcomTerrain(terrain)
 end
 
 function AddTerrain(terrain)
-	AddXcomTerrain(terrain)
+    AddXcomTerrain(terrain)
 end
 
 function AddImage(key, val)

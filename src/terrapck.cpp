@@ -28,20 +28,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "colors.h"
 #include "pck.h"
 
-
-
-/**
- * Information about the shape of map cell. Each cell is represented
- * by 16x16x12 small elements called voxels. Each element is stored as
- * a single bit, so each map cell shape information takes 384 bytes.
- * When a bit descriping voxel is set, that part of map is solid
- * and can block bullets and other projectiles.
- */
-struct ShapeInfo
-{
-    uint16 data[12][16];
-};
-
 //! Global table which contains all the possible unique 
 //! cell shapes, which can be used with current map, 
 //! MCD::ShapeIndex is a reference in this table
@@ -157,20 +143,7 @@ void TerraPCK::add_xcom_tileset(const char *mcd_name, int tftd_flag)
         for (int j = 0; j < 12; j++)
             memcpy(&s.data[j], loftemps_data + m_mcd[oldcount + i].LOFT[j] * 32, 32);
 
-        int shape_index = -1;
-        for (int j = 0; j < (int)shapes.size(); j++) {
-            if (memcmp(&shapes[j], &s, sizeof(ShapeInfo)) == 0) {
-                shape_index = j;
-                break;
-            }
-        }
-        if (shape_index >= 0) {
-            m_mcd[oldcount + i].ShapeIndex = shape_index;
-        } else {
-            shape_index = shapes.size();
-            shapes.push_back(s);
-            m_mcd[oldcount + i].ShapeIndex = shape_index;
-        }
+        m_mcd[oldcount + i].ShapeIndex = get_shape_index(s);
 
         for (int j = 0; j < 8; j++) {
             BITMAP *bmp = pck_image_ex(tftd_flag, 32, 40, pck_name.c_str(), m_mcd[oldcount + i].Frame[j]);
@@ -190,6 +163,52 @@ void TerraPCK::add_xcom_tileset(const char *mcd_name, int tftd_flag)
     delete [] scang_data;
     delete [] scang_rgb_data;
     delete [] loftemps_data;
+}
+
+int TerraPCK::get_shape_index(const ShapeInfo &s)
+{
+    int shape_index = -1;
+    for (int j = 0; j < (int)shapes.size(); j++) {
+        if (memcmp(&shapes[j], &s, sizeof(ShapeInfo)) == 0) {
+            shape_index = j;
+            break;
+        }
+    }
+    if (shape_index >= 0) {
+        return shape_index;
+    } else {
+        shape_index = shapes.size();
+        shapes.push_back(s);
+        return shape_index;
+    }
+}
+
+int TerraPCK::tileset_get_int(uint32 index, const char *tileset_name, const char *property_name, int defval)
+{
+    int stack_top = lua_gettop(L);
+    // Enter 'TilesetsTable' table
+    lua_pushstring(L, "TilesetsTable");
+    lua_gettable(L, LUA_GLOBALSINDEX);
+    ASSERT(lua_istable(L, -1)); 
+    // Enter [tileset_name] table
+    lua_pushstring(L, tileset_name);
+    lua_gettable(L, -2);
+    ASSERT(lua_istable(L, -1));
+    // Enter 'Tiles' table
+    lua_pushstring(L, "Tiles");
+    lua_gettable(L, -2);
+    ASSERT(lua_istable(L, -1));
+    // Enter [index] table
+    lua_pushnumber(L, index);
+    lua_gettable(L, -2);
+    ASSERT(lua_istable(L, -1));
+    // Get property value
+    lua_pushstring(L, property_name);
+    lua_gettable(L, -2);
+    int result = defval;
+    if (lua_isnumber(L, -1)) result = (int)lua_tonumber(L, -1);
+    lua_settop(L, stack_top);
+    return result;
 }
 
 /**
@@ -213,6 +232,17 @@ void TerraPCK::add_ufo2000_tileset(const char *tileset_name)
     ASSERT(lua_isnumber(L, -1));
     int newcount = (int)lua_tonumber(L, -1);
     lua_pop(L, 1);
+
+    if (m_mcd.size() == 0) {
+        m_mcd.resize(1);
+        memset(&m_mcd[0], 0, sizeof(MCD));
+        m_mcd[0].No_Floor = 1;
+
+        ShapeInfo s;
+        memset(&s, 0, sizeof(s));
+        m_mcd[0].ShapeIndex = get_shape_index(s);
+    }
+
     int oldcount = m_mcd.size();
     m_mcd.resize(oldcount + newcount);
 
@@ -226,28 +256,18 @@ void TerraPCK::add_ufo2000_tileset(const char *tileset_name)
 
         memset(&m_mcd[oldcount + i], 0, sizeof(MCD));
 
-        if (m_mcd[oldcount + i].Alt_MCD)
-            m_mcd[oldcount + i].Alt_MCD += oldcount;
-        if (m_mcd[oldcount + i].Die_MCD)
-            m_mcd[oldcount + i].Die_MCD += oldcount;
+        lua_pushstring(L, "Shape");
+        lua_gettable(L, -2);
+        ASSERT(lua_isstring(L, -1));
+        const uint8 *shape_data = (const uint8 *)lua_tostring(L, -1);
+        for (int j = 0; j < 384; j += 2)
+            *(uint16 *)(shape_data + j) = intel_uint16(*(uint16 *)(shape_data + j));
 
         ShapeInfo s;
-        memset(&s, 0, sizeof(s));
+        memcpy(&s, shape_data, sizeof(s));
+        lua_pop(L, 1);
 
-        int shape_index = -1;
-        for (int j = 0; j < (int)shapes.size(); j++) {
-            if (memcmp(&shapes[j], &s, sizeof(ShapeInfo)) == 0) {
-                shape_index = j;
-                break;
-            }
-        }
-        if (shape_index >= 0) {
-            m_mcd[oldcount + i].ShapeIndex = shape_index;
-        } else {
-            shape_index = shapes.size();
-            shapes.push_back(s);
-            m_mcd[oldcount + i].ShapeIndex = shape_index;
-        }
+        m_mcd[oldcount + i].ShapeIndex = get_shape_index(s);
 
         lua_pushstring(L, "IsometricImage");
         lua_gettable(L, -2);
@@ -280,6 +300,40 @@ void TerraPCK::add_ufo2000_tileset(const char *tileset_name)
             putpixel(m_mcd[oldcount + i].ScangBitmap, k % 4, k / 4,
                 makecol(scang_data[k * 3 + 0], scang_data[k * 3 + 1], scang_data[k * 3 + 2]));
         }
+
+        #define GET_LUA_TILESET_PROP(propname, defval) \
+            m_mcd[oldcount + i].propname = tileset_get_int(i + 1, tileset_name, #propname, defval)
+
+        GET_LUA_TILESET_PROP(UFO_Door, 0);
+        GET_LUA_TILESET_PROP(No_Floor, 0);
+        GET_LUA_TILESET_PROP(Big_Wall, 0);
+        GET_LUA_TILESET_PROP(Gravlift, 0);
+        GET_LUA_TILESET_PROP(Door, 0);
+        GET_LUA_TILESET_PROP(TU_Walk, 255);
+        GET_LUA_TILESET_PROP(TU_Fly, 255);
+        GET_LUA_TILESET_PROP(TU_Slide, 255);
+        GET_LUA_TILESET_PROP(Light_Source, 0);
+        GET_LUA_TILESET_PROP(HE_Type, 0);
+        GET_LUA_TILESET_PROP(HE_Strength, 0);
+        GET_LUA_TILESET_PROP(Smoke_Blockage, 0);
+        GET_LUA_TILESET_PROP(T_Level, 0);
+        GET_LUA_TILESET_PROP(P_Level, 0);
+        GET_LUA_TILESET_PROP(Stop_LOS, 0);
+        GET_LUA_TILESET_PROP(Block_Fire, 0);
+        GET_LUA_TILESET_PROP(Block_Smoke, 0);
+        GET_LUA_TILESET_PROP(Footstep, 2);
+        GET_LUA_TILESET_PROP(Target_Type, 0);
+        GET_LUA_TILESET_PROP(Fuel, 1);
+        GET_LUA_TILESET_PROP(HE_Block, 0);
+        GET_LUA_TILESET_PROP(Light_Block, 0);
+        GET_LUA_TILESET_PROP(Alt_MCD, 0);
+        GET_LUA_TILESET_PROP(Die_MCD, 0);
+        GET_LUA_TILESET_PROP(Armour, 0);
+
+        if (m_mcd[oldcount + i].Alt_MCD)
+            m_mcd[oldcount + i].Alt_MCD += oldcount - 1;
+        if (m_mcd[oldcount + i].Die_MCD)
+            m_mcd[oldcount + i].Die_MCD += oldcount - 1;
 
         lua_pop(L, 2);
     }
