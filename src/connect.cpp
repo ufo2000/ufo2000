@@ -387,14 +387,8 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
                 remote.print_simple(COLOR_WHITE);
                 local.print(COLOR_WHITE);
             }
-            //remote.print(1);
-
-            //if (local.SEND)
-            // draw_pd_info(editor->pd_local, local.gx, 170);
-            //if (remote.SEND)
-            // draw_pd_info(pd_remote, remote.gx, 170);
-
-            draw_sprite(screen2, mouser, mouse_x, mouse_y);
+            
+            draw_alpha_sprite(screen2, mouser, mouse_x, mouse_y);
             blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
 
             CHANGE = 0;

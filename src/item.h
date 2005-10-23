@@ -32,6 +32,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //to be vestigal from the original HIT option...
 
 #include "sound.h"
+#include "sprite.h"
 
 class Place;
 class Editor;
@@ -59,9 +60,9 @@ private:
     
     int m_health;
 
-    BITMAP *m_pMap;
-    BITMAP *m_pInv;
-    BITMAP *m_pHeld[8];
+    ALPHA_SPRITE *m_pMap;
+    ALPHA_SPRITE *m_pInv;
+    ALPHA_SPRITE *m_pHeld[8];
 
     SoundSym_e_t m_sound;
 
@@ -70,7 +71,7 @@ public:
 
     static int obdata_get_int(uint32 item_index, const char *property_name);
     static int obdata_get_array_int(uint32 item_index, const char *property_name, int index);
-    static BITMAP *obdata_get_bitmap(uint32 item_index, const char *property_name, int bitmap_index = -1);
+    static ALPHA_SPRITE *obdata_get_bitmap(uint32 item_index, const char *property_name, int bitmap_index = -1);
     static std::string obdata_get_string(uint32 item_index, const char *property_name);
 
     static int obdata_maxHealth(int index) { return obdata_get_int(index, "health"); }
@@ -131,9 +132,9 @@ public:
     int inside(int _x, int _y);
 
     std::string name() { return obdata_name(m_type); }
-    BITMAP *obdata_pMap() { return m_pMap; }
-    BITMAP *obdata_pInv() { return m_pInv; }
-    BITMAP *obdata_pHeld(int dir) { ASSERT(dir >= 0 && dir < 8); return m_pHeld[dir]; }
+    ALPHA_SPRITE *obdata_pMap() { return m_pMap; }
+    ALPHA_SPRITE *obdata_pInv() { return m_pInv; }
+    ALPHA_SPRITE *obdata_pHeld(int dir) { ASSERT(dir >= 0 && dir < 8); return m_pHeld[dir]; }
     int obdata_width() { return obdata_get_int(m_type, "width"); }
     int obdata_height() { return obdata_get_int(m_type, "height"); }
     int obdata_isAmmo() { return obdata_isAmmo(m_type); }

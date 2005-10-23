@@ -146,8 +146,8 @@ void TerraPCK::add_xcom_tileset(const char *mcd_name, int tftd_flag)
         m_mcd[oldcount + i].ShapeIndex = get_shape_index(s);
 
         for (int j = 0; j < 8; j++) {
-            BITMAP *bmp = pck_image_ex(tftd_flag, 32, 40, pck_name.c_str(), m_mcd[oldcount + i].Frame[j]);
-            m_mcd[oldcount + i].FrameBitmap[j] = bmp;
+            ALPHA_SPRITE *spr = pck_image_ex(tftd_flag, 32, 40, pck_name.c_str(), m_mcd[oldcount + i].Frame[j]);
+            m_mcd[oldcount + i].FrameBitmap[j] = spr;
         }
         m_mcd[oldcount + i].ScangBitmap = create_bitmap(4, 4);
         int mt = m_mcd[oldcount + i].ScanG + 35;
@@ -272,9 +272,9 @@ void TerraPCK::add_ufo2000_tileset(const char *tileset_name)
         lua_pushstring(L, "IsometricImage");
         lua_gettable(L, -2);
         if (lua_islightuserdata(L, -1)) {
-            BITMAP *bmp = (BITMAP *)lua_topointer(L, -1);
+            ALPHA_SPRITE *spr = (ALPHA_SPRITE *)lua_topointer(L, -1);
             for (int j = 0; j < 8; j++) {
-                m_mcd[oldcount + i].FrameBitmap[j] = bmp;
+                m_mcd[oldcount + i].FrameBitmap[j] = spr;
             }
             lua_pop(L, 1);
         } else if (lua_istable(L, -1)) {
@@ -282,8 +282,8 @@ void TerraPCK::add_ufo2000_tileset(const char *tileset_name)
                 lua_pushnumber(L, j + 1);
                 lua_gettable(L, -2);
                 ASSERT(lua_islightuserdata(L, -1));
-                BITMAP *bmp = (BITMAP *)lua_topointer(L, -1);
-                m_mcd[oldcount + i].FrameBitmap[j] = bmp;
+                ALPHA_SPRITE *spr = (ALPHA_SPRITE *)lua_topointer(L, -1);
+                m_mcd[oldcount + i].FrameBitmap[j] = spr;
                 lua_pop(L, 1);
             }
             lua_pop(L, 1);

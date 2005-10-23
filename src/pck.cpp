@@ -26,12 +26,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "pck.h"
 #include "text.h"
 
-#ifdef HAVE_PNG
-#define IMG_FILE_EXT ".png"
-#else
-#define IMG_FILE_EXT ".tga"
-#endif
-
 #undef map
 
 //! We cache loaded pck files here
@@ -40,7 +34,7 @@ static std::map<std::string, PCK *> g_pck_cache;
 /**
  * Load image from pck file
  */
-BITMAP *pck_image(const char *filename, int index)
+ALPHA_SPRITE *pck_image(const char *filename, int index)
 {
     std::string fullname = F(filename);
     if (g_pck_cache.find(fullname) == g_pck_cache.end())
@@ -49,7 +43,7 @@ BITMAP *pck_image(const char *filename, int index)
 }
 
 //! We cache loaded png files here
-static std::map<std::string, BITMAP *> g_png_cache;
+static std::map<std::string, ALPHA_SPRITE *> g_png_cache;
 static std::map<std::string, BITMAP *> g_png_large_cache;
 
 /**
@@ -106,7 +100,7 @@ static BITMAP *load_bitmap_alpha(const char *filename, bool use_alpha)
  * @param filename  path to a file with image on disk
  * @return          allegro bitmap on success or NULL if any error occurs
  */
-BITMAP *png_image_ex(const char *filename, bool use_alpha)
+ALPHA_SPRITE *png_image_ex(const char *filename, bool use_alpha)
 {
     std::string fullname = F(filename);
     if (g_png_cache.find(fullname) == g_png_cache.end()) {
@@ -144,12 +138,14 @@ BITMAP *png_image_ex(const char *filename, bool use_alpha)
                 }
             }
         }
-        g_png_cache[fullname] = bmp;
+        ALPHA_SPRITE *spr = get_alpha_sprite(bmp, use_alpha);
+        destroy_bitmap(bmp);
+        g_png_cache[fullname] = spr;
     }
     return g_png_cache[fullname];
 }
 
-BITMAP *png_image(const char *filename)
+ALPHA_SPRITE *png_image(const char *filename)
 {
     return png_image_ex(filename, false);
 }
@@ -157,7 +153,7 @@ BITMAP *png_image(const char *filename)
 /**
  * Load image from pck file
  */
-BITMAP *pck_image_ex(bool tftd_flag, int width, int height, const char *filename, int index)
+ALPHA_SPRITE *pck_image_ex(bool tftd_flag, int width, int height, const char *filename, int index)
 {
     std::string fullname = F(filename);
     if (g_pck_cache.find(fullname) == g_pck_cache.end())
@@ -183,9 +179,9 @@ void free_pck_cache()
 
 void free_png_cache()
 {
-    std::map<std::string, BITMAP *>::iterator it = g_png_cache.begin();
+    std::map<std::string, ALPHA_SPRITE *>::iterator it = g_png_cache.begin();
     while (it != g_png_cache.end()) {
-        destroy_bitmap(it->second);
+        destroy_alpha_sprite(it->second);
         it++;
     }
     std::map<std::string, BITMAP *>::iterator it_large = g_png_large_cache.begin();
@@ -224,7 +220,7 @@ PCK::~PCK()
     for (unsigned int i = 0; i < m_bmp.size(); i++) {
         ASSERT(m_bmp[i] != NULL);
         if (m_bmp[i] != NULL)
-            destroy_bitmap(m_bmp[i]);
+            destroy_alpha_sprite(m_bmp[i]);
     }
 }
 
@@ -236,7 +232,7 @@ PCK::~PCK()
  * @param tftd_flag flag specifying whether we need to use tftd palette
  * @return     bitmap with a frame image
  */
-BITMAP *PCK::pckdat2bmp(const unsigned char *data, int size, int width, int height, int tftd_flag)
+ALPHA_SPRITE *PCK::pckdat2bmp(const unsigned char *data, int size, int width, int height, int tftd_flag)
 {   
     BITMAP *bmp = create_bitmap(width, height);
     clear_to_color(bmp, xcom1_color(0));
@@ -260,7 +256,9 @@ BITMAP *PCK::pckdat2bmp(const unsigned char *data, int size, int width, int heig
         }
     }
 
-    return bmp;
+    ALPHA_SPRITE *spr = get_alpha_sprite(bmp);
+    destroy_bitmap(bmp);
+    return spr;
 }
 
 /**
@@ -334,23 +332,23 @@ void PCK::showpck(int num, int xx, int yy)
     if (num >= m_imgnum) {
         return;
     }
-    draw_sprite(screen2, m_bmp[num], xx, yy - 6);
+    draw_alpha_sprite(screen2, m_bmp[num], xx, yy - 6);
 }
 
-void PCK::showpck(BITMAP *img, int xx, int yy)
+void PCK::showpck(ALPHA_SPRITE *img, int xx, int yy)
 {
-    draw_sprite(screen2, img, xx, yy - 6);
+    draw_alpha_sprite(screen2, img, xx, yy - 6);
 }
 
-void PCK::showpck(BITMAP *dest, BITMAP *img, int xx, int yy)
+void PCK::showpck(BITMAP *dest, ALPHA_SPRITE *img, int xx, int yy)
 {
-    draw_sprite(dest, img, xx, yy - 6);
+    draw_alpha_sprite(dest, img, xx, yy - 6);
 }
 
 void PCK::drawpck(int num, BITMAP *dest, int y)
 {
     ASSERT(num < m_imgnum);
-    draw_sprite(dest, m_bmp[num], 0, y - 6);
+    draw_alpha_sprite(dest, m_bmp[num], 0, y - 6);
 }
 
 /* Parameters for saving data in BMP format */
@@ -374,16 +372,22 @@ void PCK::save_as_bmp(const char *fname)
     for (int y = m_height; y < bmp->h; y += m_height + 1) hline(bmp, 0, y, bmp->w - 1, makeacol32(255, 255, 255, 255));
 
     for (int i = 0; i < m_imgnum; i++) {
-        
+
+        BITMAP *tmp = create_bitmap(m_width, m_height);
+        clear_to_color(tmp, xcom_color(0));
+        draw_alpha_sprite(tmp, m_bmp[i], 0, 0);
+
         for (int x = 0; x < m_width; x++)
             for (int y = 0; y < m_height; y++) {
-                int c = getpixel(m_bmp[i], x, y);
-                if (c != bitmap_mask_color(m_bmp[i]))
+                int c = getpixel(tmp, x, y);
+                if (c != bitmap_mask_color(tmp))
                     putpixel(bmp, 
                         (i % SIZE) * (m_width + 1) + x,
                         (i / SIZE) * (m_height + 1) + y,
                         makeacol32(getr(c), getg(c), getb(c), 255));
             }
+
+        destroy_bitmap(tmp);
         
 #ifdef LINUX
         mkdir(fname, 0755);
@@ -391,14 +395,14 @@ void PCK::save_as_bmp(const char *fname)
         mkdir(fname);
 #endif
         char suffix[64];
-        sprintf(suffix, "%dx%d-%03d" IMG_FILE_EXT, m_width, m_height, i + 1);
+        sprintf(suffix, "%dx%d-%03d.png", m_width, m_height, i + 1);
         std::string smallfname = std::string(fname) + "/" + suffix;
-        BITMAP *tmp = create_bitmap_ex(32, m_width, m_height);
+        tmp = create_bitmap_ex(32, m_width, m_height);
         blit(bmp, tmp, (i % SIZE) * (m_width + 1), (i / SIZE) * (m_height + 1), 0, 0, m_width, m_height);
         save_bitmap(smallfname.c_str(), tmp, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
         destroy_bitmap(tmp);
     }
 
-    save_bitmap((std::string(fname) + IMG_FILE_EXT).c_str(), bmp, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
+    save_bitmap((std::string(fname) + ".png").c_str(), bmp, (RGB *)datafile[DAT_GAMEPAL_BMP].dat);
     destroy_bitmap(bmp);
 }

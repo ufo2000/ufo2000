@@ -22,11 +22,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define PCK_H
 
 #include "global.h"
+#include "sprite.h"
 
-BITMAP *pck_image(const char *filename, int index);
-BITMAP *pck_image_ex(bool tftd_flag, int width, int height, const char *filename, int index);
-BITMAP *png_image(const char *filename);
-BITMAP *png_image_ex(const char *filename, bool use_alpha);
+ALPHA_SPRITE *pck_image(const char *filename, int index);
+ALPHA_SPRITE *pck_image_ex(bool tftd_flag, int width, int height, const char *filename, int index);
+ALPHA_SPRITE *png_image(const char *filename);
+ALPHA_SPRITE *png_image_ex(const char *filename, bool use_alpha);
 
 void free_pck_cache();
 void free_png_cache();
@@ -37,36 +38,36 @@ void free_png_cache();
 class PCK
 {
 private:
-    friend BITMAP *pck_image_ex(bool tftd_flag, int width, int height, const char *filename, int index);
-	
-    std::vector<BITMAP *> m_bmp;
+    friend ALPHA_SPRITE *pck_image_ex(bool tftd_flag, int width, int height, const char *filename, int index);
+    
+    std::vector<ALPHA_SPRITE *> m_bmp;
 
     char m_fname[0x100];
     int  m_width;
     int  m_height;
 
-    BITMAP *pckdat2bmp(const unsigned char *data, int size, int width, int height, int tftd_flag);
+    ALPHA_SPRITE *pckdat2bmp(const unsigned char *data, int size, int width, int height, int tftd_flag);
 
     bool m_tftd_flag;
 
 public:
     int m_imgnum;
 
-	PCK(const char *pckfname, int tftd_flag = 0, int width = 32, int height = 48);
-	~PCK();
+    PCK(const char *pckfname, int tftd_flag = 0, int width = 32, int height = 48);
+    ~PCK();
 
-	BITMAP *get_image(int index)
-	{
-		if (index < 0 || index >= (int)m_bmp.size()) return NULL;
-		return m_bmp[index];
-	}
+    ALPHA_SPRITE *get_image(int index)
+    {
+        if (index < 0 || index >= (int)m_bmp.size()) return NULL;
+        return m_bmp[index];
+    }
 
-	int loadpck(const char *pckfname, int width, int height);
-	void showpck(int num, int xx, int yy);
-	static void showpck(BITMAP *img, int xx, int yy);
-	static void showpck(BITMAP *dest, BITMAP *img, int xx, int yy);
-	void drawpck(int num, BITMAP *dest, int y);
-	void save_as_bmp(const char *fname);
+    int loadpck(const char *pckfname, int width, int height);
+    void showpck(int num, int xx, int yy);
+    static void showpck(ALPHA_SPRITE *img, int xx, int yy);
+    static void showpck(BITMAP *dest, ALPHA_SPRITE *img, int xx, int yy);
+    void drawpck(int num, BITMAP *dest, int y);
+    void save_as_bmp(const char *fname);
 };
 
 #endif

@@ -124,7 +124,7 @@ int query_languages(std::vector<std::string> &languages)
 }
 
 
-BITMAP *lua_table_image(const char *name)
+ALPHA_SPRITE *lua_table_image(const char *name)
 {
     int stack_top = lua_gettop(L);
     lua_pushstring(L, "ImageTable");
@@ -133,15 +133,15 @@ BITMAP *lua_table_image(const char *name)
     lua_pushstring(L, name);
     lua_gettable(L, -2);
     ASSERT(lua_isuserdata(L, -1));
-    BITMAP *bmp = (BITMAP *)lua_touserdata(L, -1);
+    ALPHA_SPRITE *spr = (ALPHA_SPRITE *)lua_touserdata(L, -1);
     lua_settop(L, stack_top);
     
-    return bmp;
+    return spr;
 }
 
-std::vector<BITMAP *> lua_table_image_vector(const char *name)
+std::vector<ALPHA_SPRITE *> lua_table_image_vector(const char *name)
 {
-    std::vector<BITMAP *> res;
+    std::vector<ALPHA_SPRITE *> res;
 
     int stack_top = lua_gettop(L);
     lua_pushstring(L, "ImageTable");
@@ -159,7 +159,7 @@ std::vector<BITMAP *> lua_table_image_vector(const char *name)
             lua_settop(L, stack_top);
             return res;
         }
-        res.push_back((BITMAP *)lua_touserdata(L, -1));
+        res.push_back((ALPHA_SPRITE *)lua_touserdata(L, -1));
         lua_pop(L, 1);
         i++;
     }

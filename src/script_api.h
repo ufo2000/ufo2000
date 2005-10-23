@@ -22,6 +22,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define SCRIPT_API_H
 
 #include <vector>
+#include "sprite.h"
 
 /**
  * @file script_api.h
@@ -54,7 +55,7 @@ int query_languages(std::vector<std::string> &languages);
 /**
  * Get images set by AddImage() lua function
  */ 
-BITMAP *lua_table_image(const char *name);
-std::vector<BITMAP *> lua_table_image_vector(const char *name);
+ALPHA_SPRITE *lua_table_image(const char *name);
+std::vector<ALPHA_SPRITE *> lua_table_image_vector(const char *name);
 
 #endif

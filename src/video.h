@@ -22,11 +22,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define VIDEO_H
 
 #include "font.h"
+#include "sprite.h"
 
 extern BITMAP *screen2;
 extern int SCREEN2W, SCREEN2H;
-extern BITMAP *mouser;
-extern std::vector<BITMAP *> selector;
+extern ALPHA_SPRITE *mouser;
+extern std::vector<ALPHA_SPRITE *> selector;
 
 void initvideo();
 void closevideo();
@@ -34,6 +35,8 @@ void change_screen_mode();
 void set_video_mode();
 void reset_video();
 void initpal(char *fname);
+
+void set_mouse_alpha_sprite(ALPHA_SPRITE *spr);
 
 extern int (*xcom1_color)(int c);
 extern int (*xcom1_menu_color)(int c);

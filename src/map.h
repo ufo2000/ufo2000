@@ -133,8 +133,8 @@ public:
     MinimapArea *m_minimap_area;
 
     static PCK *smoke;
-    static std::vector<BITMAP *> fire_small, fire_large;
-    static std::vector<BITMAP *> selectbox, aimbox, throwbox;
+    static std::vector<ALPHA_SPRITE *> fire_small, fire_large;
+    static std::vector<ALPHA_SPRITE *> selectbox, aimbox, throwbox;
     static void initpck();
     static void freepck();
     //! checks if GEODATA structure is valid
@@ -154,7 +154,7 @@ public:
     Map(GEODATA &mapdata);
     virtual ~Map();
 
-    void drawitem(BITMAP *itype, int gx, int gy);
+    void drawitem(ALPHA_SPRITE *itype, int gx, int gy);
     void draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type, int _seen, BITMAP *_dest);
     void draw(int show_cursor, int battleview_width, int battleview_height);
     void draw2d();

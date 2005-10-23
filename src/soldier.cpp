@@ -765,7 +765,7 @@ void Soldier::draw_selector(int select_y)
     int sx = map->x + CELL_SCR_X * x + CELL_SCR_X * y + 16 - selector[num]->w / 2;
     int sy = map->y - (x + 1) * CELL_SCR_Y + CELL_SCR_Y * y - CELL_SCR_Z * z - 20 - selector[num]->h;
 
-    draw_sprite(screen2, selector[num], sx, sy - (select_y / 2) + calc_z());
+    draw_alpha_sprite(screen2, selector[num], sx, sy - (select_y / 2) + calc_z());
 }
 
 void Soldier::turnto(int destdir)
@@ -2608,9 +2608,9 @@ void Soldier::showspk(BITMAP *dest)
             lua_pushstring(L, "pInv");
             lua_gettable(L, -2);
             if (lua_islightuserdata(L, -1)) {
-                BITMAP *bmp = (BITMAP *)lua_touserdata(L, -1);
-                ASSERT(bmp);
-                draw_sprite(dest, bmp, 80 - (bmp->w / 2), 100 - (bmp->h / 2));
+                ALPHA_SPRITE *spr = (ALPHA_SPRITE *)lua_touserdata(L, -1);
+                ASSERT(spr);
+                draw_alpha_sprite(dest, spr, 80 - (spr->w / 2), 100 - (spr->h / 2));
             }
             lua_settop(L, stack_top);
             break;

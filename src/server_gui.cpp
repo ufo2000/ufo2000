@@ -247,8 +247,8 @@ public:
 
 void lobby_init_mouse()
 {
-    BITMAP *mouser = lua_table_image("mouse");
-    set_mouse_sprite(mouser);
+    ALPHA_SPRITE *mouser = lua_table_image("mouse");
+    set_mouse_alpha_sprite(mouser);
     set_palette((RGB *)datafile[DAT_GAMEPAL_BMP].dat);
     set_mouse_sens(mouse_sens);
     show_mouse(screen);

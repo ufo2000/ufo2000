@@ -384,7 +384,7 @@ void Editor::show()
             int w1 = text_length(g_small_font, str1);  // right-justify string
             textprintf(screen2, g_small_font, x2-w1, 20, COLOR_GRAY02, str1);
 
-            draw_sprite(screen2, mouser, mouse_x, mouse_y);
+            draw_alpha_sprite(screen2, mouser, mouse_x, mouse_y);
             blit(screen2, screen, 0, 0, 0, 0, screen2->w, screen2->h);
             CHANGE = 0;
         }

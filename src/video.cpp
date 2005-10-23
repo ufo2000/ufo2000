@@ -37,8 +37,9 @@ unsigned long FLAGS = 0;
 
 DATAFILE *datafile;
 
-BITMAP *mouser;                    //!< Mouse-pointer
-std::vector<BITMAP *> selector;    //!< Arrows above active friendly unit: standing/kneeling, with/without items on the ground
+ALPHA_SPRITE *mouser;                  //!< Mouse-pointer
+static BITMAP *mouser_bmp = NULL;
+std::vector<ALPHA_SPRITE *> selector;  //!< Arrows above active friendly unit: standing/kneeling, with/without items on the ground
 BITMAP *screen2;
 
 int SCREEN2W = 320, SCREEN2H = 200;
@@ -84,6 +85,10 @@ void closevideo()
 {
     destroy_fonts();
     destroy_bitmap(screen2);
+    if (mouser_bmp) {
+        destroy_bitmap(mouser_bmp);
+        mouser_bmp = NULL;
+    }
 }
 
 void change_screen_mode()
@@ -255,7 +260,7 @@ void reset_video()
 {
     set_palette((RGB *)datafile[DAT_GAMEPAL_BMP].dat);
     position_mouse(160, 100);
-    set_mouse_sprite(mouser);
+    set_mouse_alpha_sprite(mouser);
     set_mouse_sens(mouse_sens);
     reset_mouse_range();
     gui_fg_color = COLOR_BLACK1;
@@ -517,4 +522,20 @@ std::string gui_file_select(
         int result = gui_select_from_list(width, height, title, data, 0);
         return dir + "/" + data[result] + "." + ext;
     }
+}
+
+void set_mouse_alpha_sprite(ALPHA_SPRITE *spr)
+{
+    if (mouser_bmp) {
+        destroy_bitmap(mouser_bmp);
+        mouser_bmp = NULL;
+    }
+    if (spr == NULL) {
+        set_mouse_sprite(NULL); 
+        return;
+    }
+    mouser_bmp = create_bitmap(spr->w, spr->h);
+    clear_to_color(mouser_bmp, bitmap_mask_color(mouser_bmp));
+    draw_alpha_sprite(mouser_bmp, spr, 0, 0);
+    set_mouse_sprite(mouser_bmp);
 }

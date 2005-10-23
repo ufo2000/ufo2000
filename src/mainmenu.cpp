@@ -97,24 +97,24 @@ static void d_draw_baton(BITMAP *bmp, int x, int y, int w, int h, buttonState *s
  */
 static int d_mainmenu_background_proc(int msg, DIALOG *d, int c) 
 {
-	if (msg == MSG_DRAW) {
-		stretch_blit(menuback, screen, 0, 0, menuback->w, menuback->h, 0, 0, SCREEN_W, SCREEN_H);
-		text_mode(-1);
-		if (strcmp(UFO_SVNVERSION, "unknown") == 0 || strcmp(UFO_SVNVERSION, "exported") == 0 || strcmp(UFO_SVNVERSION, "") == 0) {
-			textprintf(screen, g_small_font, 0, 0, xcom1_menu_color(220), 
-				"UFO2000 %s (revision >=%d)", UFO_VERSION_STRING, UFO_REVISION_NUMBER);
-		} else {
-			textprintf(screen, g_small_font, 0, 0, xcom1_menu_color(220), 
-				"UFO2000 %s.%s", UFO_VERSION_STRING, UFO_SVNVERSION);
-		}
-	}
-	return D_O_K;
+    if (msg == MSG_DRAW) {
+        stretch_blit(menuback, screen, 0, 0, menuback->w, menuback->h, 0, 0, SCREEN_W, SCREEN_H);
+        text_mode(-1);
+        if (strcmp(UFO_SVNVERSION, "unknown") == 0 || strcmp(UFO_SVNVERSION, "exported") == 0 || strcmp(UFO_SVNVERSION, "") == 0) {
+            textprintf(screen, g_small_font, 0, 0, xcom1_menu_color(220), 
+                "UFO2000 %s (revision >=%d)", UFO_VERSION_STRING, UFO_REVISION_NUMBER);
+        } else {
+            textprintf(screen, g_small_font, 0, 0, xcom1_menu_color(220), 
+                "UFO2000 %s.%s", UFO_VERSION_STRING, UFO_SVNVERSION);
+        }
+    }
+    return D_O_K;
 }
 
 static int d_mainmenu_button_proc(int msg, DIALOG *d, int c) 
 {
     
-	switch (msg) {
+    switch (msg) {
         case MSG_GOTMOUSE:
             d->dp2 = &BS_GOTFOCUS;
             return D_REDRAWME;
@@ -124,7 +124,7 @@ static int d_mainmenu_button_proc(int msg, DIALOG *d, int c)
             d->d2 = 0;
             return D_REDRAWME;
         
-		case MSG_DRAW:
+        case MSG_DRAW:
             d_draw_baton(screen, d->x, d->y, d->w, d->h, (buttonState *)d->dp2, (char *)d->dp);
             break;
         
@@ -150,11 +150,11 @@ static int d_mainmenu_button_proc(int msg, DIALOG *d, int c)
             usleep(5000);
             break;
             
-		default:
+        default:
             break;
-	}
+    }
     
-	return D_O_K;
+    return D_O_K;
 }
 
 //#define MENU_LEFT           (SCREEN_W - 640 + 341)
@@ -176,11 +176,11 @@ extern MIDI *g_menu_midi_music;
 int do_mainmenu()
 {
     lua_message( "Enter: do_mainmenu" );
-	clear_keybuf();
+    clear_keybuf();
 
-	// static added to workaround a weird crash bug on exit
-	// (looks like after exit from do_mainmenu() function, Allegro 
-	// still tries to use the_dialog data on already invalid stack)
+    // static added to workaround a weird crash bug on exit
+    // (looks like after exit from do_mainmenu() function, Allegro 
+    // still tries to use the_dialog data on already invalid stack)
     static DIALOG the_dialog[MAINMENU_TOTAL_COUNT + 1];
     memset(the_dialog, 0, sizeof(the_dialog));
     
@@ -192,8 +192,8 @@ int do_mainmenu()
         the_dialog[i].y = MENU_TOP + (MAINMENU_COUNT - i - 1) * (MENU_BTN_STEP + MENU_BTN_H);
         the_dialog[i].w = MENU_BTN_W;
         the_dialog[i].h = MENU_BTN_H;
-        the_dialog[i].fg    =  0;	// COLOR_WHITE
-        the_dialog[i].bg    = 255;	// COLOR_BLACK2
+        the_dialog[i].fg    =  0;   // COLOR_WHITE
+        the_dialog[i].bg    = 255;  // COLOR_BLACK2
         the_dialog[i].flags = D_EXIT;
         the_dialog[i].key = 0;
         the_dialog[i].d1  = 0;
@@ -214,7 +214,7 @@ int do_mainmenu()
     the_dialog[MAINMENU_GEOSCAPE].dp    = (void *) _("show geoscape demo");
     the_dialog[MAINMENU_LOADGAME].dp    = (void *) _("load saved game");
     the_dialog[MAINMENU_SHOW_REPLAY].dp = (void *) _("load a replay");
-    the_dialog[MAINMENU_OPTIONS].dp		= (void *) _("options");
+    the_dialog[MAINMENU_OPTIONS].dp     = (void *) _("options");
     the_dialog[MAINMENU_ABOUT].dp       = (void *) _("about");
     the_dialog[MAINMENU_TIP_OF_DAY].dp  = (void *) _("tip of the day");
   //the_dialog[MAINMENU_DEMO].dp        = (void *) _("demo");
@@ -226,36 +226,36 @@ int do_mainmenu()
     BS_SELECTED.font    = large;
     BS_GOTFOCUS.font    = large;
 
-	BITMAP *mouser2 = lua_table_image("mouse_menu");
+    ALPHA_SPRITE *mouser2 = lua_table_image("mouse_menu");
 
-	set_mouse_sprite(mouser2);
-	set_palette((RGB *)datafile[DAT_MENUPAL_BMP].dat);
-	set_mouse_sens(mouse_sens);
+    set_mouse_alpha_sprite(mouser2);
+    set_palette((RGB *)datafile[DAT_MENUPAL_BMP].dat);
+    set_mouse_sens(mouse_sens);
 
-	menuback = load_back_image(cfg_get_menu_image_file_name());
-	
-	if (old_mouse_x != -1)
-		position_mouse(old_mouse_x, old_mouse_y);
+    menuback = load_back_image(cfg_get_menu_image_file_name());
+    
+    if (old_mouse_x != -1)
+        position_mouse(old_mouse_x, old_mouse_y);
     else  // initial mouse-position on button #2 "Hotseat/Mission-planner":
         position_mouse(550, MENU_TOP + 2 * MENU_BTN_H - 10);
 
-	soundSystem::getInstance()->play(SS_WINDOW_OPEN_1);
-	// Todo: wait with start of music until sound is finished ?
-	FS_MusicPlay(F(cfg_get_menu_music_file_name()));
+    soundSystem::getInstance()->play(SS_WINDOW_OPEN_1);
+    // Todo: wait with start of music until sound is finished ?
+    FS_MusicPlay(F(cfg_get_menu_music_file_name()));
 
-	int v = do_dialog(the_dialog, -1);
+    int v = do_dialog(the_dialog, -1);
 
-	destroy_bitmap(menuback);
+    destroy_bitmap(menuback);
 
-	FS_MusicPlay(NULL);
-	soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
-	
-	old_mouse_x = mouse_x;
-	old_mouse_y = mouse_y;
-	show_mouse(NULL);
+    FS_MusicPlay(NULL);
+    soundSystem::getInstance()->play(SS_BUTTON_PUSH_1);
+    
+    old_mouse_x = mouse_x;
+    old_mouse_y = mouse_y;
+    show_mouse(NULL);
 
-	clear(screen);
-	
-	return v;
+    clear(screen);
+    
+    return v;
 }
 

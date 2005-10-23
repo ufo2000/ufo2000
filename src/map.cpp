@@ -41,8 +41,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SPK *Map::scanbord = NULL;
 PCK *Map::smoke = NULL;
-std::vector<BITMAP *> Map::fire_small, Map::fire_large;
-std::vector<BITMAP *> Map::selectbox, Map::aimbox, Map::throwbox;
+std::vector<ALPHA_SPRITE *> Map::fire_small, Map::fire_large;
+std::vector<ALPHA_SPRITE *> Map::selectbox, Map::aimbox, Map::throwbox;
 int Map::m_animation_cycle = 0;
 
 //            dirs      0  1  2  3  4  5  6  7
@@ -264,7 +264,7 @@ void Map::assign_type(int lev, int col, int row, int part, int type)
         add_light_source(lev, col, row, TILE_LIGHT);
 }
 
-void Map::drawitem(BITMAP *itype, int gx, int gy)
+void Map::drawitem(ALPHA_SPRITE *itype, int gx, int gy)
 {
     PCK::showpck(itype, gx, gy);
 }
@@ -281,7 +281,7 @@ void Map::draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type,
     MCD &mcd = m_terrain->m_mcd[i];
     _y -= mcd.P_Level;
 
-    BITMAP *frame;
+    ALPHA_SPRITE *frame;
     if (!mcd.UFO_Door)
         frame = mcd.FrameBitmap[m_animation_cycle];
     else
@@ -290,7 +290,7 @@ void Map::draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type,
     ASSERT(frame);
 
     int light_level = _seen ? cell.m_light * 16 : 0;
-    draw_dark_sprite(_dest, frame, _x, _y - 6, light_level);
+    draw_alpha_sprite(_dest, frame, _x, _y - 6, light_level);
 }
 
 extern volatile unsigned int ANIMATION;
@@ -348,13 +348,13 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
                             }
                                 
                             if (!TARGET)
-                                draw_sprite(screen2, selectbox[mtype], sx, sy - 6);
+                                draw_alpha_sprite(screen2, selectbox[mtype], sx, sy - 6);
                             else if (target.action != THROW)
-                                draw_sprite(screen2, aimbox[mtype], sx, sy - 6);
+                                draw_alpha_sprite(screen2, aimbox[mtype], sx, sy - 6);
                             else
-                                draw_sprite(screen2, throwbox[mtype], sx, sy - 6);
+                                draw_alpha_sprite(screen2, throwbox[mtype], sx, sy - 6);
                         } else if (lev < sel_lev) {
-                            draw_sprite(screen2, selectbox[5], sx, sy - 6);
+                            draw_alpha_sprite(screen2, selectbox[5], sx, sy - 6);
                         }
                     }
 
@@ -427,13 +427,13 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
                             }
                                 
                             if (!TARGET)
-                                draw_sprite(screen2, selectbox[mtype], sx, sy - 6);
+                                draw_alpha_sprite(screen2, selectbox[mtype], sx, sy - 6);
                             else if (target.action != THROW)
-                                draw_sprite(screen2, aimbox[mtype], sx, sy - 6);
+                                draw_alpha_sprite(screen2, aimbox[mtype], sx, sy - 6);
                             else
-                                draw_sprite(screen2, throwbox[mtype], sx, sy - 6);
+                                draw_alpha_sprite(screen2, throwbox[mtype], sx, sy - 6);
                         } else if (lev < sel_lev) {
-                            draw_sprite(screen2, selectbox[2], sx, sy - 6);
+                            draw_alpha_sprite(screen2, selectbox[2], sx, sy - 6);
                         }
                     }
                     // Draw smoke
@@ -441,10 +441,10 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
                         if (fire_time(lev, col, row) > 0) {
                             if (fire_time(lev, col, row) > 1) {
                                 int frame = (ANIMATION / 3) % (int)fire_large.size();
-                                draw_sprite(screen2, fire_large[frame], sx, sy - 6);
+                                draw_alpha_sprite(screen2, fire_large[frame], sx, sy - 6);
                             } else {
                                 int frame = (ANIMATION / 3) % (int)fire_small.size();
-                                draw_sprite(screen2, fire_small[frame], sx, sy - 6);
+                                draw_alpha_sprite(screen2, fire_small[frame], sx, sy - 6);
                             }
                         } else {
                             int st = smog_time(lev, col, row);
@@ -485,13 +485,8 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
             lua_pushnumber(L, e / 2 + 1);
             lua_gettable(L, -2);
             if (lua_isuserdata(L, -1)) {
-                BITMAP *bmp = (BITMAP *)lua_touserdata(L, -1);
-                if (bitmap_color_depth(bmp) == 32) {
-                    set_alpha_blender();
-                    draw_trans_sprite(screen2, bmp, (sx + 16) - (bmp->w / 2), (sy + 12) - (bmp->h / 2));
-                } else {
-                    draw_sprite(screen2, bmp, (sx + 16) - (bmp->w / 2), (sy + 12) - (bmp->h / 2));
-                }
+                ALPHA_SPRITE *spr = (ALPHA_SPRITE *)lua_touserdata(L, -1);
+                draw_alpha_sprite(screen2, spr, (sx + 16) - (spr->w / 2), (sy + 12) - (spr->h / 2));
             }
             lua_settop(L, stack_top);
         }

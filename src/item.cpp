@@ -57,7 +57,7 @@ int Item::obdata_get_int(uint32 item_index, const char *property_name)
     return result;
 }
 
-BITMAP *Item::obdata_get_bitmap(uint32 item_index, const char *property_name, int bitmap_index)
+ALPHA_SPRITE *Item::obdata_get_bitmap(uint32 item_index, const char *property_name, int bitmap_index)
 {
     int stack_top = lua_gettop(L);
     // Enter 'ItemsTable' table
@@ -71,12 +71,12 @@ BITMAP *Item::obdata_get_bitmap(uint32 item_index, const char *property_name, in
     // Get property value
     lua_pushstring(L, property_name);
     lua_gettable(L, -2);
-    BITMAP *result = NULL;
+    ALPHA_SPRITE *result = NULL;
     if (lua_istable(L, -1)) {
         lua_pushnumber(L, bitmap_index);
         lua_gettable(L, -2);
     }
-    if (lua_islightuserdata(L, -1)) result = (BITMAP *)lua_topointer(L, -1);
+    if (lua_islightuserdata(L, -1)) result = (ALPHA_SPRITE *)lua_topointer(L, -1);
     lua_settop(L, stack_top);
     return result;
 }

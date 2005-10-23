@@ -318,7 +318,7 @@ class UnitSprite
     BITMAP *m_bmp;
 public:
     UnitSprite(BITMAP *bmp) { m_bmp = bmp; }
-    void draw(int x, int y, BITMAP *bmp) { draw_sprite(m_bmp, bmp, x, y); }
+    void draw(int x, int y, ALPHA_SPRITE *spr) { draw_alpha_sprite(m_bmp, spr, x, y); }
 };
 
 /**
@@ -331,8 +331,8 @@ void Skin::draw_lua()
     int dir = m_soldier->dir, phase = m_soldier->phase, is_flying = m_soldier->is_flying();
     Item *lhand_item = m_soldier->lhand_item(), *rhand_item = m_soldier->rhand_item();
 
-    BITMAP *weapon_hold = NULL;
-    BITMAP *weapon_aim  = NULL;
+    ALPHA_SPRITE *weapon_hold = NULL;
+    ALPHA_SPRITE *weapon_aim  = NULL;
     if (rhand_item != NULL) {
         weapon_hold = rhand_item->obdata_pHeld(dir);
         weapon_aim = rhand_item->obdata_pHeld((dir + 2) % 8);

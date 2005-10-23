@@ -1418,7 +1418,7 @@ void build_screen(int & select_y)
     }
     
     if (FLAGS & F_SHOWLOFCELL) g_map->show_lof_cell();
-    draw_sprite(screen2, mouser, mouse_x, mouse_y);
+    draw_alpha_sprite(screen2, mouser, mouse_x, mouse_y);
     g_map->svga2d();      // Minimap
     flush_screen();
 }
