@@ -24,6 +24,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "stdafx.h"
 #include "global.h"
 
+typedef RLE_SPRITE ALPHA_SPRITE;
+
 void draw_dark_sprite(BITMAP *dst, BITMAP *src, int dx, int dy, int brightness);
+
+ALPHA_SPRITE *get_alpha_sprite(BITMAP *bmp, bool use_alpha = false);
+void destroy_alpha_sprite(ALPHA_SPRITE *spr);
+void draw_alpha_sprite(BITMAP *dst, ALPHA_SPRITE *src, int dx, int dy, int brightness = 255);
 
 #endif
