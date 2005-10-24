@@ -218,6 +218,48 @@ void draw_dark_sprite(BITMAP *dst, BITMAP *src, int dx, int dy, int brightness)
 
 #define RLE_IS_EOL(c)          ((uint16) (c) == MASK_COLOR_16)
 
+static unsigned long alpha_normal_blender16(unsigned long x, unsigned long y, unsigned long n)
+{
+    n = (x >> 5) & 0x3F;
+    x = (x & 0x7E0F81F);
+    y = ((y & 0xFFFF) | (y << 16)) & 0x7E0F81F;
+    uint32 result = ((x - y) * n / 32 + y) & 0x7E0F81F;
+    return ((result & 0xFFFF) | (result >> 16));
+}
+
+static unsigned long alpha_black_blender16(unsigned long x, unsigned long y, unsigned long n)
+{
+    n = (x >> 5) & 0x3F;
+    y = ((y & 0xFFFF) | (y << 16)) & 0x7E0F81F;
+    uint32 result = (y - y * n / 32) & 0x7E0F81F;
+    return ((result & 0xFFFF) | (result >> 16));
+}
+
+static unsigned long alpha_dark_blender16(unsigned long x, unsigned long y, unsigned long n)
+{
+    uint32 result = (x >> 5) & 0x3F;
+    x = ((x & 0x7E0F81F) * n / 32) & 0x7E0F81F;
+    y = ((y & 0xFFFF) | (y << 16)) & 0x7E0F81F;
+    result = ((x - y) * result / 32 + y) & 0x7E0F81F;
+    return ((result & 0xFFFF) | (result >> 16));
+}
+
+unsigned long alpha_dark_blender32(unsigned long x, unsigned long y, unsigned long n)
+{
+    uint32 xrb = ((x & 0xFF00FF) * n / 256) & 0xFF00FF;
+    uint32 xg = ((x & 0xFF00) * n / 256) & 0xFF00;
+
+    n = geta32(x);
+    if (!n++) return y;
+
+    uint32 yrb = (y & 0xFF00FF);
+    uint32 rb = (xrb - yrb) * n / 256 + yrb;
+    uint32 yg = (y & 0xFF00);
+    uint32 g = (xg - yg) * n / 256 + yg;
+
+    return (rb & 0xFF00FF) | (g & 0xFF00);
+}
+
 /**
  * Draws a darkened rle sprite, usable for night missions. It is optimized 
  * for 16bpp mode and is faster than allegro functions.
@@ -230,13 +272,32 @@ void draw_dark_sprite(BITMAP *dst, BITMAP *src, int dx, int dy, int brightness)
  */
 void draw_alpha_sprite(BITMAP *dst, ALPHA_SPRITE *src, int dx, int dy, int brightness)
 {
-    if ((dst->id & (BMP_ID_VIDEO | BMP_ID_SYSTEM))
-        || (src->color_depth != 16) || (dst->vtable->color_depth != 16)) {
-
+    if ((src->color_depth != 16) || (dst->id & (BMP_ID_VIDEO | BMP_ID_SYSTEM))) {
         if (src->color_depth & 0x100) {
+            // process sprites with alpha transparency
             src->color_depth &= ~0x100;
-            set_alpha_blender();
-            draw_trans_rle_sprite(dst, src, dx, dy);
+            if (dst->vtable->color_depth == 16) {
+                if (brightness == 0) {
+                    set_blender_mode_ex(NULL, NULL, NULL, NULL, NULL, alpha_black_blender16, NULL, 0, 0, 0, 0);
+                    draw_trans_rle_sprite(dst, src, dx, dy);
+                } else if (brightness >= 255) {
+                    set_blender_mode_ex(NULL, NULL, NULL, NULL, NULL, alpha_normal_blender16, NULL, 0, 0, 0, 0);
+                    draw_trans_rle_sprite(dst, src, dx, dy);
+                } else {
+                    uint32 brightness16 = (brightness + 1) / 8;
+                    set_blender_mode_ex(NULL, NULL, NULL, NULL, NULL, alpha_dark_blender16, NULL, 0, 0, 0, brightness16);
+                    draw_trans_rle_sprite(dst, src, dx, dy);
+                }
+            } else {
+                if (brightness >= 255) {
+                    set_alpha_blender();
+                    draw_trans_rle_sprite(dst, src, dx, dy);
+                } else {
+                    uint32 brightness32 = brightness > 0 ? brightness + 1 : 0;
+                    set_blender_mode_ex(NULL, NULL, alpha_dark_blender32, alpha_dark_blender32, NULL, NULL, alpha_dark_blender32, 0, 0, 0, brightness32);
+                    draw_trans_rle_sprite(dst, src, dx, dy);
+                }
+            }
             src->color_depth |= 0x100;
         } else if (brightness >= 255) {
             draw_rle_sprite(dst, src, dx, dy);
@@ -246,6 +307,8 @@ void draw_alpha_sprite(BITMAP *dst, ALPHA_SPRITE *src, int dx, int dy, int brigh
         }
         return;
     }
+
+    ASSERT(dst->vtable->color_depth == 16);
 
     // Process clipping
     PROCESS_CLIPPING();
@@ -379,7 +442,6 @@ void draw_alpha_sprite(BITMAP *dst, ALPHA_SPRITE *src, int dx, int dy, int brigh
                 s += c;
             c = *s++;
         }
-
     next_line:;
     }
 }
@@ -408,7 +470,25 @@ ALPHA_SPRITE *get_alpha_sprite(BITMAP *bmp, bool use_alpha)
             extra_lines++;
         spr->h -= extra_lines;
 */
-    } else if (use_alpha) {
+    } else if (use_alpha && spr->color_depth == 32) {
+        if (bitmap_color_depth(screen) == 16) {
+            // Reorder RGBA data for more convenient 16-bit alpha blending
+            int i;
+            int cnt = spr->size / 4;
+            int32 *data = (int32 *)spr->dat;
+            for (i = 0; i < cnt; i++) {
+                if ((uint32)data[i] == MASK_COLOR_32) continue;
+                if (data[i] > 0) {
+                    for (int j = data[i]; j > 0; j--) {
+                        uint32 x = (uint32)data[++i];
+                        uint32 n = (geta32(x) + 1) / 8;
+                        x = makecol16(getr32(x), getg32(x), getb32(x));
+                        x = (x | (x << 16)) & 0x7E0F81F;
+                        data[i] = x | (n << 5);
+                    }
+                }
+            }
+        }
         spr->color_depth |= 0x100;
     }
     return spr; 
