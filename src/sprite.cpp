@@ -25,7 +25,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #define IS_MASK(c)             ((uint32)(c) == MASK_COLOR_16)
 
-static inline void draw_masked_lit_line16(uint16 *d, uint16 *s, uint32 n, int w)
+static inline void draw_masked_dark_line16(uint16 *&d, const uint16 *&s, int w, uint32 n)
 {
     uint16 *limit = d + w;
 
@@ -33,7 +33,7 @@ static inline void draw_masked_lit_line16(uint16 *d, uint16 *s, uint32 n, int w)
         uint32 c1 = *s++;
         if (!IS_MASK(c1)) {
             c1 = (c1 | (c1 << 16)) & 0x7E0F81F;
-            c1 = (c1 - c1 * n / 32) & 0x7E0F81F;
+            c1 = (c1 * n / 32) & 0x7E0F81F;
             *d = c1 | (c1 >> 16);
         }
         d++;
@@ -48,8 +48,8 @@ static inline void draw_masked_lit_line16(uint16 *d, uint16 *s, uint32 n, int w)
                 c2 |= (c2 << 16);
                 c1 &= 0x7E0F81F;
                 c2 &= 0x7E0F81F;
-                c1 -= c1 * n / 32;
-                c2 -= c2 * n / 32;
+                c1 = c1 * n / 32;
+                c2 = c2 * n / 32;
                 c1 &= 0x7E0F81F;
                 c2 &= 0x7E0F81F;
                 c1 |= (c1 >> 16);
@@ -58,14 +58,14 @@ static inline void draw_masked_lit_line16(uint16 *d, uint16 *s, uint32 n, int w)
                 d[1] = c2;
             } else {
                 c1 = (c1 | (c1 << 16)) & 0x7E0F81F;
-                c1 = (c1 - c1 * n / 32) & 0x7E0F81F;
+                c1 = (c1 * n / 32) & 0x7E0F81F;
                 d[0] = c1 | (c1 >> 16);
             }
         } else {
             uint32 c2 = s[1];
             if (!IS_MASK(c2)) {
                 c2 = (c2 | (c2 << 16)) & 0x7E0F81F;
-                c2 = (c2 - c2 * n / 32) & 0x7E0F81F;
+                c2 = (c2 * n / 32) & 0x7E0F81F;
                 d[1] = c2 | (c2 >> 16);
             }
         }
@@ -74,14 +74,25 @@ static inline void draw_masked_lit_line16(uint16 *d, uint16 *s, uint32 n, int w)
     }
 }
 
-static inline void draw_lit_line16(uint16 *&d, int16 *&s, uint32 n, int w)
+inline void draw_normal_line16(int16 *&d, const int16 *&s, int w)
 {
-    uint16 *limit = d + w;
+    while (--w >= 0) *d++ = *s++;
+}
+
+inline void draw_black_line16(int16 *&d, const int16 *&s, int w)
+{
+    s += w;
+    while (--w >= 0) *d++ = 0;
+}
+
+inline void draw_dark_line16(int16 *&d, const int16 *&s, int w, const uint32 n)
+{
+    int16 *limit = d + w;
 
     if (w & 1) {
         uint32 c1 = (uint16)(*s++);
         c1 = (c1 | (c1 << 16)) & 0x7E0F81F;
-        c1 = (c1 - c1 * n / 32) & 0x7E0F81F;
+        c1 = (c1 * n / 32) & 0x7E0F81F;
         *d++ = c1 | (c1 >> 16);
     }
 
@@ -92,8 +103,8 @@ static inline void draw_lit_line16(uint16 *&d, int16 *&s, uint32 n, int w)
         c2 |= (c2 << 16);
         c1 &= 0x7E0F81F;
         c2 &= 0x7E0F81F;
-        c1 -= c1 * n / 32;
-        c2 -= c2 * n / 32;
+        c1 = c1 * n / 32;
+        c2 = c2 * n / 32;
         c1 &= 0x7E0F81F;
         c2 &= 0x7E0F81F;
         c1 |= (c1 >> 16);
@@ -103,6 +114,29 @@ static inline void draw_lit_line16(uint16 *&d, int16 *&s, uint32 n, int w)
         s += 2;
         d += 2;
     }
+}
+
+inline void draw_alpha_dark_line16(int16 *&d, const int32 *&s, int w, const uint32 n)
+{
+    while (--w >= 0) {
+        uint32 x = *s++;
+        uint32 y = (uint16)*d;
+        uint32 result = (x >> 5) & 0x3F;
+        x = ((x & 0x7E0F81F) * n / 32) & 0x7E0F81F;
+        y = (y | (y << 16)) & 0x7E0F81F;
+        result = ((x - y) * result / 32 + y) & 0x7E0F81F;
+        *d++ = (result | (result >> 16));
+    }
+}
+
+inline void draw_alpha_normal_line16(int16 *&d, const int32 *&s, int w)
+{
+    draw_alpha_dark_line16(d, s, w, 32);
+}
+
+inline void draw_alpha_black_line16(int16 *&d, const int32 *&s, int w)
+{
+    draw_alpha_dark_line16(d, s, w, 0);
 }
 
 #define PROCESS_CLIPPING() \
@@ -173,7 +207,7 @@ static inline void draw_lit_line16(uint16 *&d, int16 *&s, uint32 n, int w)
  * @param dy          target y coordinate
  * @param brightness  brightness (0 - black image, 255 - original unmodified image)
  */
-void draw_dark_sprite(BITMAP *dst, BITMAP *src, int dx, int dy, int brightness)
+void draw_sprite(BITMAP *dst, BITMAP *src, int dx, int dy, unsigned int brightness)
 {
     if (brightness >= 255) {
         draw_sprite(dst, src, dx, dy);
@@ -191,13 +225,13 @@ void draw_dark_sprite(BITMAP *dst, BITMAP *src, int dx, int dy, int brightness)
     // Process clipping
     PROCESS_CLIPPING();
 
-    uint16 **sl = (uint16 **)&src->line[sybeg];
+    const uint16 **sl = (const uint16 **)&src->line[sybeg];
     uint16 **dl = (uint16 **)&dst->line[dybeg];
 
     // Draw just a black sprite
     if (brightness <= 0) {
         for (int y = 0; y < h; y++) {
-            uint16 *s = *sl++ + sxbeg;
+            const uint16 *s = *sl++ + sxbeg;
             uint16 *d = *dl++ + dxbeg;
             for (uint16 *limit = d + w; d < limit; d++)
                 if (!IS_MASK(*s++))
@@ -207,16 +241,14 @@ void draw_dark_sprite(BITMAP *dst, BITMAP *src, int dx, int dy, int brightness)
     }
 
     // Draw a darkened sprite
-    uint32 n = (255 - brightness) / 8;
+    uint32 n = (brightness + 1) / 8;
 
     for (int y = 0; y < h; y++) {
-        uint16 *s = *sl++ + sxbeg;
+        const uint16 *s = *sl++ + sxbeg;
         uint16 *d = *dl++ + dxbeg;
-        draw_masked_lit_line16(d, s, n, w);
+        draw_masked_dark_line16(d, s, w, n);
     }
 }
-
-#define RLE_IS_EOL(c)          ((uint16) (c) == MASK_COLOR_16)
 
 static unsigned long alpha_normal_blender16(unsigned long x, unsigned long y, unsigned long n)
 {
@@ -260,6 +292,151 @@ unsigned long alpha_dark_blender32(unsigned long x, unsigned long y, unsigned lo
     return (rb & 0xFF00FF) | (g & 0xFF00);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+
+template<
+    typename TD,
+    typename TS,
+    int eol_marker,
+    uint32 max_brightness,
+    void draw_black_line(TD *&, const TS *&, int),
+    void draw_normal_line(TD *&, const TS *&, int),
+    void draw_dark_line(TD *&, const TS *&, int, const uint32)
+> 
+static inline void draw_rle_sprite_internal(BITMAP *dst, ALPHA_SPRITE *src, int dx, int dy, const uint32 brightness)
+{
+    // Process clipping
+    PROCESS_CLIPPING();
+
+    // Draw a darkened sprite
+    const TS *s = (const TS *)src->dat;
+    TD **dl = (TD **)&dst->line[dybeg];
+
+    if (!clipflag) {
+        if (brightness == 0) {
+            while (--h >= 0) {
+                TD *d = *dl++ + dxbeg;
+                int c = *s++;
+                while (c != eol_marker) {
+                    if (c > 0) {
+                        draw_black_line(d, s, c);
+                    } else {
+                        d -= c;
+                    }
+                    c = *s++;
+                }
+            }
+        } else if (brightness >= max_brightness) {
+            while (--h >= 0) {
+                TD *d = *dl++ + dxbeg;
+                int c = *s++;
+                while (c != eol_marker) {
+                    if (c > 0) {
+                        draw_normal_line(d, s, c);
+                    } else {
+                        d -= c;
+                    }
+                    c = *s++;
+                }
+            }
+        } else {
+            while (--h >= 0) {
+                TD *d = *dl++ + dxbeg;
+                int c = *s++;
+                while (c != eol_marker) {
+                    if (c > 0)
+                        draw_dark_line(d, s, c, brightness);
+                    else
+                        d -= c;
+                    c = *s++;
+                }
+            }
+        }
+        return;
+    }
+
+    /* Clip top.  */
+    while (--sybeg >= 0) {
+       int c = *s++;
+       while (c != eol_marker) {
+           if (c > 0)
+               s += c;
+           c = *s++;
+       }
+    }
+
+    /* Visible part.  */
+    while (--h >= 0) {
+        int x;
+        TD *d = *dl++ + dxbeg;
+        int c = *s++;
+
+        /* Clip left.  */
+        for (x = sxbeg; x > 0; ) {
+            if (c == eol_marker)
+                goto next_line;
+            else if (c > 0) {
+                /* Run of solid pixels.  */
+                if ((x - c) >= 0) {
+                    /* Fully clipped.  */
+                    x -= c;
+                    s += c;
+                } else {
+                    /* Visible on the right.  */
+                    c -= x;
+                    s += x;
+                    break;
+                }
+            } else {
+                /* Run of transparent pixels.  */
+                if ((x + c) >= 0) {
+                    /* Fully clipped.  */
+                    x += c;
+                }
+                else {
+                    /* Visible on the right.  */
+                    c += x;
+                    break;
+                }
+            }
+            c = *s++;
+        }
+
+        /* Visible part.  */
+        for (x = w; x > 0; ) {
+            if (c == eol_marker)
+                goto next_line;
+            else if (c > 0) {
+                /* Run of solid pixels.  */
+                if ((x - c) >= 0) {
+                    /* Fully visible.  */
+                    x -= c;
+                    draw_dark_line(d, s, c, brightness);
+                } else {
+                    /* Clipped on the right.  */
+                    c -= x;
+                    draw_dark_line(d, s, x, brightness);
+                    break;
+                }
+            }
+            else {
+                /* Run of transparent pixels.  */
+                x += c;
+                d -= c;
+            }
+            c = *s++;
+        }
+
+        /* Clip right.  */
+        while (c != eol_marker) {
+            if (c > 0)
+                s += c;
+            c = *s++;
+        }
+    next_line:;
+    }
+}
+
 /**
  * Draws a darkened rle sprite, usable for night missions. It is optimized 
  * for 16bpp mode and is faster than allegro functions.
@@ -270,12 +447,14 @@ unsigned long alpha_dark_blender32(unsigned long x, unsigned long y, unsigned lo
  * @param dy          target y coordinate
  * @param brightness  brightness (0 - black image, 255 - original unmodified image)
  */
-void draw_alpha_sprite(BITMAP *dst, ALPHA_SPRITE *src, int dx, int dy, int brightness)
+void draw_alpha_sprite(BITMAP *dst, ALPHA_SPRITE *src, int dx, int dy, unsigned int brightness)
 {
-    if ((src->color_depth != 16) || (dst->id & (BMP_ID_VIDEO | BMP_ID_SYSTEM))) {
+    if ((dst->vtable->color_depth > 16) || (dst->id & (BMP_ID_VIDEO | BMP_ID_SYSTEM))) {
+        // non memory bitmap blitting or unsupported color depth, so fallback 
+        // to standard allegro functions (with our custom blenders)
         if (src->color_depth & 0x100) {
-            // process sprites with alpha transparency
             src->color_depth &= ~0x100;
+            ASSERT(dst->vtable->color_depth >= 16);
             if (dst->vtable->color_depth == 16) {
                 if (brightness == 0) {
                     set_blender_mode_ex(NULL, NULL, NULL, NULL, NULL, alpha_black_blender16, NULL, 0, 0, 0, 0);
@@ -309,140 +488,16 @@ void draw_alpha_sprite(BITMAP *dst, ALPHA_SPRITE *src, int dx, int dy, int brigh
     }
 
     ASSERT(dst->vtable->color_depth == 16);
+    if (brightness >= 255) brightness = 255;
 
-    // Process clipping
-    PROCESS_CLIPPING();
-
-    // Draw a darkened sprite
-    int16 *s = (int16 *)src->dat;
-    uint16 **dl = (uint16 **)&dst->line[dybeg];
-
-    if (!clipflag) {
-        if (brightness == 0) {
-            while (h--) {
-                uint16 *d = *dl++ + dxbeg;
-                int c = *s++;
-                while (!RLE_IS_EOL(c)) {
-                    if (c > 0) {
-                        s += c;
-                        while (c--) *d++ = 0;
-                    } else {
-                        d -= c;
-                    }
-                    c = *s++;
-                }
-            }
-        } else if (brightness >= 255) {
-            while (h--) {
-                uint16 *d = *dl++ + dxbeg;
-                int c = *s++;
-                while (!RLE_IS_EOL(c)) {
-                    if (c > 0) {
-                        while (c--) *d++ = *s++;
-                    } else {
-                        d -= c;
-                    }
-                    c = *s++;
-                }
-            }
-        } else {
-            uint32 n = (255 - brightness) / 8;
-            while (h--) {
-                uint16 *d = *dl++ + dxbeg;
-                int c = *s++;
-                while (!RLE_IS_EOL(c)) {
-                    if (c > 0)
-                        draw_lit_line16(d, s, n, c);
-                    else
-                        d -= c;
-                    c = *s++;
-                }
-            }
-        }
-        return;
-    }
-
-    uint32 n = (255 - brightness) / 8;
-
-    /* Clip top.  */
-    while (sybeg--) {
-       int16 c = *s++;
-       while (!RLE_IS_EOL(c)) {
-           if (c > 0)
-               s += c;
-           c = *s++;
-       }
-    }
-
-    /* Visible part.  */
-    while (h--) {
-        int x;
-        uint16 *d = *dl++ + dxbeg;
-        int c = *s++;
-
-        /* Clip left.  */
-        for (x = sxbeg; x > 0; ) {
-            if (RLE_IS_EOL(c))
-                goto next_line;
-            else if (c > 0) {
-                /* Run of solid pixels.  */
-                if ((x - c) >= 0) {
-                    /* Fully clipped.  */
-                    x -= c;
-                    s += c;
-                } else {
-                    /* Visible on the right.  */
-                    c -= x;
-                    s += x;
-                    break;
-                }
-            } else {
-                /* Run of transparent pixels.  */
-                if ((x + c) >= 0) {
-                    /* Fully clipped.  */
-                    x += c;
-                }
-                else {
-                    /* Visible on the right.  */
-                    c += x;
-                    break;
-                }
-            }
-            c = *s++;
-        }
-
-        /* Visible part.  */
-        for (x = w; x > 0; ) {
-            if (RLE_IS_EOL(c))
-                goto next_line;
-            else if (c > 0) {
-                /* Run of solid pixels.  */
-                if ((x - c) >= 0) {
-                    /* Fully visible.  */
-                    x -= c;
-                    draw_lit_line16(d, s, n, c);
-                } else {
-                    /* Clipped on the right.  */
-                    c -= x;
-                    draw_lit_line16(d, s, n, x);
-                    break;
-                }
-            }
-            else {
-                /* Run of transparent pixels.  */
-                x += c;
-                d -= c;
-            }
-            c = *s++;
-        }
-
-        /* Clip right.  */
-        while (!RLE_IS_EOL(c)) {
-            if (c > 0)
-                s += c;
-            c = *s++;
-        }
-    next_line:;
+    if (src->color_depth & 0x100) {
+        draw_rle_sprite_internal<int16, int32, (int)(int32)MASK_COLOR_32, 32,
+            draw_alpha_black_line16, draw_alpha_normal_line16, draw_alpha_dark_line16>
+                (dst, src, dx, dy, (brightness + 1) / 8);
+    } else {
+        draw_rle_sprite_internal<int16, int16, (int)(int16)MASK_COLOR_16, 32,
+            draw_black_line16, draw_normal_line16, draw_dark_line16>
+                (dst, src, dx, dy, (brightness + 1) / 8);
     }
 }
 
@@ -451,7 +506,7 @@ ALPHA_SPRITE *get_alpha_sprite(BITMAP *bmp, bool use_alpha)
     RLE_SPRITE *spr = get_rle_sprite(bmp);
     if (spr->color_depth == 16) {
 /*
-        // find unnecessery skip runs
+        // allegro rle sprite optimization - find unnecessery skip runs
         int i;
         int cnt = spr->size / 2;
         int16 *data = (int16 *)spr->dat;
