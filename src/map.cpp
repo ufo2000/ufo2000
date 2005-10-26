@@ -42,6 +42,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 SPK *Map::scanbord = NULL;
 PCK *Map::smoke = NULL;
 std::vector<ALPHA_SPRITE *> Map::fire_small, Map::fire_large;
+std::vector<ALPHA_SPRITE *> Map::smoke_small, Map::smoke_medium, Map::smoke_large;
 std::vector<ALPHA_SPRITE *> Map::selectbox, Map::aimbox, Map::throwbox;
 int Map::m_animation_cycle = 0;
 
@@ -110,6 +111,9 @@ void Map::initpck()
     smoke    = new PCK("$(xcom)/ufograph/smoke.pck");
     fire_small = lua_table_image_vector("fire_small");
     fire_large = lua_table_image_vector("fire_large");
+    smoke_small = lua_table_image_vector("smoke_small");
+    smoke_medium = lua_table_image_vector("smoke_medium");
+    smoke_large = lua_table_image_vector("smoke_large");
     selectbox = lua_table_image_vector("selectbox");
     aimbox = lua_table_image_vector("aimbox");
     throwbox = lua_table_image_vector("throwbox");
@@ -450,9 +454,21 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
                             int st = smog_time(lev, col, row);
                             if (st > 0) {
                                 switch (st) {
-                                    case 1: smoke->showpck(8 + (ANIMATION / 10) % 4, sx, sy); break;
-                                    case 2: smoke->showpck(12 + (ANIMATION / 10) % 4, sx, sy); break;
-                                    default: smoke->showpck(16 + (ANIMATION / 10) % 4, sx, sy); break;
+                                    case 1: {
+                                        int frame = (ANIMATION / 3) % (int)smoke_small.size();
+                                        draw_alpha_sprite(screen2, smoke_small[frame], sx, sy - 6);
+                                        break;
+                                    }
+                                    case 2: {
+                                        int frame = (ANIMATION / 3) % (int)smoke_medium.size();
+                                        draw_alpha_sprite(screen2, smoke_medium[frame], sx, sy - 6);
+                                        break;
+                                    }
+                                    default: {
+                                        int frame = (ANIMATION / 3) % (int)smoke_large.size();
+                                        draw_alpha_sprite(screen2, smoke_large[frame], sx, sy - 6);
+                                        break;
+                                    }
                                 }
                             }
                         }

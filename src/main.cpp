@@ -732,8 +732,14 @@ void initmain(int argc, char *argv[])
     if (get_config_int("Flags", "F_SECONDSIT", 1)) FLAGS |= F_SECONDSIT;      // second player starts in SIT position
     if (get_config_int("Flags", "F_REACTINFO", 0)) FLAGS |= F_REACTINFO;      // show debug info on reaction fire
     if (get_config_int("Flags", "F_CONVERT_XCOM_DATA", 0)) FLAGS |= F_CONVERT_XCOM_DATA; // convert x-com resources to a more conventional and readable format for debugging
-    if (get_config_int("Flags", "F_SHOWNIGHT", 1)) FLAGS |= F_SHOWNIGHT;      // shade tile using the light level
+    if (get_config_int("Flags", "F_PREFER_XCOM_GFX", 1)) FLAGS |= F_PREFER_XCOM_GFX; // use original x-com resources when possible
     if (get_config_int("Flags", "F_SCALE2X", 0)) FLAGS |= F_SCALE2X;          // scale battlescape image twice
+
+    if (FLAGS & F_PREFER_XCOM_GFX) {
+        lua_pushstring(L, "prefer_xcom_gfx");
+        lua_pushnumber(L, 1);
+        lua_settable(L, LUA_GLOBALSINDEX);
+    }
 
     debug_save_state_sender = get_config_int("Debug", "save_state_sender", -1);
     debug_save_state_id = get_config_int("Debug", "save_state_id", -1);

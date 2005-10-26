@@ -134,6 +134,7 @@ public:
 
     static PCK *smoke;
     static std::vector<ALPHA_SPRITE *> fire_small, fire_large;
+    static std::vector<ALPHA_SPRITE *> smoke_small, smoke_medium, smoke_large;
     static std::vector<ALPHA_SPRITE *> selectbox, aimbox, throwbox;
     static void initpck();
     static void freepck();

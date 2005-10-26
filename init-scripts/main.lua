@@ -289,6 +289,7 @@ function AddTerrain(terrain)
 end
 
 function AddImage(key, val)
+    if not val then return end
     if ImageTable[key] then
         Message("AddImage: replaced image '%s'", key)
     else
@@ -547,29 +548,51 @@ end
 
 -- returns a table with a set of pck images
 function pck_image_set(filename, start, count)
-    local tbl = {}
-    for i = 1, count do
-        tbl[i] = pck_image(filename, start + i - 1)
-        if not tbl[i] then return nil end
+    if type(start) == "table" then
+        local tbl = {}
+        for i, num in ipairs(start) do
+            tbl[i] = pck_image(filename, num)
+            if not tbl[i] then return nil end
+        end
+        return tbl
+    else
+        local tbl = {}
+        for i = 1, count do
+            tbl[i] = pck_image(filename, start + i - 1)
+            if not tbl[i] then return nil end
+        end
+        return tbl
     end
-    return tbl
 end
 
 -- returns a table with a set of pck images
 function pck_image_set_ex(a, b, c, filename, start, count)
-    local tbl = {}
-    for i = 1, count do
-        tbl[i] = pck_image_ex(a, b, c, filename, start + i - 1)
-        if not tbl[i] then return nil end
+    if type(start) == "table" then
+        local tbl = {}
+        for i, num in ipairs(start) do
+            tbl[i] = pck_image_ex(a, b, c, filename, num)
+            if not tbl[i] then return nil end
+        end
+        return tbl
+    else
+        local tbl = {}
+        for i = 1, count do
+            tbl[i] = pck_image_ex(a, b, c, filename, start + i - 1)
+            if not tbl[i] then return nil end
+        end
+        return tbl
     end
-    return tbl
 end
 
 -- returns a table with a set of png images
-function png_image_set(filename, start, count)
+function png_image_set(filename, start, count, use_alpha)
     local tbl = {}
     for i = 1, count do
-        tbl[i] = png_image(filename .. "-" .. tostring(start + i - 1) .. ".png")
+        if use_alpha then
+            tbl[i] = png_image_ex(filename .. "-" .. tostring(start + i - 1) .. ".png", true)
+        else
+            tbl[i] = png_image(filename .. "-" .. tostring(start + i - 1) .. ".png")
+        end
     end
     return tbl
 end

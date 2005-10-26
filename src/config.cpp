@@ -190,6 +190,7 @@ void saveini()
     set_config_int(flag,    "F_SECONDSIT",     FLAGS & F_SECONDSIT ? 1 : 0);
     set_config_int(flag,    "F_TOOLTIPS",      FLAGS & F_TOOLTIPS ? 1 : 0);
     set_config_int(flag,    "F_SCALE2X",       FLAGS & F_SCALE2X ? 1 : 0);
+    set_config_int(flag,    "F_PREFER_XCOM_GFX", FLAGS & F_PREFER_XCOM_GFX ? 1 : 0);
 }
 
 int sethotseatplay()
@@ -230,6 +231,7 @@ void set_language(const char *lang)
 #define FLAG_COE         13
 #define LANG             14
 #define OK_BUTTON        15
+#define FLAG_PXG         24
 #define MAX_VALUE        99
                                                  
 static DIALOG *config_dlg = NULL;                                                 
@@ -318,7 +320,7 @@ void configure()
         { d_check_proc,    340,  88, 192,  16, FG, BG, 0, 0, 1, 0, (void *)_("icon panel tooltips"), NULL, NULL },
         { d_check_proc,    340, 112, 192,  16, FG, BG, 0, 0, 1, 0, (void *)_("enlarged battleview"), NULL, NULL },
         { d_check_proc,    340, 136, 192,  16, FG, BG, 0, 0, 1, 0, (void *)_("center on new enemies"), NULL, NULL },
-        { lang_change_button_proc, 340, 160, 100, 16, FG, BG, 0, D_EXIT, -1, 0, (void *)temp, NULL, NULL },
+        { lang_change_button_proc, 340, 160 + 22, 100, 16, FG, BG, 0, D_EXIT, -1, 0, (void *)temp, NULL, NULL },
         { d_button_proc,   400, 200,  64,  16, FG, BG, 0, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL },
         { d_button_proc,   472, 200,  64,  16, FG, BG, 0, D_EXIT | D_GOTFOCUS, 0, 0, (void *)_("Cancel"), NULL, NULL },
         { d_text_proc,     176,  44,  88,  16, FG, BG, 0, 0, 0, 0, (void *)_("movement speed"), NULL, NULL },
@@ -328,6 +330,7 @@ void configure()
         { d_text_proc,     176, 140, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("music volume"), NULL, NULL },
         { d_text_proc,     176, 164, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("console font size"), NULL, NULL },
         { d_text_proc,     176, 188, 128,  16, FG, BG, 0, 0, 0, 0, (void *)_("mouse sensitivity"), NULL, NULL },
+        { d_check_proc,    340, 136 + 24, 192,  16, FG, BG, 0, 0, 1, 0, (void *)_("prefer x-com graphics"), NULL, NULL },
         { d_yield_proc,      0,   0,   0,   0,  0,  0, 0, 0, 0, 0, NULL, NULL, NULL},
         { NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL }
     };
@@ -347,6 +350,7 @@ void configure()
     if (FLAGS & F_TOOLTIPS) config_dlg[FLAG_TT].flags = D_SELECTED;
     if (FLAGS & F_SCALE2X) config_dlg[FLAG_SCALE].flags = D_SELECTED;
     if (FLAGS & F_CENTER_ON_ENEMY) config_dlg[FLAG_COE].flags = D_SELECTED;
+    if (FLAGS & F_PREFER_XCOM_GFX) config_dlg[FLAG_PXG].flags = D_SELECTED;
     config_dlg[LANG].w             = text_length(font, temp) + 6;
 
     centre_dialog(config_dlg);
@@ -376,6 +380,9 @@ void configure()
         
         if (config_dlg[FLAG_COE].flags == D_SELECTED) FLAGS |= F_CENTER_ON_ENEMY;
         else FLAGS &= ~F_CENTER_ON_ENEMY;
+
+        if (config_dlg[FLAG_PXG].flags == D_SELECTED) FLAGS |= F_PREFER_XCOM_GFX;
+        else FLAGS &= ~F_PREFER_XCOM_GFX;
 
         if (config_dlg[LANG].d1 != -1) {
             std::string lang = language_names[config_dlg[LANG].d1];
