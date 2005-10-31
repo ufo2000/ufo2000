@@ -116,6 +116,7 @@ private:
     friend class Platoon;
     friend class Inventory;
     friend class Icon;
+    friend class Item;
     friend class Editor;
     friend class Skin;
 public:
@@ -141,7 +142,7 @@ private:
     int dir;
     // direction of the movement
     int move_dir;
-        int phase;
+    int phase;
     State m_state;
 
 //! Each soldier in a platoon has a unique vision mask
@@ -156,7 +157,7 @@ private:
     int MOVED;
 
 //! If we get stunned, this points to the corpse.
-    Item *m_body;
+    Item *m_stunned_body;
 
 //! The number of shots to be done and aiming point.
 //! Soldier cannot be saved before all shots have been processed.
@@ -190,6 +191,9 @@ public:
     // get pointer to body part by name
     Place *find_place(const char *place_name);
     
+    // get name of a soldier
+    const char *get_name() { return ud.Name; }
+
     // get number of items in equipment and a list of pointers
     int get_inventory_list(std::vector<Item *> &items);
 
@@ -403,7 +407,7 @@ public:
         return m_place[ip];
     }
     
-    Item *body() { return m_body; }
+    Item *get_stunned_body() { return m_stunned_body; }
 
     void destroy_all_items();
     void draw_deselect_times(BITMAP *dest, Item *sel_item, int sel_item_place);

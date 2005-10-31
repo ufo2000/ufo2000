@@ -61,7 +61,7 @@ Soldier::Soldier(Platoon *platoon, int _NID)
     z = -1; x = -1; y = -1;
     dir = 0; move_dir = 0; phase = 0; m_state = STAND;
     m_next = NULL; m_prev = NULL;
-    m_body = NULL;
+    m_stunned_body = NULL;
     m_platoon = platoon;
     m_skin = new Skin(this, md.SkinType, md.fFemale);
 
@@ -142,7 +142,7 @@ Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *md
 
     phase = 0; m_state = STAND;
     m_next = NULL; m_prev = NULL;
-    m_body = NULL;
+    m_stunned_body = NULL;
     m_platoon = platoon;
     m_skin = new Skin(this, md.SkinType, md.fFemale);
 
@@ -155,10 +155,10 @@ Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *md
     m_place[P_LEG_LEFT]  = new Place(128, 120, 2, 1);
     m_place[P_BACK]      = new Place(192,  40, 3, 3);
     m_place[P_BELT]      = new Place(192, 104, 4, 2);
-    m_place[P_MAP] = map->place(z, x, y);      //!!
+//    m_place[P_MAP] = map->place(z, x, y);      //!!
     m_p_map_allocated = false;
 
-    map->set_man(z, x, y, this);
+    g_map->set_man(z, x, y, this);
 
     curway = -1; waylen = 0;
     FIRE_num = 0;
@@ -544,7 +544,7 @@ void Soldier::restore()
         // This means we should wake up, so find the body!
         if (was_stunned && !is_stunned()) {
             int z0 = -1, x0 = -1, y0 = -1, found = 0;
-            Place *target = m_body->get_place();
+            Place *target = m_stunned_body->get_place();
             for (z0 = 0; z0 < map->level; z0++) {
                 for (x0 = 0; x0 < map->width*10; x0++) {
                     for (y0 = 0; y0 < map->height*10; y0++) {
@@ -564,14 +564,14 @@ void Soldier::restore()
             }
             // Body found on map (not in someone's backback) 
             // and also nobody is standing at this place.
-            if (found && map->man(z0, x0, y0) == NULL) {
+            if (found && g_map->man(z0, x0, y0) == NULL) {
                 z = z0;
                 x = x0;
                 y = y0;
-                m_body->unlink();
-                delete m_body;
-                m_body = NULL;
-                map->set_man(z0, x0, y0, this); // Get back into action.
+                target->destroy(m_stunned_body);
+                m_stunned_body = NULL;
+                g_map->set_man(z0, x0, y0, this); // Get back into action.
+//                g_map->update_vision_matrix(this);
                 m_state = STAND;
                 phase = 0;
             } else ud.CurStun = was_stun; // Otherwise don't wake up yet.
@@ -803,12 +803,13 @@ int Soldier::ismoving()
 
 int Soldier::move(int ISLOCAL)
 {
-    if (z == -1) return 0; // auto-return 0 if stunned
+    if (m_stunned_body != NULL || z == -1) return 0; // auto-return 0 if stunned
 
     if ((z > 0) && map->mcd(z, x, y, 0)->No_Floor && !can_fly()) {
         if (!map->isStairs(z - 1, x, y)) {
             map->set_man(z, x, y, NULL);
             z--;
+            map->set_man(z, x, y, this);
             if (this == sel_man) {
                 //map->center(this);
                 map->sel_lev = z;
@@ -818,6 +819,7 @@ int Soldier::move(int ISLOCAL)
     if (map->isStairs(z, x, y)) {
         map->set_man(z, x, y, NULL);
         z++;
+        map->set_man(z, x, y, this);
         //map->sel_lev = z;
         if (this == sel_man) {
             //map->center(this);
@@ -825,8 +827,8 @@ int Soldier::move(int ISLOCAL)
         }
     }
 
-    map->set_man(z, x, y, this);      //preventor!!
-    m_place[P_MAP] = map->place(z, x, y);
+//    map->set_man(z, x, y, this);
+//    m_place[P_MAP] = map->place(z, x, y);
 
     if (m_state == FALL) {
         //textprintf(screen, font, 1, 100, 1, "phase=%d", phase);
@@ -855,14 +857,14 @@ int Soldier::move(int ISLOCAL)
                 y = yd;
                 map->set_man(z, x, y, this);
                 spend_time(tu_cost, 1);
-                m_place[P_MAP] = map->place(z, x, y);
+//                m_place[P_MAP] = map->place(z, x, y);
 
                 if (this == sel_man) {
                     //map->center(this);
                     map->sel_lev = z;
                 }
 
-                map->update_vision_matrix(this);
+//                map->update_vision_matrix(this);
                 
                 curway++;
                 if (curway >= waylen) {
@@ -913,9 +915,9 @@ int Soldier::move(int ISLOCAL)
             spend_time(time, 1);
             
             map->set_man(z, x, y, this);
-            m_place[P_MAP] = map->place(z, x, y);
+//            m_place[P_MAP] = map->place(z, x, y);
 
-            map->update_vision_matrix(this);
+//            map->update_vision_matrix(this);
         }
 
         if (phase >= 8) {
@@ -985,7 +987,7 @@ int Soldier::move(int ISLOCAL)
                 turnto(way[curway]);
             }
 
-            map->update_vision_matrix(this);
+            g_map->update_vision_matrix(this);
         } else {
             if (FIRE_num && m_bullet->ready()) {
                 FIRE_num--;
@@ -1114,7 +1116,7 @@ bool Soldier::use_elevator(int dz)
     if (platoon_local->belong(this))
         net->send_use_elevator(NID, dz);
 
-    map->update_vision_matrix(this);
+//    map->update_vision_matrix(this);
     map->cell_visibility_changed(z, x, y);
     return true;
 }
@@ -1499,32 +1501,40 @@ void Soldier::explo_hit(int sniper, int pierce, int type, int hitdir) //silent
 void Soldier::die()
 {   
     unlink();
-    map->set_man(z, x, y, NULL);
 
-    z = map->find_ground(z, x, y);
-    for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
-        m_place[i]->dropall(z, x, y);
+    if (m_stunned_body == NULL) {
+        // Ordinary death, drop all the posession and create corpse
+        g_map->set_man(z, x, y, NULL);
 
-    const char *ctype;
-    if (md.SkinType == S_XCOM_0)
-        ctype = "CORPSE";
-    else if (md.SkinType == S_XCOM_1)
-        ctype = "CORPSE & ARMOUR";
-    else if ((md.SkinType == S_XCOM_2) || (md.SkinType == S_XCOM_3))
-        ctype = "CORPSE & POWER SUIT";
-    else if (md.SkinType == S_SECTOID)
-        ctype = "Sectoid Corpse";
-    else
-        ctype = "Muton Corpse";
+        z = g_map->find_ground(z, x, y);
+        for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
+            m_place[i]->dropall(z, x, y);
 
-    Item *it = create_item(ctype);
-    ASSERT(it);
-    g_map->place(z, x, y)->put(it);
+        const char *ctype;
+        if (md.SkinType == S_XCOM_0)
+            ctype = "CORPSE";
+        else if (md.SkinType == S_XCOM_1)
+            ctype = "CORPSE & ARMOUR";
+        else if ((md.SkinType == S_XCOM_2) || (md.SkinType == S_XCOM_3))
+            ctype = "CORPSE & POWER SUIT";
+        else if (md.SkinType == S_SECTOID)
+            ctype = "Sectoid Corpse";
+        else
+            ctype = "Muton Corpse";
+
+        Item *it = create_item(ctype);
+        ASSERT(it);
+        g_map->place(z, x, y)->put(it);
+    } else {
+        // A death of an already stunned soldier (because his body got hit 
+        // or probably because of a fatal wound once it gets implemented)
+        m_stunned_body = NULL;
+    }
 
     //m_platoon->change_morale(-(100 / (m_platoon->num_of_men() + 1)), false);
 
-    g_console->printf(COLOR_BLUE, "%s killed.", md.Name);
-    battle_report( "%s: %s\n", _("killed"), md.Name);
+    g_console->printf(COLOR_BLUE, _("%s killed."), md.Name);
+    battle_report(_("killed: %s\n"), md.Name);
   // Todo: With-what-weapon, By-whom ?
 }
 
@@ -1532,10 +1542,11 @@ void Soldier::die()
 void Soldier::stun()
 // Todo: Make difference between 'real' corpses and stunned soldiers.
 {
-    if (z == -1) return; // already stunned.
-    map->set_man(z, x, y, NULL);
+    ASSERT(m_stunned_body == NULL);
 
-    z = map->find_ground(z, x, y);
+    g_map->set_man(z, x, y, NULL);
+
+    z = g_map->find_ground(z, x, y);
     for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
         m_place[i]->dropall(z, x, y);
 
@@ -1551,21 +1562,21 @@ void Soldier::stun()
     else
         ctype = "Muton Corpse";
 
-    Item *it = create_item(ctype);
-    ASSERT(it);
-    g_map->place(z, x, y)->put(it);
+    m_stunned_body = create_item(ctype, this);
+    ASSERT(m_stunned_body);
+    g_map->place(z, x, y)->put(m_stunned_body);
 
     x = -1;
     y = -1;
     z = -1;
 
     curway = -1; waylen = 0;
-    FIRE_num  = 0;
+    FIRE_num = 0;
     MOVED = 0;
     m_reaction_chances = 0;
 
-    g_console->printf(COLOR_BLUE, "%s stunned.", md.Name);
-    battle_report( "%s: %s\n", _("stunned"), md.Name);
+    g_console->printf(COLOR_BLUE, _("%s stunned."), md.Name);
+    battle_report(_("stunned: %s\n"), md.Name);
 }
 
 
@@ -1576,7 +1587,8 @@ void Soldier::unlink()
 {
     if (m_prev != NULL) m_prev->m_next = m_next;
     if (m_next != NULL) m_next->m_prev = m_prev;
-    m_prev = NULL; m_next = NULL;
+    if (m_platoon != NULL && m_platoon->man == this) m_platoon->man = m_next;
+    m_prev = NULL; m_next = NULL; m_platoon = NULL;
 }
 
 /**
@@ -2127,6 +2139,8 @@ void Soldier::apply_throwing_accuracy(REAL &fi, REAL &te, int weight)
 
 int Soldier::check_for_hit(int _z, int _x, int _y)
 {
+    if (m_state == FALL || m_state == LIE) return 0;
+
     int lev = _z / 12;
     int col = _x / 16;
     int row = _y / 16;
@@ -2837,7 +2851,7 @@ bool Soldier::Write(persist::Engine &archive) const
     PersistWriteObject(archive, m_next);
     PersistWriteObject(archive, m_prev);
     PersistWriteObject(archive, m_bullet);
-    PersistWriteObject(archive, m_body);
+    PersistWriteObject(archive, m_stunned_body);
     PersistWriteObject(archive, m_platoon);
     PersistWriteObject(archive, m_skin);
 
@@ -2854,7 +2868,7 @@ bool Soldier::Read(persist::Engine &archive)
     PersistReadObject(archive, m_next);
     PersistReadObject(archive, m_prev);
     PersistReadObject(archive, m_bullet);
-    PersistReadObject(archive, m_body);
+    PersistReadObject(archive, m_stunned_body);
     PersistReadObject(archive, m_platoon);
     PersistReadObject(archive, m_skin);
 

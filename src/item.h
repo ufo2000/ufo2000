@@ -57,6 +57,8 @@ private:
     int  m_rounds;
     int  m_delay_time;
     Item *m_ammo;
+    //! If it is a stunned body, this contains a pointer to its owner
+    Soldier *m_stunned_body_owner;
     
     int m_health;
 
@@ -101,12 +103,12 @@ public:
     static int obdata_isGun(int index) { return obdata_get_int(index, "isGun"); }
     static int obdata_minimapMark(int index) { return obdata_get_int(index, "minimapMark"); }
 
-    char* get_damage_name();
+    const char* get_damage_name();
     //! Get list of ammo types that can be used with this weapon
     static bool get_ammo_list(const std::string itemname, std::vector<std::string> &ammo);
 
     Item();
-    Item(int _type);
+    Item(int _type, Soldier *stunned_body_owner = NULL);
     virtual ~Item();
 
     //! Laser damage
@@ -131,7 +133,7 @@ public:
 
     int inside(int _x, int _y);
 
-    std::string name() { return obdata_name(m_type); }
+    std::string name();
     ALPHA_SPRITE *obdata_pMap() { return m_pMap; }
     ALPHA_SPRITE *obdata_pInv() { return m_pInv; }
     ALPHA_SPRITE *obdata_pHeld(int dir) { ASSERT(dir >= 0 && dir < 8); return m_pHeld[dir]; }
@@ -220,7 +222,7 @@ struct Target
     int    place;
 };
 
-Item *create_item(const char *item_name);
+Item *create_item(const char *item_name, Soldier *stunned_body_owner = NULL);
 
 bool is_item_allowed(int type);
 

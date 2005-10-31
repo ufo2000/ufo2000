@@ -581,16 +581,15 @@ int Scenario::conditions_capture ()
 {
     int win = 0, loss = 0;
 
-    Soldier *vip;
+    Soldier *vip = p2->findman(2000);
 
-    if (p2->findman(2000) == NULL) {
+    if (vip == NULL) {
         loss = 1;
         win = 2;
     } else {
-        vip = p2->findman(2000);
         if (vip->is_stunned()) {
             for (int i = 0; i < mapdata.y_size * 10; i++) {
-                if (map->cell(0, 0, i)->get_place()->isthere(vip->body())) {
+                if (g_map->cell(0, 0, i)->get_place()->isthere(vip->get_stunned_body())) {
                     if (platoon_local->belong(vip))
                         loss = 1;
                     else

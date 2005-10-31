@@ -171,6 +171,11 @@ bool Item::get_ammo_list(const std::string item_name, std::vector<std::string> &
     }
 }
 
+std::string Item::name()
+{
+    return m_stunned_body_owner ? m_stunned_body_owner->get_name() : obdata_name(m_type); 
+}
+
 /**
  * Show object stats information in the armoury
  */
@@ -275,7 +280,7 @@ void Item::od_info(int type, int gx, int gy, int gcol)
     gy += 10;
 }
 
-Item::Item(int _type)
+Item::Item(int _type, Soldier *stunned_body_owner)
 {
     m_type = _type;
     m_x = 0; m_y = 0;
@@ -283,6 +288,7 @@ Item::Item(int _type)
     m_rounds = obdata_rounds(_type);
     m_delay_time = 0;
     m_ammo = NULL;
+    m_stunned_body_owner = stunned_body_owner;
 
     m_health = obdata_maxHealth();
 
@@ -321,7 +327,7 @@ void Item::unlink()
 {
     if (m_prev != NULL) m_prev->m_next = m_next;
     if (m_next != NULL) m_next->m_prev = m_prev;
-        if (m_place != NULL && m_place->m_item == this) m_place->m_item = m_next;
+    if (m_place != NULL && m_place->m_item == this) m_place->m_item = m_next;
     m_prev = NULL; m_next = NULL; m_place = NULL;
 }
 
@@ -390,13 +396,22 @@ void Item::draw_health(BITMAP *dest, int GRAPH, int gx, int gy)
 
 int Item::damage(int dam)
 {
-    m_health -= dam;
-    if (m_health <= 0)
-        return 1;
+    if (m_stunned_body_owner != NULL) {
+        if (m_stunned_body_owner->ud.CurHealth <= dam) {
+            m_stunned_body_owner->ud.CurHealth = 0;
+            m_stunned_body_owner = NULL;
+        } else {
+            m_stunned_body_owner->ud.CurHealth -= dam;
+        }
+    } else {
+        m_health -= dam;
+        if (m_health <= 0)
+            return 1;
+    }
     return 0;
 }
 
-char* Item::get_damage_name()
+const char* Item::get_damage_name()
 {
     int damage_type = m_ammo->obdata_damageType(m_ammo->m_type);
     if (haveclip() && damage_type >= 0 && damage_type < 8)
@@ -422,7 +437,7 @@ Item *Item::create_duplicate()
  *
  * @param item_name item name
  */
-Item *create_item(const char *item_name)
+Item *create_item(const char *item_name, Soldier *stunned_body_owner)
 {
     Item *result = NULL;
     int stack_top = lua_gettop(L);
@@ -437,7 +452,7 @@ Item *create_item(const char *item_name)
         lua_pushstring(L, "index");
         lua_gettable(L, -2);
         ASSERT(lua_isnumber(L, -1));
-        result = new Item((uint32)lua_tonumber(L, -1));
+        result = new Item((uint32)lua_tonumber(L, -1), stunned_body_owner);
     }
     lua_settop(L, stack_top);
     return result;
@@ -451,6 +466,7 @@ bool Item::Write(persist::Engine &archive) const
     PersistWriteObject(archive, m_prev);
     PersistWriteObject(archive, m_place);
     PersistWriteObject(archive, m_ammo);
+    PersistWriteObject(archive, m_stunned_body_owner);
 
     return true;
 }
@@ -463,6 +479,7 @@ bool Item::Read(persist::Engine &archive)
     PersistReadObject(archive, m_prev);
     PersistReadObject(archive, m_place);
     PersistReadObject(archive, m_ammo);
+    PersistReadObject(archive, m_stunned_body_owner);
 
     m_pInv = obdata_get_bitmap(m_type, "pInv");
     ASSERT(m_pInv);

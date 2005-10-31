@@ -37,6 +37,7 @@ class Platoon: public persist::BaseObject
 {
     DECLARE_PERSISTENCE(Platoon);
 private:
+    friend class Soldier;
     //! Pointer to current selected soldier in the squad
     Soldier *man;
     //! Index of currently selected soldier --BSM

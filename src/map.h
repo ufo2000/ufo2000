@@ -288,6 +288,10 @@ public:
                (col >= 0) && (col < width * 10) &&
                (row >= 0) && (row < height * 10));
         m_cell[lev][col][row]->set_soldier(man);
+        if (man) {
+            man->m_place[P_MAP] = m_cell[lev][col][row]->get_place();
+            update_vision_matrix(man);
+        }
     }
 
     int fire_time(int lev, int col, int row) 

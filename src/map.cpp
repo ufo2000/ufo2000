@@ -1420,9 +1420,12 @@ void Map::update_vision_matrix(Soldier *watcher)
     int32 index = pos.index();
     
     vision_matrix[index] |= vision_mask;
+    pplatoon->set_seen(pos.level(), pos.column(), pos.row(), 1);
         
-    if (pos.level() > 0 && isStairs(pos.level(), pos.column(), pos.row())) 
+    if (pos.level() > 0 && isStairs(pos.level(), pos.column(), pos.row()))  {
         vision_matrix[index - m_level_offset] |= vision_mask;
+        pplatoon->set_seen(pos.level() - 1, pos.column(), pos.row(), 1);
+    }
     
     memset(field, 0, size());
     int ang = dir * 32;
