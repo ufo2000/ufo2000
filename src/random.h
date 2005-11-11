@@ -35,7 +35,6 @@ class Random: public persist::BaseObject
 private:
     static const long MBIG = 1000000000;
     static const long MSEED = 161803398;
-    static const REAL FAC = 1.0 / MBIG;
     int m_inext, m_inextp;
     long m_a[56];
     long m_j, m_k, m_init, m_iters;

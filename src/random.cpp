@@ -29,6 +29,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "text.h"
 #endif
 
+#define FAC (REAL)(1.0 / MBIG)
+
 IMPLEMENT_PERSISTENCE(Random, "Random");
 
 /**
