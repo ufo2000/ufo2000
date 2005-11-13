@@ -49,7 +49,7 @@ static std::map<std::string, BITMAP *> g_png_large_cache;
 /**
  * Load bitmap (this function is aware of truecolor transparency)
  */
-static BITMAP *load_bitmap_alpha(const char *filename, bool use_alpha)
+static BITMAP *load_bitmap_alpha(const char *filename, bool force_alpha)
 {
     // Allow any color conversions except when loaded file 
     // contains alpha channel
@@ -64,24 +64,48 @@ static BITMAP *load_bitmap_alpha(const char *filename, bool use_alpha)
     set_color_conversion(cc);
     if (!bmp_orig) return NULL;
     
-    // Check color depth, if it is 32 bit then we need some more work to do
-    bool mode32 = bitmap_color_depth(bmp_orig) == 32;
-    if (!mode32 || use_alpha) return bmp_orig;
+    // Non 32bpp bitmap just can't contain alpha channel
+    if (bitmap_color_depth(bmp_orig) != 32) return bmp_orig;
 
-    BITMAP *bmp = create_bitmap(bmp_orig->w, bmp_orig->h);
-    clear_to_color(bmp, bitmap_mask_color(bmp));
-    for (int x = 0; x < bmp_orig->w; x++)
-        for (int y = 0; y < bmp_orig->h; y++) {
-            int c = getpixel(bmp_orig, x, y);
-            if (geta32(c) != 0) {
-                if (mode32)
-                    putpixel(bmp, x, y, makeacol(getr32(c), getg32(c), getb32(c), 255));
-                else
-                    putpixel(bmp, x, y, makecol(getr32(c), getg32(c), getb32(c)));
-            }
+    // Try to detect alpha channel in the bitmap
+    bool has_alpha = false;
+    bool has_trans = false;
+    bool has_opaque = false;
+    for (int y = 0; y < bmp_orig->h; y++) {
+        const uint32 *line = (const uint32 *)bmp_orig->line[y];
+        for (int x = 0; x < bmp_orig->w; x++) {
+            uint32 a = line[x] & 0xFF000000;
+            if (a == 0)
+                has_trans = true;
+            else if (a == 0xFF000000)
+                has_opaque = true;
+            else
+                has_alpha = true;
         }
-    destroy_bitmap(bmp_orig);
-    return bmp;
+    }
+    if (has_alpha || force_alpha) {
+        for (int x = 0; x < bmp_orig->w; x++)
+            for (int y = 0; y < bmp_orig->h; y++) {
+                int c = getpixel(bmp_orig, x, y);
+                if (geta32(c) == 0) {
+                    putpixel(bmp_orig, x, y, MASK_COLOR_32);
+                }
+            }
+        return bmp_orig;
+    } else {
+        bool has_1bit_alpha = has_trans && has_opaque;
+        BITMAP *bmp = create_bitmap(bmp_orig->w, bmp_orig->h);
+        clear_to_color(bmp, bitmap_mask_color(bmp));
+        for (int x = 0; x < bmp_orig->w; x++)
+            for (int y = 0; y < bmp_orig->h; y++) {
+                int c = getpixel(bmp_orig, x, y);
+                if (!has_1bit_alpha || geta32(c) != 0) {
+                    putpixel(bmp, x, y, makeacol(getr32(c), getg32(c), getb32(c), 255));
+                }
+            }
+        destroy_bitmap(bmp_orig);
+        return bmp;
+    }
 }
 
 /**
@@ -138,7 +162,7 @@ ALPHA_SPRITE *png_image_ex(const char *filename, bool use_alpha)
                 }
             }
         }
-        ALPHA_SPRITE *spr = get_alpha_sprite(bmp, use_alpha);
+        ALPHA_SPRITE *spr = get_alpha_sprite(bmp);
         destroy_bitmap(bmp);
         g_png_cache[fullname] = spr;
     }
