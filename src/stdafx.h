@@ -65,7 +65,7 @@ inline long filelength(int handle) { struct stat s; fstat(handle, &s); return s.
 #include <memory>
 
 #include <math.h>
-#define REAL  float
+#define REAL  double
 #ifndef PI
 #define PI    3.1415926535897932384626433832795  // should be accurate enough
 #endif

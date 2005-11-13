@@ -597,9 +597,53 @@ int lua_safe_dostring(lua_State *L, const char *str)
     return lua_safe_dobuffer(L, str, strlen(str), str);
 }
 
+//! Boolean flag which specifies whether FPU implementation is compatible with the game
+static bool fpu_is_ok = true;
+
+static void init_fpu()
+{
+    // Set double precision for i386 fpu
+#if defined(__GNUC__) && defined(__i386__)
+    int mode = 0x27F; /* use double-precision rounding */
+    asm("fldcw %0" : : "m" (*&mode));
+#endif
+    // Do some basic tests for IEEE conformance
+
+    REAL d = 0.5;
+    REAL s = 0.5;
+
+    uint8 test_d[8] = {0x73, 0x77, 0x8B, 0x04, 0x9B, 0xFF, 0xE4, 0x3F};
+    uint8 test_s[8] = {0x03, 0xC3, 0x3F, 0x0C, 0x36, 0xBB, 0xE3, 0x3F};
+
+    uint8 byteswapped_test_d[8];
+    uint8 byteswapped_test_s[8];
+
+    for (int j = 0; j < 8; j++) {
+        byteswapped_test_d[7 - j] = test_d[j];
+        byteswapped_test_s[7 - j] = test_s[j];
+    }
+
+    for (int i = 1; i <= 100; i++) {
+        d = 3.8 * d * (1 - d);
+        s = 4.8 * sin(s) * (1 - sin(s));
+    }
+
+
+    if (sizeof(d) != sizeof(test_d)) {
+        fpu_is_ok = false;
+        return;
+    }
+
+    if (memcmp(&d, test_d, sizeof(d)) != 0 && memcmp(&d, byteswapped_test_d, sizeof(d)) != 0) {
+        fpu_is_ok = false;
+        return;
+    }
+}
+
 void initmain(int argc, char *argv[])
 {
     register_assert_handler(assert_handler);
+    init_fpu();
     srand(time(NULL));
     set_uformat(U_UTF8);
     allegro_init();
@@ -2857,7 +2901,13 @@ int main(int argc, char *argv[])
                     h = sethotseatplay();
                     break;
                 case MAINMENU_INTERNET:
-                    h = connect_internet_server();
+                    if (fpu_is_ok)
+                        h = connect_internet_server();
+                    else
+                        alert(
+                            _("IEEE compatible 64-bit floating point is not supported,"), 
+                            _("so you have high risk of synchronization errors in network games"), 
+                            _("and are not allowed to connect the server"), _("OK"), NULL, 0, 0);
                     break;
                 case MAINMENU_LOADGAME:
                     start_loadgame();

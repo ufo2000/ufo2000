@@ -142,20 +142,6 @@ public:
 
     void getLoadedSyms(std::ostream *os);
     void playLoadedSamples(std::ostream *os);
-
-/* positioning support */
-
-    /** sets the position and orientation of listener.
-     *  The position is expressed in some abstract coordinates.
-     */
-    void setOrigin(float x, float y, float z, float dx, float dy, float dz);
-
-    /** sets cutoff distance, at which a maximal vol sound won't be heard. */
-    void setCutoff(float cd);
-
-    /** play sound at the given point in some abstract coordinates. */
-    void play(float x, float y, float z, int vol);
-
 };
 
 

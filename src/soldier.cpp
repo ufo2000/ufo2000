@@ -2703,19 +2703,19 @@ int Soldier::check_reaction_fire(Soldier *the_target)
 {
     // Ok, check for reaction fire.
     // Compare the reaction figures.
-    float total_reactions = ud.CurReactions;
-    float tu_ratio; 
-    if (the_target->ud.CurTU > 0) tu_ratio = (float)ud.CurTU / the_target->ud.CurTU; //needs for smooth interpolating
+    REAL total_reactions = ud.CurReactions;
+    REAL tu_ratio; 
+    if (the_target->ud.CurTU > 0) tu_ratio = (REAL)ud.CurTU / the_target->ud.CurTU; //needs for smooth interpolating
     else tu_ratio = 999;
 
     ASSERT(the_target->ud.CurReactions > 0); // Shouldn't happen, but...
     
-    if (((float)ud.CurReactions / (float)the_target->ud.CurReactions) < total_reactions)
-        total_reactions = ((float)ud.CurReactions / (float)the_target->ud.CurReactions);
+    if (((REAL)ud.CurReactions / (REAL)the_target->ud.CurReactions) < total_reactions)
+        total_reactions = ((REAL)ud.CurReactions / (REAL)the_target->ud.CurReactions);
 
-    float r1 = total_reactions;
+    REAL r1 = total_reactions;
     total_reactions /= 2;
-    float r2 = total_reactions;
+    REAL r2 = total_reactions;
 
     if (tu_ratio < 1) total_reactions *= tu_ratio;
 

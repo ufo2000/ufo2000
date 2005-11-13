@@ -241,26 +241,6 @@ Packet &Packet::operator>>(uint32 &i)
     return *this;
 }
 
-Packet &Packet::operator<<(REAL i)
-{
-    ASSERT(sizeof(i) == sizeof(long));
-    int len = sprintf(data + size, "%lx(%f)_", *(long *) & i, i);
-    size += len;
-    return *this;
-}
-
-Packet &Packet::operator>>(REAL &i)
-{
-    ASSERT(sizeof(i) == sizeof(long));
-    sscanf(data + cur, "%lx", (long *) & i);
-    int len = 0;
-    while (data[cur + len] != '_')
-        len++;
-
-    cur += len + 1;
-    return *this;
-}
-
 BQ::BQ(int sz) {
 }
 
