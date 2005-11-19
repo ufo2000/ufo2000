@@ -84,7 +84,7 @@ endif
 
 VPATH = src src/jpgalleg src/dumbogg src/exchndl src/agup src/lua \
         src/glyphkeeper src/loadpng src/sqlite src/luasqlite3 src/lua/lua \
-        src/scale2x
+        src/scale2x src/fdlibm
 
 
 SRCS_LUALIB = lapi.c lauxlib.c lbaselib.c lcode.c ldblib.c ldebug.c   \
@@ -92,6 +92,15 @@ SRCS_LUALIB = lapi.c lauxlib.c lbaselib.c lcode.c ldblib.c ldebug.c   \
            lmem.c loadlib.c lobject.c lopcodes.c lparser.c            \
            lstate.c lstring.c lstrlib.c ltable.c ltablib.c            \
            ltests.c ltm.c lundump.c lvm.c lzio.c luasqlite3.c
+
+SRCS_FDLIBM = e_acos.cpp e_asin.cpp e_atan2.cpp e_exp.cpp e_fmod.cpp  \
+              e_log.cpp e_pow.cpp e_rem_pio2.cpp e_remainder.cpp      \
+              e_scalb.cpp e_sqrt.cpp k_cos.cpp k_rem_pio2.cpp         \
+              k_sin.cpp k_tan.cpp s_atan.cpp s_ceil.cpp               \
+              s_copysign.cpp s_cos.cpp s_fabs.cpp s_floor.cpp         \
+              s_rint.cpp s_scalbn.cpp s_sin.cpp s_tan.cpp w_acos.cpp  \
+              w_asin.cpp w_atan2.cpp w_exp.cpp w_fmod.cpp w_log.cpp   \
+              w_pow.cpp w_remainder.cpp w_sqrt.cpp
 
 SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
        editor.cpp explo.cpp font.cpp icon.cpp inventory.cpp item.cpp  \
@@ -107,6 +116,7 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
        sqlite3_internal.cpp sqlite3_reader.cpp                        \
                                                                       \
        $(SRCS_LUALIB)                                                 \
+       $(SRCS_FDLIBM)                                                 \
                                                                       \
        aalg.c aase.c abeos.c abitmap.c agtk.c agup.c ans.c            \
        aphoton.c awin95.c decode.c encode.c io.c jpgalleg.c scale2x.c

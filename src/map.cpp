@@ -1565,6 +1565,7 @@ int calculate_hitdir(double dz, double dx, double dy)
     // Disabled since linux and windows clients get different results
     // Need more debug and testing
     return DAMAGEDIR_UNDER;
+/*
     double ALLEGRO_PI=128; // PI=128 in the allegro trigonometry
     double UNDER_ARMOR_ANGLE = ALLEGRO_PI/3; //to rules.h ?
     
@@ -1577,6 +1578,7 @@ int calculate_hitdir(double dz, double dx, double dy)
     }
     //printf("dz, dx, dy: %f, %f, %f, %f, %d \n", dz, dx, dy, atan(dz/hor_dist), dir );
     return dir;
+*/
 }
 
 const double EXPL_BORDER_DAMAGE = 0.5; // how much damage does explosion on its border

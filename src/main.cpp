@@ -607,13 +607,13 @@ static void init_fpu()
     int mode = 0x27F; /* use double-precision rounding */
     asm("fldcw %0" : : "m" (*&mode));
 #endif
-    // Do some basic tests for IEEE conformance
+    // Do some basic tests for IEEE-754 conformance
 
     REAL d = 0.5;
     REAL s = 0.5;
 
     uint8 test_d[8] = {0x73, 0x77, 0x8B, 0x04, 0x9B, 0xFF, 0xE4, 0x3F};
-    uint8 test_s[8] = {0x03, 0xC3, 0x3F, 0x0C, 0x36, 0xBB, 0xE3, 0x3F};
+    uint8 test_s[8] = {0xBA, 0x72, 0xBE, 0x21, 0x3A, 0x3D, 0x10, 0x40};
 
     uint8 byteswapped_test_d[8];
     uint8 byteswapped_test_s[8];
@@ -625,9 +625,8 @@ static void init_fpu()
 
     for (int i = 1; i <= 100; i++) {
         d = 3.8 * d * (1 - d);
-        s = 4.8 * sin(s) * (1 - sin(s));
+        s = 48.0 / (10.0 + atan2(sin(s), cos(1.0 + s / 0.2))) * sin(s) * sqrt(2.0 - sin(s));
     }
-
 
     if (sizeof(d) != sizeof(test_d)) {
         fpu_is_ok = false;
@@ -635,6 +634,11 @@ static void init_fpu()
     }
 
     if (memcmp(&d, test_d, sizeof(d)) != 0 && memcmp(&d, byteswapped_test_d, sizeof(d)) != 0) {
+        fpu_is_ok = false;
+        return;
+    }
+
+    if (memcmp(&s, test_s, sizeof(s)) != 0 && memcmp(&s, byteswapped_test_s, sizeof(s)) != 0) {
         fpu_is_ok = false;
         return;
     }
@@ -2905,7 +2909,7 @@ int main(int argc, char *argv[])
                         h = connect_internet_server();
                     else
                         alert(
-                            _("IEEE compatible 64-bit floating point is not supported,"), 
+                            _("IEEE-754 compatible 64-bit floating point arithmetics is not supported,"), 
                             _("so you have high risk of synchronization errors in network games"), 
                             _("and are not allowed to connect the server"), _("OK"), NULL, 0, 0);
                     break;
