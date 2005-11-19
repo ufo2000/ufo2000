@@ -113,7 +113,7 @@ REAL Random::getNormal()
             v2 = getUniform(-1.0, 1.0);
             rsq = v1 * v1 + v2 * v2;
         } while (rsq >= 1.0 || rsq < LOW); // Don't make it too low to avoid precision errors.
-        fact = sqrt (-2.0 * log (rsq) / rsq);
+        fact = sqrt (-2.0 * fdlibm::log (rsq) / rsq);
         m_normalsaved = v1 * fact;
         m_normalready = true;
         result = v2 * fact;

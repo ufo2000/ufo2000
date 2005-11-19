@@ -67,6 +67,17 @@ inline long filelength(int handle) { struct stat s; fstat(handle, &s); return s.
 #include "fdlibm/fdlibm.h"
 using namespace fdlibm;
 
+// Provide some defines to override functions from "math.h" as "math.h"
+// gets included automatically by "iostream" header file in linux for
+// example, so this workaround is required
+#define sin(x) fdlibm::sin(x)
+#define cos(x) fdlibm::cos(x)
+#define sqrt(x) fdlibm::sqrt(x)
+#define acos(x) fdlibm::acos(x)
+#define atan2(x, y) fdlibm::atan2(x, y)
+#define floor(x) fdlibm::floor(x)
+#define ceil(x) fdlibm::ceil(x)
+
 #define REAL  double
 #define PI    3.1415926535897932384626433832795  // should be accurate enough
 
