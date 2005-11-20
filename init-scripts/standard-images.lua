@@ -3,18 +3,31 @@
 -- (experimental feature, interface can change any time)
 ------------------------------------------------------------------------------
 
-SetExplosionAnimation {
-    png_image_ex("$(ufo2000)/arts/explosion/256x178-001.png", true),
-    png_image_ex("$(ufo2000)/arts/explosion/256x178-002.png", true),
-    png_image_ex("$(ufo2000)/arts/explosion/256x178-003.png", true),
-    png_image_ex("$(ufo2000)/arts/explosion/256x178-004.png", true),
-    png_image_ex("$(ufo2000)/arts/explosion/256x178-005.png", true),
-    png_image_ex("$(ufo2000)/arts/explosion/256x178-006.png", true),
-    png_image_ex("$(ufo2000)/arts/explosion/256x178-007.png", true),
-    png_image_ex("$(ufo2000)/arts/explosion/256x178-008.png", true),
-    png_image_ex("$(ufo2000)/arts/explosion/256x178-009.png", true),
-    png_image_ex("$(ufo2000)/arts/explosion/256x178-010.png", true),
-}
+if prefer_xcom_gfx and ReadFile(LocateFile("$(xcom)/ufograph/x1.pck")) then
+    SetExplosionAnimation {
+        pck_image_ex(false, 128, 64, "$(xcom)/ufograph/x1.pck", 0),
+        pck_image_ex(false, 128, 64, "$(xcom)/ufograph/x1.pck", 1),
+        pck_image_ex(false, 128, 64, "$(xcom)/ufograph/x1.pck", 2),
+        pck_image_ex(false, 128, 64, "$(xcom)/ufograph/x1.pck", 3),
+        pck_image_ex(false, 128, 64, "$(xcom)/ufograph/x1.pck", 4),
+        pck_image_ex(false, 128, 64, "$(xcom)/ufograph/x1.pck", 5),
+        pck_image_ex(false, 128, 64, "$(xcom)/ufograph/x1.pck", 6),
+        pck_image_ex(false, 128, 64, "$(xcom)/ufograph/x1.pck", 7),
+    }
+else
+    SetExplosionAnimation {
+        png_image_ex("$(ufo2000)/arts/explosion/256x178-001.png", true),
+        png_image_ex("$(ufo2000)/arts/explosion/256x178-002.png", true),
+        png_image_ex("$(ufo2000)/arts/explosion/256x178-003.png", true),
+        png_image_ex("$(ufo2000)/arts/explosion/256x178-004.png", true),
+        png_image_ex("$(ufo2000)/arts/explosion/256x178-005.png", true),
+        png_image_ex("$(ufo2000)/arts/explosion/256x178-006.png", true),
+        png_image_ex("$(ufo2000)/arts/explosion/256x178-007.png", true),
+        png_image_ex("$(ufo2000)/arts/explosion/256x178-008.png", true),
+        png_image_ex("$(ufo2000)/arts/explosion/256x178-009.png", true),
+        png_image_ex("$(ufo2000)/arts/explosion/256x178-010.png", true),
+    }
+end
 
 ------------------------------------------------------------------------------
 -- Add auxiliary images
