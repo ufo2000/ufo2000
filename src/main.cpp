@@ -782,6 +782,7 @@ void initmain(int argc, char *argv[])
     if (get_config_int("Flags", "F_CONVERT_XCOM_DATA", 0)) FLAGS |= F_CONVERT_XCOM_DATA; // convert x-com resources to a more conventional and readable format for debugging
     if (get_config_int("Flags", "F_PREFER_XCOM_GFX", 1)) FLAGS |= F_PREFER_XCOM_GFX; // use original x-com resources when possible
     if (get_config_int("Flags", "F_SCALE2X", 0)) FLAGS |= F_SCALE2X;          // scale battlescape image twice
+    if (get_config_int("Flags", "F_CENTER_ON_ENEMY", 0)) FLAGS |= F_CENTER_ON_ENEMY;
 
     if (FLAGS & F_PREFER_XCOM_GFX) {
         lua_pushstring(L, "prefer_xcom_gfx");

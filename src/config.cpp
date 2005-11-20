@@ -191,6 +191,7 @@ void saveini()
     set_config_int(flag,    "F_TOOLTIPS",      FLAGS & F_TOOLTIPS ? 1 : 0);
     set_config_int(flag,    "F_SCALE2X",       FLAGS & F_SCALE2X ? 1 : 0);
     set_config_int(flag,    "F_PREFER_XCOM_GFX", FLAGS & F_PREFER_XCOM_GFX ? 1 : 0);
+    set_config_int(flag,    "F_CENTER_ON_ENEMY", FLAGS & F_CENTER_ON_ENEMY ? 1 : 0);
 }
 
 int sethotseatplay()
