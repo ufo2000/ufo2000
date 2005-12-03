@@ -264,7 +264,11 @@ lng-bel: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
 	msgmerge --update translations/ufo2000-bel.po translations/ufo2000.pot
 	
-lng-all: lng-deu lng-spa lng-rus lng-bel
+lng-fre: $(SRCS)
+	xgettext -o translations/ufo2000.pot --keyword=_ $^
+	msgmerge --update translations/ufo2000-fre.po translations/ufo2000.pot
+
+lng-all: lng-deu lng-spa lng-rus lng-bel lng-fre
 
 binary-gz: all server
 # create linux binary distributive
