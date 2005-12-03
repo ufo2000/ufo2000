@@ -892,6 +892,15 @@ int Soldier::move(int ISLOCAL)
                 case S_MUTON:
                     soundSystem::getInstance()->play(SS_STEP_MUTON, 128);
                     break;
+                case S_SNAKEMAN:
+                    soundSystem::getInstance()->play(SS_STEP_SNAKE, 128); //LAWYER:  Added Snakeman
+                    break;
+                case S_ETHEREAL:
+                    soundSystem::getInstance()->play(SS_STEP_ETHEREAL, 128); //LAWYER:  Added Ethereal
+                    break;
+                case S_FLOATER:
+                    soundSystem::getInstance()->play(SS_STEP_ALIEN_HOVER, 128); //LAWYER:  Added Floater
+                    break;
                 default:
                     soundSystem::getInstance()->play(SS_STEP_HUMAN, 128);
                     break;
@@ -1372,6 +1381,16 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir, int dam_dev)
                 case S_MUTON:
                     soundSystem::getInstance()->play(SS_MUTON_DEATH);
                     break;
+                case S_SNAKEMAN:
+                    soundSystem::getInstance()->play(SS_SNAKEMAN_DEATH); //LAWYER:  Snakeman! D:
+                    break;
+                case S_ETHEREAL:
+                    soundSystem::getInstance()->play(SS_ETHEREAL_DEATH); //LAWYER:  Ethereal death
+                    break;
+                case S_FLOATER:
+                    //soundSystem::getInstance()->play(SS_FLOATER_DEATH); //LAWYER:  Floater
+                    soundSystem::getInstance()->play(SS_SECTOID_DEATH); //LAWYER:  As there is no Floater death sound, the Sectoid's is used instead
+                    break;
                 default:
                     if (md.fFemale == 1)
                         soundSystem::getInstance()->play(SS_FEMALE_DEATH);
@@ -1391,6 +1410,15 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir, int dam_dev)
                 break;
             case S_MUTON:
                 soundSystem::getInstance()->play(SS_MUTON_WOUND);
+                break;
+            case S_SNAKEMAN:
+                soundSystem::getInstance()->play(SS_SNAKEMAN_WOUND); //LAWYER:  Snakeman
+                break;
+            case S_ETHEREAL:
+                soundSystem::getInstance()->play(SS_ETHEREAL_WOUND); //LAWYER:  Ethereal
+                break;
+            case S_FLOATER:
+                soundSystem::getInstance()->play(SS_FLOATER_WOUND); //LAWYER:  Floater
                 break;
             default:
                 if (md.fFemale == 1)
@@ -1519,6 +1547,12 @@ void Soldier::die()
             ctype = "CORPSE & POWER SUIT";
         else if (md.SkinType == S_SECTOID)
             ctype = "Sectoid Corpse";
+        else if (md.SkinType == S_SNAKEMAN)
+            ctype = "Snakeman Corpse"; //LAWYER:  Added Snakeman
+        else if (md.SkinType == S_ETHEREAL) //LAWYER:  Ethereal
+            ctype = "Ethereal Corpse";
+        else if (md.SkinType == S_FLOATER) //LAWYER:  Floater
+            ctype = "Floater Corpse";
         else
             ctype = "Muton Corpse";
 
@@ -1559,6 +1593,12 @@ void Soldier::stun()
         ctype = "CORPSE & POWER SUIT";
     else if (md.SkinType == S_SECTOID)
         ctype = "Sectoid Corpse";
+    else if (md.SkinType == S_SNAKEMAN) //LAWYER:  Added Snakeman
+        ctype = "Snakeman Corpse";
+    else if (md.SkinType == S_ETHEREAL) //LAWYER:  Ethereal
+        ctype = "Ethereal Corpse";
+    else if (md.SkinType == S_FLOATER) //LAWYER:  Floater
+        ctype = "Floater Corpse";
     else
         ctype = "Muton Corpse";
 
@@ -2605,6 +2645,15 @@ void Soldier::showspk(BITMAP *dest)
             break;
         case S_MUTON:
             Skin::m_spk[5][0][0]->show(dest, 0, 0);
+            break;
+        case S_SNAKEMAN: //LAWYER:  Added Snakeman
+            Skin::m_spk[6][0][0]->show(dest, 0, 0);
+            break;
+        case S_ETHEREAL: //LAWYER:  Added Ethereal
+            Skin::m_spk[7][0][0]->show(dest, 0, 0);
+            break;
+        case S_FLOATER: //LAWYER:  Added Floater
+            Skin::m_spk[8][0][0]->show(dest, 0, 0);
             break;
         case S_CHAMELEON: {
             int stack_top = lua_gettop(L);

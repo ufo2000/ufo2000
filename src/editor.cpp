@@ -633,6 +633,9 @@ static const char *race_names[] = {
     "human",
     "sectoid",
     "muton",
+    "snakeman", //LAWYER:  Added Snakeman
+    "ethereal", //LAWYER:  Added Ethereal
+    "floater", //LAWYER:  Added Floater
     "chameleon",
     NULL
 };
@@ -815,7 +818,7 @@ static void fixup_unit_info()
     if (sol_dialog[D_RACE].d1 == 0) {
         armour_names     = armour_names_human;
         appearance_names = appearance_names_human;
-    } else if (sol_dialog[D_RACE].d1 == 3) {
+    } else if (sol_dialog[D_RACE].d1 == 6) { //LAWYER:  This really should be a little more visible - adding more units needs this number changed
         armour_names     = armour_names_chameleon;
         init_chameleon_appearances();
     } else {
@@ -925,7 +928,16 @@ void Editor::edit_soldier()
         if (man->md.SkinType == S_MUTON)
             sol_dialog[D_RACE].d1 = 2;
         else
+        if (man->md.SkinType == S_SNAKEMAN)
             sol_dialog[D_RACE].d1 = 3;
+        else
+        if (man->md.SkinType == S_ETHEREAL)
+            sol_dialog[D_RACE].d1 = 4;
+        else
+        if (man->md.SkinType == S_FLOATER)
+            sol_dialog[D_RACE].d1 = 5;
+        else
+            sol_dialog[D_RACE].d1 = 6;
         man->md.fFemale = 0;
         if (man->md.SkinType != S_CHAMELEON)
             man->md.Appearance = 0;
@@ -937,6 +949,9 @@ void Editor::edit_soldier()
         case S_XCOM_2 : sol_dialog[D_ARMOUR].d1 = 2; break;
         case S_XCOM_3 : sol_dialog[D_ARMOUR].d1 = 3; break;
         case S_SECTOID: sol_dialog[D_ARMOUR].d1 = 0; break;
+        case S_SNAKEMAN: sol_dialog[D_ARMOUR].d1 = 0; break; //LAWYER: Snakeman
+        case S_ETHEREAL: sol_dialog[D_ARMOUR].d1 = 0; break; //LAWYER: Ethereal
+        case S_FLOATER: sol_dialog[D_ARMOUR].d1 = 0; break; //LAWYER: Floater
         default:        sol_dialog[D_ARMOUR].d1 = 0; break;
     }
 
@@ -960,6 +975,15 @@ void Editor::edit_soldier()
         case  2: 
             man->md.SkinType = S_MUTON; 
             break;
+        case  3: 
+            man->md.SkinType = S_SNAKEMAN; //LAWYER:  Snakeman!!
+            break;
+        case  4: 
+            man->md.SkinType = S_ETHEREAL; //LAWYER:  Ethereal!!
+            break;
+        case 5:
+            man->md.SkinType = S_FLOATER; //LAWYER:  Floater!!
+            break;      
         default: 
             man->md.SkinType = S_CHAMELEON; 
             man->md.Appearance = sol_dialog[D_APPEARANCE].d1;
