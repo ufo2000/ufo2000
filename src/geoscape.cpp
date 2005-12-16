@@ -22,6 +22,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "stdafx.h"
 #include "global.h"
 #include "font.h"
+#include "text.h"
 
 static BITMAP *texture;
 static BITMAP *buffer;
@@ -95,9 +96,9 @@ void geoscape()
         for (int i = 0; i < texture->w; i += STEP)
             for (int j = 0; j < texture->h; j += STEP)
                 draw_map_fragment(i, j, STEP, STEP);
-				
-		textout(buffer, g_small_font, "Use left/right arrows to rotate the globe", 0, 0, makecol(255, 255, 255));
-		textout(buffer, g_small_font, "Press ESC to exit", 0, text_height(g_small_font), makecol(255, 255, 255));
+                
+        textout(buffer, g_small_font, _("Use left/right arrows to rotate the globe"), 0, 0, makecol(255, 255, 255));
+        textout(buffer, g_small_font, _("Press ESC to exit"), 0, text_height(g_small_font), makecol(255, 255, 255));
     
         blit(buffer, screen, 0, 0, 0, 0, screen->w, screen->h);
 
