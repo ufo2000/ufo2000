@@ -126,7 +126,7 @@ void Explosive::check_for_detonation(int isprox, Item *it)
 {
 	for (int i = 0; i < EXPLOITEMS; i++)
 		if (item[i] == it) {
-			if (((delaytime[i] == 1) && (!item[i]->is_proximity_grenade())) || (isprox))
+			if (((delaytime[i] <= 1) && (!item[i]->is_proximity_grenade())) || (isprox))
 				detonate(owner[i], it);
 			return;
 		}

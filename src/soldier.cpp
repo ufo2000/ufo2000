@@ -1968,6 +1968,8 @@ int Soldier::unload_ammo(Item * it)
         if (time_reserve(8, ISLOCAL, false) == OK) {
             putitem(it, P_ARM_RIGHT);
             putitem(it->unload(), P_ARM_LEFT);
+            elist->remove(it);
+            it->set_delay_time(0);
             spend_time(8);
                 
             net->send_unload_ammo(NID);
@@ -1978,6 +1980,8 @@ int Soldier::unload_ammo(Item * it)
             putitem(it, P_ARM_RIGHT);
             putitem(it->unload(), P_MAP);
             spend_time(10);           
+            elist->remove(it);
+            it->set_delay_time(0);
             net->send_unload_ammo(NID);
             return 1;
         } else return 0;
@@ -1993,7 +1997,8 @@ int Soldier::load_ammo(int iplace, int srcplace, Item *&it)
 {
     if (it == NULL)
         return 0;
-                                                        
+    elist->remove(it);
+    it->set_delay_time(0);
     int time = it->obdata_reloadTime() + calctime(srcplace, iplace);
     int ISLOCAL = platoon_local->belong(this);
     if (time_reserve(time, ISLOCAL, false) != OK) return 0;
