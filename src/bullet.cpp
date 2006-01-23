@@ -356,7 +356,7 @@ void Bullet::move()
 #define LASER_PROJECTILE  35
 #define PLASMA_PROJECTILE 46
 
-void draw_bullet_trace(int x0, int y0, int z0, int x, int y, int z, int length, int color)
+void Bullet::draw_bullet_trace(int length, int color)
 {
     double dx = x - x0;
     double dy = y - y0;
@@ -384,6 +384,16 @@ void draw_bullet_trace(int x0, int y0, int z0, int x, int y, int z, int length, 
 
         putpixel(screen2, x, y, color);
     }
+
+    for (int trail_frame_index = 0; ; trail_frame_index++) {
+        ALPHA_SPRITE *trail_frame = Item::obdata_get_bitmap(type, "trailAnim", trail_frame_index + 1);
+        if (!trail_frame) break;
+
+        double u = (double)trail_frame_index / 2.8; // bitmap trail is longer than normal trail
+        int x3 = (int)(xg2 + (xg1 - xg2) * u);
+        int y3 = (int)(yg2 + (yg1 - yg2) * u);
+        draw_alpha_sprite(screen2, trail_frame, x3 - 16, y3 - 16);
+    }
 }
 
 void Bullet::draw()
@@ -405,15 +415,21 @@ void Bullet::draw()
 
             int len = 15, c = 16;
 
-            if (Item::obdata_damageType(type) == DT_PLAS) {
-                len = 30; 
-                c = 52;
+            if (Item::can_set_color(type)) {
+                len = Item::obdata_trailLength(type);
+                draw_bullet_trace(len, Item::get_color(type, 2));
+                putpixel(screen2, xg, yg, Item::get_color(type, 0));
+                circle(screen2, xg, yg, 1, Item::get_color(type, 1));
+            } else {
+                if (Item::obdata_damageType(type) == DT_PLAS) {
+                    len = 30;
+                    c = 52;
+                }
+
+                draw_bullet_trace(len, xcom1_color(c + 5));
+                putpixel(screen2, xg, yg, xcom1_color(c));
+                circle(screen2, xg, yg, 1, xcom1_color(c + 2));
             }
-
-            draw_bullet_trace(x0, y0, z0, x, y, z, len, xcom1_color(c + 5));
-            putpixel(screen2, xg, yg, xcom1_color(c));
-            circle(screen2, xg, yg, 1, xcom1_color(c + 2));
-
             break;
         }
         case BEAM:
@@ -442,7 +458,16 @@ void Bullet::draw()
                 xg = (int)(map->x + xt + yt);
                 yg = (int)(map->y - (xt + 1) / 2.0 + yt / 2.0 - zt * 2.0 - 2);
                 
-                putpixel(screen2, xg, yg, xcom1_color(143 + i));
+                if (Item::can_set_color(type)) {
+                    //the following fades the beam to black
+                    //i is the beam animation state and goes from 0 to 9, see Beam() and Move()
+                    int blended_color = 0;
+                    int it_col = Item::get_color(type, 1);
+                    blended_color = makecol(getr(it_col) - i * getr(it_col) / 10, getg(it_col) - i * getg(it_col) / 10, getb(it_col) - i * getb(it_col) / 10);
+                    putpixel(screen2, xg, yg, blended_color);
+                }else {
+                    putpixel(screen2, xg, yg, xcom1_color(143 + i));
+                }
             }
             break;
 
@@ -504,16 +529,22 @@ void Bullet::draw()
             yg = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
 
             if ((xg > -32) && (xg < SCREEN2W) && (yg >= -34) && (yg < SCREEN2H)) {
-                switch (Item::obdata_damageType(type)) {
-                    case DT_LAS:
-                        Map::smoke->showpck(LASER_PROJECTILE + phase / PHASE, xg - 16, yg - 10);
-                        break;
-                    case DT_PLAS:
-                        Map::smoke->showpck(PLASMA_PROJECTILE + phase / PHASE, xg - 16, yg - 10);
-                        break;
-                    default:
-                        Map::smoke->showpck(NORMAL_PROJECTILE + phase / PHASE, xg - 16, yg - 10);
-                        break;
+
+                ALPHA_SPRITE *hit_frame = Item::obdata_get_bitmap(type, "hitAnim", 1 + (phase / PHASE));
+                if (hit_frame) {
+                    draw_alpha_sprite(screen2, hit_frame, xg - 15, yg - 16);
+                } else if (!Item::obdata_get_bitmap(type, "hitAnim", 1)) {
+                    switch (Item::obdata_damageType(type)) {
+                        case DT_LAS:
+                            Map::smoke->showpck(LASER_PROJECTILE + phase / PHASE, xg - 16, yg - 10);
+                            break;
+                        case DT_PLAS:
+                            Map::smoke->showpck(PLASMA_PROJECTILE + phase / PHASE, xg - 16, yg - 10);
+                            break;
+                        default:
+                            Map::smoke->showpck(NORMAL_PROJECTILE + phase / PHASE, xg - 16, yg - 10);
+                            break;
+                    }
                 }
             }
             break;

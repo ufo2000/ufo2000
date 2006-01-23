@@ -65,7 +65,7 @@ private:
     ALPHA_SPRITE *m_pMap;
     ALPHA_SPRITE *m_pInv;
     ALPHA_SPRITE *m_pHeld[8];
-
+    
     SoundSym_e_t m_sound;
 
 public:
@@ -102,7 +102,11 @@ public:
     static int obdata_disappear(int index) { return obdata_get_int(index, "disappear"); }
     static int obdata_isGun(int index) { return obdata_get_int(index, "isGun"); }
     static int obdata_minimapMark(int index) { return obdata_get_int(index, "minimapMark"); }
-
+    static int obdata_bulletRGB(int index, int n) { return obdata_get_array_int(index, "bulletRGB", n); } //Following colors are used for drawing bullet
+    static int obdata_glowRGB(int index, int n) { return obdata_get_array_int(index, "glowRGB", n); } //Beam weapons use only this color
+    static int obdata_trailRGB(int index, int n) { return obdata_get_array_int(index, "trailRGB", n); }
+    static int obdata_trailLength(int index) { return obdata_get_int(index, "trailLength"); } //Length of the trail when bullet is drawn
+    
     const char* get_damage_name();
     //! Get list of ammo types that can be used with this weapon
     static bool get_ammo_list(const std::string itemname, std::vector<std::string> &ammo);
@@ -156,6 +160,9 @@ public:
     int obdata_importance() { return obdata_get_int(m_type, "importance"); }
     int obdata_weight() { return obdata_weight(m_type); }
     int obdata_disappear() { return obdata_disappear(m_type); }
+    
+    static int get_color(int index, int n);
+    static bool can_set_color(int index);
     
     int get_cost() { return obdata_cost(m_type); }
 

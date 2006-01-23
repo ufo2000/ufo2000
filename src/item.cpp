@@ -301,7 +301,7 @@ Item::Item(int _type, Soldier *stunned_body_owner)
         m_pHeld[i] = obdata_get_bitmap(m_type, "pHeld", i + 1);
         ASSERT(m_pHeld[i]);
     }
-
+    
     std::string sound = obdata_get_string(m_type, "sound");
     m_sound = getSymCode(sound.c_str());
     if (!sound.empty() && m_sound == SS_UNKNOWN) {
@@ -456,6 +456,52 @@ Item *create_item(const char *item_name, Soldier *stunned_body_owner)
     }
     lua_settop(L, stack_top);
     return result;
+}
+/**
+ * Returns a custom color for bullets
+ * 
+ * @param int : 0 or 1 or 2
+ */
+int Item::get_color(int index, int n)
+{
+    int cr = 0, cg = 0, cb = 0;
+    int _type = index;
+    switch (n){
+        case 0:
+            cr = obdata_get_array_int(_type, "bulletRGB", 0);
+            cg = obdata_get_array_int(_type, "bulletRGB", 1);
+            cb = obdata_get_array_int(_type, "bulletRGB", 2);
+        break;
+        case 1:
+            cr = obdata_get_array_int(_type, "glowRGB", 0);
+            cg = obdata_get_array_int(_type, "glowRGB", 1);
+            cb = obdata_get_array_int(_type, "glowRGB", 2);
+        break;
+        case 2:
+            cr = obdata_get_array_int(_type, "trailRGB", 0);
+            cg = obdata_get_array_int(_type, "trailRGB", 1);
+            cb = obdata_get_array_int(_type, "trailRGB", 2);
+        break;
+        }
+    return makecol(cr,cg,cb);
+}
+/**
+ * Checks if given item has custom colors for bullets
+ */
+bool Item::can_set_color(int index)
+{
+    int _type = index;
+    bool ans = true;
+    if ((!obdata_get_array_int(_type, "bulletRGB", 0) && !obdata_get_array_int(_type, "bulletRGB", 1) && !obdata_get_array_int(_type, "bulletRGB", 2)) && !(obdata_damageType(_type) == DT_LAS)&& obdata_isGun(_type)) {
+        ans = false;
+        }
+    if (!obdata_get_array_int(_type, "glowRGB", 0) && !obdata_get_array_int(_type, "glowRGB", 1) && !obdata_get_array_int(_type, "glowRGB", 2)) {
+        ans = false;
+        }
+    if ((!obdata_get_array_int(_type, "trailRGB", 0) && !obdata_get_array_int(_type, "trailRGB", 1) && !obdata_get_array_int(_type, "trailRGB", 2)) && !(obdata_damageType(_type) == DT_LAS) && obdata_isGun(_type)) {
+        ans = false;
+        }
+    return ans;
 }
 
 bool Item::Write(persist::Engine &archive) const

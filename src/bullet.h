@@ -33,62 +33,63 @@ class Item;
  */
 class Bullet: public persist::BaseObject
 {
-	DECLARE_PERSISTENCE(Bullet);
+    DECLARE_PERSISTENCE(Bullet);
 private:
-	int z0, x0, y0;
-	REAL ro, fi, te;      // spher coord	 ro_dist	fi_zang	te_xang
+    int z0, x0, y0;
+    REAL ro, fi, te;      // spher coord     ro_dist    fi_zang te_xang
 
-	int z, x, y;
-	int i;
+    int z, x, y;
+    int i;
 
-	REAL zA;     	// max ampl for thrown
-	Item *item;      // thrown item
-	int lev, col, row;      // thrown item dst
+    REAL zA;        // max ampl for thrown
+    Item *item;      // thrown item
+    int lev, col, row;      // thrown item dst
 
-	enum State {READY, FLY, BEAM, THROWN, HIT, ST_PUNCH, ST_AIMEDTHROW} state;
-	int type;      //bullet type
-	int phase;
+    enum State {READY, FLY, BEAM, THROWN, HIT, ST_PUNCH, ST_AIMEDTHROW} state;
+    int type;      //bullet type
+    int phase;
 
-	int owner;
-	bool explodes;
-	
-	std::vector<int> *affected;
+    int owner;
+    bool explodes;
+    
+    std::vector<int> *affected;
 public:
 
-	Bullet(Soldier *man);
+    Bullet(Soldier *man);
 
-	void fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type);
-	void beam(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type);
-	void thru(int _z0, int _x0, int _y0, REAL _ro, REAL _fi, REAL _te, REAL _zA, Item *_item);
-	void aimedthrow(int _z0, int _x0, int _y0, REAL _fi, REAL _te, Item *_item);
-	void punch(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type);
+    void fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type);
+    void beam(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type);
+    void thru(int _z0, int _x0, int _y0, REAL _ro, REAL _fi, REAL _te, REAL _zA, Item *_item);
+    void aimedthrow(int _z0, int _x0, int _y0, REAL _fi, REAL _te, Item *_item);
+    void punch(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type);
 
-	void move();
-	void draw();
+    void move();
+    void draw();
+    void draw_bullet_trace(int length, int color);
 
-	void hitcell();
-	void hitman();
-	
-	void affect_morale(int cz, int cx, int cy);
+    void hitcell();
+    void hitman();
+    
+    void affect_morale(int cz, int cx, int cy);
 
-	void detonate();
-	int explodable();
-	int incendiary();
+    void detonate();
+    int explodable();
+    int incendiary();
 
 
-	void showline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d);
-	void showthrow(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d);
-	int calc_throw(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d);
+    void showline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d);
+    void showthrow(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d);
+    int calc_throw(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d);
 
-	inline int ready()
-	{
-		if (state == READY)
-			return 1;
-		return 0;
-	}
+    inline int ready()
+    {
+        if (state == READY)
+            return 1;
+        return 0;
+    }
 
-	virtual bool Write(persist::Engine &archive) const;
-	virtual bool Read(persist::Engine &archive);
+    virtual bool Write(persist::Engine &archive) const;
+    virtual bool Read(persist::Engine &archive);
 };
 
 #endif
