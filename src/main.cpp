@@ -829,7 +829,8 @@ void initmain(int argc, char *argv[])
 
     BITMAP *text_back = load_back_image(cfg_get_loading_image_file_name());
     stretch_blit(text_back, screen, 0, 0, text_back->w, text_back->h, 0, 0, SCREEN_W, SCREEN_H);
-    print_win = new Wind(text_back, 15, 300, 625, 390, COLOR_BLACK2);
+    /*Following line is screen height related to keep the design layout correct at any resolution*/
+    print_win = new Wind(text_back, 15, 2*SCREEN_H / 3 + 5 , 625, 21 * SCREEN_H / 24, COLOR_BLACK2);
 
     /* to use the init console as an ostream -very handy. */
     consoleBuf consbuf(FLAGS & F_LOGTOSTDOUT);
