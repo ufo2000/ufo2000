@@ -135,7 +135,7 @@ public:
     void send_notice();
     void send_quit();
     void send_restart();
-    void send_endturn(int crc);
+    void send_endturn(int crc, const std::string &data);
 
     void send_open_door(int NID);
     void send_change_pose(int NID);

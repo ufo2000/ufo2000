@@ -54,7 +54,7 @@ enum Command {CMD_MESSAGE = -2, CMD_NONE = -1,
 class Packet
 {
 private:
-    char data[1000];
+    char data[100000]; // BUG: possible buffer overflow
     int cur, size;
     static char *strCommand[COMMAND_NUM];
 public:

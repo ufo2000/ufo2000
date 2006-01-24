@@ -342,7 +342,7 @@ void savegame(const char *filename, int compress = 0);
 void savegame_stream(std::ostream &stream);
 
 void check_crc(int crc);
-void recv_turn(int crc);
+void recv_turn(int crc, const std::string &data);
 void send_turn();
 
 bool nomoves();

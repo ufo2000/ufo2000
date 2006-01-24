@@ -489,19 +489,98 @@ int Net::recv_restart()
     return 1;
 }
 
-void Net::send_endturn(int crc)
+#include "zlib.h"
+
+bool zlib_compress_string(std::string &dst, const std::string &src)
+{
+    z_stream stream;
+    int err;
+
+    stream.next_in = (Bytef*)src.data();
+    stream.avail_in = (uInt)src.size();
+
+    std::vector<Bytef> tmp(src.size() * 9 / 8 + 12);
+
+    stream.next_out = &tmp[0];
+    stream.avail_out = tmp.size();
+    stream.total_out = 0;
+
+    stream.zalloc = (alloc_func)0;
+    stream.zfree = (free_func)0;
+    stream.opaque = (voidpf)0;
+
+    err = deflateInit2(&stream, Z_BEST_COMPRESSION, Z_DEFLATED, -15, 9, Z_DEFAULT_STRATEGY);
+    if (err != Z_OK) return false;
+
+    err = deflate(&stream, Z_FINISH);
+    if (err != Z_STREAM_END) {
+        deflateEnd(&stream);
+        return false;
+    }
+    dst = std::string(&tmp[0], &tmp[stream.total_out]);
+
+    err = deflateEnd(&stream);
+    return (err == Z_OK);
+}
+
+bool zlib_decompress_string(std::string &dst, const std::string &src)
+{
+    z_stream stream;
+    int err;
+
+    stream.next_in = (Bytef*)src.data();
+    stream.avail_in = (uInt)src.size();
+    stream.total_out = 0;
+
+    std::vector<Bytef> tmp(16384);
+
+    stream.next_out = &tmp[0];
+    stream.avail_out = tmp.size();
+
+    stream.zalloc = (alloc_func)0;
+    stream.zfree = (free_func)0;
+    stream.opaque = (voidpf)0;
+
+    err = inflateInit2(&stream, -15);
+    if (err != Z_OK) return false;
+
+    dst = "";
+    while ((err = inflate(&stream, Z_SYNC_FLUSH)) == Z_OK)
+    {
+        dst += std::string(&tmp[0], &tmp[stream.total_out]);
+        stream.next_out = &tmp[0];
+        stream.avail_out = tmp.size();
+        stream.total_out = 0;
+    }
+    if (err != Z_STREAM_END) {
+        inflateEnd(&stream);
+        return false;
+    }
+    dst += std::string(&tmp[0], &tmp[stream.total_out]);
+    err = inflateEnd(&stream);
+    return (err == Z_OK);
+}
+
+
+void Net::send_endturn(int crc, const std::string &data)
 {
     if (!SEND) return ;
 
     pkt.create(CMD_ENDTURN);
     pkt << crc;
+    std::string compressed_data;
+    zlib_compress_string(compressed_data, data);
+    pkt << compressed_data;
     send();
 }
 
 int Net::recv_endturn()
 { // "TURN"
     int crc; pkt >> crc;
-    recv_turn(crc);
+    std::string compressed_data; pkt >> compressed_data;
+    std::string data;
+    zlib_decompress_string(data, compressed_data);
+    recv_turn(crc, data);
     return 1;
 }
 

@@ -1036,15 +1036,17 @@ bool nomoves()
 /**
  * Function that saves game state information to a text file
  */
-static void dump_gamestate_on_crc_error(int crc)
+static void dump_gamestate_on_crc_error(int crc1, int crc2)
 {
-    if (g_eot_save.find(crc) == g_eot_save.end()) return;
+    if (g_eot_save.find(crc1) == g_eot_save.end()) return;
+    if (g_eot_save.find(crc2) == g_eot_save.end()) return;
     char filename[128];
-    sprintf(filename, "$(home)/eot_save_%d.txt", crc);
+    sprintf(filename, "$(home)/crc_error_%d.txt", crc1);
     int fh = open(F(filename), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, 0644);
     if (fh != -1) {
         write(fh, g_version_id.data(), g_version_id.size());
-        write(fh, g_eot_save[crc].data(), g_eot_save[crc].size());
+        write(fh, g_eot_save[crc1].data(), g_eot_save[crc1].size());
+        write(fh, g_eot_save[crc2].data(), g_eot_save[crc2].size());
         close(fh);
     }
 }
@@ -1062,8 +1064,7 @@ void check_crc(int crc)
         net->send_debug_message("crc error");
         battle_report( "# %s: crc=%d, bcrc=%d\n", _("wrong wholeCRC"), crc, bcrc );
         
-        dump_gamestate_on_crc_error(crc);
-        dump_gamestate_on_crc_error(bcrc);
+        dump_gamestate_on_crc_error(crc, bcrc);
     }
     
     g_eot_save.empty();
@@ -1146,7 +1147,7 @@ void send_turn()
     switch_turn();
     
     int crc = build_crc();
-    net->send_endturn(crc);
+    net->send_endturn(crc, g_eot_save[crc]);
 
     battle_report("# %s: %d\n", _("Turn end"), turn );
     g_console->printf(COLOR_VIOLET00, "%s", _("Turn end") );
@@ -1191,8 +1192,10 @@ int GAMELOOP = 0;
 /**
  * This function is called when we receive turn from the other player
  */
-void recv_turn(int crc)
+void recv_turn(int crc, const std::string &data)
 {
+    g_eot_save[crc] = data;
+
     if (!GAMELOOP) return;
 
     // In replay mode pass of the turn is simple
