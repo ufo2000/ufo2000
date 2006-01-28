@@ -1051,6 +1051,9 @@ static void dump_gamestate_on_crc_error(int crc1, int crc2)
     }
 }
 
+//! True if network synchronization bug was encountered in current game
+static bool g_crc_error_flag = false;
+
 /**
  * Function that calculates current game state crc 
  * and compares it with the value received from the remote computer (crc argument)
@@ -1058,9 +1061,11 @@ static void dump_gamestate_on_crc_error(int crc1, int crc2)
 void check_crc(int crc)
 {
     int bcrc = build_crc();
-    if (crc != bcrc) {
-        g_console->printf(COLOR_SYS_FAIL, _("wrong wholeCRC") );
-        g_console->printf(COLOR_SYS_INFO, "crc=%d, bcrc=%d", crc, bcrc);
+    if (crc != bcrc && !g_crc_error_flag) {
+        g_crc_error_flag = true;
+        g_console->printf(COLOR_SYS_FAIL, _("Error: game state on your an remote computers got out of sync."));
+        g_console->printf(COLOR_SYS_FAIL, _("You can encounter any weird bugs or just crashes if you continue playing."));
+        g_console->printf(COLOR_SYS_FAIL, _("Bug report saved in 'crc_error_%d.txt', please send it to developers"), crc);
         net->send_debug_message("crc error");
         battle_report( "# %s: crc=%d, bcrc=%d\n", _("wrong wholeCRC"), crc, bcrc );
         
@@ -2100,6 +2105,8 @@ void gameloop()
 
     clear_keybuf();
     GAMELOOP = 1;
+
+    g_crc_error_flag = false;
 
     g_console->printf( COLOR_SYS_HEADER, _("Welcome to the battlescape of UFO2000 !") );
     g_console->printf( COLOR_SYS_INFO1,  _("Press F1 for help.") );  // see KEY_F1
