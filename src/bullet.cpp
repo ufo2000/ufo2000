@@ -356,6 +356,9 @@ void Bullet::move()
 #define LASER_PROJECTILE  35
 #define PLASMA_PROJECTILE 46
 
+/**
+ * Bullet trail animation
+ */
 void Bullet::draw_bullet_trace(int length, int color)
 {
     double dx = x - x0;
@@ -364,14 +367,16 @@ void Bullet::draw_bullet_trace(int length, int color)
 
     double total_trace_length = sqrt(dx * dx + dy * dy + dz * dz);
 
+    int trace_x0 = x0, trace_y0 = y0, trace_z0 = z0;
+
     if (total_trace_length > length) {
-        x0 = (int)(x - dx * length / total_trace_length);
-        y0 = (int)(y - dy * length / total_trace_length);
-        z0 = (int)(z - dz * length / total_trace_length);
+        trace_x0 = (int)(x - dx * length / total_trace_length);
+        trace_y0 = (int)(y - dy * length / total_trace_length);
+        trace_z0 = (int)(z - dz * length / total_trace_length);
     }
 
-    int xg1 = map->x + x0 + y0;
-    int yg1 = (int)(map->y - (x0 + 1) / 2.0 + y0 / 2.0 - z0 * 2.0 - 2);
+    int xg1 = map->x + trace_x0 + trace_y0;
+    int yg1 = (int)(map->y - (trace_x0 + 1) / 2.0 + trace_y0 / 2.0 - trace_z0 * 2.0 - 2);
 
     int xg2 = map->x + x + y;
     int yg2 = (int)(map->y - (x + 1) / 2.0 + y / 2.0 - z * 2.0 - 2);
