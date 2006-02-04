@@ -662,7 +662,7 @@ void Soldier::draw_unibord(int abs_pos, int posx, int posy)
     int fw = ud.HeadWound + ud.TorsoWound + ud.RArmWound +
              ud.LArmWound + ud.RLegWound  + ud.LLegWound;   // Fatal Wounds
 
-    const int row_num = 17, col_num = 9;
+    const int row_num = 16, col_num = 9;
     FONT *name_f = large, *row_f = g_small_font;
 
     struct {
@@ -683,7 +683,6 @@ void Soldier::draw_unibord(int abs_pos, int posx, int posy)
         { (char*)_("THROWING ACCURACY"), TAccuracy(100),  ud.MaxTA,     100},
         { (char*)_("STRENGTH"),          ud.MaxStrength,  md.Strength,   52},
         {NULL, 0, 0, 0},
-        {NULL, 0, 0, 0},
         { (char*)_("FRONT ARMOUR"),      ud.CurFront,     ud.MaxFront,   87},
         { (char*)_("LEFT ARMOUR"),       ud.CurLeft,      ud.MaxLeft,    87},
         { (char*)_("RIGHT ARMOUR"),      ud.CurRight,     ud.MaxRight,   87},
@@ -693,7 +692,7 @@ void Soldier::draw_unibord(int abs_pos, int posx, int posy)
     
     int width = 320;
     
-    int name_h = text_height(name_f) + 6, row_h = text_height(row_f) + 3;
+    int name_h = text_height(name_f) + 2, row_h = text_height(row_f);
     int height = name_h + 8 + row_h * row_num;
     
     BITMAP *temp = create_bitmap(width, height);
@@ -707,7 +706,7 @@ void Soldier::draw_unibord(int abs_pos, int posx, int posy)
             putpixel(temp, i, j, graycol(c));
         }
     }
-    textout_centre(temp, name_f, md.Name, width / 2, 4, COLOR_GREEN04);
+    textout_centre(temp, name_f, md.Name, width / 2, 2, COLOR_GREEN04);
 
     int sx[col_num + 1] = {1, 150, 180, 200, 220, 240, 260, 280, 300, width - 1};
     for (int i = 2; i < col_num; i++)
@@ -715,12 +714,12 @@ void Soldier::draw_unibord(int abs_pos, int posx, int posy)
 
     int s = 0;
     line(temp, 1, name_h + 6, width - 2, name_h + 6, graycol(192));
-    for (int i = 0; i < 17; i++) {
+    for (int i = 0; i < row_num; i++) {
         for (int j = 0; j < col_num; j++)
             rectfill(temp, sx[j], name_h + 6 + row_h * i + 1, sx[j + 1] - 1, name_h + 6 + row_h * (i + 1), graycol(255 - (16 * (s++ % 2))));
             
         if (param[i].str != NULL) {
-            textout_right(temp, row_f, param[i].str, sx[1] - 2, name_h + 6 + row_h * i + 3, COLOR_GREEN00);
+            textout_right(temp, row_f, param[i].str, sx[1] - 2, name_h + 6 + row_h * i + 2, COLOR_GREEN00);
             textprintf_centre(temp, font, 165, name_h + 6 + row_h * i + 3, COLOR_RED02, "%d", param[i].cur);
 
             rect(temp, sx[2], name_h + 6 + row_h * i + 3, sx[2] + param[i].max, name_h + 6 + row_h * i + 10, xcom1_color(param[i].col));

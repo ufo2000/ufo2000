@@ -151,7 +151,7 @@ void loadini()
     win_image_file_name     = get_config_string(gen, "win_image",     "$(xcom)/geograph/back01.scr");
     lose_image_file_name    = get_config_string(gen, "lose_image",    "$(xcom)/geograph/back02.scr");
 
-    console_font_file       = get_config_string(gen,  "console_font_file", "$(ufo2000)/fonts/DejaVuSansMono-Roman.ttf");
+    console_font_file       = get_config_string(gen,  "console_font_file", "$(ufo2000)/fonts/DejaVuSansMono.ttf");
     music_volume            = get_config_int(gen,     "music_volume", 255);
 
     g_server_host           = get_config_string(serv, "host", "127.0.0.1");

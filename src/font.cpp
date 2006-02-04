@@ -719,11 +719,11 @@ void set_console_font_size(int size)
 {
     if (size < 9) size = 9;
     g_console_font_size = size;
-#ifdef HAVE_FREETYPE	
+#ifdef HAVE_FREETYPE    
     if (g_console_font_rend) {
         gk_rend_set_size_pixels(g_console_font_rend, g_console_font_size, g_console_font_size);
     }
-#endif	
+#endif  
 }
 
 int get_console_font_size()
@@ -777,7 +777,7 @@ void create_fonts()
         // If we can't load x-com font, fallback to TTF font or 
         // as the last resort - to standard allegro bitmap font
 #ifdef HAVE_FREETYPE    
-        g_small_font_face = gk_load_face_from_file(F("$(ufo2000)/fonts/DejaVuSansMono-Roman.ttf"), 0);
+        g_small_font_face = gk_load_face_from_file(F("$(ufo2000)/fonts/DejaVuSansMono.ttf"), 0);
         g_small_font_keep = gk_create_keeper(0, 0);
         g_small_font_rend = gk_create_renderer(g_small_font_face, g_small_font_keep);
         gk_rend_set_size_pixels(g_small_font_rend, 8, 9);
@@ -790,7 +790,7 @@ void create_fonts()
         // If we can't load x-com font, fallback to TTF font or 
         // as the last resort - to standard allegro bitmap font
 #ifdef HAVE_FREETYPE
-        g_large_font_face = gk_load_face_from_file(F("$(ufo2000)/fonts/DejaVuSansMono-Roman.ttf"), 0);
+        g_large_font_face = gk_load_face_from_file(F("$(ufo2000)/fonts/DejaVuSansMono.ttf"), 0);
         g_large_font_keep = gk_create_keeper(0, 0);
         g_large_font_rend = gk_create_renderer(g_large_font_face, g_large_font_keep);
         gk_rend_set_size_pixels(g_large_font_rend, 15, 16);
@@ -825,7 +825,7 @@ void destroy_fonts()
     if (g_large_font_face) gk_unload_face(g_large_font_face);
     
     gk_library_cleanup();
-#endif	
+#endif  
 }
 
 /** Prints a number in a 3x5 font onto a given position on the bitmap.
