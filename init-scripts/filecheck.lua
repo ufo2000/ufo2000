@@ -41,8 +41,11 @@ FilesTable = {
     ["$(ufo2000)/arts/menu.jpg"]      = { Crc32 = X("0x00000000") },
     ["$(ufo2000)/arts/empty.spk"]     = { Crc32 = X("0x00000000") },
 
-    ["$(ufo2000)/newunits/muton.spk"] = { Crc32 = X("0x00000000") },
-    ["$(ufo2000)/newunits/sectoid.spk"] = { Crc32 = X("0x00000000") },
+    ["$(ufo2000)/newunits/muton.spk"] = { Crc32 = X("0x00000000"),
+        Fallback = "$(ufo2000)/arts/empty.spk" },
+    ["$(ufo2000)/newunits/sectoid.spk"] = { Crc32 = X("0x00000000"),
+        Fallback = "$(ufo2000)/arts/empty.spk" },
+
     ["$(ufo2000)/newunits/add1.pck"] = { Crc32 = X("0x00000000") },
     ["$(ufo2000)/newunits/add1.tab"] = { Crc32 = X("0x00000000") },
 
