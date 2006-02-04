@@ -2426,9 +2426,6 @@ AddTileset {
             ]],
             Tile_Type = 2,
             Armour = 64,
-            TU_Walk = 4,
-            TU_Fly = -1,
-            TU_Slide = -1,
         },
         [81] = {
             EditorName = "Broken Window North",
@@ -2454,10 +2451,7 @@ AddTileset {
                 FF00FF,FF00FF,FF00FF,FF00FF,
             ]],
             Tile_Type = 1,
-            Armour = 64,
-            TU_Walk = 4,
-            TU_Fly = -1,
-            TU_Slide = -1,
+            Armour = 64,            
         },
         [82] = {
             EditorName = "",
