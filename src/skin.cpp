@@ -43,9 +43,9 @@ SKIN_INFO g_skins[] =
     { "fly_f",     S_XCOM_3,    1, 1, {110, 90, 90, 80, 70}, 1030 },
     { "sectoid",   S_SECTOID,   0, 0, {  4,  3,  3,  2,  2}, 28 },
     { "muton",     S_MUTON,     0, 0, { 70, 60, 60, 50, 50}, 580 },
-    { "snakeman",  S_SNAKEMAN,  0, 0, { 40, 30, 30, 20, 20}, 250 }, //LAWYER:  Added Snakeman
-    { "ethereal",  S_ETHEREAL,  0, 1, { 60, 50, 50, 40, 40}, 450 }, //LAWYER:  Added Ethereal
-    { "floater",   S_FLOATER,   0, 1, { 20, 15, 15, 10, 10}, 200 }, //LAWYER:  Added Floater
+    { "snakeman",  S_SNAKEMAN,  0, 0, { 40, 30, 30, 20, 20}, 280 }, //LAWYER:  Added Snakeman
+    { "ethereal",  S_ETHEREAL,  0, 1, { 60, 50, 50, 40, 40}, 630 }, //LAWYER:  Added Ethereal
+    { "floater",   S_FLOATER,   0, 1, { 20, 15, 15, 10, 10}, 290 }, //LAWYER:  Added Floater
     { "chameleon", S_CHAMELEON, 0, 0, { 70, 60, 60, 50, 50}, 580 },
 };
 
