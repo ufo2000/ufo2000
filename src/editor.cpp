@@ -1023,8 +1023,7 @@ void Editor::paste_soldier(Soldier *dest)
     dest->md = buffer.md;
     dest->id = buffer.id;
     
-    for (int i = 0; i < 26; i++)
-        dest->md.Name[i] = prev_name[i];
+    strcpy(dest->md.Name, prev_name.c_str());
     
     dest->process_MANDATA();
     dest->process_ITEMDATA();
