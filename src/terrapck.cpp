@@ -189,7 +189,7 @@ int TerraPCK::tileset_get_int(uint32 index, const char *tileset_name, const char
     // Enter 'TilesetsTable' table
     lua_pushstring(L, "TilesetsTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
-    ASSERT(lua_istable(L, -1)); 
+    ASSERT(lua_istable(L, -1));
     // Enter [tileset_name] table
     lua_pushstring(L, tileset_name);
     lua_gettable(L, -2);
@@ -329,6 +329,7 @@ void TerraPCK::add_ufo2000_tileset(const char *tileset_name)
         GET_LUA_TILESET_PROP(Alt_MCD, 0);
         GET_LUA_TILESET_PROP(Die_MCD, 0);
         GET_LUA_TILESET_PROP(Armour, 0);
+        GET_LUA_TILESET_PROP(Tile_Type, 0);
 
         if (m_mcd[oldcount + i].Alt_MCD)
             m_mcd[oldcount + i].Alt_MCD += oldcount - 1;
