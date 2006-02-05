@@ -37,7 +37,7 @@ AddImage("mouse", png_image("$(ufo2000)/arts/mouse.png"))
 AddImage("mouse_menu", png_image("$(ufo2000)/arts/mouse_menu.png"))
 AddImage("selector", png_image_set("$(ufo2000)/arts/selector/19x9", 1, 4))
 
--- Our own images
+-- Our own images, 2 fire animation, 3 smoke animations, cursors, 4 hit animations.
 -------------------
 AddImage("fire_small", png_image_set("$(ufo2000)/arts/fire_frames/32x40", 1, 4, true))
 AddImage("fire_large", png_image_set("$(ufo2000)/arts/fire_frames/32x40", 5, 4, true))
@@ -47,6 +47,10 @@ AddImage("smoke_large", png_image_set("$(ufo2000)/arts/smoke_frames/32x40", 9, 4
 AddImage("selectbox", png_image_set("$(ufo2000)/arts/cursor_frames/32x40", 1, 6))
 AddImage("aimbox", png_image_set("$(ufo2000)/arts/reticle_aim/32x40", 1, 10))
 AddImage("throwbox", png_image_set("$(ufo2000)/arts/reticle_throw/32x40", 1, 12))
+AddImage("hit_bullet", png_image_set("$(ufo2000)/arts/impact_frames/32x40", 1, 8, true))
+AddImage("hit_laser", png_image_set("$(ufo2000)/arts/impact_frames/32x40", 9, 8, true))
+AddImage("hit_plasma", png_image_set("$(ufo2000)/arts/impact_frames/32x40", 17, 8, true))
+AddImage("hit_punch", png_image_set("$(ufo2000)/arts/impact_frames/32x40", 25, 8, true))
 
 -- Original X-Com images (uncomment the following lines to use original images
 -- if available)
@@ -64,4 +68,8 @@ if prefer_xcom_gfx then
         {6, 7, 8, 9, 10, 6, 7, 8, 9, 10}))
     AddImage("throwbox", pck_image_set_ex(false, 32, 40, "$(xcom)/ufograph/cursor.pck", 
         {15, 16, 0, 0}))
+    AddImage("hit_bullet", pck_image_set("$(xcom)/ufograph/smoke.pck", 26, 10))
+    AddImage("hit_laser", pck_image_set("$(xcom)/ufograph/smoke.pck", 36, 10))
+    AddImage("hit_plasma", pck_image_set("$(xcom)/ufograph/smoke.pck", 46, 10))
+    AddImage("hit_punch", pck_image_set("$(xcom)/ufograph/smoke.pck", 26, 10))
 end

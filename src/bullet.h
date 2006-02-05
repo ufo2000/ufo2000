@@ -22,6 +22,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define BULLET_H
 
 #include "global.h"
+#include "sprite.h"
 
 class Item;
 
@@ -53,10 +54,12 @@ private:
     bool explodes;
     
     std::vector<int> *affected;
+    
+    static std::vector<ALPHA_SPRITE *> hit_bullet, hit_laser, hit_plasma, hit_punch;
 public:
-
+    
     Bullet(Soldier *man);
-
+    
     void fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type);
     void beam(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type);
     void thru(int _z0, int _x0, int _y0, REAL _ro, REAL _fi, REAL _te, REAL _zA, Item *_item);

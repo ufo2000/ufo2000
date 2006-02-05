@@ -30,8 +30,11 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "explo.h"
 #include "multiplay.h"
 #include "colors.h"
+#include "script_api.h"
 
 #define PHASE 2
+
+std::vector<ALPHA_SPRITE *> Bullet::hit_bullet, Bullet::hit_laser, Bullet::hit_plasma, Bullet::hit_punch;
 
 IMPLEMENT_PERSISTENCE(Bullet, "Bullet");
 
@@ -42,8 +45,18 @@ Bullet::Bullet(Soldier *man)
     item  = NULL;
     owner = man->get_NID();
     affected = new std::vector<int>;
+    if (hit_bullet.empty())
+        hit_bullet = lua_table_image_vector("hit_bullet");
+    if (hit_laser.empty())
+        hit_laser = lua_table_image_vector("hit_laser");
+    if (hit_plasma.empty())
+        hit_plasma = lua_table_image_vector("hit_plasma");
+    if (hit_punch.empty())
+        hit_punch = lua_table_image_vector("hit_punch");
 }
-
+/**
+ * Called when a Hand to hand weapon is used.
+ */
 void Bullet::punch(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 {
     //play(S_PUNCH);
@@ -73,7 +86,9 @@ void Bullet::punch(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 */
     i = 0;
 }
-
+/**
+ * Called when a projectile weapon is fired.
+ */
 void Bullet::fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 {
     state = FLY;
@@ -86,7 +101,9 @@ void Bullet::fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
     i = 3;
     move();
 }
-
+/**
+ * Called when a beam weapon is fired.
+ */
 void Bullet::beam(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
 {
     state = BEAM;
@@ -174,7 +191,9 @@ void Bullet::hitcell()
     row = y / 16;      //if (row >= map->height*10) row = map->height*10 - 1;
 }
 
-
+/**
+ * Includes most routines that define where a bullet or projectile is located during a specified frame.
+ */
 void Bullet::move()
 {
     int j;
@@ -400,7 +419,9 @@ void Bullet::draw_bullet_trace(int length, int color)
         draw_alpha_sprite(screen2, trail_frame, x3 - 16, y3 - 16);
     }
 }
-
+/**
+ * Bullet animation, includes all bullet states and hit animations
+ */
 void Bullet::draw()
 {
     int xg, yg;
@@ -538,17 +559,34 @@ void Bullet::draw()
                 ALPHA_SPRITE *hit_frame = Item::obdata_get_bitmap(type, "hitAnim", 1 + (phase / PHASE));
                 if (hit_frame) {
                     draw_alpha_sprite(screen2, hit_frame, xg - 15, yg - 16);
-                } else if (!Item::obdata_get_bitmap(type, "hitAnim", 1)) {
-                    switch (Item::obdata_damageType(type)) {
-                        case DT_LAS:
-                            Map::smoke->showpck(LASER_PROJECTILE + phase / PHASE, xg - 16, yg - 10);
-                            break;
-                        case DT_PLAS:
-                            Map::smoke->showpck(PLASMA_PROJECTILE + phase / PHASE, xg - 16, yg - 10);
-                            break;
-                        default:
-                            Map::smoke->showpck(NORMAL_PROJECTILE + phase / PHASE, xg - 16, yg - 10);
-                            break;
+                }else if (!Item::obdata_get_bitmap(type, "hitAnim", 1)) {
+                    ALPHA_SPRITE *default_frame = NULL;
+                    int frame_id = (phase / PHASE);
+                    if (Item::obdata_isHandToHand(type)) {
+                        if(frame_id < (int)hit_punch.size()) {
+                            default_frame = hit_punch[frame_id];
+                        }
+                    }else {
+                        switch (Item::obdata_damageType(type)) {
+                            case DT_LAS:
+                                if(frame_id < (int)hit_laser.size()) {
+                                    default_frame = hit_laser[frame_id];
+                                }
+                                break;
+                            case DT_PLAS:
+                                if(frame_id < (int)hit_plasma.size()) {
+                                    default_frame = hit_plasma[frame_id];
+                                }
+                                break;
+                            default:
+                                if(frame_id < (int)hit_bullet.size()) {
+                                    default_frame = hit_bullet[frame_id];
+                                }
+                                break;
+                        }
+                    }
+                    if (default_frame) {
+                        draw_alpha_sprite(screen2, default_frame, xg - 15, yg - 16);
                     }
                 }
             }
