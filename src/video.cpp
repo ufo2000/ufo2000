@@ -140,7 +140,7 @@ int tftd_color(int c)
 }
 
 #define MINIMUM_XRES 640
-#define MINIMUM_YRES 480
+#define MINIMUM_YRES 420
 
 /**
  * Set video mode
@@ -184,6 +184,17 @@ static void ufo2k_set_gfx_mode(int gfx_driver)
     int yres = cfg_get_screen_y_res();
     if (xres < MINIMUM_XRES) xres = MINIMUM_XRES;
     if (yres < MINIMUM_YRES) yres = MINIMUM_YRES;
+    
+    // Special case, setting video mode for Nokia 770 Internet Tablet
+    int desktop_width, desktop_height;
+    if ((desktop_color_depth() == 16) && (get_desktop_resolution(&desktop_width, &desktop_height) == 0) 
+            && (desktop_width == 800) && (desktop_height == 480)) {
+        gfx_driver = GFX_AUTODETECT_WINDOWED;
+        color_depth = 16;
+        xres = 720;
+        yres = 420;
+        switch_mode_failed = true;
+    }
     
     while (true) {
         if (color_depth > 32) {
