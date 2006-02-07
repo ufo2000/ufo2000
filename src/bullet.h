@@ -59,6 +59,7 @@ private:
 public:
     
     Bullet(Soldier *man);
+    ~Bullet();
     
     void fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type);
     void beam(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type);

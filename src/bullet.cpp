@@ -54,6 +54,12 @@ Bullet::Bullet(Soldier *man)
     if (hit_punch.empty())
         hit_punch = lua_table_image_vector("hit_punch");
 }
+
+Bullet::~Bullet()
+{
+    delete affected;
+}
+
 /**
  * Called when a Hand to hand weapon is used.
  */

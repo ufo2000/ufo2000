@@ -176,6 +176,7 @@ Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *md
 
 Soldier::~Soldier()
 {
+    delete m_skin;
     delete m_bullet;
     m_bullet = NULL;
     for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++) {
