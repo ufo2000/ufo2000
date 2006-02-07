@@ -27,7 +27,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 ALPHA_SPRITE *pck_image(const char *filename, int index);
 ALPHA_SPRITE *pck_image_ex(bool tftd_flag, int width, int height, const char *filename, int index);
 ALPHA_SPRITE *png_image(const char *filename);
-ALPHA_SPRITE *png_image_ex(const char *filename, bool use_alpha);
 
 void free_pck_cache();
 void free_png_cache();

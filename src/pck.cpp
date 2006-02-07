@@ -44,26 +44,13 @@ ALPHA_SPRITE *pck_image(const char *filename, int index)
 
 //! We cache loaded png files here
 static std::map<std::string, ALPHA_SPRITE *> g_png_cache;
-static std::map<std::string, BITMAP *> g_png_large_cache;
+static std::string g_cached_large_bitmap_name;
+static BITMAP *g_cached_large_bitmap = NULL;
 
-/**
- * Load bitmap (this function is aware of truecolor transparency)
- */
-static BITMAP *load_bitmap_alpha(const char *filename, bool force_alpha)
+static BITMAP *convert_bitmap_alpha(BITMAP *bmp_orig)
 {
-    // Allow any color conversions except when loaded file 
-    // contains alpha channel
-#if ALLEGRO_MAJOR == 0
-    int cc = _color_conv;
-#else
-    int cc = get_color_conversion();
-#endif
-    set_color_conversion((COLORCONV_TOTAL | COLORCONV_KEEP_TRANS) & 
-        ~(COLORCONV_32A_TO_8 | COLORCONV_32A_TO_15 | COLORCONV_32A_TO_16 | COLORCONV_32A_TO_24));
-    BITMAP *bmp_orig = load_bitmap(filename, NULL);
-    set_color_conversion(cc);
     if (!bmp_orig) return NULL;
-    
+
     // Non 32bpp bitmap just can't contain alpha channel
     if (bitmap_color_depth(bmp_orig) != 32) return bmp_orig;
 
@@ -83,7 +70,8 @@ static BITMAP *load_bitmap_alpha(const char *filename, bool force_alpha)
                 has_alpha = true;
         }
     }
-    if (has_alpha || force_alpha) {
+
+    if (has_alpha) {
         for (int x = 0; x < bmp_orig->w; x++)
             for (int y = 0; y < bmp_orig->h; y++) {
                 int c = getpixel(bmp_orig, x, y);
@@ -109,6 +97,25 @@ static BITMAP *load_bitmap_alpha(const char *filename, bool force_alpha)
 }
 
 /**
+ * Load bitmap (this function is aware of truecolor transparency)
+ */
+static BITMAP *load_bitmap_alpha(const char *filename)
+{
+    // Allow any color conversions except when loaded file 
+    // contains alpha channel
+#if ALLEGRO_MAJOR == 0
+    int cc = _color_conv;
+#else
+    int cc = get_color_conversion();
+#endif
+    set_color_conversion((COLORCONV_TOTAL | COLORCONV_KEEP_TRANS) & 
+        ~(COLORCONV_32A_TO_8 | COLORCONV_32A_TO_15 | COLORCONV_32A_TO_16 | COLORCONV_32A_TO_24));
+    BITMAP *bmp_orig = load_bitmap(filename, NULL);
+    set_color_conversion(cc);
+    return bmp_orig;
+}
+
+/**
  * Load sprite from PNG file. Is used for graphics resources loading 
  * in the game.
  *
@@ -124,11 +131,11 @@ static BITMAP *load_bitmap_alpha(const char *filename, bool force_alpha)
  * @param filename  path to a file with image on disk
  * @return          allegro bitmap on success or NULL if any error occurs
  */
-ALPHA_SPRITE *png_image_ex(const char *filename, bool use_alpha)
+ALPHA_SPRITE *png_image(const char *filename)
 {
     std::string fullname = F(filename);
     if (g_png_cache.find(fullname) == g_png_cache.end()) {
-        BITMAP *bmp = load_bitmap_alpha(fullname.c_str(), use_alpha);
+        BITMAP *bmp = convert_bitmap_alpha(load_bitmap_alpha(fullname.c_str()));
         if (!bmp) {
             // Maybe we could find this picture inside of large bitmap
             int width, height, index, x, y;
@@ -136,42 +143,45 @@ ALPHA_SPRITE *png_image_ex(const char *filename, bool use_alpha)
             if (p > filename && sscanf(p, "%dx%d-%d.", &width, &height, &index) == 3) {
                 std::string large_bitmap_name = std::string(filename, p - filename - 1) + "." + get_extension(filename);
                 large_bitmap_name = F(large_bitmap_name.c_str());
-                if (g_png_large_cache.find(large_bitmap_name) == g_png_large_cache.end()) {
-                    g_png_large_cache[large_bitmap_name] = load_bitmap_alpha(large_bitmap_name.c_str(), use_alpha);
+                if (g_cached_large_bitmap_name != large_bitmap_name) {
+                    destroy_bitmap(g_cached_large_bitmap);
+                    g_cached_large_bitmap = load_bitmap_alpha(large_bitmap_name.c_str());
+                    g_cached_large_bitmap_name = large_bitmap_name;
                 }
-                if (g_png_large_cache[large_bitmap_name] && index > 0) {
+                if (g_cached_large_bitmap && index > 0) {
                     // number of pictures in a row
-                    int rowcount = (g_png_large_cache[large_bitmap_name]->w + 1) / (width + 1);
+                    int rowcount = (g_cached_large_bitmap->w + 1) / (width + 1);
                     // calculate sprite coordinates from index
                     x = ((index - 1) % rowcount) * (width + 1);
                     y = ((index - 1) / rowcount) * (height + 1);
                     // create sub bitmap
-                    bmp = create_sub_bitmap(g_png_large_cache[large_bitmap_name],
-                        x, y, width, height);
+                    bmp = convert_bitmap_alpha(create_sub_bitmap(
+                        g_cached_large_bitmap, x, y, width, height));
                 }
             } else if (p > filename && sscanf(p, "x=%d,y=%d,w=%d,h=%d).", &x, &y, &width, &height) == 4) {
                 std::string large_bitmap_name = std::string(filename, p - filename - 1) + "." + get_extension(filename);
                 large_bitmap_name = F(large_bitmap_name.c_str());
-                if (g_png_large_cache.find(large_bitmap_name) == g_png_large_cache.end()) {
-                    g_png_large_cache[large_bitmap_name] = load_bitmap_alpha(large_bitmap_name.c_str(), use_alpha);
+                if (g_cached_large_bitmap_name != large_bitmap_name) {
+                    destroy_bitmap(g_cached_large_bitmap);
+                    g_cached_large_bitmap = load_bitmap_alpha(large_bitmap_name.c_str());
+                    g_cached_large_bitmap_name = large_bitmap_name;
                 }
-                if (g_png_large_cache[large_bitmap_name]) {
+                if (g_cached_large_bitmap) {
                     // create sub bitmap
-                    bmp = create_sub_bitmap(g_png_large_cache[large_bitmap_name],
-                        x, y, width, height);
+                    bmp = convert_bitmap_alpha(create_sub_bitmap(
+                        g_cached_large_bitmap, x, y, width, height));
                 }
             }
         }
-        ALPHA_SPRITE *spr = get_alpha_sprite(bmp);
-        destroy_bitmap(bmp);
-        g_png_cache[fullname] = spr;
+        if (bmp) {
+            ALPHA_SPRITE *spr = get_alpha_sprite(bmp);
+            destroy_bitmap(bmp);
+            g_png_cache[fullname] = spr;
+        } else {
+            g_png_cache[fullname] = NULL;
+        }
     }
     return g_png_cache[fullname];
-}
-
-ALPHA_SPRITE *png_image(const char *filename)
-{
-    return png_image_ex(filename, false);
 }
 
 /**
@@ -205,13 +215,12 @@ void free_png_cache()
 {
     std::map<std::string, ALPHA_SPRITE *>::iterator it = g_png_cache.begin();
     while (it != g_png_cache.end()) {
-        destroy_alpha_sprite(it->second);
+        if (it->second) destroy_alpha_sprite(it->second);
         it++;
     }
-    std::map<std::string, BITMAP *>::iterator it_large = g_png_large_cache.begin();
-    while (it_large != g_png_large_cache.end()) {
-        destroy_bitmap(it_large->second);
-        it_large++;
+    if (g_cached_large_bitmap) {
+        destroy_bitmap(g_cached_large_bitmap);
+        g_cached_large_bitmap = NULL;
     }
 }
 

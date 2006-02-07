@@ -585,14 +585,10 @@ function pck_image_set_ex(a, b, c, filename, start, count)
 end
 
 -- returns a table with a set of png images
-function png_image_set(filename, start, count, use_alpha)
+function png_image_set(filename, start, count)
     local tbl = {}
     for i = 1, count do
-        if use_alpha then
-            tbl[i] = png_image_ex(filename .. "-" .. tostring(start + i - 1) .. ".png", true)
-        else
-            tbl[i] = png_image(filename .. "-" .. tostring(start + i - 1) .. ".png")
-        end
+        tbl[i] = png_image(filename .. "-" .. tostring(start + i - 1) .. ".png")
     end
     return tbl
 end
@@ -689,9 +685,8 @@ plugins_sandbox = {
     pck_image = pck_image,
     pck_image_ex = pck_image_ex,
     png_image = png_image,
-    png_image_ex = png_image_ex,
+    png_image_ex = png_image,
     png_image_set = png_image_set,
-    png_image_set_ex = png_image_set_ex,
     pck_image_set = pck_image_set,
     pck_image_set_ex = pck_image_set_ex,
     png_image_fragment = png_image_fragment,

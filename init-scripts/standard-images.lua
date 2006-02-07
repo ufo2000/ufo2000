@@ -16,16 +16,16 @@ if prefer_xcom_gfx and ReadFile(LocateFile("$(xcom)/ufograph/x1.pck")) then
     }
 else
     SetExplosionAnimation {
-        png_image_ex("$(ufo2000)/arts/explosion/256x178-001.png", true),
-        png_image_ex("$(ufo2000)/arts/explosion/256x178-002.png", true),
-        png_image_ex("$(ufo2000)/arts/explosion/256x178-003.png", true),
-        png_image_ex("$(ufo2000)/arts/explosion/256x178-004.png", true),
-        png_image_ex("$(ufo2000)/arts/explosion/256x178-005.png", true),
-        png_image_ex("$(ufo2000)/arts/explosion/256x178-006.png", true),
-        png_image_ex("$(ufo2000)/arts/explosion/256x178-007.png", true),
-        png_image_ex("$(ufo2000)/arts/explosion/256x178-008.png", true),
-        png_image_ex("$(ufo2000)/arts/explosion/256x178-009.png", true),
-        png_image_ex("$(ufo2000)/arts/explosion/256x178-010.png", true),
+        png_image("$(ufo2000)/arts/explosion/256x178-001.png"),
+        png_image("$(ufo2000)/arts/explosion/256x178-002.png"),
+        png_image("$(ufo2000)/arts/explosion/256x178-003.png"),
+        png_image("$(ufo2000)/arts/explosion/256x178-004.png"),
+        png_image("$(ufo2000)/arts/explosion/256x178-005.png"),
+        png_image("$(ufo2000)/arts/explosion/256x178-006.png"),
+        png_image("$(ufo2000)/arts/explosion/256x178-007.png"),
+        png_image("$(ufo2000)/arts/explosion/256x178-008.png"),
+        png_image("$(ufo2000)/arts/explosion/256x178-009.png"),
+        png_image("$(ufo2000)/arts/explosion/256x178-010.png"),
     }
 end
 
