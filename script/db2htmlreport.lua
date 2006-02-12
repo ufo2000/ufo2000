@@ -221,7 +221,95 @@ for k, v in ipairs(equipment_table) do
 end
 io.write("</table>")
 
-io.write(string.format("<br>report generated on %s<br>time %.2f seconds", os.date(), os.clock()))
-io.write("</body></html>")
+------------------------------------------------------------------------------
+
+local get_version_request = db:prepare([[
+    SELECT value FROM ufo2000_debug_packets WHERE session=? AND param='version']])
+
+local function get_version(session)
+    if not get_version_request:bind(session) then return end
+    return get_version_request:first_cols()
+end
+
+local bad_games = {}
+local complete_crash_report = {}
+
+local version_statistics = {}
+
+for _, game, session, param, value in db:cols([[
+    SELECT 1, game, session, param, value FROM ufo2000_debug_packets WHERE
+    param IN ('crc error', 'assert', 'crash')]]) 
+do
+    if game and not bad_games[game] then
+        local version = get_version(session) or "?"
+        if param == "assert" then 
+            bad_games[game] = value 
+        elseif param == "crash" then
+            local _, _, summary = string.find(value, "^(Access Violation at %x+)")
+            if not summary then summary = "?" end
+            bad_games[game] = summary
+            complete_crash_report[version .. ":" .. summary] = value
+        else
+            bad_games[game] = param
+        end
+        if not version_statistics[version] then version_statistics[version] = {} end
+        version_statistics[version][bad_games[game]] = (version_statistics[version][bad_games[game]] or 0) + 1
+    end
+end
+
+local good_games = {}
+
+for _, game, session in db:cols([[
+    select 1, game, session from ufo2000_debug_packets where param='result']]) 
+do
+    if game and not good_games[game] and not bad_games[game] then
+        good_games[game] = 1
+
+        local version = get_version(session) or "?"
+        if not version_statistics[version] then version_statistics[version] = {} end
+        version_statistics[version].ok = (version_statistics[version].ok or 0) + 1
+    end
+end
+
+------------------------------------------------------------------------------
+-- start making game stability report
+------------------------------------------------------------------------------
+
+local tmp = {}
+for k, v in version_statistics do
+    local _, _, revision = string.find(k, "(%d+)%D*$")
+    revision = tonumber(revision)
+    table.insert(tmp, {revision=revision, version=k, info=v})
+end
+table.sort(tmp, function(a, b) return a.revision > b.revision end)
+version_statistics = tmp
+
+io.write("<br>")
+
+local tbl_count = 0
+for _, data in ipairs(version_statistics) do
+    tbl_count = tbl_count + 1
+    local total_games = 0
+    for k, v in data.info do total_games = total_games + v end
+
+    if tbl_count <= 1 or total_games >= 50 then
+        io.write(string.format("<b>Version: %s, games played: %d, stability rating: %.2f%%</b><br>", 
+            data.version, total_games, (data.info.ok or 0) / total_games * 100))
+        if tbl_count <= 1 then
+            io.write("<table border=1>")
+            local tmp = {}
+            for k, v in data.info do if k ~= "ok" then table.insert(tmp, {k, v}) end end
+            table.sort(tmp, function(a, b) return a[2] > b[2] end)
+
+            for _, v in ipairs(tmp) do
+                print("<tr><td>", v[2], "<td>", complete_crash_report[data.version .. ":" .. v[1]] or v[1])
+            end
+            io.write("</table>")
+        end
+    end
+end
 
 db:close()
+
+io.write(string.format("<br>report generated on %s<br>time %.2f seconds", os.date(), os.clock()))
+io.write("</body></html>")
