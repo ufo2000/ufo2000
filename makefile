@@ -319,8 +319,8 @@ source-bz2:
 	svn delete --force $(DISTNAME)
 
 html-docs: tools
-	./lua script/lumikki.lua docs/newweapons.lhtml > docs/newweapons.html
-	./lua script/lumikki.lua docs/newmaps.lhtml > docs/newmaps.html
+	./lua script/lumikki.lua docs-src/newweapons.lhtml > docs/newweapons.html
+	./lua script/lumikki.lua docs-src/newmaps.lhtml > docs/newmaps.html
 
 source-docs:
 	sed 's,%REVISION%,$(UFO_VERSION).$(UFO_SVNVERSION),g' < doxygen/doxy-en.conf > doxy-en.conf
