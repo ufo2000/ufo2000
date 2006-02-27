@@ -294,7 +294,7 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &raw_packet)
 
             server_log("login ok\n");
 
-            db_conn.executenonquery("update ufo2000_users set last_login=julianday('now') where name='%s'", 
+            db_conn.executenonquery("update ufo2000_users set last_login=julianday('now') where name='%q'", 
                 login.c_str());
 
             db_conn.executenonquery("commit;");
@@ -430,12 +430,12 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &raw_packet)
             break;
         }
         case SRV_GAME_CONTINUE_REQUEST: {
-            int game_id = db_conn.executeint32("select max(game) from ufo2000_game_players where player='%s';", m_name.c_str());
+            int game_id = db_conn.executeint32("select max(game) from ufo2000_game_players where player='%q';", m_name.c_str());
             debug_game_id = game_id;
             if(game_id > 0) {
                 Server_Game_UFO::ActivatePlayer(game_id, this);
-                int players_position = db_conn.executeint32("select position from ufo2000_game_players where player='%s' and game=%d;", m_name.c_str(), game_id);
-                int last_sended_packet = db_conn.executeint32("select last_sended_packet from ufo2000_game_players where player='%s' and game=%d;", m_name.c_str(), game_id);
+                int players_position = db_conn.executeint32("select position from ufo2000_game_players where player='%q' and game=%d;", m_name.c_str(), game_id);
+                int last_sended_packet = db_conn.executeint32("select last_sended_packet from ufo2000_game_players where player='%q' and game=%d;", m_name.c_str(), game_id);
                 char pos_str_buffer[100];
                 sprintf(pos_str_buffer, "%d", players_position);
                 send_packet_back(SRV_GAME_RECOVERY_START, pos_str_buffer);
@@ -470,7 +470,7 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &raw_packet)
                 db_conn.executenonquery("\
                 insert into ufo2000_debug_log\
                 (game, session, sender, id, time, type, value) \
-                values (%d, %d, %d, %d, julianday('now'), 1, '%s');",
+                values (%d, %d, %d, %d, julianday('now'), 1, '%q');",
                 debug_game_id, session_id, (int) (packet.c_str()[0]-'0'), packet_debug_id, packet.c_str()+8);
             } catch(std::exception &ex) {
                 LOG_EXCEPTION(ex.what());
@@ -542,7 +542,7 @@ bool ClientServerUfo::resume_game_debug(std::string game_id)
 bool ServerClientUfo::add_user(const std::string &login, const std::string &password)
 {
     try {
-        db_conn.executenonquery("insert into ufo2000_users(name,password) values('%s','%s');", login.c_str(),password.c_str());
+        db_conn.executenonquery("insert into ufo2000_users(name,password) values('%q','%q');", login.c_str(),password.c_str());
         db_conn.executenonquery("commit;");
         db_conn.executenonquery("begin transaction;");
     }
@@ -560,9 +560,9 @@ bool ServerClientUfo::add_user(const std::string &login, const std::string &pass
 int ServerClientUfo::validate_user(const std::string &username, const std::string &password)
 {
     try {
-    if (!db_conn.executeint32("select count(*) from ufo2000_users where name='%s';",username.c_str()))
+    if (!db_conn.executeint32("select count(*) from ufo2000_users where name='%q';",username.c_str()))
         return 0;
-    if (db_conn.executeint32("select count(*) from ufo2000_users where name='%s' and password='%s';",username.c_str(),password.c_str()))
+    if (db_conn.executeint32("select count(*) from ufo2000_users where name='%q' and password='%q';",username.c_str(),password.c_str()))
         return 1;
     }
     catch(std::exception &ex) {
