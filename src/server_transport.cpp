@@ -560,7 +560,7 @@ static void encode_unsigned_int(unsigned int nValue, std::string &buffer)
 
 int encode_stringmap(const std::map<std::string, std::string> &info, std::string &buffer)
 {
-    buffer.clear();
+    buffer = "";
     encode_unsigned_int(info.size(), buffer);
 
     std::map<std::string, std::string>::const_iterator it = info.begin();
