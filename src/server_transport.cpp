@@ -457,6 +457,14 @@ bool ClientServer::send_packet(NLuint id, const std::string &packet)
     return stream_to_socket(m_socket, m_stream_out);
 }
 
+bool ClientServer::send_packet(NLuint id, const std::map<std::string, std::string> &packet)
+{
+    std::string buffer;
+    encode_stringmap(packet, buffer);
+    packet_to_stream(m_stream_out, id | SRV_ADVANCED_PACKET_MASK, buffer);
+    return stream_to_socket(m_socket, m_stream_out);
+}
+
 bool ClientServer::send_delayed_packet()
 {
     return stream_to_socket(m_socket, m_stream_out);
@@ -511,4 +519,81 @@ int ClientServer::wait_packet(NLuint &id, std::string &buffer)
         usleep(50000);
     }
     return -1;
+}
+
+inline static unsigned char decode_unsigned_char(const unsigned char *& p)
+{
+    return *p++;
+}
+
+inline static void encode_unsigned_char(unsigned char value, std::string &buffer)
+{
+    buffer.push_back(value);
+}
+
+static unsigned int decode_unsigned_int(const unsigned char *& p)
+{
+    int  bitcount;
+    unsigned int Value;
+    unsigned char b;
+
+    for (Value = 0, bitcount = 0; bitcount <= 32 - 7; bitcount += 7) {
+        b = decode_unsigned_char(p);
+        if (b & 0x80) { Value |= (b & 0x7F) << bitcount; break; }
+        Value |= b << bitcount;
+    }
+
+    return Value;
+}
+
+static void encode_unsigned_int(unsigned int nValue, std::string &buffer)
+{
+    unsigned char b;
+
+    while (true) {
+        b = (unsigned char)(nValue & 0x7F);
+        nValue >>= 7;
+        if (nValue == 0) { encode_unsigned_char((unsigned char)(b | 0x80), buffer); break; }
+        encode_unsigned_char(b, buffer);
+    }
+}
+
+int encode_stringmap(const std::map<std::string, std::string> &info, std::string &buffer)
+{
+    buffer.clear();
+    encode_unsigned_int(info.size(), buffer);
+
+    std::map<std::string, std::string>::const_iterator it = info.begin();
+    while (it != info.end()) {
+        encode_unsigned_int(it->first.size(), buffer);
+        encode_unsigned_int(it->second.size(), buffer);
+        for (int i = 0; i < (int)it->first.size(); i++)
+            encode_unsigned_char(it->first[i], buffer);
+        for (int i = 0; i < (int)it->second.size(); i++)
+            encode_unsigned_char(it->second[i], buffer);
+        it++;
+    }
+
+    return buffer.size();
+}
+
+bool decode_stringmap(std::map<std::string, std::string> &info, const void *buffer)
+{
+    const unsigned char *p = (const unsigned char *)buffer;
+    unsigned int num = decode_unsigned_int(p);
+
+    while (num--) {
+        unsigned int keysize = decode_unsigned_int(p);
+        unsigned int valsize = decode_unsigned_int(p);
+        std::string key;
+        key.resize(keysize);
+        std::string val;
+        val.resize(valsize);
+        for (unsigned int i = 0; i < keysize; i++)
+            key[i] = decode_unsigned_char(p);
+        for (unsigned int i = 0; i < valsize; i++)
+            val[i] = decode_unsigned_char(p);
+        info[key] = val;
+    }
+    return true;
 }

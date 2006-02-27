@@ -33,6 +33,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "text.h"
 #include "mouse.h"
 #include "script_api.h"
+#include "version.h"
 
 #define BORDER_COLOR xcom1_color(4)
 #define TITLE_COLOR  xcom1_color(2)
@@ -402,7 +403,8 @@ int connect_internet_server()
         return -1;
     }
 
-    if (!server->login(cfg_get_server_login(), cfg_get_server_password(), error_message)) {
+    if (!server->login(cfg_get_server_login(), cfg_get_server_password(), UFO_VERSION_TAG,
+            get_os_type_string(), g_version_id.c_str(), error_message)) {
         alert(" ", error_message.c_str(), " ", _("    OK    "), NULL, 1, 0);
         g_server_autologin = 0;
         return -1;
@@ -443,8 +445,6 @@ int connect_internet_server()
 
     net->gametype = GAME_TYPE_INTERNET_SERVER;
     net->m_internet_server = server.get();
-    net->send_debug_message("system:%s", get_os_type_string());
-    net->send_debug_message("version:%s", g_version_id.c_str());
 
     lua_message( std::string("Server: ") + cfg_get_server_host() );
     lua_message( std::string("Login: ")  + g_server_login );

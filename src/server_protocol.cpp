@@ -68,21 +68,27 @@ void ServerDispatch::MakeHtmlReport(std::string &html_body)
     html_body = "<html><head><title>UFO2000 Matchmaker</title></head><body>";
     html_body += "<h3>UFO2000 matchmaking server.</h3><blockquote>";
     html_body += "<a href='http://ufo2000.sourceforge.net/'>Project home page (and the latest stable version download link)</a><br>";
-    html_body += "<a href='http://lxnt.info/mailman/listinfo/ufo2000'>Developers mailing list</a><br>";
+//    html_body += "<a href='http://lxnt.info/mailman/listinfo/ufo2000'>Developers mailing list</a><br>";
     html_body += "<a href='http://www.xcomufo.com/forums/index.php?showforum=266'>Official Forum</a><br>";
-    html_body += "<br><a href='http://ufo2000.lxnt.info/pmwiki/index.php/Main/DevelopmentVersion'>Latest beta versions of the game</a><br>";
-    html_body += "<a href='http://ufo2000.lxnt.info/pmwiki/index.php/Main/NewMaps'>Additional user made maps</a><br>";
     html_body += "<a href='http://ufo2000.lxnt.info/results.php'>Official server battle statistics</a><br>";
     html_body += "<br></blockquote><hr><table border=1>";
-    html_body += "<tr><td>user name<td>bytes from<td>bytes to<td>max average traffic<td>time online<td>status";
+    html_body += "<tr><td>user name<td>ufo2000 version<td>system<td>bytes from<td>bytes to<td>max average traffic<td>time online<td>status";
 
-//  Report other players status
+    // Report other players status
     std::map<std::string, ServerClient *>::iterator it = m_clients_by_name.begin();
     while (it != m_clients_by_name.end()) {
         ServerClientUfo *client = dynamic_cast<ServerClientUfo *>(it->second);
 
         html_body += "<tr><td>";
         html_body += client->m_name;
+        html_body += "<td>";
+        if (client->get_version() == "" || client->get_realm() == "") {
+            html_body += "?";
+        } else {
+            html_body += client->get_realm() + " " + client->get_version();
+        }
+        html_body += "<td>";
+        html_body += client->get_system() == "" ? "?" : client->get_system();
         html_body += "<td>";
         html_body += num_to_string(nlGetSocketStat(client->m_socket, NL_BYTES_RECEIVED));
         traffic_in_cur += nlGetSocketStat(client->m_socket, NL_BYTES_RECEIVED);
@@ -143,10 +149,10 @@ ServerClientUfo::~ServerClientUfo()
         Server_Game_UFO::DeactivatePlayer(this);
         
     if (m_name != "") {
-    //  send information that the user is offline to all other users
+        // send information that the user is offline to all other users
         send_packet_all(SRV_USER_OFFLINE, m_name);
 
-    //  remove this user from challenge lists of other players
+        // remove this user from challenge lists of other players
         std::map<std::string, ServerClient *>::iterator it = m_server->m_clients_by_name.begin();
         while (it != m_server->m_clients_by_name.end()) {
             ServerClientUfo *opponent = dynamic_cast<ServerClientUfo *>(it->second);
@@ -154,27 +160,34 @@ ServerClientUfo::~ServerClientUfo()
             it++;
         }
 
-    try {
-        db_conn.executenonquery("\
-        update ufo2000_user_sessions\
-        set end=julianday('now') \
-        where id=(%d);", session_id);
-        db_conn.executenonquery("commit;");
-        db_conn.executenonquery("begin transaction;");
-    } catch(std::exception &ex) {
-        LOG_EXCEPTION(ex.what());
-    }
+        try {
+            db_conn.executenonquery("\
+            update ufo2000_user_sessions\
+            set end=julianday('now') \
+            where id=(%d);", session_id);
+            db_conn.executenonquery("commit;");
+            db_conn.executenonquery("begin transaction;");
+        } catch(std::exception &ex) {
+            LOG_EXCEPTION(ex.what());
+        }
 
-    //  Save the name and disconnect time of user
+        // Save the name and disconnect time of user
         m_last_user_name = m_name;
         nlTime(&m_last_user_disconnect_time);
-
     }
 }
 
-bool ServerClientUfo::recv_packet(NLuint id, const std::string &packet)
+bool ServerClientUfo::recv_packet(NLuint id, const std::string &raw_packet)
 {
-    if(game) {
+    std::string packet = raw_packet;
+    std::map<std::string, std::string> packet_properties;
+
+    if (id & SRV_ADVANCED_PACKET_MASK) {
+        id &= ~SRV_ADVANCED_PACKET_MASK;
+        decode_stringmap(packet_properties, raw_packet.c_str());
+    }
+
+    if (game) {
         game->PacketToServer(this, id, packet);
     } else {
         if (id == SRV_DEBUG_MESSAGE) {
@@ -192,20 +205,30 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &packet)
         }
     }
 
-//  only SRV_LOGIN packet is accepted from not authenticated users
+    // only SRV_LOGIN packet is accepted from not authenticated users
     if (m_name == "" && id != SRV_LOGIN) {
         m_error = true;
         return false;
     }
 
-//  process incoming packet
+    // process incoming packet
     switch (id) {
         case SRV_LOGIN: {
             // some value just to stay alive with unexpected debug packet
             debug_game_id = 0;
 
             std::string login, password;
-            split_with_colon(packet, login, password);
+
+            if (packet_properties.empty()) {
+                split_with_colon(packet, login, password);
+            } else {
+                login = packet_properties["name"];
+                password = packet_properties["password"];
+            }
+
+            m_realm = packet_properties["realm"];
+            m_system = packet_properties["system"];
+            m_version = packet_properties["version"];
 
             server_log("user login (name='%s', pwd='%s', ip=%s)\n",
                 login.c_str(), password.c_str(), m_ip.c_str());
@@ -246,7 +269,7 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &packet)
                 break;
             }
 
-        //  check clients number limit
+            // check clients number limit
             if (m_server->m_clients_by_name.size() >= PLAYERS_COUNT_LIMIT) {
                 server_log("login failed: too many players\n");
                 send_packet_back(SRV_FAIL, "Too many players on server");
@@ -259,9 +282,10 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &packet)
                 session_id = db_conn.executeint32("select seq_val from ufo2000_sequences where name='ufo2000_user_sessions';");
                 db_conn.executenonquery("\
                 insert into ufo2000_user_sessions\
-                (id, user, begin) \
+                (id, user, begin, realm, system, version) \
                 values \
-                (%d, '%s', julianday('now'));", session_id, login.c_str());
+                (%d, '%q', julianday('now'), '%q', '%q', '%q');", session_id, login.c_str(), 
+                packet_properties["realm"].c_str(), packet_properties["system"].c_str(), packet_properties["version"].c_str());
                 db_conn.executenonquery("commit;");
                 db_conn.executenonquery("begin transaction;");
             } catch(std::exception &ex) {
@@ -278,17 +302,20 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &packet)
 
             m_name = login;
             send_packet_back(SRV_OK, "login ok");
-        // send user list to a newly created user
+            // send user list to a newly created user
             std::map<std::string, ServerClient *>::iterator it = m_server->m_clients_by_name.begin();
             while (it != m_server->m_clients_by_name.end()) {
                 ServerClientUfo *opponent = dynamic_cast<ServerClientUfo *>(it->second);
 
-                printf("send user online: %s\n", opponent->m_name.c_str());
-                opponent->send_packet_back(SRV_USER_ONLINE, m_name);
-                if (opponent->m_busy)
-                    send_packet_back(SRV_USER_BUSY, opponent->m_name);
-                else
-                    send_packet_back(SRV_USER_ONLINE, opponent->m_name);
+                if (opponent->m_realm == m_realm) {
+                    printf("send user online: %s\n", opponent->m_name.c_str());
+                    opponent->send_packet_back(SRV_USER_ONLINE, m_name);
+                    if (opponent->m_busy)
+                        send_packet_back(SRV_USER_BUSY, opponent->m_name);
+                    else
+                        send_packet_back(SRV_USER_ONLINE, opponent->m_name);
+                }
+
                 it++;
             }
 
@@ -368,7 +395,7 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &packet)
             std::map<std::string, ServerClient *>::iterator it = m_server->m_clients_by_name.begin();
             while (it != m_server->m_clients_by_name.end()) {
                 ServerClientUfo *opponent = dynamic_cast<ServerClientUfo *>(it->second);
-                if (opponent->m_name != m_name) {
+                if (opponent->m_name != m_name && opponent->m_realm == m_realm) {
                     opponent->send_packet_back(SRV_USER_ONLINE, m_name);
                     if (opponent->m_busy)
                         send_packet_back(SRV_USER_BUSY, opponent->m_name);
@@ -454,10 +481,22 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &packet)
     return true;
 }
 
-bool ClientServerUfo::login(const std::string &name, const std::string &pass,
+bool ClientServerUfo::login(
+    const std::string &name,
+    const std::string &pass,
+    const std::string &realm,
+    const std::string &system,
+    const std::string &version,
     std::string &error_message)
 {
-    if (!send_packet(SRV_LOGIN, name + ":" + pass)) {
+    std::map<std::string, std::string> packet;
+    packet["name"] = name;
+    packet["password"] = pass;
+    packet["realm"] = realm;
+    packet["system"] = system;
+    packet["version"] = version;
+
+    if (!send_packet(SRV_LOGIN, packet)) {
         error_message = "Failed to connect";
         return false;
     }

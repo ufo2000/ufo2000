@@ -52,9 +52,11 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #define SRV_GAME_CONTINUE_REQUEST  17
 #define SRV_GAME_RECOVERY_START    18
-#define SRV_GAME_REPLAY_REQUEST  19
+#define SRV_GAME_REPLAY_REQUEST    19
 
-#define SRV_SAVE_DEBUG_INFO  20
+#define SRV_SAVE_DEBUG_INFO        20
+
+#define SRV_ADVANCED_PACKET_MASK   0x80000000
 
 class Server_Game_UFO;
 
@@ -62,6 +64,9 @@ class ServerClientUfo: public ServerClient
 {
     std::set<std::string>  m_challenged_opponents;
     bool                   m_busy;
+    std::string            m_realm;
+    std::string            m_system;
+    std::string            m_version;
 public:
     static int             m_games_started;
     static std::string     m_last_user_name;
@@ -71,6 +76,10 @@ public:
         : ServerClient(d, s), m_busy(false), game(NULL) { }
     virtual ~ServerClientUfo();
     bool recv_packet(NLuint id, const std::string &packet);
+
+    const std::string & get_realm() { return m_realm; }
+    const std::string & get_system() { return m_system; }
+    const std::string & get_version() { return m_version; }
 
     // TODO - return right opponent.
     bool is_in_server_chat() { return !m_busy; }
@@ -89,6 +98,7 @@ class ClientServerUfo: public ClientServer
 {
 public:
     bool login(const std::string &name, const std::string &pass,
+        const std::string &realm, const std::string &system, const std::string &version,
         std::string &error_message);
     bool message(const std::string &text);
     bool challenge(const std::string &user);

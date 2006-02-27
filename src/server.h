@@ -32,6 +32,11 @@ inline long get_time_diff(const NLtime &x, const NLtime &y)
 
 class ServerDispatch;
 
+//! Encode std::map<std::string, std::string> into a single string
+int encode_stringmap(const std::map<std::string, std::string> &info, std::string &buffer);
+//! Decode std::map<std::string, std::string> from a string
+bool decode_stringmap(std::map<std::string, std::string> &info, const void *buffer);
+
 /**
  * Client side client-server connection
  *
@@ -50,6 +55,7 @@ public:
         const std::string &proxy_login,
         std::string &error_message);
     bool send_packet(NLuint id, const std::string &packet);
+    bool send_packet(NLuint id, const std::map<std::string, std::string> &packet);
     bool send_delayed_packet();
     bool flush_sent_packets();
     int recv_packet(NLuint &id, std::string &packet);
