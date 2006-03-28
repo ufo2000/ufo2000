@@ -22,6 +22,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "sprite.h"
 #include <string.h>
 
+#define RLE_EOL_MARKER_16 MASK_COLOR_16
+
 #define IS_MASK(c)             ((uint32)(c) == MASK_COLOR_16)
 
 #undef INLINE
@@ -31,7 +33,18 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define INLINE inline
 #endif
 
-INLINE void draw_masked_dark_line16(uint16 *d, const uint16 *s, int w, uint32 n)
+INLINE uint16 *mempcpy16_inline(uint16 *d, uint16 *s, int w)
+{
+    while (--w >= 0) *d++ = *s++;
+    return d;
+}
+INLINE uint16 *mempset16_inline(uint16 *d, uint16 *s, int w)
+{
+    while (--w >= 0) *d++ = 0;
+    return d;
+}
+
+INLINE uint16 *draw_masked_dark_line16(uint16 *d, const uint16 *s, int w, uint32 n)
 {
     uint16 *limit = d + w;
 
@@ -78,19 +91,20 @@ INLINE void draw_masked_dark_line16(uint16 *d, const uint16 *s, int w, uint32 n)
         s += 2;
         d += 2;
     }
+    return d;
 }
 
-INLINE void draw_normal_line16(int16 *d, const int16 *s, int w, const uint32 n)
+INLINE int16 *draw_normal_line16(int16 *d, const int16 *s, int w, const uint32 n)
 {
-    while (--w >= 0) *d++ = *s++;
+    return (int16 *)mempcpy16_inline((uint16 *)d, (uint16 *)s, w);
 }
 
-INLINE void draw_black_line16(int16 *d, const int16 *s, int w, const uint32 n)
+INLINE int16 *draw_black_line16(int16 *d, const int16 *s, int w, const uint32 n)
 {
-    while (--w >= 0) *d++ = 0;
+    return (int16 *)mempset16_inline((uint16 *)d, 0, w);
 }
 
-INLINE void draw_dark_line16(int16 *d, const int16 *s, int w, const uint32 n)
+INLINE int16 *draw_dark_line16(int16 *d, const int16 *s, int w, const uint32 n)
 {
     int16 *limit = d + w;
 
@@ -119,9 +133,10 @@ INLINE void draw_dark_line16(int16 *d, const int16 *s, int w, const uint32 n)
         s += 2;
         d += 2;
     }
+    return d;
 }
 
-INLINE void draw_alpha_dark_line16(int16 *d, const int32 *s, int w, const uint32 n)
+INLINE int16 *draw_alpha_dark_line16(int16 *d, const int32 *s, int w, const uint32 n)
 {
     while (--w >= 0) {
         uint32 x = *s++;
@@ -132,29 +147,32 @@ INLINE void draw_alpha_dark_line16(int16 *d, const int32 *s, int w, const uint32
         result = ((x - y) * result / 32 + y) & 0x7E0F81F;
         *d++ = (result | (result >> 16));
     }
+    return d;
 }
 
-INLINE void draw_alpha_normal_line16(int16 *d, const int32 *s, int w, const uint32 n)
+INLINE int16 *draw_alpha_normal_line16(int16 *d, const int32 *s, int w, const uint32 n)
 {
-    draw_alpha_dark_line16(d, s, w, 32);
+    return draw_alpha_dark_line16(d, s, w, 32);
 }
 
-INLINE void draw_alpha_black_line16(int16 *d, const int32 *s, int w, const uint32 n)
+INLINE int16 *draw_alpha_black_line16(int16 *d, const int32 *s, int w, const uint32 n)
 {
-    draw_alpha_dark_line16(d, s, w, 0);
+    return draw_alpha_dark_line16(d, s, w, 0);
 }
 
-INLINE void draw_normal_line32(int32 *d, const int32 *s, int w, const uint32 n)
+INLINE int32 *draw_normal_line32(int32 *d, const int32 *s, int w, const uint32 n)
 {
     while (--w >= 0) *d++ = *s++;
+    return d;
 }
 
-INLINE void draw_black_line32(int32 *d, const int32 *s, int w, const uint32 n)
+INLINE int32 *draw_black_line32(int32 *d, const int32 *s, int w, const uint32 n)
 {
     while (--w >= 0) *d++ = 0;
+    return d;
 }
 
-INLINE void draw_dark_line32(int32 *d, const int32 *s, int w, uint32 n)
+INLINE int32 *draw_dark_line32(int32 *d, const int32 *s, int w, uint32 n)
 {
     n = 256 - n;
     while (--w >= 0) {
@@ -177,9 +195,10 @@ INLINE void draw_dark_line32(int32 *d, const int32 *s, int w, uint32 n)
         *d++ = res | g;
 #endif
     }
+    return d;
 }
 
-INLINE void draw_alpha_dark_line32(int32 *d, const int32 *s, int w, uint32 n)
+INLINE int32 *draw_alpha_dark_line32(int32 *d, const int32 *s, int w, uint32 n)
 {
     while (--w >= 0) {
         uint32 x = *s++;
@@ -198,16 +217,17 @@ INLINE void draw_alpha_dark_line32(int32 *d, const int32 *s, int w, uint32 n)
 
         *d++ = (rb & 0xFF00FF) | (g & 0xFF00);
     }
+    return d;
 }
 
-INLINE void draw_alpha_normal_line32(int32 *d, const int32 *s, int w, const uint32 n)
+INLINE int32 *draw_alpha_normal_line32(int32 *d, const int32 *s, int w, const uint32 n)
 {
-    draw_alpha_dark_line32(d, s, w, 256);
+    return draw_alpha_dark_line32(d, s, w, 256);
 }
 
-INLINE void draw_alpha_black_line32(int32 *d, const int32 *s, int w, const uint32 n)
+INLINE int32 *draw_alpha_black_line32(int32 *d, const int32 *s, int w, const uint32 n)
 {
-    draw_alpha_dark_line32(d, s, w, 0);
+    return draw_alpha_dark_line32(d, s, w, 0);
 }
 
 #define PROCESS_CLIPPING() \
@@ -357,7 +377,7 @@ unsigned long alpha_dark_blender32(unsigned long x, unsigned long y, unsigned lo
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<typename TD, typename TS, int eol_marker, void draw_line(TD *, const TS *, int, const uint32)> 
+template<typename TD, typename TS, int eol_marker, TD *draw_line(TD *, const TS *, int, const uint32)> 
 INLINE void draw_rle_sprite_internal(BITMAP *dst, ALPHA_SPRITE *src, int dx, int dy, const uint32 brightness)
 {
     // Process clipping
@@ -373,8 +393,7 @@ INLINE void draw_rle_sprite_internal(BITMAP *dst, ALPHA_SPRITE *src, int dx, int
             int c = *s++;
             while (c != eol_marker) {
                 if (c > 0) {
-                    draw_line(d, s, c, brightness);
-                    d += c;
+                    d = draw_line(d, s, c, brightness);
                     s += c;
                 } else {
                     d -= c;
@@ -441,14 +460,12 @@ INLINE void draw_rle_sprite_internal(BITMAP *dst, ALPHA_SPRITE *src, int dx, int
                 if ((x - c) >= 0) {
                     /* Fully visible.  */
                     x -= c;
-                    draw_line(d, s, c, brightness);
-                    d += c;
+                    d = draw_line(d, s, c, brightness);
                     s += c;
                 } else {
                     /* Clipped on the right.  */
                     c -= x;
-                    draw_line(d, s, x, brightness);
-                    d += x;
+                    d = draw_line(d, s, x, brightness);
                     s += x;
                     break;
                 }
@@ -534,13 +551,13 @@ void draw_alpha_sprite(BITMAP *dst, ALPHA_SPRITE *src, int dx, int dy, unsigned 
                 }
             } else {
                 if (brightness >= 255) {
-                    draw_rle_sprite_internal<int16, int16, (int)(int16)MASK_COLOR_16,
+                    draw_rle_sprite_internal<int16, int16, (int)(int16)RLE_EOL_MARKER_16,
                         draw_normal_line16>(dst, src, dx, dy, (uint32)0);
                 } else if (brightness != 0) {
-                    draw_rle_sprite_internal<int16, int16, (int)(int16)MASK_COLOR_16,
+                    draw_rle_sprite_internal<int16, int16, (int)(int16)RLE_EOL_MARKER_16,
                         draw_dark_line16>(dst, src, dx, dy, (brightness + 7) / 8);
                 } else {
-                    draw_rle_sprite_internal<int16, int16, (int)(int16)MASK_COLOR_16,
+                    draw_rle_sprite_internal<int16, int16, (int)(int16)RLE_EOL_MARKER_16,
                         draw_black_line16>(dst, src, dx, dy, (uint32)0);
                 }
             }
@@ -580,18 +597,19 @@ ALPHA_SPRITE *get_alpha_sprite(BITMAP *bmp)
 { 
     RLE_SPRITE *spr = get_rle_sprite(bmp);
     if (spr->color_depth == 16) {
-        // allegro rle sprite optimization - find unnecessery skip runs
+        // allegro rle sprite optimization - find unnecessery skip runs,
+	// replace MASK_COLOR_16 with proper EOL marker
         int i;
         int cnt = spr->size / 2;
         int16 *data = (int16 *)spr->dat;
         for (i = 0; i < cnt; i++) {
             if ((uint16)data[i] == MASK_COLOR_16) {
-//                data[i] = 0;
+                data[i] = RLE_EOL_MARKER_16;
                 continue;
             }
             if (data[i] < 0 && i + 1 < cnt && (uint16)data[i + 1] == MASK_COLOR_16) {
                 memmove(&data[i], &data[i + 1], (cnt - (i + 1)) * 2);
-//                data[i] = 0;
+                data[i] = RLE_EOL_MARKER_16;
                 cnt--;
             } else if (data[i] > 0) {
                 i += data[i];
