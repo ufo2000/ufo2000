@@ -192,8 +192,7 @@ static BITMAP *really_load_png(png_structp png_ptr, png_infop info_ptr, RGB *pal
 	if (pc[0] == 255)
 	    png_set_bgr(png_ptr);
 #ifdef ALLEGRO_BIG_ENDIAN	    
-	if (color_type == PNG_COLOR_TYPE_RGB_ALPHA)
-	    png_set_swap_alpha(png_ptr);
+	png_set_swap_alpha(png_ptr);
 #endif	    
     }
 
