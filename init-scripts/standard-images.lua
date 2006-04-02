@@ -36,6 +36,8 @@ end
 AddImage("mouse", png_image("$(ufo2000)/arts/mouse.png"))
 AddImage("mouse_menu", png_image("$(ufo2000)/arts/mouse_menu.png"))
 AddImage("selector", png_image_set("$(ufo2000)/arts/selector/19x9", 1, 4))
+AddImage("button_left_arrow", png_image("$(ufo2000)/arts/button1.png"))
+AddImage("button_right_arrow", png_image("$(ufo2000)/arts/button3.png"))
 
 -- Our own images, 2 fire animation, 3 smoke animations, cursors, 4 hit animations.
 -------------------

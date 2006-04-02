@@ -30,6 +30,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "colors.h"
 #include "text.h"
 #include "mouse.h"
+#include "script_api.h"
 
 /**
  * Manage soldiers inventory
@@ -38,25 +39,23 @@ Inventory::Inventory()
 {
     x = y = 0;
 
-    BITMAP *image = create_bitmap(320, 200); clear(image);
-    tac01 = new SPK("$(xcom)/ufograph/tac01.scr");
+    BITMAP *image = create_bitmap(320, 200); clear_to_color(image, bitmap_mask_color(image));
+    SPK *tac01 = new SPK("$(xcom)/ufograph/tac01.scr");
     tac01->show(image, 0, 0);
 
-    //b123 = create_bitmap(83, 22);
-    //blit(screen2, b123, 45, 0, 0, 0, 83, 22);
-    //b4 = create_bitmap(32, 25);
-    //blit(screen2, b4, 224, 21, 0, 0, 32, 25);
-    b5 = create_bitmap(32, 15); clear(b5);
-    blit(image, b5, 288, 137, 0, 0, 32, 15);
-
+    b4 = create_bitmap(320 - 230, 30);
+    blit(image, b4, image->w - b4->w, 0, 0, 0, b4->w, b4->h);
+    b5 = create_bitmap(32, 15);
+    blit(image, b5, 288, 137, 0, 0, b5->w, b5->h);
+    delete tac01;
     destroy_bitmap(image);
     sel_item = NULL;
 }
 
 Inventory::~Inventory()
 {
+    destroy_bitmap(b4);
     destroy_bitmap(b5);
-    delete tac01;
 }
 
 /**
@@ -72,16 +71,24 @@ void Inventory::draw(int _x, int _y)
     BITMAP *temp = create_bitmap(321, 199);
     clear_bitmap(temp);                                           
     
-    if (mouse_inside(x + 50, y + 50, x + 110, y + 142))
-        rect(temp, 50, 50, 110, 142, makecol(255, 0, 0));
-    
     set_trans_blender(0, 0, 0, 160);
     draw_trans_sprite(screen2, temp, x, y);
-    clear_to_color(temp, makecol(255, 0, 255));
+    
+    destroy_bitmap(temp);
+    temp = create_sub_bitmap(screen2, x, y, 321, 199);
+    
+    if (mouse_inside(x + 50, y + 50, x + 110, y + 142))
+        rect(temp, 50, 50, 110, 142, makecol(255, 0, 0));
 
-    tac01->show(temp, 0, 0);  // Buttons: OK, next & prev.man
-    draw_sprite_vh_flip(temp, b5, 255, 137);  // b6 - Button: scroll left
-    rectfill(temp, 288, 32, 319, 57, makecol(255, 0, 255)); //hide unused "unload" button
+    draw_sprite(temp, b4, temp->w - b4->w, 0);
+    draw_sprite_vh_flip(temp, b5, 255, 137);
+
+    ALPHA_SPRITE *button_left_arrow = lua_table_image("button_left_arrow");
+    ALPHA_SPRITE *button_right_arrow = lua_table_image("button_right_arrow");
+    if (button_left_arrow && button_right_arrow) {
+        draw_alpha_sprite(temp, button_right_arrow, temp->w - button_right_arrow->w, 137);
+        draw_alpha_sprite(temp, button_left_arrow, temp->w - button_right_arrow->w - button_left_arrow->w, 137);
+    }
 
     sel_man->draw_inventory(temp);
 
@@ -125,7 +132,6 @@ void Inventory::draw(int _x, int _y)
 
     }
     
-    draw_sprite(screen2, temp, x, y);
     destroy_bitmap(temp);
     
     if (sel_item != NULL && key[KEY_LCONTROL])

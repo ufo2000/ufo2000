@@ -41,7 +41,6 @@ private:
 	Item   *sel_item;
 	int    sel_item_place;
 
-	SPK    *tac01;
 	BITMAP *b123, *b4, *b5;
 	
 	MouseRange *m_mouse_range;
