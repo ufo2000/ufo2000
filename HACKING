@@ -3,9 +3,9 @@
 ==============================================================================
 
 Note: This file is still not complete and some things still can be changed
-in the future. You can ask questions and discuss it in ufo2000 mailing list
-(http://lxnt.info/mailman/listinfo/ufo2000) and also suggest what you would 
-like to see changed or updated here.
+in the future. You can ask questions and discuss it in ufo2000 forum
+(http://www.xcomufo.com/forums/index.php?showforum=266) and also suggest 
+what you would like to see changed or updated here.
 
 ==============================================================================
 == Getting started
@@ -16,7 +16,7 @@ First you need to get the latest sources of the game. We are using Subversion
 to CVS, so if you are familiar with CVS, you will have no problems using it.
 
 Checking out your working copy of ufo2000 sources:
-# svn co http://lxnt.info:8888/repos/ufo2k/trunk ufo2000
+# svn co https://svn.sourceforge.net/svnroot/ufo2000/trunk ufo2000
 
 When other people commit their changes to the repository, you need to update 
 your working copy to keep it up to date:

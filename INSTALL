@@ -1,5 +1,7 @@
-                             Installing ufo2000.
+  !!! WARNING: This file is not up to date and needs to be updated !!!
 
+                             Installing ufo2000.
+			     
 ------------------------------------------------------------------------------
 -- 1. General information.
 ------------------------------------------------------------------------------
@@ -154,14 +156,14 @@ types and use more different units.
 ------------------------------------------------------------------------------
 
 You can get the latest source snapshot from the source repository 
-  http://lxnt.info:8888/repos/ufo2k/trunk/
+  https://svn.sourceforge.net/svnroot/ufo2000/trunk/
 
 You will need Subversion 1.0+ client. Look at
   http://subversion.tigris.org/
 
 You can also check out any release from the tags directory at
-  http://lxnt.info:8888/repos/ufo2k/tags/
+  https://svn.sourceforge.net/svnroot/ufo2000/tags/
 
 Also if you would like to know more about taking part in the development
 of the game, you are suggested to read HACKING file which is located in the
-UFO2000 directory (or here: http://lxnt.info:8888/repos/ufo2k/trunk/HACKING).
+UFO2000 directory (or here: https://svn.sourceforge.net/svnroot/ufo2000/trunk/HACKING).
