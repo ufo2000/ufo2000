@@ -303,6 +303,37 @@ static int chat_msg_color(const std::string &msg)
  
 bool set_autologin_on = false;
 
+static void show_help(const char *text)
+{
+    int w = SCREEN_W * 3 / 4;
+    int h = SCREEN_H * 3 / 4;
+    DIALOG help_dialog[] = {
+        //(dialog proc)           (x)  (y) (w) (h) (fg)(bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
+        { d_agup_shadow_box_proc,  0,   0, w, h, 0,  1,  0, 0,  0, 0, NULL, NULL, NULL },
+        { d_agup_textbox_proc,    10,  10, w - 20, h - 40, 0,  1,  0, 0,  0, 0, (void *)text, NULL, NULL },
+        { d_agup_button_proc,     w - 70, h - 25, 60,  18,  0,  1, 13, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL },
+        { d_yield_proc,           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
+        { NULL }
+    };
+    FONT *old_font = font;
+    font = large;
+    centre_dialog(help_dialog);
+    set_dialog_color(help_dialog, COLOR_BLACK1, COLOR_WHITE);
+    popup_dialog(help_dialog, 2);
+    font = old_font;
+}
+
+static int help_button_proc(
+    int msg, DIALOG *d, int c)
+{
+    int result = d_agup_button_proc(msg, d, c);
+    if (result == D_CLOSE) {
+        show_help((const char *)d->dp2);
+        return D_REDRAW;
+    }
+    return result;
+}
+
 static bool asklogin()
 {
     static char login_buffer[1024];
@@ -311,19 +342,40 @@ static bool asklogin()
 
     static DIALOG login_dialog[] = {
         //(dialog proc)           (x)  (y) (w) (h) (fg)(bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
-        { d_agup_shadow_box_proc,  0,   0, 280, 95, 0,  1,  0, 0,  0, 0, NULL, NULL, NULL },
+        { d_agup_shadow_box_proc,  0,   0, 320, 95, 0,  1,  0, 0,  0, 0, NULL, NULL, NULL },
         { d_agup_rtext_proc,      10,  10,  70, 10, 0,  1,  0, 0,  0, 0, (void *)_("Server:"), NULL, NULL },
-        { d_agup_edit_proc,       80,  10, 192, 10, 0,  1,  0, 0, 22, 0, (void *)host_buffer, NULL, NULL },
+        { d_agup_edit_proc,       80,  10, 192 + 40, 10, 0,  1,  0, 0, 64, 0, (void *)host_buffer, NULL, NULL },
         { d_agup_rtext_proc,      10,  25,  70, 10, 0,  1,  0, 0,  0, 0, (void *)_("Login:"), NULL, NULL },
-        { d_agup_edit_proc,       80,  25, 192, 10, 0,  1,  0, 0, 22, 0, (void *)login_buffer, NULL, NULL },
+        { d_agup_edit_proc,       80,  25, 192 + 40, 10, 0,  1,  0, 0, 64, 0, (void *)login_buffer, NULL, NULL },
         { d_agup_rtext_proc,      10,  40,  70, 10, 0,  1,  0, 0,  0, 0, (void *)_("Password:"), NULL, NULL },
-        { d_agup_edit_proc,       80,  40, 192, 10, 0,  1,  0, 0, 22, 0, (void *)password_buffer, NULL, NULL },
+        { d_agup_edit_proc,       80,  40, 192 + 40, 10, 0,  1,  0, 0, 64, 0, (void *)password_buffer, NULL, NULL },
         { d_agup_check_proc,      78,  57, 192, 10, 0,  1,  0, 0,  1, 0, (void *)_("Autologin"), NULL, NULL },
-        { d_agup_button_proc,     140, 71,  60, 18, 0,  1, 13, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL },
-        { d_agup_button_proc,     210, 71,  60, 18, 0,  1, 27, D_EXIT, 0, 0, (void *)_("Cancel"), NULL, NULL },
+        { help_button_proc,       20,  71,  60, 18, 0,  1, KEY_F1, D_EXIT, 0, 0, (void *)_("Help"), NULL, NULL },
+        { d_agup_button_proc,     140 + 40, 71,  60, 18, 0,  1, 13, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL },
+        { d_agup_button_proc,     210 + 40, 71,  60, 18, 0,  1, 27, D_EXIT, 0, 0, (void *)_("Cancel"), NULL, NULL },
         { d_yield_proc,           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
         { NULL }
     };
+    
+    login_dialog[8].dp2 = (void *)_(
+        "The game can connect to the server running on the internet or on a "
+        "local network (to start the server on your computer, just run "
+        "'ufo2000-srv' executable included in ufo2000 distributive).\n\n"
+
+        "You need to enter server address. On the first run of the game, the server address "
+        "contains some default value, it is the official ufo2000 "
+        "server running on the internet. If you want to play on a local "
+        "network, you need to start the ufo2000 server on one computer and "
+        "enter its IP address when connecting to it from ufo2000 on another computer.\n\n"
+
+        "The other two required fields are login and password. They are "
+        "used to identify the user to track some game statistics like the number "
+        "of victories and ELO rating.\n\n"
+
+        "Login should be any name not used by other players and password should be "
+        "at least 6 characters long. If you are connecting to the server for the first "
+        "time, your account will be registered automatically. After successful login "
+        "or registration, you will see the internet server chat screen.");
 
     strcpy(host_buffer, g_server_host.c_str());
     strcpy(login_buffer, g_server_login.c_str());
@@ -332,7 +384,7 @@ static bool asklogin()
     centre_dialog(login_dialog);
     set_dialog_color(login_dialog, COLOR_BLACK1, COLOR_WHITE);
 
-    if (popup_dialog(login_dialog, 2) == 8) {
+    if (popup_dialog(login_dialog, 2) == 9) {
         g_server_host     = host_buffer;
         g_server_login    = login_buffer;
         g_server_password = password_buffer;
