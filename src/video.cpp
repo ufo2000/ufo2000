@@ -198,22 +198,38 @@ static void ufo2k_set_gfx_mode(int gfx_driver)
     
     while (true) {
         if (color_depth > 32) {
-            // Did not manage to set video mode
+            // Did not manage to set video mode, as the last resort try to set
+            // display mode matching current desktop settings
+            if (gfx_driver == GFX_AUTODETECT_FULLSCREEN) {
+                color_depth = desktop_color_depth();
+                set_color_depth(color_depth);
+                if ((color_depth >= 16) && (get_desktop_resolution(&xres, &yres) == 0) 
+                        && (xres >= MINIMUM_XRES) && (yres >= MINIMUM_YRES) 
+                        && (set_gfx_mode(gfx_driver, xres, yres, 0, 0) == 0)) {
+                    switch_mode_failed = true;
+                    break;
+                }
+            }
+
+            gfx_driver = GFX_AUTODETECT_WINDOWED;
+            color_depth = desktop_color_depth();
+            set_color_depth(color_depth);
+            if ((color_depth >= 16) && (set_gfx_mode(gfx_driver, MINIMUM_XRES, MINIMUM_YRES, 0, 0) == 0)) {
+                xres = MINIMUM_XRES;
+                yres = MINIMUM_YRES;
+                switch_mode_failed = true;
+                break;
+            }
+
+            // Still no luck, giving up
             fprintf(stderr, "Error: set_gfx_mode() failed (%s).\n", allegro_error);
             exit(1);
         }
 
-        // Try both the video modes selected in the ufo200.ini file and 640x480
+        // Try both the video mode selected in the ufo200.ini
         set_color_depth(color_depth);
         if (set_gfx_mode(gfx_driver, xres, yres, 0, 0) == 0)
             break;
-        if (xres != MINIMUM_XRES && yres != MINIMUM_YRES) {
-            if (set_gfx_mode(gfx_driver, MINIMUM_XRES, MINIMUM_YRES, 0, 0) == 0) {
-                xres = MINIMUM_XRES;
-                yres = MINIMUM_YRES;
-                break;
-            }
-        }
 
         // Try next color depth
         color_depth += 8;
