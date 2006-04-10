@@ -295,23 +295,57 @@ static std::string *find_config_file(int argc, char *argv[])
 // Create or upgrade the database, if it's not existed or outdated.
 void prepare_db()
 {
-    char buffer[512];
-    FILE *f = fopen("update_db.sql", "rt");
-    if (f == NULL) {
-        printf("Error: can't db init script.\n");
-        return;
-    }
+    static const char *update_db[] = {
+        "CREATE TABLE ufo2000_users (name text primary key, password text, last_login date, victories integer default 0, draws integer default 0, defeats integer default 0, elo_score double default 1500);",
 
-    int line = 1;
-    while (fgets(buffer, 511, f)) {
+        "CREATE TABLE ufo2000_sequences (name text primary key,seq_val integer);",
+
+        "CREATE TABLE ufo2000_games (id integer primary key,  last_received_packed integer, is_finished text, errors text, result integer);",
+
+        "CREATE TABLE ufo2000_game_players(game integer,  player text, last_sended_packet integer, position integer, primary key(game, player));",
+
+        "insert or ignore into ufo2000_sequences values ('ufo2000_games',0);",
+
+        "CREATE TABLE ufo2000_game_packets(game integer, id integer, sender integer, command text, packet_type integer, primary key(game,id));",
+
+        "CREATE TRIGGER ufo2000_game_insert insert ON ufo2000_games BEGIN "
+        "   delete from ufo2000_game_packets where game<new.id-100; "
+        "   delete from ufo2000_debug_log where game<new.id-100; "
+        "END;",
+
+        "alter table ufo2000_games add column client_version text;",
+
+        "alter table ufo2000_game_packets add column time real;",
+
+        "create table ufo2000_user_sessions (id integer primary key, user text, realm text, system text, version text, begin real, end real, unique (user, begin));",
+
+        "alter table ufo2000_user_sessions add column realm text;",
+
+        "alter table ufo2000_user_sessions add column system text;",
+
+        "alter table ufo2000_user_sessions add column version text;",
+
+        "alter table ufo2000_game_packets add column session integer;",
+
+        "insert or ignore into ufo2000_sequences values ('ufo2000_user_sessions', 0);",
+
+        "create table ufo2000_debug_packets (game integer, id integer, sender integer, time real, param text, value text, session integer, primary key (game, id));",
+
+        "create table ufo2000_debug_log (game integer, session integer, sender integer, id integer, time real, type integer, value text);",
+
+        "create index ufo2000_debug_log_indx on ufo2000_debug_log (game, session, sender, id, type);",
+
+        "create index ufo2000_debug_packets_indx on ufo2000_debug_packets (session, game, param);"
+    };
+
+    for (int i = 0; i < (int)(sizeof(update_db) / sizeof(update_db[0])); i++) {
         try {
-            db_conn.executenonquery(buffer);
+            db_conn.executenonquery(update_db[i]);
         }
         catch(std::exception &ex) {
-		    server_log("Error in update_db.sql, line %d - %s\n", line, buffer);
+            server_log("Error executing '%s'\n", update_db[i]);
             LOG_EXCEPTION(ex.what());
         }
-		line++;
     }
     db_conn.executenonquery("begin transaction;");
 }
