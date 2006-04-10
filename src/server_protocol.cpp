@@ -25,6 +25,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "server_protocol.h"
 #include "server_config.h"
 #include "server_game.h"
+#include "md5/md5.h"
 
 std::string ServerClientUfo::m_last_user_name = "";
 NLtime      ServerClientUfo::m_last_user_disconnect_time;
@@ -138,6 +139,31 @@ void ServerDispatch::MakeHtmlReport(std::string &html_body)
     html_body += "</body></html>";
 }
 
+/**
+ * Calculate password hash for secure transmission of it over network and
+ * storing it in the database. In order to protect from services like
+ * http://passcracking.com/ a prefix 'ufo2000:' is always added to the 
+ * password before calculating md5 hash.
+ * @param pass password
+ * @return password hash value
+ */
+static std::string ufo2000_get_password_hash(const std::string &pass)
+{
+    std::string result;
+    md5_state_t md5_state;
+    unsigned char md5_data[16];
+    md5_init(&md5_state);
+    md5_append(&md5_state, (md5_byte_t *)"ufo2000:", 8);
+    md5_append(&md5_state, (md5_byte_t *)pass.data(), pass.size());
+    md5_finish(&md5_state, (md5_byte_t *)md5_data);
+    for (int i = 0; i < 16; i++) {
+        char tmp[3];
+        sprintf(tmp, "%02x", md5_data[i]);
+        result.append(tmp);
+    }
+    return result;
+}
+
 ServerClient *ServerDispatch::CreateServerClient(NLsocket socket)
 {
     return new ServerClientUfo(this, socket);
@@ -221,9 +247,14 @@ bool ServerClientUfo::recv_packet(NLuint id, const std::string &raw_packet)
 
             if (packet_properties.empty()) {
                 split_with_colon(packet, login, password);
+                password = ufo2000_get_password_hash(password);
             } else {
                 login = packet_properties["name"];
-                password = packet_properties["password"];
+                if (packet_properties.find("password_hash") != packet_properties.end()) {
+                    password = packet_properties["password_hash"];
+                } else {
+                    password = ufo2000_get_password_hash(packet_properties["password"]);
+                }
             }
 
             m_realm = packet_properties["realm"];
@@ -491,7 +522,7 @@ bool ClientServerUfo::login(
 {
     std::map<std::string, std::string> packet;
     packet["name"] = name;
-    packet["password"] = pass;
+    packet["password_hash"] = ufo2000_get_password_hash(pass);
     packet["realm"] = realm;
     packet["system"] = system;
     packet["version"] = version;
@@ -542,7 +573,8 @@ bool ClientServerUfo::resume_game_debug(std::string game_id)
 bool ServerClientUfo::add_user(const std::string &login, const std::string &password)
 {
     try {
-        db_conn.executenonquery("insert into ufo2000_users(name,password) values('%q','%q');", login.c_str(),password.c_str());
+        db_conn.executenonquery("insert into ufo2000_users(name,password) values('%q','%q');", 
+            login.c_str(), ufo2000_get_password_hash(password).c_str());
         db_conn.executenonquery("commit;");
         db_conn.executenonquery("begin transaction;");
     }
@@ -560,18 +592,17 @@ bool ServerClientUfo::add_user(const std::string &login, const std::string &pass
 int ServerClientUfo::validate_user(const std::string &username, const std::string &password)
 {
     try {
-    if (!db_conn.executeint32("select count(*) from ufo2000_users where name='%q';",username.c_str()))
-        return 0;
-    if (db_conn.executeint32("select count(*) from ufo2000_users where name='%q' and password='%q';",username.c_str(),password.c_str()))
-        return 1;
+        if (!db_conn.executeint32("select count(*) from ufo2000_users where name='%q';", username.c_str()))
+            return 0;
+        if (db_conn.executeint32("select count(*) from ufo2000_users where name='%q' and password='%q';", 
+            username.c_str(), ufo2000_get_password_hash(password).c_str())) return 1;
+        // Support for legacy clients that send passwords as clear text - calculate hash twice
+        if (db_conn.executeint32("select count(*) from ufo2000_users where name='%q' and password='%q';", 
+            username.c_str(), ufo2000_get_password_hash(ufo2000_get_password_hash(password)).c_str())) return 1;
     }
     catch(std::exception &ex) {
         LOG_EXCEPTION(ex.what());
     }
     return -1;
-    
-/*    sqlite3::reader reader=con.executereader("select * from t_test;");
-    if (accept_user.find(username) == accept_user.end()) return 0;
-    return accept_user[username] == password ? 1 : -1;*/
 }
 

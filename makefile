@@ -84,7 +84,7 @@ endif
 
 VPATH = src src/jpgalleg src/dumbogg src/exchndl src/agup src/lua \
         src/glyphkeeper src/loadpng src/sqlite src/luasqlite3 src/lua/lua \
-        src/scale2x src/fdlibm
+        src/scale2x src/fdlibm src/md5
 
 
 SRCS_LUALIB = lapi.c lauxlib.c lbaselib.c lcode.c ldblib.c ldebug.c   \
@@ -117,12 +117,12 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
                                                                       \
        $(SRCS_LUALIB)                                                 \
        $(SRCS_FDLIBM)                                                 \
-                                                                      \
+       md5.c                                                          \
        aalg.c aase.c abeos.c abitmap.c agtk.c agup.c ans.c            \
        aphoton.c awin95.c decode.c encode.c io.c jpgalleg.c scale2x.c
 
 SRCS_SERVER = server_config.cpp server_main.cpp server_protocol.cpp   \
-              server_game.cpp                                         \
+              server_game.cpp md5.c                                   \
               server_transport.cpp $(SRCS_LUALIB)                     \
               sqlite3_command.cpp sqlite3_connection.cpp              \
               sqlite3_internal.cpp sqlite3_reader.cpp                 \
