@@ -44,18 +44,6 @@ to successfully compile and run UFO2000 in one of them, please let us know.
 Detailed information about installing UFO2000 can be found in the INSTALL
 file from UFO2000 directory.
 
-===============
-***Important***
-===============
-
-You need data files from the original X-COM: UFO Defense to play UFO2000. 
-The game will also work with data files from the X-COM demo (which can be 
-downloaded), but you will only be able to play on 'City' map and use a 
-limited set of units in this case. Having a full version of X-COM: UFO Defense 
-is highly recommended in order to be able to play in all the original terrains.
-Having only TFTD is not sufficient: you will still need UFO, either the full 
-game or the demo. 
-
 =========
 Main Menu
 =========
@@ -75,7 +63,7 @@ After starting the game, you will see a number of available menu options:
       to it from ufo2000 on another computer.
       The other two required fields are login and password. They are 
       used to identify the user to track some game statistics 
-      (http://ufo2000.lxnt.info/results.php, currently.) Login 
+      (http://ufo2000.xcomufo.com/results.php, currently.) Login 
       should be any name not used by other players and password should be 
       at least 6 characters long. After successful login or registration, 
       you will see the internet server chat screen.

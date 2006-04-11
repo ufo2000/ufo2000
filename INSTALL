@@ -1,7 +1,5 @@
-  !!! WARNING: This file is not up to date and needs to be updated !!!
-
                              Installing ufo2000.
-			     
+                 
 ------------------------------------------------------------------------------
 -- 1. General information.
 ------------------------------------------------------------------------------
@@ -13,17 +11,12 @@ look for instructions there). DOS support is not a primary target now though
 it still may be not completely broken. If anyone wants to reanimate
 DOS support, you are welcome.
 
-In order to successfully run ufo2000, you need a set of data files from 
-'UFO: Enemy Unknown' by Microprose. UFO2000 can also use data files from 
-demo-version of this game, but you will only have a limited set of features 
-available in this case. If you have TFTD you will be able to use its maps but 
-you will still need UFO (full game or demo) to play UFO2000.
-
-Important: if the game fails to start and suggests you to read this file,
-most likely you have problems with the data files from X-COM (you may have
-some X-COM mod installed which is incompatible with ufo2000), try using
-X-COM demo in this case and see if it helps (link to it is given in the 
-instructions below).
+The game is designed to be compatible with the graphics and other data files from 
+'UFO: Enemy Unknown' by Microprose. Moreover, some time ago using these data files 
+was the only way to run the game. But now we have a set of free graphics and other 
+resources, so now installing and using the data files from X-COM is optional.
+Having data files from X-COM and TFTD provides a lot more maps and unit skins 
+for use in the game though.
 
 ------------------------------------------------------------------------------
 -- 2. Platform-specific instructions
@@ -62,83 +55,41 @@ instructions below).
    the directory where you have X-COM: UFO Defense installed into 
    'XCOM' subdirectory of ufo2000 (it is initially empty).
 
-4) If you do not have a full version of X-COM, you can download a freely 
-   available demo from ftp://ftp.microprose.com:
-
-     ftp://ftp.microprose.com/pub/mps-online/x-com/xcomdemo.zip
-
-   After decompression of this file, you will get XCOM.EXE file which
-   is zip self extracting archive. Run it with -d option and specify
-   ufo2000 directory in a command line: 'XCOM.EXE -d c:\games\ufo2000'.
-
-   Note: this SFX archive is a DOS executable and it can not handle
-   long file names ('C:\Program Files\ufo2000' for example), in this case
-   you will have to extract all the needed files using any other external
-   utility and place extracted files to ufo2000 directory manually (into
-   'XCOMDEMO' subdirectory, which is initially empty).
-
-5) X-COM: Terror From the Deep data files are installed in a similar 
-   way: TFTD subdirectory is used for a full version, TFTDDEMO 
-   subdierectory is used for a demo version of X-COM: Terror From the Deep.
-   This demo version can be downloaded here: 
-
-     ftp://ftp.microprose.com/pub/mps-online/demos/terror.zip
-
-   Please note that data files from TFTD are optional and only add support 
-   for some extra maps to the game. Data files from X-COM are required and
-   you can't start the game without them.
+4) X-COM: Terror From the Deep data files are installed in a similar 
+   way to 'TFTD' subdirectory
 
 --- Linux/Unix ---
 
 1) Check if you have all the needed libraries installed and install them
-   if necessery. A list of the required libraries is listed below:
+   if necessery. The game requires a lot of libraries, but most of them are 
+   usually already preinstalled: expat, zlib, libpng, ogg vorbis, freetype2. 
+   
+   Less 'standard' libraries you may have troubles with are listed below:
    
    Allegro library version 4.0.x
      can be found at http://www.talula.demon.co.uk/allegro/
-   Expat library 1.95.6
-     can be found at http://expat.sourceforge.net/
    HawkNL network library 1.68
      can be found at http://www.hawksoft.com/hawknl/
-   Lua scripting language and library version 5.0
-     can be found at http://www.lua.org/
-
-   If gcc complains about expat.h :
-
-   expat.h:657: use of enum `XML_Status' without previous declaration
-   expat.h:736: multiple definition of `enum XML_Status'
-
-   cut the enum definition at about line 736 and paste it somewhere above
-   line 657.
+   Sqlite embeddable SQL database engine library version 3
+     can be found at http://www.sqlite.org/
+   DUMB music library 0.9.2 (version 0.9.3 is not compatible with the game!)
+     can be found at http://dumb.sourceforge.net/
 
 2) Download the latest sources of ufo2000, extract them into a separate 
    directory and run make (or gmake) from it:
 
    # make
 
-3) If you have a full version of X-COM, you can just copy all the files
-   from the installed X-COM directory into 'XCOM' subdirectory of ufo2000
-   (it is initially empty)
+   For building without music support (and without the need to install DUMB library):
 
-4) If you do not have a full version of X-COM, you can download a freely 
-   available demo from ftp://ftp.microprose.com:
+   # make no_dumbogg=1
 
-     ftp://ftp.microprose.com/pub/mps-online/x-com/xcomdemo.zip
+3) If you have a full version of X-COM, you can copy all the files from 
+   the directory where you have X-COM: UFO Defense installed into 
+   'XCOM' subdirectory of ufo2000 (it is initially empty).
 
-   After decompression of this file, you will get XCOM.EXE file which
-   is zip self extracting archive. There are all the needed files for 
-   ufo2000 to work inside of it. Extract them and copy into 'XCOMDEMO' 
-   subdirectory of ufo2000.
-
-5) X-COM: Terror From the Deep data files are installed in a similar 
-   way: TFTD subdirectory is used for a full version, TFTDDEMO 
-   subdierectory is used for a demo version of X-COM: Terror From the Deep.
-   This demo version can be downloaded here: 
-
-     ftp://ftp.microprose.com/pub/mps-online/demos/terror.zip
-
-   Please note that data files from TFTD are optional and only add support 
-   for some extra maps to the game. Data files from X-COM are required and
-   you can't start the game without them.
+4) X-COM: Terror From the Deep data files are installed in a similar 
+   way to 'TFTD' subdirectory
 
 --- Gentoo Linux ---
 
