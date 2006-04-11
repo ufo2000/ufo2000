@@ -45,7 +45,6 @@
     
     ReserveFile "select_option.ini"
     ReserveFile "xcom_folder.ini"
-    ReserveFile "demo_select.ini"
     ReserveFile "readme_select.ini"
     !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
 
@@ -55,7 +54,6 @@
 Function .onInit
     !insertmacro MUI_INSTALLOPTIONS_EXTRACT "select_option.ini"
     !insertmacro MUI_INSTALLOPTIONS_EXTRACT "xcom_folder.ini"
-    !insertmacro MUI_INSTALLOPTIONS_EXTRACT "demo_select.ini"
     !insertmacro MUI_INSTALLOPTIONS_EXTRACT "readme_select.ini"
     
     System::Call 'kernel32::CreateMutexA(i 0, i 0, t "myMutex") i .r1 ?e' 
@@ -80,7 +78,7 @@ FunctionEnd
     !define MUI_FINISHPAGE_RUN $INSTDIR\ufo2000.exe
     !define MUI_UNCONFIRMPAGE_TEXT_TOP "${GAME_NAME} will be uninstalled from the following folder. \
     Click Uninstall to start the uninstallation.$\r$\nWARNING: All files and folders in the ${GAME_NAME} \
-    folder will be deleted, including any downloaded X-Com/TFTD demos."
+    folder will be deleted."
     !define MUI_ABORTWARNING
     
 ;--------------------------------
@@ -106,7 +104,6 @@ FunctionEnd
     Page custom SelectOption
     Page custom SearchXcom
     Page custom XComFolder
-    Page custom DemoSelect
     !define MUI_STARTMENUPAGE_REGISTRY_ROOT HKLM 
   !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${GAME_NAME}" 
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
@@ -412,7 +409,6 @@ Section "${GAME_NAME} (required)" MainSec
     File "ufo2000-srv.exe"
     File "ufo2000.default.ini"
     File "ufo2000-srv.conf"
-    File "update_db.sql"
     
     SetOutPath $INSTDIR\arts
     File /r arts\*
@@ -502,86 +498,6 @@ Section "Desktop Shortcut" DesktopSec
     CreateShortCut "$DESKTOP\${GAME_NAME}.lnk" "$INSTDIR\ufo2000.exe"
   
 SectionEnd
-
-Section /o -"XcomDemoSec" XcomDemoSec
-
-    ;(uses NSISdl.dll)
-    NSISdl::download "http://ufo2000.lxnt.info/files/xcomdemo.zip" "$TEMP\xcomdemo.zip"
-    Pop $0
-    StrCmp $0 success success1
-        SetDetailsView show
-        DetailPrint "download failed: $0"
-        Abort
-    success1:
-
-    ;(uses ZipDLL.dll)
-    !insertmacro ZIPDLL_EXTRACT "$TEMP\xcomdemo.zip" "$TEMP" "XCOM.EXE"
-    Pop $0
-    StrCmp $0 success success2
-        SetDetailsView show
-        DetailPrint "unzipping failed: $0"
-        Abort
-    success2:
-    !insertmacro ZIPDLL_EXTRACT "$TEMP\XCOM.EXE" "$INSTDIR" "<ALL>"
-    Pop $0
-    StrCmp $0 success success3
-        SetDetailsView show
-        DetailPrint "unzipping failed: $0"
-        Abort
-    success3:
-
-    Delete "$TEMP\xcomdemo.zip"
-    Delete "$TEMP\XCOM.EXE"
-
-SectionEnd
-
-Section /o -"TFTDDemoSec" TFTDDemoSec
-
-    ;(uses NSISdl.dll)
-    NSISdl::download "http://ufo2000.lxnt.info/files/terror.zip" "$TEMP\terror.zip"
-    Pop $0
-    StrCmp $0 success success1
-        SetDetailsView show
-        DetailPrint "download failed: $0"
-        Abort
-    success1:
-
-    ;(uses ZipDLL.dll)
-    !insertmacro ZIPDLL_EXTRACT "$TEMP\terror.zip" "$TEMP" "TFTD.ZIP"
-    Pop $0
-    StrCmp $0 success success2
-        SetDetailsView show
-        DetailPrint "unzipping failed: $0"
-        Abort
-    success2:
-    !insertmacro ZIPDLL_EXTRACT "$TEMP\TFTD.ZIP" "$INSTDIR\TFTDDEMO" "<ALL>"
-    Pop $0
-    StrCmp $0 success success3
-        SetDetailsView show
-        DetailPrint "unzipping failed: $0"
-        Abort
-    success3:
-
-    Delete "$TEMP\terror.zip"
-    Delete "$TEMP\TFTD.ZIP"
-
-SectionEnd
-
-Function DemoSelect
-    !insertmacro MUI_INSTALLOPTIONS_READ $0 "select_option.ini" "Field 6" "State"
-    StrCmp $0 "1" sucess fail
-    fail: Abort
-    sucess:
-  !insertmacro MUI_HEADER_TEXT "$(TEXT_DEMOSEL_TITLE)" "$(TEXT_DEMOSEL_SUBTITLE)"
-  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "demo_select.ini"
-    !insertmacro MUI_INSTALLOPTIONS_READ $0 "demo_select.ini" "Field 2" "State"
-    StrCmp $0 "1" xcomdemo check
-    xcomdemo: !insertmacro SelectSection ${XcomDemoSec}
-    check: !insertmacro MUI_INSTALLOPTIONS_READ $0 "demo_select.ini" "Field 3" "State"
-    StrCmp $0 "1" tftddemo end
-    tftddemo: !insertmacro SelectSection ${TFTDDemoSec}
-    end:
-FunctionEnd
 
 ;--------------------------------
 ;Descriptions
