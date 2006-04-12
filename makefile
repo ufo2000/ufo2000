@@ -119,8 +119,7 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
        $(SRCS_FDLIBM)                                                 \
        md5.c                                                          \
        aalg.c aase.c abeos.c abitmap.c agtk.c agup.c ans.c            \
-       aphoton.c awin95.c decode.c encode.c io.c jpgalleg.c scale2x.c \
-	   gametime.cpp
+       aphoton.c awin95.c decode.c encode.c io.c jpgalleg.c scale2x.c
 
 SRCS_SERVER = server_config.cpp server_main.cpp server_protocol.cpp   \
               server_game.cpp md5.c                                   \
