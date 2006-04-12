@@ -2,7 +2,7 @@
 This file is part of "UFO 2000" aka "X-COM: Gladiators"
                     http://ufo2000.sourceforge.net/
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
-Copyright (C) 2002-2005  ufo2000 development team
+Copyright (C) 2002-2006  ufo2000 development team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,6 +23,11 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "global.h"
 #include "font.h"
 #include "text.h"
+#include "gametime.h"
+
+
+static  GameTime  g_game_time;
+
 
 static BITMAP *texture;
 static BITMAP *buffer;
@@ -97,19 +102,41 @@ void geoscape()
             for (int j = 0; j < texture->h; j += STEP)
                 draw_map_fragment(i, j, STEP, STEP);
                 
+        g_game_time.tick();
+        struct tm*  now = g_game_time.human_readable();
+        char  formattedGameTime[8 + 2 + 3 + 8 + 1 + 5];
+        strftime( formattedGameTime, sizeof(formattedGameTime),
+                  "%T, %a %e %b %Y", now );
+
         textout(buffer, g_small_font, _("Use left/right arrows to rotate the globe"), 0, 0, makecol(255, 255, 255));
-        textout(buffer, g_small_font, _("Press ESC to exit"), 0, text_height(g_small_font), makecol(255, 255, 255));
+        textout(buffer, g_small_font, _("Use F1..F7 to accelerate time"), 0, text_height(g_small_font), makecol(255, 255, 255));
+        textout(buffer, g_small_font, _("Press ESC to exit"), 0, text_height(g_small_font)*2, makecol(255, 255, 255));
+        textout(buffer, g_console_font, _(formattedGameTime), 0, text_height(g_small_font)*3, makecol(255, 255, 255));
     
         blit(buffer, screen, 0, 0, 0, 0, screen->w, screen->h);
 
         int scancode;
-        ureadkey(&scancode);
-        if (scancode == KEY_ESC) break;
+        if ( keypressed() ) {
 
-        if (scancode == KEY_RIGHT)
-            delta_phi -= PI / 64;
-        if (scancode == KEY_LEFT)
-            delta_phi += PI / 64;
+            ureadkey(&scancode);
+            if (scancode == KEY_ESC) break;
+
+            if (scancode == KEY_RIGHT)
+                delta_phi -= PI / 64;
+            if (scancode == KEY_LEFT)
+                delta_phi += PI / 64;
+
+            switch (scancode) {
+
+                case KEY_F1: g_game_time.set_rate(PAUSED); break;
+                case KEY_F2: g_game_time.set_rate(FIVE_SECONDS); break;
+                case KEY_F3: g_game_time.set_rate(ONE_MINUTE); break;
+                case KEY_F4: g_game_time.set_rate(FIVE_MINUTES); break;
+                case KEY_F5: g_game_time.set_rate(THIRTY_MINUTES); break;
+                case KEY_F6: g_game_time.set_rate(ONE_HOUR); break;
+                case KEY_F7: g_game_time.set_rate(ONE_DAY); break;
+            }
+        }
     }
     
     destroy_bitmap(texture);
