@@ -129,6 +129,8 @@ SRCS_SERVER = server_config.cpp server_main.cpp server_protocol.cpp   \
 
 SRCS_LUA = lua.c $(SRCS_LUALIB)
 
+DISTRO = ${shell if [ -e /etc/debian_version ]; then echo debian; else echo non-debian; fi }
+
 ifdef debug
 	CFLAGS += -g
 ifdef valgrind
@@ -183,10 +185,18 @@ else
 	INCLUDES = ${shell allegro-config --cflags}
 	CFLAGS += $(INCLUDES)
 ifdef static	
+ifneq ($(DISTRO),debian)
 	LIBS := -static $(LIBS) -lNL ${shell allegro-config --libs}
+else
+	LIBS := -static $(LIBS) -lNL
+endif
 	SERVER_LIBS += -static -lNL -pthread
 else
+ifneq ($(DISTRO),debian)
 	LIBS += -lNL -pthread ${shell allegro-config --libs}
+else
+	LIBS += -lNL -pthread
+endif
 	SERVER_LIBS += -lNL -pthread
 endif
 endif
@@ -214,6 +224,9 @@ endif
 endif
 
 ##############################################################################
+
+# switch off echo of make commands
+.SILENT:
 
 all: $(OBJDIR) $(NAME)
 
@@ -243,7 +256,13 @@ $(LUA_NAME): $(OBJS_LUA)
 clean:
 	$(RM) $(OBJDIR)/*.o
 	$(RM) $(OBJDIR)/*.d
+	rmdir $(OBJDIR)
+	$(RM) init-scripts.log squad.lua
+	$(RM) -R debian/ufo2000
+	$(RM) build-stamp configure-stamp ufo2000.1
+	$(RM) -R $(DISTNAME)
 	$(RM) $(NAME)
+	$(RM) $(NAME)-srv
 
 # Update the translations of game messages to different languages 
 # using gettext tools - see manual at
@@ -317,6 +336,29 @@ source-bz2:
 	sed 's,unknown,$(UFO_SVNVERSION),g' < src/version.h > $(DISTNAME)/src/version.h
 	tar -cjf $(DISTNAME)-src.tar.bz2 $(DISTNAME)
 	svn delete --force $(DISTNAME)
+
+install: all server
+	# necessary in order to create a Debian/derivatives package with:
+	# dpkg-buildpackage -rfakeroot
+	# BEGIN copied from binary-gz target
+	svn delete --force $(DISTNAME)
+	svn export . $(DISTNAME)
+	rm -R $(DISTNAME)/src
+	rm -R $(DISTNAME)/datfile
+	rm -R $(DISTNAME)/doxygen
+	rm $(DISTNAME)/makefile* $(DISTNAME)/Seccast*
+	rm $(DISTNAME)/*.rc $(DISTNAME)/*.h
+	cp ufo2000 ufo2000-srv $(DISTNAME)
+	# END copied from binary-gz target
+	install -d $(DESTDIR)/usr/share/games/ufo2000 $(DESTDIR)/usr/games
+	cp -a $(DISTNAME)/* $(DESTDIR)/usr/share/games/ufo2000
+	find $(DESTDIR) -type d -print0 | xargs -0 chmod 755
+	find $(DESTDIR) -type f -print0 | xargs -0 chmod 644
+	mv $(DESTDIR)/usr/share/games/ufo2000/ufo2000 $(DESTDIR)/usr/games
+	mv $(DESTDIR)/usr/share/games/ufo2000/ufo2000-srv $(DESTDIR)/usr/games
+	chmod 755 $(DESTDIR)/usr/games/ufo2000
+	chmod 755 $(DESTDIR)/usr/games/ufo2000-srv
+	cp -a $(DESTDIR)/usr/share/games/ufo2000/ufo2000.default.ini $(DESTDIR)/usr/share/games/ufo2000/ufo2000.ini
 
 html-docs: tools
 	./lua script/lumikki.lua docs-src/newweapons.lhtml > docs/newweapons.html

@@ -1,0 +1,16 @@
+Source: ufo2000
+Section: games
+Priority: optional
+Maintainer: Neil Stockbridge <unclouded@users.sourceforge.net>
+Build-Depends: debhelper (>= 4.0.0), docbook-to-man
+Standards-Version: 3.6.1
+
+Package: ufo2000
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: UFO2000 is a multi-player turn-based tactical game
+ UFO2000 is a multi-player remake of the tactical part the original XCOM:*
+ games by Microprose (XCOM: UFO Defense, XCOM: Enemy Unknown and XCOM: Terror
+ From The Deep).  UFO2000 does not require any of the original non-free data
+ files although it supports them if available.  The upstream site is
+ http://ufo2000.sourceforge.net/

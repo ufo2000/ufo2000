@@ -1,0 +1,2 @@
+?package(ufo2000):needs="X11" section="Apps/Games"\
+  title="ufo2000" command="/usr/games/ufo2000"
