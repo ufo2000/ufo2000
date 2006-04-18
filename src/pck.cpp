@@ -28,6 +28,39 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #undef map
 
+#ifdef _WIN32
+
+// Not every Win32 system has GetLongPathName function available, so we try to get its
+// address at runtime
+
+static HANDLE hKernel32 = GetModuleHandle("kernel32.dll");
+static DWORD WINAPI (*lpGetLongPathName)(LPCTSTR lpszShortPath, LPTSTR lpszLongPath, DWORD cchBuffer) = 
+    (DWORD WINAPI (*)(LPCTSTR, LPTSTR, DWORD))GetProcAddress(hKernel32, "GetLongPathNameA");
+
+#endif
+
+/**
+ * Windows system is not case sensitive so if some resources description contains
+ * reference to a file with inconsistent case, it will work in Windows, but fail
+ * to load in Unix. In order to prevent this from happening, this function checks
+ * if filename has correct case and path separators.
+ */
+bool check_filename_case_consistency(const char *filename)
+{
+#ifdef _WIN32
+    char tmp[MAX_PATH];
+    if (!lpGetLongPathName) return true; // unable to check file name consistency, let it live :)
+
+    DWORD result = lpGetLongPathName(filename, tmp, MAX_PATH);
+    if (result == 0 || result > MAX_PATH) return true; // some problems detected
+
+    for (int i = 0; tmp[i]; i++) if (tmp[i] == '\\') tmp[i] = '/';
+
+    if (strcmp(filename, tmp) != 0) return false;
+#endif
+    return true;
+}
+
 //! We cache loaded pck files here
 static std::map<std::string, PCK *> g_pck_cache;
 
@@ -134,6 +167,11 @@ static BITMAP *load_bitmap_alpha(const char *filename)
 ALPHA_SPRITE *png_image(const char *filename)
 {
     std::string fullname = F(filename);
+
+    if (!check_filename_case_consistency(fullname.c_str())) {
+        return NULL;
+    }
+
     if (g_png_cache.find(fullname) == g_png_cache.end()) {
         BITMAP *bmp = convert_bitmap_alpha(load_bitmap_alpha(fullname.c_str()));
         if (!bmp) {
