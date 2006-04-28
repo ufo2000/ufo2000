@@ -22,6 +22,8 @@ ExplosionAnimation = {}
 ImageTable = {}
 -- table with information about units
 UnitsTable = {}
+-- table with GUI information
+GuiTable = {}
 
 -- Workaround for a problem when running the game in valgrind.
 -- Appears that get_executable_name() function can't get correct
@@ -142,6 +144,16 @@ local function UpdateTableCrc32(initcrc, tbl, exclude_list)
         initcrc = UpdateCrc32(initcrc, "\n")
     end
     return initcrc
+end
+
+-- adds a GUI screen definition
+function AddPanel(screen)
+    if GuiTable[screen.Name] then
+        Warning("AddPanel: duplicate screen GUI definition detected '%s'", screen.Name)
+        return nil
+    end
+    GuiTable[screen.Name] = screen
+    Message("AddPanel: added panel '%s'", screen.Name)
 end
 
 -- adds new tileset
@@ -678,6 +690,8 @@ plugins_sandbox = {
 
     AddTileset = AddTileset,
     AddTerrain = AddTerrain,
+    
+    AddPanel = AddPanel,
 
     AddXcomTerrain = AddXcomTerrain,
 

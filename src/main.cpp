@@ -52,6 +52,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "random.h"
 #include "stats.h"
 #include "zfstream.h"
+#include "gui.h"
 #ifdef HAVE_PNG
 #include "loadpng/loadpng.h"
 #endif
@@ -825,16 +826,28 @@ void initmain(int argc, char *argv[])
 
     set_video_mode();
     set_palette((RGB *)datafile[DAT_GAMEPAL_BMP].dat);
-
-    BITMAP *text_back = load_back_image(cfg_get_loading_image_file_name());
-    stretch_blit(text_back, screen, 0, 0, text_back->w, text_back->h, 0, 0, SCREEN_W, SCREEN_H);
-    /*Following line is screen height related to keep the design layout correct at any resolution*/
-    print_win = new Wind(text_back, 15, 2*SCREEN_H / 3 + 5 , 625, 21 * SCREEN_H / 24, COLOR_BLACK2);
-
+    
+    lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-gui.lua");   
+    
+    /* Execute some routines of the skin object to control appearance. */
+    SkinInterface *screen_init;
+    screen_init = new SkinInterface("Game_init");
+    BITMAP *loading_back = screen_init->background();
+    stretch_blit(loading_back, screen, 0, 0, loading_back->w, loading_back->h, 0, 0, SCREEN_W, SCREEN_H);
+       
+    int init_win_x1, init_win_y1, init_win_x2, init_win_y2;
+    init_win_x1 = screen_init->Feature("InitStream")->get_pd_x1();
+    init_win_y1 = screen_init->Feature("InitStream")->get_pd_y1();
+    init_win_x2 = screen_init->Feature("InitStream")->get_pd_x2();
+    init_win_y2 = screen_init->Feature("InitStream")->get_pd_y2();
+    /*Draw on sprite : otherwise we get a bad visual effect*/
+    print_win = new Wind(loading_back, init_win_x1, init_win_y1, init_win_x2, init_win_y2, COLOR_BLACK2);
+    delete screen_init; 
     /* to use the init console as an ostream -very handy. */
     consoleBuf consbuf(FLAGS & F_LOGTOSTDOUT);
     std::ostream console(&consbuf);
 
+    /* Load Allegro library */    
     console<<"allegro_init"<<std::endl;
 
     console<<"agup_init"<<std::endl;
@@ -846,7 +859,6 @@ void initmain(int argc, char *argv[])
     gui_edit_proc = d_agup_edit_proc;
     gui_list_proc = d_agup_list_proc;
     gui_text_list_proc = d_agup_text_list_proc;
-
     lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-items.lua");
     lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-images.lua");
 

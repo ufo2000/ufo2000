@@ -37,6 +37,7 @@ FilesTable = {
     ["$(ufo2000)/init-scripts/standard-maps.lua"]      = { Crc32 = X("0x00000000") },
     ["$(ufo2000)/init-scripts/standard-items.lua"]     = { Crc32 = X("0x00000000") },
     ["$(ufo2000)/init-scripts/standard-icons.lua"]     = { Crc32 = X("0x00000000") },
+    ["$(ufo2000)/init-scripts/standard-gui.lua"]     = { Crc32 = X("0x00000000") },
     
     ["$(ufo2000)/arts/menu.jpg"]      = { Crc32 = X("0x00000000") },
     ["$(ufo2000)/arts/empty.spk"]     = { Crc32 = X("0x00000000") },

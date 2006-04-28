@@ -113,7 +113,7 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
        sound.cpp spk.cpp stats.cpp terrapck.cpp text.cpp units.cpp    \
        video.cpp wind.cpp geoscape.cpp zfstream.cpp script_api.cpp    \
        sqlite3_command.cpp sqlite3_connection.cpp                     \
-       sqlite3_internal.cpp sqlite3_reader.cpp                        \
+       sqlite3_internal.cpp sqlite3_reader.cpp gui.cpp                \
                                                                       \
        $(SRCS_LUALIB)                                                 \
        $(SRCS_FDLIBM)                                                 \
