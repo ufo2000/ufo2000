@@ -479,10 +479,13 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
     }
                                    
     //explosions have to be drawn over all other sprites
+    //explosions have to be weapon specific
+    //The center of an explosion sprite is defined as 1/2 of it's width and 1/3 of it's height starting from the bottom
+    //This center is placed above the middle of the tile that explodes.
     std::vector<effect>::iterator exp;  
     for (exp = explo_spr_list->begin(); exp != explo_spr_list->end(); exp++) {
         int l = exp->lev, r = exp->row, c = exp->col;
-            
+        int it_type = exp->type;    
         if (!(platoon_local->is_seen(l, c, r)) ||
             !(l >= l1 && l <= l2) ||
             !(r >= r1 && r <= r2) ||
@@ -501,8 +504,18 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
             lua_pushnumber(L, e / 2 + 1);
             lua_gettable(L, -2);
             if (lua_isuserdata(L, -1)) {
-                ALPHA_SPRITE *spr = (ALPHA_SPRITE *)lua_touserdata(L, -1);
-                draw_alpha_sprite(screen2, spr, (sx + 16) - (spr->w / 2), (sy + 12) - (spr->h / 2));
+                if (it_type > 0) {
+                    ALPHA_SPRITE *spr = (ALPHA_SPRITE *)lua_touserdata(L, -1);
+                    ALPHA_SPRITE *exp_frame = Item::obdata_get_bitmap(it_type, "hitAnim", e / 2 + 1);
+                    if (exp_frame) {
+                        draw_alpha_sprite(screen2, exp_frame, (sx + 16) - (exp_frame->w / 2), (sy + 12) - (exp_frame->h * 2 / 3));
+                    }else if( !Item::obdata_get_bitmap(it_type, "hitAnim", 1) ) {
+                        draw_alpha_sprite(screen2, spr, (sx + 16) - (spr->w / 2), (sy + 12) - (spr->h * 2 / 3));
+                    }
+                }else {
+                    ALPHA_SPRITE *spr = (ALPHA_SPRITE *)lua_touserdata(L, -1);
+                    draw_alpha_sprite(screen2, spr, (sx + 16) - (spr->w / 2), (sy + 12) - (spr->h * 2 / 3));
+                } 
             }
             lua_settop(L, stack_top);
         }
@@ -1584,7 +1597,9 @@ int calculate_hitdir(double dz, double dx, double dy)
 const double EXPL_BORDER_DAMAGE = 0.5; // how much damage does explosion on its border
 const double HEIGHT_RATIO = 2; // how high is one level in squares 
 
-//map object explosion
+/*
+ *Map object explosion
+ */
 int Map::explode(int z, int x, int y, int max_damage)
 {
     int damage_type = 2;    //HE damage type
@@ -1593,7 +1608,7 @@ int Map::explode(int z, int x, int y, int max_damage)
     int DEFAULT_SMOKE_TIME = 2; // how many half-turns will the smoke cloud exist
     
     effect eff;
-    eff.lev = z / 12; eff.col = x / 16; eff.row = y / 16;
+    eff.lev = z / 12; eff.col = x / 16; eff.row = y / 16; eff.type = 0;
     eff.state = 0 - explo_spr_list->size();
     explo_spr_list->push_back(eff);
     
@@ -1622,7 +1637,9 @@ int Map::explode(int z, int x, int y, int max_damage)
     return 1;
 } 
   
-//weapon explosion
+/*
+ *weapon or item explosion
+ */
 int Map::explode(int sniper, int z, int x, int y, int type)
 {
     int damage, hit_dir = 0;
@@ -1633,16 +1650,19 @@ int Map::explode(int sniper, int z, int x, int y, int type)
     double smoke_range = Item::obdata_smokeRange(type);
     int smoke_time = Item::obdata_smokeTime(type);
     double range = explo_range < smoke_range ? smoke_range : explo_range;
-    
     if (dam_dev > 0)
         max_damage = (int) cur_random->getUniform(max_damage * (1.0 - (dam_dev / 100.0)), max_damage * (1.0 + (dam_dev / 100.0)));
     
     effect eff;
-    eff.lev = z / 12; eff.col = x / 16; eff.row = y / 16;
+    eff.lev = z / 12; eff.col = x / 16; eff.row = y / 16; eff.type = type;
     eff.state = 0 - explo_spr_list->size();
     explo_spr_list->push_back(eff);
-    // should be sound associated with given weapon
-    soundSystem::getInstance()->play(SS_CV_GRENADE_BANG);
+    //Play object's sound or the default sound if the latter is not found
+    if (Item::obdata_get_sound(type)) {
+        soundSystem::getInstance()->play(Item::obdata_get_sound(type));
+    }else {
+        soundSystem::getInstance()->play(SS_CV_GRENADE_BANG);
+    }
     
     // convert to coords relative to center of a cell
     double lev = double(z)/12 - 0.5;

@@ -108,7 +108,7 @@ private:
     Cell ****m_cell;
     TerraPCK *m_terrain;
     
-    typedef struct { int lev, col, row, state; } effect;    //should it be used for fire and smoke? 
+    typedef struct { int lev, col, row, state, type; } effect;    //should it be used for fire and smoke? 
     typedef std::vector<effect> effect_vector;
     effect_vector *explo_spr_list;
     std::vector<Position>* m_changed_visicells;
