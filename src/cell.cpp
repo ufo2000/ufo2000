@@ -31,6 +31,7 @@ Cell::Cell( Position p )
     : m_position(p)
 {
     m_soldier = NULL;
+    m_soldier_aux = NULL;
     MOUSE = 0;
     m_place = new Place(0, 152, 20 * 10, 3 ,this);
 
@@ -45,6 +46,23 @@ Cell::Cell( Position p )
 Cell::~Cell()
 {
     delete m_place;
+}
+
+void Cell::set_soldier(Soldier *soldier) {
+    if (soldier != NULL) {
+        if (m_soldier == NULL) {
+            m_soldier = soldier;
+        }else {
+            m_soldier_aux = soldier;
+        }
+    } else {
+        if(m_soldier_aux == NULL){
+            m_soldier = NULL;
+        }else {
+            m_soldier = m_soldier_aux;
+            m_soldier_aux = NULL;
+        }
+    }
 }
 
 bool Cell::Write(persist::Engine &archive) const

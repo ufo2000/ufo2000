@@ -57,6 +57,7 @@ Scenario::Scenario (int sc_type)
     init_hold();
     init_break();
     init_capture();
+    init_search();
 
     rules[0] = 16;  //maximum light level
     rules[1] = 15;  //15k points limit
@@ -200,6 +201,22 @@ void Scenario::init_capture ()
     options[SC_CAPTURE][2] = new Option(OPT_NONE);
 }
 
+void Scenario::init_search ()
+{
+    name[SC_SEARCH] = ("Search and destroy");
+
+    briefing_left[SC_SEARCH][0] = briefing_right[SC_SEARCH][0] = _("You can deploy your units anywhere on the map.   ");
+    briefing_left[SC_SEARCH][1] = briefing_right[SC_SEARCH][1] = _("Find and kill the ennemy. All units will face    ");
+    briefing_left[SC_SEARCH][2] = briefing_right[SC_SEARCH][2] = _("away from the center and the outside of the map, ");
+    briefing_left[SC_SEARCH][3] = briefing_right[SC_SEARCH][3] = _("depending on the closest map feature.            ");
+    briefing_left[SC_SEARCH][4] = briefing_right[SC_SEARCH][4] = _("                                                 ");
+    briefing_left[SC_SEARCH][5] = briefing_right[SC_SEARCH][5] = _("Map exploration level 0 (unexplored) recommended.");
+     
+    options[SC_SEARCH][0] = new Option(OPT_NONE);
+    options[SC_SEARCH][1] = new Option(OPT_NONE);
+    options[SC_SEARCH][2] = new Option(OPT_NONE);
+}
+
 void Scenario::new_scenario (int sc_type)
 {
     //!!!
@@ -316,6 +333,9 @@ void Scenario::new_coords ()
 
         case SC_BREAK:
         break;
+        
+        case SC_SEARCH:
+        break;
     }
 }
 
@@ -353,6 +373,9 @@ int Scenario::check_conditions ()
 
         case SC_CAPTURE:
         n = conditions_capture();
+        break;
+        
+        case SC_SEARCH:
         break;
     }
     if (n != 0) return n;
@@ -633,6 +656,9 @@ bool Scenario::is_target_on_minimap (int lev, int col, int row, Map *m_map)
         case SC_CAPTURE:
         return minimap_capture(lev, col, row, m_map);
         break;
+        
+        case SC_SEARCH:
+        break;
     }
 
     return false;
@@ -661,6 +687,9 @@ void Scenario::draw_minimap_rectangle (BITMAP *bmp, int x, int y)
         break;
 
         case SC_BREAK:
+        break;
+        
+        case SC_SEARCH:
         break;
     }
 }
@@ -749,6 +778,9 @@ bool Scenario::is_correct_platoon (long points, Platoon *platoon, Soldier *first
 
         case SC_CAPTURE:
         n = platoon_capture (platoon, first_soldier, pos, buf, len);
+        break;
+        
+        case SC_SEARCH:
         break;
     }
 
@@ -901,6 +933,9 @@ bool Scenario::is_deploy_zone (DeployType dep, int x, int y)
 
         case DEP_SURROUND:
         return x < 5 || x >= mapdata.x_size * 10 - 5 || y < 5 || y >= mapdata.y_size * 10 - 5;
+        
+        case DEP_ALL:
+        return true;
     }
 
     return false;
@@ -929,6 +964,10 @@ void Scenario::draw_deploy_zone (PanPos pos, int x, int y, int color)
         case DEP_SURROUND:
         rect(screen2, x, y, x + mapdata.x_size * 10 * 4 - 1, y + mapdata.y_size * 10 * 4 - 1, color);
         rect(screen2, x + 5 * 4, y + 5 * 4, x + mapdata.x_size * 10 * 4 - 5 * 4, y + mapdata.y_size * 10 * 4 - 5 * 4, color);
+        break;
+        
+        case DEP_ALL:
+        rect(screen2, x, y, x + mapdata.x_size * 10 * 4 - 1, y + mapdata.y_size * 10 * 4 - 1, color);
         break;
     }
 }
@@ -985,6 +1024,11 @@ void Scenario::update_deploy_type ()
         deploy_type[0] = DEP_LEFT;
         deploy_type[1] = DEP_RIGHT;
         break;
+        
+        case SC_SEARCH:
+        deploy_type[0] = DEP_ALL;
+        deploy_type[1] = DEP_ALL;
+        break;
     }
 }
 
@@ -1015,6 +1059,9 @@ bool Scenario::can_use (Soldier *sld, Item *it)
         break;
 
         case SC_CAPTURE:
+        break;
+        
+        case SC_SEARCH:
         break;
     }
 

@@ -57,6 +57,7 @@ void Soldier::initpck()
 
 Soldier::Soldier(Platoon *platoon, int _NID)
 {
+    stun_on_init = false;
     NID = _NID;
     z = -1; x = -1; y = -1;
     dir = 0; move_dir = 0; phase = 0; m_state = STAND;
@@ -91,6 +92,7 @@ Soldier::Soldier(Platoon *platoon, int _NID)
 
 Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *mdat, ITEMDATA *idat, DeployType dep_type,int32 vision_mask)
 {
+    stun_on_init = false;
     NID = _NID; z = _z; x = _x; y = _y;
     dir = 0; move_dir = 0;
     m_vision_mask = vision_mask;
@@ -138,6 +140,24 @@ Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *md
                 dir = ang >> 5;
             }
             break;
+        case DEP_ALL:
+            // Face the outside if closer to center, face the center if closer to outside 
+            dest_col = map->width * 10 - 1;
+            dest_row = map->height * 10 - 1;
+            ox = itofix(dest_col - x * 2);
+            oy = itofix(dest_row - y * 2);
+            if ((!ox) && (!oy)) {
+                dir = 0;
+            } else {
+                ang = fixtoi(fatan2(oy, ox));
+                if (ang < 0) ang = 256 + ang;
+                ang = (ang + 16) % 256;
+                dir = ang >> 5;
+            }
+            if ((x * 4 > dest_col) && (x * 4 < dest_col * 3) && (y * 4 > dest_row) && (y * 4 < dest_row * 3)) {
+               dir = DIR_REVERSE (dir);
+               }
+            break;
     }
 
     phase = 0; m_state = STAND;
@@ -157,7 +177,9 @@ Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *md
     m_place[P_BELT]      = new Place(192, 104, 4, 2);
 //    m_place[P_MAP] = map->place(z, x, y);      //!!
     m_p_map_allocated = false;
-
+    if (map->man(z, x, y)) {
+        map->man(z, x, y)->stun_on_init = true;
+    }
     g_map->set_man(z, x, y, this);
 
     curway = -1; waylen = 0;
@@ -578,6 +600,16 @@ void Soldier::restore()
             } else ud.CurStun = was_stun; // Otherwise don't wake up yet.
         }
     }
+    /* Stuns a man on start of the game if a conflict between two spawning units is detected. */
+    if (stun_on_init) {
+        int z0, x0, y0;
+        z0 = z;
+        x0 = x;
+        y0 = y;
+        fall_stun();
+        //g_map->man(z0, x0, y0)->draw();
+        stun_on_init = false;
+    }
 }
 
 /**
@@ -809,6 +841,9 @@ int Soldier::move(int ISLOCAL)
         if (!map->isStairs(z - 1, x, y)) {
             map->set_man(z, x, y, NULL);
             z--;
+            if(map->man(z, x, y)) {
+                map->man(z, x, y)->fall_stun();
+                }
             map->set_man(z, x, y, this);
             if (this == sel_man) {
                 //map->center(this);
@@ -1006,6 +1041,14 @@ int Soldier::move(int ISLOCAL)
         }
     }
     return 1;
+}
+/*
+* The unit is stunned with a stun damage value of 2, armor is left as is and undamaged.
+*/
+void Soldier::fall_stun() 
+{
+    ud.CurStun = ud.CurHealth + 2;
+    this->stun();
 }
 
 int Soldier::tus_reserved(std::string *error)

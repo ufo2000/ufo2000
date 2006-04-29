@@ -257,7 +257,7 @@ enum Mode { MAP2D, MAP3D, MAN, WATCH, UNIT_INFO, PLANNER };
 
 enum Action { NONE, THROW, PRIME, SNAPSHOT, AIMEDSHOT, AUTOSHOT, PUNCH, AIMEDTHROW };
 
-enum DeployType {DEP_LEFT, DEP_RIGHT, DEP_CENTER, DEP_SURROUND};
+enum DeployType {DEP_LEFT, DEP_RIGHT, DEP_CENTER, DEP_SURROUND, DEP_ALL};
 
 //! possible Stati for reserve-time - buttons
 // extern int ReserveTimeMode;

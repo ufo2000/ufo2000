@@ -30,7 +30,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define SC_HOLD         5
 #define SC_BREAK        6
 #define SC_CAPTURE      7
-#define SCENARIO_NUMBER 8
+#define SC_SEARCH       8
+#define SCENARIO_NUMBER 9
 
 class Platoon;
 class Soldier;
@@ -124,6 +125,7 @@ private:
     void            init_hold ();
     void            init_break ();      
     void            init_capture ();
+    void            init_search (); //similar to deathmatch and has no particular conditions / features
     
     int             conditions_common ();
     int             conditions_escape ();

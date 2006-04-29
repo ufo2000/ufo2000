@@ -180,6 +180,8 @@ private:
     void precise_aiming(int za, int xa, int ya);    
 
 public:
+    // Flag that sets a unit as stunned when the game starts (I.E. same square as another unit on game start)
+    bool stun_on_init;
     // set all stats to minimum and remove all inventory
     void reset_stats();
     // set attribute value (when initializing soldier stats)
@@ -248,6 +250,7 @@ public:
     int load_ammo(int iplace, int srcplace, Item *&it);
     void die();
     void stun();
+    void fall_stun(); //Used when a unit falls on this one. Stuns the unit for the round without affecting armor.
 
     void apply_accuracy(REAL &fi, REAL &te);
     void apply_throwing_accuracy(REAL &fi, REAL &te, int weight);

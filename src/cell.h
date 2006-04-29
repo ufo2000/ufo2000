@@ -45,6 +45,7 @@ private:
     int MOUSE;
     char visi[3][3][3];
     Soldier *m_soldier; //!< Soldier standing here
+    Soldier *m_soldier_aux; //!< If another soldier stands here.
     Place *m_place;     //!< Stack of items here
 public:
     //! Indexes of MCD records for floor, walls and object
@@ -52,7 +53,7 @@ public:
 
     Soldier *get_soldier() { return m_soldier; }
     Place *get_place() { return m_place; }
-    void set_soldier(Soldier *soldier) { m_soldier = soldier; }
+    void set_soldier(Soldier *soldier);
     bool soldier_here() { return m_soldier != NULL; }
     Position get_position() { return m_position; }
 
