@@ -40,7 +40,7 @@ private:
     long m_j, m_k, m_init, m_iters;
     REAL m_normalsaved;
     bool m_iff, m_normalready;
-    void Random::next() {
+    void next() {
         ASSERT (m_iff);
         if (++m_inext == 56) m_inext = 1;
         if (++m_inextp == 56) m_inextp = 1;

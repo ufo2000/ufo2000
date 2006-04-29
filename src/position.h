@@ -19,7 +19,7 @@ public:
     int level() {return m_pos >> 16;}
     int column() {return (m_pos >> 8) & 255;}
     int row() {return m_pos & 255;}
-    int Position::index();
+    int index();
     int32 position() {return m_pos;}
     Position operator= (const Position pos){ m_pos = pos.m_pos; return pos; }
     bool operator== (const Position& pos){ return m_pos == pos.m_pos; }

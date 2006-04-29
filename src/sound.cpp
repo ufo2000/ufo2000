@@ -379,9 +379,6 @@ static SAMPLE *wav2sample(const std::string& inbuf, std::ostream& log,
             length--;
         }
     }
-    if (verbose)
-        log<<"returning SAMPLE pointer 0x"<<std::hex<<(int)spl
-           <<std::dec<<std::endl;
     return spl;
 }
 /* Original UFO samples have values from 0 to 0x3f.
@@ -751,8 +748,6 @@ static void h_StartEl(void *userData,
         }
         b->zeSys->setSample(soundSym, sample);
         b->curSample = sample;
-        if (b->verbose)
-            *b->log<<"assigned 0x"<<std::hex<<(int)sample<<std::dec<<" to '"<<sym<<"'\n";
         return;
     }
 

@@ -49,7 +49,7 @@ class ClientServer
     NLsocket    m_socket;
 public:
     virtual ~ClientServer();
-    bool ClientServer::connect(
+    bool connect(
         const std::string &host,
         const std::string &proxy,
         const std::string &proxy_login,

@@ -28,38 +28,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "global.h"
 #include "sprite.h"
 
-/*class SkinInterface;*/
-/**
- * SkinInterface object. Reaches for properties defined in standard-gui.lua
- * Used to get GUI related properties such as window placement, fonts, images, button sizes, etc.
- * -- globals used --
- * SCREEN_H, SCREEN_W
- * -- Usage --
- * gui = new SkinInterface();
- * gui->function( params );
- * gui->Feature( feature name )->function( params );
- */ 
-class SkinInterface
-{
-private:
-    friend class SkinFeature;
-
-    ALPHA_SPRITE *m_background;
-    const char *m_screen;  
-    /*  Returns values from the screen itself (Screen) */
-    ALPHA_SPRITE *get_bitmap(const char *bitmap_name);
-public:
-    SkinInterface();
-    SkinInterface(const char *screen_name);
-    ~SkinInterface();
-    /*  - Feature subclass */
-    SkinFeature *Feature(const char *feature_name);    
-    /*  - Background related properties */
-    BITMAP *background();
-    /*  - Other properties */
-    const char *name() { return m_screen; };
-};
-
 /*class SkinFeature;*/
 /**
  * SkinFeature object. Reaches for properties of a screen feature defined in standard-gui.lua
@@ -107,4 +75,36 @@ public:
     const char *name() { return m_feature; };
 };
  
+/*class SkinInterface;*/
+/**
+ * SkinInterface object. Reaches for properties defined in standard-gui.lua
+ * Used to get GUI related properties such as window placement, fonts, images, button sizes, etc.
+ * -- globals used --
+ * SCREEN_H, SCREEN_W
+ * -- Usage --
+ * gui = new SkinInterface();
+ * gui->function( params );
+ * gui->Feature( feature name )->function( params );
+ */ 
+class SkinInterface
+{
+private:
+    friend class SkinFeature;
+
+    ALPHA_SPRITE *m_background;
+    const char *m_screen;  
+    /*  Returns values from the screen itself (Screen) */
+    ALPHA_SPRITE *get_bitmap(const char *bitmap_name);
+public:
+    SkinInterface();
+    SkinInterface(const char *screen_name);
+    ~SkinInterface();
+    /*  - Feature subclass */
+    SkinFeature *Feature(const char *feature_name);    
+    /*  - Background related properties */
+    BITMAP *background();
+    /*  - Other properties */
+    const char *name() { return m_screen; };
+};
+
 #endif
