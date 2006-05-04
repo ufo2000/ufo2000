@@ -136,6 +136,41 @@ a number of subdirectories with third-party code and libraries which are
 included into ufo2000 source tree.
 
 ==============================================================================
+== Building and testing experimental versions of the game
+==============================================================================
+
+Some patches or other changes might be not stable enough for committing to
+SVN and need more real-world testing. Just compiling experimental build
+of the game and connecting to the main server can cause problems because
+starting the game against normal build user might cause all sorts of 
+compatibility problems.
+
+In this case it is recommended to edit 'src/version.h' file in the sources 
+directory and change UFO_VERSION_TAG define to something else, for example 
+to something like "experimental-mindcontrol". After that you can safely 
+distribute this experimental binary, connect to the primary server, play 
+games and do some testing without interfering other users playing ordinary 
+"release" or "beta" builds.
+
+The server allows different versions to play on the same server without 
+interfering each other. In 'version.h' now we have VERSION_TAG constant, 
+only clients which have the same tag see each other on the server, so 
+changing it to something like "experimental" any other tag and building 
+the game will ensure that 'normal' players will be able to continue 
+playing 'beta' versions, but the courageous and curious ones will be 
+able to play 'experimental' versions. Server status page now also 
+shows some information about the versions and tags of the players currently 
+who are logged on to the server.
+
+It should be easy to provide separate stability statistics for each tag 
+on http://ufo2000.xcomufo.com/results-beta.php page. So now anyone can 
+checkout the latest sources of the game from the repository, apply some 
+patch, set some special tag in version.h and put this build for download. 
+People can download this build and play it, if we see that stability of 
+this build is acceptable after a reasonable number of games, the patch 
+can be safely committed to the repository.
+
+==============================================================================
 == Some issues that should be taken into account when coding for UFO2000
 ==============================================================================
 
