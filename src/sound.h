@@ -144,5 +144,7 @@ public:
     void playLoadedSamples(std::ostream *os);
 };
 
+SAMPLE *wav_sample(const char *filename);
+void free_wav_cache();
 
 #endif

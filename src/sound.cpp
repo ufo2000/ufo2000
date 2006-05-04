@@ -1,9 +1,31 @@
+/*
+This file is part of "UFO 2000" aka "X-COM: Gladiators"
+                    http://ufo2000.sourceforge.net/
+Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
+Copyright (C) 2002-2006  ufo2000 development team
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+*/
 
 #include "stdafx.h"
-
 #include "global.h"
-
 #include "sound.h"
+
+#include <map>
+#include <string>
+#undef map
 
 struct sound_sym_maptable_t {
     SoundSym_e_t symcode;
@@ -491,8 +513,8 @@ void soundFile::loadCeCat(const std::string& buf, std::ostream& log,
     nsamples = intel_uint32(nsamples);
     nsamples /= 8;
 
-	std::vector<int> offsets(nsamples + 1);
-	std::vector<int> lengths(nsamples + 1);
+    std::vector<int> offsets(nsamples + 1);
+    std::vector<int> lengths(nsamples + 1);
 
     count = 0;
     do {
@@ -540,8 +562,8 @@ void soundFile::loadCeCat(const std::string& buf, std::ostream& log,
                    <<", is 0x"<<offsets[i+1]<<std::endl;
 
             if (verbose)
-	            log<<"Giving 0x"<<lengths[i]<<" bytes at offset 0x"
-    	           <<(offsets[i] + datbytes)<<" to wav2sample()"<<std::endl;
+                log<<"Giving 0x"<<lengths[i]<<" bytes at offset 0x"
+                   <<(offsets[i] + datbytes)<<" to wav2sample()"<<std::endl;
 
             std::string chunk = buf.substr(offsets[i] + datbytes, lengths[i]);
 
@@ -575,8 +597,8 @@ void soundFile::loadOrigCat(const std::string& buf, std::ostream& log,
     nsamples = intel_uint32(nsamples);
     nsamples /= 8;
 
-	std::vector<int> offsets(nsamples + 1);
-	std::vector<int> lengths(nsamples + 1);
+    std::vector<int> offsets(nsamples + 1);
+    std::vector<int> lengths(nsamples + 1);
 
     count = 0;
     do {
@@ -846,10 +868,10 @@ int soundSystem::initialize(const std::string& xml, std::ostream *log,
      * so we try to call install_sound() again without MIDI support if the first call
      * failed. That is done to at least have sound effects.
      */
-	if (   install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) != 0
+    if (   install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) != 0
         && install_sound(DIGI_AUTODETECT, MIDI_NONE, NULL) != 0)
     {
-		*log<<"Error initialising sound system: "<<allegro_error<<std::endl;
+        *log<<"Error initialising sound system: "<<allegro_error<<std::endl;
         soundInstalled = false;
         return -1;
     } else {
@@ -967,4 +989,33 @@ void soundSystem::playLoadedSamples(std::ostream *os) {
             if (soundInstalled)
                 rest(1500); // sleep 1.5 secs to allow the sample to play.
         }
+}
+
+//! We cache loaded wav files here
+static std::map<std::string, SAMPLE *> g_wav_cache;
+
+void free_wav_cache()
+{
+    std::map<std::string, SAMPLE *>::iterator it = g_wav_cache.begin();
+    while (it != g_wav_cache.end()) {
+        if (it->second) destroy_sample(it->second);
+        it++;
+    }
+}
+
+/**
+ * Load a sound sample from a wav-file
+ */
+SAMPLE *wav_sample(const char *filename)
+{
+    std::string fullname = F(filename);
+
+    if (!check_filename_case_consistency(fullname.c_str())) {
+        return NULL;
+    }
+
+    if (g_wav_cache.find(fullname) == g_wav_cache.end()) {
+        g_wav_cache[fullname] = load_sample(fullname.c_str());
+    }
+    return g_wav_cache[fullname];
 }

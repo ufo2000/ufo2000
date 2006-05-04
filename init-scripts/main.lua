@@ -704,6 +704,7 @@ plugins_sandbox = {
     pck_image_set = pck_image_set,
     pck_image_set_ex = pck_image_set_ex,
     png_image_fragment = png_image_fragment,
+    wav_sample = wav_sample,
 
     AddEquipment = AddEquipment,
     

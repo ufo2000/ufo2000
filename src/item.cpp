@@ -81,6 +81,30 @@ ALPHA_SPRITE *Item::obdata_get_bitmap(uint32 item_index, const char *property_na
     return result;
 }
 
+SAMPLE *Item::obdata_get_sound_sample(uint32 item_index, const char *property_name, int sample_index)
+{
+    int stack_top = lua_gettop(L);
+    // Enter 'ItemsTable' table
+    lua_pushstring(L, "ItemsTable");
+    lua_gettable(L, LUA_GLOBALSINDEX);
+    ASSERT(lua_istable(L, -1)); 
+    // Enter [item_index] table
+    lua_pushnumber(L, item_index);
+    lua_gettable(L, -2);
+    ASSERT(lua_istable(L, -1));
+    // Get property value
+    lua_pushstring(L, property_name);
+    lua_gettable(L, -2);
+    SAMPLE *result = NULL;
+    if (lua_istable(L, -1)) {
+        lua_pushnumber(L, sample_index);
+        lua_gettable(L, -2);
+    }
+    if (lua_islightuserdata(L, -1)) result = (SAMPLE *)lua_topointer(L, -1);
+    lua_settop(L, stack_top);
+    return result;
+}
+
 int Item::obdata_get_array_int(uint32 item_index, const char *property_name, int index)
 {
     int stack_top = lua_gettop(L);
@@ -289,6 +313,7 @@ Item::Item(int _type, Soldier *stunned_body_owner)
     m_delay_time = 0;
     m_ammo = NULL;
     m_stunned_body_owner = stunned_body_owner;
+    m_sound_sample = obdata_get_sound_sample(m_type, "sound");
 
     m_health = obdata_maxHealth();
 
@@ -527,6 +552,7 @@ bool Item::Read(persist::Engine &archive)
     PersistReadObject(archive, m_ammo);
     PersistReadObject(archive, m_stunned_body_owner);
 
+    m_sound_sample = obdata_get_sound_sample(m_type, "sound");
     m_pInv = obdata_get_bitmap(m_type, "pInv");
     ASSERT(m_pInv);
     m_pMap = obdata_get_bitmap(m_type, "pMap");

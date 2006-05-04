@@ -371,6 +371,7 @@ extern lua_State *L;
 const char *F(const char *fileid);
 std::string lua_escape_string(const std::string &str);
 std::string indent(const std::string &);
+bool check_filename_case_consistency(const char *filename);
 
 #define CELL_SCR_X 16
 #define CELL_SCR_Y 8

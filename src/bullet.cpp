@@ -236,46 +236,7 @@ void Bullet::move()
                     hitcell();
                     state = HIT;
                     
-                    soundSystem::getInstance()->play(Item::obdata_get_sound(type));
-/*
-                    switch(type)
-                    {
-                        case PISTOL_CLIP:
-                        case RIFLE_CLIP:
-                        default:
-                            soundSystem::getInstance()->play(SS_CV_BULLET_HIT);
-                            break;
-                        case CANNON_AP_AMMO:
-                        case AUTO_CANNON_AP_AMMO:
-                            soundSystem::getInstance()->play(SS_CV_CANNON_AP_HIT);
-                            break;
-                        case CANNON_HE_AMMO:
-                        case AUTO_CANNON_HE_AMMO:
-                            soundSystem::getInstance()->play(SS_CV_CANNON_HE_HIT);
-                            break;
-                        case CANNON_I_AMMO:
-                        case AUTO_CANNON_I_AMMO:
-                            soundSystem::getInstance()->play(SS_CV_CANNON_IN_HIT);
-                            break;
-                        case SMALL_ROCKET:
-                            soundSystem::getInstance()->play(SS_SMALL_ROCKET_HIT);
-                            break;
-                        case LARGE_ROCKET:
-                            soundSystem::getInstance()->play(SS_HE_ROCKET_HIT);
-                            break;
-                        case INCENDIARY_ROCKET:
-                            soundSystem::getInstance()->play(SS_IN_ROCKET_HIT);
-                            break;
-                        case Plasma_Pistol_Clip:
-                        case Plasma_Rifle_Clip:
-                        case Heavy_Plasma_Clip:
-                            soundSystem::getInstance()->play(SS_PLASMA_HIT);
-                            break;
-                        case STUN_MISSILE:
-                            soundSystem::getInstance()->play(SS_ALIEN_SMALL_HIT);
-                            break;
-                    }
-*/
+                    Item::obdata_play_sound_sample(type);
                     break;
                 }
             }

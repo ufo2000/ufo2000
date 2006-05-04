@@ -67,6 +67,18 @@ private:
     ALPHA_SPRITE *m_pHeld[8];
     
     SoundSym_e_t m_sound;
+    SAMPLE *m_sound_sample;
+
+    static SoundSym_e_t obdata_get_sound(int type)
+    {
+        std::string sound = obdata_get_string(type, "sound");
+        return getSymCode(sound.c_str());
+    }
+
+    SoundSym_e_t get_sound()
+    { 
+        return m_sound; 
+    }
 
 public:
     static void od_info(int type, int gx, int gy, int gcol);
@@ -74,6 +86,7 @@ public:
     static int obdata_get_int(uint32 item_index, const char *property_name);
     static int obdata_get_array_int(uint32 item_index, const char *property_name, int index);
     static ALPHA_SPRITE *obdata_get_bitmap(uint32 item_index, const char *property_name, int bitmap_index = -1);
+    static SAMPLE *obdata_get_sound_sample(uint32 item_index, const char *property_name, int bitmap_index = -1);
     static std::string obdata_get_string(uint32 item_index, const char *property_name);
 
     static int obdata_maxHealth(int index) { return obdata_get_int(index, "health"); }
@@ -186,15 +199,23 @@ public:
 
     Item *create_duplicate();
 
-    SoundSym_e_t get_sound()
-    { 
-        return m_sound; 
+    static void obdata_play_sound_sample(int type)
+    {
+        SAMPLE *sample = obdata_get_sound_sample(type, "sound");
+        if (sample) {
+            play_sample(sample, 255, 127, 1000, 0);
+        } else {
+            soundSystem::getInstance()->play(Item::obdata_get_sound(type));
+        }
     }
 
-    static SoundSym_e_t obdata_get_sound(int type)
+    void play_sound()
     {
-        std::string sound = obdata_get_string(type, "sound");
-        return getSymCode(sound.c_str());
+        if (m_sound_sample) {
+            play_sample(m_sound_sample, 255, 127, 1000, 0);
+        } else {
+            soundSystem::getInstance()->play(get_sound());
+        }
     }
 
     void od_info(int gx, int gy, int gcol)

@@ -686,6 +686,7 @@ void initmain(int argc, char *argv[])
     LUA_REGISTER_FUNCTION(L, pck_image);
     LUA_REGISTER_FUNCTION(L, pck_image_ex);
     LUA_REGISTER_FUNCTION(L, png_image);
+    LUA_REGISTER_FUNCTION(L, wav_sample);
     
 #ifdef LINUX
     // Do not silently exit on broken network connection
@@ -850,28 +851,6 @@ void initmain(int argc, char *argv[])
     /* Load Allegro library */    
     console<<"allegro_init"<<std::endl;
 
-    console<<"agup_init"<<std::endl;
-    if (gui_theme == NULL) gui_theme = abeos_theme;
-    agup_init(gui_theme);
-    gui_shadow_box_proc = d_agup_shadow_box_proc;
-    gui_ctext_proc = d_agup_ctext_proc;
-    gui_button_proc = d_agup_button_proc;
-    gui_edit_proc = d_agup_edit_proc;
-    gui_list_proc = d_agup_list_proc;
-    gui_text_list_proc = d_agup_text_list_proc;
-    lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-items.lua");
-    lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-images.lua");
-
-    // Load standard and custom maps
-    lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-maps.lua", "plugins_sandbox");
-    for_each_file(DATA_DIR "/newmaps/*.lua", FA_RDONLY | FA_ARCH, find_lua_files_callback, 0);
-    for_each_file(DATA_DIR "/extensions/*", FA_DIREC | FA_RDONLY | FA_ARCH, find_dir_callback, 0);
-
-    console<<"install_timer"<<std::endl;
-    install_timer();
-    console<<"install_mouse"<<std::endl;
-    install_mouse();
-
     {
         bool VERBOSE_SOUNDCHECK = false;
         
@@ -897,6 +876,29 @@ void initmain(int argc, char *argv[])
             console<<"  Error reading soundmap.xml"<<std::endl;
         }
     }
+
+    console<<"agup_init"<<std::endl;
+    if (gui_theme == NULL) gui_theme = abeos_theme;
+    agup_init(gui_theme);
+    gui_shadow_box_proc = d_agup_shadow_box_proc;
+    gui_ctext_proc = d_agup_ctext_proc;
+    gui_button_proc = d_agup_button_proc;
+    gui_edit_proc = d_agup_edit_proc;
+    gui_list_proc = d_agup_list_proc;
+    gui_text_list_proc = d_agup_text_list_proc;
+    lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-items.lua");
+    lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-images.lua");
+
+    // Load standard and custom maps
+    lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-maps.lua", "plugins_sandbox");
+    for_each_file(DATA_DIR "/newmaps/*.lua", FA_RDONLY | FA_ARCH, find_lua_files_callback, 0);
+    for_each_file(DATA_DIR "/extensions/*", FA_DIREC | FA_RDONLY | FA_ARCH, find_dir_callback, 0);
+
+    console<<"install_timer"<<std::endl;
+    install_timer();
+    console<<"install_mouse"<<std::endl;
+    install_mouse();
+
     console<<"initvideo"<<std::endl;
     initvideo();
 
@@ -979,6 +981,7 @@ void closemain()
 
     free_pck_cache();
     free_png_cache();
+    free_wav_cache();
 
     Map::freepck();
     Soldier::freepck();

@@ -2640,7 +2640,7 @@ int Soldier::beam(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, in
     REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
     apply_accuracy(fi, te);
     spend_time(req_time);
-    soundSystem::getInstance()->play(it->get_sound());
+    it->play_sound();
     m_bullet->beam(z0, x0, y0, fi, te, it->itemtype());
     return OK;
 }
@@ -2660,7 +2660,7 @@ int Soldier::fire(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, in
     REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
     apply_accuracy(fi, te);
     spend_time(req_time);
-    soundSystem::getInstance()->play(it->get_sound());
+    it->play_sound();
     m_bullet->fire(z0, x0, y0, fi, te, it->cliptype());
     it->shot();
     return OK;
