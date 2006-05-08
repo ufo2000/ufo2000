@@ -75,9 +75,9 @@ end
 
 io.write("</table>")
 
-local get_version_request = db:prepare([[
+local get_version_request = assert(db:prepare([[
     SELECT sender, command FROM ufo2000_game_packets 
-    WHERE game=? AND (id<10) AND command LIKE "UFO2000 REVISION OF YOUR OPPONENT: %"]])
+    WHERE game=? AND (id<10) AND command LIKE "UFO2000 REVISION OF YOUR OPPONENT: %"]]))
     
 local function get_client_versions(game_id)
     local tmp = {}
@@ -91,9 +91,9 @@ local function get_client_versions(game_id)
 end
 
     
-local get_bugreport_request = db:prepare([[
+local get_bugreport_request = assert(db:prepare([[
     SELECT param, value FROM ufo2000_debug_packets 
-    WHERE game=? AND (param="crash" or param="assert" or param="crc error")]])
+    WHERE game=? AND (param="crash" or param="assert" or param="crc error")]]))
 
 local function get_bugreport(game_id)
     local tmp = {}
@@ -105,11 +105,11 @@ local function get_bugreport(game_id)
     return table.concat(tmp2, "<br>")
 end
 
-local get_game_start_time_request = db:prepare([[
-    SELECT time FROM ufo2000_game_packets WHERE id=1 AND game=?]])
+local get_game_start_time_request = assert(db:prepare([[
+    SELECT time FROM ufo2000_game_packets WHERE id=1 AND game=?]]))
     
-local get_game_end_time_request = db:prepare([[
-    SELECT time FROM ufo2000_game_packets WHERE game=? ORDER BY id DESC LIMIT 1]])
+local get_game_end_time_request = assert(db:prepare([[
+    SELECT time FROM ufo2000_game_packets WHERE game=? ORDER BY id DESC LIMIT 1]]))
 
 local function get_game_time(game_id)
     if not get_game_start_time_request:bind(game_id) then return end
@@ -164,24 +164,26 @@ io.write("</table>")
 local terain_games_table = {}
 local terrain_table = {}
 
-for game, terrain in db:cols([[
-    SELECT game, value FROM ufo2000_debug_packets WHERE param="terrain" ORDER BY id DESC]])
+for _, game, terrain, t in db:cols([[
+    SELECT 1, game, value, time FROM ufo2000_debug_packets WHERE param="terrain"]])
 do
-    if not terain_games_table[game] then 
+    local timediff = math.floor((os.time() - convert_julian_day(t)) / (24 * 60 * 60))
+    if timediff < 30 and not terain_games_table[game or "?"] then 
         terrain_table[terrain] = (terrain_table[terrain] or 0) + 1
-        terain_games_table[game] = 1
+        terain_games_table[game or "?"] = 1
     end
 end
 
 local equipment_games_table = {}
 local equipment_table = {}
 
-for game, equipment in db:cols([[
-    SELECT game, value FROM ufo2000_debug_packets WHERE param="equipment" ORDER BY id DESC]])
+for _, game, equipment, t in db:cols([[
+    SELECT 1, game, value, time FROM ufo2000_debug_packets WHERE param="equipment"]])
 do
-    if not equipment_games_table[game] then 
+    local timediff = math.floor((os.time() - convert_julian_day(t)) / (24 * 60 * 60))
+    if timediff < 30 and not equipment_games_table[game or "?"] then 
         equipment_table[equipment] = (equipment_table[equipment] or 0) + 1
-        equipment_games_table[game] = 1
+        equipment_games_table[game or "?"] = 1
     end
 end
 
@@ -223,10 +225,16 @@ io.write("</table>")
 
 ------------------------------------------------------------------------------
 
-local get_version_request = db:prepare([[
-    SELECT value FROM ufo2000_debug_packets WHERE session=? AND param='version']])
+local get_version_request_new = assert(db:prepare([[
+    SELECT version FROM ufo2000_user_sessions WHERE id=?]]))
+
+local get_version_request = assert(db:prepare([[
+    SELECT value FROM ufo2000_debug_packets WHERE session=? AND param='version']]))
 
 local function get_version(session)
+    if not get_version_request_new:bind(session) then return end
+    local version = get_version_request_new:first_cols()
+    if version and version ~= "" then return version end
     if not get_version_request:bind(session) then return end
     return get_version_request:first_cols()
 end
