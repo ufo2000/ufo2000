@@ -27,17 +27,16 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "text.h"
 
 #undef map
-//Following lines commented until fixed, caused a crash in windows 98
-/*#ifdef _WIN32
+
+#ifdef _WIN32
 
 // Not every Win32 system has GetLongPathName function available, so we try to get its
 // address at runtime
 
-static HANDLE hKernel32 = GetModuleHandle("kernel32.dll");
-static DWORD WINAPI (*lpGetLongPathName)(LPCTSTR lpszShortPath, LPTSTR lpszLongPath, DWORD cchBuffer) = 
-    (DWORD WINAPI (*)(LPCTSTR, LPTSTR, DWORD))GetProcAddress(hKernel32, "GetLongPathNameA");
+static DWORD (WINAPI *lpGetLongPathName)(LPCTSTR lpszShortPath, LPTSTR lpszLongPath, DWORD cchBuffer) = 
+    (DWORD (WINAPI *)(LPCTSTR, LPTSTR, DWORD))GetProcAddress(GetModuleHandle("kernel32.dll"), "GetLongPathNameA");
 
-#endif*/
+#endif
 
 /**
  * Windows system is not case sensitive so if some resources description contains
@@ -47,7 +46,14 @@ static DWORD WINAPI (*lpGetLongPathName)(LPCTSTR lpszShortPath, LPTSTR lpszLongP
  */
 bool check_filename_case_consistency(const char *filename)
 {
-/*#ifdef _WIN32
+#ifdef _WIN32
+    // Windows 98 seems to have some troubles with GetLongPathName function, so 
+    // we test operating system type before
+    OSVERSIONINFO osVer;
+    osVer.dwOSVersionInfoSize = sizeof(osVer);
+    GetVersionEx(&osVer);
+    if (osVer.dwPlatformId != VER_PLATFORM_WIN32_NT) return true;
+
     char tmp[MAX_PATH];
     if (!lpGetLongPathName) return true; // unable to check file name consistency, let it live :)
 
@@ -57,7 +63,7 @@ bool check_filename_case_consistency(const char *filename)
     for (int i = 0; tmp[i]; i++) if (tmp[i] == '\\') tmp[i] = '/';
 
     if (strcmp(filename, tmp) != 0) return false;
-#endif*/
+#endif
     return true;
 }
 
