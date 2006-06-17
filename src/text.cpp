@@ -561,7 +561,7 @@ void help( const int helppage )
         case HELP_BATTLESCAPE + 3 :
             b1 = alert3( _("To fire a gun, click on the weapon in the left or right hand,"),
                          _("select the fire-mode (aimed, snapshot, autoshot), then click"),
-                         _("on the target.  Use the up&&down-buttons to aim at other levels."),
+                         _("on the target.  Use the PgUp&&PgDown-buttons to aim at other levels."),
                          prev, ok, next, kp_prev, kp_ok, kp_next);
             break;
         case HELP_BATTLESCAPE + 4 :
