@@ -66,6 +66,8 @@ extern "C" {
 #define MSCROLL 10
 #define BACKCOLOR COLOR_BLACK1
 
+#undef map
+
 Target target;
 int HOST, DONE, TARGET, turn;
 Mode MODE;                      //!< Display-Mode
@@ -123,7 +125,7 @@ void show_time_left()
 }
 
 Net *net;
-Map *map;
+Map *g_map;
 Scenario *scenario;
 TerrainSet *terrain_set;
 Icon *icon;
@@ -276,7 +278,7 @@ void restartgame()
     win  = 0;
     loss = 0;
 
-    map = new Map(mapdata);
+    g_map = new Map(mapdata);
     p1  = new Platoon(1000, &pd1, scenario->deploy_type[0]);
     p2  = new Platoon(2000, &pd2, scenario->deploy_type[1]);
     cur_random = new Random;
@@ -367,8 +369,8 @@ void closegame()
     p2 = NULL;
     platoon_local = NULL;
     platoon_remote = NULL;
-    delete map;
-    map = NULL;
+    delete g_map;
+    g_map = NULL;
     delete elist;
     elist = NULL;
 
@@ -524,11 +526,14 @@ void find_lua_files_callback(const char *filename, int attrib, int param)
     *allegro_errno = 0; 
 }
 
+static std::map<std::string, double> g_extensions_loading_time;
+
 void find_dir_callback(const char *filename, int attrib, int param)
 {
     char *filepart = get_filename(filename);
     if ((attrib & FA_DIREC) && strcmp(filepart, ".") != 0 && strcmp(filepart, "..") != 0) {
         lua_message(std::string("Loading extension '") + filename + std::string("'"));
+        clock_t before = clock();
         
         lua_pushstring(L, "extension_dir");
         lua_pushstring(L, filename);
@@ -537,6 +542,8 @@ void find_dir_callback(const char *filename, int attrib, int param)
         char tmp[1024];
         sprintf(tmp, "%s/*.lua", filename);
         for_each_file(tmp, FA_RDONLY | FA_ARCH, find_lua_files_callback, 0);
+        clock_t after = clock();
+        g_extensions_loading_time[filename] = (double)(after - before) / (double)CLOCKS_PER_SEC;
     }
     // $$$ Fixme: lua_dofile sets errno variable in some mysterious way,
     // so allegro for_each_file function stops searching files if we do not 
@@ -893,6 +900,17 @@ void initmain(int argc, char *argv[])
     lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-maps.lua", "plugins_sandbox");
     for_each_file(DATA_DIR "/newmaps/*.lua", FA_RDONLY | FA_ARCH, find_lua_files_callback, 0);
     for_each_file(DATA_DIR "/extensions/*", FA_DIREC | FA_RDONLY | FA_ARCH, find_dir_callback, 0);
+    
+    {
+        // Report extensions loading times
+        std::map<std::string, double>::iterator it = g_extensions_loading_time.begin();
+        while (it != g_extensions_loading_time.end()) {
+            char tmp[1024];
+            sprintf(tmp, "Extension '%s', loading time=%.3lfs", it->first.c_str(), it->second);
+            lua_message(tmp);
+            it++;
+        }
+    }
 
     console<<"install_timer"<<std::endl;
     install_timer();
@@ -1010,14 +1028,12 @@ void closemain()
 }
 
 
-#undef map
 /**
  * Buffer that stores gamestate information indexed by gamestate crc.
  * It is used for debugging network synchronization bugs when gamestate
  * becomes different on local and remote computers.
  */
 static std::map<int, std::string> g_eot_save;
-#define map g_map
 #define CRCBUFFSIZE 1048576
 
 int build_crc()
@@ -1559,7 +1575,7 @@ void savegame_stream(std::ostream &stream)
     PersistWriteObject(archive, p2);
     PersistWriteObject(archive, platoon_local);
     PersistWriteObject(archive, platoon_remote);
-    PersistWriteObject(archive, map);
+    PersistWriteObject(archive, g_map);
     PersistWriteObject(archive, sel_man);
     PersistWriteObject(archive, elist);
     PersistWriteObject(archive, cur_random);
@@ -1621,14 +1637,14 @@ bool loadgame_stream(std::istream &stream)
     p2 = NULL;
     platoon_local = NULL;
     platoon_remote = NULL;
-    delete map;
+    delete g_map;
     delete elist;
                                     
     PersistReadObject(archive, p1);
     PersistReadObject(archive, p2);
     PersistReadObject(archive, platoon_local);
     PersistReadObject(archive, platoon_remote);
-    PersistReadObject(archive, map);
+    PersistReadObject(archive, g_map);
     PersistReadObject(archive, sel_man);
     PersistReadObject(archive, elist);
     PersistReadObject(archive, cur_random);
@@ -2662,7 +2678,7 @@ void faststart()
     read(fh, &pd2, sizeof(pd2));
     close(fh);
 
-    map = new Map(mapdata);
+    g_map = new Map(mapdata);
     elist = new Explosive();
     p1 = new Platoon(1111, &pd1, scenario->deploy_type[0]);
     p2 = new Platoon(2222, &pd2, scenario->deploy_type[1]);
