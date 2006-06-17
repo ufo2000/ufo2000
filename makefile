@@ -129,8 +129,6 @@ SRCS_SERVER = server_config.cpp server_main.cpp server_protocol.cpp   \
 
 SRCS_LUA = lua.c $(SRCS_LUALIB)
 
-DISTRO = ${shell if [ -e /etc/debian_version ]; then echo debian; else echo non-debian; fi }
-
 ifdef debug
 	CFLAGS += -g
 ifdef valgrind
@@ -185,18 +183,10 @@ else
 	INCLUDES = ${shell allegro-config --cflags}
 	CFLAGS += $(INCLUDES)
 ifdef static	
-ifneq ($(DISTRO),debian)
 	LIBS := -static $(LIBS) -lNL ${shell allegro-config --libs}
-else
-	LIBS := -static $(LIBS) -lNL
-endif
 	SERVER_LIBS += -static -lNL -pthread
 else
-ifneq ($(DISTRO),debian)
 	LIBS += -lNL -pthread ${shell allegro-config --libs}
-else
-	LIBS += -lNL -pthread
-endif
 	SERVER_LIBS += -lNL -pthread
 endif
 endif
@@ -224,9 +214,6 @@ endif
 endif
 
 ##############################################################################
-
-# switch off echo of make commands
-.SILENT:
 
 all: $(OBJDIR) $(NAME)
 
@@ -256,13 +243,9 @@ $(LUA_NAME): $(OBJS_LUA)
 clean:
 	$(RM) $(OBJDIR)/*.o
 	$(RM) $(OBJDIR)/*.d
-	rmdir $(OBJDIR)
 	$(RM) init-scripts.log squad.lua
-	$(RM) -R debian/ufo2000
-	$(RM) build-stamp configure-stamp ufo2000.1
-	$(RM) -R $(DISTNAME)
 	$(RM) $(NAME)
-	$(RM) $(NAME)-srv
+	$(RM) $(SERVER_NAME)
 
 # Update the translations of game messages to different languages 
 # using gettext tools - see manual at
