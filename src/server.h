@@ -29,9 +29,9 @@
 #define PACKET_SIZE_LIMIT 65536
 #endif
 
-inline long get_time_diff(const NLtime &x, const NLtime &y)
+inline double get_time_diff(const NLtime &x, const NLtime &y)
 {
-    return (y.seconds - x.seconds) * 1000 + (y.mseconds - x.mseconds);
+    return (double)(y.seconds - x.seconds) * 1000.0 + (double)(y.mseconds - x.mseconds);
 }
 
 class ServerDispatch;

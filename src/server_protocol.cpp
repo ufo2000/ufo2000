@@ -58,13 +58,13 @@ std::string ServerClientUfo::m_last_user_name = "";
 NLtime      ServerClientUfo::m_last_user_disconnect_time;
 int         ServerClientUfo::m_games_started = 0;
 
-static std::string time_to_string(long t)
+static std::string time_to_string(double t)
 {
     char buffer[64];
-    long days    = t / (24 * 3600 * 1000); t -= days * (24 * 3600 * 1000);
-    long hours   = t / (3600 * 1000); t -= hours * (3600 * 1000);
-    long minutes = t / (60 * 1000); t -= minutes * (60 * 1000);
-    long seconds = t / 1000;
+    long days    = (long)(t / (24 * 3600 * 1000)); t -= (double)days * (24 * 3600 * 1000);
+    long hours   = (long)(t / (3600 * 1000)); t -= (double)hours * (3600 * 1000);
+    long minutes = (long)(t / (60 * 1000)); t -= (double)minutes * (60 * 1000);
+    long seconds = (long)(t / 1000);
 
     if (days > 0)
         sprintf(buffer, "%ldd %02ldh %02ldm %02lds", days, hours, minutes, seconds);
@@ -95,10 +95,9 @@ void ServerDispatch::MakeHtmlReport(std::string &html_body)
 
     html_body = "<html><head><title>UFO2000 Matchmaker</title></head><body>";
     html_body += "<h3>UFO2000 matchmaking server.</h3><blockquote>";
-    html_body += "<a href='http://ufo2000.sourceforge.net/'>Project home page (and the latest stable version download link)</a><br>";
-//    html_body += "<a href='http://lxnt.info/mailman/listinfo/ufo2000'>Developers mailing list</a><br>";
+    html_body += "<a href='http://ufo2000.sourceforge.net/'>Project home page (and the latest version download link)</a><br>";
     html_body += "<a href='http://www.xcomufo.com/forums/index.php?showforum=266'>Official Forum</a><br>";
-    html_body += "<a href='http://ufo2000.lxnt.info/results.php'>Official server battle statistics</a><br>";
+    html_body += "<a href='http://ufo2000.xcomufo.com/results.php'>Official server battle statistics</a><br>";
     html_body += "<br></blockquote><hr><table border=1>";
     html_body += "<tr><td>user name<td>ufo2000 version<td>system<td>bytes from<td>bytes to<td>max average traffic<td>time online<td>status";
 
