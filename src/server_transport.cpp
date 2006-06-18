@@ -55,6 +55,8 @@ static NLuint nlSwapi(NLuint x)
     }
 }
 
+#ifdef ENABLE_UFO2K_SERVER
+
 ServerClient::ServerClient(ServerDispatch *server, NLsocket socket)
     :m_socket(socket), m_server(server)
 {
@@ -82,6 +84,8 @@ ServerClient::~ServerClient()
     server_log("connection closed (name='%s', max_ave_traffic=%d, ip=%s)\n", 
         m_name.c_str(), m_max_ave_traffic, m_ip.c_str());
 }
+
+#endif
 
 #define PACKET_HEADER_SIZE 8
 
@@ -127,6 +131,8 @@ static bool stream_to_socket(NLsocket socket, std::string &stream)
 
     return true;    
 }
+
+#ifdef ENABLE_UFO2K_SERVER
 
 void ServerDispatch::HandleSocket(NLsocket socket)
 {
@@ -318,6 +324,8 @@ bool ServerClient::send_packet_all(NLuint id, const std::string &packet)
     }
     return true;
 }
+
+#endif
 
 /****************************************************************************/
 

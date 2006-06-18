@@ -69,7 +69,7 @@ SERVER_CONFIG_VARIABLE(login_time_limit,        10000);
 // The maximum length of user name
 SERVER_CONFIG_VARIABLE(username_size_limit,     16);
 // Maximum size of data packet
-SERVER_CONFIG_VARIABLE(packet_size_limit,       16384);
+SERVER_CONFIG_VARIABLE(packet_size_limit,       65536);
 // Time to keep log messages (in days)
 SERVER_CONFIG_VARIABLE(keep_log_time,           7);
 // Daemonize or not (on unixen)
@@ -184,16 +184,7 @@ void load_config(const std::string &pathname)
         std::string var, val, comment;
         if (!get_variable(buffer, var, val, '#', comment)) continue;
 
-        if (var == "accept_user") {
-        // We can place a moving data from config file to db here.
-/*            std::string login, password;
-            if (!split_loginpass(val, login, password)) {
-                server_log("invalid user login format in config: %s\n", val.c_str());
-            } else {
-                server_log("config accept_user = '%s'\n", val.c_str());
-                accept_user.insert(std::pair<std::string, std::string>(login, password));
-            }*/
-        } else if (var == "reject_ip") {
+        if (var == "reject_ip") {
             NLuint ip, mask;
             if (!decode_ip(val.c_str(), ip, mask)) {
                 server_log("invalid ip address format in config: %s\n", val.c_str());

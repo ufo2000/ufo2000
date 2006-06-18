@@ -91,8 +91,8 @@ SRCS_LUALIB = lapi.c lauxlib.c lbaselib.c lcode.c ldblib.c ldebug.c   \
            ldo.c ldump.c lfunc.c lgc.c liolib.c llex.c lmathlib.c     \
            lmem.c loadlib.c lobject.c lopcodes.c lparser.c            \
            lstate.c lstring.c lstrlib.c ltable.c ltablib.c            \
-           ltests.c ltm.c lundump.c lvm.c lzio.c luasqlite3.c
-
+           ltests.c ltm.c lundump.c lvm.c lzio.c
+           
 SRCS_FDLIBM = e_acos.cpp e_asin.cpp e_atan2.cpp e_exp.cpp e_fmod.cpp  \
               e_log.cpp e_pow.cpp e_rem_pio2.cpp e_remainder.cpp      \
               e_scalb.cpp e_sqrt.cpp k_cos.cpp k_rem_pio2.cpp         \
@@ -107,13 +107,11 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
        keys.cpp main.cpp mainmenu.cpp map.cpp map_pathfind.cpp        \
        minimap.cpp mouse.cpp multiplay.cpp music.cpp packet.cpp       \
        pck.cpp persist.cpp place.cpp platoon.cpp position.cpp         \
-       random.cpp scenario.cpp server_config.cpp server_gui.cpp       \
+       random.cpp scenario.cpp server_gui.cpp                         \
        server_protocol.cpp server_transport.cpp skin.cpp soldier.cpp  \
-       server_game.cpp sprite.cpp                                     \
+       sprite.cpp gui.cpp                                             \
        sound.cpp spk.cpp stats.cpp terrapck.cpp text.cpp units.cpp    \
        video.cpp wind.cpp geoscape.cpp zfstream.cpp script_api.cpp    \
-       sqlite3_command.cpp sqlite3_connection.cpp                     \
-       sqlite3_internal.cpp sqlite3_reader.cpp gui.cpp                \
                                                                       \
        $(SRCS_LUALIB)                                                 \
        $(SRCS_FDLIBM)                                                 \
@@ -122,12 +120,15 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
        aphoton.c awin95.c decode.c encode.c io.c jpgalleg.c scale2x.c
 
 SRCS_SERVER = server_config.cpp server_main.cpp server_protocol.cpp   \
+              server_config.cpp \
               server_game.cpp md5.c                                   \
               server_transport.cpp $(SRCS_LUALIB)                     \
               sqlite3_command.cpp sqlite3_connection.cpp              \
               sqlite3_internal.cpp sqlite3_reader.cpp                 \
+              sqlite3_command.cpp sqlite3_connection.cpp              \
+              sqlite3_internal.cpp sqlite3_reader.cpp
 
-SRCS_LUA = lua.c $(SRCS_LUALIB)
+SRCS_LUA = lua.c $(SRCS_LUALIB) luasqlite3.c
 
 ifdef debug
 	CFLAGS += -g
@@ -142,7 +143,7 @@ else
 	CFLAGS += $(OPTFLAGS)
 endif
 
-LIBS = -lexpat -lsqlite3
+LIBS = -lexpat
 SERVER_LIBS = -lsqlite3
 
 ifndef no_ttf
@@ -198,7 +199,7 @@ DEPS = $(OBJS:.o=.d)
 
 OBJS_SERVER := $(SRCS_SERVER:.cpp=.o)
 OBJS_SERVER := $(OBJS_SERVER:.c=.o)
-OBJS_SERVER := $(addprefix $(OBJDIR)/,$(OBJS_SERVER))
+OBJS_SERVER := $(addprefix $(OBJDIR)-srv/,$(OBJS_SERVER))
 DEPS_SERVER = $(OBJS_SERVER:.o=.d)
 
 OBJS_LUA := $(SRCS_LUA:.cpp=.o)
@@ -217,12 +218,21 @@ endif
 
 all: $(OBJDIR) $(NAME)
 
-server: $(OBJDIR) $(SERVER_NAME)
+server: $(OBJDIR)-srv $(SERVER_NAME)
 
 tools: $(OBJDIR) $(LUA_NAME)
 
 $(OBJDIR):
 	mkdir $(OBJDIR)
+
+$(OBJDIR)-srv:
+	mkdir $(OBJDIR)-srv
+
+$(OBJDIR)-srv/%.o: %.cpp
+	$(CX) -MMD $(CFLAGS) -DENABLE_UFO2K_SERVER -c $< -o $@
+
+$(OBJDIR)-srv/%.o: %.c
+	$(CC) -MMD $(CFLAGS) -DENABLE_UFO2K_SERVER -c $< -o $@
 
 $(OBJDIR)/%.o: %.cpp
 	$(CX) -MMD $(CFLAGS) -c $< -o $@

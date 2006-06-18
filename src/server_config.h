@@ -24,6 +24,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef SERVER_CONFIG_H
 #define SERVER_CONFIG_H
 
+#ifdef ENABLE_UFO2K_SERVER
+
 #define DB_FILENAME "ufo2000.db"
 
 extern int g_server_reload_config_flag;
@@ -38,6 +40,8 @@ extern unsigned long g_srv_packet_size_limit;
 extern unsigned long g_srv_keep_log_time;
 extern unsigned long g_srv_daemonize;
 extern sqlite3::connection db_conn;
+
+#endif
 
 void load_config();
 void load_config(const std::string &pathname);

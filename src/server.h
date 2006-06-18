@@ -23,7 +23,11 @@
 // The maximum length of user name
 #define USERNAME_SIZE_LIMIT g_srv_username_size_limit
 // Maximum size of data packet
+#ifdef ENABLE_UFO2K_SERVER
 #define PACKET_SIZE_LIMIT g_srv_packet_size_limit
+#else
+#define PACKET_SIZE_LIMIT 65536
+#endif
 
 inline long get_time_diff(const NLtime &x, const NLtime &y)
 {
