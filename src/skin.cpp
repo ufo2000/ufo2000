@@ -297,6 +297,7 @@ void Skin::next_human()
 
 void Skin::next_alien()
 {
+    m_soldier->md.fFemale = 0;
     m_soldier->md.SkinType++;
 
     if(m_soldier->md.SkinType < S_SECTOID)
