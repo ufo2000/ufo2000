@@ -303,7 +303,7 @@ void Skin::next_alien()
     if(m_soldier->md.SkinType < S_SECTOID)
         m_soldier->md.SkinType = S_SECTOID;
 
-    if(m_soldier->md.SkinType > S_FLOATER) //LAWYER:  Shifted by one.
+    if(m_soldier->md.SkinType > SKIN_NUMBER) //LAWYER:  Shifted by one. //RAGING_HOG: Changed to compare to the max value of skins.
         m_soldier->md.SkinType = S_SECTOID;
 }
 
