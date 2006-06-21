@@ -1,7 +1,10 @@
 ; UFO2000 NSIS Installer v1.4.2 (see bottom for version history)
 ;
 ; This script was made by Daniel "SupSuper" Albano (supsuper@gmail.com) with Venis IX.
-; UFO2000 is a massive multiplayer game based on XCOM saga: http://ufo2000.sourceforge.net
+; UFO2000 is a multiplayer game heavily inspired by X-COM: http://ufo2000.sourceforge.net
+;
+; Also requires Dialogs plugin: http://nsis.sourceforge.net/Dialogs_plug-in
+; This plugin should be downloaded and extracted into 'nsis-plugins' subdirectory
 
 ;--------------------------------
 ;Includes
@@ -12,7 +15,6 @@
     !addPluginDir  "..\nsis-plugins"
     !addincludedir "..\nsis-plugins"
     !include "MUI.nsh"
-    !include "zipdll.nsh"
     !include "Sections.nsh"
     !include "defines.nsh"
     
