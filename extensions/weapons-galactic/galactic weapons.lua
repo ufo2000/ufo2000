@@ -23,7 +23,7 @@ AddXcomItem {
     weight = 3,
     isGun = 1,
     minimapMark = 1,
-    sound = "cv-pistol-shot",
+    sound = cat_sample("$(xcom)/sound/sound1.cat", 4) or cat_sample("$(xcom)/sound/sample2.cat", 4),
 }
 
 AddXcomItem {
@@ -54,7 +54,7 @@ AddXcomItem {
     weight = 1,
     isAmmo = 1,
     reloadTime = 15,
-    sound = "alien-small-launch",
+    sound = cat_sample("$(xcom)/sound/sound1.cat", 53) or cat_sample("$(xcom)/sound/sample2.cat", 53),
 }
 
 AddXcomItem {
@@ -84,7 +84,7 @@ AddXcomItem {
     isGun = 1,
     minimapMark = 1,
     twoHanded = 1,
-    sound = "cv-pistol-shot",
+    sound = cat_sample("$(xcom)/sound/sound1.cat", 4) or cat_sample("$(xcom)/sound/sample2.cat", 4),
 }
 
 AddXcomItem {
@@ -115,7 +115,7 @@ AddXcomItem {
     weight = 2,
     isAmmo = 1,
     reloadTime = 15,
-    sound = "alien-small-launch",
+    sound = cat_sample("$(xcom)/sound/sound1.cat", 53) or cat_sample("$(xcom)/sound/sample2.cat", 53),
 }
 
 
@@ -147,7 +147,7 @@ AddXcomItem {
       weight = 6,
       isGun = 1,
     minimapMark = 1,
-      sound = "laser-pistol-shot",
+      sound = cat_sample("$(xcom)/sound/sound1.cat", 11) or cat_sample("$(xcom)/sound/sample2.cat", 11),
 }
 
 AddXcomItem {
@@ -179,7 +179,7 @@ AddXcomItem {
       twoHanded = 1,
       isGun = 1,
     minimapMark = 1,
-      sound = "laser-rifle-shot",
+      sound = cat_sample("$(xcom)/sound/sound1.cat", 11) or cat_sample("$(xcom)/sound/sample2.cat", 11),
 }
 
 AddXcomItem {
@@ -210,7 +210,7 @@ AddXcomItem {
       twoHanded = 1,
       isGun = 1,
     minimapMark = 1,
-      sound = "laser-heavy-shot",
+      sound = cat_sample("$(xcom)/sound/sound1.cat", 11) or cat_sample("$(xcom)/sound/sample2.cat", 11),
 }
 
 AddXcomItem {
@@ -244,7 +244,7 @@ AddXcomItem {
     isGun = 1,
     minimapMark = 1,
     twoHanded = 1,
-    sound = "laser-heavy-shot",
+    sound = cat_sample("$(xcom)/sound/sound1.cat", 11) or cat_sample("$(xcom)/sound/sample2.cat", 11),
 }
 
 AddXcomItem {
@@ -273,7 +273,7 @@ AddXcomItem {
       weight = 3,
       isGun = 1,
     minimapMark = 1,
-      sound = "plasma-pistol-shot",
+      sound = cat_sample("$(xcom)/sound/sound1.cat", 18) or cat_sample("$(xcom)/sound/sample2.cat", 18),
 }
 
 AddXcomItem {
@@ -303,7 +303,7 @@ AddXcomItem {
       weight = 2,
       isAmmo = 1,
       reloadTime = 15,
-      sound = "plasma-hit",
+      sound = cat_sample("$(xcom)/sound/sound1.cat", 19) or cat_sample("$(xcom)/sound/sample2.cat", 19),
 }
 
 AddXcomItem {
@@ -333,7 +333,7 @@ AddXcomItem {
       twoHanded = 1,
       isGun = 1,
     minimapMark = 1,
-      sound = "plasma-rifle-shot",
+      sound = cat_sample("$(xcom)/sound/sound1.cat", 18) or cat_sample("$(xcom)/sound/sample2.cat", 18),
 }
 
 AddXcomItem {
@@ -363,7 +363,7 @@ AddXcomItem {
       weight = 3,
       isAmmo = 1,
       reloadTime = 15,
-      sound = "plasma-hit",
+      sound = cat_sample("$(xcom)/sound/sound1.cat", 19) or cat_sample("$(xcom)/sound/sample2.cat", 19),
 }
 
 AddXcomItem {
@@ -393,7 +393,7 @@ AddXcomItem {
       twoHanded = 1,
       isGun = 1,
     minimapMark = 1,
-      sound = "plasma-heavy-shot",
+      sound = cat_sample("$(xcom)/sound/sound1.cat", 18) or cat_sample("$(xcom)/sound/sample2.cat", 18),
 }
 
 AddXcomItem {
@@ -423,7 +423,7 @@ AddXcomItem {
       disappear = 0,
       weight = 3,
       isAmmo = 1,
-      sound = "plasma-hit",
+      sound = cat_sample("$(xcom)/sound/sound1.cat", 19) or cat_sample("$(xcom)/sound/sample2.cat", 19),
 }
 
 AddXcomItem {
@@ -452,7 +452,7 @@ AddXcomItem {
       weight = 12,
       isGun = 1,
     minimapMark = 1,
-      sound = "alien-small-launch",
+      sound = cat_sample("$(xcom)/sound/sound1.cat", 53) or cat_sample("$(xcom)/sound/sample2.cat", 53),
 }
 
 AddXcomItem {
@@ -485,7 +485,7 @@ AddXcomItem {
       weight = 2,
       isAmmo = 1,
       reloadTime = 15,
-      sound = "plasma-hit",
+      sound = cat_sample("$(xcom)/sound/sound1.cat", 19) or cat_sample("$(xcom)/sound/sample2.cat", 19),
 }
 
 AddXcomItem {
@@ -514,7 +514,7 @@ AddXcomItem {
       isGun = 1,
     minimapMark = 1,
       twoHanded = 1,
-      sound = "alien-blaster-launch",
+      sound = cat_sample("$(xcom)/sound/sound1.cat", 53) or cat_sample("$(xcom)/sound/sample2.cat", 53),
 }
 
 AddXcomItem {
@@ -547,7 +547,7 @@ AddXcomItem {
       weight = 3,
       isAmmo = 1,
       reloadTime = 15,
-      sound = "plasma-hit",
+      sound = cat_sample("$(xcom)/sound/sound1.cat", 19) or cat_sample("$(xcom)/sound/sample2.cat", 19),
 }
 
 AddXcomItem {
@@ -577,7 +577,7 @@ AddXcomItem {
       isGun = 1,
     minimapMark = 1,
     twoHanded = 1,
-      sound = "alien-blaster-launch",
+      sound = cat_sample("$(xcom)/sound/sound1.cat", 53) or cat_sample("$(xcom)/sound/sample2.cat", 53),
 }
 
 AddXcomItem {
@@ -783,7 +783,7 @@ AddXcomItem {
       isGun = 1,
     minimapMark = 1,
       twoHanded = 1,
-      sound = "alien-small-launch",
+      sound = cat_sample("$(xcom)/sound/sound1.cat", 53) or cat_sample("$(xcom)/sound/sample2.cat", 53),
 }
 
 AddXcomItem {

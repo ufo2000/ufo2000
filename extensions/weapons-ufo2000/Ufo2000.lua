@@ -23,7 +23,7 @@ AddXcomItem {
 	weight = 3,
 	isGun = 1,
 	minimapmark = 1,
-	sound = "cv-rifle-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 4) or cat_sample("$(xcom)/sound/sample2.cat", 4),
 }
 
 AddXcomItem {
@@ -53,7 +53,7 @@ AddXcomItem {
 	weight = 1,
 	isAmmo = 1,
 	reloadTime = 15,
-	sound = "cv-bullet-hit",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 22) or cat_sample("$(xcom)/sound/sample2.cat", 22),
 	bulletRGB = {255,245,0},
 	glowRGB = {255,245,0},
    	trailRGB = {255,245,0},
@@ -88,7 +88,7 @@ AddXcomItem {
 	weight = 1,
 	isAmmo = 1,
 	reloadTime = 15,
-	sound = "cv-bullet-hit",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 22) or cat_sample("$(xcom)/sound/sample2.cat", 22),
 	bulletRGB = {255,245,0},
 	glowRGB = {255,245,0},
    	trailRGB = {255,245,0},
@@ -123,7 +123,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "cv-rifle-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 4) or cat_sample("$(xcom)/sound/sample2.cat", 4),
 }
 
 AddXcomItem {
@@ -153,7 +153,7 @@ AddXcomItem {
 	weight = 2,
 	isAmmo = 1,
 	reloadTime = 5,
-	sound = "cv-bullet-hit",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 22) or cat_sample("$(xcom)/sound/sample2.cat", 22),
 	bulletRGB = {255,245,0},
 	glowRGB = {255,245,0},
    	trailRGB = {255,245,0},
@@ -189,7 +189,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "cv-rifle-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 4) or cat_sample("$(xcom)/sound/sample2.cat", 4),
 }
 
 AddXcomItem {
@@ -219,7 +219,7 @@ AddXcomItem {
 	weight = 4,
 	isAmmo = 1,
 	reloadTime = 35,
-	sound = "cv-bullet-hit",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 22) or cat_sample("$(xcom)/sound/sample2.cat", 22),
 	bulletRGB = {255,245,0},
 	glowRGB = {255,245,0},
    	trailRGB = {255,245,0},
@@ -254,7 +254,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
   	twoHanded = 1,
-  	sound = "cv-rifle-shot",
+  	sound = cat_sample("$(xcom)/sound/sound1.cat", 4) or cat_sample("$(xcom)/sound/sample2.cat", 4),
 }
 
 AddXcomItem {
@@ -284,7 +284,7 @@ AddXcomItem {
  	weight = 3,
  	isAmmo = 1,
   	reloadTime = 5,
-  	sound = "cv-bullet-hit",
+  	sound = cat_sample("$(xcom)/sound/sound1.cat", 22) or cat_sample("$(xcom)/sound/sample2.cat", 22),
 	bulletRGB = {255,245,0},
 	glowRGB = {255,245,0},
    	trailRGB = {255,245,0},
@@ -317,7 +317,7 @@ AddXcomItem {
 	weight = 6,
 	isGun = 1,
 	minimapMark = 1,
-	sound = "cv-pistol-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 4) or cat_sample("$(xcom)/sound/sample2.cat", 4),
 }
 
 AddXcomItem {
@@ -347,7 +347,7 @@ AddXcomItem {
 	weight = 1,
 	isAmmo = 1,
 	reloadTime = 32,
-	sound = "cv-bullet-hit",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 22) or cat_sample("$(xcom)/sound/sample2.cat", 22),
 	bulletRGB = {255,245,0},
 	glowRGB = {255,245,0},
    	trailRGB = {255,245,0},
@@ -382,7 +382,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "cv-rifle-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 4) or cat_sample("$(xcom)/sound/sample2.cat", 4),
 }
 
 AddXcomItem {
@@ -412,7 +412,7 @@ AddXcomItem {
 	weight = 2,
 	isAmmo = 1,
 	reloadTime = 25,
-	sound = "cv-bullet-hit",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 22) or cat_sample("$(xcom)/sound/sample2.cat", 22),
 	bulletRGB = {255,245,0},
 	glowRGB = {255,245,0},
    	trailRGB = {255,245,0},
@@ -447,7 +447,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "cv-auto-cannon-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 2) or cat_sample("$(xcom)/sound/sample2.cat", 2),
 }
 
 AddXcomItem {
@@ -477,7 +477,7 @@ AddXcomItem {
 	weight = 2,
 	isAmmo = 1,
 	reloadTime = 35,
-	sound = "cv-cannon-AP-hit",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 22) or cat_sample("$(xcom)/sound/sample2.cat", 22),
 	bulletRGB = {255,245,0},
 	glowRGB = {255,245,0},
    	trailRGB = {255,245,0},
@@ -515,7 +515,7 @@ AddXcomItem {
 	weight = 5,
 	isAmmo = 1,
 	reloadTime = 35,
-	sound = "cv-cannon-HE-hit",
+	sound = cat_sample("$(xcom)/sound/sound2.cat", 10) or cat_sample("$(xcom)/sound/sample.cat", 10),
 	bulletRGB = {255,245,0},
 	glowRGB = {255,245,0},
    	trailRGB = {255,245,0},
@@ -553,7 +553,7 @@ AddXcomItem {
 	weight = 3,
 	isAmmo = 1,
 	reloadTime = 35,
-	sound = "cv-cannon-IN-hit",
+	sound = cat_sample("$(xcom)/sound/sound2.cat", 10) or cat_sample("$(xcom)/sound/sample.cat", 10),
 	bulletRGB = {255,245,0},
 	glowRGB = {255,245,0},
    	trailRGB = {255,245,0},
@@ -587,7 +587,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "cv-heavy-cannon-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 2) or cat_sample("$(xcom)/sound/sample2.cat", 2),
 }
 
 AddXcomItem {
@@ -617,7 +617,7 @@ AddXcomItem {
 	weight = 4,
 	isAmmo = 1,
 	reloadTime = 20,
-	sound = "cv-cannon-AP-hit",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 22) or cat_sample("$(xcom)/sound/sample2.cat", 22),
 	bulletRGB = {255,245,0},
 	glowRGB = {255,245,0},
    	trailRGB = {255,245,0},
@@ -655,7 +655,7 @@ AddXcomItem {
 	weight = 7,
 	isAmmo = 1,
 	reloadTime = 20,
-	sound = "cv-cannon-HE-hit",
+	sound = cat_sample("$(xcom)/sound/sound2.cat", 10) or cat_sample("$(xcom)/sound/sample.cat", 10),
 	bulletRGB = {255,245,0},
 	glowRGB = {255,245,0},
    	trailRGB = {255,245,0},
@@ -693,7 +693,7 @@ AddXcomItem {
 	weight = 5,
 	isAmmo = 1,
 	reloadTime = 20,
-	sound = "cv-cannon-IN-hit",
+	sound = cat_sample("$(xcom)/sound/sound2.cat", 10) or cat_sample("$(xcom)/sound/sample.cat", 10),
 	bulletRGB = {255,245,0},
 	glowRGB = {255,245,0},
    	trailRGB = {255,245,0},
@@ -727,7 +727,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "rl-launch",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 52) or cat_sample("$(xcom)/sound/sample2.cat", 52),
 }
 
 AddXcomItem {
@@ -760,7 +760,7 @@ AddXcomItem {
 	weight = 6,
 	isAmmo = 1,
 	reloadTime = 3,
-	sound = "small-rocket-hit",
+	sound = cat_sample("$(xcom)/sound/sound2.cat", 10) or cat_sample("$(xcom)/sound/sample.cat", 10),
 	bulletRGB = {255,85,50},
    	glowRGB = {255,40,0},
    	trailRGB = {222,30,0},
@@ -799,7 +799,7 @@ AddXcomItem {
 	weight = 6,
 	isAmmo = 1,
 	reloadTime = 3,
-	sound = "IN-rocket-hit",
+	sound = cat_sample("$(xcom)/sound/sound2.cat", 10) or cat_sample("$(xcom)/sound/sample.cat", 10),
 	bulletRGB = {255,85,50},
    	glowRGB = {255,40,0},
    	trailRGB = {222,30,0},
@@ -837,7 +837,7 @@ AddXcomItem {
 	weight = 8,
 	isAmmo = 1,
 	reloadTime = 3,
-	sound = "HE-rocket-hit",
+	sound = cat_sample("$(xcom)/sound/sound2.cat", 10) or cat_sample("$(xcom)/sound/sample.cat", 10),
 	bulletRGB = {255,85,50},
    	glowRGB = {255,40,0},
    	trailRGB = {222,30,0},
@@ -875,7 +875,7 @@ AddXcomItem {
 	weight = 4,
 	isAmmo = 1,
 	reloadTime = 3,
-	sound = "small-rocket-hit",
+	sound = cat_sample("$(xcom)/sound/sound2.cat", 10) or cat_sample("$(xcom)/sound/sample.cat", 10),
 	bulletRGB = {255,85,50},
    	glowRGB = {255,40,0},
    	trailRGB = {222,30,0},
@@ -1137,7 +1137,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "rl-launch",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 52) or cat_sample("$(xcom)/sound/sample2.cat", 52),
 }
 
 AddXcomItem {
@@ -1170,7 +1170,7 @@ AddXcomItem {
 	weight = 12,
 	isAmmo = 1,
 	reloadTime = 15,
-	sound = "small-rocket-hit",
+	sound = cat_sample("$(xcom)/sound/sound2.cat", 10) or cat_sample("$(xcom)/sound/sample.cat", 10),
 	bulletRGB = {255,85,50},
    	glowRGB = {255,40,0},
    	trailRGB = {222,30,0},
@@ -1208,7 +1208,7 @@ AddXcomItem {
 	weight = 12,
 	isAmmo = 1,
 	reloadTime = 15,
-	sound = "small-rocket-hit",
+	sound = cat_sample("$(xcom)/sound/sound2.cat", 10) or cat_sample("$(xcom)/sound/sample.cat", 10),
 	bulletRGB = {255,85,50},
    	glowRGB = {255,40,0},
    	trailRGB = {222,30,0},
@@ -1244,7 +1244,7 @@ AddXcomItem {
 	weight = 5,
 	isGun = 1,
 	minimapMark = 1,
-	sound = "laser-pistol-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 11) or cat_sample("$(xcom)/sound/sample2.cat", 11),
 	bulletRGB = {0,0,0},
 	glowRGB = {100,120,255},
    	trailRGB = {0,0,0},
@@ -1280,7 +1280,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "laser-rifle-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 11) or cat_sample("$(xcom)/sound/sample2.cat", 11),
 	bulletRGB = {0,0,0},
 	glowRGB = {120,160,255},
    	trailRGB = {0,0,0},
@@ -1315,7 +1315,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "laser-rifle-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 11) or cat_sample("$(xcom)/sound/sample2.cat", 11),
 	bulletRGB = {0,0,0},
 	glowRGB = {210,220,255},
    	trailRGB = {0,0,0},
@@ -1351,7 +1351,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "laser-heavy-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 11) or cat_sample("$(xcom)/sound/sample2.cat", 11),
 	bulletRGB = {0,0,0},
 	glowRGB = {170,200,255},
    	trailRGB = {0,0,0},
@@ -1384,7 +1384,7 @@ AddXcomItem {
 	weight = 3,
 	isGun = 1,
 	minimapMark = 1,
-	sound = "plasma-pistol-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 18) or cat_sample("$(xcom)/sound/sample2.cat", 18),
 }
 
 AddXcomItem {
@@ -1414,7 +1414,7 @@ AddXcomItem {
 	weight = 2,
 	isAmmo = 1,
 	reloadTime = 35,
-	sound = "plasma-hit",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 19) or cat_sample("$(xcom)/sound/sample2.cat", 19),
 	bulletRGB = {0,180,0},
    	glowRGB = {0,140,0},
    	trailRGB = {0,100,0},
@@ -1449,7 +1449,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "plasma-rifle-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 18) or cat_sample("$(xcom)/sound/sample2.cat", 18),
 }
 
 AddXcomItem {
@@ -1479,7 +1479,7 @@ AddXcomItem {
 	weight = 3,
 	isAmmo = 1,
 	reloadTime = 35,
-	sound = "plasma-hit",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 19) or cat_sample("$(xcom)/sound/sample2.cat", 19),
 	bulletRGB = {0,200,0},
    	glowRGB = {0,200,0},
    	trailRGB = {0,180,0},
@@ -1514,7 +1514,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "plasma-rifle-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 18) or cat_sample("$(xcom)/sound/sample2.cat", 18),
 }
 
 AddXcomItem {
@@ -1544,7 +1544,7 @@ AddXcomItem {
 	weight = 3,
 	isAmmo = 1,
 	reloadTime = 35,
-	sound = "plasma-hit",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 19) or cat_sample("$(xcom)/sound/sample2.cat", 19),
 	bulletRGB = {0,255,0},
    	glowRGB = {0,225,0},
    	trailRGB = {0,255,0},
@@ -1579,7 +1579,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "plasma-heavy-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 18) or cat_sample("$(xcom)/sound/sample2.cat", 18),
 }
 
 AddXcomItem {
@@ -1609,7 +1609,7 @@ AddXcomItem {
 	weight = 3,
 	isAmmo = 1,
 	reloadTime = 35,
-	sound = "plasma-hit",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 19) or cat_sample("$(xcom)/sound/sample2.cat", 19),
 	bulletRGB = {0,255,0},
    	glowRGB = {0,225,0},
    	trailRGB = {0,200,0},
@@ -1643,7 +1643,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "alien-small-launch",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 53) or cat_sample("$(xcom)/sound/sample2.cat", 53),
 }
 
 AddXcomItem {
@@ -1746,7 +1746,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "alien-small-launch",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 53) or cat_sample("$(xcom)/sound/sample2.cat", 53),
 	
 }
 

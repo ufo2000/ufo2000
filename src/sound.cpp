@@ -1019,3 +1019,37 @@ SAMPLE *wav_sample(const char *filename)
     }
     return g_wav_cache[fullname];
 }
+
+static std::map<std::string, soundFile *> g_cat_cache;
+
+void free_cat_cache()
+{
+    std::map<std::string, soundFile *>::iterator it = g_cat_cache.begin();
+    while (it != g_cat_cache.end()) {
+        if (it->second) delete it->second;
+        it++;
+    }
+}
+
+/**
+ * Load a sound sample from a cat-file
+ */
+SAMPLE *cat_sample(const char *filename, int index)
+{
+    std::string fullname = F(filename);
+
+    if (!check_filename_case_consistency(fullname.c_str())) {
+        return NULL;
+    }
+
+    if (g_cat_cache.find(fullname) == g_cat_cache.end()) {
+        soundFile *sf = new soundFile();
+        std::stringstream x;
+        if (sf->loadFile(fullname.c_str(), x) == -1) {
+            delete sf;
+            return NULL;
+        }
+        g_cat_cache[fullname] = sf;
+    }
+    return g_cat_cache[fullname]->fetchSample(index);
+}

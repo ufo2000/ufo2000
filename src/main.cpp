@@ -694,6 +694,7 @@ void initmain(int argc, char *argv[])
     LUA_REGISTER_FUNCTION(L, pck_image_ex);
     LUA_REGISTER_FUNCTION(L, png_image);
     LUA_REGISTER_FUNCTION(L, wav_sample);
+    LUA_REGISTER_FUNCTION(L, cat_sample);
     
 #ifdef LINUX
     // Do not silently exit on broken network connection
@@ -999,6 +1000,7 @@ void closemain()
 
     free_pck_cache();
     free_png_cache();
+    free_cat_cache();
     free_wav_cache();
 
     Map::freepck();

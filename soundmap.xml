@@ -75,7 +75,7 @@
 <!-- #21 --> <sample sym="alien-int-door" /> 
 <!-- #22 --> <sample sym="cv-bullet-bounce"> 
                 <alias sym="cv-bullet-hit" />
-                <alias sym="cannon-ap-hit" />
+                <alias sym="cv-cannon-AP-hit" />
              </sample>
 <!-- #23 --> <sample sym="HWP-death" /> 
 <!-- #24 --> <sample sym="step-human-metal"> 
@@ -150,8 +150,8 @@
                  <alias sym="high-explosive-bang" />
                  <alias sym="proxy-grenade-bang" />
                  <alias sym="alien-grenade-bang" />
-                 <alias sym="cannon-he-hit" />
-                 <alias sym="cannon-in-hit" />
+                 <alias sym="cv-cannon-HE-hit" />
+                 <alias sym="cv-cannon-IN-hit" />
              </sample>
 <!-- #11 --> <sample sym="unknown" /> 
 <!-- #12 --> <sample sym="unknown" /> 
@@ -182,8 +182,8 @@
                  <alias sym="high-explosive-bang" />
                  <alias sym="proxy-grenade-bang" />
                  <alias sym="alien-grenade-bang" />
-                 <alias sym="cannon-he-hit" />
-                 <alias sym="cannon-in-hit" />
+                 <alias sym="cv-cannon-HE-hit" />
+                 <alias sym="cv-cannon-IN-hit" />
              </sample>
 <!-- #11 --> <sample sym="unknown" /> 
 <!-- #12 --> <sample sym="unknown" /> 
@@ -230,7 +230,7 @@
 <!-- #21 --> <sample sym="alien-int-door" /> 
 <!-- #22 --> <sample sym="cv-bullet-bounce"> 
                 <alias sym="cv-bullet-hit" />
-                <alias sym="cannon-ap-hit" />
+                <alias sym="cv-cannon-AP-hit" />
              </sample>
 <!-- #23 --> <sample sym="HWP-death" /> 
 <!-- #24 --> <sample sym="step-human-metal"> 

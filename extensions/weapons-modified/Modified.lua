@@ -18,7 +18,7 @@ AddXcomItem {
 	weight = 3,
 	isGun = 1,
 	minimapMark = 1,
-	sound = "cv-pistol-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 4) or cat_sample("$(xcom)/sound/sample2.cat", 4),
 }
 
 AddXcomItem {
@@ -39,7 +39,7 @@ AddXcomItem {
 	weight = 1,
 	isAmmo = 1,
 	reloadTime = 15,
-	sound = "cv-bullet-hit",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 22) or cat_sample("$(xcom)/sound/sample2.cat", 22),
 }
 
 AddXcomItem {
@@ -60,7 +60,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "cv-rifle-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 4) or cat_sample("$(xcom)/sound/sample2.cat", 4),
 }
 
 AddXcomItem {
@@ -81,7 +81,7 @@ AddXcomItem {
 	weight = 2,
 	isAmmo = 1,
 	reloadTime = 15,
-	sound = "cv-bullet-hit",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 22) or cat_sample("$(xcom)/sound/sample2.cat", 22),
 }
 
 AddXcomItem {
@@ -101,7 +101,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "cv-heavy-cannon-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 2) or cat_sample("$(xcom)/sound/sample2.cat", 2),
 }
 
 AddXcomItem {
@@ -122,7 +122,7 @@ AddXcomItem {
 	weight = 6,
 	isAmmo = 1,
 	reloadTime = 15,
-	sound = "cv-cannon-AP-hit",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 22) or cat_sample("$(xcom)/sound/sample2.cat", 22),
 }
 
 AddXcomItem {
@@ -146,7 +146,7 @@ AddXcomItem {
 	weight = 6,
 	isAmmo = 1,
 	reloadTime = 15,
-	sound = "cv-cannon-HE-hit",
+	sound = cat_sample("$(xcom)/sound/sound2.cat", 10) or cat_sample("$(xcom)/sound/sample.cat", 10),
 }
 
 AddXcomItem {
@@ -170,7 +170,7 @@ AddXcomItem {
 	weight = 6,
 	isAmmo = 1,
 	reloadTime = 15,
-	sound = "cv-cannon-IN-hit",
+	sound = cat_sample("$(xcom)/sound/sound2.cat", 10) or cat_sample("$(xcom)/sound/sample.cat", 10),
 }
 
 AddXcomItem {
@@ -191,7 +191,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "cv-auto-cannon-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 2) or cat_sample("$(xcom)/sound/sample2.cat", 2),
 }
 
 AddXcomItem {
@@ -212,7 +212,7 @@ AddXcomItem {
 	weight = 5,
 	isAmmo = 1,
 	reloadTime = 15,
-	sound = "cv-cannon-AP-hit",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 22) or cat_sample("$(xcom)/sound/sample2.cat", 22),
 }
 
 AddXcomItem {
@@ -236,7 +236,7 @@ AddXcomItem {
 	weight = 5,
 	isAmmo = 1,
 	reloadTime = 15,
-	sound = "cv-cannon-HE-hit",
+	sound = cat_sample("$(xcom)/sound/sound2.cat", 10) or cat_sample("$(xcom)/sound/sample.cat", 10),
 }
 
 AddXcomItem {
@@ -260,7 +260,7 @@ AddXcomItem {
 	weight = 5,
 	isAmmo = 1,
 	reloadTime = 15,
-	sound = "cv-cannon-IN-hit",
+	sound = cat_sample("$(xcom)/sound/sound2.cat", 10) or cat_sample("$(xcom)/sound/sample.cat", 10),
 }
 
 AddXcomItem {
@@ -280,7 +280,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "rl-launch",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 52) or cat_sample("$(xcom)/sound/sample2.cat", 52),
 }
 
 AddXcomItem {
@@ -304,7 +304,7 @@ AddXcomItem {
 	weight = 6,
 	isAmmo = 1,
 	reloadTime = 15,
-	sound = "small-rocket-hit",
+	sound = cat_sample("$(xcom)/sound/sound2.cat", 10) or cat_sample("$(xcom)/sound/sample.cat", 10),
 }
 
 AddXcomItem {
@@ -328,7 +328,7 @@ AddXcomItem {
 	weight = 8,
 	isAmmo = 1,
 	reloadTime = 15,
-	sound = "HE-rocket-hit",
+	sound = cat_sample("$(xcom)/sound/sound2.cat", 10) or cat_sample("$(xcom)/sound/sample.cat", 10),
 }
 
 AddXcomItem {
@@ -352,7 +352,7 @@ AddXcomItem {
 	weight = 7,
 	isAmmo = 1,
 	reloadTime = 15,
-	sound = "IN-rocket-hit",
+	sound = cat_sample("$(xcom)/sound/sound2.cat", 10) or cat_sample("$(xcom)/sound/sample.cat", 10),
 }
 
 AddXcomItem {
@@ -374,7 +374,7 @@ AddXcomItem {
 	weight = 6,
 	isGun = 1,
 	minimapMark = 1,
-	sound = "laser-pistol-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 11) or cat_sample("$(xcom)/sound/sample2.cat", 11),
 }
 
 AddXcomItem {
@@ -397,7 +397,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "laser-rifle-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 11) or cat_sample("$(xcom)/sound/sample2.cat", 11),
 }
 
 AddXcomItem {
@@ -419,7 +419,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "laser-heavy-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 11) or cat_sample("$(xcom)/sound/sample2.cat", 11),
 }
 
 AddXcomItem {
@@ -546,7 +546,7 @@ AddXcomItem {
 	weight = 4,
 	isAmmo = 1,
 	reloadTime = 15,
-	sound = "small-rocket-hit",
+	sound = cat_sample("$(xcom)/sound/sound2.cat", 10) or cat_sample("$(xcom)/sound/sample.cat", 10),
 }
 
 AddXcomItem {
@@ -587,7 +587,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "plasma-heavy-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 18) or cat_sample("$(xcom)/sound/sample2.cat", 18),
 }
 
 AddXcomItem {
@@ -608,7 +608,7 @@ AddXcomItem {
 	weight = 3,
 	isAmmo = 1,
 	reloadTime = 15,
-	sound = "plasma-hit",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 19) or cat_sample("$(xcom)/sound/sample2.cat", 19),
 }
 
 AddXcomItem {
@@ -629,7 +629,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "plasma-rifle-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 18) or cat_sample("$(xcom)/sound/sample2.cat", 18),
 }
 
 AddXcomItem {
@@ -650,7 +650,7 @@ AddXcomItem {
 	weight = 3,
 	isAmmo = 1,
 	reloadTime = 15,
-	sound = "plasma-hit",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 19) or cat_sample("$(xcom)/sound/sample2.cat", 19),
 }
 
 AddXcomItem {
@@ -670,7 +670,7 @@ AddXcomItem {
 	weight = 3,
 	isGun = 1,
 	minimapMark = 1,
-	sound = "plasma-pistol-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 18) or cat_sample("$(xcom)/sound/sample2.cat", 18),
 }
 
 AddXcomItem {
@@ -691,7 +691,7 @@ AddXcomItem {
 	weight = 2,
 	isAmmo = 1,
 	reloadTime = 15,
-	sound = "plasma-hit",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 19) or cat_sample("$(xcom)/sound/sample2.cat", 19),
 }
 
 AddXcomItem {
@@ -711,7 +711,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "alien-small-launch",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 53) or cat_sample("$(xcom)/sound/sample2.cat", 53),
 }
 
 AddXcomItem {
@@ -796,7 +796,7 @@ AddXcomItem {
 	isGun = 1,
 	minimapMark = 1,
 	twoHanded = 1,
-	sound = "cv-rifle-shot",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 4) or cat_sample("$(xcom)/sound/sample2.cat", 4),
 }
 
 AddXcomItem {
@@ -817,7 +817,7 @@ AddXcomItem {
 	weight = 2,
 	isAmmo = 1,
 	reloadTime = 15,
-	sound = "cv-bullet-hit",
+	sound = cat_sample("$(xcom)/sound/sound1.cat", 22) or cat_sample("$(xcom)/sound/sample2.cat", 22),
 }
 
 AddEquipment {

@@ -145,6 +145,8 @@ public:
 };
 
 SAMPLE *wav_sample(const char *filename);
+SAMPLE *cat_sample(const char *filename, int index);
 void free_wav_cache();
+void free_cat_cache();
 
 #endif
