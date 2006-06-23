@@ -1038,10 +1038,6 @@ SAMPLE *cat_sample(const char *filename, int index)
 {
     std::string fullname = F(filename);
 
-    if (!check_filename_case_consistency(fullname.c_str())) {
-        return NULL;
-    }
-
     if (g_cat_cache.find(fullname) == g_cat_cache.end()) {
         soundFile *sf = new soundFile();
         std::stringstream x;
