@@ -17,6 +17,7 @@
 #endif
 
 #include "jpgalleg/jpgalleg.h"
+#include "fpasprite/fpasprite.h"
 
 extern "C" {
 #include "agup/agup.h"

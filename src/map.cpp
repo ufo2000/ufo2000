@@ -35,7 +35,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "text.h"
 #include "random.h"
 #include "script_api.h"
-#include "sprite.h"
 
 #define SCANGSIZE 4
 

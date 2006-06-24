@@ -21,7 +21,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "stdafx.h"
 
 #include "global.h"
-#include "sprite.h"
 #include "gui.h"
 /*
  * -- SKIN INTERFACE RELATED --

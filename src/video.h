@@ -22,7 +22,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define VIDEO_H
 
 #include "font.h"
-#include "sprite.h"
 
 extern BITMAP *screen2;
 extern int SCREEN2W, SCREEN2H;

@@ -26,7 +26,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define SKIN_GUI_H
 
 #include "global.h"
-#include "sprite.h"
 
 /*class SkinFeature;*/
 /**

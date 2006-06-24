@@ -32,7 +32,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //to be vestigal from the original HIT option...
 
 #include "sound.h"
-#include "sprite.h"
 
 class Place;
 class Editor;

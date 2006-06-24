@@ -22,7 +22,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define BULLET_H
 
 #include "global.h"
-#include "sprite.h"
 
 class Item;
 

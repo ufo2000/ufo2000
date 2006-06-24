@@ -22,7 +22,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define TERRAPCK_H
 
 #include "global.h"
-#include "sprite.h"
 
 /**
  * Information about the shape of map cell. Each cell is represented

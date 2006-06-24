@@ -22,7 +22,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define SCRIPT_API_H
 
 #include <vector>
-#include "sprite.h"
 
 /**
  * @file script_api.h

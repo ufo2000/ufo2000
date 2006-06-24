@@ -84,7 +84,7 @@ endif
 
 VPATH = src src/jpgalleg src/dumbogg src/exchndl src/agup src/lua \
         src/glyphkeeper src/loadpng src/sqlite src/luasqlite3 src/lua/lua \
-        src/scale2x src/fdlibm src/md5
+        src/scale2x src/fdlibm src/md5 src/fpasprite
 
 
 SRCS_LUALIB = lapi.c lauxlib.c lbaselib.c lcode.c ldblib.c ldebug.c   \
@@ -109,7 +109,7 @@ SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
        pck.cpp persist.cpp place.cpp platoon.cpp position.cpp         \
        random.cpp scenario.cpp server_gui.cpp                         \
        server_protocol.cpp server_transport.cpp skin.cpp soldier.cpp  \
-       sprite.cpp gui.cpp                                             \
+       fpasprite.cpp gui.cpp                                          \
        sound.cpp spk.cpp stats.cpp terrapck.cpp text.cpp units.cpp    \
        video.cpp wind.cpp geoscape.cpp zfstream.cpp script_api.cpp    \
                                                                       \

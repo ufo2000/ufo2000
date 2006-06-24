@@ -22,7 +22,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define PCK_H
 
 #include "global.h"
-#include "sprite.h"
 
 ALPHA_SPRITE *pck_image(const char *filename, int index);
 ALPHA_SPRITE *pck_image_ex(bool tftd_flag, int width, int height, const char *filename, int index);
