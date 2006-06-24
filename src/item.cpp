@@ -76,7 +76,10 @@ ALPHA_SPRITE *Item::obdata_get_bitmap(uint32 item_index, const char *property_na
         lua_pushnumber(L, bitmap_index);
         lua_gettable(L, -2);
     }
-    if (lua_islightuserdata(L, -1)) result = (ALPHA_SPRITE *)lua_topointer(L, -1);
+    if (lua_isuserdata(L, -1)) {
+        ASSERT(lpcd_isuserdatatype(L, -1, "ALPHA_SPRITE"));
+        result = (ALPHA_SPRITE *)lua_unboxpointer(L, -1);
+    }
     lua_settop(L, stack_top);
     return result;
 }
@@ -100,7 +103,10 @@ SAMPLE *Item::obdata_get_sound_sample(uint32 item_index, const char *property_na
         lua_pushnumber(L, sample_index);
         lua_gettable(L, -2);
     }
-    if (lua_islightuserdata(L, -1)) result = (SAMPLE *)lua_topointer(L, -1);
+    if (lua_isuserdata(L, -1)) {
+        ASSERT(lpcd_isuserdatatype(L, -1, "SAMPLE"));
+        result = (SAMPLE *)lua_unboxpointer(L, -1);
+    }
     lua_settop(L, stack_top);
     return result;
 }

@@ -2718,8 +2718,9 @@ void Soldier::showspk(BITMAP *dest)
             ASSERT(lua_istable(L, -1));
             lua_pushstring(L, "pInv");
             lua_gettable(L, -2);
-            if (lua_islightuserdata(L, -1)) {
-                ALPHA_SPRITE *spr = (ALPHA_SPRITE *)lua_touserdata(L, -1);
+            if (lua_isuserdata(L, -1)) {
+                ASSERT(lpcd_isuserdatatype(L, -1, "ALPHA_SPRITE"));
+                ALPHA_SPRITE *spr = (ALPHA_SPRITE *)lua_unboxpointer(L, -1);
                 ASSERT(spr);
                 draw_alpha_sprite(dest, spr, 80 - (spr->w / 2), 100 - (spr->h / 2));
             }

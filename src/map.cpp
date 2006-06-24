@@ -504,16 +504,17 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
             lua_pushnumber(L, e / 2 + 1);
             lua_gettable(L, -2);
             if (lua_isuserdata(L, -1)) {
+                ASSERT(lpcd_isuserdatatype(L, -1, "ALPHA_SPRITE"));
                 if (it_type > 0) {
-                    ALPHA_SPRITE *spr = (ALPHA_SPRITE *)lua_touserdata(L, -1);
+                    ALPHA_SPRITE *spr = (ALPHA_SPRITE *)lua_unboxpointer(L, -1);
                     ALPHA_SPRITE *exp_frame = Item::obdata_get_bitmap(it_type, "hitAnim", e / 2 + 1);
                     if (exp_frame) {
                         draw_alpha_sprite(screen2, exp_frame, (sx + 16) - (exp_frame->w / 2), (sy + 12) - (exp_frame->h * 2 / 3));
                     }else if( !Item::obdata_get_bitmap(it_type, "hitAnim", 1) ) {
                         draw_alpha_sprite(screen2, spr, (sx + 16) - (spr->w / 2), (sy + 12) - (spr->h * 2 / 3));
                     }
-                }else {
-                    ALPHA_SPRITE *spr = (ALPHA_SPRITE *)lua_touserdata(L, -1);
+                } else {
+                    ALPHA_SPRITE *spr = (ALPHA_SPRITE *)lua_unboxpointer(L, -1);
                     draw_alpha_sprite(screen2, spr, (sx + 16) - (spr->w / 2), (sy + 12) - (spr->h * 2 / 3));
                 } 
             }

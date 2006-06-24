@@ -30,8 +30,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "stdafx.h"
 #include "global.h"
 #include "script_api.h"
-//#include <vector>
-//#include <string>
 
 /**
  * Gets the name of the currently selected equipment set
@@ -132,8 +130,8 @@ ALPHA_SPRITE *lua_table_image(const char *name)
     ASSERT(lua_istable(L, -1));
     lua_pushstring(L, name);
     lua_gettable(L, -2);
-    ASSERT(lua_isuserdata(L, -1));
-    ALPHA_SPRITE *spr = (ALPHA_SPRITE *)lua_touserdata(L, -1);
+    ASSERT(lpcd_isuserdatatype(L, -1, "ALPHA_SPRITE"));
+    ALPHA_SPRITE *spr = (ALPHA_SPRITE *)lua_unboxpointer(L, -1);
     lua_settop(L, stack_top);
     
     return spr;
@@ -159,7 +157,8 @@ std::vector<ALPHA_SPRITE *> lua_table_image_vector(const char *name)
             lua_settop(L, stack_top);
             return res;
         }
-        res.push_back((ALPHA_SPRITE *)lua_touserdata(L, -1));
+        ASSERT(lpcd_isuserdatatype(L, -1, "ALPHA_SPRITE"));
+        res.push_back((ALPHA_SPRITE *)lua_unboxpointer(L, -1));
         lua_pop(L, 1);
         i++;
     }

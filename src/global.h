@@ -49,6 +49,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
         lua_pushstring(L, "__index"); \
         lua_pushvalue(L, -2); \
         lua_settable(L, -3); \
+        lua_pushstring(L, "__usertype"); \
+        lua_pushstring(L, #classname); \
+        lua_settable(L, -3); \
         lua_settable(L, LUA_GLOBALSINDEX); \
     }
     

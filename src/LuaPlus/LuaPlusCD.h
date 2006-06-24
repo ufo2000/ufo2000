@@ -1133,4 +1133,26 @@ inline void lpcd_pushglobalpropertysetclosure(lua_State* L, VarType* var)
 }
 
 
+inline bool lpcd_isuserdatatype(lua_State* L, int idx, const char *typestr)
+{
+    if (!lua_getmetatable(L, idx)) {
+        return false;
+    }
+    
+    lua_pushstring(L, "__usertype");
+    lua_gettable(L, -2);
+    if (!lua_isstring(L, -1)) {
+        lua_pop(L, 2);
+        return false;
+    }
+    
+    if (strcmp(typestr, lua_tostring(L, -1)) == 0) {
+        lua_pop(L, 2);
+        return true;
+    } else {
+        lua_pop(L, 2);
+        return false;
+    }
+}
+
 #endif // LUAPLUS_LPCD_H

@@ -68,7 +68,10 @@ ALPHA_SPRITE *SkinInterface::get_bitmap(const char *bitmap_name)
         lua_pushnumber(L, -1);
         lua_gettable(L, -2);
     }
-    if (lua_islightuserdata(L, -1)) result = (ALPHA_SPRITE *)lua_topointer(L, -1);
+    if (lua_isuserdata(L, -1)) {
+        ASSERT(lpcd_isuserdatatype(L, -1, "ALPHA_SPRITE"));
+        result = (ALPHA_SPRITE *)lua_unboxpointer(L, -1);
+    }
     lua_settop(L, stack_top);
     return result;
 }
@@ -247,7 +250,10 @@ ALPHA_SPRITE *SkinFeature::feat_get_bitmap(const char *bitmap_name)
         lua_pushnumber(L, -1);
         lua_gettable(L, -2);
     }
-    if (lua_islightuserdata(L, -1)) result = (ALPHA_SPRITE *)lua_topointer(L, -1);
+    if (lua_islightuserdata(L, -1)) {
+        ASSERT(lpcd_isuserdatatype(L, -1, "ALPHA_SPRITE"));
+        result = (ALPHA_SPRITE *)lua_unboxpointer(L, -1);
+    }
     lua_settop(L, stack_top);
     return result;
 }
