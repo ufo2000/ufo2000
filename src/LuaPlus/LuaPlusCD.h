@@ -6,6 +6,12 @@
 //
 // The code presented in this file may be used in any environment it is
 // acceptable to use Lua.
+//
+// WARNING!
+// 
+// Now this file is part of UFO2000 project and it was modified to match this
+// project requirements. So it is NOT an original LuaPlus call dispatcher!
+// If you want to get original sources, please visit http://www.luaplus.org
 ///////////////////////////////////////////////////////////////////////////////
 #ifdef _MSC_VER
 #pragma once
@@ -91,7 +97,7 @@ namespace LPCD
     inline bool Match(TypeWrapper<lua_State*>, lua_State* L, int idx)
         {  return lua_type(L, idx) == LUA_TNONE;  }
     template<typename T> inline bool Match(TypeWrapper<T *>, lua_State* L, int idx)
-        {  return lua_type(L, idx) == LUA_TLIGHTUSERDATA;  }
+        {  return lua_type(L, idx) == LUA_TUSERDATA;  }
 
     inline void             Get(TypeWrapper<void>, lua_State*, int)
         {  }
@@ -126,7 +132,7 @@ namespace LPCD
     inline lua_State*       Get(TypeWrapper<lua_State*>, lua_State* L, int /*idx*/)
         {  return L;  }
     template<typename T> inline T *Get(TypeWrapper<T *>, lua_State* L, int idx)
-        {  return static_cast<T *>(lua_touserdata(L, idx));  }
+        {  return static_cast<T *>(lua_unboxpointer(L, idx));  }
 
     //////////////////////////////////////////////////////////////////////////
     
