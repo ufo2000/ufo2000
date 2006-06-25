@@ -674,6 +674,26 @@ void Units::execute(Map *map, int map_change_allowed)
 }
 
 /**
+ * Activate unit inventory editor
+ */
+bool Units::edit_unit(int num)
+{
+    if (editor->set_man(name[num])) {
+        clear(screen);
+
+        editor->show();
+        editor->build_Units(*this);
+        reset_video();
+
+        destroy_bitmap(screen2);
+        screen2 = create_bitmap(640, SCREEN2H - 1); clear(screen2);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
  * Mission-planner: select position for a soldier in deployment-area on map.
  * When user ctrl-clicks on a soldier-name, call editor for soldier-equipment.
  */
@@ -717,22 +737,7 @@ void Units::execute_main(Map *map, int map_change_allowed)
 
         if (mouse_inside(x1, y1, x2, y2)) {
             if (key[KEY_LCONTROL]) { // do editor
-                //if (is_selected(i)) // don't edit selected
-                //  return;
-                if (editor->set_man(name[i])) {
-                    clear(screen);
-
-                    editor->show();
-                    editor->build_Units(*this);
-                    reset_video();
-
-                    destroy_bitmap(screen2);
-                    screen2 = create_bitmap(640, SCREEN2H - 1); clear(screen2);
-                    /*if (is_selected(i)) {
-                        lev[i] = -1;
-                        net->send_deselect_unit(i);
-                    }*/
-                }
+                edit_unit(i);
                 return ;
             }
             selected = i;

@@ -99,6 +99,7 @@ public:
     int select_unit(int num, int n_lev, int n_col, int n_row);
     int deselect_unit(int num);
     int is_selected(int num) {return (lev[num] != -1);}
+    bool edit_unit(int num);
     friend class Platoon;
 };
 

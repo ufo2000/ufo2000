@@ -443,8 +443,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
                   //Editor::load();
                     break;
                 case KEY_F4: 
-                  //editor->set_man(name[1]);
-                  //Editor::show();
+                    local.edit_unit(0);
                     break;
                 case KEY_F5: // Toggle F_RAWMESSAGES
                     FLAGS ^= F_RAWMESSAGES;
