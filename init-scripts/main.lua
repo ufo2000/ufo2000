@@ -34,12 +34,17 @@ if string.find(ufo2000_dir, "^%S*valgrind") then ufo2000_dir, home_dir = nil, ni
 
 -- directories for data files from the original x-com and ufo2000
 ufo2000_dir   = ufo2000_dir or "."
-xcomdemo_dir  = xcomdemo_dir or (ufo2000_dir .. "/XCOMDEMO")
 xcom_dir      = xcom_dir or (ufo2000_dir .. "/XCOM")
-tftddemo_dir  = tftddemo_dir or (ufo2000_dir .. "/TFTDDEMO")
 tftd_dir      = tftd_dir or (ufo2000_dir .. "/TFTD")
 home_dir      = home_dir or "."
 
+local file_prefixes = {
+    ["$(xcom)"] = xcom_dir,
+    ["$(tftd)"] = tftd_dir,
+    ["$(ufo2000)"] = ufo2000_dir,
+    ["$(home)"] = home_dir,
+}
+    
 -- Functions for writing debug information to init-scripts.log 
 local io_open_unrestricted = io.open
 local fh = io_open_unrestricted(home_dir .. "/init-scripts.log", "wt") fh:close()
@@ -76,9 +81,15 @@ end
 -- finds path to the required file performing prefixes expansion
 -- and using different file name case if needed
 ------------------------------------------------------------------------------
-function LocateFile(filename)
 
-    local function SearchFile(filename)
+local locate_file_xcom_files_cache = {}
+
+function LocateFile(filename)
+    local cached_filename = locate_file_xcom_files_cache[filename]
+    if type(cached_filename) == "string" then return cached_filename end
+    local initial_filename = filename
+
+    local function SearchMixedCaseFile(filename)
         local count = 1
         while count == 1 do
             fh = io.open(filename, "rb")
@@ -90,33 +101,30 @@ function LocateFile(filename)
         end
         return nil
     end
-
-    if string.find(filename, "^%$%(xcom%)") then
-        local fname = SearchFile(string.gsub(filename, "^%$%(xcom%)", xcomdemo_dir))
+    
+    local function CheckPrefix(filename, prefix)
+        if string.sub(filename, 1, string.len(prefix)) == prefix then
+            return true
+        end
+    end
+    
+    preprocessed_filename = string.gsub(filename, "^(%$%(.-%))", function(varname)
+            if varname == "$(extension)" and extension_dir then return extension_dir end
+            return file_prefixes[varname] or varname
+        end)
+        
+    if cached_filename ~= nil then return preprocessed_filename end
+        
+    -- Check if it is a file from x-com data set, it may have inconsistent file 
+    -- name case
+    
+    if CheckPrefix(preprocessed_filename, xcom_dir) or CheckPrefix(preprocessed_filename, tftd_dir) then
+        local fname = SearchMixedCaseFile(preprocessed_filename)
+        locate_file_xcom_files_cache[filename] = fname or false
         if fname then return fname end
-        local fname = SearchFile(string.gsub(filename, "^%$%(xcom%)", xcom_dir))
-        if fname then return fname end
-        return string.gsub(filename, "^%$%(xcom%)", xcomdemo_dir)
     end
 
-    if string.find(filename, "^%$%(tftd%)") then
-        local fname = SearchFile(string.gsub(filename, "^%$%(tftd%)", tftddemo_dir))
-        if fname then return fname end
-        local fname = SearchFile(string.gsub(filename, "^%$%(tftd%)", tftd_dir))
-        if fname then return fname end
-        return string.gsub(filename, "^%$%(tftd%)", tftddemo_dir)
-    end
-
-    filename = string.gsub(filename, "^%$%(ufo2000%)", ufo2000_dir)
-    filename = string.gsub(filename, "^%$%(home%)", home_dir)
-    if extension_dir then
-        filename = string.gsub(filename, "^%$%(extension%)", extension_dir)
-    end
-
-    local fname = SearchFile(filename)
-    if fname then return fname end
-
-    return filename
+    return preprocessed_filename
 end
 
 local function UpdateTableCrc32(initcrc, tbl, exclude_list)

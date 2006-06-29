@@ -19,7 +19,7 @@ local function X(a) return tonumber(a, 16) end
 --       modifiable and write permission availability is checked for it
 ------------------------------------------------------------------------------
 
-FilesTable = {
+local FilesTable = {
     ["$(ufo2000)/ufo2000.dat"]    = { Crc32 = X("0x85F35853") }, -- Rev.864
     ["$(ufo2000)/keyboard.dat"]   = { Crc32 = X("0xC796755E") },
 
@@ -118,11 +118,6 @@ FilesTable = {
     ["$(xcom)/units/xcom_0.tab"] = { Crc32 = X("0x68930DB8"), 
         Fallback = "$(xcom)/units/xcom_1.tab" },
 
---    ["$(xcom)/units/xcom_1.pck"] = { Crc32 = X("0xF03FB73B") },
---    ["$(xcom)/units/xcom_1.tab"] = { Crc32 = X("0xA3839667") },
---    ["$(xcom)/units/xcom_2.pck"] = { Crc32 = X("0xC49CCBE5") },
---    ["$(xcom)/units/xcom_2.tab"] = { Crc32 = X("0x528354F7") },
-
     ["$(xcom)/units/muton.pck"] = { Crc32 = X("0x00000000"), 
         Fallback = "$(xcom)/units/xcom_1.pck" },
     ["$(xcom)/units/muton.tab"] = { Crc32 = X("0x00000000"), 
@@ -131,15 +126,6 @@ FilesTable = {
         Fallback = "$(xcom)/units/xcom_1.pck" },
     ["$(xcom)/units/sectoid.tab"] = { Crc32 = X("0x00000000"), 
         Fallback = "$(xcom)/units/xcom_1.tab" },
-
---    ["$(xcom)/ufograph/hit.pck"]     = { Crc32 = X("0x29C07717") },
---    ["$(xcom)/ufograph/hit.tab"]     = { Crc32 = X("0x4FF3EE8F") },
---    ["$(xcom)/ufograph/smoke.pck"]   = { Crc32 = X("0x65CB2E8E") },
---    ["$(xcom)/ufograph/smoke.tab"]   = { Crc32 = X("0xEE8E1054") },
---    ["$(xcom)/ufograph/icons.pck"]   = { Crc32 = X("0xD407EF95") },
-
---    ["$(xcom)/geodata/loftemps.dat"] = { Crc32 = X("0x7B354479") },
---    ["$(xcom)/geodata/scang.dat"]    = { Crc32 = X("0x26C1BD1B") },
 
     ["$(xcom)/ufograph/tac00.scr"]   = { Crc32 = X("0x226E61A0"),
         Fallback = "$(ufo2000)/arts/empty.spk" },
@@ -240,20 +226,5 @@ CheckDataFiles()
 
 function GetDataFileName(x)
     if FilesTable[x] then return FilesTable[x].FileName end
-    local _, _, p1, p2 = string.find(x, "(.*)(%#[^%#]+)$")
-    if p1 and p2 and FilesTable[p1] then return FilesTable[p1].FileName .. p2 end
-
-    local fname = LocateFile(x)
-    local fh = io.open(fname, "rb")
-    if fh then
-        fh:close()
-        if x ~= fname then
---            Message("GetDataFileName: '%s' resolved as '%s' and cached for future use", x, fname)
-        end
-    else
---        Message("GetDataFileName: '%s' resolved as '%s' but not found on disk", x, fname)
-    end
-
-    FilesTable[x] = { FileName = fname }
-    return fname
+    return LocateFile(x)
 end
