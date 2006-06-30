@@ -261,6 +261,18 @@ void Item::od_info(int type, int gx, int gy, int gcol)
                     _("Usage TU cost"), obdata_useTime(type));
         gy += 10;
     }
+    
+    if (obdata_primeTime(type) > 0) {
+        textprintf(screen2, font, gx, gy, gcol, "%13s: %2d%%",
+                    _("Prime TU cost"), obdata_primeTime(type));
+        gy += 10;
+    }
+    
+    if (obdata_throwTime(type) > 0) {
+        textprintf(screen2, font, gx, gy, gcol, "%13s: %2d%%",
+                    _("Throw TU cost"), obdata_throwTime(type));
+        gy += 10;
+    }
 
     if (obdata_damage(type) > 0) {
         textprintf(screen2, font, gx, gy, gcol, "%13s: %3d (%2d%%) %8s: %d",

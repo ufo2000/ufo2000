@@ -548,7 +548,8 @@ void Icon::firemenu(int iplace)
         i++;
 
         waccur[i] = sel_man->TAccuracy(100); // !!! no such parameter in obdata.dat
-        wtime[i]  = sel_man->required(25);
+        wtime[i] = sel_man->required(it->obdata_throwTime()); 
+        if (!wtime[i]) wtime[i] = sel_man->required(25); // Restore default value if neccesary // 
         if (sel_man->havetime(wtime[i]) == OK) {
             sprintf(dstr[i], _("THROW       ACC>%02d%% TUs>%02d"), waccur[i], wtime[i]);
             the_dialog[i].proc = firemenu_dialog_proc;
@@ -572,7 +573,8 @@ void Icon::firemenu(int iplace)
             }
         } else
             if (it->is_grenade()) {
-                wtime[i] = sel_man->required(24);
+                wtime[i] = sel_man->required(it->obdata_primeTime()); 
+                if (!wtime[i]) wtime[i] = sel_man->required(50); // Restore default value if neccesary // 
                 if (sel_man->havetime(wtime[i]) == OK) {
                     if (it->is_high_explosive()) {
                         if (it->delay_time() == 0) {

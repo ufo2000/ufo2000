@@ -118,6 +118,8 @@ public:
     static int obdata_glowRGB(int index, int n) { return obdata_get_array_int(index, "glowRGB", n); } //Beam weapons use only this color
     static int obdata_trailRGB(int index, int n) { return obdata_get_array_int(index, "trailRGB", n); }
     static int obdata_trailLength(int index) { return obdata_get_int(index, "trailLength"); } //Length of the trail when bullet is drawn
+    static int obdata_primeTime(int index) { return obdata_get_int(index, "primeTime"); } // Time to prime a grenade
+    static int obdata_throwTime(int index) { return obdata_get_int(index, "throwTime"); } // Time to throw a grenade
     
     const char* get_damage_name();
     //! Get list of ammo types that can be used with this weapon
@@ -172,6 +174,8 @@ public:
     int obdata_importance() { return obdata_get_int(m_type, "importance"); }
     int obdata_weight() { return obdata_weight(m_type); }
     int obdata_disappear() { return obdata_disappear(m_type); }
+    int obdata_primeTime() { return obdata_primeTime(m_type); } // See above
+    int obdata_throwTime() { return obdata_throwTime(m_type); } // See above
     
     static int get_color(int index, int n);
     static bool can_set_color(int index);
