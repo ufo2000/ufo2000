@@ -86,55 +86,6 @@ static std::map<std::string, ALPHA_SPRITE *> g_png_cache;
 static std::string g_cached_large_bitmap_name;
 static BITMAP *g_cached_large_bitmap = NULL;
 
-static BITMAP *convert_bitmap_alpha(BITMAP *bmp_orig)
-{
-    if (!bmp_orig) return NULL;
-
-    // Non 32bpp bitmap just can't contain alpha channel
-    if (bitmap_color_depth(bmp_orig) != 32) return bmp_orig;
-
-    // Try to detect alpha channel in the bitmap
-    bool has_alpha = false;
-    bool has_trans = false;
-    bool has_opaque = false;
-    for (int y = 0; y < bmp_orig->h; y++) {
-        const uint32 *line = (const uint32 *)bmp_orig->line[y];
-        for (int x = 0; x < bmp_orig->w; x++) {
-            uint32 a = line[x] & 0xFF000000;
-            if (a == 0)
-                has_trans = true;
-            else if (a == 0xFF000000)
-                has_opaque = true;
-            else
-                has_alpha = true;
-        }
-    }
-
-    if (has_alpha) {
-        for (int x = 0; x < bmp_orig->w; x++)
-            for (int y = 0; y < bmp_orig->h; y++) {
-                int c = getpixel(bmp_orig, x, y);
-                if (geta32(c) == 0) {
-                    putpixel(bmp_orig, x, y, MASK_COLOR_32);
-                }
-            }
-        return bmp_orig;
-    } else {
-        bool has_1bit_alpha = has_trans && has_opaque;
-        BITMAP *bmp = create_bitmap(bmp_orig->w, bmp_orig->h);
-        clear_to_color(bmp, bitmap_mask_color(bmp));
-        for (int x = 0; x < bmp_orig->w; x++)
-            for (int y = 0; y < bmp_orig->h; y++) {
-                int c = getpixel(bmp_orig, x, y);
-                if (!has_1bit_alpha || geta32(c) != 0) {
-                    putpixel(bmp, x, y, makeacol(getr32(c), getg32(c), getb32(c), 255));
-                }
-            }
-        destroy_bitmap(bmp_orig);
-        return bmp;
-    }
-}
-
 /**
  * Load bitmap (this function is aware of truecolor transparency)
  */
@@ -179,8 +130,13 @@ ALPHA_SPRITE *png_image(const char *filename)
     }
 
     if (g_png_cache.find(fullname) == g_png_cache.end()) {
-        BITMAP *bmp = convert_bitmap_alpha(load_bitmap_alpha(fullname.c_str()));
-        if (!bmp) {
+        BITMAP *bmp = load_bitmap_alpha(fullname.c_str());
+        if (bmp) {
+            ALPHA_SPRITE *spr = get_alpha_sprite(bmp, 0, 0, bmp->w, bmp->h);
+            destroy_bitmap(bmp);
+            g_png_cache[fullname] = spr;
+            return g_png_cache[fullname];
+        } else {
             // Maybe we could find this picture inside of large bitmap
             int width, height, index, x, y;
             char *p = get_filename(filename);
@@ -198,9 +154,9 @@ ALPHA_SPRITE *png_image(const char *filename)
                     // calculate sprite coordinates from index
                     x = ((index - 1) % rowcount) * (width + 1);
                     y = ((index - 1) / rowcount) * (height + 1);
-                    // create sub bitmap
-                    bmp = convert_bitmap_alpha(create_sub_bitmap(
-                        g_cached_large_bitmap, x, y, width, height));
+                    ALPHA_SPRITE *spr = get_alpha_sprite(g_cached_large_bitmap, x, y, width, height);
+                    g_png_cache[fullname] = spr;
+                    return g_png_cache[fullname];
                 }
             } else if (p > filename && sscanf(p, "x=%d,y=%d,w=%d,h=%d).", &x, &y, &width, &height) == 4) {
                 std::string large_bitmap_name = std::string(filename, p - filename - 1) + "." + get_extension(filename);
@@ -212,18 +168,13 @@ ALPHA_SPRITE *png_image(const char *filename)
                 }
                 if (g_cached_large_bitmap) {
                     // create sub bitmap
-                    bmp = convert_bitmap_alpha(create_sub_bitmap(
-                        g_cached_large_bitmap, x, y, width, height));
+                    ALPHA_SPRITE *spr = get_alpha_sprite(g_cached_large_bitmap, x, y, width, height);
+                    g_png_cache[fullname] = spr;
+                    return g_png_cache[fullname];
                 }
             }
         }
-        if (bmp) {
-            ALPHA_SPRITE *spr = get_alpha_sprite(bmp);
-            destroy_bitmap(bmp);
-            g_png_cache[fullname] = spr;
-        } else {
-            g_png_cache[fullname] = NULL;
-        }
+        g_png_cache[fullname] = NULL;
     }
     return g_png_cache[fullname];
 }

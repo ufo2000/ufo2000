@@ -15,6 +15,7 @@
 #include <string.h>
 
 #define RLE_EOL_MARKER_16 MASK_COLOR_16
+#define RLE_EOL_MARKER_32 MASK_COLOR_32
 
 #define IS_MASK(c)             ((uint32)(c) == MASK_COLOR_16)
 
@@ -532,13 +533,13 @@ void draw_alpha_sprite(BITMAP *dst, ALPHA_SPRITE *src, int dx, int dy, unsigned 
         case 16:
             if (src->color_depth & 0x100) {
                 if (brightness >= 255) {
-                    draw_rle_sprite_internal<int16, int32, (int)(int32)MASK_COLOR_32, 
+                    draw_rle_sprite_internal<int16, int32, (int)(int32)RLE_EOL_MARKER_32, 
                         draw_alpha_normal_line16>(dst, src, dx, dy, (uint32)0);
                 } else if (brightness != 0) {
-                    draw_rle_sprite_internal<int16, int32, (int)(int32)MASK_COLOR_32,
+                    draw_rle_sprite_internal<int16, int32, (int)(int32)RLE_EOL_MARKER_32,
                         draw_alpha_dark_line16>(dst, src, dx, dy, (brightness + 7) / 8);
                 } else {
-                    draw_rle_sprite_internal<int16, int32, (int)(int32)MASK_COLOR_32,
+                    draw_rle_sprite_internal<int16, int32, (int)(int32)RLE_EOL_MARKER_32,
                         draw_alpha_black_line16>(dst, src, dx, dy, (uint32)0);
                 }
             } else {
@@ -557,24 +558,24 @@ void draw_alpha_sprite(BITMAP *dst, ALPHA_SPRITE *src, int dx, int dy, unsigned 
         case 32:
             if (src->color_depth & 0x100) {
                 if (brightness >= 255) {
-                    draw_rle_sprite_internal<int32, int32, (int)(int32)MASK_COLOR_32, 
+                    draw_rle_sprite_internal<int32, int32, (int)(int32)RLE_EOL_MARKER_32, 
                         draw_alpha_normal_line32>(dst, src, dx, dy, (uint32)0);
                 } else if (brightness != 0) {
-                    draw_rle_sprite_internal<int32, int32, (int)(int32)MASK_COLOR_32,
+                    draw_rle_sprite_internal<int32, int32, (int)(int32)RLE_EOL_MARKER_32,
                         draw_alpha_dark_line32>(dst, src, dx, dy, brightness);
                 } else {
-                    draw_rle_sprite_internal<int32, int32, (int)(int32)MASK_COLOR_32,
+                    draw_rle_sprite_internal<int32, int32, (int)(int32)RLE_EOL_MARKER_32,
                         draw_alpha_black_line32>(dst, src, dx, dy, (uint32)0);
                 }
             } else {
                 if (brightness >= 255) {
-                    draw_rle_sprite_internal<int32, int32, (int)(int32)MASK_COLOR_32,
+                    draw_rle_sprite_internal<int32, int32, (int)(int32)RLE_EOL_MARKER_32,
                         draw_normal_line32>(dst, src, dx, dy, (uint32)0);
                 } else if (brightness != 0) {
-                    draw_rle_sprite_internal<int32, int32, (int)(int32)MASK_COLOR_32,
+                    draw_rle_sprite_internal<int32, int32, (int)(int32)RLE_EOL_MARKER_32,
                         draw_dark_line32>(dst, src, dx, dy, brightness);
                 } else {
-                    draw_rle_sprite_internal<int32, int32, (int)(int32)MASK_COLOR_32,
+                    draw_rle_sprite_internal<int32, int32, (int)(int32)RLE_EOL_MARKER_32,
                         draw_black_line32>(dst, src, dx, dy, (uint32)0);
                 }
             }
@@ -585,63 +586,143 @@ void draw_alpha_sprite(BITMAP *dst, ALPHA_SPRITE *src, int dx, int dy, unsigned 
     }
 }
 
+static INLINE uint32 transform_16bpp_alpha(uint32 x)
+{
+    uint32 n = (geta32(x) + 1) / 8;
+    x = makecol16(getr32(x), getg32(x), getb32(x));
+    x = (x | (x << 16)) & 0x7E0F81F;
+    return x | (n << 5);
+}
+
 ALPHA_SPRITE *get_alpha_sprite(BITMAP *bmp) 
 { 
-    RLE_SPRITE *spr = get_rle_sprite(bmp);
-    if (spr->color_depth == 16) {
-        // allegro rle sprite optimization - find unnecessery skip runs,
-	// replace MASK_COLOR_16 with proper EOL marker
-        int i;
-        int cnt = spr->size / 2;
-        int16 *data = (int16 *)spr->dat;
-        for (i = 0; i < cnt; i++) {
-            if ((uint16)data[i] == MASK_COLOR_16) {
-                data[i] = RLE_EOL_MARKER_16;
-                continue;
-            }
-            if (data[i] < 0 && i + 1 < cnt && (uint16)data[i + 1] == MASK_COLOR_16) {
-                memmove(&data[i], &data[i + 1], (cnt - (i + 1)) * 2);
-                data[i] = RLE_EOL_MARKER_16;
-                cnt--;
-            } else if (data[i] > 0) {
-                i += data[i];
-            }
-        }
-    } else if (spr->color_depth == 32) {
-        bool has_alpha = bitmap_color_depth(screen) != 32;
-        for (int y = 0; y < bmp->h; y++) {
-            const uint32 *line = (const uint32 *)bmp->line[y];
-            for (int x = 0; x < bmp->w; x++) {
-                uint32 a = line[x] & 0xFF000000;
-                if (a != 0 && a != 0xFF000000) {
-                    has_alpha = true;
-                }
-            }
-        }
+    return get_alpha_sprite(bmp, 0, 0, bmp->w, bmp->h);
+}
 
-        if (has_alpha) {
-            if (bitmap_color_depth(screen) == 16) {
-                // Reorder RGBA data for more convenient 16-bit alpha blending
-                int i;
-                int cnt = spr->size / 4;
-                int32 *data = (int32 *)spr->dat;
-                for (i = 0; i < cnt; i++) {
-                    if ((uint32)data[i] == MASK_COLOR_32) continue;
-                    if (data[i] > 0) {
-                        for (int j = data[i]; j > 0; j--) {
-                            uint32 x = (uint32)data[++i];
-                            uint32 n = (geta32(x) + 1) / 8;
-                            x = makecol16(getr32(x), getg32(x), getb32(x));
-                            x = (x | (x << 16)) & 0x7E0F81F;
-                            data[i] = x | (n << 5);
-                        }
+ALPHA_SPRITE *get_alpha_sprite_fallback(BITMAP *bmp, int sx, int sy, int w, int h)
+{
+    BITMAP *tmp = create_sub_bitmap(bmp, sx, sy, w, h);
+    ALPHA_SPRITE *result = get_rle_sprite(tmp);
+    destroy_bitmap(tmp);
+    return result;
+}
+
+ALPHA_SPRITE *get_alpha_sprite(BITMAP *bmp, int sx, int sy, int w, int h)
+{
+    if (bitmap_color_depth(bmp) != 32) return get_alpha_sprite_fallback(bmp, sx, sy, w, h);
+    const int screen_color_depth = bitmap_color_depth(screen);
+    if (screen_color_depth < 16) return get_alpha_sprite_fallback(bmp, sx, sy, w, h);
+
+    // First pass, calculate size of resulting RLE sprite, also check whether
+    // alpha channel is really required for this sprite
+
+    int size = 0;
+    const int run_limit = 127;
+    int opaque_flag = 0;
+    int alpha_flag = 0;
+
+    for (int y = 0; y < h; y++) {
+        const uint32 *line = (const uint32 *)bmp->line[y + sy] + sx;
+
+        int old_x = 0;
+        int x = 0;
+        uint32 c;
+
+        while (true) {
+            while ((x < w) && (c = (line[x] & 0xFF000000))) { 
+                if (c == 0xFF000000) opaque_flag = 1; else alpha_flag = 1;
+                x++;
+            }
+            if (x > old_x) {
+                if (x - old_x > run_limit) { x = old_x + run_limit; }
+                size += 1 + (x - old_x);
+                if (x == w) break;
+                old_x = x;
+            }
+            while ((x < w) && ((line[x] & 0xFF000000) == 0)) { x++; }
+            if (x > old_x) {
+                if (x - old_x > run_limit) { x = old_x + run_limit; }
+                if (x == w) break;
+                size += 1;
+                old_x = x;
+            }
+        }
+        size += 1;
+    }
+
+    // Second pass, now we know how much memory is needed for a sprite and
+    // what kind of alpha transparency is required
+
+    if (alpha_flag || (opaque_flag && screen_color_depth >= 24)) {
+        // Full alpha transparency is needed
+        RLE_SPRITE *s = (RLE_SPRITE *)malloc(sizeof(RLE_SPRITE) + size * 4);
+        uint32 *p = (uint32 *)s->dat;
+        s->w = w;
+        s->h = h;
+        s->color_depth = 32 | (alpha_flag ? 0x100 : 0);
+        s->size = size * 4;
+        for (int y = 0; y < h; y++) {
+            const uint32 *line = (const uint32 *)bmp->line[y + sy] + sx;
+
+            int old_x = 0;
+            int x = 0;
+
+            while (true) {
+                while ((x < w) && (line[x] & 0xFF000000)) { x++; }
+                if (x > old_x) {
+                    if (x - old_x > run_limit) { x = old_x + run_limit; }
+                    *p++ = x - old_x;
+                    while (old_x < x) {
+                        *p++ = (screen_color_depth == 16) ? transform_16bpp_alpha(line[old_x++]) : line[old_x++];
                     }
+                    if (x == w) break;
+                }
+                while ((x < w) && ((line[x] & 0xFF000000) == 0)) { x++; }
+                if (x > old_x) {
+                    if (x - old_x > run_limit) { x = old_x + run_limit; }
+                    if (x == w) break;
+                    *p++ = -(x - old_x);
+                    old_x = x;
                 }
             }
-            spr->color_depth |= 0x100;
+            *p++ = RLE_EOL_MARKER_32;
         }
+        return s;
+    } else if (opaque_flag && screen_color_depth == 16) {
+        // Alpha channel is present, but it indicates that only fully opaque/transparent
+        // pixels are present (1-bit alpha transparency), so we may use just ordinary RLE 
+        // sprite for better performance and more efficient memory use
+        RLE_SPRITE *s = (RLE_SPRITE *)malloc(sizeof(RLE_SPRITE) + size * 2);
+        uint16 *p = (uint16 *)s->dat;
+        int color_depth = bitmap_color_depth(screen);
+        s->w = w; s->h = h; s->color_depth = color_depth; s->size = size * 2;
+        for (int y = 0; y < h; y++) {
+            const uint32 *line = (const uint32 *)bmp->line[y + sy] + sx; int old_x = 0; int x = 0;
+            while (true) {
+                while ((x < w) && (line[x] & 0xFF000000)) { x++; }
+                if (x > old_x) {
+                    if (x - old_x > run_limit) { x = old_x + run_limit; }
+                    *p++ = x - old_x;
+                    while (old_x < x) {
+                        int c = line[old_x++];
+                        *p++ = makecol16(getr32(c), getg32(c), getb32(c));
+                    }
+                    if (x == w) break;
+                }
+                while ((x < w) && ((line[x] & 0xFF000000) == 0)) { x++; }
+                if (x > old_x) {
+                    if (x - old_x > run_limit) { x = old_x + run_limit; }
+                    if (x == w) break;
+                    *p++ = -(x - old_x);
+                    old_x = x;
+                }
+            }
+            *p++ = bitmap_mask_color(screen);
+        }
+        return s;
+    } else {
+        return get_alpha_sprite_fallback(bmp, sx, sy, w, h);
     }
-    return spr; 
 }
 
 void destroy_alpha_sprite(ALPHA_SPRITE *spr)

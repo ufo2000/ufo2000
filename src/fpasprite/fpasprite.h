@@ -51,6 +51,8 @@ void draw_sprite(BITMAP *dst, BITMAP *src, int dx, int dy, unsigned int brightne
  */
 ALPHA_SPRITE *get_alpha_sprite(BITMAP *bmp);
 
+ALPHA_SPRITE *get_alpha_sprite(BITMAP *bmp, int sx, int sy, int w, int h);
+
 /**
  * Destroy alpha sprite.
  */
