@@ -20,7 +20,7 @@
 #define IS_MASK(c)             ((uint32)(c) == MASK_COLOR_16)
 
 #undef INLINE
-#ifdef __GNUC__
+#if defined(__GNUC__) && defined(__OPTIMIZE__)
 #define INLINE inline __attribute__((always_inline))
 #else
 #define INLINE inline

@@ -133,7 +133,7 @@ SRCS_LUA = lua.c $(SRCS_LUALIB) luasqlite3.c
 ifdef debug
 	CFLAGS += -g
 ifdef valgrind
-	CFLAGS += -O1
+	CFLAGS += -O2
 endif
 	OBJDIR := ${addsuffix -debug,$(OBJDIR)}
 	NAME := ${addsuffix -debug,$(NAME)}
