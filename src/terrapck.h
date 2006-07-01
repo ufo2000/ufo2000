@@ -132,7 +132,11 @@ struct MCD
     ALPHA_SPRITE *FrameBitmap[8];
     BITMAP *ScangBitmap;
     int     ShapeIndex;
-};
+}
+#ifdef __GNUC__
+__attribute__((packed))
+#endif
+;
 #pragma pack()
 
 /**

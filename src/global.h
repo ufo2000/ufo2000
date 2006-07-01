@@ -210,7 +210,11 @@ struct MANDATA
     unsigned char SkinType;
     unsigned char fFemale;
     unsigned char Appearance;
-};
+}
+#ifdef __GNUC__
+__attribute__((packed))
+#endif
+;
 #pragma pack()
 
 #pragma pack(1)
@@ -221,7 +225,11 @@ struct ITEMDATA
     uint8  place[100];
     uint8  x[100];
     uint8  y[100];
-};
+}
+#ifdef __GNUC__
+__attribute__((packed))
+#endif
+;
 #pragma pack()
 
 #pragma pack(1)
@@ -231,7 +239,11 @@ struct PLAYERDATA
     MANDATA  md[20];
     ITEMDATA id[20];
     uint8    lev[20], col[20], row[20];
-};
+}
+#ifdef __GNUC__
+__attribute__((packed))
+#endif
+;
 #pragma pack()
 
 //////////////////////////////////////////////////////////////////////////////

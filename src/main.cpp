@@ -987,6 +987,10 @@ void initmain(int argc, char *argv[])
     GameErrorColour[-ERR_DISTANCE]   = COLOR_YELLOW;
 
     delete print_win;
+    
+    // Safety check to ensure that the game is compiled with proper alignment
+    // and all the #paragma pack and other attributes are accepted
+    ASSERT(sizeof(ITEMDATA) == 701);
 }
 
 void closemain()
