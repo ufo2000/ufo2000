@@ -1,4 +1,4 @@
-Sources of the fdlibm library extracted from gcc 3.3.6 distributive (they contain 
+Sources of the fdlibm library extracted from gcc 4.1.1 distributive (they contain 
 some fixes, for example aliasing problem is fixed there, otherwise original 
 optimized version is broken when compiled without '-fno-strict-aliasing' option)
 

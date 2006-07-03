@@ -11,14 +11,22 @@
  * ====================================================
  */
 
+#ifndef __CLASSPATH_FDLIBM_H__
+#define __CLASSPATH_FDLIBM_H__
+
 typedef int int32_t;
 typedef unsigned int uint32_t;
 
 namespace fdlibm {
 
+/* AIX needs _XOPEN_SOURCE */
+#ifdef _AIX
+#define _XOPEN_SOURCE
+#endif
+
 #include <stdlib.h>
 
-/* CYGNUS LOCAL: Include files.  */
+/* GCJ LOCAL: Include files.  */
 #include "ieeefp.h"
 
 /* CYGNUS LOCAL: Default to XOPEN_MODE.  */
@@ -33,13 +41,13 @@ namespace fdlibm {
 #endif
 
 #ifdef __STDC__
-#define __P(p)  p
+#define	__P(p)	p
 #else
-#define __P(p)  ()
+#define	__P(p)	()
 #endif
 
 #ifndef HUGE
-#define HUGE    ((float)3.40282346638528860e+38)
+#define	HUGE	((float)3.40282346638528860e+38)
 #endif
 
 /* 
@@ -47,7 +55,7 @@ namespace fdlibm {
  * (one may replace the following line by "#include <values.h>")
  */
 
-#define X_TLOSS     1.41484755040568800000e+16 
+#define X_TLOSS		1.41484755040568800000e+16 
 
 /* These typedefs are true for the targets running Java. */
 
@@ -117,13 +125,13 @@ extern double scalb __P((double, double));
 extern double significand __P((double));
 
 /* ieee style elementary functions */
-extern double __ieee754_sqrt __P((double));         
-extern double __ieee754_acos __P((double));         
-extern double __ieee754_acosh __P((double));            
-extern double __ieee754_log __P((double));          
-extern double __ieee754_atanh __P((double));            
-extern double __ieee754_asin __P((double));         
-extern double __ieee754_atan2 __P((double,double));         
+extern double __ieee754_sqrt __P((double));			
+extern double __ieee754_acos __P((double));			
+extern double __ieee754_acosh __P((double));			
+extern double __ieee754_log __P((double));			
+extern double __ieee754_atanh __P((double));			
+extern double __ieee754_asin __P((double));			
+extern double __ieee754_atan2 __P((double,double));			
 extern double __ieee754_exp __P((double));
 extern double __ieee754_cosh __P((double));
 extern double __ieee754_fmod __P((double,double));
@@ -173,13 +181,13 @@ extern float rintf __P((float));
 extern double scalbn __P((double, int));
 
 /* ieee style elementary float functions */
-extern float __ieee754_sqrtf __P((float));          
-extern float __ieee754_acosf __P((float));          
-extern float __ieee754_acoshf __P((float));         
-extern float __ieee754_logf __P((float));           
-extern float __ieee754_atanhf __P((float));         
-extern float __ieee754_asinf __P((float));          
-extern float __ieee754_atan2f __P((float,float));           
+extern float __ieee754_sqrtf __P((float));			
+extern float __ieee754_acosf __P((float));			
+extern float __ieee754_acoshf __P((float));			
+extern float __ieee754_logf __P((float));			
+extern float __ieee754_atanhf __P((float));			
+extern float __ieee754_asinf __P((float));			
+extern float __ieee754_atan2f __P((float,float));			
 extern float __ieee754_expf __P((float));
 extern float __ieee754_coshf __P((float));
 extern float __ieee754_fmodf __P((float,float));
@@ -210,9 +218,9 @@ extern float __kernel_tanf __P((float,float,int));
 extern int   __kernel_rem_pio2f __P((float*,float*,int,int,int,const int32_t*));
 
 /* The original code used statements like
-    n0 = ((*(int*)&one)>>29)^1;     * index of high word *
-    ix0 = *(n0+(int*)&x);           * high word of x *
-    ix1 = *((1-n0)+(int*)&x);       * low word of x *
+	n0 = ((*(int*)&one)>>29)^1;		* index of high word *
+	ix0 = *(n0+(int*)&x);			* high word of x *
+	ix1 = *((1-n0)+(int*)&x);		* low word of x *
    to dig two 32 bit words out of the 64 bit IEEE floating point
    value.  That is non-ANSI, and, moreover, the gcc instruction
    scheduler gets it wrong.  We instead use the following macros.
@@ -259,60 +267,60 @@ typedef union
 
 /* Get two 32 bit ints from a double.  */
 
-#define EXTRACT_WORDS(ix0,ix1,d)                \
-do {                                \
-  ieee_double_shape_type ew_u;                  \
-  ew_u.value = (d);                     \
-  (ix0) = ew_u.parts.msw;                   \
-  (ix1) = ew_u.parts.lsw;                   \
+#define EXTRACT_WORDS(ix0,ix1,d)				\
+do {								\
+  ieee_double_shape_type ew_u;					\
+  ew_u.value = (d);						\
+  (ix0) = ew_u.parts.msw;					\
+  (ix1) = ew_u.parts.lsw;					\
 } while (0)
 
 /* Get the more significant 32 bit int from a double.  */
 
-#define GET_HIGH_WORD(i,d)                  \
-do {                                \
-  ieee_double_shape_type gh_u;                  \
-  gh_u.value = (d);                     \
-  (i) = gh_u.parts.msw;                     \
+#define GET_HIGH_WORD(i,d)					\
+do {								\
+  ieee_double_shape_type gh_u;					\
+  gh_u.value = (d);						\
+  (i) = gh_u.parts.msw;						\
 } while (0)
 
 /* Get the less significant 32 bit int from a double.  */
 
-#define GET_LOW_WORD(i,d)                   \
-do {                                \
-  ieee_double_shape_type gl_u;                  \
-  gl_u.value = (d);                     \
-  (i) = gl_u.parts.lsw;                     \
+#define GET_LOW_WORD(i,d)					\
+do {								\
+  ieee_double_shape_type gl_u;					\
+  gl_u.value = (d);						\
+  (i) = gl_u.parts.lsw;						\
 } while (0)
 
 /* Set a double from two 32 bit ints.  */
 
-#define INSERT_WORDS(d,ix0,ix1)                 \
-do {                                \
-  ieee_double_shape_type iw_u;                  \
-  iw_u.parts.msw = (ix0);                   \
-  iw_u.parts.lsw = (ix1);                   \
-  (d) = iw_u.value;                     \
+#define INSERT_WORDS(d,ix0,ix1)					\
+do {								\
+  ieee_double_shape_type iw_u;					\
+  iw_u.parts.msw = (ix0);					\
+  iw_u.parts.lsw = (ix1);					\
+  (d) = iw_u.value;						\
 } while (0)
 
 /* Set the more significant 32 bits of a double from an int.  */
 
-#define SET_HIGH_WORD(d,v)                  \
-do {                                \
-  ieee_double_shape_type sh_u;                  \
-  sh_u.value = (d);                     \
-  sh_u.parts.msw = (v);                     \
-  (d) = sh_u.value;                     \
+#define SET_HIGH_WORD(d,v)					\
+do {								\
+  ieee_double_shape_type sh_u;					\
+  sh_u.value = (d);						\
+  sh_u.parts.msw = (v);						\
+  (d) = sh_u.value;						\
 } while (0)
 
 /* Set the less significant 32 bits of a double from an int.  */
 
-#define SET_LOW_WORD(d,v)                   \
-do {                                \
-  ieee_double_shape_type sl_u;                  \
-  sl_u.value = (d);                     \
-  sl_u.parts.lsw = (v);                     \
-  (d) = sl_u.value;                     \
+#define SET_LOW_WORD(d,v)					\
+do {								\
+  ieee_double_shape_type sl_u;					\
+  sl_u.value = (d);						\
+  sl_u.parts.lsw = (v);						\
+  (d) = sl_u.value;						\
 } while (0)
 
 /* A union which permits us to convert between a float and a 32 bit
@@ -326,20 +334,22 @@ typedef union
 
 /* Get a 32 bit int from a float.  */
 
-#define GET_FLOAT_WORD(i,d)                 \
-do {                                \
-  ieee_float_shape_type gf_u;                   \
-  gf_u.value = (d);                     \
-  (i) = gf_u.word;                      \
+#define GET_FLOAT_WORD(i,d)					\
+do {								\
+  ieee_float_shape_type gf_u;					\
+  gf_u.value = (d);						\
+  (i) = gf_u.word;						\
 } while (0)
 
 /* Set a float from a 32 bit int.  */
 
-#define SET_FLOAT_WORD(d,i)                 \
-do {                                \
-  ieee_float_shape_type sf_u;                   \
-  sf_u.word = (i);                      \
-  (d) = sf_u.value;                     \
+#define SET_FLOAT_WORD(d,i)					\
+do {								\
+  ieee_float_shape_type sf_u;					\
+  sf_u.word = (i);						\
+  (d) = sf_u.value;						\
 } while (0)
 
 }
+
+#endif /* __CLASSPATH_FDLIBM_H__ */
