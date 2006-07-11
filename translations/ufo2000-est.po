@@ -5,18 +5,16 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: UFO2000\n"
-"POT-Creation-Date: 2005-12-16 19:49+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-07-11 09:26+0300\n"
 "PO-Revision-Date: 2006-06-15 19:53+0200\n"
 "Last-Translator: Northen Wolf <semukas@hot.ee>\n"
 "Language-Team: Estonian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Report-Msgid-Bugs-To: \n"
 
-#: src/config.cpp:311
-#: src/text.cpp:335
-#: src/units.cpp:332
+#: src/config.cpp:311 src/text.cpp:335 src/units.cpp:328
 msgid "Options"
 msgstr "Valikud"
 
@@ -40,25 +38,15 @@ msgstr "Suurandenda vaated."
 msgid "center on new enemies"
 msgstr "Näita uut vastast."
 
-#: src/config.cpp:325
-#: src/connect.cpp:291
-#: src/editor.cpp:92
-#: src/editor.cpp:855
-#: src/editor.cpp:1053
-#: src/main.cpp:2468
-#: src/main.cpp:2687
-#: src/main.cpp:2725
-#: src/main.cpp:2730
-#: src/main.cpp:2915
-#: src/server_gui.cpp:321
-#: src/video.cpp:358
+#: src/config.cpp:325 src/connect.cpp:291 src/editor.cpp:92 src/editor.cpp:855
+#: src/editor.cpp:1052 src/main.cpp:2518 src/main.cpp:2737 src/main.cpp:2775
+#: src/main.cpp:2780 src/main.cpp:2965 src/server_gui.cpp:314
+#: src/server_gui.cpp:354 src/video.cpp:385
 msgid "OK"
 msgstr "OK"
 
-#: src/config.cpp:326
-#: src/icon.cpp:671
-#: src/server_gui.cpp:322
-#: src/video.cpp:358
+#: src/config.cpp:326 src/icon.cpp:673 src/server_gui.cpp:355
+#: src/video.cpp:385
 msgid "Cancel"
 msgstr "Katkesta"
 
@@ -132,25 +120,22 @@ msgstr "Vasak klikk, et sõdur kaartile panna, parem klikk, et  eemaldada."
 
 #: src/connect.cpp:343
 msgid "When finished, click SEND, then START.  Press ESC to quit, F1 for help."
-msgstr "Kui lõpetatud, vajuta SAADA ja ALUSTA. Vajuta ESC, et väljuda ja F1 abi jaoks"
+msgstr ""
+"Kui lõpetatud, vajuta SAADA ja ALUSTA. Vajuta ESC, et väljuda ja F1 abi jaoks"
 
 #: src/connect.cpp:407
 msgid "PREPARATIONS FOR MISSION FINISHED"
 msgstr "ETTEVALMISTUSED MISSIOONIKS LÕPETATUD."
 
-#: src/connect.cpp:460
-#: src/editor.cpp:538
-#: src/main.cpp:2509
+#: src/connect.cpp:459 src/editor.cpp:538 src/main.cpp:2559
 msgid "SCREEN-SNAPSHOT"
 msgstr "EKRAANI FOTOSALVESTUS"
 
-#: src/connect.cpp:466
-#: src/main.cpp:1981
-#: src/server_gui.cpp:640
+#: src/connect.cpp:465 src/main.cpp:2029 src/server_gui.cpp:692
 msgid "Music OFF"
 msgstr "Muusika VÄLJAs"
 
-#: src/connect.cpp:469
+#: src/connect.cpp:468
 msgid "EXIT MISSION-PLANNER"
 msgstr "VÄLJU MISSIOONI PLANEERIAST"
 
@@ -172,32 +157,32 @@ msgid "Armoury layout exported as weapon set template to %s"
 msgstr "Relvastuse valik muudetud sest relv on %s"
 
 #: src/editor.cpp:248
-msgid "This item is not allowed for currently selected weapon set, right-click to get rid of it"
-msgstr "Object ei ole lubatd praeguse relvastuse juurda, parem-klikk, et sellest lahti saada."
+msgid ""
+"This item is not allowed for currently selected weapon set, right-click to "
+"get rid of it"
+msgstr ""
+"Object ei ole lubatd praeguse relvastuse juurda, parem-klikk, et sellest "
+"lahti saada."
 
 #: src/editor.cpp:280
-msgid "Click-and-drop weapons from the armory to the soldier, right-click to remove"
-msgstr "Lohista relv relvastusest sõduri peale, parem klikk, et relvastust eemaldada sõdurilt."
+msgid ""
+"Click-and-drop weapons from the armory to the soldier, right-click to remove"
+msgstr ""
+"Lohista relv relvastusest sõduri peale, parem klikk, et relvastust eemaldada "
+"sõdurilt."
 
-#: src/editor.cpp:330
-#: src/editor.cpp:338
-#: src/inventory.cpp:104
-#: src/inventory.cpp:112
+#: src/editor.cpp:330 src/editor.cpp:338 src/inventory.cpp:111
+#: src/inventory.cpp:119
 msgid "AMMO:"
 msgstr "KUULID:"
 
-#: src/editor.cpp:331
-#: src/editor.cpp:339
-#: src/inventory.cpp:105
-#: src/inventory.cpp:113
+#: src/editor.cpp:331 src/editor.cpp:339 src/inventory.cpp:112
+#: src/inventory.cpp:120
 msgid "ROUNDS"
 msgstr "SALVI:"
 
-#: src/editor.cpp:332
-#: src/editor.cpp:340
-#: src/inventory.cpp:96
-#: src/inventory.cpp:106
-#: src/inventory.cpp:114
+#: src/editor.cpp:332 src/editor.cpp:340 src/inventory.cpp:103
+#: src/inventory.cpp:113 src/inventory.cpp:121
 msgid "LEFT="
 msgstr "JÄRE="
 
@@ -274,8 +259,7 @@ msgstr "Vali üksuse kehakaitse"
 msgid "Select unit appearance"
 msgstr "Vali üksuse välimus"
 
-#: src/editor.cpp:801
-#: src/editor.cpp:907
+#: src/editor.cpp:801 src/editor.cpp:907
 #, c-format
 msgid "Points remain: %2d "
 msgstr "Punkte alles: %2d  "
@@ -328,510 +312,503 @@ msgstr "Viskamine"
 msgid "Strength"
 msgstr "Jõud"
 
-#: src/editor.cpp:1046
+#: src/editor.cpp:1045
 msgid "Select equipment set"
 msgstr "Vali varustus"
 
-#: src/editor.cpp:1053
+#: src/editor.cpp:1052
 msgid "Remote player does not have any of your weaponsets"
 msgstr "Eemal oleval mängijal ei ole sinu relvastust"
 
 #: src/icon.cpp:546
+#, c-format
 msgid "CANCEL"
 msgstr "Katkesta"
 
-#: src/icon.cpp:553
+#: src/icon.cpp:554
 #, c-format
 msgid "THROW       ACC>%02d%% TUs>%02d"
 msgstr "Viska    Täpsus>%02d%% ??>%02d"
 
-#: src/icon.cpp:566
+#: src/icon.cpp:567
 #, c-format
 msgid "STUN                TUs>%02d"
 msgstr "Löö oimetuks:     TUs>%02d"
 
-#: src/icon.cpp:568
+#: src/icon.cpp:569
 #, c-format
 msgid "PUNCH               TUs>%02d"
 msgstr "Löö                      TUs>%02d"
 
-#: src/icon.cpp:579
+#: src/icon.cpp:581
 #, c-format
 msgid "PRIME EXPLOSIVE     TUs>%02d"
 msgstr "Lõhka lõhke ained    TUs>%02d"
 
-#: src/icon.cpp:586
+#: src/icon.cpp:588
 #, c-format
 msgid "PRIME GRENADE       TUs>%02d"
 msgstr "Lõhka granaat     TUs>%02d"
 
-#: src/icon.cpp:599
+#: src/icon.cpp:601
 #, c-format
 msgid "AUTO SHOT   ACC>%02d%% TUs>%02d"
 msgstr "Valang      Täpsus>%02d%%TUs>%02d"
 
-#: src/icon.cpp:609
+#: src/icon.cpp:611
 #, c-format
 msgid "SNAP SHOT   ACC>%02d%% TUs>%02d"
 msgstr "Sihtimata lask   Täpsus>%02d%% TUs>%02d"
 
-#: src/icon.cpp:619
+#: src/icon.cpp:621
 #, c-format
 msgid "AIMED SHOT  ACC>%02d%% TUs>%02d"
 msgstr "Sihitud lask   Täpsus>%02d%% TUs>%02d"
 
-#: src/icon.cpp:828
-#: src/main.cpp:2399
+#: src/icon.cpp:830 src/main.cpp:2449
 #, c-format
 msgid "%s is panicking and can't access inventory."
 msgstr "%s on paanikas ja ei suuda pääseda oma varustuse juurde"
 
-#: src/inventory.cpp:94
+#: src/inventory.cpp:101
 msgid "DELAY"
 msgstr "Aja pikendus"
 
-#: src/inventory.cpp:95
+#: src/inventory.cpp:102
 msgid "TIME:"
 msgstr "AEG:"
 
-#: src/item.cpp:192
+#: src/item.cpp:222
 msgid "Firing-Type"
 msgstr "Tulistamise tüüp"
 
-#: src/item.cpp:192
+#: src/item.cpp:222
 msgid "Accuracy"
 msgstr "Täpsus:"
 
-#: src/item.cpp:192
+#: src/item.cpp:222
 msgid "TU cost"
 msgstr "TUs kulub:"
 
-#: src/item.cpp:196
+#: src/item.cpp:226
 msgid "Auto"
 msgstr "Valang"
 
-#: src/item.cpp:202
+#: src/item.cpp:232
 msgid "Snap"
 msgstr "Sihtimata"
 
-#: src/item.cpp:208
+#: src/item.cpp:238
 msgid "Aimed"
 msgstr "Täpsus lask"
 
-#: src/item.cpp:217
+#: src/item.cpp:247
 msgid "Hand-to-hand weapon"
 msgstr "Lähivõitlus relv"
 
-#: src/item.cpp:222
+#: src/item.cpp:252
 msgid "Two-handed weapon"
 msgstr "Kahekäe relv"
 
-#: src/item.cpp:231
+#: src/item.cpp:261
 msgid "Usage TU cost"
 msgstr "Kasutab TUs-se"
 
-#: src/item.cpp:237
-#: src/main.cpp:1899
-#: src/main.cpp:1901
-#: src/main.cpp:1905
+#: src/item.cpp:267
+#, fuzzy
+msgid "Prime TU cost"
+msgstr "TUs kulub:"
+
+#: src/item.cpp:273
+#, fuzzy
+msgid "Throw TU cost"
+msgstr "TUs kulub:"
+
+#: src/item.cpp:279 src/main.cpp:1947 src/main.cpp:1949 src/main.cpp:1953
 msgid "Damage"
 msgstr "Kahju"
 
-#: src/item.cpp:238
+#: src/item.cpp:280
 msgid "Ammo-Type"
 msgstr "Kuulide tüüp"
 
-#: src/item.cpp:244
+#: src/item.cpp:286
 msgid "Rounds"
 msgstr "Salvesid"
 
-#: src/item.cpp:250
+#: src/item.cpp:292
 msgid "Blast range"
 msgstr "Plahavtus ulatus"
 
-#: src/item.cpp:256
+#: src/item.cpp:298
 msgid "Smoke range"
 msgstr "Suitsu ulatus"
 
-#: src/item.cpp:262
+#: src/item.cpp:304
 msgid "Smoke time"
 msgstr "Suitsu kestvus aeg"
 
-#: src/item.cpp:271
+#: src/item.cpp:313
 msgid "Ammo#"
 msgstr "Kuule#"
 
-#: src/item.cpp:276
+#: src/item.cpp:318
 msgid "Weight"
 msgstr "Kaal"
 
-#: src/item.cpp:279
+#: src/item.cpp:321
 msgid "Cost"
 msgstr "Maksumus"
 
-#: src/main.cpp:110
+#: src/main.cpp:113
 #, c-format
 msgid "Time left: %d"
 msgstr "Aega järel: %d"
 
-#: src/main.cpp:1059
-#: src/main.cpp:1062
+#: src/main.cpp:1105
+msgid "Error: game state on your an remote computers got out of sync."
+msgstr ""
+
+#: src/main.cpp:1106
+msgid ""
+"You can encounter any weird bugs or just crashes if you continue playing."
+msgstr ""
+
+#: src/main.cpp:1107
+#, c-format
+msgid "Bug report saved in 'crc_error_%d.txt', please send it to developers"
+msgstr ""
+
+#: src/main.cpp:1109
 msgid "wrong wholeCRC"
 msgstr "wrong whole CRC"
 
-#: src/main.cpp:1150
-#: src/main.cpp:1151
+#: src/main.cpp:1196 src/main.cpp:1197
 msgid "Turn end"
 msgstr "Käigu lõpp"
 
-#: src/main.cpp:1179
+#: src/main.cpp:1225
 msgid "  NEXT TURN  "
 msgstr "JÄRGMINE KÄIK"
 
-#: src/main.cpp:1180
-#: src/multiplay.cpp:129
-#: src/multiplay.cpp:137
-#: src/server_gui.cpp:400
-#: src/server_gui.cpp:406
-#: src/server_gui.cpp:460
+#: src/main.cpp:1226 src/multiplay.cpp:129 src/multiplay.cpp:137
+#: src/server_gui.cpp:453 src/server_gui.cpp:460 src/server_gui.cpp:512
 msgid "    OK    "
 msgstr "OK"
 
-#: src/main.cpp:1231
+#: src/main.cpp:1279
 #, c-format
 msgid "Next turn. local = %d, remote = %d soldiers"
 msgstr "Järgmine käik. <TODO>? = %d, eemalolevaid = %d Sõdureid"
 
-#: src/main.cpp:1237
+#: src/main.cpp:1285
 msgid "Next turn"
 msgstr "Järgmine käik"
 
-#: src/main.cpp:1435
+#: src/main.cpp:1483
 msgid "WATCH"
 msgstr "VAATA"
 
-#: src/main.cpp:1437
+#: src/main.cpp:1485
 #, c-format
 msgid "FPS: %d"
 msgstr "FPS: %d"
 
-#: src/main.cpp:1440
+#: src/main.cpp:1488
 msgid "PAUSE (press shift+space to resume)"
 msgstr "Peata (vajuta shift-space, et jätkata)"
 
-#: src/main.cpp:1779
-#: src/main.cpp:1801
+#: src/main.cpp:1827 src/main.cpp:1849
 msgid "DRAW!"
 msgstr "VIIK!"
 
-#: src/main.cpp:1784
-#: src/main.cpp:1788
+#: src/main.cpp:1832 src/main.cpp:1836
 msgid "PLAYER 2 WINS!"
 msgstr "Mängija nr 2 VÕITIS!"
 
-#: src/main.cpp:1785
-#: src/main.cpp:1787
+#: src/main.cpp:1833 src/main.cpp:1835
 msgid "PLAYER 1 WINS!"
 msgstr "Mängija nr 1 VÕITIS!!"
 
-#: src/main.cpp:1796
+#: src/main.cpp:1844
 msgid "YOU WIN!"
 msgstr "Sina Võitsid!"
 
-#: src/main.cpp:1800
+#: src/main.cpp:1848
 msgid "YOU LOSE!"
 msgstr "SA kaotasid!"
 
-#: src/main.cpp:1810
+#: src/main.cpp:1858
 msgid "Summary"
 msgstr "ülevaade"
 
-#: src/main.cpp:1821
-#: src/main.cpp:1871
-#: src/main.cpp:1879
-#: src/main.cpp:1887
-#: src/units.cpp:319
+#: src/main.cpp:1869 src/main.cpp:1919 src/main.cpp:1927 src/main.cpp:1935
+#: src/units.cpp:315
 msgid "Player 1"
 msgstr "Mängija 1"
 
-#: src/main.cpp:1822
-#: src/main.cpp:1871
-#: src/main.cpp:1879
-#: src/main.cpp:1887
-#: src/units.cpp:325
+#: src/main.cpp:1870 src/main.cpp:1919 src/main.cpp:1927 src/main.cpp:1935
+#: src/units.cpp:321
 msgid "Player 2"
 msgstr "Mängija 2"
 
-#: src/main.cpp:1827
+#: src/main.cpp:1875
 msgid "Your Platoon"
 msgstr "Sinu XXXX"
 
-#: src/main.cpp:1828
+#: src/main.cpp:1876
 msgid "Remote Platoon"
 msgstr "Eemmalolevaid XXXX"
 
-#: src/main.cpp:1835
+#: src/main.cpp:1883
 msgid "Total Kills:"
 msgstr "Tapmisi kokku:"
 
-#: src/main.cpp:1840
-#: src/main.cpp:1904
+#: src/main.cpp:1888 src/main.cpp:1952
 msgid "Player"
 msgstr "Mängija"
 
-#: src/main.cpp:1843
+#: src/main.cpp:1891
 msgid "Death:"
 msgstr "Surmi:"
 
-#: src/main.cpp:1850
+#: src/main.cpp:1898
 msgid "Total Damage Inflicted:"
 msgstr "Kogu tehtud kahju:"
 
-#: src/main.cpp:1857
+#: src/main.cpp:1905
 msgid "Total Damage Taken:"
 msgstr "Kogu saadud kahju :"
 
-#: src/main.cpp:1868
+#: src/main.cpp:1916
 msgid "Most Valuable Soldier:"
 msgstr "Kõige väärtuslikum sõdur:"
 
-#: src/main.cpp:1869
+#: src/main.cpp:1917
 #, c-format
 msgid "%s (%s, %d kills)"
 msgstr "%s (%s, %d tapmisi)"
 
-#: src/main.cpp:1871
-#: src/main.cpp:1879
-#: src/main.cpp:1887
+#: src/main.cpp:1919 src/main.cpp:1927 src/main.cpp:1935
 msgid "Remote"
 msgstr "Remote"
 
-#: src/main.cpp:1871
-#: src/main.cpp:1879
-#: src/main.cpp:1887
+#: src/main.cpp:1919 src/main.cpp:1927 src/main.cpp:1935
 msgid "Local"
 msgstr "Local"
 
-#: src/main.cpp:1876
+#: src/main.cpp:1924
 msgid "Most Devastating Soldier:"
 msgstr "Kõige laastavam sõdur:"
 
-#: src/main.cpp:1877
-#: src/main.cpp:1885
+#: src/main.cpp:1925 src/main.cpp:1933
 #, c-format
 msgid "%s (%s, %d damage inflicted)"
 msgstr "%s (%s, %d Kahju tehtud)"
 
-#: src/main.cpp:1884
+#: src/main.cpp:1932
 msgid "Most Cowardly Soldier:"
 msgstr "Kõige arkpükslikuim sõdur:"
 
-#: src/main.cpp:1899
-#: src/main.cpp:1901
-#: src/main.cpp:1905
+#: src/main.cpp:1947 src/main.cpp:1949 src/main.cpp:1953
 msgid "Name"
 msgstr "Nimi"
 
-#: src/main.cpp:1899
-#: src/main.cpp:1901
-#: src/main.cpp:1905
+#: src/main.cpp:1947 src/main.cpp:1949 src/main.cpp:1953
 msgid "Kills"
 msgstr "Tapmisi"
 
-#: src/main.cpp:1903
+#: src/main.cpp:1951
 msgid "Details"
 msgstr "Detailid"
 
-#: src/main.cpp:1940
+#: src/main.cpp:1988
 msgid "End"
 msgstr "Lõpeta"
 
-#: src/main.cpp:1949
+#: src/main.cpp:1997
 msgid "You can chat here.  Press ESC when finished."
 msgstr "Te saate suhelda siin vajuta ESc, et väljuda."
 
-#: src/main.cpp:1969
+#: src/main.cpp:2017
 msgid "EXIT TO MAIN MENU"
 msgstr "VÄLJU PÕHI MENÜÜSE"
 
-#: src/main.cpp:2100
+#: src/main.cpp:2150
 msgid "Welcome to the battlescape of UFO2000 !"
 msgstr "Tere tulemast UFO2000 võitlusväljale !"
 
-#: src/main.cpp:2101
+#: src/main.cpp:2151
 msgid "Press F1 for help."
 msgstr "Vajuta F1 kui vajad abi."
 
-#: src/main.cpp:2103
+#: src/main.cpp:2153
 msgid "Battlereport"
 msgstr "Võitlus raport"
 
-#: src/main.cpp:2455
+#: src/main.cpp:2505
 msgid "SAVE GAME"
 msgstr "SALVESTA mäng"
 
-#: src/main.cpp:2458
-#: src/main.cpp:2460
+#: src/main.cpp:2508 src/main.cpp:2510
 msgid "Game saved"
 msgstr "mäng salvestatud"
 
-#: src/main.cpp:2464
-#: src/main.cpp:2466
-#: src/main.cpp:2471
-#: src/main.cpp:2690
+#: src/main.cpp:2514 src/main.cpp:2516 src/main.cpp:2521 src/main.cpp:2740
 msgid "LOAD GAME"
 msgstr "LAE mäng"
 
-#: src/main.cpp:2466
+#: src/main.cpp:2516
 msgid "failed"
 msgstr "Ebaõnnestus"
 
-#: src/main.cpp:2468
+#: src/main.cpp:2518
 msgid "Saved game not found"
 msgstr "Salvestatud mängu ei leitud"
 
-#: src/main.cpp:2471
+#: src/main.cpp:2521
 msgid "success"
 msgstr "Õnnestus"
 
-#: src/main.cpp:2481
+#: src/main.cpp:2531
 msgid "Tooltips OFF"
 msgstr "Ära näita Abi "
 
-#: src/main.cpp:2484
+#: src/main.cpp:2534
 msgid "Tooltips ON."
 msgstr "Näita abi"
 
-#: src/main.cpp:2498
+#: src/main.cpp:2548
 msgid "STOP NOTIFY"
 msgstr "STOP NOTIFY"
 
-#: src/main.cpp:2501
+#: src/main.cpp:2551
 msgid "START NOTIFY"
 msgstr "START NOTIFY"
 
-#: src/main.cpp:2523
+#: src/main.cpp:2573
 msgid "ABORT MISSION ?"
 msgstr "Katkesta missioon ?"
 
-#: src/main.cpp:2523
+#: src/main.cpp:2573
 msgid "YES=RESIGN"
 msgstr "Jah = ALISTU"
 
-#: src/main.cpp:2524
+#: src/main.cpp:2574
 msgid "RECALL DRAW OFFER"
 msgstr "VÕTA TAGSI VIIGIi PAKKUMINE"
 
-#: src/main.cpp:2525
+#: src/main.cpp:2575
 msgid "ACCEPT DRAW OFFER"
 msgstr "NÕUSTU VIIGI PAKKUMISEGA"
 
-#: src/main.cpp:2526
+#: src/main.cpp:2576
 msgid "OFFER DRAW"
 msgstr "PAKU VIIKI"
 
-#: src/main.cpp:2526
+#: src/main.cpp:2576
 msgid "NO=CONTINUE"
 msgstr "EI= JÄTKA"
 
-#: src/main.cpp:2528
+#: src/main.cpp:2578
 msgid "EXIT FROM REPLAY?"
 msgstr "VÄLJU KORDUSEST?"
 
-#: src/main.cpp:2533
+#: src/main.cpp:2583
 msgid "Game aborted"
 msgstr "Mäng katkestatud"
 
-#: src/main.cpp:2538
+#: src/main.cpp:2588
 msgid "You: Draw offer accepted"
 msgstr "Sinu viigi pakkumine on vastuvõetud"
 
-#: src/main.cpp:2540
+#: src/main.cpp:2590
 msgid "You: Draw offered"
 msgstr "Sinu viik on pakutud"
 
-#: src/main.cpp:2542
+#: src/main.cpp:2592
 msgid "You: Draw offer recalled"
 msgstr "Sinu viigi pakkumine on tagasi võetud"
 
-#: src/main.cpp:2575
+#: src/main.cpp:2625
 msgid "Save replay?"
 msgstr "Salvest kordus?"
 
-#: src/main.cpp:2577
+#: src/main.cpp:2627
 msgid "Save replay (*.replay file)"
 msgstr "Salvest kordus (*.replay fail)"
 
-#: src/main.cpp:2582
+#: src/main.cpp:2632
 #, c-format
 msgid "Unable to delete existing file %s!"
 msgstr "Eo siida kustutada praeguseid faile %s!"
 
-#: src/main.cpp:2588
+#: src/main.cpp:2638
 #, c-format
 msgid "Replay saved as %s"
 msgstr "Kordus salvestatud %s"
 
-#: src/main.cpp:2590
+#: src/main.cpp:2640
 #, c-format
 msgid "Unable to save %s!"
 msgstr "Ei suuda salvestada %s!"
 
-#: src/main.cpp:2598
+#: src/main.cpp:2648
 #, c-format
 msgid "Unable to delete temporary file %s!"
 msgstr "Ei suuda kustutada ajutist faili %s!"
 
-#: src/main.cpp:2687
+#: src/main.cpp:2737
 msgid "Saved game not available"
 msgstr "Salvestatud mäng ei ole kättesaadav"
 
-#: src/main.cpp:2722
+#: src/main.cpp:2772
 msgid "Load replay (*.replay files)"
 msgstr "Lae kordus (*.replay fail)"
 
-#: src/main.cpp:2725
+#: src/main.cpp:2775
 msgid "No saved replays found!"
 msgstr "Ei leitud ühtegi salvestatud kordus faili."
 
-#: src/main.cpp:2730
+#: src/main.cpp:2780
 msgid "Replay is invalid!"
 msgstr "Kordus fail on vigane!"
 
-#: src/main.cpp:2730
+#: src/main.cpp:2780
 msgid "(Probably it was saved by incompatible version)."
 msgstr "Ilmselt salvestati vale versiooni poolt)"
 
-#: src/main.cpp:2734
+#: src/main.cpp:2784
 msgid "START REPLAY"
 msgstr "Näita kordust"
 
-#: src/main.cpp:2887
+#: src/main.cpp:2937
 #, c-format
 msgid "UFO2000 v%s.%s - a free and opensource multiplayer game"
 msgstr "UFO2000 v%s.%s - tasuta mängitav vabalähtekoodiga mitmik mängija mäng"
 
-#: src/main.cpp:2890
+#: src/main.cpp:2940
 msgid "inspired by 'X-COM: UFO Defense', see http://ufo2000.sf.net."
 msgstr "Inspireeritud mängust 'X-COM: UFO Defense', http://ufo2000.sf.net"
 
-#: src/main.cpp:2892
+#: src/main.cpp:2942
 msgid " &MORE "
 msgstr " &Veel"
 
-#: src/main.cpp:2892
+#: src/main.cpp:2942
 msgid " OK "
 msgstr "OK"
 
-#: src/main.cpp:2913
+#: src/main.cpp:2963
 msgid "IEEE-754 compatible 64-bit floating point arithmetics is not supported,"
-msgstr "IEEE-754 compatible 64-bit floating point arithmetics is not supported,"
+msgstr ""
+"IEEE-754 compatible 64-bit floating point arithmetics is not supported,"
 
-#: src/main.cpp:2914
+#: src/main.cpp:2964
 msgid "so you have high risk of synchronization errors in network games"
 msgstr "so you have high risk of synchronization errors in network games"
 
-#: src/main.cpp:2915
+#: src/main.cpp:2965
 msgid "and are not allowed to connect the server"
 msgstr "and are not allowed to connect the server"
 
@@ -871,7 +848,7 @@ msgstr "Päeva soovitus"
 msgid "quit"
 msgstr "Välju"
 
-#: src/map.cpp:2280
+#: src/map.cpp:2300
 msgid "Select terrain type"
 msgstr "Vali maastiku tüüp"
 
@@ -898,24 +875,30 @@ msgstr "pane:[%d]"
 msgid "get:[%d]"
 msgstr "Saa:[%d]"
 
-#: src/multiplay.cpp:1236
+#: src/multiplay.cpp:1315
 #, c-format
-msgid "Remote player has the following %d maps that can be used for network game:\n"
+msgid ""
+"Remote player has the following %d maps that can be used for network game:\n"
 msgstr "Sellel mängijal on järgnevad kaardid %d :\n"
 
-#: src/multiplay.cpp:1261
-msgid "The following maps can not be used, they are modified or just not installed by remote player:\n"
-msgstr "Järgnevaid kaarte ei saa kasutada neid ei ole teisel mängijal või on nad muudetud\n"
+#: src/multiplay.cpp:1340
+#, c-format
+msgid ""
+"The following maps can not be used, they are modified or just not installed "
+"by remote player:\n"
+msgstr ""
+"Järgnevaid kaarte ei saa kasutada neid ei ole teisel mängijal või on nad "
+"muudetud\n"
 
-#: src/multiplay.cpp:1531
+#: src/multiplay.cpp:1619
 msgid "Opponent: Draw offer accepted"
 msgstr "Vastane: Viik vastuvõetud"
 
-#: src/multiplay.cpp:1533
+#: src/multiplay.cpp:1621
 msgid "Opponent: Draw offered"
 msgstr "Vastane: Viik pakutud"
 
-#: src/multiplay.cpp:1535
+#: src/multiplay.cpp:1623
 msgid "Opponent: Draw offer recalled"
 msgstr "Vastane: Viigipakkumine tagasivõetud"
 
@@ -928,506 +911,545 @@ msgstr "mängjal ei ole sinu relvi)"
 msgid "Weapon set: %s"
 msgstr "Relv: %s"
 
-#: src/scenario.cpp:74
+#: src/scenario.cpp:75
 msgid "Kill 'em all!"
 msgstr "TAPA NAD KÕIK!"
 
-#: src/scenario.cpp:85
+#: src/scenario.cpp:86
 msgid "You must get your leader (first selected soldier)"
 msgstr "SA PEAD SAAMA OMA JUHI(ESIMESENA VALITUD SÕDUR)"
 
-#: src/scenario.cpp:86
+#: src/scenario.cpp:87
 msgid "to the opposite edge of the map to win.          "
 msgstr "TEISe kAARTI SERVA; ET VÕITA."
 
-#: src/scenario.cpp:87
+#: src/scenario.cpp:88
 msgid "Your leader is always visible on your opponent's "
 msgstr "SU JUHT ON VASTASELE NÄHTAV"
 
-#: src/scenario.cpp:88
+#: src/scenario.cpp:89
 msgid "minimap."
 msgstr "Väike kaart."
 
-#: src/scenario.cpp:90
-#: src/scenario.cpp:136
+#: src/scenario.cpp:91 src/scenario.cpp:137
 msgid "You must kill enemy leader (first selected       "
 msgstr "SA pead tapma vastase juhi"
 
-#: src/scenario.cpp:91
+#: src/scenario.cpp:92
 msgid "soldier) before he gets to your edge of the map. "
 msgstr "Enne kui ta jõuab kaarti serva"
 
-#: src/scenario.cpp:92
+#: src/scenario.cpp:93
 msgid "Leader is always visible on your minimap.        "
 msgstr "Vastane on alati nähtav sinu väiksel kaartil."
 
-#: src/scenario.cpp:94
-#: src/scenario.cpp:144
+#: src/scenario.cpp:95 src/scenario.cpp:145
 msgid "Leader can use two-handed weapons"
 msgstr "Juht saavad kasutada kahekäe relvi"
 
-#: src/scenario.cpp:94
-#: src/scenario.cpp:144
+#: src/scenario.cpp:95 src/scenario.cpp:145
 msgid "Leader can't use two-handed weapons"
 msgstr "Juht ei saa kasutada kahekäe relvi"
 
-#: src/scenario.cpp:103
+#: src/scenario.cpp:104
 msgid "You must place high explosives at places which   "
 msgstr "Sa pead paigutama lõhkeained kohtadesse"
 
-#: src/scenario.cpp:104
+#: src/scenario.cpp:105
 msgid "are indicated on your minimap. You can have high "
 msgstr "mis on näitadud väiksel kaaril. Sul saavad olla"
 
-#: src/scenario.cpp:105
+#: src/scenario.cpp:106
 msgid "explosives even if they aren't allowed by rules  "
 msgstr "Lõhkeained isegi siis kui need on keelatud"
 
-#: src/scenario.cpp:106
+#: src/scenario.cpp:107
 msgid "of the match.                                    "
 msgstr "Matchi reeglitega"
 
-#: src/scenario.cpp:108
+#: src/scenario.cpp:109
 msgid "You must kill all enemy soldiers before they     "
 msgstr "Sa pead tapma vastase sõdurid enne kui nad "
 
-#: src/scenario.cpp:109
+#: src/scenario.cpp:110
 msgid "plant explosives at places which are indicated on"
 msgstr "jõuavad paigaldada lõhkeained kohtadesse mis on"
 
-#: src/scenario.cpp:110
+#: src/scenario.cpp:111
 msgid "the minimap.                                     "
 msgstr "mis on märgitud väiksele kaartile."
 
-#: src/scenario.cpp:121
+#: src/scenario.cpp:122
 msgid "You must control the 10x10 area in the centre of "
 msgstr "Sa pead kontrollima 10x10 ala kaarti keskel"
 
-#: src/scenario.cpp:122
+#: src/scenario.cpp:123
 msgid "the map for number of successive half-turns set  "
 msgstr "Kindel number käike"
 
-#: src/scenario.cpp:123
+#: src/scenario.cpp:124
 msgid "in the \"Options\" section.                      "
 msgstr "mis määratakse Valikute menüüs"
 
-#: src/scenario.cpp:124
+#: src/scenario.cpp:125
 msgid "To control an area you have to have in it more   "
 msgstr "Kontrolli ala omades selles"
 
-#: src/scenario.cpp:125
+#: src/scenario.cpp:126
 msgid "soldiers than your opponent.                     "
 msgstr "rohkem sõdureid kui vastane."
 
-#: src/scenario.cpp:127
+#: src/scenario.cpp:128
 msgid "Half-turns to control the area"
 msgstr "Käike konntrollida ala:"
 
-#: src/scenario.cpp:137
+#: src/scenario.cpp:138
 msgid "soldier). Enemy leader is always visible on your "
 msgstr "Vastase juht on alati sinu  "
 
-#: src/scenario.cpp:138
+#: src/scenario.cpp:139
 msgid "minimap.                                         "
 msgstr "väikeselt kaartilt nähtav"
 
-#: src/scenario.cpp:140
+#: src/scenario.cpp:141
 msgid "You must save your leader (first selected        "
 msgstr "Sa pead päästama oma juhi"
 
-#: src/scenario.cpp:141
+#: src/scenario.cpp:142
 msgid "soldier). He is always visible for your opponent "
 msgstr "ta on vastasele nähtav"
 
-#: src/scenario.cpp:142
+#: src/scenario.cpp:143
 msgid "on the minimap.                                  "
 msgstr "kaarti peal."
 
-#: src/scenario.cpp:153
+#: src/scenario.cpp:154
 msgid "You must save at least half of your squad        "
 msgstr "sa pead päästma vähemalt pool"
 
-#: src/scenario.cpp:154
-#: src/scenario.cpp:158
+#: src/scenario.cpp:155 src/scenario.cpp:159
 msgid "(rounded down) until the end of the match (number"
 msgstr "oma sõduritest käikude lõpuni"
 
-#: src/scenario.cpp:155
-#: src/scenario.cpp:159
+#: src/scenario.cpp:156 src/scenario.cpp:160
 msgid "of turns is set in the \"Options\" section).       "
 msgstr "Käike saab muuta Valikute menüüs)."
 
-#: src/scenario.cpp:157
-#: src/scenario.cpp:175
+#: src/scenario.cpp:158 src/scenario.cpp:176
 msgid "You must kill more than half of enemy squad      "
 msgstr "Sa pead tapma üle poole vastase tiimist"
 
-#: src/scenario.cpp:161
+#: src/scenario.cpp:162
 msgid "Half-turns to hold (match length)"
 msgstr "Match kestab käike "
 
-#: src/scenario.cpp:162
-#: src/scenario.cpp:180
+#: src/scenario.cpp:163 src/scenario.cpp:181
 msgid "\"Surrounded\" deployment"
 msgstr "\"Ümbritsetud\" paigutamine"
 
-#: src/scenario.cpp:162
-#: src/scenario.cpp:180
+#: src/scenario.cpp:163 src/scenario.cpp:181
 msgid "Standard deployment"
 msgstr "Tavaline paigutus"
 
-#: src/scenario.cpp:170
+#: src/scenario.cpp:171
 msgid "You must bring at least half of your squad       "
 msgstr "Sa pead tooma vähemalt pool oma tiimist"
 
-#: src/scenario.cpp:171
+#: src/scenario.cpp:172
 msgid "(rounded up) to the opposite edge of the map if  "
 msgstr "teise kaartipoole serv"
 
-#: src/scenario.cpp:172
+#: src/scenario.cpp:173
 msgid "standard deployment is selected or to any edge if"
 msgstr "kui tavaline paigutus on valitud või ükskõik"
 
-#: src/scenario.cpp:173
+#: src/scenario.cpp:174
 msgid "\"surrounded\" deployment is selected.             "
 msgstr "millisesse kaarti serva kui \"Ümbritsetud\" paigutus on valitud"
 
-#: src/scenario.cpp:176
+#: src/scenario.cpp:177
 msgid "(rounded up) before they get to your edge of the "
 msgstr "enne kui nad jõuavad sinu kaarti serva"
 
-#: src/scenario.cpp:177
+#: src/scenario.cpp:178
 msgid "map if standard deployment is selected or to any "
 msgstr "kui \"tavaline\" paigutus on valitud või kui"
 
-#: src/scenario.cpp:178
+#: src/scenario.cpp:179
 msgid "edge if \"surrounded\" deployment is selected.     "
 msgstr "äärde kui \"ümbritsetud\" paigutus on valitud"
 
-#: src/scenario.cpp:189
+#: src/scenario.cpp:190
 msgid "You must capture enemy leader (first selected    "
 msgstr "Sa pead tabama vastase juhi"
 
-#: src/scenario.cpp:190
+#: src/scenario.cpp:191
 msgid "soldier). To do this you must stun him and bring "
 msgstr ", et seda teha pead sa ta oimetuks lööma ja viima"
 
-#: src/scenario.cpp:191
+#: src/scenario.cpp:192
 msgid "to your edge of the map. Leader is always visible"
 msgstr "oma kaarti poolele. Juhid on alati nähtavad "
 
-#: src/scenario.cpp:192
+#: src/scenario.cpp:193
 msgid "on your minimap.                                 "
 msgstr "Kaarti peal"
 
-#: src/scenario.cpp:194
+#: src/scenario.cpp:195
 msgid "You must save your leader (first selected man)   "
 msgstr "Sa pead päästma oma juhi vastase kätte langemast"
 
-#: src/scenario.cpp:195
+#: src/scenario.cpp:196
 msgid "from capturing by enemy. He is always visible on "
 msgstr "vastase kätte langemast. Juht on vastasele nähtav"
 
-#: src/scenario.cpp:196
+#: src/scenario.cpp:197
 msgid "your opponent's minimap.                         "
 msgstr "tema kaartil."
 
-#: src/scenario.cpp:198
+#: src/scenario.cpp:199
 msgid "Leader can have two-handed weapons"
 msgstr "Juht saab hoida 2he käe relvasid"
 
-#: src/scenario.cpp:198
+#: src/scenario.cpp:199
 msgid "Leader can't have two-handed weapons"
 msgstr "Juht ei saa käsitseda kahekäe relvasid."
 
-#: src/scenario.cpp:480
+#: src/scenario.cpp:208
+msgid "You can deploy your units anywhere on the map.   "
+msgstr ""
+
+#: src/scenario.cpp:209
+msgid "Find and kill the ennemy. All units will face    "
+msgstr ""
+
+#: src/scenario.cpp:210
+msgid "away from the center and the outside of the map, "
+msgstr ""
+
+#: src/scenario.cpp:211
+msgid "depending on the closest map feature.            "
+msgstr ""
+
+#: src/scenario.cpp:212
+#, fuzzy
+msgid "                                                 "
+msgstr "väikeselt kaartilt nähtav"
+
+#: src/scenario.cpp:213
+msgid "Map exploration level 0 (unexplored) recommended."
+msgstr ""
+
+#: src/scenario.cpp:503
 #, c-format
 msgid "Player 1 is controlling the target area for %d turn(s)."
 msgstr "Mängja 1 kontrollib ala  %d käik(u)."
 
-#: src/scenario.cpp:488
+#: src/scenario.cpp:511
 #, c-format
 msgid "Player 2 is controlling the target area for %d turn(s)."
 msgstr "Mängja 2 kontrollib ala  %d käik(u)."
 
-#: src/scenario.cpp:493
+#: src/scenario.cpp:516
 msgid "Nobody is controlling the target area."
 msgstr "Keegi ei kontrolli nõutud ala."
 
-#: src/scenario.cpp:766
+#: src/scenario.cpp:798
 #, c-format
 msgid "%d points limit exceeded!"
 msgstr "%d puktide liimit ületatud!"
 
-#: src/scenario.cpp:779
+#: src/scenario.cpp:811
 #, c-format
 msgid "%s does not have his %s loaded!"
 msgstr "%s ei ike tema %s laetud!"
 
-#: src/scenario.cpp:793
+#: src/scenario.cpp:825
 #, c-format
-msgid "Items on the ground aren't allowed (you have: %d, including unselected soldiers)."
+msgid ""
+"Items on the ground aren't allowed (you have: %d, including unselected "
+"soldiers)."
 msgstr "esemed maas ei ole lubatud (sul on: %d, liasedes ka valimata sõdurid)."
 
-#: src/scenario.cpp:805
-#: src/scenario.cpp:836
-#: src/scenario.cpp:881
+#: src/scenario.cpp:837 src/scenario.cpp:868 src/scenario.cpp:913
 msgid "Soldier #1 can't have two-handed weapons!"
 msgstr "Sõdur #1 ei saa kanda 2he käe relvi!"
 
-#: src/scenario.cpp:824
+#: src/scenario.cpp:856
 msgid "You must have at least 2 high explosives."
 msgstr "Sul peab olema vähemalt 2 lõhkeainet."
 
-#: src/scenario.cpp:875
+#: src/scenario.cpp:907
 msgid "You must have at least one stun weapon."
 msgstr "Sul peab olema vähemalt üks uimastamise relv."
 
-#: src/scenario.cpp:1029
-#: src/scenario.cpp:1043
+#: src/scenario.cpp:1076 src/scenario.cpp:1090
 msgid "Leader can't use two-handed weapons."
 msgstr "Juht ei saa kasutada kahekäe relvi."
 
-#: src/server_gui.cpp:314
+#: src/server_gui.cpp:346
 msgid "Server:"
 msgstr "Server:"
 
-#: src/server_gui.cpp:316
+#: src/server_gui.cpp:348
 msgid "Login:"
 msgstr "Login:"
 
-#: src/server_gui.cpp:318
+#: src/server_gui.cpp:350
 msgid "Password:"
 msgstr "Parool:"
 
-#: src/server_gui.cpp:320
+#: src/server_gui.cpp:352
 msgid "Autologin"
 msgstr "Automaatne sisselogimine"
 
-#: src/server_gui.cpp:394
+#: src/server_gui.cpp:353
+#, fuzzy
+msgid "Help"
+msgstr "Tervis"
+
+#: src/server_gui.cpp:361
+msgid ""
+"The game can connect to the server running on the internet or on a local "
+"network (to start the server on your computer, just run 'ufo2000-srv' "
+"executable included in ufo2000 distributive).\n"
+"\n"
+"You need to enter server address. On the first run of the game, the server "
+"address contains some default value, it is the official ufo2000 server "
+"running on the internet. If you want to play on a local network, you need to "
+"start the ufo2000 server on one computer and enter its IP address when "
+"connecting to it from ufo2000 on another computer.\n"
+"\n"
+"The other two required fields are login and password. They are used to "
+"identify the user to track some game statistics like the number of victories "
+"and ELO rating.\n"
+"\n"
+"Login should be any name not used by other players and password should be at "
+"least 6 characters long. If you are connecting to the server for the first "
+"time, your account will be registered automatically. After successful login "
+"or registration, you will see the internet server chat screen."
+msgstr ""
+
+#: src/server_gui.cpp:447
 msgid "Connecting to server..."
 msgstr "Ühendan serveriga."
 
-#: src/server_gui.cpp:416
+#: src/server_gui.cpp:470
 msgid "ufo2000 internet server ("
 msgstr "ufo2000 interneti server ("
 
-#: src/server_gui.cpp:420
+#: src/server_gui.cpp:474
 msgid "users online"
 msgstr "Kasutajaid sees"
 
-#: src/server_gui.cpp:424
+#: src/server_gui.cpp:478
 msgid "You have just connected to ufo2000 internet server"
 msgstr "Sa ühendasid end ufo2000 serveriga"
 
-#: src/server_gui.cpp:425
+#: src/server_gui.cpp:479
 msgid "There are two windows here: chat console in the left window"
 msgstr "Siin on kaks akent: rääkimise aken vasakul"
 
-#: src/server_gui.cpp:426
+#: src/server_gui.cpp:480
 msgid "and the list of online players in the right"
 msgstr "ja mängijate nimestik paremal"
 
-#: src/server_gui.cpp:428
+#: src/server_gui.cpp:482
 msgid "white player name - that's your own name"
 msgstr "Valge mängja nimi - Sinu nimi"
 
-#: src/server_gui.cpp:429
+#: src/server_gui.cpp:483
 msgid "gray player name - available for chat"
 msgstr "Pruuni mängija nimi - saad temaga rääkida"
 
-#: src/server_gui.cpp:430
+#: src/server_gui.cpp:484
 msgid "yellow player name - you have sent a challenge to this player"
 msgstr "Kollane mängija - sa esitasid talle väljakutse "
 
-#: src/server_gui.cpp:431
+#: src/server_gui.cpp:485
 msgid "green player name - you can accept a challenge from this player"
 msgstr "Roheline mängija - esitas Sulle väljakutse"
 
-#: src/server_gui.cpp:432
+#: src/server_gui.cpp:486
 msgid "red player name - the player is busy playing with someone else"
 msgstr "Punane mängja - mängib kellegagi"
 
-#: src/server_gui.cpp:434
+#: src/server_gui.cpp:488
 msgid "You can left click on player names to select them as your opponents"
 msgstr "Vasak klikkides mängja nimele saad valida ta vastaseks "
 
-#: src/server_gui.cpp:436
-msgid "If you have an unfinished game at the server you can press F3 to continue it."
+#: src/server_gui.cpp:490
+msgid ""
+"If you have an unfinished game at the server you can press F3 to continue it."
 msgstr "Kui sul on lõpetamata mäng serveris siis vajuta F3, et seda jätkata"
 
-#: src/server_gui.cpp:451
+#: src/server_gui.cpp:503
 msgid "Connected to server"
 msgstr "Ühenda serveriga"
 
-#: src/server_gui.cpp:452
+#: src/server_gui.cpp:504
 msgid "as user"
 msgstr "kasutajana"
 
-#: src/server_gui.cpp:460
-#: src/server_gui.cpp:461
+#: src/server_gui.cpp:512 src/server_gui.cpp:513
 msgid "  Connection lost  "
 msgstr "Ühendus katkes"
 
-#: src/server_gui.cpp:473
+#: src/server_gui.cpp:525
 #, c-format
 msgid "%s is back from a game"
 msgstr "%s on tagasi mängimast"
 
-#: src/server_gui.cpp:475
+#: src/server_gui.cpp:527
 #, c-format
 msgid "%s is here"
 msgstr "%s on siin"
 
-#: src/server_gui.cpp:482
+#: src/server_gui.cpp:534
 #, c-format
 msgid "%s disconnected"
 msgstr "%s katkestas ühenduse"
 
-#: src/server_gui.cpp:500
+#: src/server_gui.cpp:552
 #, c-format
 msgid "%s left chat to play a game"
 msgstr "%s lahkus rääkimisest, et mängida mängu"
 
-#: src/server_gui.cpp:514
+#: src/server_gui.cpp:566
 msgid "Start networkgame with"
 msgstr "Alusta mängu"
 
-#: src/server_gui.cpp:541
-#: src/server_gui.cpp:570
+#: src/server_gui.cpp:593 src/server_gui.cpp:622
 msgid "Join networkgame with"
 msgstr "Ühine mänguga "
 
-#: src/server_gui.cpp:656
-#: src/server_gui.cpp:658
-#: src/server_gui.cpp:684
+#: src/server_gui.cpp:708 src/server_gui.cpp:710 src/server_gui.cpp:736
 msgid "DISCONNECT FROM SERVER"
 msgstr "´Katkesta ühendus"
 
-#: src/soldier.cpp:612
+#: src/soldier.cpp:645
 #, c-format
 msgid "Equipment weight: %d/%2d"
 msgstr "Varustuse kaal: %d/%2d"
 
-#: src/soldier.cpp:621
+#: src/soldier.cpp:654
 msgid "TUs>"
 msgstr "TUs>"
 
-#: src/soldier.cpp:643
+#: src/soldier.cpp:676
 msgid "Health>"
 msgstr "Tervis>"
 
-#: src/soldier.cpp:675
+#: src/soldier.cpp:708
 msgid "TIME UNITS"
 msgstr "Ajaühikuid(TUs)"
 
-#: src/soldier.cpp:676
+#: src/soldier.cpp:709
 msgid "ENERGY"
 msgstr "Energia"
 
-#: src/soldier.cpp:677
+#: src/soldier.cpp:710
 msgid "HEALTH"
 msgstr "TERVIS"
 
-#: src/soldier.cpp:678
+#: src/soldier.cpp:711
 msgid "FATAL WOUNDS"
 msgstr "Kriitilisi haavu"
 
-#: src/soldier.cpp:679
+#: src/soldier.cpp:712
 msgid "BRAVERY"
 msgstr "Vaprus"
 
-#: src/soldier.cpp:680
+#: src/soldier.cpp:713
 msgid "MORALE"
 msgstr "Moraal"
 
-#: src/soldier.cpp:681
+#: src/soldier.cpp:714
 msgid "REACTIONS"
 msgstr "Reaktsioonid"
 
-#: src/soldier.cpp:682
+#: src/soldier.cpp:715
 msgid "FIRING ACCURACY"
 msgstr "Tulistamise täpsus"
 
-#: src/soldier.cpp:683
+#: src/soldier.cpp:716
 msgid "THROWING ACCURACY"
 msgstr "Viskamise täpsus"
 
-#: src/soldier.cpp:684
+#: src/soldier.cpp:717
 msgid "STRENGTH"
 msgstr "Jõud"
 
-#: src/soldier.cpp:687
+#: src/soldier.cpp:719
 msgid "FRONT ARMOUR"
 msgstr "Eest kaitse"
 
-#: src/soldier.cpp:688
+#: src/soldier.cpp:720
 msgid "LEFT ARMOUR"
 msgstr "Vasak kaitse"
 
-#: src/soldier.cpp:689
+#: src/soldier.cpp:721
 msgid "RIGHT ARMOUR"
 msgstr "Parem kaitse"
 
-#: src/soldier.cpp:690
+#: src/soldier.cpp:722
 msgid "REAR ARMOUR"
 msgstr "Tagant kaitse"
 
-#: src/soldier.cpp:691
+#: src/soldier.cpp:723
 msgid "UNDER ARMOUR"
 msgstr "Alt kaitse"
 
-#: src/soldier.cpp:1026
+#: src/soldier.cpp:1069
 msgid "Time units are reserved for snap shot."
 msgstr "Ajaühikuid(TUs) hoitakse alles sihtimata lasu jaoks."
 
-#: src/soldier.cpp:1033
+#: src/soldier.cpp:1076
 msgid "Time units are reserved for aimed shot."
 msgstr "Ajaühikuid(TUs) hoitakse alles sihitud lasu jaoks."
 
-#: src/soldier.cpp:1040
+#: src/soldier.cpp:1083
 msgid "Time units are reserved for auto shot."
 msgstr "Ajaühikuid(TUs) hoitakse alles valangu jaoks."
 
-#: src/soldier.cpp:1047
+#: src/soldier.cpp:1090
 msgid "Time units are reserved for grenade throw."
 msgstr "Ajaühikuid(TUs) hoitakse alles granaafi viskamiseks."
 
-#: src/soldier.cpp:1570
+#: src/soldier.cpp:1613
 #, c-format
 msgid "%s killed."
 msgstr "%s tapetud"
 
-#: src/soldier.cpp:1571
+#: src/soldier.cpp:1614
 #, c-format
 msgid "killed: %s\n"
 msgstr "tapetud: %s\n"
 
-#: src/soldier.cpp:1618
+#: src/soldier.cpp:1661
 #, c-format
 msgid "%s stunned."
 msgstr "%s on oimetu."
 
-#: src/soldier.cpp:1619
+#: src/soldier.cpp:1662
 #, c-format
 msgid "stunned: %s\n"
 msgstr "Lõid oimetuks: %s\n"
 
-#: src/soldier.cpp:1691
+#: src/soldier.cpp:1734
 #, c-format
 msgid "%s has panicked."
 msgstr "%s on paanikas."
 
-#: src/soldier.cpp:1693
+#: src/soldier.cpp:1736
 msgid "(can't access inventory but moves faster)"
 msgstr "(Ei pääse relvastuse juurde aga liigub kiiremini)"
 
-#: src/soldier.cpp:1695
+#: src/soldier.cpp:1738
 msgid "Panicked"
 msgstr "On paanikas"
 
-#: src/text.cpp:210
-#: src/text.cpp:487
+#: src/text.cpp:210 src/text.cpp:487
 msgid "  CLOSE  "
 msgstr "  SULE  "
 
@@ -1519,8 +1541,8 @@ msgstr "Näita kaarti"
 msgid "Stand up / Crouch"
 msgstr "Seisa püsti/kükita"
 
-#: src/text.cpp:328
-#: src/text.cpp:391
+#: src/text.cpp:328 src/text.cpp:391
+#, c-format
 msgid "Inventory"
 msgstr "Varustus"
 
@@ -1573,34 +1595,42 @@ msgid "Reserve Time: Autoshot"
 msgstr "Säästa aega: Valang"
 
 #: src/text.cpp:388
+#, c-format
 msgid "Introduction"
 msgstr "Instruktsioonid"
 
 #: src/text.cpp:389
+#, c-format
 msgid "Battlescape"
 msgstr "Lahingu väli"
 
 #: src/text.cpp:390
+#, c-format
 msgid "Mapview"
 msgstr "Kaartivaade"
 
 #: src/text.cpp:392
+#, c-format
 msgid "Stats-View"
 msgstr "Omaduste vaade"
 
 #: src/text.cpp:393
+#, c-format
 msgid "Endgame-Stats"
 msgstr "Statistika"
 
 #: src/text.cpp:394
+#, c-format
 msgid "Network"
 msgstr "Internet"
 
 #: src/text.cpp:395
+#, c-format
 msgid "Mission-Planner"
 msgstr "Missiooni planeerja"
 
 #: src/text.cpp:396
+#, c-format
 msgid "Scenarios"
 msgstr "Osad"
 
@@ -1677,8 +1707,12 @@ msgid "UFO2000 is controlled mainly with the mouse, and these keys:"
 msgstr "UFO2000 Juhitakse põhiliselt hiirega ja nende nuppudega:"
 
 #: src/text.cpp:545
-msgid "F1: Help, F2+F3: Save+Load, F9: Keymap, F10: Window/Fullscreen, F12: Screenshot"
-msgstr "F1: abi, F2+F3: salvesta/lae., F9: Nuppudepaigutamine, F10: ekraani suurus  F12: Screenshot"
+msgid ""
+"F1: Help, F2+F3: Save+Load, F9: Keymap, F10: Window/Fullscreen, F12: "
+"Screenshot"
+msgstr ""
+"F1: abi, F2+F3: salvesta/lae., F9: Nuppudepaigutamine, F10: ekraani suurus  "
+"F12: Screenshot"
 
 #: src/text.cpp:546
 msgid "Keypad+/-: adjust Music-Volume, Shift+space: Pause, ESC: Quit."
@@ -1713,7 +1747,8 @@ msgid "select the fire-mode (aimed, snapshot, autoshot), then click"
 msgstr "Vali tulistamise liik (sihitud, sihtimata, valang), ja siis kliki"
 
 #: src/text.cpp:564
-msgid "on the target.  Use the up&&down-buttons to aim at other levels."
+#, fuzzy
+msgid "on the target.  Use the PgUp&&PgDown-buttons to aim at other levels."
 msgstr "Sihtmärgile, Kasuta üless/alla nuppe, et liikuda kõrguste vahel."
 
 #: src/text.cpp:568
@@ -1774,7 +1809,8 @@ msgstr "Vaata ülesse ja alla"
 
 #: src/text.cpp:595
 msgid "Maps have 4 levels.  Keyboard-shortcut: PgUp && PgDn-Keys."
-msgstr "Kaartil on 4 erinevat kõrgust: vaheta kõrgus vajutades PgUp && PgDn-Keys."
+msgstr ""
+"Kaartil on 4 erinevat kõrgust: vaheta kõrgus vajutades PgUp && PgDn-Keys."
 
 #: src/text.cpp:599
 msgid "Control-panel:  Buttons in column 3:"
@@ -1968,9 +2004,7 @@ msgstr "With F5..F8 a predefined soldier-type can be selected."
 msgid "Shift-F5..F8 set up these keys."
 msgstr "Sihft-F5..F8,et neid nuppe määrata."
 
-#: src/text.cpp:799
-#: src/text.cpp:805
-#: src/text.cpp:811
+#: src/text.cpp:799 src/text.cpp:805 src/text.cpp:811
 msgid "Quick-Setup:"
 msgstr "Kiired muutused."
 
@@ -2006,14 +2040,8 @@ msgstr "Omadused - sõduri jõud ja oskused."
 msgid "To leave, press ESC or click a mousebutton."
 msgstr "Et väljuda vajuta ESCi või kliki"
 
-#: src/text.cpp:828
-#: src/text.cpp:834
-#: src/text.cpp:840
-#: src/text.cpp:846
-#: src/text.cpp:852
-#: src/text.cpp:858
-#: src/text.cpp:864
-#: src/text.cpp:870
+#: src/text.cpp:828 src/text.cpp:834 src/text.cpp:840 src/text.cpp:846
+#: src/text.cpp:852 src/text.cpp:858 src/text.cpp:864 src/text.cpp:870
 #: src/text.cpp:876
 msgid "Stats:"
 msgstr "Omaduse:"
@@ -2072,7 +2100,8 @@ msgstr "Jõud see määrab kui palju sõdur jaksab kanda varustust."
 
 #: src/text.cpp:866
 msgid "When overloaded, he gets less TU each round."
-msgstr "Kui on rohkem kui mees kanda jõuab seda vähem TUs saab mees igal käigul"
+msgstr ""
+"Kui on rohkem kui mees kanda jõuab seda vähem TUs saab mees igal käigul"
 
 #: src/text.cpp:871
 msgid "PSI-Strength: (not yet implemented)"
@@ -2086,8 +2115,7 @@ msgstr "Kehakaitsed: kaitse väärtused mehe külgedel."
 msgid "Under-armor protects against nearby explosions."
 msgstr "All olev kaitse: kaitseb plahvatuste eest."
 
-#: src/text.cpp:887
-#: src/text.cpp:893
+#: src/text.cpp:887 src/text.cpp:893
 msgid "Endgame-Statistics:"
 msgstr "Statistika:"
 
@@ -2165,7 +2193,9 @@ msgstr "Sättida mängu reegleid ja sõdureid."
 
 #: src/text.cpp:941
 msgid "When finished, press SEND, then START. To leave, press ESC."
-msgstr "Kui sa oled lõpetanud vajuta  SEND(saada) ja seejärel START.  Et väljuda vajuta ESC "
+msgstr ""
+"Kui sa oled lõpetanud vajuta  SEND(saada) ja seejärel START.  Et väljuda "
+"vajuta ESC "
 
 #: src/text.cpp:945
 msgid "To edit one of your soldiers, CTRL-click on his name."
@@ -2256,8 +2286,10 @@ msgid "Gamerules - Map Exploration Level at start of game:"
 msgstr "Mängureeglid: Kaarti tuntud ala."
 
 #: src/text.cpp:994
-msgid "0: map not explored, 1: deployment-area explored, 2: whole map explored."
-msgstr "0: ala ei ole uuritud, 1: paigutamise ala on uuritud, 2: kogu kaart on teada."
+msgid ""
+"0: map not explored, 1: deployment-area explored, 2: whole map explored."
+msgstr ""
+"0: ala ei ole uuritud, 1: paigutamise ala on uuritud, 2: kogu kaart on teada."
 
 #: src/text.cpp:995
 msgid "Unexplored (not yet seen) parts of the map are shown as black."
@@ -2299,162 +2331,166 @@ msgstr "ja tapma/oimetuks lööma kõik teised."
 msgid "(to be continued)"
 msgstr "(jätkub)"
 
-#: src/units.cpp:223
+#: src/units.cpp:219
 msgid "MATCH SETTINGS"
 msgstr "MÄNGU REEGLID"
 
-#: src/units.cpp:229
+#: src/units.cpp:225
 msgid "Game rules:"
 msgstr "Mängu reeglid:"
 
-#: src/units.cpp:255
+#: src/units.cpp:251
 #, c-format
 msgid "Total points=%d (of %d)"
 msgstr "Punkte kokku=%d (? %d)"
 
-#: src/units.cpp:371
+#: src/units.cpp:367
 msgid "NEW"
 msgstr "UUS"
 
-#: src/units.cpp:372
+#: src/units.cpp:368
 msgid "LOAD"
 msgstr "LAE."
 
-#: src/units.cpp:373
+#: src/units.cpp:369
 msgid "SAVE"
 msgstr "SALVESTA."
 
-#: src/units.cpp:385
+#: src/units.cpp:381
 #, c-format
 msgid "Light level: %d"
 msgstr "VALGUS: %d"
 
-#: src/units.cpp:386
+#: src/units.cpp:382
 #, c-format
 msgid "Points limit: %d000"
 msgstr "PUNKTI LIMIIT: %d000"
 
-#: src/units.cpp:387
+#: src/units.cpp:383
 msgid "No turns limit"
 msgstr "Pole käikude limiiti"
 
-#: src/units.cpp:387
+#: src/units.cpp:383
 #, c-format
 msgid "Turns limit: %d"
 msgstr "Käikude limiit: %d"
 
-#: src/units.cpp:388
+#: src/units.cpp:384
 msgid "No time limit"
 msgstr "Pole aja limiiti"
 
-#: src/units.cpp:388
+#: src/units.cpp:384
 #, c-format
 msgid "Time limit: %d sec"
 msgstr "Ajalimiit: %d sek."
 
-#: src/units.cpp:389
+#: src/units.cpp:385
 #, c-format
 msgid "Exploration level: %d"
 msgstr "Kaarti tundmine: %d"
 
-#: src/units.cpp:390
+#: src/units.cpp:386
 msgid "Editor: ground on"
 msgstr "Maapinnal olevad asjad: olemas"
 
-#: src/units.cpp:390
+#: src/units.cpp:386
 msgid "Editor: ground off"
 msgstr "Maapinnal olevad asjad: puuduvad"
 
-#: src/units.cpp:413
+#: src/units.cpp:409
 msgid "Night."
 msgstr "Öö"
 
-#: src/units.cpp:414
+#: src/units.cpp:410
 msgid "Low visibility."
 msgstr "Halb nägevus."
 
-#: src/units.cpp:419
+#: src/units.cpp:415
 msgid "Twilight."
 msgstr "Hommik"
 
-#: src/units.cpp:420
+#: src/units.cpp:416
 msgid "Medium visibility."
 msgstr "Keskmine nägevus"
 
-#: src/units.cpp:425
+#: src/units.cpp:421
 msgid "Day."
 msgstr "Päev."
 
-#: src/units.cpp:426
+#: src/units.cpp:422
 msgid "Good visibility."
 msgstr "Hea nägevus."
 
-#: src/units.cpp:458
-#: src/units.cpp:474
+#: src/units.cpp:454 src/units.cpp:470
 msgid "no"
 msgstr "ei"
 
-#: src/units.cpp:497
+#: src/units.cpp:493
 msgid "Map isn't explored at all."
 msgstr "Kaart ei ole uuritud."
 
-#: src/units.cpp:501
+#: src/units.cpp:497
 msgid "Deployment area is explored."
 msgstr "Sisenemise koht on uuritud."
 
-#: src/units.cpp:505
+#: src/units.cpp:501
 msgid "The entire map is explored."
 msgstr "kogu kaart on uuritud."
 
-#: src/units.cpp:603
+#: src/units.cpp:599
 msgid "Ready to play!"
 msgstr "Valmis mängima!"
 
-#: src/units.cpp:619
+#: src/units.cpp:615
 msgid "SERVER"
 msgstr "SERVER"
 
-#: src/units.cpp:622
+#: src/units.cpp:618
 msgid "CLIENT"
 msgstr "KLIENT"
 
-#: src/units.cpp:629
+#: src/units.cpp:625
 msgid "SEND"
 msgstr "SEND"
 
-#: src/units.cpp:636
+#: src/units.cpp:632
 msgid "START"
 msgstr "START"
 
-#: src/units.cpp:770
-msgid "Some of the soldiers selected for battle are equipped with forbidden weapons"
+#: src/units.cpp:771
+msgid ""
+"Some of the soldiers selected for battle are equipped with forbidden weapons"
 msgstr "Mõned sõdurid on relvastatud keealtud relvastusega"
 
-#: src/units.cpp:976
+#: src/units.cpp:977
 msgid "Load map"
 msgstr "Lae kaart"
 
-#: src/units.cpp:982
+#: src/units.cpp:983
 msgid "Invalid map file."
 msgstr "Vigane kaart!."
 
-#: src/units.cpp:995
+#: src/units.cpp:996
 msgid "Save map"
 msgstr "Salvesta kaart"
 
-#: src/units.cpp:999
+#: src/units.cpp:1000
 msgid "Can't save map file."
 msgstr "Ei saa salvestada kaarti."
 
-#: src/video.cpp:291
+#: src/video.cpp:318
 #, c-format
 msgid "Screenshot saved as %s"
 msgstr "Screenshot salvestatud %s"
 
-#: src/geoscape.cpp:100
+#: src/geoscape.cpp:111
 msgid "Use left/right arrows to rotate the globe"
 msgstr "Kasuta vasak/parem noolt, et maakera pöörata."
 
-#: src/geoscape.cpp:101
+#: src/geoscape.cpp:112
+msgid "Use F1..F7 to accelerate time"
+msgstr ""
+
+#: src/geoscape.cpp:113
 msgid "Press ESC to exit"
 msgstr "vajuta ESCi, et väljuda."

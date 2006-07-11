@@ -260,27 +260,35 @@ clean:
 # Update the translations of game messages to different languages 
 # using gettext tools - see manual at
 # http://www.gnu.org/software/gettext/manual/gettext.html
+lng-bel: $(SRCS)
+	xgettext -o translations/ufo2000.pot --keyword=_ $^
+	msgmerge --update translations/ufo2000-bel.po translations/ufo2000.pot
+
 lng-deu: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
 	msgmerge --update translations/ufo2000-deu.po translations/ufo2000.pot
 
-lng-spa: $(SRCS)
+lng-est: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
-	msgmerge --update translations/ufo2000-spa.po translations/ufo2000.pot
+	msgmerge --update translations/ufo2000-est.po translations/ufo2000.pot
+
+lng-fre: $(SRCS)
+	xgettext -o translations/ufo2000.pot --keyword=_ $^
+	msgmerge --update translations/ufo2000-fre.po translations/ufo2000.pot
+
+lng-ita: $(SRCS)
+	xgettext -o translations/ufo2000.pot --keyword=_ $^
+	msgmerge --update translations/ufo2000-ita.po translations/ufo2000.pot
 
 lng-rus: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
 	msgmerge --update translations/ufo2000-rus.po translations/ufo2000.pot
 
-lng-bel: $(SRCS)
+lng-spa: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
-	msgmerge --update translations/ufo2000-bel.po translations/ufo2000.pot
-	
-lng-fre: $(SRCS)
-	xgettext -o translations/ufo2000.pot --keyword=_ $^
-	msgmerge --update translations/ufo2000-fre.po translations/ufo2000.pot
+	msgmerge --update translations/ufo2000-spa.po translations/ufo2000.pot
 
-lng-all: lng-deu lng-spa lng-rus lng-bel lng-fre
+lng-all: lng-bel lng-deu lng-est lng-fre lng-ita lng-rus lng-spa
 
 binary-gz: all server
 # create linux binary distributive
