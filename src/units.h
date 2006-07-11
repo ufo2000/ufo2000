@@ -77,7 +77,7 @@ public:
     void set_pos(PanPos pos, int gx, int gy, int gmx, int gmw, int gmy, int gmh);
     void reset_selections();
 
-    int add(int num, char *nm, int ct);
+    int add(int num, const char *nm, int ct);
     void store_mouse_range(int mx1, int my1, int mx2, int my2);
     void limit_mouse_range();
     void restore_mouse_range();

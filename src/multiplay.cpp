@@ -1019,14 +1019,14 @@ void Net::send_add_unit(int num, char *name, int cost)
 int Net::recv_add_unit()
 {
     int num;
-    char name[26];
+    std::string name;
     int cost;
 
     pkt >> num;
     pkt >> name;
     pkt >> cost;
 
-    if (!target_uints[pkt.Position-1]->add(num, name, cost)) {
+    if (!target_uints[pkt.Position-1]->add(num, name.c_str(), cost)) {
         error("can't add to remote units");
         return 0;
     }
@@ -1480,9 +1480,12 @@ void Net::send_rules(int index, int value)
 int Net::recv_rules()
 {
     int index;
+    int value;
     
     pkt >> index;
-    pkt >> scenario->rules[index];
+    pkt >> value;
+    
+    scenario->set_rules(index, value);
 
     local.SEND =
     local.START = 
@@ -1517,6 +1520,12 @@ int Net::recv_options()
     
     pkt >> scenario_type;
     pkt >> index;
+    
+    if (!scenario->check_options_range(scenario_type, index)) {
+        ASSERT(false);
+        return 0;
+    }
+           
     pkt >> scenario->options[scenario_type][index]->value;
 
     if (scenario->options[scenario_type][index]->type != OPT_HIDDEN)

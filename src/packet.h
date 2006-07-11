@@ -76,9 +76,6 @@ public:
     Packet &operator<<(uint32 i);
     Packet &operator>>(uint32 &i);
 
-    Packet &operator<<(char *i);
-    Packet &operator>>(char *i);
-
     Packet &operator<<(const std::string &i);
     Packet &operator>>(std::string &i);
 };

@@ -135,22 +135,18 @@ int Units::deselect_unit(int num)
 }
 
 
-int Units::add(int num, char *nm, int ct)
+int Units::add(int num, const char *nm, int ct)
 {
-    size = num;
-    if (size == 19)
+    if (num >= SQUAD_LIMIT)
         return 0;
+    if (strlen(nm) >= 25)
+        return 0;
+    size = num;
     strcpy(name[size], nm);
     cost[size] = ct;
     size++;
     SEND = 0; START = 0;
 
-    /*if (size == 19)
-        return 0;
-    strcpy(name[size], nm);
-    cost[size] = ct;
-    size++;
-    SEND = 0; START = 0;*/
     return 1;
 }
 

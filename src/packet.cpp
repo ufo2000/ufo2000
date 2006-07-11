@@ -131,25 +131,6 @@ void Packet::pop(char *buf, int buf_size)
     cur++;
 }
 
-Packet &Packet::operator<<(char *i)
-{
-    ASSERT(strchr(i, '_') == NULL);
-    int n = 0;
-    while (i[n])
-        data[size++] = i[n++];
-    data[size++] = '_';
-    return *this;
-}
-
-Packet &Packet::operator>>(char *i)
-{
-    int n = 0;
-    while (data[cur] != '_')
-        i[n++] = data[cur++];
-    i[n] = 0; cur++;
-    return *this;
-}
-
 Packet &Packet::operator<<(const std::string &x)
 {
     for (int i = 0; i < (int)x.size(); i++) {

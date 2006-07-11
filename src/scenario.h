@@ -162,7 +162,18 @@ public:
     void            new_coords ();
     
     int             rules[5]; //0 - light level (1-16), 1 - points limit(x1000), 2 - turn limit, 3 - all map explored, 4 - weapons on ground in editor
+    bool            set_rules(int index, int value)
+    {
+        if (index >= 0 && index < 5) { rules[index] = value;  return true; } 
+        ASSERT(false);
+        return false;
+    }
+
     Option          *options[SCENARIO_NUMBER][3];
+    bool            check_options_range(int scenario_type, int index)
+    {
+        return (scenario_type >= 0 && scenario_type < SCENARIO_NUMBER && index >= 0 && index < 3);
+    }
     
     int             type;
     DeployType      deploy_type[2]; // specifies the deployment areas for the squads.
