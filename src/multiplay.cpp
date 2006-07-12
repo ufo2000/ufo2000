@@ -1235,6 +1235,8 @@ int Net::recv_map_data()
     pkt >> mapdata.z_size;
     pkt >> map_data;
     ASSERT((int)map_data.size() == mapdata.x_size * mapdata.y_size);
+    ASSERT((int)map_data.size() <= (int)sizeof(mapdata.mapdata));
+    if ((int)map_data.size() > (int)sizeof(mapdata.mapdata)) return 0;
     memcpy(&mapdata.mapdata, map_data.data(), map_data.size());
     mapdata.terrain = terrain_set->get_terrain_id(map_name);
     if (mapdata.terrain < 0) {
@@ -1664,6 +1666,7 @@ int Net::recv_start_visible_recovery()
 {
     CHANGE = 1;
     g_fast_forward = 0;
+    return 0;
 }
 
 void Net::send_debug_message(const char *fmt, ...)

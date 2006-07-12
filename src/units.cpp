@@ -111,7 +111,7 @@ void Units::set_pos(PanPos pos, int gx, int gy, int gmx, int gmw, int gmy, int g
  */
 int Units::select_unit(int num, int n_lev, int n_col, int n_row)
 {
-    if (num >= size)
+    if (num < 0 || num >= size)
         return 0;
     lev[num] = n_lev;
     col[num] = n_col;
@@ -125,7 +125,7 @@ int Units::select_unit(int num, int n_lev, int n_col, int n_row)
  */
 int Units::deselect_unit(int num)
 {
-    if (num >= size)
+    if (num < 0 || num >= size)
         return 0;
     lev[num] = -1;
     col[num] = 0;
@@ -137,7 +137,7 @@ int Units::deselect_unit(int num)
 
 int Units::add(int num, const char *nm, int ct)
 {
-    if (num >= SQUAD_LIMIT)
+    if (num < 0 || num >= SQUAD_LIMIT)
         return 0;
     if (strlen(nm) >= 25)
         return 0;
