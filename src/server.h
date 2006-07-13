@@ -39,7 +39,7 @@ class ServerDispatch;
 //! Encode std::map<std::string, std::string> into a single string
 int encode_stringmap(const std::map<std::string, std::string> &info, std::string &buffer);
 //! Decode std::map<std::string, std::string> from a string
-bool decode_stringmap(std::map<std::string, std::string> &info, const void *buffer);
+bool decode_stringmap(std::map<std::string, std::string> &info, const std::string &buffer);
 
 /**
  * Client side client-server connection

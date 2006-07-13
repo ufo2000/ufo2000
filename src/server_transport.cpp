@@ -529,9 +529,12 @@ int ClientServer::wait_packet(NLuint &id, std::string &buffer)
     return -1;
 }
 
-inline static unsigned char decode_unsigned_char(const unsigned char *& p)
+inline static unsigned char decode_unsigned_char(const unsigned char *& p, const unsigned char *limit)
 {
-    return *p++;
+    if (p < limit)
+        return *p++;
+    else
+        return 0;
 }
 
 inline static void encode_unsigned_char(unsigned char value, std::string &buffer)
@@ -539,14 +542,14 @@ inline static void encode_unsigned_char(unsigned char value, std::string &buffer
     buffer.push_back(value);
 }
 
-static unsigned int decode_unsigned_int(const unsigned char *& p)
+static unsigned int decode_unsigned_int(const unsigned char *& p, const unsigned char *limit)
 {
     int  bitcount;
     unsigned int Value;
     unsigned char b;
 
     for (Value = 0, bitcount = 0; bitcount <= 32 - 7; bitcount += 7) {
-        b = decode_unsigned_char(p);
+        b = decode_unsigned_char(p, limit);
         if (b & 0x80) { Value |= (b & 0x7F) << bitcount; break; }
         Value |= b << bitcount;
     }
@@ -585,22 +588,21 @@ int encode_stringmap(const std::map<std::string, std::string> &info, std::string
     return buffer.size();
 }
 
-bool decode_stringmap(std::map<std::string, std::string> &info, const void *buffer)
+bool decode_stringmap(std::map<std::string, std::string> &info, const std::string &buffer)
 {
-    const unsigned char *p = (const unsigned char *)buffer;
-    unsigned int num = decode_unsigned_int(p);
+    const unsigned char *p = (const unsigned char *)buffer.data();
+    const unsigned char *limit = (const unsigned char *)buffer.data() + buffer.size();
+    unsigned int num = decode_unsigned_int(p, limit);
 
-    while (num--) {
-        unsigned int keysize = decode_unsigned_int(p);
-        unsigned int valsize = decode_unsigned_int(p);
+    while (num-- && p < limit) {
+        unsigned int keysize = decode_unsigned_int(p, limit);
+        unsigned int valsize = decode_unsigned_int(p, limit);
         std::string key;
-        key.resize(keysize);
         std::string val;
-        val.resize(valsize);
-        for (unsigned int i = 0; i < keysize; i++)
-            key[i] = decode_unsigned_char(p);
-        for (unsigned int i = 0; i < valsize; i++)
-            val[i] = decode_unsigned_char(p);
+        for (unsigned int i = 0; i < keysize && p < limit; i++)
+            key.push_back(decode_unsigned_char(p, limit));
+        for (unsigned int i = 0; i < valsize && p < limit; i++)
+            val.push_back(decode_unsigned_char(p, limit));
         info[key] = val;
     }
     return true;
