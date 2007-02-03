@@ -41,6 +41,7 @@ private:
     int feat_get_color_int(const char *property_name, int index);
     int feat_get_placement_int(const char *property_name, int index);
     bool feat_placement_exists(const char *property_name);
+    int feat_make_color(const char *property_name);
 public:
     SkinFeature();
     SkinFeature(const char *feature_name, const char *screen_name);
@@ -67,8 +68,10 @@ public:
     int get_padding();
     /* Returns the font to be used on that feature. */
     //  FONT *get_font() { return m_font; };
-    //int normal_text_color() { return 0; }; 
-    //int active_text_color() { return 0; }; 
+    int tx_color_normal() { return feat_make_color("Color"); };
+    int tx_color_active() { return feat_make_color("Color_active"); };
+    int bg_color_normal() { return feat_make_color("Bg_color"); };
+    int bg_color_active() { return feat_make_color("Bg_color_active"); };
     /*  - Other properties */
     const char *screen() { return m_fscreen; };
     const char *name() { return m_feature; };

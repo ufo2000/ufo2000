@@ -33,6 +33,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "mouse.h"
 #include "pck.h"
 #include "script_api.h"
+#include "gui.h"
 
 static int old_mouse_x = -1, old_mouse_y = -1;
 
@@ -64,30 +65,30 @@ struct buttonState {
     FONT *font;
 };
                          // bw   c0   c1   c2   c3   c4     bg    fg
-buttonState BS_DISABLED = { 5, { 183, 190, 197, 204, 211 }, 195,  85, NULL };
-buttonState BS_IDLE     = { 5, { 183, 190, 197, 204, 211 }, 187, 220, NULL };
-buttonState BS_GOTFOCUS = { 5, { 183, 190, 197, 204, 211 }, 190, 220, NULL };
-buttonState BS_SELECTED = { 5, { 183, 190, 197, 204, 211 }, 195, 220, NULL };
+buttonState BS_DISABLED = { 0, { -1 , -1 , -1 , -1 , -1  }, 255,  5, NULL };
+buttonState BS_IDLE     = { 0, { -1 , -1 , -1 , -1 , -1  }, 255,  1, NULL };
+buttonState BS_GOTFOCUS = { 0, { -1 , -1 , -1 , -1 , -1  }, 138,  1, NULL };
+buttonState BS_SELECTED = { 0, { -1 , -1 , -1 , -1 , -1  }, 138,  1, NULL };
 
 static void d_draw_baton(BITMAP *bmp, int x, int y, int w, int h, buttonState *state, char *text) {
     int i, in_x, in_y, in_w, in_h, tmode, text_x, text_y;
     
     for (i=0; i< state->border_width; i++) {
-        if (xcom1_menu_color(state->border_colors[i]) != xcom1_menu_color(0))
-            rect(bmp, x+i, y+i, x + w - i, y + h - i, xcom1_menu_color(state->border_colors[i]));
+        if (state->border_colors[i] != -1)
+            rect(bmp, x+i, y+i, x + w - i, y + h - i, xcom1_color(state->border_colors[i]));
     }
     
     in_x = x + state->border_width; in_y = y + state->border_width; 
     in_h = h - 2 * state->border_width; in_w = w - 2 * state->border_width; 
-    if (xcom1_menu_color(state->background_color) != xcom1_menu_color(0)) {
-        rectfill(bmp, in_x, in_y, in_x + in_w, in_y + in_h, xcom1_menu_color(state->background_color));
+    if (state->background_color != -1) {
+        rectfill(bmp, in_x, in_y, in_x + in_w, in_y + in_h, xcom1_color(state->background_color));
     }
     
     text_x = in_x + in_w/2;
     text_y = in_y + in_h/2 - text_height(state->font)/2;
     
     tmode = text_mode(-1);
-    textout_centre(bmp, state->font, text, text_x, text_y, xcom1_menu_color(state->font_color));
+    textout_centre(bmp, state->font, text, text_x, text_y, xcom1_color(state->font_color));
     text_mode(tmode);
 }
 
@@ -97,14 +98,21 @@ static void d_draw_baton(BITMAP *bmp, int x, int y, int w, int h, buttonState *s
  */
 static int d_mainmenu_background_proc(int msg, DIALOG *d, int c) 
 {
+    int version_x;
+    int version_y;
+    SkinInterface *scrmenuversion;
+    scrmenuversion = new SkinInterface("Main_menu");
+    version_x = scrmenuversion->Feature("versionNumber")->get_pd_x1();
+    version_y = scrmenuversion->Feature("versionNumber")->get_pd_y1();
+    delete scrmenuversion; 
     if (msg == MSG_DRAW) {
         stretch_blit(menuback, screen, 0, 0, menuback->w, menuback->h, 0, 0, SCREEN_W, SCREEN_H);
         text_mode(-1);
         if (strcmp(UFO_SVNVERSION, "unknown") == 0 || strcmp(UFO_SVNVERSION, "exported") == 0 || strcmp(UFO_SVNVERSION, "") == 0) {
-            textprintf(screen, g_small_font, 0, 0, xcom1_menu_color(220), 
+            textprintf(screen, g_small_font, version_x, version_y, xcom1_menu_color(220), 
                 "UFO2000 %s (revision >=%d)", UFO_VERSION_STRING, UFO_REVISION_NUMBER);
         } else {
-            textprintf(screen, g_small_font, 0, 0, xcom1_menu_color(220), 
+            textprintf(screen, g_small_font, version_x, version_y, xcom1_menu_color(220), 
                 "UFO2000 %s.%s", UFO_VERSION_STRING, UFO_SVNVERSION);
         }
     }
@@ -157,14 +165,11 @@ static int d_mainmenu_button_proc(int msg, DIALOG *d, int c)
     return D_O_K;
 }
 
-//#define MENU_LEFT           (SCREEN_W - 640 + 341)
-//#define MENU_TOP            115
-#define MENU_LEFT           (SCREEN_W - 640 + 358)
-#define MENU_TOP            35 
+#define MENU_LEFT           (SCREEN_W * 567 / 800)
+#define MENU_TOP            (SCREEN_H * 100 / 800)
 #define MENU_BTN_STEP       8
-//#define MENU_BTN_W          237
-#define MENU_BTN_W          257
-#define MENU_BTN_H          32
+#define MENU_BTN_W          220
+#define MENU_BTN_H          28
 
 extern MIDI *g_menu_midi_music;
 
@@ -175,6 +180,8 @@ extern MIDI *g_menu_midi_music;
  */
 int do_mainmenu()
 {
+    SkinInterface *scrmenu;
+    scrmenu = new SkinInterface("Main_menu");
     lua_message( "Enter: do_mainmenu" );
     clear_keybuf();
 
@@ -184,16 +191,40 @@ int do_mainmenu()
     static DIALOG the_dialog[MAINMENU_TOTAL_COUNT + 1];
     memset(the_dialog, 0, sizeof(the_dialog));
     
+    // Creation of the lua - programming name referencing table
+    char *button_list[MAINMENU_COUNT];
+    button_list[MAINMENU_BACKGROUND] = "";
+    button_list[MAINMENU_YIELD] = "";
+    button_list[MAINMENU_INTERNET] = "ButtonInternet";
+    button_list[MAINMENU_HOTSEAT] = "ButtonHotseat";
+    button_list[MAINMENU_GEOSCAPE] = "ButtonGeoscape";
+    button_list[MAINMENU_LOADGAME] = "ButtonLoadGame";
+    button_list[MAINMENU_SHOW_REPLAY] = "ButtonLoadReplay";
+    button_list[MAINMENU_OPTIONS] = "ButtonOptions";
+    button_list[MAINMENU_ABOUT] = "ButtonAbout";
+    button_list[MAINMENU_TIP_OF_DAY] = "ButtonTipOfDay";
+    button_list[MAINMENU_QUIT] = "ButtonQuit";
+    
     int i;
     
     for (i = 0; i < MAINMENU_COUNT; i++) {
         the_dialog[i].proc = d_mainmenu_button_proc;
-        the_dialog[i].x = MENU_LEFT;
-        the_dialog[i].y = MENU_TOP + (MAINMENU_COUNT - i - 1) * (MENU_BTN_STEP + MENU_BTN_H);
-        the_dialog[i].w = MENU_BTN_W;
-        the_dialog[i].h = MENU_BTN_H;
-        the_dialog[i].fg    =  0;   // COLOR_WHITE
-        the_dialog[i].bg    = 255;  // COLOR_BLACK2
+        //We get the values from the LUA if this button exists, otherwise we use defaults
+        if ( button_list[i] != "" ){
+            the_dialog[i].x = scrmenu->Feature(button_list[i])->get_pd_x1();
+            the_dialog[i].y = scrmenu->Feature(button_list[i])->get_pd_y1();
+            the_dialog[i].w = scrmenu->Feature(button_list[i])->get_width();
+            the_dialog[i].h = scrmenu->Feature(button_list[i])->get_height();
+            the_dialog[i].fg = 0;   // COLOR_WHITE
+            the_dialog[i].bg = 255;  // COLOR_BLACK2
+        }else {
+            the_dialog[i].x = MENU_LEFT;
+            the_dialog[i].y = MENU_TOP + (MAINMENU_COUNT - i - 1) * (MENU_BTN_STEP + MENU_BTN_H);
+            the_dialog[i].w = MENU_BTN_W;
+            the_dialog[i].h = MENU_BTN_H;
+            the_dialog[i].fg    =  0;   // COLOR_WHITE
+            the_dialog[i].bg    = 255;  // COLOR_BLACK2  
+        }
         the_dialog[i].flags = D_EXIT;
         the_dialog[i].key = 0;
         the_dialog[i].d1  = 0;
@@ -232,12 +263,13 @@ int do_mainmenu()
     set_palette((RGB *)datafile[DAT_MENUPAL_BMP].dat);
     set_mouse_sens(mouse_sens);
 
-    menuback = load_back_image(cfg_get_menu_image_file_name());
+    //menuback = load_back_image(cfg_get_menu_image_file_name());
+    menuback = scrmenu->background();
     
     if (old_mouse_x != -1)
         position_mouse(old_mouse_x, old_mouse_y);
     else  // initial mouse-position on button #2 "Hotseat/Mission-planner":
-        position_mouse(550, MENU_TOP + 2 * MENU_BTN_H - 10);
+        position_mouse(600, MENU_TOP + 2 * MENU_BTN_H - 10);
 
     soundSystem::getInstance()->play(SS_WINDOW_OPEN_1);
     // Todo: wait with start of music until sound is finished ?
@@ -253,7 +285,8 @@ int do_mainmenu()
     old_mouse_x = mouse_x;
     old_mouse_y = mouse_y;
     show_mouse(NULL);
-
+    delete scrmenu; 
+    
     clear(screen);
     
     return v;

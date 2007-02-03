@@ -63,11 +63,26 @@
 --      }
 --  }
 -- }
---
+
 --------------------------------------------------------------------------------------
 -- DATA
 --------------------------------------------------------------------------------------
 
+------------------------------------------------------------------------------
+-- Add common images that are GUI related
+-- (such as cursors, selectors etc.)
+------------------------------------------------------------------------------
+AddImage("mouse", png_image("$(ufo2000)/arts/mouse.png"))
+AddImage("mouse_menu", png_image("$(ufo2000)/arts/mouse_menu.png"))
+AddImage("selector", png_image_set("$(ufo2000)/arts/selector/19x9", 1, 4))
+AddImage("button_left_arrow", png_image("$(ufo2000)/arts/button1.png"))
+AddImage("button_right_arrow", png_image("$(ufo2000)/arts/button3.png"))
+
+------------------------------------------------------------------------------
+-- Add panels GUI
+------------------------------------------------------------------------------
+-- Main loading screen
+------------------------------------------------------------------------------
 AddPanel {
     Name = "Game_init",
     Background = png_image("$(ufo2000)/arts/loading_screen.png"),
@@ -85,33 +100,150 @@ AddPanel {
         },
     },
 }
-
+------------------------------------------------------------------------------
+-- Mainmenu
+------------------------------------------------------------------------------
 AddPanel {
     Name = "Main_menu",
     Background = png_image("$(ufo2000)/arts/main.jpg"),
     Features = {
         ButtonInternet = {
             Placement = {
-                Top = {6667, 8},
-                Right = {0, 8},
-                Width = {10000, -16},
-                Height = {2333, -16}
+                Top = {1383, 0},
+                Left = {6750, 0},
+                Width = {2813, 0},
+                Height = {350, 0}
             },
             Font = "small",
             Color = {255,255,255},
             Color_active = {255,255,255},
-            Bg_color = {20,20,20},
-            Bg_color_active = {10,10,10},
+            Bg_color = {0,0,0},
+            Bg_color_active = {0,73,140},
+            Background_active = png_image("$(ufo2000)/arts/menu_button_bg.png"),
         },
         ButtonHotseat = {
             Placement = {
-                Top = {6667, 8},
-                Right = {0, 8},
-                Width = {10000, -16},
-                Height = {2333, -16}
+                Top = {1883, 0},
+                Left = {6750, 0},
+                Width = {2813, 0},
+                Height = {350, 0}
             },
             Font = "small",
             Color = {255,255,255},
+            Color_active = {255,255,255},
+            Bg_color = {0,0,0},
+            Bg_color_active = {0,73,140},
+            Background_active = png_image("$(ufo2000)/arts/menu_button_bg.png"),
         },
+        ButtonLoadGame = {
+            Placement = {
+                Top = {2383, 0},
+                Left = {6750, 0},
+                Width = {2813, 0},
+                Height = {350, 0}
+            },
+            Font = "small",
+            Color = {255,255,255},
+            Color_active = {255,255,255},
+            Bg_color = {0,0,0},
+            Bg_color_active = {0,73,140},
+            Background_active = png_image("$(ufo2000)/arts/menu_button_bg.png"),
+        },
+        ButtonLoadReplay = {
+            Placement = {
+                Top = {2883, 0},
+                Left = {6750, 0},
+                Width = {2813, 0},
+                Height = {350, 0}
+            },
+            Font = "small",
+            Color = {255,255,255},
+            Color_active = {255,255,255},
+            Bg_color = {0,0,0},
+            Bg_color_active = {0,73,140},
+            Background_active = png_image("$(ufo2000)/arts/menu_button_bg.png"),
+        },
+        ButtonOptions = {
+            Placement = {
+                Top = {3900, 0},
+                Left = {6750, 0},
+                Width = {2813, 0},
+                Height = {350, 0}
+            },
+            Font = "small",
+            Color = {255,255,255},
+            Color_active = {255,255,255},
+            Bg_color = {0,0,0},
+            Bg_color_active = {0,73,140},
+            Background_active = png_image("$(ufo2000)/arts/menu_button_bg.png"),
+        },
+        ButtonTipOfDay = {
+            Placement = {
+                Top = {4400, 0},
+                Left = {6750, 0},
+                Width = {2813, 0},
+                Height = {350, 0}
+            },
+            Font = "small",
+            Color = {255,255,255},
+            Color_active = {255,255,255},
+            Bg_color = {0,0,0},
+            Bg_color_active = {0,73,140},
+            Background_active = png_image("$(ufo2000)/arts/menu_button_bg.png"),
+        },
+        ButtonGeoscape = {
+            Placement = {
+                Top = {4900, 0},
+                Left = {6750, 0},
+                Width = {2813, 0},
+                Height = {350, 0}
+            },
+            Font = "small",
+            Color = {255,255,255},
+            Color_active = {255,255,255},
+            Bg_color = {0,0,0},
+            Bg_color_active = {0,73,140},
+            Background_active = png_image("$(ufo2000)/arts/menu_button_bg.png"),
+        },
+        ButtonAbout = {
+            Placement = {
+                Top = {5833, 0},
+                Left = {6750, 0},
+                Width = {2813, 0},
+                Height = {350, 0}
+            },
+            Font = "small",
+            Color = {255,255,255},
+            Color_active = {255,255,255},
+            Bg_color = {0,0,0},
+            Bg_color_active = {0,73,140},
+            Background_active = png_image("$(ufo2000)/arts/menu_button_bg.png"),
+        },
+        ButtonQuit = {
+            Placement = {
+                Top = {6333, 0},
+                Left = {6750, 0},
+                Width = {2813, 0},
+                Height = {350, 0}
+            },
+            Font = "small",
+            Color = {255,255,255},
+            Color_active = {255,255,255},
+            Bg_color = {0,0,0},
+            Bg_color_active = {0,73,140},
+            Background_active = png_image("$(ufo2000)/arts/menu_button_bg.png"),
+        },
+        versionNumber = {
+            Placement = {
+                Top = {8350, 0},
+                Left = {6750, 0},
+                Width = {2813, 0},
+                Height = {350, 0}
+            },
+            Font = "small",
+            Color = {19,76,41},
+            Bg_color = {0,0,0},
+        },
+
     },
 }

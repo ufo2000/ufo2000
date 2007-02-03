@@ -105,7 +105,7 @@ SkinFeature::~SkinFeature()
 /*
  * feat_get_color_int(const char *property_name, int index)
  * @function: Extracts an integer from a specific feature.
- * @param: property_name (Color, Color_active, Bg_color, etc.) index (0,1,2)-RGB
+ * @param: property_name (Color, Color_active, Bg_color, etc.) index (1,2,3)-RGB
  */ 
 int SkinFeature::feat_get_color_int(const char *property_name, int index)
 {
@@ -440,33 +440,49 @@ int SkinFeature::get_pd_x1()
     ret_val = get_padding() + get_x1();
     return ret_val;
 }
+
 int SkinFeature::get_pd_y1() 
 {
     int ret_val;
     ret_val = get_padding() + get_y1();
     return ret_val;
 }
+
 int SkinFeature::get_pd_x2() 
 {
     int ret_val;
     ret_val = get_x2() - get_padding();
     return ret_val;
 }
+
 int SkinFeature::get_pd_y2() 
 {
     int ret_val;
     ret_val = get_y2() - get_padding();
     return ret_val;
 }
+
 int SkinFeature::get_pd_width() 
 {
     int ret_val;
     ret_val =  get_width() - 2 * get_padding();
     return ret_val;
 }
+
 int SkinFeature::get_pd_height() 
 {
     int ret_val;
     ret_val = get_height() - 2 * get_padding();
     return ret_val;
+}
+
+int SkinFeature::feat_make_color(const char *property_name)
+{
+    int r_val;
+    int g_val;
+    int b_val;
+    r_val = feat_get_color_int(property_name, 1);
+    g_val = feat_get_color_int(property_name, 2);
+    b_val = feat_get_color_int(property_name, 3);
+    return makecol(r_val,g_val,b_val);
 }
