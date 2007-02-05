@@ -1078,7 +1078,7 @@ bool nomoves()
 static void dump_gamestate_on_crc_error(int crc1, int crc2)
 {
     if (g_eot_save.find(crc1) == g_eot_save.end()) return;
-    if (g_eot_save.find(crc2) == g_eot_save.end()) return;
+    if (g_eot_save.find(crc2) == g_eot_save.end()) return;    
     char filename[128];
     sprintf(filename, "$(home)/crc_error_%d.txt", crc1);
     int fh = open(F(filename), O_CREAT | O_TRUNC | O_RDWR | O_BINARY, 0644);
@@ -1107,10 +1107,10 @@ void check_crc(int crc)
         g_console->printf(COLOR_SYS_FAIL, _("Bug report saved in 'crc_error_%d.txt', please send it to developers"), crc);
         net->send_debug_message("crc error");
         battle_report( "# %s: crc=%d, bcrc=%d\n", _("wrong wholeCRC"), crc, bcrc );
-        
+
         dump_gamestate_on_crc_error(crc, bcrc);
     }
-    
+
     g_eot_save.empty();
 }
 
@@ -1139,7 +1139,7 @@ void switch_turn()
         win = loss = 1;
         break;
     }      
-    
+    //Increment explosives counter
     elist->step(0);
 }
 
@@ -1192,7 +1192,7 @@ void send_turn()
     
     int crc = build_crc();
     net->send_endturn(crc, g_eot_save[crc]);
-
+    
     battle_report("# %s: %d\n", _("Turn end"), turn );
     g_console->printf(COLOR_VIOLET00, "%s", _("Turn end") );
     if(FLAGS & F_ENDTURNSND)
@@ -1236,10 +1236,12 @@ int GAMELOOP = 0;
 /**
  * This function is called when we receive turn from the other player
  */
+
 void recv_turn(int crc, const std::string &data)
 {
+     
     g_eot_save[crc] = data;
-
+    
     if (!GAMELOOP) return;
 
     // In replay mode pass of the turn is simple
@@ -1247,13 +1249,14 @@ void recv_turn(int crc, const std::string &data)
         switch_turn();
         platoon_local->restore();
         
-        Platoon *pt = platoon_local;
+        Platoon *plattemp = platoon_local;
         platoon_local = platoon_remote;
-        platoon_remote = pt;
-        
+        platoon_remote = plattemp;
+        //Trace initial callup for next-turn
+        battle_report("# REPLAY- %s: %d\n", _("Next turn"), turn );
         return;
     }
-
+    
     ASSERT(MODE == WATCH || g_game_receiving);
     update_visibility();
     switch_turn();

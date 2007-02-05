@@ -184,7 +184,6 @@ void Net::send()
 {
     if (GAMELOOP && (net->gametype != GAME_TYPE_REPLAY))
         *m_oreplay_file<<pkt.str()<<"\n";
-
     ASSERT(pkt.str_len() > 0);
     send(pkt.str());
 }
@@ -234,8 +233,10 @@ int Net::recv(std::string &pkt)
         case GAME_TYPE_REPLAY:
             // loads packet from replay file up to \n, needs to 
             // be rewritten in a proper way
-            char buffer[1000];
-            m_ireplay_file->getline(buffer, 1000);
+            //Warning, change the buffer size only if you also change it in packet.h
+            //Replays depend on the buffersize
+            char buffer[100000];
+            m_ireplay_file->getline(buffer, 100000);
             pkt = buffer;
             return pkt.size();
         default:
@@ -565,21 +566,25 @@ bool zlib_decompress_string(std::string &dst, const std::string &src)
 void Net::send_endturn(int crc, const std::string &data)
 {
     if (!SEND) return ;
-
+    
     pkt.create(CMD_ENDTURN);
     pkt << crc;
+
     std::string compressed_data;
     zlib_compress_string(compressed_data, data);
     pkt << compressed_data;
+
     send();
 }
 
 int Net::recv_endturn()
 { // "TURN"
     int crc; pkt >> crc;
+
     std::string compressed_data; pkt >> compressed_data;
     std::string data;
     zlib_decompress_string(data, compressed_data);
+
     recv_turn(crc, data);
     return 1;
 }

@@ -54,6 +54,8 @@ enum Command {CMD_MESSAGE = -2, CMD_NONE = -1,
 class Packet
 {
 private:
+    //Warning, change the data size only if you also change it in multiplay.cpp - Net::recv
+    //Replays depend on the buffersize
     char data[100000]; // BUG: possible buffer overflow
     int cur, size;
     static char *strCommand[COMMAND_NUM];
