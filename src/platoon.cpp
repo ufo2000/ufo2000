@@ -38,8 +38,8 @@ Platoon::Platoon(int PID, int num)
         
     size = num;
     memset(m_seen, 0, sizeof(m_seen));
-    
-    for (int i = 0; i < 4; i++)
+    //Number of levels should be set relative to map max number of levels
+    for (int i = 0; i < MAP_LEVEL_LIMIT; i++)
         for (int j = 0; j < 10 * 6; j++)
             for (int k = 0; k < 10 * 6; k++)
                 m_seen_item_index[i][j][k] = -1;
@@ -70,7 +70,7 @@ Platoon::Platoon(int PID, PLAYERDATA * pd, DeployType dep_type)
     size = pd->size;
     memset(m_seen, 0, sizeof(m_seen));
     
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < map->level; i++)
         for (int j = 0; j < 10 * 6; j++)
             for (int k = 0; k < 10 * 6; k++)
                 m_seen_item_index[i][j][k] = -1;

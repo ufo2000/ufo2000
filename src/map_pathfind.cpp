@@ -41,58 +41,58 @@ int Map::pathfind(int sz, int sx, int sy, int dz, int dx, int dy, int can_fly, b
 {
     m_pathfind_mode = pf_mode;
         
-	static Pathfinding pathfinding;
-	return pathfinding.pathfind(this, sz, sx, sy, dz, dx, dy, can_fly, less_time, way, pf_mode);
+    static Pathfinding pathfinding;
+    return pathfinding.pathfind(this, sz, sx, sy, dz, dx, dy, can_fly, less_time, way, pf_mode);
 }
 
 static int TU, TU_max, TU_color;
 
 void Map::draw_path_from(Soldier * s)
 {
-	char way[100];
-	int waylen = pathfind(s->z, s->x, s->y, sel_lev, sel_col, sel_row, s->can_fly(), s->is_panicking(), way, PF_DISPLAY);
-	TU = s->ud.CurTU;
-	if (s->state() == SIT) TU -= 8;		//time to stand up
-	TU_max = s->ud.MaxTU;
-	TU_color = 1;			// COLOR_WHITE
+    char way[100];
+    int waylen = pathfind(s->z, s->x, s->y, sel_lev, sel_col, sel_row, s->can_fly(), s->is_panicking(), way, PF_DISPLAY);
+    TU = s->ud.CurTU;
+    if (s->state() == SIT) TU -= 8;     //time to stand up
+    TU_max = s->ud.MaxTU;
+    TU_color = 1;           // COLOR_WHITE
     // Todo: change this color to have some contrast to terrain (e.g. arctic)
-	path_show(s->z, s->x, s->y, way, waylen, s);
+    path_show(s->z, s->x, s->y, way, waylen, s);
 }
 
 void Map::path_show(int _z, int _x, int _y, char *way, int waylen, Soldier *sld)
 {
-	//text_mode(0);
-	//textprintf(screen, font, 0, SCREEN2H, COLOR_WHITE, "waylen=%d ", waylen);
+    //text_mode(0);
+    //textprintf(screen, font, 0, SCREEN2H, COLOR_WHITE, "waylen=%d ", waylen);
 
-	for (int i = 1; i < waylen; i++) {
-		int dir = way[i];
+    for (int i = 1; i < waylen; i++) {
+        int dir = way[i];
 
         int time_of_dst;
         step_dest(_z, _x, _y, dir, sld->can_fly(), _z, _x, _y, time_of_dst, sld->is_panicking());
 
-		int sx = x + 16 * _x + 16 * _y + 16;
-		int sy = y - (_x + 1) * 8 + 8 * _y - 8 - _z * CELL_SCR_Z;
-		
-		TU -= time_of_dst;
+        int sx = x + 16 * _x + 16 * _y + 16;
+        int sy = y - (_x + 1) * 8 + 8 * _y - 8 - _z * CELL_SCR_Z;
+        
+        TU -= time_of_dst;
 
-		if ((sx > -32) && (sx < SCREEN2W) && (sy >= -34) && (sy < SCREEN2H)) {
+        if ((sx > -32) && (sx < SCREEN2W) && (sy >= -34) && (sy < SCREEN2H)) {
             if (TU < sld->tus_reserved()) {
                 TU_color = 32;      // COLOR_RED00
             }
-			
-			// Keep showing consecutive turns:
-			if (TU < 0) {
-				TU = TU_max - time_of_dst;
+            
+            // Keep showing consecutive turns:
+            if (TU < 0) {
+                TU = TU_max - time_of_dst;
               //TU_color += 4;      // COLOR_GRAY04
                 TU_color =  4;      // COLOR_GRAY04
-			}
-			if (TU < 0) break;
-			printsmall_center_back(sx, sy, xcom1_color(TU_color), COLOR_GRAY15, TU);
-		}
+            }
+            if (TU < 0) break;
+            printsmall_center_back(sx, sy, xcom1_color(TU_color), COLOR_GRAY15, TU);
+        }
 
-		//textprintf(screen, font, 0+i*80, SCREEN2H+20, COLOR_WHITE, "way[%d]=%d ", i, way[i]);
-		//textprintf(screen, font, 0+i* 8, SCREEN2H+10, COLOR_WHITE, "%d            ", way[i]);
-	}
+        //textprintf(screen, font, 0+i*80, SCREEN2H+20, COLOR_WHITE, "way[%d]=%d ", i, way[i]);
+        //textprintf(screen, font, 0+i* 8, SCREEN2H+10, COLOR_WHITE, "%d            ", way[i]);
+    }
 }
 
 int Map::step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2, int& y2, int& tu_cost, bool less_time)
@@ -107,8 +107,8 @@ int Map::step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2
     y2=y1;
 
     //Horizontal moving
-	x2 += DIR_DELTA_X(dir);
-	y2 += DIR_DELTA_Y(dir);
+    x2 += DIR_DELTA_X(dir);
+    y2 += DIR_DELTA_Y(dir);
 
     //Are the fly abilities necessary for this step?
     int trying_to_fly = 0;
@@ -128,7 +128,7 @@ int Map::step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2
     if (!cell_inside(z2, x2, y2))
         return 0;
 
-    // If we have to fly bat we can't
+    // If we have to fly but we can't
     if (trying_to_fly && !(flying || map->mcd(z1, x1, y1, 0)->Gravlift && map->mcd(z2, x2, y2, 0)->Gravlift ))
         return 0;
 
@@ -143,15 +143,15 @@ int Map::step_dest(int z1, int x1, int y1, int dir, int flying, int& z2, int& x2
         tu_cost = tu_cost * 3 / 4;
 
     // Up over the stairs
-	if (isStairs(z2, x2, y2))
-		z2++;
+    if (isStairs(z2, x2, y2))
+        z2++;
 
     if (!cell_inside(z2, x2, y2))
         return 0;
 
     //Down if we have no ground under our feet
-	while ( !support_for_feet(z2, x2, y2) && !flying)
-		z2--;
+    while ( !support_for_feet(z2, x2, y2) && !flying)
+        z2--;
 
     if (!passable(z2, x2, y2))
         return 0;
@@ -163,7 +163,7 @@ int Map::support_for_feet(int z, int x, int y)
 {
     if (z <= 0)
         return true;
-	return !mcd(z, x, y, 0)->No_Floor || isStairs(z - 1, x, y);
+    return !mcd(z, x, y, 0)->No_Floor || isStairs(z - 1, x, y);
 }
 
 int Pathfinding::pathfind(Map* _map,int sz, int sx, int sy, int dz, int dx, int dy, int can_fly, bool less_time, char *way, PF_MODE pf_mode)
@@ -173,15 +173,15 @@ int Pathfinding::pathfind(Map* _map,int sz, int sx, int sy, int dz, int dx, int 
     if (map->stopWALK(dz, dx, dy, 0) || map->stopWALK(dz, dx, dy, 3))
         return 0;
 
-	way[0] = DIR_NULL;
+    way[0] = DIR_NULL;
 
-	int k, i, j;
+    int k, i, j;
 
     //Clearing pathfinding info for all map cells
-	for (k = 0; k < map->level; k++)
-		for (i = 0; i < map->width * 10; i++)
-			for (j = 0; j < map->height * 10; j++)
-				pf_info(k, i, j)->path_is_known = 0;
+    for (k = 0; k < map->level; k++)
+        for (i = 0; i < map->width * 10; i++)
+            for (j = 0; j < map->height * 10; j++)
+                pf_info(k, i, j)->path_is_known = 0;
 
     //Marking start position
     pathfinding_cell_list.push_back(pf_info(sz, sx, sy));
@@ -227,12 +227,12 @@ int Pathfinding::pathfind(Map* _map,int sz, int sx, int sy, int dz, int dx, int 
 
     //Backward tracking of the path
     pathfinding_info* cur_pf=pf_info(dz, dx, dy);
-	for (i = pf_info(dz, dx, dy)->steps_num; i > 0; i--) {
-		way[i] = cur_pf->prev_dir;
+    for (i = pf_info(dz, dx, dy)->steps_num; i > 0; i--) {
+        way[i] = cur_pf->prev_dir;
         cur_pf=cur_pf->prev_point;
-	}
+    }
 
-	return pf_info(dz, dx, dy)->steps_num + 1;
+    return pf_info(dz, dx, dy)->steps_num + 1;
 }
 
 void Pathfinding::SetMap(Map* _map)
@@ -250,11 +250,11 @@ void Pathfinding::SetMap(Map* _map)
                     for (k = 0; k < 10 * height; k++) {
                         delete m_pf[i][j][k];
                     }
-        			delete [] m_pf[i][j];
-        		}
-        		delete [] m_pf[i];
-	       }
-	       delete [] m_pf;
+                    delete [] m_pf[i][j];
+                }
+                delete [] m_pf[i];
+           }
+           delete [] m_pf;
         }
         level = map -> level;
         width = map -> width;
@@ -262,18 +262,18 @@ void Pathfinding::SetMap(Map* _map)
 
         m_pf = new pathfinding_info***[map->level];
 
-    	for (i = 0; i < level; i++) {
-    		m_pf[i] = new pathfinding_info ** [10 * width];
-        		for (j = 0; j < 10 * map->width; j++) {
-        			m_pf[i][j] = new pathfinding_info * [10 * height];
-        			for (k = 0; k < 10 * height; k++) {
-        				m_pf[i][j][k] = new pathfinding_info();
-        				m_pf[i][j][k] -> z = i;
-        				m_pf[i][j][k] -> x = j;
-        				m_pf[i][j][k] -> y = k;
-        			}
-        		}
-	    }
+        for (i = 0; i < level; i++) {
+            m_pf[i] = new pathfinding_info ** [10 * width];
+                for (j = 0; j < 10 * map->width; j++) {
+                    m_pf[i][j] = new pathfinding_info * [10 * height];
+                    for (k = 0; k < 10 * height; k++) {
+                        m_pf[i][j][k] = new pathfinding_info();
+                        m_pf[i][j][k] -> z = i;
+                        m_pf[i][j][k] -> x = j;
+                        m_pf[i][j][k] -> y = k;
+                    }
+                }
+        }
      }
 }
 
@@ -287,14 +287,14 @@ Pathfinding::~Pathfinding()
     if(level && width && height) {
         int i, j, k;
         for (i = 0; i < level; i++) {
-    		for (j = 0; j < 10 * width; j++) {
-	      		for (k = 0; k < 10 * height; k++) {
-	       			delete m_pf[i][j][k];
-		      	}
-			    delete [] m_pf[i][j];
+            for (j = 0; j < 10 * width; j++) {
+                for (k = 0; k < 10 * height; k++) {
+                    delete m_pf[i][j][k];
+                }
+                delete [] m_pf[i][j];
             }
             delete [] m_pf[i];
         }
         delete [] m_pf;
-	}
+    }
 }

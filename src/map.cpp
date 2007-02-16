@@ -589,9 +589,9 @@ void Map::move(int ofs_x, int ofs_y)
     int sx = x, sy = y;
     x += ofs_x;
     y += ofs_y;
-
+	//Consider the middle to be on current level
     int mx = SCREEN2W / 2;
-    int my = SCREEN2H / 2;
+    int my = SCREEN2H / 2 + sel_lev * CELL_SCR_Z;
     if (FLAGS & F_SCALE2X) {
         mx /= 2;
         my /= 2;
@@ -781,7 +781,6 @@ int Map::haveGROUND(int lev, int col, int row)
         return 1;
     return 0;
 }
-
 
 void Map::build_visi_cell(int lev, int col, int row)
 {
@@ -1384,7 +1383,7 @@ int Map::find_ground(int lev, int col, int row)
 #define FI_STEP (PI / 64.0)
 #define TE_STEP (PI / 64.0)
 
-static char field[8 * 6*10 * 6*10];
+static char field[MAP_LEVEL_LIMIT * 2 * 6*10 * 6*10];
 
 /**
  * Store position of cells whose visibility has changed in a queue. 
@@ -1868,7 +1867,7 @@ int Map::valid_GEODATA(GEODATA *md)
 
     if ((md->x_size > 6) || (md->y_size > 6) ||
         (md->x_size < 2) || (md->y_size < 2) ||
-        (md->z_size != 4) || terrain_name == "") return 0;
+        (md->z_size != MAP_LEVEL_LIMIT) || terrain_name == "") return 0;
         
     if (net->is_network_game() && 
         g_net_allowed_terrains.find(terrain_name) == g_net_allowed_terrains.end()) return 0;
@@ -1883,7 +1882,7 @@ int Map::valid_GEODATA(GEODATA *md)
 bool Map::load_map_from_top_of_lua_stack(GEODATA *mapdata)
 {
     memset(mapdata, 0, sizeof(GEODATA));
-    mapdata->z_size = 4; // !!! Hack
+    mapdata->z_size = MAP_LEVEL_LIMIT; // !!! Hack
     
     int stack_top = lua_gettop(L);
 
@@ -2242,7 +2241,7 @@ bool TerrainSet::create_geodata(const std::string &terrain_name, int x_size, int
     gd.terrain   = terrain_index;
     gd.x_size    = x_size;
     gd.y_size    = y_size;
-    gd.z_size    = 4;
+    gd.z_size    = MAP_LEVEL_LIMIT;
     
     return terrain[terrain_index]->create_geodata(gd);
 }

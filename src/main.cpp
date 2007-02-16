@@ -2105,7 +2105,8 @@ void view_level_up()
 {
     if (g_map->sel_lev < g_map->level - 1) {
         g_map->sel_lev++;
-        position_mouse(mouse_x, mouse_y - CELL_SCR_Z);
+		g_map->move(0, CELL_SCR_Z / 2); // Move the map and the cursor to minimize unwanted scrolling          
+        position_mouse(mouse_x, mouse_y - CELL_SCR_Z / 2);
     }
 }
 
@@ -2116,7 +2117,8 @@ void view_level_down()
 {
     if (g_map->sel_lev > 0) {
         g_map->sel_lev--;
-        position_mouse(mouse_x, mouse_y + CELL_SCR_Z);
+		g_map->move(0, -CELL_SCR_Z / 2); // Move the map and the cursor to avoid unwanted scrolling           
+        position_mouse(mouse_x, mouse_y + CELL_SCR_Z / 2);
     }
 }
 
@@ -2431,7 +2433,7 @@ void gameloop()
             switch (scancode) {
                 case KEY_PGUP:
                     view_level_up();
-                    break;
+					break;
                 case KEY_PGDN:
                     view_level_down();
                     break;

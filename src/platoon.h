@@ -21,6 +21,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #ifndef PLATOON_H
 #define PLATOON_H
 
+#include "global.h"
+
 #include "soldier.h"
 #include "position.h"
 
@@ -49,13 +51,13 @@ private:
 
     //! Each bit in the vision_matrix is set to 1 if the soldier
     //! with the corresponding vision_mask can see that map cell.
-    int32 m_vision_matrix[4 * 10 * 6 * 10 * 6];
+    int32 m_vision_matrix[MAP_LEVEL_LIMIT * 10 * 6 * 10 * 6];
         
     //! Map cell that has been explored
-    int m_seen[4][10 * 6][10 * 6];
+    int m_seen[MAP_LEVEL_LIMIT][10 * 6][10 * 6];
         
     //! Seen items remain visible until you look at them again
-    int m_seen_item_index[4][10 * 6][10 * 6];
+    int m_seen_item_index[MAP_LEVEL_LIMIT][10 * 6][10 * 6];
         
     //! All visible enemy soldiers
     int32 m_visible_enemies;

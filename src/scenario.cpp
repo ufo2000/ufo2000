@@ -267,7 +267,7 @@ void Scenario::start ()
         break;
 
         case 1: // Deployment areas visible
-        for (i = 0; i < 4; i++) {
+        for (i = 0; i < mapdata.z_size; i++) {
             for (int j = 0; j < 10 * mapdata.x_size; j++) {
                 for (int k = 0; k < 10 * mapdata.y_size; k++) {
                     if (is_deploy_zone(deploy_type[0], j, k))
@@ -280,7 +280,7 @@ void Scenario::start ()
         break;
 
         case 2: // Entire map visible
-        for (i = 0; i < 4; i++) {
+        for (i = 0; i < mapdata.z_size; i++) {
             for (int j = 0; j < 10 * mapdata.x_size; j++) {
                 for (int k = 0; k < 10 * mapdata.y_size; k++) {
                     platoon_local->set_seen(i, j, k, 1);

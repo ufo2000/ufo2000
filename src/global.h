@@ -388,9 +388,16 @@ std::string lua_escape_string(const std::string &str);
 std::string indent(const std::string &);
 bool check_filename_case_consistency(const char *filename);
 
+/**
+ * @defgroup battlescape Battlescape Map
+ * Tile dimensions
+ * Maximum number of map levels allowed in the game
+ */
+
 #define CELL_SCR_X 16
 #define CELL_SCR_Y 8
 #define CELL_SCR_Z 24
+#define MAP_LEVEL_LIMIT 16
 
 #include "../ufo2000.h"
 
