@@ -569,7 +569,9 @@ static void dotted_line_proc(BITMAP *bmp, int x, int y, int color)
         putpixel(bmp, x, y, color);
 }
 
-
+/**
+ * Draw a straight trajectory for bullets
+ */
 void Bullet::showline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 {
     if ((z_s == z_d) && (x_s == x_d) && (y_s == y_d))
@@ -630,11 +632,14 @@ void Bullet::showline(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
     do_line(screen2, xg, yg, xg2, yg2, COLOR_BROWN, dotted_line_proc);
 }
 
-
+/**
+ * Draw a parabollic trajectory for thrown objects
+ */
 void Bullet::showthrow(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 {
     int xd, yd, zd;
-    int color = 50;
+	int color = makecol(20,20,180);
+	double max_range = 18.0;
 
     x0 = x_s * 16 + 8; y0 = y_s * 16 + 8; z0 = z_s * 12 + 8;
     xd = x_d * 16 + 8; yd = y_d * 16 + 8; zd = z_d * 12 + 0;
@@ -652,10 +657,10 @@ void Bullet::showthrow(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
     int throwable = 1;
 
     while (z > 0) {
-        if (i > 18.0 * 16)
-            color = 33;       // red
+        if (i > max_range * 16)
+            color = makecol(0,0,80);       // out of range
         else
-            color = 50;       // green
+            color = makecol(20,20,180);       // in range
 
         x = (int)(x0 + i * cos(te) * sin(fi));
         y = (int)(y0 + i * sin(te) * sin(fi));
@@ -677,9 +682,9 @@ void Bullet::showthrow(int z_s, int x_s, int y_s, int z_d, int x_d, int y_d)
 
         if ((xg > -32) && (xg < SCREEN2W) && (yg >= -34) && (yg < SCREEN2H)) {
             if (throwable)
-                circle(screen2, xg, yg, 1, color);
+				circle(screen2, xg, yg, 1, color);
             else
-                putpixel(screen2, xg, yg, color + 4);
+				putpixel(screen2, xg, yg, makecol(153,0,0)); //After obstacle, path is red
         }
         i++;
     }
