@@ -20,7 +20,7 @@ local function X(a) return tonumber(a, 16) end
 ------------------------------------------------------------------------------
 
 local FilesTable = {
-    ["$(ufo2000)/ufo2000.dat"]    = { Crc32 = X("0x85F35853") }, -- Rev.864
+    ["$(ufo2000)/ufo2000.dat"]    = { Crc32 = X("0x29641bee") }, -- Rev.1068, added research palette
     ["$(ufo2000)/keyboard.dat"]   = { Crc32 = X("0xC796755E") },
 
     ["$(home)/squad.lua"]             = { Origin = "$(ufo2000)/squad.default.lua" },

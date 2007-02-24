@@ -29,6 +29,14 @@ else
     }
 end
 
+-- Mask for alien units.
+-------------------
+AddImage("Sectoid", png_image("$(ufo2000)/arts/Unitsmasks/155x200-001.png"))
+AddImage("Muton", png_image("$(ufo2000)/arts/Unitsmasks/155x200-002.png"))
+AddImage("Etheral", png_image("$(ufo2000)/arts/Unitsmasks/155x200-005.png"))
+AddImage("Snakeman", png_image("$(ufo2000)/arts/Unitsmasks/155x200-004.png"))
+AddImage("Floater", png_image("$(ufo2000)/arts/Unitsmasks/155x200-003.png"))
+
 -- Our own images, 2 fire animation, 3 smoke animations, cursors, 4 hit animations.
 -------------------
 AddImage("fire_small", png_image_set("$(ufo2000)/arts/fire_frames/32x40", 1, 4, true))

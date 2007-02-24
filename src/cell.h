@@ -49,8 +49,8 @@ private:
     Place *m_place;     //!< Stack of items here
 public:
     //! Indexes of MCD records for floor, walls and object
-    unsigned char type[4]; 
-
+	unsigned int type[4]; 
+	
     Soldier *get_soldier() { return m_soldier; }
     Place *get_place() { return m_place; }
     void set_soldier(Soldier *soldier);

@@ -104,6 +104,7 @@ void change_screen_mode()
 static int tftd_color_table[256];
 static int xcom1_color_table[256];
 static int xcom1_menu_color_table[256];
+static int xcom1_research_color_table[256];
 
 /**
  * Function that converts color from xcom1 game palette to current
@@ -114,6 +115,7 @@ static int xcom1_menu_color_table[256];
  */
 int (*xcom1_color)(int c);
 int (*xcom1_menu_color)(int c);
+int (*xcom1_research_color)(int c);
 int (*xcom1_darken_color)(int c, int level);
 
 static int xcom1_color_high_bpp(int c)
@@ -125,6 +127,11 @@ static int xcom1_menu_color_high_bpp(int c)
 { 
     ASSERT(c >= 0 && c < 256);
     return xcom1_menu_color_table[c]; 
+}
+static int xcom1_research_color_high_bpp(int c)
+{
+    ASSERT(c >= 0 && c < 256);
+    return xcom1_research_color_table[c]; 
 }
 static int xcom1_darken_color_high_bpp(int c, int level)
 { 
@@ -244,6 +251,7 @@ static void ufo2k_set_gfx_mode(int gfx_driver)
     // to colors for currently selected video mode
     xcom1_color_table[0]      = makecol(255, 0, 255);
     xcom1_menu_color_table[0] = makecol(255, 0, 255);
+	xcom1_research_color_table[0] = makecol(255, 0, 255);
     tftd_color_table[0]       = makecol(255, 0, 255);
 
     for (int c = 1; c < 256; c++)
@@ -254,10 +262,13 @@ static void ufo2k_set_gfx_mode(int gfx_driver)
         xcom1_menu_color_table[c] = makecol(menu_rgb.r << 2, menu_rgb.g << 2, menu_rgb.b << 2);
         const RGB & tftd_rgb = ((RGB *)datafile[DAT_TFTDPAL_BMP].dat)[c];
         tftd_color_table[c] = makecol(tftd_rgb.r << 2, tftd_rgb.g << 2, tftd_rgb.b << 2);
+		const RGB & rsch_rgb = ((RGB *)datafile[DAT_RSRCHPAL_BMP].dat)[c];
+        xcom1_research_color_table[c] = makecol(rsch_rgb.r << 2, rsch_rgb.g << 2, rsch_rgb.b << 2);
     }
 
     xcom1_color        = xcom1_color_high_bpp;
     xcom1_menu_color   = xcom1_menu_color_high_bpp;
+	xcom1_research_color   = xcom1_research_color_high_bpp;
     xcom1_darken_color = xcom1_darken_color_high_bpp;
 }
 

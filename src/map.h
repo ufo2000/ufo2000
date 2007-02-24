@@ -118,6 +118,7 @@ private:
 
     void create(int l, int w, int h);
 
+	int load_lua_map(const char *mapname, int _x, int _y);
     void loadmaps(unsigned char *_map);
     int loadmap(const char *fname, int _x, int _y); 
     void assign_type(int lev, int col, int row, int part, int type);

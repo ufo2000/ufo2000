@@ -11,6 +11,7 @@ all:
 	dat ../ufo2000.dat UNIFONT_8X8_TXT NAME=UNIFONT_8X8
 	dat -a ../ufo2000.dat fonts/biglets.cyr -t DATA
 	dat -a ../ufo2000.dat fonts/smallset.cyr -t DATA
+	dat -a ../ufo2000.dat rsrchpal.bmp -t PAL
 	dat -h ../ufo2000.h -p DAT_ ../ufo2000.dat
 #
 	echo; echo "Don't forget to update crc in filecheck.lua !"

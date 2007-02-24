@@ -2678,6 +2678,46 @@ void Soldier::draw_bullet_way()
 
 void Soldier::showspk(BITMAP *dest)
 {
+	int stack_top = lua_gettop(L);
+	ALPHA_SPRITE *alien_pic;
+	BITMAP *alien_bg = create_bitmap(160, 200);
+	clear_to_color(alien_bg, makecol(0,0,0));
+	//NACHTWOLF : The following switch avoids massive copy/paste - it is used to create inventory picture from UFOpaedia images
+	switch (md.SkinType) {
+		case S_SECTOID:
+		case S_MUTON:
+        case S_SNAKEMAN:
+        case S_ETHEREAL:
+        case S_FLOATER:
+			lua_pushstring(L, "ImageTable");
+            lua_gettable(L, LUA_GLOBALSINDEX);
+            ASSERT(lua_istable(L, -1));
+			switch (md.SkinType) {
+				case S_SECTOID:
+					lua_pushstring(L, "Sectoid");
+					break;
+				case S_MUTON:
+					lua_pushstring(L, "Muton");
+					break;
+				case S_SNAKEMAN:
+					lua_pushstring(L, "Snakeman");
+					break;
+				case S_ETHEREAL:
+					lua_pushstring(L, "Etheral");
+					break;
+				case S_FLOATER:
+					lua_pushstring(L, "Floater");
+					break;
+			}
+            lua_gettable(L, -2);
+            if (lua_isuserdata(L, -1)) {
+                ASSERT(lpcd_isuserdatatype(L, -1, "ALPHA_SPRITE"));
+                alien_pic = (ALPHA_SPRITE *)lua_unboxpointer(L, -1);
+			}
+            break;
+		default:
+			break;
+	}
     // Why did these have "% 4" before? They prevented the flying suit from displaying.
     switch (md.SkinType) {
         case S_XCOM_0:
@@ -2689,22 +2729,42 @@ void Soldier::showspk(BITMAP *dest)
             Skin::m_spk[(md.SkinType - 1) % 4][0][0]->show(dest, 0, 0);
             break;
         case S_SECTOID:
-            Skin::m_spk[4][0][0]->show(dest, 0, 0);
+			//Generate sprite
+            Skin::m_spk[4][0][0]->show_pal2(alien_bg, -160, 0);
+            if (alien_pic) {
+				draw_alpha_sprite(alien_bg, alien_pic, 5, 0);
+            }
+			stretch_blit(alien_bg, dest, 0, 0, 160, 200, 40, 45, 80, 100);
             break;
         case S_MUTON:
-            Skin::m_spk[5][0][0]->show(dest, 0, 0);
+            Skin::m_spk[5][0][0]->show_pal2(alien_bg, -160, 0);
+            if (alien_pic) {
+				draw_alpha_sprite(alien_bg, alien_pic, 5, 0);
+            }
+			stretch_blit(alien_bg, dest, 0, 0, 160, 200, 40, 45, 80, 100);
             break;
         case S_SNAKEMAN: //LAWYER:  Added Snakeman
-            Skin::m_spk[6][0][0]->show(dest, 0, 0);
+            Skin::m_spk[6][0][0]->show_pal2(alien_bg, -160, 0);
+            if (alien_pic) {
+				draw_alpha_sprite(alien_bg, alien_pic, 5, 0);
+            }
+			stretch_blit(alien_bg, dest, 0, 0, 160, 200, 40, 45, 80, 100);
             break;
         case S_ETHEREAL: //LAWYER:  Added Ethereal
-            Skin::m_spk[7][0][0]->show(dest, 0, 0);
+            Skin::m_spk[7][0][0]->show_pal2(alien_bg, -160, 0);
+            if (alien_pic) {
+				draw_alpha_sprite(alien_bg, alien_pic, 5, 0);
+            }
+			stretch_blit(alien_bg, dest, 0, 0, 160, 200, 40, 45, 80, 100);
             break;
         case S_FLOATER: //LAWYER:  Added Floater
-            Skin::m_spk[8][0][0]->show(dest, 0, 0);
+            Skin::m_spk[8][0][0]->show_pal2(alien_bg, -160, 0);
+            if (alien_pic) {
+				draw_alpha_sprite(alien_bg, alien_pic, 5, 0);
+            }
+			stretch_blit(alien_bg, dest, 0, 0, 160, 200, 40, 45, 80, 100);
             break;
         case S_CHAMELEON: {
-            int stack_top = lua_gettop(L);
             lua_pushstring(L, "UnitsTable");
             lua_gettable(L, LUA_GLOBALSINDEX);
             ASSERT(lua_istable(L, -1));
@@ -2724,12 +2784,12 @@ void Soldier::showspk(BITMAP *dest)
                 ASSERT(spr);
                 draw_alpha_sprite(dest, spr, 80 - (spr->w / 2), 100 - (spr->h / 2));
             }
-            lua_settop(L, stack_top);
             break;
         }
         default:
             break;
     }
+	lua_settop(L, stack_top);
 }
 
 /**

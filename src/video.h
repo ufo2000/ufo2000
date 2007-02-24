@@ -39,6 +39,7 @@ void set_mouse_alpha_sprite(ALPHA_SPRITE *spr);
 
 extern int (*xcom1_color)(int c);
 extern int (*xcom1_menu_color)(int c);
+extern int (*xcom1_research_color)(int c);
 extern int (*xcom1_darken_color)(int c, int level);
 int tftd_color(int c);
 

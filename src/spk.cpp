@@ -70,14 +70,20 @@ void SPK::load(const char *fname)
  */
 void SPK::show(BITMAP *_dest, int _x, int _y)
 {
-	BITMAP *bmp = spk2bmp();
+	BITMAP *bmp = spk2bmp(0);
+	draw_sprite(_dest, bmp, _x, _y);
+	destroy_bitmap(bmp);
+}
+void SPK::show_pal2(BITMAP *_dest, int _x, int _y)
+{
+	BITMAP *bmp = spk2bmp(1);
 	draw_sprite(_dest, bmp, _x, _y);
 	destroy_bitmap(bmp);
 }
 
 void SPK::show_strech(BITMAP *_dest, int _x, int _y, int _w, int _h)
 {
-	BITMAP *bmp = spk2bmp();
+	BITMAP *bmp = spk2bmp(0);
 	stretch_blit(bmp, _dest, 0, 0, 320, 200, 0, 0, _w, _h);
 	destroy_bitmap(bmp);
 }
@@ -85,7 +91,7 @@ void SPK::show_strech(BITMAP *_dest, int _x, int _y, int _w, int _h)
 // ?? same as SPK::show() 
 void SPK::show_pck(BITMAP *_dest, int _x, int _y)
 {
-	BITMAP *bmp = spk2bmp();
+	BITMAP *bmp = spk2bmp(0);
 	draw_sprite(_dest, bmp, _x, _y);
 	destroy_bitmap(bmp);
 }
@@ -111,18 +117,27 @@ void SPK::show_pck(BITMAP *_dest, int _x, int _y)
 
 /**
  * Convert graphics from SPK-format to bitmap
+ * @arg 0 for default palette, 1 for research palette
  */
-BITMAP *SPK::spk2bmp()
+BITMAP *SPK::spk2bmp(int _pal)
 {
 	BITMAP *bmp = create_bitmap(320, 200);
-	clear_to_color(bmp, xcom_color(0));
+	if (_pal == 1){
+		clear_to_color(bmp, xcom1_research_color(0));
+	}else{
+		clear_to_color(bmp, xcom_color(0));
+	}
 	long i = 0, j = 0;
 
 //	Process .scr files
 	if (m_datlen == 64000 && (intel_uint16(*(uint16 *)m_dat) & 0xFFF0) != 0xFFF0) {
 		long size = 64000;
 		while (size--) {
-			putpixel(bmp, j % 320, j / 320, xcom1_color(m_dat[i++]));
+			if (_pal == 1){
+				putpixel(bmp, j % 320, j / 320, xcom1_research_color(m_dat[i++]));
+			}else{
+				putpixel(bmp, j % 320, j / 320, xcom1_color(m_dat[i++]));
+			}
 			j++;
 		}
 		return bmp;
@@ -148,7 +163,11 @@ BITMAP *SPK::spk2bmp()
 				if (!(i + size <= m_datlen && j + size <= 64000)) 
 					return bmp;
 				while (size--) {
-					putpixel(bmp, j % 320, j / 320, xcom1_color(m_dat[i++]));
+					if (_pal == 1){
+						putpixel(bmp, j % 320, j / 320, xcom1_research_color(m_dat[i++]));
+					}else{
+						putpixel(bmp, j % 320, j / 320, xcom1_color(m_dat[i++]));
+					}
 					j++;
 				}
 				break;

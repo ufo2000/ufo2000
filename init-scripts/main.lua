@@ -14,6 +14,9 @@ TerrainTable = {}
 -- global table with the information about all items and weapons
 -- used from ufo2000 executable
 ItemsTable = {}
+-- global table with all the information about all maps
+-- used from ufo2000 executable and AddTerrain
+MapTable = {}
 -- global table with the information about all available weaponsets
 EquipmentTable = {}
 -- table with images for explosion animation
@@ -196,16 +199,16 @@ function AddTileset(tileset)
     tileset.NumberOfTiles = table.getn(tileset.Tiles)
     tileset.Crc32 = UpdateTableCrc32(0, tileset, {"IsometricImage", "MinimapImage"})
     TilesetsTable[tileset.Name] = tileset
-    Warning("Tileset '%s' initialized, crc32 = %08X", tileset.Name, tileset.Crc32)
+    Warning("Tileset '%s' initialized, %d tiles, crc32 = %08X", tileset.Name, tileset.NumberOfTiles, tileset.Crc32)
 end
 
 -- adds a new map file to a terrain record
 local function AddXcomMap(ti, map_filename)
     local _, _, map_id = string.find(string.lower(map_filename), "(%d+)%.map$")
-    if not map_id then
+	if not map_id then
         return string.format("invalid map file name '%s'", map_filename)
     end
-
+	
     map_id = tonumber(map_id)
 
     local map_data = ReadFile(map_filename)
@@ -221,7 +224,80 @@ local function AddXcomMap(ti, map_filename)
     ti.Crc32 = UpdateCrc32(ti.Crc32, map_id)
     ti.Crc32 = UpdateCrc32(ti.Crc32, map_data)
     ti.Maps[map_id] = map_filename
+    return nil
+end
 
+-- Adds a map to the global table of available maps
+function AddLuaMap(map_data)
+	if MapTable[map_data.Name] then
+		Warning("AddLuaMap: Duplicate Lua map definition detected '%s'", map_data.Name)
+		return nil
+	end
+	-- Check unique
+	-- Check that data is valid
+	local datavalid = true
+	local strkey = ""
+	local size_x = map_data.X
+    local size_y = map_data.Y
+    local size_z = map_data.Z
+	if size_x > 60 or math.mod(size_x, 10) ~= 0 then
+		Warning("AddLuaMap: Invalid map dimension (X), must divide by 10, no greater than 60 '%s'", map_data.Name)
+		datavalid = false
+	end
+	if size_y > 60 or math.mod(size_y, 10) ~= 0 then
+		Warning("AddLuaMap: Invalid map dimension (Y), must divide by 10, no greater than 60 '%s'", map_data.Name)
+		datavalid = false
+	end
+	-- Make loop statement to check the Cell structure
+	if table.getn(map_data.MapData) ~= size_z then
+		Warning("AddLuaMap: Invalid mapdata - number of levels do not match '%s'", map_data.Name)
+		datavalid = false
+	end
+	-- Check that the data is valid and make a crc Key based on MapData
+	if datavalid then
+		for lev = 1, size_z do
+			if table.getn(map_data.MapData[lev]) ~= size_x * size_y then
+				Warning("AddLuaMap: Invalid mapdata - number of cells do not match map size on level %d '%s'", lev, map_data.Name)
+				datavalid = false
+				break
+			end
+			for k = 1, size_x * size_y do
+				if table.getn(map_data.MapData[lev][k]) ~= 4 then
+					Warning("AddLuaMap: Invalid mapdata - bad tile on level %d position %d '%s'", lev, k, map_data.Name)
+					datavalid = false
+					break
+				end
+				strkey = string.format("%s%X", strkey, map_data.MapData[lev][k][1] + map_data.MapData[lev][k][2] + map_data.MapData[lev][k][3] + map_data.MapData[lev][k][4])
+			end
+		end
+	end
+	-- Add
+	if datavalid then
+		MapTable[map_data.Name] = map_data
+		MapTable[map_data.Name].key = strkey
+		--Message("AddLuaMap: Map '%s' successfully loaded - CrcKey '%s'", map_data.Name, strkey)
+	else
+		Warning("AddLuaMap: Map ignored '%s'", map_data.Name)
+	end
+	return nil
+end
+
+-- appends a lua map file to a terrain record
+local function GetLuaMap(ti, map_name)
+    local _, _, map_id = string.find(string.lower(map_name), "(%d+)$")
+	if not map_id then
+        return string.format("Invalid lua map name '%s'", map_name)
+    end
+
+    map_id = tonumber(map_id)
+	
+	if not MapTable[map_name] then
+		return string.format("Lua map not found in MapTable '%s'", map_name)
+	end
+    ti.Crc32 = UpdateCrc32(ti.Crc32, map_id)
+	ti.Crc32 = UpdateCrc32(ti.Crc32, MapTable[map_name].key)
+	--Add basic map data to tileset
+	ti.Maps[map_id] = MapTable[map_name]
     return nil
 end
 
@@ -284,13 +360,30 @@ function AddXcomTerrain(terrain)
     local number_of_maps = 0
     local errmsg = nil
     for k, v in ipairs(terrain.Maps) do
-        errmsg = AddXcomMap(tmp, LocateFile(v))
-        if errmsg then
-            number_of_maps = 0
-            break
-        else
-            number_of_maps = number_of_maps + 1
-        end
+		if string.find(v, "%w") then
+			if string.find(v, "%\.map") then
+				errmsg = AddXcomMap(tmp, LocateFile(v))
+				if errmsg then
+					number_of_maps = 0
+					break
+				else
+					--Message("AddXcomMap %s", v)
+					number_of_maps = number_of_maps + 1
+				end
+			else
+				errmsg = GetLuaMap(tmp, LocateFile(v))
+				if errmsg then
+					number_of_maps = 0
+					break
+				else
+					--Message("AddLuaMap %s", v)
+					number_of_maps = number_of_maps + 1
+				end
+			end
+		else
+			number_of_maps = 0
+			break
+		end
     end
 
     if number_of_maps > 0 then
@@ -703,6 +796,8 @@ plugins_sandbox = {
 
     AddXcomTerrain = AddXcomTerrain,
 
+	AddLuaMap = AddLuaMap,
+	
     AddXcomItem = AddXcomItem,
     pck_image = pck_image,
     pck_image_ex = pck_image_ex,

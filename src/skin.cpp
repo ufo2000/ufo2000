@@ -125,11 +125,11 @@ void Skin::initpck()
     m_spk[2][0][0] = new SPK("$(xcom)/ufograph/man_2.spk");
     m_spk[3][0][0] = new SPK("$(xcom)/ufograph/man_3.spk");
 
-    m_spk[4][0][0] = new SPK("$(ufo2000)/newunits/sectoid.spk");
-    m_spk[5][0][0] = new SPK("$(ufo2000)/newunits/muton.spk");
-    m_spk[6][0][0] = new SPK("$(ufo2000)/newunits/snakeman.spk"); //LAWYER:  Snakeman backpack view.  Needs an SPK
-    m_spk[7][0][0] = new SPK("$(ufo2000)/newunits/ethereal.spk"); //LAWYER:  Ethereal backpack view.  Needs an SPK
-    m_spk[8][0][0] = new SPK("$(ufo2000)/newunits/floater.spk"); //LAWYER:  Floater backpack view.  Needs an SPK    
+    m_spk[4][0][0] = new SPK("$(xcom)/geograph/up024.spk");
+    m_spk[5][0][0] = new SPK("$(xcom)/geograph/up020.spk");
+    m_spk[6][0][0] = new SPK("$(xcom)/geograph/up030.spk"); //LAWYER:  Snakeman backpack view.  Needs an SPK
+    m_spk[7][0][0] = new SPK("$(xcom)/geograph/up016.spk"); //LAWYER:  Ethereal backpack view.  Needs an SPK
+    m_spk[8][0][0] = new SPK("$(xcom)/geograph/up018.spk"); //LAWYER:  Floater backpack view.  Needs an SPK    
     
     m_image = create_bitmap(32, 40);
     

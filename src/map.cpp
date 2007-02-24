@@ -188,6 +188,7 @@ Map::~Map()
 
 void Map::loadmaps(unsigned char *_map)
 {
+	char map_name[512];
     int stack_top = lua_gettop(L);
     lua_pushstring(L, "TerrainTable");
     lua_gettable(L, LUA_GLOBALSINDEX);
@@ -209,15 +210,118 @@ void Map::loadmaps(unsigned char *_map)
                 // Todo: fix ufo200 crashing
                 // when loading invalid map-number
                 // ?? maybe just replace map with "00" ??
-                ASSERT(lua_isstring(L, -1));
-                loadmap(lua_tostring(L, -1), col * 10, row * 10);
-                lua_pop(L, 1);
+				if(lua_isstring(L, -1)){
+					loadmap(lua_tostring(L, -1), col * 10, row * 10);
+					lua_pop(L, 1);
+				}else if(lua_istable(L, -1)) {
+					lua_pushstring(L, "Name");
+					lua_gettable(L, -2);
+					ASSERT(lua_isstring(L, -1)); 
+					sprintf(map_name, "%s", lua_tostring(L, -1));
+					lua_pop(L, 1);
+					load_lua_map(map_name, col * 10, row * 10);
+					lua_pop(L, 1);
+				}else{
+					//This should not happen - check Terrain::terrain(str)
+					ASSERT(false);
+				}
             }
             i++;
         }
     }
 
     lua_settop(L, stack_top);
+}
+
+/**
+ * @brief : Loads a lua map, which is contained at the top of the lua stack. Called by Map::Loadmaps
+ */
+ int Map::load_lua_map(const char *mapname, int _x, int _y)
+{
+	//Debug purpose
+	//char tmp[1024];
+	
+	int lua_stack_top = lua_gettop(L);
+	int map_x;
+	int map_y;
+	int map_z;
+	
+	int mcol;
+	int mrow;
+	int mlev;
+	int mindex;
+	//Get dimensions
+	lua_pushstring(L, "X");
+	lua_gettable(L, -2);
+	ASSERT(lua_isnumber(L, -1));
+	map_x = (unsigned int)lua_tonumber(L, -1);
+	lua_pop(L, 1);
+	
+	lua_pushstring(L, "Y");
+	lua_gettable(L, -2);
+	ASSERT(lua_isnumber(L, -1));
+	map_y = (unsigned int)lua_tonumber(L, -1);
+	lua_pop(L, 1);
+	
+	lua_pushstring(L, "Z");
+	lua_gettable(L, -2);
+	ASSERT(lua_isnumber(L, -1));
+	map_z = (unsigned int)lua_tonumber(L, -1);
+	lua_pop(L, 1);
+	//Get data
+	lua_pushstring(L, "MapData");
+	lua_gettable(L, -2);
+	ASSERT(lua_istable(L, -1));
+	//sprintf(tmp, "Load Lua Map size %d,%d,%d\n", map_x, map_y, map_z); 
+	//lua_message(tmp);
+
+	for (mlev = 0; mlev < map_z; mlev++) {
+		lua_pushnumber(L, mlev + 1);
+		lua_gettable(L, -2);
+		ASSERT(lua_istable(L, -1));
+		// exec
+        for (mindex = map_x * map_y; mindex > 0; mindex--) {
+
+				mcol = (int)((mindex - 1) % map_x) + _x;
+				mrow = (int)((mindex - 1) / map_x) + _y;
+				
+				lua_pushnumber(L, mindex);
+				lua_gettable(L, -2);
+				ASSERT(lua_istable(L, -1));
+				//Set tiles
+				lua_pushnumber(L, 1);
+				lua_gettable(L, -2);
+				ASSERT(lua_isnumber(L, -1));
+			    assign_type(mlev, mcol, mrow, 0, (unsigned int)lua_tonumber(L, -1));
+				lua_pop(L, 1);
+
+				lua_pushnumber(L, 2);
+				lua_gettable(L, -2);
+				ASSERT(lua_isnumber(L, -1));
+                assign_type(mlev, mcol, mrow, 1, (unsigned int)lua_tonumber(L, -1));
+				lua_pop(L, 1);
+
+				lua_pushnumber(L, 3);
+				lua_gettable(L, -2);
+				ASSERT(lua_isnumber(L, -1));
+                assign_type(mlev, mcol, mrow, 2, (unsigned int)lua_tonumber(L, -1));
+				lua_pop(L, 1);
+
+				lua_pushnumber(L, 4);
+				lua_gettable(L, -2);
+				ASSERT(lua_isnumber(L, -1));
+                assign_type(mlev, mcol, mrow, 3, (unsigned int)lua_tonumber(L, -1));
+				lua_pop(L, 1);
+				
+				m_cell[mlev][mcol][mrow]->set_soldier(NULL);
+				//Go back to MapData
+				lua_pop(L, 1);
+		}
+		lua_pop(L, 1);
+	}
+	lua_pop(L, 1);
+	lua_settop(L, lua_stack_top);
+	return 1;
 }
 
 int Map::loadmap(const char *fname, int _c, int _r)
@@ -2105,6 +2209,33 @@ Terrain::Terrain(const std::string &terrain_name)
     for (index = 0; index < m_blocks.size(); index++) {
         lua_pushnumber(L, index);
         lua_gettable(L, -2);
+		
+		//Check if we have a lua map entry
+		if (lua_istable(L, -1)){
+			// Extract map definition
+			lua_pushstring(L, "X");
+			lua_gettable(L, -2);
+			ASSERT(lua_isnumber(L, -1)); 
+			m_blocks[index].x_size = (unsigned int)lua_tonumber(L, -1) / 10;
+			lua_pop(L, 1);
+			
+			lua_pushstring(L, "Y");
+			lua_gettable(L, -2);
+			ASSERT(lua_isnumber(L, -1)); 
+			m_blocks[index].y_size = (unsigned int)lua_tonumber(L, -1) / 10;
+			lua_pop(L, 1);		
+			
+			lua_pushstring(L, "Z");
+			lua_gettable(L, -2);
+			ASSERT(lua_isnumber(L, -1)); 
+			m_blocks[index].z_size = (unsigned int)lua_tonumber(L, -1);
+			lua_pop(L, 1);
+			
+			m_blocks[index].rand_weight = 1;
+			lua_pop(L, 1);
+			continue;
+		}
+		//Check if we have a map file entry
         if (!lua_isstring(L, -1)) {
             m_blocks[index].rand_weight = 0;
             lua_pop(L, 1);
@@ -2112,6 +2243,8 @@ Terrain::Terrain(const std::string &terrain_name)
         }
 
         const char *fname = lua_tostring(L, -1);
+		
+		//Open the file
         int fh = open(fname, O_RDONLY | O_BINARY);
         if (fh == -1)
         {
@@ -2130,7 +2263,6 @@ Terrain::Terrain(const std::string &terrain_name)
         m_blocks[index].y_size      = buffer[1] / 10;
         m_blocks[index].z_size      = buffer[2];
         m_blocks[index].rand_weight = 1;
-
         lua_pop(L, 1);
     }
 

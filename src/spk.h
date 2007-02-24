@@ -27,7 +27,7 @@ private:
 	unsigned char *m_dat;
 	int m_datlen;
 
-	BITMAP *spk2bmp();
+	BITMAP *spk2bmp(int _pal);
 
 public:
 	SPK();
@@ -36,6 +36,7 @@ public:
 
 	void load(const char *fname);
 	void show(BITMAP *_dest, int _x, int _y);
+	void show_pal2(BITMAP *_dest, int _x, int _y);
 	void show_strech(BITMAP *_dest, int _x, int _y, int _w, int _h);
 
 	void show_pck(BITMAP *_dest, int _x, int _y);
