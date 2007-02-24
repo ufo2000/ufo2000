@@ -374,6 +374,7 @@ class Terrain
     std::string             m_name;
     std::vector<block_info> m_blocks;
     int                     m_rand_weight;
+	int						m_max_levels; //Shrinks the number of levels back down
 
     uint32                  m_crc32;
 
@@ -383,6 +384,7 @@ public:
     Terrain(const std::string &terrain_name);
     virtual ~Terrain();
 
+	int get_total_levels() { return m_max_levels; }
     int get_rand_weight() { return m_rand_weight; }
     uint32 get_crc32() { return m_crc32; }
     const std::string &get_name() { return m_name; }

@@ -1971,7 +1971,7 @@ int Map::valid_GEODATA(GEODATA *md)
 
     if ((md->x_size > 6) || (md->y_size > 6) ||
         (md->x_size < 2) || (md->y_size < 2) ||
-        (md->z_size != MAP_LEVEL_LIMIT) || terrain_name == "") return 0;
+        (md->z_size > MAP_LEVEL_LIMIT) || terrain_name == "") return 0;
         
     if (net->is_network_game() && 
         g_net_allowed_terrains.find(terrain_name) == g_net_allowed_terrains.end()) return 0;
@@ -2182,6 +2182,7 @@ bool Map::Read(persist::Engine &archive)
 
 Terrain::Terrain(const std::string &terrain_name)
 {
+	int current_max = 1;
     int stack_top = lua_gettop(L);
     // Enter 'TerrainTable' table
     lua_pushstring(L, "TerrainTable");
@@ -2229,6 +2230,13 @@ Terrain::Terrain(const std::string &terrain_name)
 			lua_gettable(L, -2);
 			ASSERT(lua_isnumber(L, -1)); 
 			m_blocks[index].z_size = (unsigned int)lua_tonumber(L, -1);
+			if (m_blocks[index].z_size + 1 > current_max) {
+				if (m_blocks[index].z_size + 1 <= MAP_LEVEL_LIMIT) {
+					current_max = m_blocks[index].z_size + 1;
+				}else {
+					current_max = MAP_LEVEL_LIMIT;
+				}
+			}
 			lua_pop(L, 1);
 			
 			m_blocks[index].rand_weight = 1;
@@ -2262,10 +2270,21 @@ Terrain::Terrain(const std::string &terrain_name)
         m_blocks[index].x_size      = buffer[0] / 10;
         m_blocks[index].y_size      = buffer[1] / 10;
         m_blocks[index].z_size      = buffer[2];
+		if (m_blocks[index].z_size + 1 > current_max) {
+			if (m_blocks[index].z_size + 1 <= MAP_LEVEL_LIMIT) {
+				current_max = m_blocks[index].z_size + 1;
+			}else {
+				current_max = MAP_LEVEL_LIMIT;
+			}
+		}
         m_blocks[index].rand_weight = 1;
         lua_pop(L, 1);
     }
-
+	if (current_max > 4) {
+		m_max_levels = current_max;
+	}else {
+		m_max_levels = 4;
+	}
     lua_settop(L, stack_top);
 }
 
@@ -2322,6 +2341,7 @@ bool Terrain::create_geodata(GEODATA &gd)
 
             map[y][x] = i;
             gd.mapdata[y * gd.x_size + x] = i;
+			gd.z_size = m_max_levels;
         }
     return true;
 }
