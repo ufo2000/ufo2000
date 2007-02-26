@@ -1,0 +1,12 @@
+Weapon Art Work by Sporb
+LUA Programming by Plasma & Sporb
+Weapon Impacts by Sporb & Nachtwolf
+Weapon Trails by Sporb & Nachtwolf
+Large Explosion Art Work by Judeau Akagi & Nachtwolf
+
+Thanks to the UFO2K Community for all the support and Testing work done :)
+
+Thanks also to Serge, Project head.
+
+If you have any suggestions on how to improve the stats of the ufo2k weaponset, 
+please post them here : http://www.xcomufo.com/forums/index.php?showtopic=6258
