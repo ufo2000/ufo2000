@@ -1,7 +1,7 @@
 /*
  * glyph.h  -  Glyph Keeper API header file
  *
- * Copyright (c) 2003-2005 Kirill Kryukov
+ * Copyright (c) 2003-2007 Kirill Kryukov
  *
  * This file is part of Glyph Keeper library, and may only be used,
  * modified, and distributed under the terms of the Glyph Keeper
@@ -17,17 +17,18 @@
  * Glyph Keeper identification
  */
 #define GK_VERSION_MAJOR  0
-#define GK_VERSION_MINOR  22
+#define GK_VERSION_MINOR  32
 #define GK_VERSION_PATCH  0
-#define GK_VERSION_STR    "0.22"
-#define GK_DATE_STR       "2005-02-15"
+#define GK_VERSION_STR    "0.32.0"
+#define GK_DATE_STR       "2007-02-06"
+
 
 
 /*
  * Define this macro to enable more safety checks.
  * Useful for debugging, but results in a little slower code.
  *
- * Note: Defining this macro will debug Glyph Keeper, not your program.
+ * Note: Defining this macro will affect Glyph Keeper, not your program.
  * Enabling/disabling this macro has effect only after recompiling the
  * Glyph Keeper library.
  */
@@ -36,15 +37,27 @@
 
 /*
  * Define this macro to enable Glyph Keeper internal logging.
- * This should not be used normally, unless you are serious
- * to debug Glyph Keeper routine.
+ * This is used for debugging Glyph Keeper library, so use it only if you
+ * want to debug Glyph Keeper, or to understand how it works.
  *
  * When you run a program linked to Glyph Keeper compiled with GLYPH_LOG
  * defined, a logfile "glyph.log" will be created in the curent directory.
- * Many things then will be written to that file, as your program proceeds
- * using Glyph Keeper rountines.
+ * Many things then will be written to that file, as your program calls
+ * Glyph Keeper rountines.
+ *
+ * Note that enabling this option slows down the Glyph Keeper dramatically,
+ * so don't attempt to run a benchmark with this option on.
  */
 /*#define GLYPH_LOG*/
+
+
+/*
+ * Debugging Glyph Keeper and FreeType memory usage.
+ */
+/*#define GLYPH_DEBUG_GK_MEMORY*/
+/*#define GLYPH_LOG_GK_MEMORY*/
+/*#define GLYPH_DEBUG_FT_MEMORY*/
+/*#define GLYPH_LOG_FT_MEMORY*/
 
 
 /*
@@ -55,14 +68,9 @@
  * Feel free to modify this if your compiler wants some other declaration.
  * But in that case please send me back your changes, so I can include them
  * in next version.
- *
- * Actually, I suggest linking Glyph Keeper statically to your program.
- * FreeType may still be DLL, but for safety I would also link statically.
- * The HDD/Memory is cheap these days, that space saving does not worth all
- * troubles, which may occur because of wrong FereType version /
- * configuration.
  */
 #undef GLYPH_DECLSPEC
+
 #ifdef GLYPH_DLL
 #define GLYPH_DECLSPEC __declspec(dllexport)
 #else
@@ -74,21 +82,21 @@
  * Glyph Keeper supports three rendering target systems:
  *
  * 1 - Pure text mode. No any graphics library is involved.
- *     All you can do is render character glyphs and write them
- *     to the FILE* stream one by one. Kind of ASCII art.
+ *     All you can do is render character glyphs one by one and write them
+ *     to the FILE* stream. Kind of ASCII art.
  *
  *     This mode is useful to isolate problems related to Glyph Keeper only.
- *     It is also convenient to check if Glyph Keeper works fine with your
+ *     It is also convenient to check if Glyph Keeper works with your
  *     FreeType installation, without introducing extra dependencies.
  *
  * 2 - Rendering target is Allegro's BITMAP.
  *     You have to supply Allegro headers and link with Allegro lib.
  *     
  * 3 - Rendering target is SDL's SDL_Surface.
- *     Limited initial support - only monochrome opaque rendering.
+ *     Requires SDL and SDL_gfx libraries.
  *
- * You should define GLYPH_TARGET to be one of these targets.
- * To do this, add line like this (for ex.):
+ * You have to define GLYPH_TARGET to be one of these targets.
+ * To do this, add line like this (for example):
  *      #define GLYPH_TARGET = GLYPH_TARGET_ALLEGRO
  * to your program _BEFORE_ including "glyph.h"
  *
@@ -98,10 +106,7 @@
  * It is also OK to do it in command line for all your project files,
  * so that you don't need to #define it in the source.
  *
- * You can't mix two targets in one program. (at the moment)
- * In future I may incorporate driver based API, where each platform is
- * handled by a separate driver, and drivers can be independently
- * activated and used.
+ * You can't mix two targets in one program.
  *
  * If you don't define GLYPH_TARGET to anything,
  * "glyph.h" will define it to GLYPH_TARGET_TEXT, the default target.
@@ -109,6 +114,8 @@
 #define GLYPH_TARGET_TEXT     1
 #define GLYPH_TARGET_ALLEGRO  2
 #define GLYPH_TARGET_SDL      3
+#define GLYPH_TARGET_OPENGL   4
+#define GLYPH_TARGET_ALLEGGL  5
 
 
 
@@ -118,7 +125,16 @@
  * and including target-specific headers.
  * GLYPH_TARGET_TEXT is the default target.
  */
-#if (GLYPH_TARGET == GLYPH_TARGET_ALLEGRO)
+#if (GLYPH_TARGET == GLYPH_TARGET_ALLEGGL) || (GLYPH_TARGET == GLYPH_TARGET_OPENGL)
+
+#define GLYPH_TARGET_STR "OpenGL"
+#define GK_DRIVER_CODE "glyph_to_opengl.c"
+#define GLYPH_TARGET_SURFACE GLYPH_TEXTURE
+typedef struct GLYPH_TEXTURE GLYPH_TEXTURE;
+
+
+
+#elif (GLYPH_TARGET == GLYPH_TARGET_ALLEGRO)
 
 #include <allegro.h>
 #include <allegro/internal/aintern.h>
@@ -135,7 +151,7 @@
 
 #elif (GLYPH_TARGET == GLYPH_TARGET_SDL)
 
-#include <sdl.h>
+#include <SDL/SDL.h>
 #define GLYPH_TARGET_STR        "SDL"
 #define GLYPH_TARGET_SURFACE    SDL_Surface
 #define GLYPH_TARGET_HAS_RECTFILL
@@ -144,10 +160,8 @@
 
 
 
-#else
+#elif (GLYPH_TARGET == GLYPH_TARGET_TEXT)
 
-#undef GLYPH_TARGET
-#define GLYPH_TARGET            GLYPH_TARGET_TEXT
 #include <stdio.h>
 #define GLYPH_TARGET_STR        "Text"
 #define GLYPH_TARGET_SURFACE    FILE
@@ -161,7 +175,7 @@
 
 
 /*
- * Glyph Keeper objects, which your program will create and use.
+ * Glyph Keeper objects, that your program will create and use.
  * Your program should not make any assumption about their content layout.
  * You will normally only work with pointers to them.
  * All handling of this data should be done by Glyph Keeper API calls.
@@ -169,6 +183,11 @@
 typedef struct GLYPH_FACE GLYPH_FACE;
 typedef struct GLYPH_KEEP GLYPH_KEEP;
 typedef struct GLYPH_REND GLYPH_REND;
+
+
+
+/* Maximum possible Unicode code point. */
+#define GK_MAX_UNICODE   0x10FFFFu
 
 
 
@@ -183,6 +202,12 @@ typedef struct GLYPH_REND GLYPH_REND;
 #define gk_makeacol(a,r,g,b)  ( ((a)<<24) | ((r)<<16) | ((g)<<8) | (b) )
 #endif
 
+
+
+/*
+ * Packing version into one integer value.
+ */
+#define GK_MAKE_VERSION(a,b,c)  (((a)<<20)|((b)<<10)|(c))
 
 
 
@@ -206,7 +231,7 @@ GLYPH_DECLSPEC void gk_set_messenger ( void (*func)(const char* const) );
  * Sets font search path - a list of directories where
  * a font files will be searched.
  */
-GLYPH_DECLSPEC void gk_set_font_path ( char* const path );
+GLYPH_DECLSPEC void gk_set_font_path ( const char* const path );
 
 /*
  * Glyph Keeper initialization.
@@ -239,14 +264,37 @@ GLYPH_DECLSPEC void gk_library_init();
  */
 GLYPH_DECLSPEC void gk_library_cleanup(void);
 
+
 /*
- * Returns amount of memory, allocated in heap by Glyph Keeper, in bytes.
+ * Returns number of bytes allocated by Glyph Keeper.
  * FreeType memory is not counted.
- * (I don't know how to get this information from FreeType) (FIXME)
+ *
+ * To see the real 'raw' memory usage of Glyph Keeper and FreeType, compile
+ * both Glyph Keeper and FreeType with -DGLYPH_DEBUG_GK_MEMORY and
+ * -DGLYPH_DEBUG_FT_MEMORY and use the functions below.
  */
-GLYPH_DECLSPEC int gk_bytes_allocated();
+GLYPH_DECLSPEC size_t gk_bytes_allocated();
 
 
+/*
+ * Functions for debugging Glyph Keeper and FreeType memory usage.
+ * Don't use them in your project normally.
+ * Note that they will give meaningful output only if you compile Glyph Keeper
+ * and FreeType with -DGLYPH_DEBUG_GK_MEMORY and -DGLYPH_DEBUG_FT_MEMORY.
+ *
+ * ..._allocated_bytes() - returns amount of memory allocated and used. This
+ * will be the correct memory usage numbers when you switch memory debugging
+ * off. When memory debugging is on, the actual allocated memory is larger
+ * because there is debugging overhead.
+ *
+ * ..._overhead_bytes() - returns debugging overhead. This is extra memory
+ * allocated to enable memory debugging. Overhead will be 0 when you switch
+ * off the debugging.
+ */
+GLYPH_DECLSPEC size_t gk_total_gk_allocated_bytes();
+GLYPH_DECLSPEC size_t gk_total_gk_overhead_bytes();
+GLYPH_DECLSPEC size_t gk_total_ft_allocated_bytes();
+GLYPH_DECLSPEC size_t gk_total_ft_overhead_bytes();
 
 
 
@@ -262,15 +310,26 @@ GLYPH_DECLSPEC int gk_bytes_allocated();
  * only one font face in the file.
  * This function returns 0 on failure.
  */
-GLYPH_DECLSPEC GLYPH_FACE* gk_load_face_from_file
-    ( const char* const fname, const int face_index );
+GLYPH_DECLSPEC GLYPH_FACE* _gk_load_face_from_file
+    ( const char* const fname, const int face_index,
+      const int gk_header_version, const int gk_header_target );
+
+#define gk_load_face_from_file(a,b)  \
+    _gk_load_face_from_file(a,b,GK_MAKE_VERSION(GK_VERSION_MAJOR,GK_VERSION_MINOR,GK_VERSION_PATCH),GLYPH_TARGET)
+
 
 /*
  * Loads font face from a memory buffer
  * Returns 0 on failure.
  */
-GLYPH_DECLSPEC GLYPH_FACE* gk_load_face_from_memory
-    ( const unsigned char* const data, const int size, const int face_index );
+GLYPH_DECLSPEC GLYPH_FACE* _gk_load_face_from_memory
+    ( const unsigned char* const data, const int size, const int face_index,
+      const int gk_header_version, const int gk_header_target );
+
+#define gk_load_face_from_memory(a,b,c)  \
+    _gk_load_face_from_memory(a,b,c,GK_MAKE_VERSION(GK_VERSION_MAJOR,GK_VERSION_MINOR,GK_VERSION_PATCH),GLYPH_TARGET)
+
+
 
 /*
  * You can manually dispose GLYPH_FACE object with this function.
@@ -289,6 +348,16 @@ GLYPH_DECLSPEC const char* gk_face_family          ( const GLYPH_FACE* const f )
 GLYPH_DECLSPEC const char* gk_face_style           ( const GLYPH_FACE* const f );
 GLYPH_DECLSPEC const char* gk_face_postscript_name ( const GLYPH_FACE* const f );
 GLYPH_DECLSPEC const char* gk_face_driver_name     ( const GLYPH_FACE* const f );
+
+/*
+ * Returns number of charmaps a given face has.
+ */
+GLYPH_DECLSPEC int gk_face_get_number_of_charmaps ( const GLYPH_FACE* const f );
+
+/*
+ * Returns non-zero of the face is scalable.
+ */
+GLYPH_DECLSPEC int gk_face_is_scalable ( const GLYPH_FACE* const f );
 
 /*
  * These functions check the directions supported by the font face.
@@ -323,11 +392,49 @@ GLYPH_DECLSPEC int gk_face_line_spacing ( const GLYPH_FACE* const f );
 GLYPH_DECLSPEC int gk_face_number_of_glyphs ( const GLYPH_FACE* const f );
 
 /*
- * Returns total number of unicode characters, that can be rendered
+ * Returns total number of characters, that can be rendered
  * with this font face.
  */
 GLYPH_DECLSPEC int gk_face_number_of_characters ( GLYPH_FACE* const f );
 
+/*
+ * Returns total number of characters, that are actually defined
+ * in this font face, without remapping.
+ */
+GLYPH_DECLSPEC int gk_face_number_of_own_characters ( GLYPH_FACE* const f );
+
+GLYPH_DECLSPEC int gk_face_number_of_own_characters_in_range(GLYPH_FACE* const f, const unsigned start, const unsigned end);
+
+/*
+ * This function checks if the face has character 'code'.
+ * Remapped characters are included.
+ */
+GLYPH_DECLSPEC int gk_face_has_character
+    ( GLYPH_FACE* const face, const unsigned code );
+
+/*
+ * This function checks if the face has character 'code'
+ * among its own characters, without remapping.
+ */
+GLYPH_DECLSPEC int gk_face_has_own_character
+    ( GLYPH_FACE* const face, const unsigned code );
+
+/*
+ * Remapping
+ */
+GLYPH_DECLSPEC void gk_remap_character
+    ( GLYPH_FACE* const face1, const unsigned code1,
+      GLYPH_FACE* const face2, const unsigned code2 );
+
+GLYPH_DECLSPEC void gk_unmap_character
+    ( GLYPH_FACE* const face, const unsigned code );
+
+GLYPH_DECLSPEC void gk_remap_range
+    ( GLYPH_FACE* const face1, const unsigned code1,
+      GLYPH_FACE* const face2, const unsigned code2, const unsigned range_size );
+
+GLYPH_DECLSPEC void gk_unmap_range
+    ( GLYPH_FACE* const face, const unsigned code, const unsigned range_size );
 
 
 
@@ -404,17 +511,25 @@ GLYPH_DECLSPEC void gk_keeper_debug(const GLYPH_KEEP* const keeper);
  * If 'face' is 0, renderer will be still created, but can't be used until
  * some font face is specified with gk_rend_set_face().
  *
- * FT_RENDER_MODE_NORMAL is the default rendering mode.
+ * Antialiasing is on by default.
  * '?' (U+003F) is the default undefined character.
  */
 GLYPH_DECLSPEC GLYPH_REND* gk_create_renderer
     ( GLYPH_FACE* const face, GLYPH_KEEP* const keeper );
 
 /*
- * Deletes GLYPH_REND object from memory. Don't use in any way pointer
- * to the destroyed renderer, it will crash your program.
+ * Creates a copy of renderer 'rend'.
+ */
+GLYPH_DECLSPEC GLYPH_REND* gk_create_copy_of_renderer
+    ( GLYPH_REND* const rend );
+
+/*
+ * Deletes GLYPH_REND object from memory. Don't use in any way a pointer
+ * to destroyed renderer, it will crash your program.
  */
 GLYPH_DECLSPEC void gk_done_renderer(GLYPH_REND* const rend);
+
+
 
 /*
  * Assigns a particular GLYPH_KEEP object to this renderer.
@@ -434,6 +549,8 @@ GLYPH_DECLSPEC void gk_rend_set_keeper
 GLYPH_DECLSPEC void gk_rend_set_face
     ( GLYPH_REND* const rend, GLYPH_FACE* const new_face );
 
+
+
 /*
  * Sets new text size - size of EM square, in 1/64th of a pixel.
  * Returns 1 on success, 0 on failure.
@@ -449,15 +566,61 @@ GLYPH_DECLSPEC int gk_rend_set_size_pixels ( GLYPH_REND* const rend,
     const unsigned new_pixel_hsize, const unsigned new_pixel_vsize );
 
 /*
- * Sets new angle in radians.
+ * Set and get angle of text rotation.
+ * Increasing the angle will rotate the text counter-clockwise.
  */
-GLYPH_DECLSPEC void gk_rend_set_angle
+GLYPH_DECLSPEC void gk_rend_set_angle_in_radians
     ( GLYPH_REND* const rend, const double new_text_angle );
+GLYPH_DECLSPEC void gk_rend_set_angle_in_degrees
+    ( GLYPH_REND* const rend, const double new_text_angle );
+GLYPH_DECLSPEC double gk_rend_get_angle_in_radians
+    ( const GLYPH_REND* const rend );
+GLYPH_DECLSPEC double gk_rend_get_angle_in_degrees
+    ( const GLYPH_REND* const rend );
+
 
 /*
- *
+ * Set and get angle of text obliqueness. Allowed angles are
+ * from -PI/4 to PI/4 (or -45 to 45 with _in_degrees version).
+ * Negative angle means text is oblique to the left, 0 means text is straight
+ * normal, positive angle means text is oblique to the right.
+ * Use PI/15 (12 degrees) to get common italic text.
  */
-GLYPH_DECLSPEC void gk_rend_set_italic ( GLYPH_REND* const rend, const int new_italic_angle );
+GLYPH_DECLSPEC void gk_rend_set_italic_angle_in_radians
+    ( GLYPH_REND* const rend, const double new_italic_angle );
+GLYPH_DECLSPEC void gk_rend_set_italic_angle_in_degrees
+    ( GLYPH_REND* const rend, const double new_italic_angle );
+GLYPH_DECLSPEC double gk_rend_get_italic_angle_in_radians
+    ( const GLYPH_REND* const rend );
+GLYPH_DECLSPEC double gk_rend_get_italic_angle_in_degrees
+    ( const GLYPH_REND* const rend );
+
+
+/*
+ * Set and get strength of emboldening.
+ * 0 means no emboldening, positive value will produce bold text.
+ * Negative values will shrink the letters making them thinner.
+ * 100 is moderately bold text.
+ */
+GLYPH_DECLSPEC void gk_rend_set_bold_strength
+    ( GLYPH_REND* const rend, const int new_bold_strength );
+GLYPH_DECLSPEC int gk_rend_get_bold_strength
+    ( const GLYPH_REND* const rend );
+
+
+/*
+ * Sets renderer and offset to render the same character before and after that
+ * character is rendered with the renderer 'rend'.
+ */
+GLYPH_DECLSPEC void gk_rend_set_before_renderer
+    ( GLYPH_REND* const rend, GLYPH_REND* const new_before_rend,
+    const int new_before_dx, const int new_before_dy );
+
+GLYPH_DECLSPEC void gk_rend_set_after_renderer
+    ( GLYPH_REND* const rend, GLYPH_REND* const new_after_rend,
+    const int new_after_dx, const int new_after_dy );
+
+
 
 /*
  * Return renderer's ascender and descender in 1/64th of a pixel.
@@ -572,9 +735,18 @@ GLYPH_DECLSPEC void gk_rend_debug ( const GLYPH_REND* const rend );
 
 
 
-
-/*GLYPH_DECLSPEC void text_layout_utf8(GLYPH_REND* const rend,const char* const text,
-    int* const size_x,int* const size_y,int* const origin_x,int* const origin_y);*/
+/*
+ * Returning text dimensions and origin point coordinates.
+ */
+GLYPH_DECLSPEC void gk_text_dimensions_utf8 ( GLYPH_REND* const rend,
+    const char* const text, int* const size_x, int* const size_y,
+    int* const origin_x, int* const origin_y );
+GLYPH_DECLSPEC void gk_text_dimensions_utf16 ( GLYPH_REND* const rend,
+    const unsigned short* const text, int* const size_x, int* const size_y,
+    int* const origin_x, int* const origin_y );
+GLYPH_DECLSPEC void gk_text_dimensions_utf32 ( GLYPH_REND* const rend,
+    const unsigned int* const text, int* const size_x, int* const size_y,
+    int* const origin_x, int* const origin_y );
 
 
 /*
@@ -643,6 +815,9 @@ GLYPH_DECLSPEC void gk_text_advance_subpixel_utf32 ( GLYPH_REND* const rend,
 
 
 
+
+
+
 /*
  * This function renders the character's glyph and adds it into the cache.
  * The rendered character is not printed anywhere.
@@ -650,7 +825,21 @@ GLYPH_DECLSPEC void gk_text_advance_subpixel_utf32 ( GLYPH_REND* const rend,
  * This function can be useful to 'prepare' the glyphs of some characters,
  * that you expect to be used soon.
  */
-GLYPH_DECLSPEC void gk_precache_char ( GLYPH_REND* const rend, const unsigned unicode );
+GLYPH_DECLSPEC void gk_precache_char
+    ( GLYPH_REND* const rend, const unsigned unicode );
+
+GLYPH_DECLSPEC void gk_precache_range
+    ( GLYPH_REND* const rend,
+      const unsigned range_start, const unsigned range_end );
+
+GLYPH_DECLSPEC void gk_precache_set_utf8
+    ( GLYPH_REND* const rend, const char* const char_set );
+
+GLYPH_DECLSPEC void gk_precache_set_utf16
+    ( GLYPH_REND* const rend, const unsigned short* const char_set );
+
+GLYPH_DECLSPEC void gk_precache_set_utf32
+    ( GLYPH_REND* const rend, const unsigned* const char_set );
 
 
 
@@ -660,6 +849,7 @@ GLYPH_DECLSPEC void gk_precache_char ( GLYPH_REND* const rend, const unsigned un
  * Functions, rendering something to the target surface.
  */
 
+#ifdef GLYPH_TARGET
 
 /*
  * Outputs a character 'unicode' to the 'bmp', using renderer 'rend'.
@@ -683,6 +873,10 @@ GLYPH_DECLSPEC void gk_render_char ( GLYPH_TARGET_SURFACE* const bmp,
     GLYPH_REND* const rend, const unsigned unicode,
     int* const pen_x, int* const pen_y );
 
+GLYPH_DECLSPEC void gk_render_char_center ( GLYPH_TARGET_SURFACE* const bmp,
+    GLYPH_REND* const rend, const unsigned unicode, const int x, const int y );
+
+
 /*
  *
  */
@@ -699,21 +893,56 @@ GLYPH_DECLSPEC void gk_render_line_utf32 ( GLYPH_TARGET_SURFACE* const bmp,
     const int pen_x, const int pen_y );
 
 
-
 /*
  * Target-specific functions
  */
-#if (GLYPH_TARGET == GLYPH_TARGET_ALLEGRO)
+#if (GLYPH_TARGET == GLYPH_TARGET_ALLEGGL) || (GLYPH_TARGET == GLYPH_TARGET_OPENGL)
 
-GLYPH_DECLSPEC FONT* gk_create_allegro_font(GLYPH_REND* const r);
+GLYPH_DECLSPEC GLYPH_TEXTURE *gk_create_texture( GLYPH_REND *rend,
+    int rangeStart, int rangeLength );
+
+GLYPH_DECLSPEC void gk_send_texture_to_gpu( GLYPH_TEXTURE *texture );
+
+GLYPH_DECLSPEC void gk_render_line_gl_utf8( GLYPH_TEXTURE *texture,
+    const char *text, int x, int y );
+
+GLYPH_DECLSPEC void gk_unload_texture_from_gpu( GLYPH_TEXTURE *texture );
+
+GLYPH_DECLSPEC void gk_destroy_texture( GLYPH_TEXTURE *texture );
 
 #endif
+
+
+
+#if (GLYPH_TARGET == GLYPH_TARGET_ALLEGRO)
+
+/*
+ * Creates an Allegro FONT with Glyph Keeper's vtable.
+ * The renderer 'rend' will be used for all text output with this font.
+ * So don't dispose the renderer if you are still going to use the font.
+ */
+GLYPH_DECLSPEC FONT* gk_create_allegro_font ( GLYPH_REND* const rend );
+
+/*
+ * Creates a native Allegro FONT structure, with Allegro vtable.
+ * In this case the renderer 'rend' is not used for output, so you can
+ * safely dispose it.
+ */
+GLYPH_DECLSPEC FONT* gk_create_allegro_bitmap_font_for_range
+    ( GLYPH_REND* const rend, const int range_start, const int range_end,
+    const int color_depth );
+
+#endif
+
+
+#endif  /* GLYPH_TARGET */
 
 
 
 #ifdef __cplusplus
 }
 #endif
+
 
 #undef GLYPH_DECLSPEC
 
@@ -816,6 +1045,10 @@ GLYPH_DECLSPEC FONT* gk_create_allegro_font(GLYPH_REND* const r);
 #define  render_char                      gk_render_char
 #define  render_line_utf8                 gk_render_line_utf8
 #define  render_line_utf32                gk_render_line_utf32
+
+#define  gk_rend_set_angle                gk_rend_set_angle_in_radians
+#define  gk_rend_set_italic               gk_rend_set_italic_angle_in_degrees
+#define  gk_rend_set_bold                 gk_rend_set_bold_strength
 
 #endif  /* GK_LEGACY */
 

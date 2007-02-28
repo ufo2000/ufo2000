@@ -1,9 +1,12 @@
 
+ Glyph Keeper license
+ --------------------
+
 Glyph Keeper - a text-rendering library
 
-version 0.22 (February 15, 2005)
+version 0.32 (February 6, 2007)
 
-Copyright (c) 2003-2005 Kirill Kryukov
+Copyright (c) 2003-2007 Kirill Kryukov
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages
@@ -20,3 +23,103 @@ freely, subject to the following restrictions:
 2. Altered source versions must be plainly marked as such, and must not be
    misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
+
+Kirill Kryukov <kkryukov@gmail.com>
+
+
+
+ Bundled 3-rd party software
+ ---------------------------
+
+Glyph Keeper source distribution contains a number of files that are not
+created by me:
+
+ - FreeType library source code, under "freetype" directory. It is required
+   for compiling Glyph Keeper, although you may use your own copy of FreeType
+   instead. I use and distribute it in agreement with FreeType license located
+   in "freetype/FTL.txt" file. See the "freetype/readme.Kirr-mod.txt" file for
+   the list of my modifications.
+
+ - Example font "DejaVu Sans" version 2.14, located in "fonts/DejaVuSans.ttf"
+   file. Check its the readme "fonts/DejaVu readme.txt" and license
+   "fonts/DejaVu licene.txt" for more information about it.
+
+ - Allegro font "fonts/demofont.pcx". It is used by Allegro benchmark program,
+   a part of Glyph Keeper benchmark suite. To say the truth I don't remember
+   where it came from. I believe it came from Allegro library examples which
+   is a giftware. Corerect me if I am wrong.
+
+ - AllegroFont 1.9.2 library in "benchmark/alfont.c" file (slightly modified).
+   It is used by a benchmark program to compare performance of Glyph Keeper
+   with AllegoFont. It is created by Javier Gonzalez, and distributed under
+   FreeType license. (See the source for copyright info).
+
+
+
+ FreeType note
+ -------------
+
+As using Glyph Keeper requires you to use FreeType, you must also comply
+with FreeType license. Glyph Keeper license does not substitute FreeType
+license for you!
+
+Please check the FreeType license located in "freetype/license.txt" file in
+Glyph Keeper source archive if you are using FreeType bundled with Glyph
+Keeper. If you are using FreeType already installed on your system, refer to
+its license instead.
+
+I include FreeType 2.2.1 source with Glyph Keeper source distribution. It is
+located in "freetype" directory. I did not write any code there. I include it
+for convenience of those who don't have FreeType installed on their system.
+I use and distribute it together with Glyph Keeper under the terms of FreeType
+license, located in "freetype/FTL.txt" file.
+
+
+
+ Patent note 1
+ -------------
+
+There is an important potential patent issue involved in using FreeType, and
+therefore Glyph Keeper. It is best explained on FreeType project web-site
+here: http://www.freetype.org/patents.html
+
+Briefly, you should be careful if you are using TrueType bytecode interpreter
+patented by Apple. It is disabled (turned OFF) by default in FreeType bundled
+with Glyph Keeper. This means Glyph Keeper will not render some fonts as
+beautifully as they are rendered by MacOS or Windows.
+
+To activate bytecode interpreter (at your own risk) do the following:
+Open header file "include/freetype/config/ftoption.h", and find this line:
+
+/* #define TT_CONFIG_OPTION_BYTECODE_INTERPRETER */ 
+
+(It is commented out, which means bytecode interpreter is disabled and you are
+safe, but some fonts may look bad)
+
+To activate bytecode interpreter, change that line to:
+
+#define TT_CONFIG_OPTION_BYTECODE_INTERPRETER 
+
+And re-compile FreeType and Glyph Keeper (and your program if you are linking
+statically). Then bytecode interpreter will be enabled, and some fonts may
+look better.
+
+
+
+ Patent note 2
+ -------------
+
+My FreeType build has sub-pixel rendering (a.k.a. LCD rendering, or ClearType)
+disabled by default. It is patented by Microsoft, so you should be careful
+with it. If you want to activate it, open the header file
+"include/freetype/config/ftoption.h", find this line that sais:
+
+/* #define FT_CONFIG_OPTION_SUBPIXEL_RENDERING */
+
+and change it to
+
+#define FT_CONFIG_OPTION_SUBPIXEL_RENDERING
+
+Don't forget to re-compile FreeType and Glyph Keeper if you change it. Note
+that Glyph Keeper does not use sub-pixel rendering at the moment, but it may
+change in future.
