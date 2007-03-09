@@ -63,14 +63,11 @@ public:
     int Position; //!< 1 - the sender is a player going first, 2 - second
     Packet();
     void reset();
-    void create(char *header);
     void create(Command cmd);
     Command command(char *buf, int buf_size);
 
     inline char *str() { return data; }
     inline int str_len() { return size; }
-    void push(char *buf, int buf_size);
-    void pop(char *buf, int buf_size);
 
     Packet &operator<<(int i);
     Packet &operator>>(int &i);
@@ -92,9 +89,7 @@ public:
     ~BQ();
 
     void put(const std::string &str);
-    void put(char *buf, int buf_size);
     int get(std::string &str);
-    int get(char *buf, int &buf_size);
 };
 
 #endif

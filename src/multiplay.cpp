@@ -261,7 +261,7 @@ void Net::check()
     recv(packet);
 
     if (!packet.empty()) {
-        queue->put((char *)packet.data(), packet.size());
+        queue->put(packet);
         if (FLAGS & F_RAWMESSAGES) {
             g_console->printf( _("put:[%d]"), packet.size());
             g_console->printf("%s", packet.c_str());
@@ -1184,8 +1184,8 @@ void Net::send_unit_data(int num, int lev, int col, int row, MANDATA *md, ITEMDA
     pkt << lev;
     pkt << col;
     pkt << row;
-    pkt.push((char *)md, sizeof(MANDATA));
-    pkt.push((char *)id, sizeof(ITEMDATA));
+    pkt << std::string((char *)md, (char *)md + sizeof(MANDATA));
+    pkt << std::string((char *)id, (char *)id + sizeof(ITEMDATA));
     //send();
     send(pkt.str(), pkt.str_len());
 }
@@ -1193,16 +1193,21 @@ void Net::send_unit_data(int num, int lev, int col, int row, MANDATA *md, ITEMDA
 int Net::recv_unit_data()
 {
     int num, lev, col, row;
-    MANDATA md;
-    ITEMDATA id;
+    std::string str_md;
+    std::string str_id;
 
     pkt >> num;
     pkt >> lev;
     pkt >> col;
     pkt >> row;
-    pkt.pop((char *) & md, sizeof(MANDATA));
-    pkt.pop((char *) & id, sizeof(ITEMDATA));
-
+    pkt >> str_md;
+    pkt >> str_id;
+    
+    if ((int)str_md.size() != (int)sizeof(MANDATA) || (int)str_id.size() != (int)sizeof(ITEMDATA)) {
+        error("invalid unit data packet");
+        return 0;
+    }
+    
     if (num > 19) {
         error("PD num > 19");
         return 0;
@@ -1211,8 +1216,8 @@ int Net::recv_unit_data()
     pd_remote->lev[num] = lev;
     pd_remote->col[num] = col;
     pd_remote->row[num] = row;
-    memcpy(&pd_remote->md[num], &md, sizeof(MANDATA));
-    memcpy(&pd_remote->id[num], &id, sizeof(ITEMDATA));
+    memcpy(&pd_remote->md[num], str_md.data(), sizeof(MANDATA));
+    memcpy(&pd_remote->id[num], str_id.data(), sizeof(ITEMDATA));
 
     return 1;
 }

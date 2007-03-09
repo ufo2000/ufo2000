@@ -46,14 +46,6 @@ void Packet::reset()
     memset(data, 0, sizeof(data));
 }
 
-void Packet::create(char *header)
-{
-    reset();
-    ASSERT(strchr(header, '_') == NULL);
-    int len = sprintf(data + size, "%s_", header);
-    size += len;
-}
-
 extern Units local;
 extern int build_crc();
 extern int GAMELOOP;
@@ -115,20 +107,6 @@ Command Packet::command(char *buf, int buf_size)
             }
         }
     return CMD_NONE;
-}
-
-void Packet::push(char *buf, int buf_size)
-{
-    for (int n = 0; n < buf_size; n++)
-        data[size++] = buf[n];
-    data[size++] = '_';
-}
-
-void Packet::pop(char *buf, int buf_size)
-{
-    for (int n = 0; n < buf_size; n++)
-        buf[n] = data[cur++];
-    cur++;
 }
 
 Packet &Packet::operator<<(const std::string &x)
@@ -233,27 +211,11 @@ void BQ::put(const std::string &str)
     bq.push_back(str);
 }
 
-void BQ::put(char *buf, int buf_size)
-{
-    bq.push_back(std::string(buf, buf_size));
-}
-
 int BQ::get(std::string &str)
 {
     if (bq.empty()) return 0;
 
     str = bq.front();
-    bq.pop_front();
-    return 1;
-}
-
-int BQ::get(char *buf, int &buf_size)
-{
-    if (bq.empty()) return 0;
-
-    buf_size = bq.front().size();
-    memcpy(buf, bq.front().data(), buf_size);
-    buf[buf_size] = 0;
     bq.pop_front();
     return 1;
 }
