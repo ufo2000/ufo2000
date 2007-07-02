@@ -397,7 +397,7 @@ void Map::draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type,
     ASSERT(frame);
 
     int light_level = _seen ? cell.m_light * 16 : 0;
-    draw_alpha_sprite(_dest, frame, _x, _y - 6, light_level);
+    draw_alpha_sprite(_dest, frame, _x, _y - CELL_SCR_Y, light_level);
 }
 
 extern volatile unsigned int ANIMATION;
@@ -430,7 +430,7 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
         for (int row = r1; row <= r2; row++) {
             for (int col = c2; col >= c1; col--) {
                 sx = x + CELL_SCR_X * col + CELL_SCR_X * row;
-                sy = y - (col) * CELL_SCR_Y + CELL_SCR_Y * row - 26 - lev * CELL_SCR_Z - 1;
+                sy = y - (col) * CELL_SCR_Y + CELL_SCR_Y * row - CELL_SCR_Z - lev * CELL_SCR_Z - 1;
                 if ((sx > -32) && (sx < battleview_width) && (sy >= -34) && (sy < battleview_height)) {
                     draw_cell_pck(sx, sy, lev, col, row, 0, platoon_local->is_seen(lev, col, row), screen2);
                 }
@@ -440,7 +440,7 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
         for (int row = r1; row <= r2; row++) {
             for (int col = c2; col >= c1; col--) {
                 sx = x + CELL_SCR_X * col + CELL_SCR_X * row;
-                sy = y - (col) * CELL_SCR_Y + CELL_SCR_Y * row - 26 - lev * CELL_SCR_Z - 1;
+                sy = y - (col) * CELL_SCR_Y + CELL_SCR_Y * row - CELL_SCR_Z - lev * CELL_SCR_Z - 1;
 
                 if ((sx > -32) && (sx < battleview_width) && (sy >= -34) && (sy < battleview_height)) {
                     if (m_cell[sel_lev][col][row]->MOUSE && show_cursor) {
@@ -455,13 +455,13 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
                             }
                                 
                             if (!TARGET)
-                                draw_alpha_sprite(screen2, selectbox[mtype], sx, sy - 6);
+                                draw_alpha_sprite(screen2, selectbox[mtype], sx, sy - CELL_SCR_Y);
                             else if (target.action != THROW)
-                                draw_alpha_sprite(screen2, aimbox[mtype], sx, sy - 6);
+                                draw_alpha_sprite(screen2, aimbox[mtype], sx, sy - CELL_SCR_Y);
                             else
-                                draw_alpha_sprite(screen2, throwbox[mtype], sx, sy - 6);
+                                draw_alpha_sprite(screen2, throwbox[mtype], sx, sy - CELL_SCR_Y);
                         } else if (lev < sel_lev) {
-                            draw_alpha_sprite(screen2, selectbox[5], sx, sy - 6);
+                            draw_alpha_sprite(screen2, selectbox[5], sx, sy - CELL_SCR_Y);
                         }
                     }
 
@@ -534,13 +534,13 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
                             }
                                 
                             if (!TARGET)
-                                draw_alpha_sprite(screen2, selectbox[mtype], sx, sy - 6);
+                                draw_alpha_sprite(screen2, selectbox[mtype], sx, sy - CELL_SCR_Y);
                             else if (target.action != THROW)
-                                draw_alpha_sprite(screen2, aimbox[mtype], sx, sy - 6);
+                                draw_alpha_sprite(screen2, aimbox[mtype], sx, sy - CELL_SCR_Y);
                             else
-                                draw_alpha_sprite(screen2, throwbox[mtype], sx, sy - 6);
+                                draw_alpha_sprite(screen2, throwbox[mtype], sx, sy - CELL_SCR_Y);
                         } else if (lev < sel_lev) {
-                            draw_alpha_sprite(screen2, selectbox[2], sx, sy - 6);
+                            draw_alpha_sprite(screen2, selectbox[2], sx, sy - CELL_SCR_Y);
                         }
                     }
                     // Draw smoke
@@ -548,7 +548,7 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
                         if (fire_time(lev, col, row) > 0) {
                             if (fire_time(lev, col, row) > 1) {
                                 int frame = (ANIMATION / 3) % (int)fire_large.size();
-                                draw_alpha_sprite(screen2, fire_large[frame], sx, sy - 6);
+                                draw_alpha_sprite(screen2, fire_large[frame], sx, sy - CELL_SCR_Y);
                             } else {
                                 int frame = (ANIMATION / 3) % (int)fire_small.size();
                                 draw_alpha_sprite(screen2, fire_small[frame], sx, sy - 6);
@@ -559,17 +559,17 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
                                 switch (st) {
                                     case 1: {
                                         int frame = (ANIMATION / 3) % (int)smoke_small.size();
-                                        draw_alpha_sprite(screen2, smoke_small[frame], sx, sy - 6);
+                                        draw_alpha_sprite(screen2, smoke_small[frame], sx, sy - CELL_SCR_Y);
                                         break;
                                     }
                                     case 2: {
                                         int frame = (ANIMATION / 3) % (int)smoke_medium.size();
-                                        draw_alpha_sprite(screen2, smoke_medium[frame], sx, sy - 6);
+                                        draw_alpha_sprite(screen2, smoke_medium[frame], sx, sy - CELL_SCR_Y);
                                         break;
                                     }
                                     default: {
                                         int frame = (ANIMATION / 3) % (int)smoke_large.size();
-                                        draw_alpha_sprite(screen2, smoke_large[frame], sx, sy - 6);
+                                        draw_alpha_sprite(screen2, smoke_large[frame], sx, sy - CELL_SCR_Y);
                                         break;
                                     }
                                 }
@@ -595,7 +595,7 @@ void Map::draw(int show_cursor, int battleview_width, int battleview_height)
             !(c >= c1 && c <= c2)) continue;
                 
         sx = x + CELL_SCR_X * c + CELL_SCR_X * r;
-        sy = y - (c) * CELL_SCR_Y + CELL_SCR_Y * r - 26 - l * CELL_SCR_Z - 1;
+        sy = y - (c) * CELL_SCR_Y + CELL_SCR_Y * r - CELL_SCR_Z - l * CELL_SCR_Z - 1;
                 
         int e = exp->state;
         if (e >= 0) {
@@ -1544,12 +1544,13 @@ void Map::update_vision_matrix(Soldier *watcher)
     }
     
     memset(field, 0, size());
+	/*255 directions possible : 1 to 8, times 32 = 255. 0 is 12 O'clock, 64 is 3 O'clock, 128 is 6 O'clock, 192 is 9 O'clock*/
     int ang = dir * 32;
-
-    for (int fi = 24; fi <= 128 - 24; fi += 4) {
+/* Sweep vertical... should be : up above to 45 degrees underneath*/
+    for (int fi = 8; fi <= 128 - 32; fi += 1) {
         fixed cos_fi = fcos(itofix(fi));
         fixed sin_fi = fsin(itofix(fi));
-
+/* Sweep horizontal */
         for (int te = ang - 32; te <= ang + 32; te += 1) {
             fixed cos_te = fcos(itofix(te));
             fixed sin_te = fsin(itofix(te));
@@ -1560,7 +1561,7 @@ void Map::update_vision_matrix(Soldier *watcher)
             int smokeway = 0;
             int lightway = 0;
             int lw_delta = 0;
-
+/* Sweep distance */
             for (l = 1; l < 18 - smokeway * 3; l++) { /////////////from smoke
 
                 vz = pos.level() + fixtoi(fmul(itofix(l), cos_fi));                

@@ -901,6 +901,7 @@ void initmain(int argc, char *argv[])
     lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-images.lua");
 
     // Load standard and custom maps
+	console<<"Loading extensions"<<std::endl;
     lua_safe_dofile(L, DATA_DIR "/init-scripts/standard-maps.lua", "plugins_sandbox");
     for_each_file(DATA_DIR "/newmaps/*.lua", FA_RDONLY | FA_ARCH, find_lua_files_callback, 0);
     for_each_file(DATA_DIR "/extensions/*", FA_DIREC | FA_RDONLY | FA_ARCH, find_dir_callback, 0);
