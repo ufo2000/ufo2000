@@ -4,7 +4,7 @@
 
 Note: This file is still not complete and some things still can be changed
 in the future. You can ask questions and discuss it in ufo2000 forum
-(http://www.xcomufo.com/forums/index.php?showforum=266) and also suggest 
+(http://www.xcomufo.com/forums/index.php?showforum=266) and also suggest
 what you would like to see changed or updated here.
 
 ==============================================================================
@@ -16,28 +16,35 @@ First you need to get the latest sources of the game. We are using Subversion
 to CVS, so if you are familiar with CVS, you will have no problems using it.
 
 Checking out your working copy of ufo2000 sources:
-# svn co https://svn.sourceforge.net/svnroot/ufo2000/trunk ufo2000
+# svn co https://ufo2000.svn.sourceforge.net/svnroot/ufo2000/trunk ufo2000
 
-When other people commit their changes to the repository, you need to update 
-your working copy to keep it up to date:
+Other people may commit their changes to the repository while you are working
+with your copy of sources, so you need to update your working copy from time
+to time to keep it up to date:
 # svn up
 
-If you added some useful feature to the game or fixed a bug, you may want
-share your changes with the other people and get them in the next version
-of the game. Please review everything you have changed to avoid adding bugs 
-and breaking existing code, check that your code conforms to our sources 
-formatting style described in the next chapter. Also the patch should be
-reasonably small, readable and address a single problem. Finally create a
-patch using subversion:
+There is quite a comprehensive and well written book about Subversion and
+version control systems in general here: http://svnbook.red-bean.com/
+
+Compilation instruction can be found here:
+http://www.xcomufo.com/forums/index.php?showtopic=8144
+
+Once you got familiar with compiling the game and have added some useful
+feature or fixed a bug, you may want to share your changes with the other
+people and get them in the next version of the game. Please review everything
+you have changed to avoid adding bugs and breaking existing code, check that
+your code conforms to our sources formatting style described in the next
+chapter. Also any patch should be reasonably small, readable and address
+a single problem. Patches can be created with subversion using:
 # svn diff > somefile.diff
 
-You can submit the patch to our bugtracker and one of the developers with 
+You can submit the patch to our bugtracker and one of the developers with
 full access to the repository can review it and commit. Also if anyone finds
-any problems with the patch, we can discuss it there it gets committed.
+any problems with the patch, we can discuss it there before it gets committed.
 
-If you are looking for a task to do, you can visit our bugtracker to see 
-currently open and unassigned bugs and feature requests: 
-http://ufo2000.xcomufo.com/mantis/
+If you don't know where to start and what to do, you can visit our bugtracker
+and be sure to see a big list of currently open and unassigned bugs and
+feature requests: http://ufo2000.xcomufo.com/mantis/
 
 ==============================================================================
 == Sources formatting style
@@ -47,17 +54,17 @@ Most important rules:
 * Indentation is 4 spaces
 * K&R braces style (see http://en.wikipedia.org/wiki/Indent_style)
 
-The other issue that always comes up in C styling is the placement of braces. 
-Unlike the indent size, there are few technical reasons to choose one placement 
-strategy over the other, but the preferred way, as shown to us by the prophets 
-Kernighan and Ritchie, is to put the opening brace last on the line, and put 
+The other issue that always comes up in C styling is the placement of braces.
+Unlike the indent size, there are few technical reasons to choose one placement
+strategy over the other, but the preferred way, as shown to us by the prophets
+Kernighan and Ritchie, is to put the opening brace last on the line, and put
 the closing brace first, thusly:
 
     if (x is true) {
         we do y
     }
 
-However, there is one special case, namely functions: they have the opening 
+However, there is one special case, namely functions: they have the opening
 brace at the beginning of the next line, thus:
 
     int function(int x)
@@ -65,13 +72,13 @@ brace at the beginning of the next line, thus:
         body of function
     }
 
-Heretic people all over the world have claimed that this inconsistency is ... 
-well ... inconsistent, but all right-thinking people know that (a) K&R are 
-right and (b) K&R are right. Besides, functions are special anyway (you can't 
+Heretic people all over the world have claimed that this inconsistency is ...
+well ... inconsistent, but all right-thinking people know that (a) K&R are
+right and (b) K&R are right. Besides, functions are special anyway (you can't
 nest them in C).
 
-Note that the closing brace is empty on a line of its own, except in the cases 
-where it is followed by a continuation of the same statement, ie a "while" in 
+Note that the closing brace is empty on a line of its own, except in the cases
+where it is followed by a continuation of the same statement, ie a "while" in
 a do-statement or an "else" in an if-statement, like this:
 
     do {
@@ -102,14 +109,14 @@ Switch statement example:
             break;
     }
 
-It is also currently recommended to add 'g_' prefix to global variables 
+It is also currently recommended to add 'g_' prefix to global variables
 and 'm_' to class member fields. Class names should have first uppercase
-letter, function and variable names should begin with a lowercase letter. 
+letter, function and variable names should begin with a lowercase letter.
 Constants should be all uppercase. The use of #ifdef's should be avoided
 if possible.
 
 The sources should have doxygen style comments describing arguments
-and return values for different functions (doxygen home page is 
+and return values for different functions (doxygen home page is
 here: http://www.doxygen.org).
 
 Note: not all the UFO2000 sources are formatted as described here, this
@@ -142,78 +149,78 @@ included into ufo2000 source tree.
 Some patches or other changes might be not stable enough for committing to
 SVN and need more real-world testing. Just compiling experimental build
 of the game and connecting to the main server can cause problems because
-starting the game against normal build user might cause all sorts of 
+starting the game against normal build user might cause all sorts of
 compatibility problems.
 
-In this case it is recommended to edit 'src/version.h' file in the sources 
-directory and change UFO_VERSION_TAG define to something else, for example 
-to something like "experimental-mindcontrol". After that you can safely 
-distribute this experimental binary, connect to the primary server, play 
-games and do some testing without interfering other users playing ordinary 
+In this case it is recommended to edit 'src/version.h' file in the sources
+directory and change UFO_VERSION_TAG define to something else, for example
+to something like "experimental-mindcontrol". After that you can safely
+distribute this experimental binary, connect to the primary server, play
+games and do some testing without interfering other users playing ordinary
 "release" or "beta" builds.
 
-The server allows different versions to play on the same server without 
-interfering each other. In 'version.h' now we have VERSION_TAG constant, 
-only clients which have the same tag see each other on the server, so 
-changing it to something like "experimental" any other tag and building 
-the game will ensure that 'normal' players will be able to continue 
-playing 'beta' versions, but the courageous and curious ones will be 
-able to play 'experimental' versions. Server status page now also 
-shows some information about the versions and tags of the players currently 
+The server allows different versions to play on the same server without
+interfering each other. In 'version.h' now we have VERSION_TAG constant,
+only clients which have the same tag see each other on the server, so
+changing it to something like "experimental" any other tag and building
+the game will ensure that 'normal' players will be able to continue
+playing 'beta' versions, but the courageous and curious ones will be
+able to play 'experimental' versions. Server status page now also
+shows some information about the versions and tags of the players currently
 who are logged on to the server.
 
-It should be easy to provide separate stability statistics for each tag 
-on http://ufo2000.xcomufo.com/results-beta.php page. So now anyone can 
-checkout the latest sources of the game from the repository, apply some 
-patch, set some special tag in version.h and put this build for download. 
-People can download this build and play it, if we see that stability of 
-this build is acceptable after a reasonable number of games, the patch 
+It should be easy to provide separate stability statistics for each tag
+on http://ufo2000.xcomufo.com/results-beta.php page. So now anyone can
+checkout the latest sources of the game from the repository, apply some
+patch, set some special tag in version.h and put this build for download.
+People can download this build and play it, if we see that stability of
+this build is acceptable after a reasonable number of games, the patch
 can be safely committed to the repository.
 
 ==============================================================================
 == Some issues that should be taken into account when coding for UFO2000
 ==============================================================================
 
-1. Don't use floating point calculations for anything that should be 
-   identically processed on both local and remote computer. Currently the 
-   game sends a command to the remote host and simultaneously executes it on 
+1. Don't use floating point calculations for anything that should be
+   identically processed on both local and remote computer. Currently the
+   game sends a command to the remote host and simultaneously executes it on
    both computers when making any action. If the results of command
    execution differ, the game state gets out of sync. Floating point
    is bad as different hardware implementations can have different precision
-   and rounding mechanics, also different compilers can reorder some 
+   and rounding mechanics, also different compilers can reorder some
    instructions or change them to equivalents but with slightly different
    precision (see '-ffast-math' option for gcc for example)
 
    Also see the following article for more explanations:
    http://web.mit.edu/sunsoft_v6.1/SUNWspro/DOC5.0/lib/locale/C/html/common/ug/goldberg1.doc.html
 
-   Some correction: now we use fdlibm (src/fdlibm) math library which is used 
-   in java to ensure the same results for floating point calculations, so this 
+   Some correction: now we use fdlibm (src/fdlibm) math library which is used
+   in java to ensure the same results for floating point calculations, so this
    problem it not so critical now. Anyway, it seems to be a bit fragile and
-   requires special care, in addition floating point math must be IEEE-754 
+   requires special care, in addition floating point math must be IEEE-754
    compatible on target platform anyway (which is not true for some platforms).
 
 ==============================================================================
 == Good rules of programming
 ==============================================================================
 
-1. Copy/paste is a bad habbit, better create a function containing reusable 
+1. Copy/paste is a bad habbit, better create a function containing reusable
    code
-2. Hide implementation details for classes (use private members when possible) 
-   and modules (use static functions and variables). It makes the interaction 
+2. Hide implementation details for classes (use private members when possible)
+   and modules (use static functions and variables). It makes the interaction
    between different parts of code more obvious and easier to understand.
-3. Avoid the use of global variables, as they are visible from just anywhere, you 
+3. Avoid the use of global variables, as they are visible from just anywhere, you
    never know for sure when they can be unexpectedly modified.
 4. Don't add anything that "can be useful in the future". The code that is not
    really used tends to contain bugs and makes the sources harder to maintain.
-   In addition, when the future really comes, there is a good chance that 
+   In addition, when the future really comes, there is a good chance that
    this code will need to be rewritten anyway :)
 5. If you have to add some dirty hack to make a quick fix or workaround
-   some weird problem, always add a comment explaining why you did this. 
+   some weird problem, always add a comment explaining why you did this.
    Otherwise other people (or even you after some time) will have problems
    understanding this code in the future increasing a chance of breaking it.
-6. Comment every nontrivial function, input arguments and return value, 
-   interaction with the rest of code if there are some issues. If you find 
+6. Comment every nontrivial function, input arguments and return value,
+   interaction with the rest of code if there are some issues. If you find
    that something is hard to comment, that's an indication that this code
    is probably written wrong :)
 7. More to add....
@@ -245,6 +252,67 @@ and minimizing unnecessary impact on the rest of the code.  Many full
 committers are people who have not made major code contributions, but
 rather lots of small, clean fixes, each of which was an unambiguous
 improvement to the code.
+
+==============================================================================
+== Version numbers and release management
+==============================================================================
+
+Every ufo2000 release uses three part version number convention: major.minor.svnrev
+
+major  - is the major version number (is currently set to 0), it is currently
+         reserved for future use, it will change to '1' some day
+minor  - that's the primary version number which can identify big releases
+         even minor version numbers are used for stable releases and odd minor
+         version numbers are used for beta releases
+svnrev - that's just SVN revision number which can be used to easily find the
+         sources for any UFO2000 build in SVN repository
+
+As mentioned above, there are generally two types of releases: beta and stable.
+
+Beta versions are released quite frequently as soon as some new features get
+implemented (new beta releases may become available weekly or even daily), they
+are compiled directly from SVN trunk. When you see an odd minor version number,
+you can clearly know that the sources of this build can be obtained from SVN
+repositary by performing checkout of svnrev revision from SVN trunk. In other
+words, we make use of subversion ability to identify the whole source three by
+a single revision number and use it as an automatically generated version number.
+Makefile automatically takes case of assigning version numbers and can build full
+ufo2000 installers with running only a single command. This eliminates human factor
+and guarantees consistent releases with proper version. If some ufo2000 build has
+'M' suffix in the end of the version string, it means that this release was built
+from not a pure SVN revision but from modified sources. Beta versions should be
+always built from some pure SVN revision so that we clearly know what sources
+were used for it (knowing what sources exacltly were used for any version is
+vital when analyzing bugreports and debugging).
+
+Stable versions are released less frequently (interval between stable releases is
+usually measured in months) after some extensive testing to ensure that they don't
+have any major problems. Stable versions are intended for general use by the players
+who don't like to upgrade too often and want more stability.
+
+The list of planned features and bugfixes for each stable release can be found in
+the bugtracker pinned at top. Once SVN trunk is in the more or less consistent form
+and all the needed features already got implemented, release branch gets created.
+Stable branches have a name matching planned version number in the form of 'major.minor'
+without revision number (exact revision number is not known at that time). Branches can
+be seen here: http://ufo2000.svn.sourceforge.net/viewvc/ufo2000/branches/
+
+After a stable branch got created, development may continue in trunk and new beta
+versions may get released from it as usual. On the other hand, only bugfixes and
+other changes which are blocking release are allowed in the stable branch. In some
+exceptional cases it is allowed to backport some changes to a stable branch from trunk,
+but these changes must be solid and well tested. A few release candidate builds can
+precede the final release. Getting the sources for any release candidate is also
+quite simple: if the minor version number is even, we need to checkout the appropriate
+revision from the branch named after 'major.minor' pair. Once the quality of sources
+in the stable branch is considered good enough, a release is built from them and tagged:
+http://ufo2000.svn.sourceforge.net/viewvc/ufo2000/tags/
+
+Some fixes may get released for stable versions later, but it is important not to break
+game compatibility. If compatibility breakage is unavoidable for the required fixes,
+minor number should be also changed effectively resulting in a new 'big' stable version
+release. Minor bugfixes for stable releases can result in only svnrev part of the version
+number changing.
 
 ==============================================================================
 
