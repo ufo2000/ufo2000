@@ -156,9 +156,11 @@ Map::Map(GEODATA &mapdata)
     strcpy(m_terrain_name, terrain_name.c_str());
     load_terrain_pck(m_terrain_name, m_terrain);
     loadmaps(mapdata.mapdata);
-
+	
     build_visi();
 
+	build_lights();
+	
     m_minimap_area = new MinimapArea(this, SCREEN_W - SCREEN2W, SCREEN2H);
     
     explo_spr_list = new effect_vector;
@@ -199,12 +201,10 @@ void Map::loadmaps(unsigned char *_map)
     lua_pushstring(L, "Maps");
     lua_gettable(L, -2);
     ASSERT(lua_istable(L, -1));
-
     int i = 0;
     for (int row = 0; row < height; row++) {
         for (int col = 0; col < width; col++) {
             if (_map[i] != 0xFE) {
-                
                 lua_pushnumber(L, _map[i]);
                 lua_gettable(L, -2);
                 // Todo: fix ufo200 crashing
@@ -222,6 +222,7 @@ void Map::loadmaps(unsigned char *_map)
 					load_lua_map(map_name, col * 10, row * 10);
 					lua_pop(L, 1);
 				}else{
+					battle_report("Unable to load terrain, line 230 of map.cpp\n");
 					//This should not happen - check Terrain::terrain(str)
 					ASSERT(false);
 				}
@@ -350,7 +351,6 @@ int Map::loadmap(const char *fname, int _c, int _r)
                 if (i < 3 || i + 4 > size) continue;
                 if (col < 0 || col >= width * 10) continue;
                 if (row < 0 || row >= height * 10) continue;
-
                 assign_type(lev, col, row, 0, mbuf[i + 0]);
                 assign_type(lev, col, row, 1, mbuf[i + 1]);
                 assign_type(lev, col, row, 2, mbuf[i + 2]);
@@ -366,9 +366,6 @@ int Map::loadmap(const char *fname, int _c, int _r)
 void Map::assign_type(int lev, int col, int row, int part, int type)
 {
     m_cell[lev][col][row]->type[part] = type;
-    
-    if (m_terrain->m_mcd[type].Light_Source)
-        add_light_source(lev, col, row, TILE_LIGHT);
 }
 
 void Map::drawitem(ALPHA_SPRITE *itype, int gx, int gy)
@@ -396,7 +393,13 @@ void Map::draw_cell_pck(int _x, int _y, int _lev, int _col, int _row, int _type,
 
     ASSERT(frame);
 
-    int light_level = _seen ? cell.m_light * 16 : 0;
+    /*int light_level = _seen ? cell.m_light * 16 : 0;*/
+	int light_level = 0;
+	if (_seen) {
+		light_level = ((cell.m_light < cell.m_visi)) ? cell.m_visi * 16 : cell.m_light * 16;
+	}else {
+		light_level = 0;
+	}	
     draw_alpha_sprite(_dest, frame, _x, _y - CELL_SCR_Y, light_level);
 }
 
@@ -895,7 +898,7 @@ void Map::build_visi_cell(int lev, int col, int row)
                 int dx = i - 1;
                 int dy = j - 1;
 
-                m_cell[lev][col][row]->visi[k][i][j] = 0; //so below we found if cell is(become) visible, but if it become INvisible?
+                m_cell[lev][col][row]->visi[k][i][j] = 0; //so below we check if the cell becomes visible, but what about if it becomes INvisible?
                 switch (dz) {
                     case 0:
                         if (stopLOS_level(dx, dy, lev, col, row))
@@ -940,6 +943,38 @@ void Map::build_visi()
         for (int col = 0; col < width*10; col++) {
             for (int row = 0; row < height*10; row++) {
                 build_visi_cell(lev, col, row);
+            }
+        }
+    }
+}
+
+void Map::build_lights()
+{
+    for (int lev = 0; lev < level; lev++) {
+        for (int col = 0; col < width*10; col++) {
+            for (int row = 0; row < height*10; row++) {
+				if (m_terrain->m_mcd[m_cell[lev][col][row]->type[0]].Light_Source)
+					m_cell[lev][col][row]->islight = TILE_LIGHT;
+				if (m_terrain->m_mcd[m_cell[lev][col][row]->type[1]].Light_Source)
+					m_cell[lev][col][row]->islight = TILE_LIGHT;
+				if (m_terrain->m_mcd[m_cell[lev][col][row]->type[2]].Light_Source)
+					m_cell[lev][col][row]->islight = TILE_LIGHT;
+				if (m_terrain->m_mcd[m_cell[lev][col][row]->type[3]].Light_Source)
+					m_cell[lev][col][row]->islight = TILE_LIGHT;
+            }
+        }
+    }
+	update_lights();
+}
+
+void Map::update_lights()
+{
+	battle_report("== UPDATE LIGHTS");
+    for (int lev = 0; lev < level; lev++) {
+        for (int col = 0; col < width*10; col++) {
+            for (int row = 0; row < height*10; row++) {
+				if (m_cell[lev][col][row]->islight > 0)
+					show_light_source(lev, col, row);
             }
         }
     }
@@ -1239,7 +1274,7 @@ int Map::open_door(int z, int x, int y, int dir)
     if (door > 0) {
 
         int ct = cell(doorz, doorx, doory)->type[door];
-        int mcd = m_terrain->m_mcd[ct].Alt_MCD;
+        int mcd = m_terrain->m_mcd[ct].Alt_tile;
         ASSERT(mcd < (int)m_terrain->m_mcd.size());
 
         m_cell[doorz][doorx][doory]->type[door] = 0;
@@ -1345,7 +1380,7 @@ void Map::destroy_cell_part(int lev, int col, int row, int _part)
 {
     int ct = m_cell[lev][col][row]->type[_part];
     if (ct > 0) {
-        int mcd = m_terrain->m_mcd[ct].Die_MCD;
+        int mcd = m_terrain->m_mcd[ct].Die_tile;
         ASSERT(mcd < (int)m_terrain->m_mcd.size());
 
         if (m_terrain->m_mcd[ct].Light_Source)
@@ -1605,7 +1640,6 @@ void Map::update_vision_matrix(Soldier *watcher)
             }
         }
     }
-    
     watcher->set_visible_enemies(visible_enemies);
 }
 
@@ -1618,7 +1652,6 @@ int32 Map::update_vision_matrix(Platoon* platoon)
     int32* vision_matrix = platoon->get_vision_matrix();
     int32 soldiers_affected = 0;
     std::vector<Position>::iterator iter = m_changed_visicells->begin();
-    
     // Build a list of soldiers whose vision has changed
     while( iter != m_changed_visicells->end() ) {
         soldiers_affected |= vision_matrix[iter->index()];
@@ -1626,7 +1659,6 @@ int32 Map::update_vision_matrix(Platoon* platoon)
     }
     if (soldiers_affected != 0) {
         Soldier *ss = platoon->findnum(0); 
-        
         // Recalculate visibile cells for soldiers whose vision has changed.
         while (ss != NULL) {
             if ( (ss->is_active()) && (ss->get_vision_mask() & soldiers_affected) )
@@ -1842,48 +1874,126 @@ void Map::explocell(int sniper, int lev, int col, int row, int damage, int damag
     }
 }
                         
-const double POWER_TO_RANGE = 2.5;                        
+const double POWER_TO_RANGE = 2.5;
+                     
 
-void Map::add_light_source(int lev, int col, int row, int power)
+void Map::Init_visi_platoon(Platoon* platoon)
 {
-    double range = power / POWER_TO_RANGE;
+	if (platoon == platoon_local) {
+		reset_visi();
+		Soldier *ss = platoon->findnum(0);
+		while (ss != NULL) {
+			add_visi(ss->z, ss->x, ss->y, 15);
+			ss = ss->next();
+        }
+	}
+}
+					 
+void Map::add_visi(int lev, int col, int row, int pow)
+{   
+	if (scenario->rules[0] != 16) {
+		int power = (pow - scenario->rules[0]);
+		double range = power / POWER_TO_RANGE;
+	    for (int i = int(floor(lev - range)); i <= int(ceil(lev + range)); i++) {
+	        for (int j = int(floor(col - range)); j <= int(ceil(col + range)); j++) {
+	            for (int k = int(floor(row - range)); k <= int(ceil(row + range)); k++) {
+	                double dst = distance_3d(row - k, col - j, (lev - i) * HEIGHT_RATIO); 
+	                if (i < 0 || j < 0 || k < 0 ||
+	                    i >= level || j >= width * 10 || k >= height * 10 ||
+	                    dst > range)
+	                        continue;
+					m_cell[i][j][k]->m_visi += power - (int)((double)(power - 1) / range * dst);
+	            }
+	        }
+	    }
+	}
+}
 
-    for (int i = int(floor(lev - range)); i <= int(ceil(lev + range)); i++) {
-        for (int j = int(floor(col - range)); j <= int(ceil(col + range)); j++) {
-            for (int k = int(floor(row - range)); k <= int(ceil(row + range)); k++) {
-                double dst = distance_3d(row - k, col - j, (lev - i) * HEIGHT_RATIO); 
+void Map::remove_visi(int lev, int col, int row, int pow)
+{   
+	if (scenario->rules[0] != 16) {
+		int power = (pow - scenario->rules[0]); 
+		double range = power / POWER_TO_RANGE;
+		for (int i = int(floor(lev - range)); i <= int(ceil(lev + range)); i++) {
+			for (int j = int(floor(col - range)); j <= int(ceil(col + range)); j++) {
+				for (int k = int(floor(row - range)); k <= int(ceil(row + range)); k++) {
+					double dst = distance_3d(row - k, col - j, (lev - i) * HEIGHT_RATIO); 
+					if (i < 0 || j < 0 || k < 0 ||
+						i >= level || j >= width * 10 || k >= height * 10 ||
+						dst > range)
+							continue;
+					m_cell[i][j][k]->m_visi -= power - (int)((double)(power - 1) / range * dst);
+					if (m_cell[i][j][k]->m_visi < scenario->rules[0])
+						m_cell[i][j][k]->m_visi = scenario->rules[0];
+				}
+			}
+		}
+	}
+}
+
+//Resets visibility
+void Map::reset_visi()
+{
+    for (int i = 0; i <= level; i++) {
+        for (int j = 0; j <= width * 10; j++) {
+            for (int k = 0; k <= height * 10; k++) {
             
-                if (i < 0 || j < 0 || k < 0 ||
-                    i >= level || j >= width * 10 || k >= height * 10 ||
-                    dst > range)
+                if (i < 0 || j < 0 || k < 0 || i >= level || j >= width * 10 || k >= height * 10)
                         continue;
                         
-                m_cell[i][j][k]->m_light += power - (int)((double)(power - 1) / range * dst);
-                cell_visibility_changed(i, j, k);
+				m_cell[i][j][k]->m_visi = scenario->rules[0];
             }
         }
     }
 }
 
-void Map::remove_light_source(int lev, int col, int row, int power)
-{
-    double range = power / POWER_TO_RANGE;
 
+void Map::add_light_source(int lev, int col, int row, int power)
+{	
+	m_cell[lev][col][row]->islight = power;
+	show_light_source(lev, col, row);
+}
+
+void Map::show_light_source(int lev, int col, int row)
+{
+battle_report("== SHOW LIGHT SOURCE %d %d %d \n", lev,col,row);
+int power = m_cell[lev][col][row]->islight;
+//Rebuild lights
+	double range = power / POWER_TO_RANGE;
+	//We know this cell is the LightSource and should be blocked by the same object.
     for (int i = int(floor(lev - range)); i <= int(ceil(lev + range)); i++) {
         for (int j = int(floor(col - range)); j <= int(ceil(col + range)); j++) {
             for (int k = int(floor(row - range)); k <= int(ceil(row + range)); k++) {
-                double dst = distance_3d(row - k, col - j, (lev - i) * HEIGHT_RATIO); 
-            
-                if (i < 0 || j < 0 || k < 0 ||
-                    i >= level || j >= width * 10 || k >= height * 10 ||
-                    dst > range)
-                        continue;
-                        
-                m_cell[i][j][k]->m_light -= power - (int)((double)(power - 1) / range * dst);
-                cell_visibility_changed(i, j, k);
+			    double dst = distance_3d(row - k, col - j, (lev - i) * HEIGHT_RATIO);
+			    if (i < 0 || j < 0 || k < 0 || i >= level || j >= width * 10 || k >= height * 10 || dst > range)
+                    continue;
+				if (i == lev && j == col && k == row) {
+					m_cell[i][j][k]->m_light += power;
+					cell_visibility_changed(i, j, k);
+					continue;
+				}
+				if (ray_visi(lev,col,row,i,j,k)) {
+					m_cell[i][j][k]->m_light += power - (int)((double)(power - 1) / range * dst);
+					cell_visibility_changed(i, j, k);
+					continue;
+				}
             }
-        }
+		}
     }
+}
+/*
+ * o stands for Origin, t stands for Target
+ * Function should check for light blocking
+*/
+bool Map::ray_visi(int oz, int ox, int oy, int tz, int tx, int ty)
+{
+	return true;
+}
+
+void Map::remove_light_source(int lev, int col, int row, int power)
+{
+	m_cell[lev][col][row]->islight = 0;
+	update_lights();
 }
 
 /**

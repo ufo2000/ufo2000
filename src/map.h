@@ -129,7 +129,7 @@ private:
     int m_width_offset;
     int m_height_offset;
     int m_size;
-    
+    bool ray_visi(int oz, int ox, int oy, int tz, int tx, int ty);
 public:
     MinimapArea *m_minimap_area;
 
@@ -192,6 +192,10 @@ public:
     void update_seen_item(Position p);
     
     void build_visi();
+	
+	void build_lights();
+	void update_lights();
+	
     void rebuild_visi(int z, int x, int y);
     void build_visi_cell(int lev, int col, int row);
     int stopLOS_level(int dx, int dy, int lev, int col, int row);
@@ -292,8 +296,12 @@ public:
         if (man) {
             man->m_place[P_MAP] = m_cell[lev][col][row]->get_place();
             update_vision_matrix(man);
-        }
-    }
+			if (man->get_platoon() == platoon_local)
+				add_visi(lev,col,row,15);
+        }else {
+			remove_visi(lev,col,row,15);
+		}
+	}
 
     int fire_time(int lev, int col, int row) 
     {
@@ -330,8 +338,13 @@ public:
         if (--m_cell[lev][col][row]->m_smog_time <= 0)
             cell_visibility_changed(lev, col, row);
     }
-    
+	
+	void Init_visi_platoon(Platoon* platoon);
+    void add_visi(int lev, int col, int row, int pow);
+	void remove_visi(int lev, int col, int row, int pow);
+	void reset_visi();
     void add_light_source(int lev, int col, int row, int power);
+	void show_light_source(int lev, int col, int row);
     void remove_light_source(int lev, int col, int row, int power);
     
     int isStairs(int lev, int col, int row)

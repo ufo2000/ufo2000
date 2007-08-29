@@ -725,7 +725,7 @@ void Soldier::draw_unibord(int abs_pos, int posx, int posy)
     
     int width = 320;
     
-    int name_h = text_height(name_f) + 2, row_h = text_height(row_f);
+    int name_h = text_height(name_f) + 2, row_h = text_height(row_f) + 1;
     int height = name_h + 8 + row_h * row_num;
     
     BITMAP *temp = create_bitmap(width, height);
@@ -755,11 +755,11 @@ void Soldier::draw_unibord(int abs_pos, int posx, int posy)
             textout_right(temp, row_f, param[i].str, sx[1] - 2, name_h + 6 + row_h * i + 2, COLOR_GREEN00);
             textprintf_centre(temp, font, 165, name_h + 6 + row_h * i + 3, COLOR_RED02, "%d", param[i].cur);
 
-            rect(temp, sx[2], name_h + 6 + row_h * i + 3, sx[2] + param[i].max, name_h + 6 + row_h * i + 10, xcom1_color(param[i].col));
+            rect(temp, sx[2], name_h + 6 + row_h * i + 3, sx[2] + param[i].max, name_h + 6 + row_h * i + row_h - 2, xcom1_color(param[i].col));
             if (param[i].max)
-                line(temp, sx[2], name_h + 6 + row_h * i + 4, sx[2], name_h + 6 + row_h * i + 9, xcom1_color(param[i].col - 4));
+                line(temp, sx[2], name_h + 6 + row_h * i + 4, sx[2], name_h + 6 + row_h * i + row_h - 2, xcom1_color(param[i].col - 4));
             if (param[i].cur)
-                rectfill(temp, sx[2], name_h + 6 + row_h * i + 4, sx[2] + param[i].cur - 1, name_h + 6 + row_h * i + 9, xcom1_color(param[i].col - 4));
+                rectfill(temp, sx[2], name_h + 6 + row_h * i + 4, sx[2] + param[i].cur - 1, name_h + 6 + row_h * i + row_h - 3, xcom1_color(param[i].col - 4));
 
             // special case for the health bar
             if (i == 2) // draw stun damage
@@ -1892,6 +1892,11 @@ int Soldier::haveitem(Item *it)
     return 0;
 }
 
+/**
+ * Return the place, where the soldier stores this item.
+ * If found, set the three variables to the soldier's coordinates.
+ * @return The place, or NULL if not found.
+ */
 Place *Soldier::find_item(Item *it, int &lev, int &col, int &row)
 {
     for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
@@ -1902,6 +1907,10 @@ Place *Soldier::find_item(Item *it, int &lev, int &col, int &row)
     return NULL;
 }
 
+/**
+ * Check if the place belongs to this soldier.
+ * @return 1 if found. Also sets the coordinates.
+ */
 int Soldier::find_place_coords(Place *pl, int &lev, int &col, int &row)
 {
     for (int i = 0; i < NUMBER_OF_CARRIED_PLACES; i++)
@@ -1912,7 +1921,8 @@ int Soldier::find_place_coords(Place *pl, int &lev, int &col, int &row)
     return 0;
 }
 
-
+/** Return index of given place.
+	@return The place index, or -1 if the space does not belong to this soldier. */
 int Soldier::place(Place *pl)
 {
     for (int i = 0; i < NUMBER_OF_PLACES; i++)
@@ -1974,6 +1984,10 @@ int Soldier::standup()
         return 0;
 }
 
+/**
+ * Prime grenade at given place.
+ * @return 1 if primed, 0 if no TU to do that.
+ */
 int Soldier::prime_grenade(int iplace, int delay_time, int req_time)
 {
     ASSERT((iplace == P_ARM_RIGHT) || (iplace == P_ARM_LEFT));
@@ -2164,10 +2178,10 @@ int Soldier::FAccuracy(int peraccur, int TWOHAND)
 
     if (TWOHAND) {
         if ((rhand_item() != NULL) && (lhand_item() != NULL))
-            ac -= ac / 3;
+            ac -= ac / 3;	// minus for no empty hand
     }
 
-    if (m_state == SIT) ac += ac / 10;
+    if (m_state == SIT) ac += ac / 10;	// bonus for kneeling
 
     double weapon_delta  = 1. / (double)(peraccur * peraccur);
     double soldier_delta = 1. / (double)(ac * ac);
@@ -2548,8 +2562,10 @@ int Soldier::do_target_action(int z0, int x0, int y0, int zd, int xd, int yd, Ac
         case AIMEDSHOT:
         case AUTOSHOT:
             if (target.item->is_laser()) {
+            	/* laser beam with no ammo */
                 chk = beam(z0, x0, y0, zd, xd, yd, target.place, target.time);
             } else {
+            	/* fire a bullet or plasma */
                 chk = fire(z0, x0, y0, zd, xd, yd, target.place, target.time);
             }
             break;
@@ -2581,7 +2597,9 @@ int Soldier::punch(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, i
     return OK;
 }
 
-
+/**
+ * Throw an item.
+ */
 int Soldier::thru(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time)
 {
     int chk;
@@ -2627,6 +2645,9 @@ int Soldier::aimedthrow(int z0, int x0, int y0, int zd, int xd, int yd, int ipla
 }
 
 
+/**
+ * Fire with laser beam.
+ */
 int Soldier::beam(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time)
 {
     int chk;
@@ -2645,7 +2666,9 @@ int Soldier::beam(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, in
     return OK;
 }
 
-
+/**
+ * Fire with weapon which has ammo loaded.
+ */
 int Soldier::fire(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time)
 {
     int chk;
@@ -2667,6 +2690,9 @@ int Soldier::fire(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, in
 }
 
 
+/**
+ * If pressing ALT while aiming, the way of the bullet or the object thrown can be seen.
+ */
 void Soldier::draw_bullet_way()
 {
     if (TARGET && target.action == THROW)
@@ -2679,7 +2705,7 @@ void Soldier::draw_bullet_way()
 void Soldier::showspk(BITMAP *dest)
 {
 	int stack_top = lua_gettop(L);
-	ALPHA_SPRITE *alien_pic;
+	ALPHA_SPRITE *alien_pic = NULL;
 	BITMAP *alien_bg = create_bitmap(160, 200);
 	clear_to_color(alien_bg, makecol(0,0,0));
 	//NACHTWOLF : The following switch avoids massive copy/paste - it is used to create inventory picture from UFOpaedia images
@@ -2884,6 +2910,7 @@ int Soldier::check_reaction_fire(Soldier *the_target)
     {
         // We can make a reaction shot.
         // Try the weapon in right hand first
+        // Act differently on different "reserve tu for xxx shot" button pressed
         for (int arm = P_ARM_RIGHT; arm <= P_ARM_LEFT; arm++) {
             switch (m_ReserveTimeMode) {
             case RESERVE_FREE:
@@ -2984,6 +3011,10 @@ int Soldier::count_weight()
     return weight;
 }
 
+/**
+ * Returns 1 if the soldier is holding equipment which
+ * is not allowed for the current weaponset.
+ */
 int Soldier::has_forbidden_equipment()
 {
     for (int i = 0; i < NUMBER_OF_PLACES; i++)
@@ -2992,6 +3023,9 @@ int Soldier::has_forbidden_equipment()
     return 0;
 }
 
+/**
+ * Returns 1 if the soldier has a two handed weapon.
+ */
 int Soldier::has_twohanded_weapon()
 {
     std::vector<Item *> items;
@@ -3053,6 +3087,9 @@ void Soldier::set_reserve_type(int type)
     }
 };
 
+/**
+ * Returns true if the soldier can fly.
+ */
 int Soldier::can_fly()
 {
     return skin()->get_fFlying();

@@ -40,6 +40,8 @@ private:
     int m_smog_time;
     int m_fire_time;
     int m_light;
+	int m_visi;
+	int islight; //!< 0 if not a light, otherwise set to power.
     Position m_position;
 
     int MOUSE;

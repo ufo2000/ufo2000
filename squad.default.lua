@@ -248,7 +248,7 @@ return {
             ["LEFT SHOULDER"] = {
             },
             ["RIGHT HAND"] = {
-                {0, 0, "PLASMA HANDGUN", "PLASMA HANDGUN BATTERY"},
+                {1, 0, "PLASMA HANDGUN", "PLASMA HANDGUN CELL"},
             },
             ["LEFT HAND"] = {
                 {1, 1, "ALIEN FUSION GRENADE"},
@@ -260,7 +260,7 @@ return {
             ["BACK PACK"] = {
             },
             ["BELT"] = {
-                {0, 0, "PLASMA HANDGUN BATTERY"},
+                {0, 0, "PLASMA HANDGUN CELL"},
             },
             ["GROUND"] = {
             },
@@ -286,7 +286,7 @@ return {
             ["LEFT SHOULDER"] = {
             },
             ["RIGHT HAND"] = {
-                {1, 0, "PLASMA HANDGUN", "PLASMA HANDGUN BATTERY"},
+                {1, 0, "PLASMA HANDGUN", "PLASMA HANDGUN CELL"},
             },
             ["LEFT HAND"] = {
                 {0, 0, "MISSLE LAUNCHER", "HEAVY MISSLE"},
@@ -323,7 +323,7 @@ return {
             ["LEFT SHOULDER"] = {
             },
             ["RIGHT HAND"] = {
-                {1, 0, "PLASMA HANDGUN", "PLASMA HANDGUN BATTERY"},
+                {1, 0, "PLASMA HANDGUN", "PLASMA HANDGUN CELL"},
             },
             ["LEFT HAND"] = {
                 {0, 1, "ALIEN FUSION GRENADE"},
@@ -335,7 +335,7 @@ return {
             ["BACK PACK"] = {
             },
             ["BELT"] = {
-                {0, 0, "PLASMA HANDGUN BATTERY"},
+                {0, 0, "PLASMA HANDGUN CELL"},
             },
             ["GROUND"] = {
             },
@@ -361,7 +361,7 @@ return {
             ["LEFT SHOULDER"] = {
             },
             ["RIGHT HAND"] = {
-                {0, 1, "PLASMA HANDGUN", "PLASMA HANDGUN BATTERY"},
+                {0, 1, "PLASMA HANDGUN", "PLASMA HANDGUN CELL"},
             },
             ["LEFT HAND"] = {
                 {0, 1, "MAGNETIC FUSION LAUNCHER", "MAGNETIC FUSION MISSLE"},
@@ -435,7 +435,7 @@ return {
             ["LEFT SHOULDER"] = {
             },
             ["RIGHT HAND"] = {
-                {0, 0, "PLASMA HANDGUN", "PLASMA HANDGUN BATTERY"},
+                {0, 0, "PLASMA HANDGUN", "PLASMA HANDGUN CELL"},
             },
             ["LEFT HAND"] = {
                 {0, 0, "XAAS 12 GUAGE", "XAAS HE-AMMO"},
@@ -474,7 +474,7 @@ return {
             ["LEFT SHOULDER"] = {
             },
             ["RIGHT HAND"] = {
-                {0, 0, "PLASMA BLASTER", "PLASMA BLASTER BATTERY"},
+                {0, 0, "PLASMA BLASTER", "PLASMA BLASTER CELL"},
             },
             ["LEFT HAND"] = {
             },
@@ -486,7 +486,7 @@ return {
             },
             ["BELT"] = {
                 {0, 0, "PLASMA BLADE"},
-                {1, 0, "PLASMA BLASTER BATTERY"},
+                {1, 0, "PLASMA BLASTER CELL"},
             },
             ["GROUND"] = {
             },
@@ -739,7 +739,7 @@ return {
             ["LEFT SHOULDER"] = {
             },
             ["RIGHT HAND"] = {
-                {1, 0, "PLASMA GUN", "PLASMA GUN BATTERY"},
+                {1, 0, "PLASMA GUN", "PLASMA GUN CELL"},
             },
             ["LEFT HAND"] = {
             },

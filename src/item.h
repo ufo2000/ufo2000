@@ -80,8 +80,6 @@ private:
     }
 
 public:
-    static void od_info(int type, int gx, int gy, int gcol);
-
     static int obdata_get_int(uint32 item_index, const char *property_name);
     static int obdata_get_array_int(uint32 item_index, const char *property_name, int index);
     static ALPHA_SPRITE *obdata_get_bitmap(uint32 item_index, const char *property_name, int bitmap_index = -1);
@@ -93,8 +91,8 @@ public:
     static int obdata_dDeviation(int index) { return obdata_get_int(index, "dDeviation"); }
     static int obdata_exploRange(int index) { return obdata_get_int(index, "exploRange"); }
     static int obdata_smokeRange(int index) { return obdata_get_int(index, "smokeRange"); }
-    static int obdata_smokeTime(int index) { return obdata_get_int(index, "smokeTime"); }
-    static int obdata_cost(int index) { return obdata_get_int(index, "cost"); }
+    static int obdata_smokeTime(int index) { return obdata_get_int(index, "smokeTime"); }	/// Turns the smoke from this weapon remains
+    static int obdata_cost(int index) { return obdata_get_int(index, "cost"); }		/// Cost of item
     static int obdata_isAmmo(int index) { return obdata_get_int(index, "isAmmo"); }
     static int obdata_isGrenade(int index) { return obdata_get_int(index, "isGrenade"); }
     static int obdata_isHighExplosive(int index) { return obdata_get_int(index, "isHighExplosive"); }
@@ -106,22 +104,24 @@ public:
     static int obdata_accuracy(int index, int n) { return obdata_get_array_int(index, "accuracy", n); }
     static int obdata_time(int index, int n) { return obdata_get_array_int(index, "time", n); }
     static int obdata_useTime(int index) { return obdata_get_int(index, "useTime"); }
-    static int obdata_autoShots(int index) { return obdata_get_int(index, "autoShots"); }
+    static int obdata_autoShots(int index) { return obdata_get_int(index, "autoShots"); }	/// Number of shots in an autoshot burst
     static int obdata_weight(int index) { return obdata_get_int(index, "weight"); }
     static int obdata_twoHanded(int index) { return obdata_get_int(index, "twoHanded"); }
     static int obdata_rounds(int index) { return obdata_get_int(index, "rounds"); }
     static int obdata_isHandToHand(int index) { return obdata_get_int(index, "isHandToHand"); }
-    static int obdata_disappear(int index) { return obdata_get_int(index, "disappear"); }
+    static int obdata_disappear(int index) { return obdata_get_int(index, "disappear"); }	/// This clip disappears from weapon when empty
     static int obdata_isGun(int index) { return obdata_get_int(index, "isGun"); }
     static int obdata_minimapMark(int index) { return obdata_get_int(index, "minimapMark"); }
-    static int obdata_bulletRGB(int index, int n) { return obdata_get_array_int(index, "bulletRGB", n); } //Following colors are used for drawing bullet
-    static int obdata_glowRGB(int index, int n) { return obdata_get_array_int(index, "glowRGB", n); } //Beam weapons use only this color
+    static int obdata_bulletRGB(int index, int n) { return obdata_get_array_int(index, "bulletRGB", n); } /// Following colors are used for drawing bullet
+    static int obdata_glowRGB(int index, int n) { return obdata_get_array_int(index, "glowRGB", n); } /// Beam weapons use only this color
     static int obdata_trailRGB(int index, int n) { return obdata_get_array_int(index, "trailRGB", n); }
-    static int obdata_trailLength(int index) { return obdata_get_int(index, "trailLength"); } //Length of the trail when bullet is drawn
-    static int obdata_primeTime(int index) { return obdata_get_int(index, "primeTime"); } // Time to prime a grenade
-    static int obdata_throwTime(int index) { return obdata_get_int(index, "throwTime"); } // Time to throw a grenade
+    static int obdata_trailLength(int index) { return obdata_get_int(index, "trailLength"); } /// Length of the trail when bullet is drawn
+    static int obdata_primeTime(int index) { return obdata_get_int(index, "primeTime"); } /// Time to prime a grenade
+    static int obdata_throwTime(int index) { return obdata_get_int(index, "throwTime"); } /// Time to throw a grenade
+    static int obdata_ownLight(int index) { return obdata_get_int(index, "ownLight"); }	/// Own light for electro flare
     
     const char* get_damage_name();
+    const char* get_damage_description();
     //! Get list of ammo types that can be used with this weapon
     static bool get_ammo_list(const std::string itemname, std::vector<std::string> &ammo);
 
@@ -176,6 +176,10 @@ public:
     int obdata_disappear() { return obdata_disappear(m_type); }
     int obdata_primeTime() { return obdata_primeTime(m_type); } // See above
     int obdata_throwTime() { return obdata_throwTime(m_type); } // See above
+    int obdata_ownLight() { return obdata_ownLight(m_type); }
+    int obdata_damageType() { return obdata_damageType(m_type); }
+
+    void od_info(int gx, int gy, int gcol);
     
     static int get_color(int index, int n);
     static bool can_set_color(int index);
@@ -191,14 +195,17 @@ public:
         return false;
     }
     
+    /** Return clip from the weapon, if any. */
     Item *clip() { return m_ammo; }
+    /** Return type of clip in this weapon. */
     int cliptype() { ASSERT(m_ammo); return m_ammo->m_type; }
     int itemtype() { return m_type; }
+    /** Return rounds remaining in clip. */
     int roundsremain() { return m_ammo ? m_ammo->m_rounds : 0; }
     void setpos(int _x, int _y) { m_x = _x; m_y = _y; }
+    /** Set delay time (for grenades) */
     void set_delay_time(int dt) { m_delay_time = dt; }
     int delay_time() { return m_delay_time; }
-    int is_explo();
 
     Item *create_duplicate();
 
@@ -219,11 +226,6 @@ public:
         } else {
             soundSystem::getInstance()->play(get_sound());
         }
-    }
-
-    void od_info(int gx, int gy, int gcol)
-    {
-        od_info(m_type, gx, gy, gcol);
     }
 
     friend class Place;
@@ -258,3 +260,4 @@ Item *create_item(const char *item_name, Soldier *stunned_body_owner = NULL);
 bool is_item_allowed(int type);
 
 #endif
+

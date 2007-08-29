@@ -138,12 +138,10 @@ private:
     unsigned char m_ReserveTimeMode;
 
     int NID;
-    // direction of the face
-    int dir;
-    // direction of the movement
-    int move_dir;
+    int dir;    //!< direction of the face
+    int move_dir;    //!< direction of the movement
     int phase;
-    State m_state;
+    State m_state;	//!< Movement state
 
 //! Each soldier in a platoon has a unique vision mask
 //! This bit is written to the index vision matrix when a soldier can see that cell
@@ -180,23 +178,23 @@ private:
     void precise_aiming(int za, int xa, int ya);    
 
 public:
-    // Flag that sets a unit as stunned when the game starts (I.E. same square as another unit on game start)
+    //! Flag that sets a unit as stunned when the game starts (I.E. same square as another unit on game start)
     bool stun_on_init;
-    // set all stats to minimum and remove all inventory
+    //! set all stats to minimum and remove all inventory
     void reset_stats();
-    // set attribute value (when initializing soldier stats)
+    //! set attribute value (when initializing soldier stats)
     bool set_attribute(const char *attribute_name, int value);
-    // set name for soldier
+    //! set name for soldier
     bool set_name(const char *newname);
-    // set skin information
+    //! set skin information
     bool set_skin_info(int skin_type, int female, int appearance);
-    // get pointer to body part by name
+    //! get pointer to body part by name
     Place *find_place(const char *place_name);
     
-    // get name of a soldier
+    //! get name of a soldier
     const char *get_name() { return ud.Name; }
 
-    // get number of items in equipment and a list of pointers
+    //! get number of items in equipment and a list of pointers
     int get_inventory_list(std::vector<Item *> &items);
 
     static void initpck();
@@ -284,7 +282,7 @@ public:
     void spend_time(int tm, int use_energy = 0);
     int walktime(int _dir);
     int tus_reserved(std::string *error = NULL);
-        int get_dir() { return dir; }
+	int get_dir() { return dir; }
     State state() { return m_state; }
 
     void unlink();
@@ -353,7 +351,7 @@ public:
 
     int count_weight();
     int has_forbidden_equipment();
-        int has_twohanded_weapon();
+	int has_twohanded_weapon();
 
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     static int calc_mandata_cost(MANDATA _md);
@@ -367,28 +365,37 @@ public:
     int find_place_coords(Place *pl, int &lev, int &col, int &row);
     int haveitem(Item *it);
 
+	/** Return item in left hand. */
     Item *lhand_item() { return m_place[P_ARM_LEFT]->item(); }
+    /** Return item in right hand. */
     Item *rhand_item() { return m_place[P_ARM_RIGHT]->item(); }
 
+	/** Return the item at the specific place.
+		It stays in the place! */
     Item *item(int ip)
     {
         ASSERT((ip >= 0) && (ip < NUMBER_OF_PLACES));
         return m_place[ip]->item();
     }
 
+	/** Return the item at the specific place and position.
+		It stays in the place! */
     Item *item(int ip, int ix, int iy)
     {
         ASSERT((ip >= 0) && (ip < NUMBER_OF_PLACES));
         return m_place[ip]->item(ix, iy);
     }
 
+	/** Remove and return item from place.
+		@return The item that was there. It gets deleted from the place. */
     Item *getitem(int ip, int ix, int iy)
     {
         ASSERT((ip >= 0) && (ip < NUMBER_OF_PLACES));
         return m_place[ip]->get(ix, iy);
     }
 
-    int putitem(Item *it, int ip, int ix, int iy)
+	/** Put an item to a place, to the given position */
+    int putitem(Item *it, int ip, int ix = -1, int iy = -1)
     {
         ASSERT((ip >= 0) && (ip < NUMBER_OF_PLACES));
         if (ix == -1 || iy == -1)
@@ -396,14 +403,10 @@ public:
         else
             return m_place[ip]->put(it, ix, iy);
     }
-
-    int putitem(Item *it, int ip)
-    {
-        ASSERT((ip >= 0) && (ip < NUMBER_OF_PLACES));
-        return m_place[ip]->put(it);
-    }
-
+	
     int place(Place *place);
+    
+    /** return a place at given index. */
     Place *place(int ip)
     {
         ASSERT((ip >= 0) && (ip < NUMBER_OF_PLACES));

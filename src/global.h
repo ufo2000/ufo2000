@@ -310,6 +310,10 @@ extern char last_unit_name[1000];
 // gettext-translation deactivated / active:
 //#define _(String) (String)
 #define _(String) ufo2k_gettext(String)
+// mark text for translation
+// for values which have to be set at compile time, for example
+// static char* arrays
+#define N_(String) (String)
 
 extern const char *place_name[11];
 

@@ -3,6 +3,23 @@
 ------------------------------------------------------------------------------
 
 AddXcomItem {
+    cost = 10,
+    name = "ELECTRO FLARE",
+    pInv = pck_image("$(xcom)/units/bigobs.pck", 55),
+    pMap = pck_image("$(xcom)/units/floorob.pck", 72),
+    health = 999,
+    importance = 1,
+    width = 1,
+    height = 1,
+    pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
+    weight = 2,
+    minimapMark = 1,
+    ownLight = 10,
+}
+
+
+
+AddXcomItem {
 	cost = 0,
 	name = "PISTOL",
 	pInv = pck_image("$(xcom)/units/bigobs.pck", 3),
@@ -745,5 +762,6 @@ AddEquipment {
 		{13, 03, "SMALL LAUNCHER"},
 		{14, 06, "SMALL ROCKET"},
 		{18, 00, "HIGH EXPLOSIVE"},
+		{18, 01, "ELECTRO FLARE"},
 	}
 }

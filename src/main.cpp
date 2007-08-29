@@ -1048,7 +1048,7 @@ static std::map<int, std::string> g_eot_save;
 
 int build_crc()
 {
-    char *buf = (char *)malloc(CRCBUFFSIZE);
+    char *buf = new char[CRCBUFFSIZE];
     memset(buf, 0, CRCBUFFSIZE);
     int buf_size = 0;
     
@@ -1175,7 +1175,6 @@ void update_visibility()
             }
         }
     }
-
     g_map->update_vision_matrix(platoon_remote);
     g_map->clear_changed_cells();
 
@@ -1230,6 +1229,8 @@ void send_turn()
     g_time_left = 0;
     MODE = WATCH;
     update_visibility();
+	//Initialise the halo around units for this turn
+	g_map->Init_visi_platoon(platoon_local);
 }
 
 int GAMELOOP = 0;
@@ -1287,6 +1288,7 @@ void recv_turn(int crc, const std::string &data)
         soundSystem::getInstance()->play(SS_BUTTON_PUSH_2); 
 
     battle_report("# %s: %d\n", _("Next turn"), turn );
+	update_visibility();
 }
 
 #define STAT_PANEL_W 200
@@ -2160,7 +2162,9 @@ void gameloop()
     
     platoon_local->initialize_vision_matrix();
     platoon_remote->initialize_vision_matrix();
-    
+	//Initialize the halo around units
+    g_map->Init_visi_platoon(platoon_local);
+	
     if (MODE != WATCH) {
         g_time_left = g_time_limit;
         last_time_left  = -1;

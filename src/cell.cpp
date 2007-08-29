@@ -40,7 +40,9 @@ Cell::Cell( Position p )
     m_smog_time = 0;
     m_fire_time = 0;
     m_light = scenario->rules[0];
+	m_visi = m_light;
     memset(visi, 0, sizeof(visi));
+	islight = 0;
 }
 
 Cell::~Cell()

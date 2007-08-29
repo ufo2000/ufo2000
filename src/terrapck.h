@@ -88,12 +88,12 @@ struct MCD
     unsigned char Armour;
 //! How much of an explosion this tile will block
     unsigned char HE_Block;
-//! If the terrain is destroyed, it is set to 0 and a tile of type Die_MCD is added
+//! If the terrain is destroyed, it is set to 0 and a tile of type Die_tile (Which is Die_MCD) is added
     unsigned char Die_MCD;
 //! How flammable it is (the higher the harder it is to set aflame)
     unsigned char Flammable;
 //! If "Door" or "UFO_Door" is on, then when a unit walks through it the door 
-//! is set to 0 and a tile type Alt_MCD is added.
+//! is set to 0 and a tile type Alt_tile (Which is Alt_MCD) is added.
     unsigned char Alt_MCD;       
     unsigned char u48;
 //! When a unit or object is standing on the tile, the unit is shifted by this amount
@@ -129,6 +129,10 @@ struct MCD
 //! End of X-COM data, ufo2000 specific data comes next
     unsigned char ufo2000_data_start_marker[2];
 
+//! Out of the structure of the MCD file, we add these values for supporting more than 255 tiles.
+	unsigned int Die_tile;
+	unsigned int Alt_tile;
+	
     ALPHA_SPRITE *FrameBitmap[8];
     BITMAP *ScangBitmap;
     int     ShapeIndex;

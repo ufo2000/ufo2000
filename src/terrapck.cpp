@@ -136,8 +136,12 @@ void TerraPCK::add_xcom_tileset(const char *mcd_name, int tftd_flag)
         m_mcd[oldcount + i].ScanG = intel_int16(m_mcd[oldcount + i].ScanG);
         if (m_mcd[oldcount + i].Alt_MCD)
             m_mcd[oldcount + i].Alt_MCD += oldcount;
+		
         if (m_mcd[oldcount + i].Die_MCD)
             m_mcd[oldcount + i].Die_MCD += oldcount;
+			
+		m_mcd[oldcount + i].Alt_tile = int(m_mcd[oldcount + i].Alt_MCD);	
+		m_mcd[oldcount + i].Die_tile = int(m_mcd[oldcount + i].Die_MCD);
 
         ShapeInfo s;
         for (int j = 0; j < 12; j++)
@@ -333,10 +337,15 @@ void TerraPCK::add_ufo2000_tileset(const char *tileset_name)
         GET_LUA_TILESET_PROP(Armour, 0);
         GET_LUA_TILESET_PROP(Tile_Type, 0);
 
-        if (m_mcd[oldcount + i].Alt_MCD)
-            m_mcd[oldcount + i].Alt_MCD += oldcount - 1;
-        if (m_mcd[oldcount + i].Die_MCD)
-            m_mcd[oldcount + i].Die_MCD += oldcount - 1;
+//! For tilesets over 255 tiles
+		m_mcd[oldcount + i].Alt_tile = tileset_get_int(i + 1, tileset_name, "Alt_MCD", 0);
+		m_mcd[oldcount + i].Die_tile = tileset_get_int(i + 1, tileset_name, "Die_MCD", 0);
+		
+        if (m_mcd[oldcount + i].Alt_tile)
+            m_mcd[oldcount + i].Alt_tile += oldcount - 1;
+				
+        if (m_mcd[oldcount + i].Die_tile) 
+            m_mcd[oldcount + i].Die_tile += oldcount - 1;
 
         lua_pop(L, 2);
     }

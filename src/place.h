@@ -43,14 +43,13 @@ private:
     int width, height;
     int viscol;
 
-    Item *m_item;
-    Cell* m_cell;
+    Item *m_item;	/**< List of items stored in this place */
+    Cell* m_cell;	/**< Map cell this place belongs to, or NULL */
 
     void set(int x, int y, int w, int h);
 
 public:
-    Place(int x, int y, int w, int h);
-    Place(int x, int y, int w, int h, Cell* cell);
+    Place(int x, int y, int w, int h, Cell* cell = NULL);
     virtual ~Place();
 
     void draw(int gx, int gy);
@@ -105,3 +104,4 @@ public:
 };
 
 #endif
+

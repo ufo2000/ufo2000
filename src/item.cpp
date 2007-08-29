@@ -33,8 +33,6 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "text.h"
 #include "explo.h"
 
-char* damage_names[7] = {"AP", "IN", "HE", "LS", "PL", "ST",""};
-
 IMPLEMENT_PERSISTENCE(Item, "Item");
 
 int Item::obdata_get_int(uint32 item_index, const char *property_name)
@@ -163,6 +161,9 @@ std::string Item::obdata_get_string(uint32 item_index, const char *property_name
     return result;
 }
 
+/**
+ * Get list of ammo which fit in this weapon.
+ */
 bool Item::get_ammo_list(const std::string item_name, std::vector<std::string> &ammo)
 {
     ammo.clear();
@@ -201,6 +202,10 @@ bool Item::get_ammo_list(const std::string item_name, std::vector<std::string> &
     }
 }
 
+/**
+ * Return name of item.
+ * If this is a stunned soldier, return his name instead.
+ */
 std::string Item::name()
 {
     return m_stunned_body_owner ? m_stunned_body_owner->get_name() : obdata_name(m_type); 
@@ -209,8 +214,9 @@ std::string Item::name()
 /**
  * Show object stats information in the armoury
  */
-void Item::od_info(int type, int gx, int gy, int gcol)
+void Item::od_info(int gx, int gy, int gcol)
 {
+	int type = m_type;
     text_mode(-1);
 
     textprintf(screen2, font, gx, gy, gcol, "%s", obdata_name(type).c_str());
@@ -275,9 +281,12 @@ void Item::od_info(int type, int gx, int gy, int gcol)
     }
 
     if (obdata_damage(type) > 0) {
-        textprintf(screen2, font, gx, gy, gcol, "%13s: %3d (%2d%%) %8s: %d",
-                   _("Damage"),     obdata_damage(type), obdata_dDeviation(type),
-                   _("Ammo-Type"),   obdata_damageType(type));
+        textprintf(screen2, font, gx, gy, gcol, "%13s: %3d (%2d%%)",
+                   _("Damage"),     obdata_damage(type), obdata_dDeviation(type));
+		gy += 10;
+		
+        textprintf(screen2, font, gx, gy, gcol, "%13s: %s",
+                   _("Ammo-Type"), _(get_damage_description()));
         gy += 10;
     }
 
@@ -366,27 +375,38 @@ Item::~Item()
     }
 }
 
+/**
+ * Remove the item from the list containing it.
+ */
 void Item::unlink()
 {
-    if (m_prev != NULL) m_prev->m_next = m_next;
+    if (m_prev != NULL) m_prev->m_next = m_next;	/* unlink from list */
     if (m_next != NULL) m_next->m_prev = m_prev;
-    if (m_place != NULL && m_place->m_item == this) m_place->m_item = m_next;
+    if (m_place != NULL && m_place->m_item == this) m_place->m_item = m_next;	/* If this was the first item on a place, delete from that */
     m_prev = NULL; m_next = NULL; m_place = NULL;
 }
 
+/**
+ * Load clip into weapon.
+ * @param clip The clip to load. Will contain the unloaded clip.
+ * @return 1 if successful.
+ */
 int Item::loadclip(Item *&clip)
 {
     ASSERT(clip != NULL);
     if (can_use_ammo_type(obdata_name(clip->m_type))) {
-        clip->unlink();
+        clip->unlink();	// remove loaded clip from original container
         Item *it = m_ammo;
         m_ammo = clip;
-        clip = it;
+        clip = it;	// pass the unloaded clip
         return 1;
     }
     return 0;
 }
 
+/**
+ * Unload ammo from weapon and return ammo item.
+ */
 Item *Item::unload()
 {
     Item *t;
@@ -395,6 +415,9 @@ Item *Item::unload()
     return t;
 }
 
+/**
+ * Returns 1 if this weapon is loaded.
+ */
 int Item::haveclip()
 {
     if (m_ammo != NULL)
@@ -402,8 +425,13 @@ int Item::haveclip()
     return 0;
 }
 
+/**
+ * Shot one with this weapon.
+ * Decrements ammo rounds, and unloads the empty clip automatically, if needed.
+ */
 void Item::shot()
 {
+	ASSERT (m_ammo != NULL);
     if (m_ammo->m_rounds > 0)
         m_ammo->m_rounds--;
     if (m_ammo->m_rounds == 0 && m_ammo->obdata_disappear()) {
@@ -437,6 +465,10 @@ void Item::draw_health(BITMAP *dest, int GRAPH, int gx, int gy)
         printsmall_x(dest, gx, gy + 1, color, m_health);
 }
 
+/**
+ * Damage item (for example an explosion)
+ * @return true if item health is 0, ie. destroyed
+ */
 int Item::damage(int dam)
 {
     if (m_stunned_body_owner != NULL) {
@@ -454,16 +486,47 @@ int Item::damage(int dam)
     return 0;
 }
 
+/**
+ * Return two letter damage name.
+ */
 const char* Item::get_damage_name()
 {
-    int damage_type = m_ammo->obdata_damageType(m_ammo->m_type);
-    if (haveclip() && damage_type >= 0 && damage_type < 8)
+	static const char* damage_names[7] = {"AP", "IN", "HE", "LS", "PL", "ST"};
+	ASSERT (m_ammo != NULL);
+    int damage_type = m_ammo->obdata_damageType();
+    
+    if (haveclip() && damage_type >= 0 && damage_type < 6)
         return damage_names[damage_type];
-    return damage_names[7];
+    return "";
+}
+
+/**
+ * Return long damage name.
+ */
+const char* Item::get_damage_description()
+{
+	static const char* damage_longnames[7] = {N_("Armour piercing"), N_("Incendiary"),
+		N_("High explosive"), N_("Laser"), N_("Plasma"), N_("Stun")};
+    
+    if (haveclip()) {
+    	if (m_ammo == NULL)
+    		return "";
+	    int damage_type = m_ammo->obdata_damageType();
+    	if (damage_type >= 0 && damage_type < 6)
+			return damage_longnames[damage_type];
+		return "";
+	} else {
+		int damage_type = obdata_damageType();
+    	if (damage_type >= 0 && damage_type < 6)
+			return damage_longnames[damage_type];
+		return "";
+	}
+	return "";
 }
 
 /**
  * Create an exact copy of the item including loaded clip
+ * @return the copy
  */
 Item *Item::create_duplicate()
 {
@@ -582,3 +645,4 @@ bool Item::Read(persist::Engine &archive)
 
     return true;
 }
+
