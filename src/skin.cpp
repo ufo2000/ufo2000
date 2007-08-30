@@ -32,21 +32,24 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SKIN_INFO g_skins[] =
 {
-//    name,        SkinType,    fFemale, fFlying, armour_values, cost
-    { "male",      S_XCOM_0,    0, 0, { 12,  8,  8,  5,  2}, 70 },
-    { "female",    S_XCOM_0,    1, 0, { 12,  8,  8,  5,  2}, 70 },
-    { "armour_m",  S_XCOM_1,    0, 0, { 50, 40, 40, 30, 30}, 380 },
-    { "armour_f",  S_XCOM_1,    1, 0, { 50, 40, 40, 30, 30}, 380 },
-    { "power_m",   S_XCOM_2,    0, 0, {100, 80, 80, 70, 60}, 780 },
-    { "power_f",   S_XCOM_2,    1, 0, {100, 80, 80, 70, 60}, 780 },
-    { "fly_m",     S_XCOM_3,    0, 1, {110, 90, 90, 80, 70}, 1030 },
-    { "fly_f",     S_XCOM_3,    1, 1, {110, 90, 90, 80, 70}, 1030 },
-    { "sectoid",   S_SECTOID,   0, 0, {  4,  3,  3,  2,  2}, 28 },
-    { "muton",     S_MUTON,     0, 0, { 70, 60, 60, 50, 50}, 580 },
-    { "snakeman",  S_SNAKEMAN,  0, 0, { 40, 30, 30, 20, 20}, 280 },
-    { "ethereal",  S_ETHEREAL,  0, 1, { 60, 50, 50, 40, 40}, 730 },
-    { "floater",   S_FLOATER,   0, 1, { 20, 15, 15, 10, 10}, 440 },
-    { "chameleon", S_CHAMELEON, 0, 0, { 70, 60, 60, 50, 50}, 580 },
+//                                 fFemale (0=male 1=female), fFlying (0=nofly 1=fly), armour & cost (1 point= 2 cost, accumulate entire value)
+
+//    name,         SkinType,      fFemale, fFlying, armour_values, cost
+    { "male",       S_XCOM_0,      0, 0, { 12,  8,  8,  5,  2},   70 },
+    { "female",     S_XCOM_0,      1, 0, { 12,  8,  8,  5,  2},   70 },
+    { "armour_m",   S_XCOM_1,      0, 0, { 50, 40, 40, 30, 30},  380 },
+    { "armour_f",   S_XCOM_1,      1, 0, { 50, 40, 40, 30, 30},  380 },
+    { "power_m",    S_XCOM_2,      0, 0, {100, 80, 80, 70, 60},  780 },
+    { "power_f",    S_XCOM_2,      1, 0, {100, 80, 80, 70, 60},  780 },
+    { "fly_m",      S_XCOM_3,      0, 1, {110, 90, 90, 80, 70}, 1030 },  //150 fly cost
+    { "fly_f",      S_XCOM_3,      1, 1, {110, 90, 90, 80, 70}, 1030 },  //150 fly cost
+    { "sectoid",    S_SECTOID,     0, 0, {  4,  3,  3,  2,  2},   28 },
+    { "muton",      S_MUTON,       0, 0, { 70, 60, 60, 50, 50},  580 },
+    { "snakeman",   S_SNAKEMAN,    0, 0, { 40, 30, 30, 20, 20},  280 },
+    { "ethereal",   S_ETHEREAL,    0, 1, { 60, 50, 50, 40, 40},  730 },  //250 fly cost
+    { "floater",    S_FLOATER,     0, 1, { 20, 15, 15, 10, 10},  440 },  //300 fly cost
+	{ "chrys",      S_CHRYS,       0, 0, { 55, 45, 45, 35, 35},  430 },  //Zombify cost? (not implemented)
+    { "chameleon",  S_CHAMELEON,   0, 0, { 70, 60, 60, 50, 50},  580 },
 };
 
 int g_skins_count = sizeof(g_skins) / sizeof(g_skins[0]);
@@ -64,7 +67,7 @@ char *****Skin::m_bof = NULL;
 PCK **Skin::m_pck = NULL;
 PCK *Skin::m_add1 = NULL;
 BITMAP *Skin::m_image = NULL;
-SPK *Skin::m_spk[9][2][4] = {{{NULL, NULL, NULL, NULL}, {NULL, NULL, NULL, NULL}},
+SPK *Skin::m_spk[10][2][4] = {{{NULL, NULL, NULL, NULL}, {NULL, NULL, NULL, NULL}},
                                 {{NULL, NULL, NULL, NULL}, {NULL, NULL, NULL, NULL}},
                                 {{NULL, NULL, NULL, NULL}, {NULL, NULL, NULL, NULL}},
                                 {{NULL, NULL, NULL, NULL}, {NULL, NULL, NULL, NULL}},
@@ -87,7 +90,7 @@ void Skin::initpck()
     static char *skin_fname[] = {
         "handob.pck", "xcom_0.pck", "xcom_1.pck", "xcom_2.pck", "xcom_2.pck",
         "sectoid.pck", "muton.pck", "snakeman.pck", "ethereal.pck", "floater.pck",
-        "celatid.pck", "silacoid.pck", "chrys.pck", "civm.pck", "civf.pck",
+        "chrys.pck", "silacoid.pck", "celatid.pck", "civm.pck", "civf.pck",
         "zombie.pck"
     };
 
@@ -129,7 +132,8 @@ void Skin::initpck()
     m_spk[5][0][0] = new SPK("$(xcom)/geograph/up020.spk");
     m_spk[6][0][0] = new SPK("$(xcom)/geograph/up030.spk"); //LAWYER:  Snakeman backpack view.  Needs an SPK
     m_spk[7][0][0] = new SPK("$(xcom)/geograph/up016.spk"); //LAWYER:  Ethereal backpack view.  Needs an SPK
-    m_spk[8][0][0] = new SPK("$(xcom)/geograph/up018.spk"); //LAWYER:  Floater backpack view.  Needs an SPK    
+    m_spk[8][0][0] = new SPK("$(xcom)/geograph/up018.spk"); //LAWYER:  Floater backpack view.  Needs an SPK
+    m_spk[9][0][0] = new SPK("$(xcom)/geograph/up014.spk");	//Kratos:  Chryssalid SPK 
     
     m_image = create_bitmap(32, 40);
     
@@ -264,6 +268,7 @@ void Skin::freepck()
     delete m_spk[6][0][0]; //LAWYER:  Neatness purposes, i think
     delete m_spk[7][0][0];
     delete m_spk[8][0][0];
+    delete m_spk[9][0][0]; //Kratos: Chryssalid
     
     destroy_bitmap(m_image);
     
@@ -623,6 +628,9 @@ void Skin::draw()
             break;
         case S_FLOATER:
             draw_floater();
+            break;
+        case S_CHRYS:
+            draw_chrys();
             break;
         default:
             draw_common();
@@ -1038,6 +1046,142 @@ void Skin::draw_floater() //LAWYER:  The Floater.  Note that due to animation od
     if ((dir == 3) || (dir == 7)) {
         ox = 0; oy *= 2;
     }
+
+    if (state == MARCH) {
+        if (phase < 4)
+            draw_sprite(screen2, image, gx + phase * 2 * ox, gy - phase * oy);
+        else
+            draw_sprite(screen2, image, gx + (phase - 8) * 2 * ox, gy - (phase - 8) * oy);
+    } else
+        draw_sprite(screen2, image, gx + phase * 2 * ox, gy - phase * oy);
+}
+
+//Kratos: Chryssalids are like Sectoid/Muton sprites but without certain images (no holding)
+//...     Basically a copy/paste then edit/omit preused code since they're so similar
+//...     A copy paste of this mess probably wasn't the best idea, but was the easiest solution
+
+void Skin::draw_chrys()
+{
+    //-----Initialisation-----
+    State state = m_soldier->state(); //LAWYER:  Current state, such as crouch, or flight?
+    int x = m_soldier->x, y = m_soldier->y, z = m_soldier->z; //LAWYER:  Map positions?
+    int dir = m_soldier->dir, phase = m_soldier->phase, is_flying = m_soldier->is_flying(); //Direction, animation phase, flying state?
+    Item *lhand_item = m_soldier->lhand_item(), *rhand_item = m_soldier->rhand_item(); //Items in hand  //Kratos: don't need this?
+    
+    int head_frame = 24; //Kratos: Start head sequence at 24 instead of Sectoid/Muton's head at 32
+    //-----End Initialisation-----
+    
+    //LAWYER:  Placement in the map, I'd assume
+    int gx = g_map->x + CELL_SCR_X * x + CELL_SCR_X * y;
+    int gy = g_map->y - (x + 1) * CELL_SCR_Y + CELL_SCR_Y * y - 18 - z * CELL_SCR_Z;
+    gy += m_soldier->calc_z();
+    
+    //LAWYER:  If we're falling, skip any calculations for building the character and draw the death sequence
+    if (state == FALL) {
+        m_pck[skin_info.SkinType]->showpck(224 + phase / 3, gx, gy); //Kratos: Start at 224 instead of 264
+        return ;
+    }
+    
+    int arm1, arm2, army, handob_y = 0;
+    int yofs;
+
+    BITMAP *image = m_image;
+    clear_to_color(image, xcom1_color(0));
+
+    arm1 = 0; arm2 = 0; army = 5;
+    if (dir < 4) {
+        arm2 = 1;
+    } else {
+        arm1 = 1;
+    }
+
+//  if (state == SIT) handob_y += 4;
+//  if (skin_info.SkinType == S_SECTOID) handob_y += 6; // $$$
+
+    if ((lhand_item != NULL) || (rhand_item != NULL)) {
+        if (state != MARCH) {
+//             arm1 += 30;  //Kratos: Chryssalids don't need this (Hand sprites?)
+//             arm2 += 30;  //...
+        }
+    }
+    if ((dir < 1) || (dir > 5)) {
+        if (rhand_item != NULL)
+            PCK::showpck(image, rhand_item->obdata_pHeld(dir), 0, handob_y);
+        else if (lhand_item != NULL)
+            PCK::showpck(image, lhand_item->obdata_pHeld(dir), 0, handob_y);
+    }
+
+    switch (state) {
+        case FALL: case LIE: break;      //neverhap
+        case SIT: //Kratos: Chryssalids don't crouch
+        case STAND:
+            m_pck[skin_info.SkinType]->drawpck(dir + 8 * arm1, image, 0);
+//          m_pck[md.SkinType]->drawpck(dir + head_frame, image, 0);      //head
+            draw_head(m_soldier->md.Appearance, head_frame, dir, image, 0);
+            if (is_flying && m_pck[skin_info.SkinType]->m_imgnum >= 226) //Kratos: 226 instead of 275
+                m_pck[skin_info.SkinType]->drawpck(226 + dir, image, 0);
+            else
+                m_pck[skin_info.SkinType]->drawpck(dir + 8 * 2, image, 0);
+            m_pck[skin_info.SkinType]->drawpck(dir + 8 * arm2, image, 0);
+            break;
+        case MARCH:
+            if (phase % 4 == 0)
+                yofs = -1;
+            else
+                if (phase % 2 == 1)
+                    yofs = 0;
+                else
+                    yofs = 2;
+
+            if ((lhand_item != NULL) || (rhand_item != NULL)) {
+//              arm1 += 30;  //Kratos: Chryssalids don't need this (Hand sprites?)
+//              arm2 += 30;  //...
+                m_pck[skin_info.SkinType]->drawpck(dir + 8 * arm1, image, 0);
+          } else {
+                m_pck[skin_info.SkinType]->drawpck(phase + (dir * 3 + 6 - 1 - arm2) * 8, image, yofs); //Kratos: slightly different arm calculation than Mutons/Sectoids
+          }
+
+//          m_pck[md.SkinType]->drawpck(dir + head_frame, image, 0);      //head
+            draw_head(m_soldier->md.Appearance, head_frame, dir, image, 0);
+            int yo = 0;
+            if (phase % 4 == 0) yo = -1;
+
+            if (is_flying && m_pck[skin_info.SkinType]->m_imgnum >= 275) //Kratos: Not sure if this needs changing
+                m_pck[skin_info.SkinType]->drawpck(275 + dir, image, 0); //...
+            else
+                m_pck[skin_info.SkinType]->drawpck(phase + (dir * 3 + 6) * 8, image, yo);     //yofs); //Kratos: slightly different arm calculations...
+
+            if ((lhand_item != NULL) || (rhand_item != NULL)) {
+                m_pck[skin_info.SkinType]->drawpck(dir + 8 * arm2, image, 0);
+            } else {
+                m_pck[skin_info.SkinType]->drawpck(phase + (dir * 3 + 6 - 1 - arm1) * 8, image, yofs); //Kratos: ...
+            }
+            break;
+    }
+
+    if ((dir > 0) && (dir < 6)) {
+        if (rhand_item != NULL)
+            PCK::showpck(image, rhand_item->obdata_pHeld(dir), 0, handob_y);
+        else if (lhand_item != NULL)
+            PCK::showpck(image, lhand_item->obdata_pHeld(dir), 0, handob_y);
+    }
+
+    int ox, oy;
+    if (dir < 3) ox = 1; else if ((dir == 3) || (dir == 7)) ox = 0; else ox = -1;
+    if ((dir == 1) || (dir == 5)) {
+        oy = 0; ox *= 2;
+    } else
+            if ((dir > 1) && (dir < 5)) oy = -1; else oy = 1;
+    if ((dir == 3) || (dir == 7)) {
+        ox = 0; oy *= 2;
+    }
+
+    //text_mode(-1);
+    //textprintf(image, font, 0, 0, 1, "%d", phase);
+    //textprintf(image, font, 0, 8, 1, "%d%d", ox, oy);
+    //textprintf(image, font, 0, 0, 1, "%d", enemy_num);
+    //textprintf(image, font, 0, 0, 1, "%d", seen_enemy_num);
+
 
     if (state == MARCH) {
         if (phase < 4)

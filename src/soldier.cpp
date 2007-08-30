@@ -936,6 +936,9 @@ int Soldier::move(int ISLOCAL)
                 case S_FLOATER:
                     soundSystem::getInstance()->play(SS_STEP_ALIEN_HOVER, 128); //LAWYER:  Added Floater
                     break;
+                case S_CHRYS:
+                    soundSystem::getInstance()->play(SS_STEP_CHRYSSALID, 128); //Kratos: Chryssalid
+                    break;
                 default:
                     soundSystem::getInstance()->play(SS_STEP_HUMAN, 128);
                     break;
@@ -1434,6 +1437,9 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir, int dam_dev)
                     //soundSystem::getInstance()->play(SS_FLOATER_DEATH); //LAWYER:  Floater
                     soundSystem::getInstance()->play(SS_SECTOID_DEATH); //LAWYER:  As there is no Floater death sound, the Sectoid's is used instead
                     break;
+                case S_CHRYS:
+                    soundSystem::getInstance()->play(SS_CHRYSSALID_DEATH); //Kratos: Chryssalid
+                    break;
                 default:
                     if (md.fFemale == 1)
                         soundSystem::getInstance()->play(SS_FEMALE_DEATH);
@@ -1462,6 +1468,9 @@ void Soldier::hit(int sniper, int pierce, int type, int hitdir, int dam_dev)
                 break;
             case S_FLOATER:
                 soundSystem::getInstance()->play(SS_FLOATER_WOUND); //LAWYER:  Floater
+                break;
+            case S_CHRYS:
+                soundSystem::getInstance()->play(SS_CHRYSSALID_WOUND); //Kratos: Chryssalid
                 break;
             default:
                 if (md.fFemale == 1)
@@ -1596,6 +1605,8 @@ void Soldier::die()
             ctype = "Ethereal Corpse";
         else if (md.SkinType == S_FLOATER) //LAWYER:  Floater
             ctype = "Floater Corpse";
+        else if (md.SkinType == S_CHRYS) //Kratos: Chryssalid
+            ctype = "Chryssalid Corpse";
         else
             ctype = "Muton Corpse";
 
@@ -1642,6 +1653,8 @@ void Soldier::stun()
         ctype = "Ethereal Corpse";
     else if (md.SkinType == S_FLOATER) //LAWYER:  Floater
         ctype = "Floater Corpse";
+    else if (md.SkinType == S_CHRYS) //Kratos: Chryssalid
+        ctype = "Chryssalid Corpse";
     else
         ctype = "Muton Corpse";
 
@@ -2715,6 +2728,7 @@ void Soldier::showspk(BITMAP *dest)
         case S_SNAKEMAN:
         case S_ETHEREAL:
         case S_FLOATER:
+        case S_CHRYS:
 			lua_pushstring(L, "ImageTable");
             lua_gettable(L, LUA_GLOBALSINDEX);
             ASSERT(lua_istable(L, -1));
@@ -2733,6 +2747,9 @@ void Soldier::showspk(BITMAP *dest)
 					break;
 				case S_FLOATER:
 					lua_pushstring(L, "Floater");
+					break;
+				case S_CHRYS:
+					lua_pushstring(L, "Chrys");
 					break;
 			}
             lua_gettable(L, -2);
@@ -2785,6 +2802,13 @@ void Soldier::showspk(BITMAP *dest)
             break;
         case S_FLOATER: //LAWYER:  Added Floater
             Skin::m_spk[8][0][0]->show_pal2(alien_bg, -160, 0);
+            if (alien_pic) {
+				draw_alpha_sprite(alien_bg, alien_pic, 5, 0);
+            }
+			stretch_blit(alien_bg, dest, 0, 0, 160, 200, 40, 45, 80, 100);
+            break;
+        case S_CHRYS:
+            Skin::m_spk[9][0][0]->show_pal2(alien_bg, -160, 0);
             if (alien_pic) {
 				draw_alpha_sprite(alien_bg, alien_pic, 5, 0);
             }

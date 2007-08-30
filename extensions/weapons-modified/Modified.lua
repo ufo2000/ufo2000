@@ -1,6 +1,20 @@
 ------------------------------------------------------------------------------
 -- Modified X-Com Weapons Set (by Hobbes, Twillight Owl, DiversanT and others)
 ------------------------------------------------------------------------------
+AddXcomItem {
+    cost = 10,
+    name = "Electro Flare",
+    pInv = pck_image("$(xcom)/units/bigobs.pck", 55),
+    pMap = pck_image("$(xcom)/units/floorob.pck", 72),
+    health = 40,
+    importance = 1,
+    width = 1,
+    height = 1,
+    pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
+    weight = 2,
+    minimapMark = 1,
+    ownLight = 10,
+}
 
 AddXcomItem {
 	cost = 70,
@@ -861,6 +875,7 @@ AddEquipment {
 		{13, 06, "Small Rocket"},
 		{14, 06, "Smoke Rocket"},
 		{18, 00, "High Explosive"},
+		{18, 01, "Electro Flare"},
 	}
 }
 
@@ -905,6 +920,7 @@ AddEquipment {
 --		{13, 06, "Small Rocket"},
 		{14, 06, "Smoke Rocket"},
 --		{18, 00, "High Explosive"},
+		{18, 01, "Electro Flare"},
 	}
 }
 
@@ -949,6 +965,7 @@ AddEquipment {
 		{13, 06, "Small Rocket"},
 		{14, 06, "Smoke Rocket"},
 		{18, 00, "High Explosive"},
+		{18, 01, "Electro Flare"},
 	}
 }
 
@@ -993,6 +1010,7 @@ AddEquipment {
 		{13, 06, "Small Rocket"},
 		{14, 06, "Smoke Rocket"},
 		{18, 00, "High Explosive"},
+		{18, 01, "Electro Flare"},
 	}
 }
 
@@ -1037,5 +1055,6 @@ AddEquipment {
 --		{13, 06, "Small Rocket"},
 --		{14, 06, "Smoke Rocket"},
 --		{18, 00, "High Explosive"},
+		{18, 01, "Electro Flare"},
 	}
 }

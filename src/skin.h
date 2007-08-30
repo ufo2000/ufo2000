@@ -35,10 +35,11 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define S_SNAKEMAN        7 //LAWYER:  Added Snakefolk
 #define S_ETHEREAL        8 //LAWYER:  Added Ethereals
 #define S_FLOATER         9 //LAWYER:  Added Floaters
-#define SKIN_NUMBER       10
+#define S_CHRYS           10 //Kratos: Chryssalids
+#define SKIN_NUMBER       11
 
 // !!! Hack - only to test custom unit sprite rendering code
-#define S_CHAMELEON       10
+#define S_CHAMELEON       11
 
 struct SKIN_INFO {
     const char *Name;
@@ -62,7 +63,7 @@ public:
     static PCK **m_pck;
     static PCK *m_add1;
     static BITMAP *m_image;
-    static SPK *m_spk[9][2][4];
+    static SPK *m_spk[10][2][4];
 private:
     SKIN_INFO skin_info;
     
@@ -73,6 +74,7 @@ private:
     void draw_snakeman(); //LAWYER:  Alien specific
     void draw_ethereal(); 
     void draw_floater();
+    void draw_chrys(); //Kratos: Chryssalid
     
     void draw_lua();
 

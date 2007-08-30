@@ -124,6 +124,8 @@ static const sound_sym_maptable_t KNOWN_SYMS[] = {
 { SS_STEP_MUTON_METAL, "step-muton-metal" },
 { SS_STEP_ETHEREAL, "step-ethereal" },
 { SS_STEP_ETHEREAL_METAL, "step-ethereal-metal" },
+{ SS_STEP_CHRYSSALID, "step-chryssalid" },
+{ SS_STEP_CHRYSSALID_METAL, "step-chryssalid-metal" },
 { SS_STEP_REAPER, "step-reaper" },
 { SS_STEP_REAPER_METAL, "step-reaper-metal" },
 { SS_STEP_SNAKE, "step-snake" },
