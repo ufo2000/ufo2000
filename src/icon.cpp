@@ -630,7 +630,7 @@ void Icon::firemenu(int iplace)
 						waccur[i] = 100;
 						wtime[i]  = sel_man->required(it->obdata_useTime());
 						if (!wtime[i]) wtime[i] = sel_man->required(25);
-						if ((sel_man->havetime(wtime[i]) == OK) && (it->obdata_heal(_HEALTH))) {
+						if ((sel_man->havetime(wtime[i]) == OK) && (it->obdata_heal(HEAL_TYPE_HEALTH))) {
 							sprintf(dstr[i], _("HEAL WOUNDS         TUs>%02d"), wtime[i]);
 							the_dialog[i].proc = firemenu_dialog_proc;
 							waction[i] = HEAL_WOUNDS;
@@ -638,7 +638,7 @@ void Icon::firemenu(int iplace)
 						}
 						waccur[i] = 100;
 						wtime[i]  = sel_man->required(it->obdata_useTime());
-						if ((sel_man->havetime(wtime[i]) == OK) && (it->obdata_heal(_STUN) || it->obdata_heal(_ENERGY))){
+						if ((sel_man->havetime(wtime[i]) == OK) && (it->obdata_heal(HEAL_TYPE_STUN) || it->obdata_heal(HEAL_TYPE_ENERGY))){
 							sprintf(dstr[i], _("INJECT STIMULANTS   TUs>%02d"), wtime[i]);
 							the_dialog[i].proc = firemenu_dialog_proc;
 							waction[i] = HEAL_ENERGY_STUN;
@@ -646,7 +646,7 @@ void Icon::firemenu(int iplace)
 						}
 						waccur[i] = 100;
 						wtime[i]  = sel_man->required(it->obdata_useTime());
-						if ((sel_man->havetime(wtime[i]) == OK) && (it->obdata_heal(_MORALE))) {
+						if ((sel_man->havetime(wtime[i]) == OK) && (it->obdata_heal(HEAL_TYPE_MORALE))) {
 							sprintf(dstr[i], _("INJECT PAINKILLERS  TUs>%02d"), wtime[i]);
 							the_dialog[i].proc = firemenu_dialog_proc;
 							waction[i] = HEAL_MORALE;

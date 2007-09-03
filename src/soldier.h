@@ -101,10 +101,10 @@ struct UNITDATA
 #define DAMAGEDIR_UNDER      8
 
 #define HEAL_COST	8
-/*#define _HEALTH 0
-#define _STUN 1
-#define _ENERGY 2
-#define _MORALE 3*/
+#define HEAL_TYPE_HEALTH 0
+#define HEAL_TYPE_STUN 1
+#define HEAL_TYPE_ENERGY 2
+#define HEAL_TYPE_MORALE 3
 
 enum State { SIT = 0, STAND, MARCH, FALL, LIE };
 
