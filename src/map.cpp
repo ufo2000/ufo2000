@@ -1429,7 +1429,9 @@ void Map::apply_hit(int _z, int _x, int _y, int _wtype)
                 int lev = _z / 12;
                 int col = _x / 16;
                 int row = _y / 16;
-                damage_cell_part(lev, col, row, i, Item::obdata_damage(_wtype), Item::obdata_dDeviation(_wtype));
+				if (!Item::obdata_isMed(_wtype)) {
+					damage_cell_part(lev, col, row, i, Item::obdata_damage(_wtype), Item::obdata_dDeviation(_wtype));
+				}
             }
     }
 }

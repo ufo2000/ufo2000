@@ -102,6 +102,8 @@ public:
     static int obdata_damageType(int index) { return obdata_get_int(index, "damageType"); }
     static int obdata_wayPoints(int index) { return obdata_get_int(index, "wayPoints"); }
     static int obdata_accuracy(int index, int n) { return obdata_get_array_int(index, "accuracy", n); }
+    static int obdata_heal(int index, int n) { return obdata_get_array_int(index, "heal", n); }
+	static int obdata_heal_max(int index, int n) { return obdata_get_array_int(index, "max_heal", n); }
     static int obdata_time(int index, int n) { return obdata_get_array_int(index, "time", n); }
     static int obdata_useTime(int index) { return obdata_get_int(index, "useTime"); }
     static int obdata_autoShots(int index) { return obdata_get_int(index, "autoShots"); }	/// Number of shots in an autoshot burst
@@ -111,6 +113,7 @@ public:
     static int obdata_isHandToHand(int index) { return obdata_get_int(index, "isHandToHand"); }
     static int obdata_disappear(int index) { return obdata_get_int(index, "disappear"); }	/// This clip disappears from weapon when empty
     static int obdata_isGun(int index) { return obdata_get_int(index, "isGun"); }
+    static int obdata_isMed(int index) { return obdata_get_int(index, "isMed"); }
     static int obdata_minimapMark(int index) { return obdata_get_int(index, "minimapMark"); }
     static int obdata_bulletRGB(int index, int n) { return obdata_get_array_int(index, "bulletRGB", n); } /// Following colors are used for drawing bullet
     static int obdata_glowRGB(int index, int n) { return obdata_get_array_int(index, "glowRGB", n); } /// Beam weapons use only this color
@@ -135,8 +138,10 @@ public:
     int is_hand_to_hand() { return obdata_isHandToHand(m_type); }
     //! Stun damage
     int is_stun_weapon() { return (obdata_damageType(m_type) == DT_STUN); }
-    //! Check if this is a grenade (something explosive that needs to be thrown)
-    int is_grenade() { return obdata_isGrenade(m_type); }
+    //! Check if it is made for healing
+    int is_healing_item() { return (obdata_isMed(m_type)); }
+	//! Check if this is a grenade (something explosive that needs to be thrown)
+	int is_grenade() { return obdata_isGrenade(m_type); }
     //! Check if it is high explosive (explosion triggered by timer)
     int is_high_explosive() { return obdata_isHighExplosive(m_type); }
     //! Check if it is proximity grenade (explosion triggered by movement)
@@ -160,7 +165,8 @@ public:
     int obdata_isAmmo() { return obdata_isAmmo(m_type); }
     int obdata_reloadTime() { return obdata_reloadTime(m_type); }
     int obdata_isGun() { return obdata_isGun(m_type); }
-    int obdata_twoHanded() { return obdata_twoHanded(m_type); }
+    int obdata_isMed() { return obdata_isMed(m_type); }
+	int obdata_twoHanded() { return obdata_twoHanded(m_type); }
     int obdata_maxHealth() { return obdata_maxHealth(m_type); }
     int obdata_damage() { return obdata_damage(m_type); }
     int obdata_dDeviation() { return obdata_dDeviation(m_type); }
@@ -168,7 +174,9 @@ public:
     int obdata_smokeRange() { return obdata_smokeRange(m_type); }
     int obdata_smokeTime() { return obdata_smokeRange(m_type); }
     int obdata_accuracy(int n) { return obdata_get_array_int(m_type, "accuracy", n); }
-    int obdata_time(int n) { return obdata_get_array_int(m_type, "time", n); }
+    int obdata_heal(int n) { return obdata_get_array_int(m_type, "heal", n); }
+	int obdata_heal_max(int n) { return obdata_get_array_int(m_type, "max_heal", n); }
+	int obdata_time(int n) { return obdata_get_array_int(m_type, "time", n); }
     int obdata_useTime() { return obdata_useTime(m_type); }
     int obdata_autoShots() { return obdata_autoShots(m_type); }
     int obdata_importance() { return obdata_get_int(m_type, "importance"); }

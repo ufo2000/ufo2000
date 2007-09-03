@@ -100,6 +100,12 @@ struct UNITDATA
 #define DAMAGEDIR_FRONTRIGHT 7
 #define DAMAGEDIR_UNDER      8
 
+#define HEAL_COST	8
+/*#define _HEALTH 0
+#define _STUN 1
+#define _ENERGY 2
+#define _MORALE 3*/
+
 enum State { SIT = 0, STAND, MARCH, FALL, LIE };
 
 /**
@@ -266,10 +272,16 @@ public:
     int beam(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time);
     int fire(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time);
     int punch(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time);
-    int aimedthrow(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time);
+    int do_heal(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time);
+	int aimedthrow(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time);
 
     int check_for_hit(int _z, int _x, int _y);
-    void apply_hit(int sniper, int _z, int _x, int _y, int _type, int _hitdir);
+    
+	void heal_wounds(int, int);
+	void heal_energy_stun(int, int, int, int);
+	void heal_morale(int, int);
+	
+	void apply_hit(int sniper, int _z, int _x, int _y, int _type, int _hitdir);
     int do_armour_check(int &pierce, int damdir);
     void apply_wound(int hitloc);
     void hit(int sniper, int pierce, int type, int hitdir, int dam_dev = 50);

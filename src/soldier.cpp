@@ -2251,7 +2251,9 @@ void Soldier::apply_throwing_accuracy(REAL &fi, REAL &te, int weight)
     fi += FI_STEP * rand_fi;
 }
 
-
+/**
+ * Check for the hit on a soldier which is located at that map cell.
+ */
 int Soldier::check_for_hit(int _z, int _x, int _y)
 {
     if (m_state == FALL || m_state == LIE) return 0;
@@ -2280,12 +2282,116 @@ int Soldier::check_for_hit(int _z, int _x, int _y)
     return 0;
 }
 
+/**
+ * Healing the HP of a soldier (HP% of his max, up to max_HP% of his max)
+ */
+void Soldier::heal_wounds(int HP, int max_HP) 
+{
+	//! Delta is the amount you heal, limit is the maximum that can be healed.
+	int delta;
+	int limit;
+	//!Possible problematic CRC formula
+	limit = ud.MaxHealth * max_HP / 100;
+	delta = ud.MaxHealth * HP / 100;
+	if (ud.CurHealth != 0) {
+		//!Being healed costs two steps but you can still be healed if you have 0 remaining TUs
+		if ((ud.CurTU - HEAL_COST) >= 0) {
+			ud.CurTU -= HEAL_COST;
+		}else {
+			ud.CurTU = 0;
+		}
+		if (ud.CurHealth < limit) {
+			if (ud.CurHealth + delta > limit) {
+				ud.CurHealth = limit;
+			}else {
+				ud.CurHealth += delta;
+			}
+		}
+	}
+}
+/**
+ * Healing the Stun and Energy of a soldier (Stun/Energy% of his max, up to max_Stun/Energy% of his max)
+ */
+void Soldier::heal_energy_stun(int stun, int energy, int max_stun, int max_energy) 
+{
+	//! Delta is the amount you heal, limit is the maximum that can be healed.
+	int deltaStun;
+	int limitStun;
+	int deltaEnergy;
+	int limitEnergy;
+	//!Possible problematic CRC formula
+	deltaStun = ud.MaxHealth * stun / 100;
+	limitStun = ud.MaxHealth * (100 - max_stun) / 100; //Minimum
+	deltaEnergy = ud.MaxEnergy * energy / 100;
+	limitEnergy = ud.MaxEnergy * max_energy / 100;
+	if (ud.CurHealth != 0) {
+		//!Being healed costs two steps but you can still be healed if you have 0 remaining TUs	
+		if ((ud.CurTU - HEAL_COST) >= 0) {
+			ud.CurTU -= HEAL_COST;
+		}else {
+			ud.CurTU = 0;
+		}
+		if (ud.CurStun > limitStun) {		
+			if (ud.CurStun - deltaStun < limitStun) {
+				ud.CurStun = limitStun;
+			}else {
+				ud.CurStun -= deltaStun;
+			}
+		}
+		if (ud.CurEnergy < limitEnergy) {
+			if (ud.CurEnergy + deltaEnergy > limitEnergy) {
+				ud.CurEnergy = limitEnergy;
+			}else {
+				ud.CurEnergy += deltaEnergy;
+			}
+		}
+	}
+}
 
+/**
+ * Healing the Morale of a soldier (morale% of his max, up to max_morale% of his max)
+ */
+void Soldier::heal_morale(int morale, int max_morale)
+{
+	//! Delta is the amount you heal, limit is the maximum that can be healed.
+	int delta;
+	int limit;
+	//! MaxMorale is Always 100.
+	delta = morale;
+	limit = max_morale;
+	if ((ud.CurHealth != 0)) {
+		//!Being healed costs two steps but you can still be healed if you have 0 remaining TUs
+		if ((ud.CurTU - HEAL_COST) >= 0) {
+			ud.CurTU -= HEAL_COST;
+		}else {
+			ud.CurTU = 0;
+		}
+		if (ud.Morale < limit) {
+			if (ud.Morale + delta > limit) {
+				ud.Morale = limit;
+			}else {
+				ud.Morale += delta;
+			}		
+		}
+	}
+}
+
+/**
+ * Apply the hit on a soldier which is located at that map cell.
+ */
 void Soldier::apply_hit(int sniper, int _z, int _x, int _y, int _wtype, int _hitdir)
 {
-    if (check_for_hit(_z, _x, _y)) {    
-        hit(sniper, Item::obdata_damage(_wtype), Item::obdata_damageType(_wtype), _hitdir, Item::obdata_dDeviation(_wtype));
-    }
+    if (check_for_hit(_z, _x, _y)) {
+		if(target.action == HEAL_WOUNDS) 
+			heal_wounds(Item::obdata_heal(_wtype, 0),Item::obdata_heal_max(_wtype, 0));
+		else if(target.action == HEAL_ENERGY_STUN) 
+			heal_energy_stun(Item::obdata_heal(_wtype, 1), Item::obdata_heal(_wtype, 2), Item::obdata_heal_max(_wtype, 1), Item::obdata_heal_max(_wtype, 2));
+		else if(target.action == HEAL_MORALE) 
+			heal_morale(Item::obdata_heal(_wtype, 3),Item::obdata_heal_max(_wtype, 3));
+		else  
+			hit(sniper, Item::obdata_damage(_wtype), Item::obdata_damageType(_wtype), _hitdir, Item::obdata_dDeviation(_wtype));
+		
+	}
 }
 
 /**
@@ -2553,7 +2659,19 @@ int Soldier::assign_target(Action action, int iplace)
             target.accur = TAccuracy(it->obdata_accuracy(ATHROW));
             target.time = required(50);
             break;
-        default: ASSERT(false);
+        case HEAL_WOUNDS:
+			target.accur = 100;
+			target.time = required(it->obdata_useTime());
+			break;
+		case HEAL_ENERGY_STUN:
+			target.accur = 100;
+			target.time = required(it->obdata_useTime());
+			break;
+		case HEAL_MORALE:
+			target.accur = 100;
+			target.time = required(it->obdata_useTime());
+			break;
+		default: ASSERT(false);
     }
     target.item = it;
     target.place = iplace;
@@ -2588,7 +2706,16 @@ int Soldier::do_target_action(int z0, int x0, int y0, int zd, int xd, int yd, Ac
         case AIMEDTHROW:
             chk = aimedthrow(z0, x0, y0, zd, xd, yd, target.place, target.time);
             break;
-        default: ASSERT(false);
+        case HEAL_WOUNDS:
+			chk = do_heal(z0, x0, y0, zd, xd, yd, target.place, target.time);
+			break;
+		case HEAL_ENERGY_STUN:
+			chk = do_heal(z0, x0, y0, zd, xd, yd, target.place, target.time);
+			break;
+		case HEAL_MORALE:
+			chk = do_heal(z0, x0, y0, zd, xd, yd, target.place, target.time);
+			break;
+		default: ASSERT(false);
     }
     return chk;
 }
@@ -2610,9 +2737,27 @@ int Soldier::punch(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, i
     return OK;
 }
 
+int Soldier::do_heal(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time)
+{
+    int chk;
+    Item *it = item(iplace);
+    if (it == NULL) return ERR_NO_ITEM;
+    chk = havetime(req_time);
+    if (chk != OK) return chk;
+
+    REAL ro = sqrt((double)((xd - x0) * (xd - x0) + (yd - y0) * (yd - y0) + (zd - z0) * (zd - z0)));
+    REAL fi = acos((REAL)(zd - z0) / ro);
+    REAL te = atan2((REAL)(yd - y0), (REAL)(xd - x0));
+    apply_accuracy(fi, te);
+    spend_time(req_time);
+    m_bullet->heal(z0, x0, y0, fi, te, it->itemtype());
+    return OK;
+}
+
 /**
  * Throw an item.
  */
+
 int Soldier::thru(int z0, int x0, int y0, int zd, int xd, int yd, int iplace, int req_time)
 {
     int chk;

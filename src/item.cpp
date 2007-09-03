@@ -262,6 +262,30 @@ void Item::od_info(int gx, int gy, int gcol)
        gy += 5;
     }
     
+	//! Print medical device data 
+	if (obdata_isMed(type)) {
+		textprintf(screen2, font, gx, gy, gcol, _("Medical item") );
+        gy += 10;
+
+		if (obdata_heal(type, 0) && obdata_heal_max(type, 0)) {
+			textprintf(screen2, font, gx, gy, gcol, "%13s: %2d%%, max %2d%%",_("Health"), obdata_heal(type, 0), obdata_heal_max(type, 0));
+			gy += 10;
+		}
+		if (obdata_heal(type, 1) && obdata_heal_max(type, 1)) {
+			textprintf(screen2, font, gx, gy, gcol, "%13s: %2d%%, max %2d%%",_("Stun"), obdata_heal(type, 1), obdata_heal_max(type, 1));
+			gy += 10;
+		}
+		if (obdata_heal(type, 2) && obdata_heal_max(type, 2)) {
+			textprintf(screen2, font, gx, gy, gcol, "%13s: %2d%%, max %2d%%",_("Energy"), obdata_heal(type, 2), obdata_heal_max(type, 2));
+			gy += 10;
+		}
+		if (obdata_heal(type, 3) && obdata_heal_max(type, 3)) {
+			textprintf(screen2, font, gx, gy, gcol, "%13s: %2d%%, max %2d%%",_("Morale"), obdata_heal(type, 3), obdata_heal_max(type, 3));
+			gy += 10;
+		}
+	}
+	//! End print medical device data
+	
     if (obdata_useTime(type) > 0) {
         textprintf(screen2, font, gx, gy, gcol, "%13s: %2d%%",
                     _("Usage TU cost"), obdata_useTime(type));

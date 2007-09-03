@@ -65,7 +65,9 @@ public:
     void thru(int _z0, int _x0, int _y0, REAL _ro, REAL _fi, REAL _te, REAL _zA, Item *_item);
     void aimedthrow(int _z0, int _x0, int _y0, REAL _fi, REAL _te, Item *_item);
     void punch(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type);
+	void heal(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type);
 
+	
     void move();
     void draw();
     void draw_bullet_trace(int length, int color);

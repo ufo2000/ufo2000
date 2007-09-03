@@ -834,6 +834,27 @@ AddXcomItem {
 	sound = cat_sample("$(xcom)/sound/sound1.cat", 22) or cat_sample("$(xcom)/sound/sample2.cat", 22),
 }
 
+AddXcomItem {
+	cost = 500,
+	name = "MediKit",
+	pInv = pck_image("$(xcom)/units/bigobs.pck", 24),
+	pMap = pck_image("$(xcom)/units/floorob.pck", 24),
+	health = 80,
+	-- HP, Stun, Energy, Morale
+	heal = {20, 20, 30, 20},
+	max_heal = {75, 75, 100, 75},
+	dDeviation = 25,
+	importance = 6,
+	width = 1,
+	height = 2,
+	pHeld = pck_image_set("$(xcom)/units/handob.pck", 120, 8),
+	useTime = 20,
+	weight = 5,
+	minimapMark = 1,
+	twoHanded = 1,
+	isMed = 1,
+}
+
 AddEquipment {
 	Name = "Modified X-Com Weapons",
 	Layout = {
@@ -875,7 +896,8 @@ AddEquipment {
 		{13, 06, "Small Rocket"},
 		{14, 06, "Smoke Rocket"},
 		{18, 00, "High Explosive"},
-		{18, 01, "Electro Flare"},
+		{18, 01, "MediKit"},
+		{19, 01, "Electro Flare"},
 	}
 }
 
@@ -920,7 +942,8 @@ AddEquipment {
 --		{13, 06, "Small Rocket"},
 		{14, 06, "Smoke Rocket"},
 --		{18, 00, "High Explosive"},
-		{18, 01, "Electro Flare"},
+		{18, 01, "MediKit"},
+		{19, 01, "Electro Flare"},
 	}
 }
 
@@ -965,7 +988,8 @@ AddEquipment {
 		{13, 06, "Small Rocket"},
 		{14, 06, "Smoke Rocket"},
 		{18, 00, "High Explosive"},
-		{18, 01, "Electro Flare"},
+		{18, 01, "MediKit"},
+		{19, 01, "Electro Flare"},
 	}
 }
 
@@ -1010,7 +1034,8 @@ AddEquipment {
 		{13, 06, "Small Rocket"},
 		{14, 06, "Smoke Rocket"},
 		{18, 00, "High Explosive"},
-		{18, 01, "Electro Flare"},
+		{18, 01, "MediKit"},
+		{19, 01, "Electro Flare"},
 	}
 }
 
@@ -1055,6 +1080,7 @@ AddEquipment {
 --		{13, 06, "Small Rocket"},
 --		{14, 06, "Smoke Rocket"},
 --		{18, 00, "High Explosive"},
-		{18, 01, "Electro Flare"},
+		{18, 01, "MediKit"},
+		{19, 01, "Electro Flare"},
 	}
 }

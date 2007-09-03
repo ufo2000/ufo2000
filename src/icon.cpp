@@ -624,7 +624,36 @@ void Icon::firemenu(int iplace)
                             i++;
                         }
                     }
-                }
+                } else {
+					//! We are dealing with a medical kit
+					if (it->is_healing_item()) {
+						waccur[i] = 100;
+						wtime[i]  = sel_man->required(it->obdata_useTime());
+						if (!wtime[i]) wtime[i] = sel_man->required(25);
+						if ((sel_man->havetime(wtime[i]) == OK) && (it->obdata_heal(_HEALTH))) {
+							sprintf(dstr[i], _("HEAL WOUNDS         TUs>%02d"), wtime[i]);
+							the_dialog[i].proc = firemenu_dialog_proc;
+							waction[i] = HEAL_WOUNDS;
+							i++;
+						}
+						waccur[i] = 100;
+						wtime[i]  = sel_man->required(it->obdata_useTime());
+						if ((sel_man->havetime(wtime[i]) == OK) && (it->obdata_heal(_STUN) || it->obdata_heal(_ENERGY))){
+							sprintf(dstr[i], _("INJECT STIMULANTS   TUs>%02d"), wtime[i]);
+							the_dialog[i].proc = firemenu_dialog_proc;
+							waction[i] = HEAL_ENERGY_STUN;
+							i++;
+						}
+						waccur[i] = 100;
+						wtime[i]  = sel_man->required(it->obdata_useTime());
+						if ((sel_man->havetime(wtime[i]) == OK) && (it->obdata_heal(_MORALE))) {
+							sprintf(dstr[i], _("INJECT PAINKILLERS  TUs>%02d"), wtime[i]);
+							the_dialog[i].proc = firemenu_dialog_proc;
+							waction[i] = HEAL_MORALE;
+							i++;
+						}
+					}
+				}
             } 
             
         if (i > 1) {                  

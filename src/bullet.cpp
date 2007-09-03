@@ -93,6 +93,39 @@ void Bullet::punch(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
     i = 0;
 }
 /**
+ * Called when using mediKits on someone.
+ */
+void Bullet::heal(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)
+{
+    //play(S_PUNCH);
+    state = ST_PUNCH;
+
+    z0 = _z0; x0 = _x0; y0 = _y0;
+    fi = _fi; te = _te;
+    type = _type;
+
+    for (i = 3; i < 24; i++) {
+        z = (int)(z0 + i * cos(fi));
+        x = (int)(x0 + i * cos(te) * sin(fi));
+        y = (int)(y0 + i * sin(te) * sin(fi));
+
+        if ((!map->inside(z, x, y)) ||
+                (!map->pass_lof_cell(z, x, y)))
+            break;
+        if (platoon_remote->check_for_hit(z, x, y) ||
+                platoon_local->check_for_hit(z, x, y)
+           )
+            break;
+    }
+/*
+    x0 += (int)(8 * cos(te) * sin(fi));
+    y0 += (int)(8 * sin(te) * sin(fi));
+    z0 += (int)(8 * cos(fi));
+*/
+    i = 0;
+}
+
+/**
  * Called when a projectile weapon is fired.
  */
 void Bullet::fire(int _z0, int _x0, int _y0, REAL _fi, REAL _te, int _type)

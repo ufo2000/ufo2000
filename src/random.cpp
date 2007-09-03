@@ -82,6 +82,7 @@ REAL Random::getUniform()
  */
 REAL Random::getUniform(REAL a, REAL b)
 {
+	//! False if hitting a tile with an item that has no damage attribute. From Bullet::hitman(), Map->apply_hit();
     ASSERT(a < b);
     next();
     REAL result = m_j * FAC;
