@@ -970,6 +970,13 @@ void Map::build_lights()
 void Map::update_lights()
 {
 	battle_report("== UPDATE LIGHTS");
+	/* set all to default value from scenario rules */
+    for (int i = 0; i < level; i++)
+        for (int j = 0; j < width * 10; j++)
+            for (int k = 0; k < height * 10; k++)
+				m_cell[i][j][k]->m_light = scenario->rules[0];
+
+	/* and then add all known light sources */
     for (int lev = 0; lev < level; lev++) {
         for (int col = 0; col < width*10; col++) {
             for (int row = 0; row < height*10; row++) {
@@ -1936,17 +1943,10 @@ void Map::remove_visi(int lev, int col, int row, int pow)
 //Resets visibility
 void Map::reset_visi()
 {
-    for (int i = 0; i <= level; i++) {
-        for (int j = 0; j <= width * 10; j++) {
-            for (int k = 0; k <= height * 10; k++) {
-            
-                if (i < 0 || j < 0 || k < 0 || i >= level || j >= width * 10 || k >= height * 10)
-                        continue;
-                        
+    for (int i = 0; i < level; i++)
+        for (int j = 0; j < width * 10; j++)
+            for (int k = 0; k < height * 10; k++)
 				m_cell[i][j][k]->m_visi = scenario->rules[0];
-            }
-        }
-    }
 }
 
 
@@ -1958,9 +1958,9 @@ void Map::add_light_source(int lev, int col, int row, int power)
 
 void Map::show_light_source(int lev, int col, int row)
 {
-battle_report("== SHOW LIGHT SOURCE %d %d %d \n", lev,col,row);
-int power = m_cell[lev][col][row]->islight;
-//Rebuild lights
+	battle_report("== SHOW LIGHT SOURCE %d %d %d \n", lev,col,row);
+	int power = m_cell[lev][col][row]->islight;
+
 	double range = power / POWER_TO_RANGE;
 	//We know this cell is the LightSource and should be blocked by the same object.
     for (int i = int(floor(lev - range)); i <= int(ceil(lev + range)); i++) {
@@ -1994,7 +1994,7 @@ bool Map::ray_visi(int oz, int ox, int oy, int tz, int tx, int ty)
 
 void Map::remove_light_source(int lev, int col, int row, int power)
 {
-	m_cell[lev][col][row]->islight = 0;
+	m_cell[lev][col][row]->islight -= power;
 	update_lights();
 }
 

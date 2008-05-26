@@ -2984,7 +2984,8 @@ void Soldier::showspk(BITMAP *dest)
         default:
             break;
     }
-	lua_settop(L, stack_top);
+    lua_settop(L, stack_top);
+    destroy_bitmap(alien_bg);
 }
 
 /**
