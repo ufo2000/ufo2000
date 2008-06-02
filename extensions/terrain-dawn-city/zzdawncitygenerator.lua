@@ -966,6 +966,70 @@ AddXcomTerrain {
 
 ------------------------START OF RUNNING FUNCTIONS---------------------------------
 
+------- If battlescape size is 40x40 then only use 10x10 buildings, no roads ------
+
+		if ((tmp.SizeX == 4) and (tmp.SizeY == 4)) then
+
+		for i = 1, tmp.SizeY do
+			for j = 1, tmp.SizeX do
+				tmp.Mapdata[i][j] = random_10x10()
+			end
+		end
+
+		for i = 1, tmp.SizeY do
+			for j = 1, tmp.SizeX - 1 do
+				sbuildingfix(i, j, tmp.Mapdata)
+			end	
+		end
+
+		return tmp
+	end
+
+--------------- For 50x50 size roads and buildings are simplified -----------------
+
+
+		if ((tmp.SizeX == 5) and (tmp.SizeY == 5)) then
+
+		for i = 1, tmp.SizeY do
+			for j = 1, tmp.SizeX do
+				tmp.Mapdata[i][j] = random_10x10()
+			end
+		end
+
+		add_roads(tmp.SizeX, tmp.SizeY, tmp.Mapdata)
+
+		for i = 1, tmp.SizeY - 1 do
+			for j = 1, tmp.SizeX - 1 do
+				if (math.random(1, 12) > 10) then
+					random_20x20(i, j, tmp.Mapdata)
+				end
+			end
+		end
+
+		for i = 1, tmp.SizeY do
+			for j = 1, tmp.SizeX - 1 do
+				roadfix(i, j, tmp.Mapdata)
+			end	
+		end
+
+		for i = 1, tmp.SizeY - 1 do
+			for j = 1, tmp.SizeX - 2 do
+				largebuildingfix(i, j, tmp.Mapdata)
+			end	
+		end
+
+
+		for i = 1, tmp.SizeY do
+			for j = 1, tmp.SizeX - 1 do
+				sbuildingfix(i, j, tmp.Mapdata)
+			end	
+		end
+
+		return tmp
+	end
+
+------ On 60x60 and higher battlescape size all generation features active ------
+
 
 		for i = 1, tmp.SizeY do
 			for j = 1, tmp.SizeX do
