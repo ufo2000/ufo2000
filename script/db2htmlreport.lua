@@ -289,7 +289,7 @@ for k, v in version_statistics do
     revision = tonumber(revision)
     table.insert(tmp, {revision=revision, version=k, info=v})
 end
-table.sort(tmp, function(a, b) return a.revision > b.revision end)
+table.sort(tmp, function(a, b) return (a.revision or 0) > (b.revision or 0) end)
 version_statistics = tmp
 
 io.write("<br>")
