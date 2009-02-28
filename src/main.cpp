@@ -526,6 +526,25 @@ void find_lua_files_callback(const char *filename, int attrib, int param)
     *allegro_errno = 0; 
 }
 
+static int find_files_callback(const char *filename, int attrib, void *param)
+{
+    std::set<std::string> *files = (std::set<std::string> *)param;
+    files->insert(filename);
+    // $$$ Fixme: lua_dofile sets errno variable in some mysterious way,
+    // so allegro for_each_file function stops searching files if we do not 
+    // reset this back to 0
+    *allegro_errno = 0; 
+    return 0;
+}
+
+static int find_files(const char *dir, const char *searchmask, std::set<std::string> &files)
+{
+    char tmp[1024];
+    append_filename(tmp, dir, searchmask, sizeof(tmp));
+    for_each_file_ex(tmp, 0, 0, find_files_callback, &files);
+    return 1;
+}
+
 static std::map<std::string, double> g_extensions_loading_time;
 
 void find_dir_callback(const char *filename, int attrib, int param)
@@ -539,9 +558,14 @@ void find_dir_callback(const char *filename, int attrib, int param)
         lua_pushstring(L, filename);
         lua_settable(L, LUA_GLOBALSINDEX);
 
-        char tmp[1024];
-        sprintf(tmp, "%s/*.lua", filename);
-        for_each_file(tmp, FA_RDONLY | FA_ARCH, find_lua_files_callback, 0);
+        std::set<std::string> files;
+        std::set<std::string>::iterator it;
+        find_files(filename, "*.lua", files);
+
+        for (it = files.begin(); it != files.end(); ++it) {
+            lua_safe_dofile(L, it->c_str(), "plugins_sandbox");
+        }
+
         clock_t after = clock();
         g_extensions_loading_time[filename] = (double)(after - before) / (double)CLOCKS_PER_SEC;
     }
