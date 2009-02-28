@@ -25,6 +25,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <vector>
 #include <stdio.h>
 #include <time.h>
+#include <stdlib.h>
 
 #ifdef WIN32
 #include <windows.h>

@@ -24,6 +24,7 @@ extern "C" {
 #include "lauxlib.h"
 }
 
+#include <typeinfo>
 #include <string.h>
 
 // LuaPlus Call Dispatcher
