@@ -55,19 +55,16 @@ static unsigned long init_server_variable(const std::string name, unsigned long 
     unsigned long g_srv_##a = init_server_variable(#a, &g_srv_##a, d)
 
 SERVER_CONFIG_VARIABLE(tcp_port,                2000);
-// Limit for average incoming traffic (average is calculated by HawkNL
-// for for past 8 seconds)
-SERVER_CONFIG_VARIABLE(ave_traffic_limit,       2000);
 // Maximum number of authenticated users allowed on server
-SERVER_CONFIG_VARIABLE(players_count_limit,     16);
+SERVER_CONFIG_VARIABLE(players_count_limit,     32);
 // Maximum number of connections (including non authenticated and
 // http requests)
-SERVER_CONFIG_VARIABLE(connections_count_limit, 32);
+SERVER_CONFIG_VARIABLE(connections_count_limit, 64);
 // Number of miliseconds for users to login (after this time the socket
 // will be closed)
 SERVER_CONFIG_VARIABLE(login_time_limit,        10000);
 // The maximum length of user name
-SERVER_CONFIG_VARIABLE(username_size_limit,     16);
+SERVER_CONFIG_VARIABLE(username_size_limit,     25);
 // Maximum size of data packet
 SERVER_CONFIG_VARIABLE(packet_size_limit,       65536);
 // Time to keep log messages (in days)

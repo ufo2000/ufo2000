@@ -10,9 +10,6 @@
 #include <set>
 #include <nl.h>
 
-// Limit for average incoming traffic (average is calculated by HawkNL 
-// for the past 8 seconds)
-#define AVE_TRAFFIC_LIMIT g_srv_ave_traffic_limit
 // Maximum number of authenticated users allowed on server
 #define PLAYERS_COUNT_LIMIT g_srv_players_count_limit
 // Maximum number of connections
