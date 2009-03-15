@@ -280,6 +280,10 @@ lng-ita: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
 	msgmerge --update translations/ufo2000-ita.po translations/ufo2000.pot
 
+lng-pol: $(SRCS)
+	xgettext -o translations/ufo2000.pot --keyword=_ $^
+	msgmerge --update translations/ufo2000-pol.po translations/ufo2000.pot
+
 lng-rus: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
 	msgmerge --update translations/ufo2000-rus.po translations/ufo2000.pot
@@ -288,7 +292,7 @@ lng-spa: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
 	msgmerge --update translations/ufo2000-spa.po translations/ufo2000.pot
 
-lng-all: lng-bel lng-deu lng-est lng-fre lng-ita lng-rus lng-spa
+lng-all: lng-bel lng-deu lng-est lng-fre lng-ita lng-pol lng-rus lng-spa
 
 binary-gz: all server
 # create linux binary distributive
