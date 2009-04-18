@@ -1,4 +1,9 @@
 ==============================================================================
+== WARNING: THIS FILE IS OLD, INCOMPLETE, NOT UP TO DATE AND DOES           ==
+== NOT MENTION ALL CONTRIBUTIONS PROPERLY, USE SVN CHANGELOG INSTEAD!       ==
+==============================================================================
+
+==============================================================================
 == The following people have contributed to UFO2000 development
 ==============================================================================
 
@@ -22,7 +27,7 @@ Programming:
       * Unicode support for X-COM fonts
       * Sound loading code
 
-   Serge Semashko
+   Siarhei Siamashka aka Serge and ssvb
       * Bugfixes and code cleanup
       * Data files integrity checking
       * Save/load feature
