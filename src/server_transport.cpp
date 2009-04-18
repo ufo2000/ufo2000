@@ -259,12 +259,6 @@ void ServerDispatch::Run(NLsocket sock)
                 unsigned long ave_traffic = nlGetSocketStat(s[i], NL_AVE_BYTES_RECEIVED);
                 if (ave_traffic > client->m_max_ave_traffic)
                     client->m_max_ave_traffic = ave_traffic;
-                if (ave_traffic > AVE_TRAFFIC_LIMIT) {
-                    server_log("flooder detected, connection terminated: user '%s' from %s\n",
-                        client->m_name.c_str(), client->m_ip.c_str());
-                    client->m_error = true;
-                    break;
-                }
             }
 
             if (readlen == NL_INVALID) {
