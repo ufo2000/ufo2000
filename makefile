@@ -1,7 +1,7 @@
 ##############################################################################
 # makefile for ufo2000                                                       #
 #                                                                            #
-# Compiling ufo2000: make {debug=1} {xmingw=1} {no_ttf=1} {no_dumbogg=1}     #
+# Compiling ufo2000: make {debug=1} {xmingw=1} {no_ttf=1} {dumbogg=1}        #
 #                                                                            #
 # Define xmingw=1 when compiling win32 binary with Mingw gcc crosscompiler   #
 # Define debug=1 when you want to build debug version of ufo2000             #
@@ -15,8 +15,8 @@
 # need to install them before running make                                   #
 #                                                                            #
 # DUMB and Ogg Vorbis are optional (they allow to play music in XM, S3M,     #
-# MOD, IT and OGG formats). Use no_dumbogg=1 in make command line to build   #
-# ufo2000 without these libraries.                                           #
+# MOD, IT and OGG formats). Use dumbogg=1 in make command line to build      #
+# ufo2000 with these libraries.                                              #
 #                                                                            #
 # FreeType2 library is optional too, its support can be disabled with        #
 # no_ttf=1 make command line option.                                         #
@@ -157,7 +157,7 @@ endif
 	SRCS += glyph.c
 endif
 
-ifndef no_dumbogg
+ifdef dumbogg
 	LIBS += -lvorbisfile -lvorbis -logg -laldmb -ldumb
 	SRCS += dumbogg.c
 	CFLAGS += -DHAVE_DUMBOGG
