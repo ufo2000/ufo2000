@@ -115,7 +115,7 @@ int Connect::do_chat()
                         remote_win->printstr("and upgrade your UFO2000 version\n");
                         remote_win->printstr(tmp);
                     }
-                    net->send("QUIT");
+                    net->send_quit();
                     net->SEND = 0;
                     DONE = 1;
                 }
@@ -130,7 +130,7 @@ int Connect::do_chat()
                     remote_win->printstr("\nUnfortunately your opponent has an\n");
                     remote_win->printstr("outdated UFO2000 version and you will be\n");
                     remote_win->printstr("unable to play until he upgrades\n");
-                    net->send("QUIT");
+                    net->send_quit();
                     net->SEND = 0;
                 }
                 DONE = 1;
@@ -155,7 +155,7 @@ int Connect::do_chat()
                     remote_win->redraw();
                     break;
                 case KEY_ESC:
-                    net->send("QUIT");
+                    net->send_quit();
                     net->SEND = 0;
                     DONE = 1;
                     break;
@@ -208,9 +208,9 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
 {
     lua_message( "Enter: Connect::do_planner" );
     MODE = PLANNER;
-
     int mouse_leftr = 1, mouse_rightr = 1;
     int DONE = 0;
+	int REMOTE_LEFT = 0;
     //HOST = 0;
     FINISH_PLANNER = 0;
 
@@ -231,7 +231,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
     Map *map = new Map(mapdata);
     BITMAP *map2d = map->create_bitmap_of_map(0);
     int map2d_x = (640 - map2d->w) / 2;
-
+	
     if (HOST) {
         target_uints[1] = &remote;
         target_uints[0] = &local;
@@ -276,16 +276,48 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
         }
         net->send_terrain_crc32("", 0);
 #define map g_map
-
+		
         // Wait until a complete list of remote terrains is received
-        while (g_net_allowed_terrains.find("") == g_net_allowed_terrains.end()) {
+        while ((g_net_allowed_terrains.find("") == g_net_allowed_terrains.end()) && (!REMOTE_LEFT)) {
             net->check();
             rest(1);
-        }
+			
+			process_keyswitch();
 
+			if (keypressed()) {
+				CHANGE = 1;
+
+				int scancode;
+				int keycode = ureadkey(&scancode);
+
+				switch (scancode) {
+					case KEY_ESC:
+						if (askmenu( _("EXIT MISSION-PLANNER") )) {
+							net->send_quit();
+							net->SEND = 0;
+							REMOTE_LEFT = 1;
+						}
+						break;
+					default:
+						if (g_console->process_keyboard_input(keycode, scancode))
+							net->send_message((char *)g_console->get_text());
+				}
+			}
+        }
         // Remove end marker
         g_net_allowed_terrains.erase("");
 
+		if (REMOTE_LEFT) {
+		    delete map;
+            SCREEN2H = old_SCREEN2H;
+            destroy_bitmap(screen2);
+            screen2 = create_bitmap(SCREEN2W, SCREEN2H); clear(screen2);
+            clear(screen);
+            g_console->resize(SCREEN_W, SCREEN_H - SCREEN2H);
+            g_console->set_full_redraw();
+            return 0;
+		}
+		
         if (g_net_allowed_terrains.size() == 0) {
             alert( "", _("Remote player does not have any of your maps"), "",
                    _("OK"), NULL, 0, 0);
@@ -341,7 +373,7 @@ int Connect::do_planner(int F10ALLOWED, int map_change_allowed)
     g_console->printf( COLOR_SYS_INFO1,    _("To edit a soldier, CTRL-click on his name.") );
     g_console->printf( COLOR_SYS_INFO1,    _("Left-click to place a soldier on the map, right-click to remove him.") );
     g_console->printf( COLOR_SYS_PROMPT,   _("When finished, click SEND, then START.  Press ESC to quit, F1 for help.") ); 
-
+	
     while (!DONE) {
 
         rest(1); // Don't eat all CPU resources

@@ -452,8 +452,11 @@ void Net::send_quit()
 
 int Net::recv_quit()
 { // "QUIT"
+	//Is this really an error ??
     error("Remote exit from game");
-    return 1;
+    alert( "", _("Your opponent left the game"), "",
+                   _("OK"), NULL, 0, 0);
+	return 1;
 }
 
 extern void restartgame();
