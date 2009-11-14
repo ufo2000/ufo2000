@@ -38,20 +38,13 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 /**
  * Return string with current date+time,
  * formatted as YYYY-MM-DD HH:MM:SS.
- * On unix-systems, the process-id is appended.
  */
-// see also (using other time-format):
-// Net::log()   in multiplay.cpp
-// server_log() in server_config.cpp
 const char *datetime()
 {
     time_t now = time(NULL);
     struct tm * t = localtime(&now);
     static char timebuf[128];
     strftime(timebuf, 128, "%Y-%m-%d %H:%M:%S", t);
-#ifndef WIN32
-    snprintf(timebuf + strlen(timebuf), sizeof(timebuf), " [%d]", getpid());
-#endif
 
     return timebuf;
 }
@@ -63,20 +56,16 @@ const char *datetime()
  */
 void lua_message(const std::string &str1)
 {
-    char txt1[32], txt2[32];
-
-    sprintf(txt1, "# %s : ", datetime());
-    sprintf(txt2, "." );
-
     lua_pushstring(L, "Message");
     lua_gettable(L, LUA_GLOBALSINDEX);
     if (!lua_isfunction(L, -1)) {
         lua_pop(L, 1);
         return;
     }
-    lua_pushstring(L, "%s");
-    lua_pushstring(L, (std::string(txt1) + str1 + txt2).c_str());
-    lua_safe_call(L, 2, 0);
+    lua_pushstring(L, "# %s : %s");
+    lua_pushstring(L, datetime());
+    lua_pushstring(L, str1.c_str());
+    lua_safe_call(L, 3, 0);
 };
 
 /** 
