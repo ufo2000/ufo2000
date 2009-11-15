@@ -188,12 +188,14 @@ static BITMAP *really_load_png(png_structp png_ptr, png_infop info_ptr, RGB *pal
     /* Maybe flip RGB to BGR. */
     if ((bpp == 24) || (bpp == 32)) {
 	int c = makecol_depth(bpp, 0, 0, 255);
-	unsigned char *pc = (unsigned char *)&c;
-	if (pc[0] == 255)
-	    png_set_bgr(png_ptr);
-#ifdef ALLEGRO_BIG_ENDIAN	    
+#ifdef ALLEGRO_BIG_ENDIAN
 	png_set_swap_alpha(png_ptr);
-#endif	    
+	if (c != 0x000000FF)
+	    png_set_bgr(png_ptr);
+#else
+	if (c != 0x00FF0000)
+	    png_set_bgr(png_ptr);
+#endif
     }
 
     /* Read the image, one line at a line (easier to debug!) */
