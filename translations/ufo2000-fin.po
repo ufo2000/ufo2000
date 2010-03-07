@@ -503,7 +503,7 @@ msgstr "Voit kohdata kaikkia outoja vikoja tai vain kaatumisia jos jatkat pelaam
 #: src/main.cpp:1107
 #, c-format
 msgid "Bug report saved in 'crc_error_%d.txt', please send it to developers"
-msgstr "Vikailmoitus on talletettu 'crc_error_% d.txt' tiedostoon, lähetä se kehittäjille"
+msgstr "Vikailmoitus on talletettu 'crc_error_%d.txt' tiedostoon, lähetä se kehittäjille"
 
 #: src/main.cpp:1109
 msgid "wrong wholeCRC"
