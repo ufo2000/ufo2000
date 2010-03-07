@@ -57,6 +57,9 @@ void Soldier::initpck()
 
 Soldier::Soldier(Platoon *platoon, int _NID)
 {
+    memset(&md, 0, sizeof(md));
+    memset(&id, 0, sizeof(id));
+    memset(&ud, 0, sizeof(ud));
     stun_on_init = false;
     NID = _NID;
     z = -1; x = -1; y = -1;
@@ -84,14 +87,13 @@ Soldier::Soldier(Platoon *platoon, int _NID)
     m_reaction_chances = 0;
 
     m_ReserveTimeMode = RESERVE_FREE;
-
-    memset(&md, 0, sizeof(md));
-    memset(&id, 0, sizeof(id));
-    memset(&ud, 0, sizeof(ud));
 }
 
 Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *mdat, ITEMDATA *idat, DeployType dep_type,int32 vision_mask)
 {
+    memset(&ud, 0, sizeof(ud));
+    memcpy(&md, mdat, sizeof(md));
+    memcpy(&id, idat, sizeof(id));
     stun_on_init = false;
     NID = _NID; z = _z; x = _x; y = _y;
     dir = 0; move_dir = 0;
@@ -189,8 +191,6 @@ Soldier::Soldier(Platoon *platoon, int _NID, int _z, int _x, int _y, MANDATA *md
     panicking = false;
 
     m_ReserveTimeMode = RESERVE_FREE;
-    memcpy(&md, mdat, sizeof(md));
-    memcpy(&id, idat, sizeof(id));
 
     initialize();
 }
