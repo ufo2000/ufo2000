@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: UFO2000\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-01-29 20:11+0200\n"
-"PO-Revision-Date: 2010-02-01 02:33+0200\n"
+"PO-Revision-Date: 2010-03-16 16:43+0200\n"
 "Last-Translator: Tuomas Lähteenmäki <lahtis@gmail.com>\n"
 "Language-Team: Finnish language team\n"
 "MIME-Version: 1.0\n"
@@ -26,15 +26,15 @@ msgstr "Asetukset"
 
 #: src/config.cpp:319
 msgid "end turn sound"
-msgstr "lopeta vuoro äänimerkillä"
+msgstr "lopeta vuoro äänellä"
 
 #: src/config.cpp:320
 msgid "start sitting if second"
-msgstr "aloita istunto sekunnissa"
+msgstr "aloita istunto sek."
 
 #: src/config.cpp:321
 msgid "icon panel tooltips"
-msgstr "ikoni panelista työkaluvihjeet"
+msgstr "näytä työkaluvihjeet"
 
 #: src/config.cpp:322
 msgid "enlarged battleview"
@@ -85,11 +85,11 @@ msgstr "kartan vieritys pisteet"
 
 #: src/config.cpp:331
 msgid "music volume"
-msgstr "musiikin äänenvoimakkuus"
+msgstr "musiikin voimakkuus"
 
 #: src/config.cpp:332
 msgid "console font size"
-msgstr "konsolista fontin koko"
+msgstr "fontin koko"
 
 #: src/config.cpp:333
 msgid "mouse sensitivity"
@@ -870,7 +870,7 @@ msgstr "ja ei saa hyväksettyä yhteyttä palvelimeen"
 
 #: src/mainmenu.cpp:212
 msgid "connect to internet server"
-msgstr "yhdistä Internet-palvelimelle"
+msgstr "Yhdistä Internettiin"
 
 #: src/mainmenu.cpp:213
 msgid "start hotseat game"
@@ -878,7 +878,7 @@ msgstr "aloita kuuma peli"
 
 #: src/mainmenu.cpp:214
 msgid "show geoscape demo"
-msgstr "näytä maailmankartta demo"
+msgstr "maailmankartta demo"
 
 #: src/mainmenu.cpp:215
 msgid "load saved game"
@@ -941,17 +941,14 @@ msgstr "Vastapuolen pelaaja seuraa %d karttoja, joita voidaan käyttää verkko-
 msgid "The following maps can not be used, they are modified or just not installed by remote player:\n"
 msgstr "Seuraava karttoja ei voida käyttää, ne on muutettu tai niitä ei voida asentaa vastapuolen pelaajalle:\n"
 
-# Gegner akzeptiert unentschieden
 #: src/multiplay.cpp:1619
 msgid "Opponent: Draw offer accepted"
 msgstr "Vastustaja: Vastustaja hyväksyy tarjouksen"
 
-# Gegner bietet Unentschieden an
 #: src/multiplay.cpp:1621
 msgid "Opponent: Draw offered"
 msgstr "Vastustaja: Vedä tarjous"
 
-# Gegner zieht Angebot zurück
 #: src/multiplay.cpp:1623
 msgid "Opponent: Draw offer recalled"
 msgstr "Vastustaja: Vastustaja vetäytyy tarjouksesta"
@@ -1255,7 +1252,7 @@ msgstr "Palvelin:"
 
 #: src/server_gui.cpp:348
 msgid "Login:"
-msgstr "Kirjautuminen:"
+msgstr "Kirjaudu:"
 
 #: src/server_gui.cpp:350
 msgid "Password:"
