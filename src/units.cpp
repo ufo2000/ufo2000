@@ -594,9 +594,34 @@ void Units::print_simple(int gcol)
     if (!SEND)
         return ;
 
-    // Todo: show statistics about equipment points used by the opponent
+    //Show statistics about equipment points used by the opponent,
+    //via PLAYERDATA *pd_remote since platoon_remote is empty here.
+    int remote_total_unit_cost = 0, remote_total_equipment_cost = 0,
+        remote_unit_equipment_cost = 0;
+
+    //cycle through all remote units, which are placed side-by-side in ManData
+    for (int i = 0; i < pd_remote->size; i++) {
+        //calculate a cost of current unit without equipment, add it to total
+        remote_total_unit_cost += Soldier::calc_mandata_cost(pd_remote->md[i]);
+
+        //calculate a cost of the current unit's equipment, add it to total
+        //can't use Soldier::calc_full_ammunition_cost() it is not static
+        remote_unit_equipment_cost = 0;
+        //cycle over all unit's items which are placed side-by-side in ItemData
+        uint32 item_type;
+        int item_quantity = pd_remote->id[i].num;
+        for (int j = 0; j < item_quantity; j++){
+            item_type = pd_remote->id[i].item_type[j];
+            remote_unit_equipment_cost += Item::obdata_cost(item_type);
+        }
+        remote_total_equipment_cost += remote_unit_equipment_cost;
+    }
+
     int yy = gy + size * 15 - 3;
     textprintf_centre(screen2, g_small_font, gx + 10 * 8, yy, COLOR_GREEN, _("Ready to play!"));
+    yy = yy + 10; //under "Ready to play!"
+    textprintf_centre(screen2, g_small_font, gx + 10 * 8, yy, COLOR_GREEN,
+        _("Total points=%d "), remote_total_unit_cost + remote_total_equipment_cost);
 }
 
 /**
