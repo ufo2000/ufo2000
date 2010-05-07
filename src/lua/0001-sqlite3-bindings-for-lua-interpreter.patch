@@ -1,0 +1,29 @@
+sqlite3 bindings for lua interpreter
+---
+ lua/lua.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/lua/lua.c b/lua/lua.c
+index 28c84cb..768fa6f 100644
+--- a/lua/lua.c
++++ b/lua/lua.c
+@@ -16,7 +16,7 @@
+ 
+ #include "lauxlib.h"
+ #include "lualib.h"
+-
++#include "luasqlite3.h"
+ 
+ /*
+ ** generic extra include file
+@@ -75,6 +75,7 @@ static const luaL_reg lualibs[] = {
+   {"math", luaopen_math},
+   {"debug", luaopen_debug},
+   {"loadlib", luaopen_loadlib},
++  {"sqlite3", luaopen_sqlite3},
+   /* add your libraries here */
+   LUA_EXTRALIBS
+   {NULL, NULL}
+-- 
+1.6.4.4
+
