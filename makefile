@@ -174,7 +174,8 @@ ifdef win32
 	NAME := ${addsuffix .exe,$(NAME)}
 	SERVER_NAME := ${addsuffix .exe,$(SERVER_NAME)}
 	LUA_NAME := ${addsuffix .exe,$(LUA_NAME)}
-	CFLAGS += -DWIN32 -DALLEGRO_STATICLINK -I mingw-libs/include -L mingw-libs/lib
+	CFLAGS += -DWIN32 -DHAVE_HAWKNL -DALLEGRO_STATICLINK \
+	          -I mingw-libs/include -L mingw-libs/lib
 	LIBS += -lNL_s -lalleg_s -lws2_32 -lkernel32 -luser32 -lgdi32 -lcomdlg32 \
 	        -lole32 -ldinput -lddraw -ldxguid -lwinmm -ldsound -lbfd -liberty
 	SERVER_LIBS += -lNL_s -lws2_32
@@ -184,10 +185,10 @@ else
 	INCLUDES = ${shell allegro-config --cflags}
 	CFLAGS += $(INCLUDES)
 ifdef static	
-	LIBS := -static $(LIBS) -lNL ${shell allegro-config --libs}
+	LIBS := -static $(LIBS) ${shell allegro-config --libs}
 	SERVER_LIBS += -static -lNL -pthread
 else
-	LIBS += -lNL -pthread ${shell allegro-config --libs}
+	LIBS += -pthread ${shell allegro-config --libs}
 	SERVER_LIBS += -lNL -pthread
 endif
 endif
@@ -229,10 +230,10 @@ $(OBJDIR)-srv:
 	mkdir $(OBJDIR)-srv
 
 $(OBJDIR)-srv/%.o: %.cpp
-	$(CX) -MMD $(CFLAGS) -DENABLE_UFO2K_SERVER -c $< -o $@
+	$(CX) -MMD $(CFLAGS) -DENABLE_UFO2K_SERVER -DHAVE_HAWKNL -c $< -o $@
 
 $(OBJDIR)-srv/%.o: %.c
-	$(CC) -MMD $(CFLAGS) -DENABLE_UFO2K_SERVER -c $< -o $@
+	$(CC) -MMD $(CFLAGS) -DENABLE_UFO2K_SERVER -DHAVE_HAWKNL -c $< -o $@
 
 $(OBJDIR)/%.o: %.cpp
 	$(CX) -MMD $(CFLAGS) -c $< -o $@

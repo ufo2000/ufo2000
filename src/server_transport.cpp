@@ -26,12 +26,18 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include <string.h>
 
 #ifdef WIN32
 #include <windows.h>
 #define usleep(t) Sleep((t + 999) / 1000)
 #else
 #include <unistd.h>
+#include <fcntl.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <errno.h>
 #endif
 
 #include "server.h"
@@ -122,14 +128,20 @@ static bool packet_to_stream(std::string &stream, NLuint id, const std::string &
 
 static bool stream_to_socket(NLsocket socket, std::string &stream)
 {
+#ifdef HAVE_HAWKNL
     NLint size_written = nlWrite(socket, stream.data(), stream.size());
 
     if (size_written == NL_INVALID && nlGetError() != NL_CON_PENDING)
         return false;
-
     if (size_written != NL_INVALID)
         stream.erase(stream.begin(), stream.begin() + size_written);
-
+#else
+    ssize_t size_written = send(socket, stream.data(), stream.size(), 0);
+    if (size_written == -1 && errno != EAGAIN && errno != EINTR)
+        return false;
+    if (size_written != -1)
+        stream.erase(stream.begin(), stream.begin() + size_written);
+#endif
     return true;    
 }
 
@@ -324,7 +336,7 @@ bool ServerClient::send_packet_all(NLuint id, const std::string &packet)
 
 /****************************************************************************/
 
-static bool string_to_base64(const char *src, std::string &dst)
+bool string_to_base64(const char *src, std::string &dst)
 {
     static unsigned char alphabet[] =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -359,6 +371,7 @@ bool ClientServer::connect(
     const std::string &http_proxy_login,
     std::string &error_message)
 {
+#ifdef HAVE_HAWKNL
     m_socket = NL_INVALID;
     NLaddress addr;
 
@@ -444,14 +457,52 @@ bool ClientServer::connect(
             return false;
         }
     }
+#else
+    m_socket = -1;
+    std::string proxy = http_proxy;
+    if (proxy == "disabled") proxy = "";
+    if (!proxy.empty()) {
+        error_message = "Proxy is not supported for BSD sockets network code";
+        return false;
+    }
+    m_socket = socket(AF_INET, SOCK_STREAM, 0);
+    struct sockaddr_in sin;
+    std::string host_str, port_str;
 
+    if (!split_with_colon(ufo2000_server, host_str, port_str)) {
+        host_str = ufo2000_server;
+        port_str = "2000";
+    }
+
+    struct hostent *host = gethostbyname(host_str.c_str());
+    memcpy(&sin.sin_addr.s_addr, host->h_addr, host->h_length);
+    sin.sin_family = AF_INET;
+    sin.sin_port = htons(atoi(port_str.c_str()));
+
+    while (::connect (m_socket, (struct sockaddr *)&sin, sizeof(sin)) == -1 && errno != EISCONN) {
+        if (errno != EINTR)  {
+            error_message = strerror(errno);
+            close(m_socket);
+            m_socket = -1;
+            return false;
+        }
+    }
+
+    int flags = fcntl(m_socket, F_GETFL, 0);
+    fcntl(m_socket, F_SETFL, flags | O_NONBLOCK);
+#endif
     return true;
 }
 
 ClientServer::~ClientServer()
 {
+#ifdef HAVE_HAWKNL
     if (m_socket != NL_INVALID)
         nlClose(m_socket);
+#else
+    if (m_socket != -1)
+        close(m_socket);
+#endif
 }
 
 bool ClientServer::send_packet(NLuint id, const std::string &packet)
@@ -484,6 +535,7 @@ bool ClientServer::flush_sent_packets()
 
 int ClientServer::recv_packet(NLuint &id, std::string &packet)
 {
+#ifdef HAVE_HAWKNL
     int readlen;
     NLbyte buffer[128];
 
@@ -498,6 +550,21 @@ int ClientServer::recv_packet(NLuint &id, std::string &packet)
         if (err == NL_SOCK_DISCONNECT || err == NL_MESSAGE_END)
             return -1;
     }
+#else
+    int readlen;
+    char buffer[128];
+
+    unsigned long stream_size_before = m_stream.size();
+
+    while ((readlen = recv(m_socket, buffer, sizeof(buffer), 0)) > 0)
+        m_stream.append(buffer, readlen);
+
+    if (stream_size_before == m_stream.size() && readlen == -1)
+    {
+        if (errno != EAGAIN && errno != EINTR)
+            return -1;
+    }
+#endif
 
     int result = stream_to_packet(m_stream, id, packet);
     if (result < 0) return result;

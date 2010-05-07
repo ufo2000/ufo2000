@@ -30,7 +30,6 @@ extern "C" {
 #include <ctype.h>
 
 #include <time.h>
-#include <nl.h>
 #include <signal.h>
 #include <stdarg.h>
 

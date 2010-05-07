@@ -255,19 +255,4 @@ void server_log(const char *fmt, ...)
     va_end(arglist);
 }
 
-bool split_with_colon(const std::string &str, std::string &login, std::string &password)
-{
-    bool colon_found = false;
-    for (unsigned int i = 0; i < str.size(); i++) {
-        if (!colon_found && str[i] == ':') {
-            colon_found = true;
-        } else if (!colon_found) {
-            login.append(str.substr(i, 1));
-        } else {
-            password.append(str.substr(i, 1));
-        }
-    }
-    return colon_found;
-}
-
 int g_server_reload_config_flag = 0;

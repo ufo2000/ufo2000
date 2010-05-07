@@ -53,6 +53,21 @@ static std::string ufo2000_get_password_hash(const std::string &pass)
     return result;
 }
 
+bool split_with_colon(const std::string &str, std::string &login, std::string &password)
+{
+    bool colon_found = false;
+    for (unsigned int i = 0; i < str.size(); i++) {
+        if (!colon_found && str[i] == ':') {
+            colon_found = true;
+        } else if (!colon_found) {
+            login.append(str.substr(i, 1));
+        } else {
+            password.append(str.substr(i, 1));
+        }
+    }
+    return colon_found;
+}
+
 #ifdef ENABLE_UFO2K_SERVER
 
 std::string ServerClientUfo::m_last_user_name = "";

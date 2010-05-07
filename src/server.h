@@ -8,7 +8,14 @@
 #include <string>
 #include <map>
 #include <set>
+#ifdef HAVE_HAWKNL
 #include <nl.h>
+#else
+/* TODO: drop the use of any HawkNL types later */
+typedef int NLsocket;
+typedef unsigned int NLuint;
+typedef signed int NLint;
+#endif
 
 // Maximum number of authenticated users allowed on server
 #define PLAYERS_COUNT_LIMIT g_srv_players_count_limit
