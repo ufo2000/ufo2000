@@ -1,0 +1,21 @@
+Lua: 'strcoll' -> 'strcmp' replacement to get rid of locale dependencies
+---
+ lvm.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/lvm.c b/lvm.c
+index 94e2802..7f1a641 100644
+--- a/lvm.c
++++ b/lvm.c
+@@ -239,7 +239,7 @@ static int luaV_strcmp (const TString *ls, const TString *rs) {
+   const char *r = getstr(rs);
+   size_t lr = rs->tsv.len;
+   for (;;) {
+-    int temp = strcoll(l, r);
++    int temp = strcmp(l, r);
+     if (temp != 0) return temp;
+     else {  /* strings are equal up to a `\0' */
+       size_t len = strlen(l);  /* index of first `\0' in both strings */
+-- 
+1.6.4.4
+
