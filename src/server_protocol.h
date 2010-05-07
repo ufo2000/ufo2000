@@ -58,6 +58,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #define SRV_ADVANCED_PACKET_MASK   0x80000000
 
+#ifdef ENABLE_UFO2K_SERVER
+
 class Server_Game_UFO;
 
 class ServerClientUfo: public ServerClient
@@ -93,6 +95,8 @@ private:
     bool add_user(const std::string &username, const std::string &password);
     int validate_user(const std::string &username, const std::string &password);
 };
+
+#endif
 
 class ClientServerUfo: public ClientServer
 {

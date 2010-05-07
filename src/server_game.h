@@ -24,6 +24,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "server_protocol.h"
 
+#ifdef ENABLE_UFO2K_SERVER
+
 class Server_Game_UFO
 {
 public:
@@ -49,5 +51,7 @@ private:
         players[1] = NULL;
     }
 };
+
+#endif
 
 #endif

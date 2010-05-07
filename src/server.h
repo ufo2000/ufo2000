@@ -26,13 +26,6 @@
 #define PACKET_SIZE_LIMIT 65536
 #endif
 
-inline double get_time_diff(const NLtime &x, const NLtime &y)
-{
-    return (double)(y.seconds - x.seconds) * 1000.0 + (double)(y.mseconds - x.mseconds);
-}
-
-class ServerDispatch;
-
 //! Encode std::map<std::string, std::string> into a single string
 int encode_stringmap(const std::map<std::string, std::string> &info, std::string &buffer);
 //! Decode std::map<std::string, std::string> from a string
@@ -62,6 +55,15 @@ public:
     int recv_packet(NLuint &id, std::string &packet);
     int wait_packet(NLuint &id, std::string &buffer);
 };
+
+#ifdef ENABLE_UFO2K_SERVER
+
+inline double get_time_diff(const NLtime &x, const NLtime &y)
+{
+    return (double)(y.seconds - x.seconds) * 1000.0 + (double)(y.mseconds - x.mseconds);
+}
+
+class ServerDispatch;
 
 /**
  * Server side client-server connection
@@ -131,5 +133,7 @@ public:
     virtual ServerClient *CreateServerClient(NLsocket socket);
     virtual void MakeHtmlReport(std::string &html_body);
 };
+
+#endif
 
 #endif
