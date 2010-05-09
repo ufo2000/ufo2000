@@ -55,7 +55,7 @@ void *ThreadFunc(void *data)
 			}
 		}
 		nlMutexUnlock(&mutex);
-		usleep(10000);
+		rest(10);
 	}
 	nlMutexDestroy(&mutex);
 	return NULL;

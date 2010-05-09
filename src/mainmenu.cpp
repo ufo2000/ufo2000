@@ -155,7 +155,7 @@ static int d_mainmenu_button_proc(int msg, DIALOG *d, int c)
                 break;
         
         case MSG_IDLE:
-            usleep(5000);
+            rest(5);
             break;
             
         default:

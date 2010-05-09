@@ -98,10 +98,6 @@ extern "C" {
 #include "LuaPlus/LuaPlusCD.h"
 
 
-#ifdef WIN32
-#define usleep(t) Sleep((t + 999) / 1000)
-#endif
-
 /**
  * Standard game errors are coded with these constants.
  */

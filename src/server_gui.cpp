@@ -730,7 +730,7 @@ int connect_internet_server()
             }
         }
         // Do not load cpu so heavy
-        usleep(10000);
+        rest(10);
     }
 
     show_mouse(NULL);
