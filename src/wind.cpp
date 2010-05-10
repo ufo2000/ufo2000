@@ -180,23 +180,15 @@ void ConsoleWindow::print(const char *text, int color)
 
 void ConsoleWindow::vprintf(int color, const char *format, va_list arglist)
 {
-    int stringsize = 4096;
-    char *bigbuf;
-
-#ifdef HAVE_VSNPRINTF
-    static char smallbuf[4];
-    stringsize = vsnprintf(smallbuf, sizeof(smallbuf), format, arglist);
-    if (stringsize < 0)  /* Pre-glibc 2.1 behaviour */
-        stringsize = 4096;
-    bigbuf = new char[stringsize];
-    vsnprintf(bigbuf, stringsize, format, arglist);
-#else
-    bigbuf = new char[stringsize];
-    vsprintf(bigbuf, format, arglist); //WILL break if exceeds 4K.
-#endif
-    print(bigbuf, color);
-
-    delete[] bigbuf;
+    const int maxbufsize = 4096;
+    char *buf = new char[maxbufsize];
+    int result = vsnprintf(buf, maxbufsize, format, arglist);
+    if (result < 0 || result >= maxbufsize) {
+        print("!!! error in ConsoleWindow::vprintf() !!!\n", color);
+    } else {
+        print(buf, color);
+    }
+    delete [] buf;
 }
 
 // This or next function gets called for:
