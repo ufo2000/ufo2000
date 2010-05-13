@@ -303,7 +303,20 @@ lng-spa: $(SRCS)
 
 lng-all: lng-bel lng-deu lng-est lng-fre lng-ita lng-pol lng-rus lng-spa
 
-binary-gz: all server
+binary-archive: all server
+ifdef win32
+# create win32 binary distributive
+	-svn delete --force $(DISTNAME)
+	svn export --native-eol "CRLF" . $(DISTNAME)
+	rm -R $(DISTNAME)/src
+	rm -R $(DISTNAME)/datfile
+	rm -R $(DISTNAME)/doxygen
+	rm $(DISTNAME)/makefile* $(DISTNAME)/Seccast*
+	rm $(DISTNAME)/*.rc $(DISTNAME)/*.h
+	cp ufo2000.exe ufo2000-srv.exe $(DISTNAME)
+	7z a -tzip -mx -r $(DISTNAME).zip $(DISTNAME)
+	svn delete --force $(DISTNAME)
+else
 # create linux binary distributive
 	-svn delete --force $(DISTNAME)
 	svn export . $(DISTNAME)
@@ -315,11 +328,12 @@ binary-gz: all server
 	cp ufo2000 ufo2000-srv $(DISTNAME)
 	tar -czf $(DISTNAME).tar.gz $(DISTNAME)
 	svn delete --force $(DISTNAME)
+endif
 
 win32-installer: all server
 # create windows installer using NSIS
 	-svn delete --force $(DISTNAME)
-	svn export . $(DISTNAME)
+	svn export --native-eol "CRLF" . $(DISTNAME)
 	rm $(DISTNAME)/makefile* $(DISTNAME)/Seccast*
 	rm $(DISTNAME)/*.rc $(DISTNAME)/*.h
 	cp ufo2000.exe ufo2000-srv.exe $(DISTNAME)
@@ -331,7 +345,7 @@ win32-installer: all server
 win32-beta-installer: all server
 # create windows beta installer using NSIS
 	-svn delete --force $(DISTNAME)
-	svn export . $(DISTNAME)
+	svn export --native-eol "CRLF" . $(DISTNAME)
 	rm $(DISTNAME)/makefile* $(DISTNAME)/Seccast*
 	rm $(DISTNAME)/*.rc $(DISTNAME)/*.h
 	cp ufo2000.exe ufo2000-srv.exe $(DISTNAME)
