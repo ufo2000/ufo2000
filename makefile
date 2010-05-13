@@ -260,6 +260,8 @@ $(LUA_NAME): $(OBJS_LUA)
 clean:
 	$(RM) $(OBJDIR)/*.o
 	$(RM) $(OBJDIR)/*.d
+	$(RM) $(OBJDIR)-srv/*.o
+	$(RM) $(OBJDIR)-srv/*.d
 	$(RM) init-scripts.log squad.lua
 	$(RM) $(NAME)
 	$(RM) $(SERVER_NAME)
