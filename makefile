@@ -50,8 +50,10 @@ else
 	DISTNAME := ufo2000
 endif
 
-CX = g++
-CC = gcc
+ifndef CXX
+	CXX = g++
+endif
+
 CFLAGS = -funsigned-char -Wall -Wno-deprecated-declarations -I src/lua -I src/luasqlite3 -DDEBUGMODE
 OBJDIR = obj
 NAME = ufo2000
@@ -74,10 +76,8 @@ ifdef WINDIR
 	win32 = 1
 endif
 
-ifdef xmingw
-    CX = i386-mingw32msvc-g++
-    CC = i386-mingw32msvc-gcc
-    win32 = 1
+ifneq ($(findstring mingw,$(CXX)),)
+	win32 = 1
 endif
 
 ifdef profile
@@ -236,26 +236,26 @@ $(OBJDIR)-srv:
 	mkdir $(OBJDIR)-srv
 
 $(OBJDIR)-srv/%.o: %.cpp
-	$(CX) -MMD $(CFLAGS) -DENABLE_UFO2K_SERVER -DHAVE_HAWKNL -c $< -o $@
+	$(CXX) -MMD $(CFLAGS) -DENABLE_UFO2K_SERVER -DHAVE_HAWKNL -c $< -o $@
 
 $(OBJDIR)-srv/%.o: %.c
-	$(CC) -MMD $(CFLAGS) -DENABLE_UFO2K_SERVER -DHAVE_HAWKNL -c $< -o $@
+	$(CXX) -x c -MMD $(CFLAGS) -DENABLE_UFO2K_SERVER -DHAVE_HAWKNL -c $< -o $@
 
 $(OBJDIR)/%.o: %.cpp
-	$(CX) -MMD $(CFLAGS) -c $< -o $@
+	$(CXX) -MMD $(CFLAGS) -c $< -o $@
 
 $(OBJDIR)/%.o: %.c
-	$(CC) -MMD $(CFLAGS) -c $< -o $@
+	$(CXX) -x c -MMD $(CFLAGS) -c $< -o $@
 
 $(NAME): $(OBJS)
-	$(CX) $(CFLAGS) -o $@ $^ $(LIBS) $(SUBSYSTEM)
+	$(CXX) $(CFLAGS) -o $@ $^ $(LIBS) $(SUBSYSTEM)
 
 $(SERVER_NAME): $(OBJS_SERVER)
-	$(CX) $(CFLAGS) -o $@ $^ $(SERVER_LIBS)
+	$(CXX) $(CFLAGS) -o $@ $^ $(SERVER_LIBS)
 
 $(LUA_NAME): $(OBJS_LUA)
 	echo $(OBJS_LUA)
-	$(CX) $(CFLAGS) -o $@ $^ -lsqlite3
+	$(CXX) $(CFLAGS) -o $@ $^ -lsqlite3
 
 clean:
 	$(RM) $(OBJDIR)/*.o
