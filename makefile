@@ -1,9 +1,8 @@
 ##############################################################################
 # makefile for ufo2000                                                       #
 #                                                                            #
-# Compiling ufo2000: make {debug=1} {xmingw=1} {no_ttf=1} {dumbogg=1}        #
+# Compiling ufo2000: make {debug=1} {no_ttf=1} {dumbogg=1}                   #
 #                                                                            #
-# Define xmingw=1 when compiling win32 binary with Mingw gcc crosscompiler   #
 # Define debug=1 when you want to build debug version of ufo2000             #
 #                                                                            #
 # Just typing 'make' builds the release version of ufo2000 for *nix          #
@@ -11,24 +10,31 @@
 #                                                                            #
 # Type 'make server' to build ufo2000 server                                 #
 #                                                                            #
-# The game depends on Allegro (4.0.x), Expat and HawkNL libraries, so you    #
-# need to install them before running make                                   #
+# The game depends on allegro (4.x), expat, freetype and libpng libraries,   #
+# so you need to install them before running make.                           #
 #                                                                            #
-# DUMB and Ogg Vorbis are optional (they allow to play music in XM, S3M,     #
-# MOD, IT and OGG formats). Use dumbogg=1 in make command line to build      #
-# ufo2000 with these libraries.                                              #
+# HawkNL library (version 1.68) is also needed unless you are building       #
+# linux/unix ufo2000 client program (the game itself). There are plans       #
+# to get rid of HawkNL completely.                                           #
+#                                                                            #
+# DUMB (0.9.2) and Ogg Vorbis are optional (they allow to play music in XM,  #
+# S3M, MOD, IT and OGG formats). Use dumbogg=1 in make command line to build #
+# ufo2000 with these libraries. Note: DUMB 0.9.2 has a security              #
+# vulnerability and newer DUMB 0.9.3 is incompatible with ufo2000. So this   #
+# stuff is disabled by default, but you can enable it at your own risk.      #
 #                                                                            #
 # FreeType2 library is optional too, its support can be disabled with        #
 # no_ttf=1 make command line option.                                         #
 #                                                                            #
 # When compiling the game with Mingw (either native or a crosscompiler), it  #
 # is possible to use a set of precompiled libraries. Just download archive   #
-# http://ufo2000.lxnt.info/files/mingw-libs.zip and extract it into ufo2000  #
-# sources directory.                                                         #
+# http://ufo2000.sourceforge.net/mingw-libs-20100514.zip and extract it into #
+# ufo2000 sources directory.                                                 #
 #                                                                            #
 # Also it is highly recommended but not necessery to have subversion         #
-# command line client installed (it is required if you want to make          #
-# 'win32-installer', 'source-zip' and 'source-bz2' targets)                  #
+# command line client installed (It is required if you want to make          #
+# 'win32-installer', 'source-zip' and 'source-bz2' targets. Also these       #
+# targets have to be built from SVN working copy).                           #
 ##############################################################################
 
 UFO_SVNVERSION := ${shell svnversion .}
