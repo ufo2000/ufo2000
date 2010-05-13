@@ -305,7 +305,7 @@ lng-all: lng-bel lng-deu lng-est lng-fre lng-ita lng-pol lng-rus lng-spa
 
 binary-gz: all server
 # create linux binary distributive
-	svn delete --force $(DISTNAME)
+	-svn delete --force $(DISTNAME)
 	svn export . $(DISTNAME)
 	rm -R $(DISTNAME)/src
 	rm -R $(DISTNAME)/datfile
@@ -318,7 +318,7 @@ binary-gz: all server
 
 win32-installer: all server
 # create windows installer using NSIS
-	svn delete --force $(DISTNAME)
+	-svn delete --force $(DISTNAME)
 	svn export . $(DISTNAME)
 	rm $(DISTNAME)/makefile* $(DISTNAME)/Seccast*
 	rm $(DISTNAME)/*.rc $(DISTNAME)/*.h
@@ -330,7 +330,7 @@ win32-installer: all server
 
 win32-beta-installer: all server
 # create windows beta installer using NSIS
-	svn delete --force $(DISTNAME)
+	-svn delete --force $(DISTNAME)
 	svn export . $(DISTNAME)
 	rm $(DISTNAME)/makefile* $(DISTNAME)/Seccast*
 	rm $(DISTNAME)/*.rc $(DISTNAME)/*.h
@@ -345,7 +345,7 @@ win32-beta-installer: all server
 source-bz2: 
 # create tar.bz2 archive with ufo2000 sources (on *nix systems)
 	-$(RM) $(DISTNAME)-src.tar.bz2
-	svn delete --force $(DISTNAME)
+	-svn delete --force $(DISTNAME)
 	svn export --native-eol "LF" . $(DISTNAME)
 	sed 's,unknown,$(UFO_SVNVERSION),g' < src/version.h > $(DISTNAME)/src/version.h
 	tar -cjf $(DISTNAME)-src.tar.bz2 $(DISTNAME)
@@ -355,7 +355,7 @@ install: all server
 	# necessary in order to create a Debian/derivatives package with:
 	# dpkg-buildpackage -rfakeroot
 	# BEGIN copied from binary-gz target
-	svn delete --force $(DISTNAME)
+	-svn delete --force $(DISTNAME)
 	svn export . $(DISTNAME)
 	rm -R $(DISTNAME)/src
 	rm -R $(DISTNAME)/datfile
