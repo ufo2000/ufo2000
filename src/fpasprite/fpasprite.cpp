@@ -601,7 +601,39 @@ ALPHA_SPRITE *get_alpha_sprite(BITMAP *bmp)
 
 ALPHA_SPRITE *get_alpha_sprite_fallback(BITMAP *bmp, int sx, int sy, int w, int h)
 {
-    BITMAP *tmp = create_sub_bitmap(bmp, sx, sy, w, h);
+    BITMAP *tmp;
+    if (bitmap_color_depth(bmp) == 32) {
+        // This is quite ugly: we have an image with alpha channel here,
+        // but allegro only respects mask color for get_rle_sprite() and blit
+        // functions. This means we first need to convert all the transparent
+        // pixels to mask color manually. Also semi-transparent pixels become
+        // opaque.
+        //
+        // Fortunately we only get here in really exceptional cases, for
+        // example if screen uses unsupported color format (neither 16bpp nor
+        // 32bpp).
+        tmp = create_bitmap(w, h);
+        BITMAP *tmp2 = create_bitmap_ex(32, w, h);
+        blit(bmp, tmp2, sx, sy, 0, 0, w, h);
+        for (int y = 0; y < tmp2->h; y++) {
+            uint32 *line = (uint32 *)tmp2->line[y];
+            for (int x = 0; x < tmp2->w; x++) {
+                if ((line[x] & 0xFF000000) == 0)
+                    line[x] = MASK_COLOR_32;
+            }
+        }
+        blit(tmp2, tmp, 0, 0, 0, 0, w, h);
+        destroy_bitmap(tmp2);
+    } else if (bitmap_color_depth(bmp) != bitmap_color_depth(screen)) {
+        // get_rle_sprite() does not work well if called for a bitmap
+        // having color format different from the one used for screen,
+        // so a conversion (via temporary bitmap) is needed
+        tmp = create_bitmap(w, h);
+        blit(bmp, tmp, sx, sy, 0, 0, w, h);
+    } else {
+        // This part of code is used normally and it is quite fast
+        tmp = create_sub_bitmap(bmp, sx, sy, w, h);
+    }
     ALPHA_SPRITE *result = get_rle_sprite(tmp);
     destroy_bitmap(tmp);
     return result;
@@ -609,9 +641,13 @@ ALPHA_SPRITE *get_alpha_sprite_fallback(BITMAP *bmp, int sx, int sy, int w, int 
 
 ALPHA_SPRITE *get_alpha_sprite(BITMAP *bmp, int sx, int sy, int w, int h)
 {
-    if (bitmap_color_depth(bmp) != 32) return get_alpha_sprite_fallback(bmp, sx, sy, w, h);
+    if (bitmap_color_depth(bmp) != 32)
+        return get_alpha_sprite_fallback(bmp, sx, sy, w, h);
     const int screen_color_depth = bitmap_color_depth(screen);
-    if (screen_color_depth < 16) return get_alpha_sprite_fallback(bmp, sx, sy, w, h);
+    if (screen_color_depth != 16 && screen_color_depth != 32) {
+        // alpha sprites implement only 16bpp and 32bpp blenders at the moment
+        return get_alpha_sprite_fallback(bmp, sx, sy, w, h);
+    }
 
     // First pass, calculate size of resulting RLE sprite, also check whether
     // alpha channel is really required for this sprite
