@@ -975,24 +975,31 @@ void Editor::edit_soldier()
             man->md.SkinType = sol_dialog[D_ARMOUR].d1 + 1; 
             break;
         case  1: 
+            man->md.fFemale = 0;
             man->md.SkinType = S_SECTOID; 
             break;
         case  2: 
+            man->md.fFemale = 0;
             man->md.SkinType = S_MUTON; 
             break;
         case  3: 
+            man->md.fFemale = 0;
             man->md.SkinType = S_SNAKEMAN; //LAWYER:  Snakeman!!
             break;
         case  4: 
+            man->md.fFemale = 0;
             man->md.SkinType = S_ETHEREAL; //LAWYER:  Ethereal!!
             break;
         case 5:
+            man->md.fFemale = 0;
             man->md.SkinType = S_FLOATER; //LAWYER:  Floater!!
             break;      
         case 6:
+            man->md.fFemale = 0;
             man->md.SkinType = S_CHRYS; //Kratos: Chryssalid
             break;
         default: 
+            man->md.fFemale = 0; // Here too, even though it looks inconsistent
             man->md.SkinType = S_CHAMELEON; 
             man->md.Appearance = sol_dialog[D_APPEARANCE].d1;
             break;
