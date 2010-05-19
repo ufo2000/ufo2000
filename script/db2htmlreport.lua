@@ -125,7 +125,7 @@ end
     
 io.write("<br> <b>UFO2000 recent games statistics</b><br>")
 io.write("<table border=1>\n")
-io.write("<tr><td>id<td>version<td>date<td>player1<td>player2<td>time<td>result<td>comment<td></tr>\n")
+io.write("<tr><td>id<td>version<td>date<td>player1<td>player2<td>time<td>result<td>comment</tr>\n")
 for id, ver, pl1, pl2, result in db:cols([[
     select id, ver, pl1, pl2, result from 
     (select id,ifnull(g.client_version, "") ver,p1.player pl1, p2.player pl2, case when g.result=1 then p1.player||" won" when g.result=2 then p2.player||" won" when g.result=3 then "draw" else "not finished" end result,ifnull(g.errors,"") errors 
@@ -156,7 +156,7 @@ do
             "<td>", timestring(duration), 
             "<td>", result, 
             "<td>", comment,
-            "<td><A href=http://ufo2000.lxnt.info/db_report.php?a=", id, ",0,0,>Compare CRC</A>\n")
+            "\n")
     end
 end
 io.write("</table>")
