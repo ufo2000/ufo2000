@@ -74,5 +74,8 @@ void showtip();
 //! Simple help, using alert3().
 void help( const int helppage );
 
+//! Show a large dialog with formatted text.
+void show_help(const char *text);
+
 #endif
 

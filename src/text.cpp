@@ -1026,3 +1026,26 @@ void help( const int helppage )
 }
 END_OF_FUNCTION(help);
 
+/**
+ * Show a large dialog with formatted text. It is useful for showing help
+ * pages with long descriptions of something.
+ */
+void show_help(const char *text)
+{
+    int w = SCREEN_W * 3 / 4;
+    int h = SCREEN_H * 3 / 4;
+    DIALOG help_dialog[] = {
+        //(dialog proc)           (x)  (y) (w) (h) (fg)(bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
+        { d_agup_shadow_box_proc,  0,   0, w, h, 0,  1,  0, 0,  0, 0, NULL, NULL, NULL },
+        { d_agup_textbox_proc,    10,  10, w - 20, h - 40, 0,  1,  0, 0,  0, 0, (void *)text, NULL, NULL },
+        { d_agup_button_proc,     w - 70, h - 25, 60,  18,  0,  1, 13, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL },
+        { d_yield_proc,           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
+        { NULL }
+    };
+    FONT *old_font = font;
+    font = large;
+    centre_dialog(help_dialog);
+    set_dialog_color(help_dialog, COLOR_BLACK1, COLOR_WHITE);
+    popup_dialog(help_dialog, 2);
+    font = old_font;
+}
