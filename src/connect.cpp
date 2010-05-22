@@ -50,26 +50,16 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 int Connect::do_version_check()
 {
-    Wind *local_win = NULL, *remote_win = NULL, *info_win = NULL;
-
+    const char *you_are_too_old_msg =
+        _("Unfortunately you have an older UFO2000 version than your opponent has. "
+          "And the changes introduced between these versions make them incompatible.\n\n"
+          "Please visit http://ufo2000.sourceforge.net and upgrade "
+          "(you need UFO2000 version %s.%d or newer).");
+    const char *opponent_is_too_old_msg =
+        _("Unfortunately your opponent has an older version of UFO2000. "
+          "And the changes introduced between these versions make them incompatible.\n\n"
+          "Please try again after your opponent upgrades to an up to date version.");
     bool version_check_passed = false;
-
-    reset_video();
-
-    position_mouse(320, 200);
-    MouseRange temp_mouse_range(0, 0, 639, 399);
-
-    BITMAP *scr = create_bitmap(320, 200); clear(scr);
-    BITMAP *backscr = create_bitmap(640, 400);
-    SPK *back09 = new SPK("$(xcom)/geograph/back09.scr");      //gamepal used
-
-    back09->show(scr, 0, 0);
-    stretch_blit(scr, screen,  0, 0, 320, 200, 0, 0, 640, 400);
-    stretch_blit(scr, backscr, 0, 0, 320, 200, 0, 0, 640, 400);
-
-    local_win  = new Wind(backscr,  15, 197, 619, 383, COLOR_GOLD);
-    remote_win = new Wind(backscr,  15,  12, 408, 179, COLOR_RED01);
-    info_win   = new Wind(backscr, 434,  17, 619, 171, COLOR_VIOLET00);
 
     int DONE = 0;
     std::string buf;
@@ -82,11 +72,14 @@ int Connect::do_version_check()
             break;
     }
 
-    g_net_allowed_terrains.clear();
+    clear(screen);
+    text_mode(-1);
+    textprintf(screen, font, 1, 1, COLOR_SYS_INFO1, "%s",
+        _("Comparing local and remote UFO2000 versions..."));
+    textprintf(screen, font, 1, 1 + text_height(font), COLOR_SYS_INFO1, "%s",
+        _("Press ESC to cancel if it takes too long."));
 
-    remote_win->printstr("\n");
-    remote_win->printstr( _("Comparing local and remote UFO2000 versions...") );
-    remote_win->printstr( _("Press ESC to cancel") );
+    g_net_allowed_terrains.clear();
 
     char version_check_packet[128];
     sprintf(version_check_packet, "UFO2000 REVISION OF YOUR OPPONENT: %d", UFO_REVISION_NUMBER);
@@ -101,19 +94,10 @@ int Connect::do_version_check()
                     version_check_passed = true;
                 } else {
                     if (remote_revision < UFO_REVISION_NUMBER) {
-                        // Todo: Reformat following texts for gettext()
-                        remote_win->printstr("\nUnfortunately your opponent has an\n");
-                        remote_win->printstr("outdated UFO2000 version and you will be\n");
-                        remote_win->printstr("unable to play until he upgrades\n");
+                        show_help(opponent_is_too_old_msg);
                     } else {
-                        char tmp[128];
-                        sprintf(tmp, "\nYou need UFO2000 %s (revision %d)\nor newer", 
-                            UFO_VERSION_STRING, remote_revision);
-                        remote_win->printstr("\nUnfortunately you have an older UFO2000\n");
-                        remote_win->printstr("version than your opponent has.\n");
-                        remote_win->printstr("\nPlease visit http://ufo2000.sourceforge.net\n");
-                        remote_win->printstr("and upgrade your UFO2000 version\n");
-                        remote_win->printstr(tmp);
+                        show_help(string_format(you_are_too_old_msg,
+                            UFO_VERSION_STRING, remote_revision).c_str());
                     }
                     net->send_quit();
                     net->SEND = 0;
@@ -127,9 +111,7 @@ int Connect::do_version_check()
             }
             if (strstr(buf.c_str(), "START") != NULL) {
                 if (!version_check_passed) {
-                    remote_win->printstr("\nUnfortunately your opponent has an\n");
-                    remote_win->printstr("outdated UFO2000 version and you will be\n");
-                    remote_win->printstr("unable to play until he upgrades\n");
+                    show_help(opponent_is_too_old_msg);
                     net->send_quit();
                     net->SEND = 0;
                 }
@@ -137,23 +119,11 @@ int Connect::do_version_check()
             }
         }
 
-        if (!net->SEND) {
-            info_win->printstr( _("connection closed") );
-            readkey();
-            DONE = 1;
-        }
-
         if (keypressed()) {
             int scancode;
             ureadkey(&scancode);
 
             switch (scancode) {
-                case KEY_F4:
-                case KEY_F5:
-                    info_win->redraw_full();
-                    local_win->redraw();
-                    remote_win->redraw();
-                    break;
                 case KEY_ESC:
                     net->send_quit();
                     net->SEND = 0;
@@ -162,13 +132,6 @@ int Connect::do_version_check()
             }
         }
     }
-
-    delete back09;
-    delete local_win;  local_win  = NULL;
-    delete remote_win; remote_win = NULL;
-    delete info_win;   info_win   = NULL;
-    destroy_bitmap(scr);
-    destroy_bitmap(backscr);
 
     clear(screen);
     return net->SEND;
