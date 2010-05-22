@@ -1049,3 +1049,29 @@ void show_help(const char *text)
     popup_dialog(help_dialog, 2);
     font = old_font;
 }
+
+std::string string_vformat(const char *fmt, va_list arglist)
+{
+    int bufsize = 1024;
+    char *buf = new char[bufsize];
+    while (true) {
+        int result = vsnprintf(buf, bufsize, fmt, arglist);
+        if (result >= 0 && result < bufsize)
+            break;
+        delete [] buf;
+        bufsize *= 2;
+        buf = new char[bufsize];
+    }
+    std::string text = buf;
+    delete [] buf;
+    return text;
+}
+
+std::string string_format(const char *fmt, ...)
+{
+    va_list arglist;
+    va_start(arglist, fmt);
+    std::string text = string_vformat(fmt, arglist);
+    va_end(arglist);
+    return text;
+}

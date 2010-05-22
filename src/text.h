@@ -77,5 +77,12 @@ void help( const int helppage );
 //! Show a large dialog with formatted text.
 void show_help(const char *text);
 
+//! A C++ variant of lua 'string.format' (a safe sprintf replacement)
+#if defined(__GNUC__)
+__attribute__((__format__(__printf__,1,2)))
+#endif
+std::string string_format(const char *fmt, ...);
+std::string string_vformat(const char *fmt, va_list arglist);
+
 #endif
 
