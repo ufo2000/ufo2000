@@ -137,7 +137,7 @@ int Net::init()
         alert(" ", _("  GAME START  "), " ", _("    OK    "), NULL, 1, 0);
         inithotseatgame();
     } else {
-        if (!connect->do_chat() || !connect->do_planner(0)) {
+        if (!connect->do_version_check() || !connect->do_planner(0)) {
             close();
             return 0;
         }

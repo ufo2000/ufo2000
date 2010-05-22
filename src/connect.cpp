@@ -48,7 +48,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * @todo remove all the unneeded stuff here, this function does not need 
  *       displaying any graphics at all
  */
-int Connect::do_chat()
+int Connect::do_version_check()
 {
     Wind *local_win = NULL, *remote_win = NULL, *info_win = NULL;
 
