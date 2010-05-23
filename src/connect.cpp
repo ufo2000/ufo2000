@@ -60,6 +60,8 @@ int Connect::do_version_check()
           "And the changes introduced between these versions make them incompatible.\n\n"
           "Please try again after your opponent upgrades to an up to date version.");
     bool version_check_passed = false;
+    bool version_check_tried = false;
+    bool result = true;
 
     int DONE = 0;
     std::string buf;
@@ -81,59 +83,61 @@ int Connect::do_version_check()
 
     g_net_allowed_terrains.clear();
 
-    char version_check_packet[128];
-    sprintf(version_check_packet, "UFO2000 REVISION OF YOUR OPPONENT: %d", UFO_REVISION_NUMBER);
-    net->send(version_check_packet);
+    // The version check protocol is simple:
+    // First both sides send the information about their version.
+    // Then they wait for a reply from the remote side with "START" or "QUIT"
+    // string. If any of the clients sends "QUIT", then the game can't
+    // be started and this function should return false.
+    // In any case, we try to send exactly two packets to the remote side
+    // (version info + START or QUIT).
+    // Receiving of the same two packets from the remote side is not necessary
+    // if we are not going to start the game.
+
+    net->send(string_format("UFO2000 REVISION OF YOUR OPPONENT: %d",
+        UFO_REVISION_NUMBER));
 
     while (!DONE) {
         if (net->recv(buf)) {
             int remote_revision;
             if (sscanf(buf.c_str(), "UFO2000 REVISION OF YOUR OPPONENT: %d", &remote_revision) == 1) {
+                version_check_tried = true;
                 if (UFO_REVISION_NUMBER == remote_revision) {
                     net->send("START");
                     version_check_passed = true;
                 } else {
+                    net->send("QUIT");
+                    result = false;
                     if (remote_revision < UFO_REVISION_NUMBER) {
                         show_help(opponent_is_too_old_msg);
                     } else {
                         show_help(string_format(you_are_too_old_msg,
                             UFO_VERSION_STRING, remote_revision).c_str());
                     }
-                    net->send_quit();
-                    net->SEND = 0;
-                    DONE = 1;
                 }
-            }
-
-            if (strstr(buf.c_str(), "QUIT") != NULL) {
-                net->SEND = 0;
+            } else if (strstr(buf.c_str(), "QUIT") != NULL) {
+                result = false;
+                DONE = 1;
+            } else if (strstr(buf.c_str(), "START") != NULL) {
+                if (!version_check_passed)
+                    result = false;
                 DONE = 1;
             }
-            if (strstr(buf.c_str(), "START") != NULL) {
-                if (!version_check_passed) {
-                    show_help(opponent_is_too_old_msg);
-                    net->send_quit();
-                    net->SEND = 0;
-                }
-                DONE = 1;
-            }
-        }
-
-        if (keypressed()) {
+        } else if (keypressed()) {
             int scancode;
             ureadkey(&scancode);
-
-            switch (scancode) {
-                case KEY_ESC:
-                    net->send_quit();
-                    net->SEND = 0;
-                    DONE = 1;
-                    break;
+            if (scancode == KEY_ESC) {
+                result = false;
+                DONE = 1;
             }
         }
+        rest(10);
     }
 
+    if (!version_check_tried)
+        net->send("QUIT");
+
     clear(screen);
+    net->SEND = result;
     return net->SEND;
 }
 
