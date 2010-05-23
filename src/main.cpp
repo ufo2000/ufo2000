@@ -1909,8 +1909,8 @@ void endgame_stats()
       //textprintf(newscr, large,  x1, y1, COLOR_GREEN, _("Your Platoon") );
       //textprintf(newscr, large,  x2, y1, COLOR_GREEN, _("Remote Platoon") );
     }
-    textprintf(newscr, large,  x1, y1, COLOR_GREEN, player1 );
-    textprintf(newscr, large,  x2, y1, COLOR_GREEN, player2 );
+    textprintf(newscr, large,  x1, y1, COLOR_GREEN, "%s", player1 );
+    textprintf(newscr, large,  x2, y1, COLOR_GREEN, "%s", player2 );
 
     strcpy(txt, _("Total Kills:") );
     textprintf(newscr, g_small_font,  x1+ 0, y2+0*h, COLOR_RED03,  "%s",  txt );
@@ -2124,7 +2124,7 @@ void report_game_error(int chk)
     chk = -chk; // Error codes are negative.
     if(FLAGS & F_ENDTURNSND)
         soundSystem::getInstance()->play(SS_BUTTON_PUSH_2);
-    g_console->printf(GameErrorColour[chk], GameErrorMessage[chk]);
+    g_console->printf(GameErrorColour[chk], "%s", GameErrorMessage[chk]);
 }
 
 /**
@@ -2629,7 +2629,7 @@ void gameloop()
                             } else {
                                 sprintf(buf, "%s", _("You: Draw offer recalled"));
                             }
-                            g_console->printf(COLOR_SYS_PROMPT, buf);
+                            g_console->printf(COLOR_SYS_PROMPT, "%s", buf);
                             battle_report("# %s\n", buf);
                         }
                     }

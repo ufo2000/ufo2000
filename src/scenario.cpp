@@ -822,7 +822,7 @@ bool Scenario::platoon_common (long points, Platoon *platoon, PanPos pos)
             platoon->findnum(i)->place(P_MAP)->get_items_list(items);
 
         if (items.size() > 0) {
-            g_console->printf(COLOR_RED04, _("Items on the ground aren't allowed (you have: %d, including unselected soldiers)."), items.size());
+            g_console->printf(COLOR_RED04, _("Items on the ground aren't allowed (you have: %d, including unselected soldiers)."), (int)items.size());
             return false;
         }
     }

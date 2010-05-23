@@ -263,7 +263,7 @@ void Net::check()
     if (!packet.empty()) {
         queue->put(packet);
         if (FLAGS & F_RAWMESSAGES) {
-            g_console->printf( _("put:[%d]"), packet.size());
+            g_console->printf( _("put:[%d]"), (int)packet.size());
             g_console->printf("%s", packet.c_str());
         }
     }
@@ -274,7 +274,7 @@ void Net::check()
     if (!queue->get(packet)) return;
 
     if (FLAGS & F_RAWMESSAGES) {
-        g_console->printf( _("get:[%d]"), packet.size());
+        g_console->printf( _("get:[%d]"), (int)packet.size());
         g_console->printf("%s", packet.c_str());
     }
 
@@ -1328,7 +1328,7 @@ int Net::recv_terrain_crc32()
         // special end of terrain list marker received (empty terrain name)
         g_console->printf("\n");
         g_console->printf( _("Remote player has the following %d maps that can be used for network game:\n"),
-            g_net_allowed_terrains.size());
+            (int)g_net_allowed_terrains.size());
 
         std::string tlist = "";
         
@@ -1637,7 +1637,7 @@ int Net::recv_tie()
     } else {
         sprintf(buf, "%s", _("Opponent: Draw offer recalled"));
     }
-    g_console->printf(COLOR_SYS_PROMPT, buf);
+    g_console->printf(COLOR_SYS_PROMPT, "%s", buf);
     battle_report("# %s\n", buf);
     return 0;
 }

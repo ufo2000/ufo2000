@@ -1111,7 +1111,7 @@ int Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
     
     if((havetime(walk_time + time, 0) != OK) && (havetime(time, 0) == OK)) {
         if(error != "")
-            g_console->printf(COLOR_SYS_INFO1, error.c_str());
+            g_console->printf(COLOR_SYS_INFO1, "%s", error.c_str());
         return havetime(walk_time + time, 0);
     } else {
         return havetime(walk_time, use_energy);

@@ -314,13 +314,13 @@ void Units::draw_scenario_window()
 
     textout_centre(screen2, font, _("Player 1"), x0, SCREEN2H - 285, xcom1_color(CAPTION));
     for (i = 0; i < 8; i++)
-        textprintf(screen2, font, x0 - x1  + 5, SCREEN2H - 270 + i * 9, xcom1_color(COMMENT), scenario->briefing_left[scenario->type][i]);
+        textprintf(screen2, font, x0 - x1  + 5, SCREEN2H - 270 + i * 9, xcom1_color(COMMENT), "%s", scenario->briefing_left[scenario->type][i]);
     if (pos == POS_LEFT)
         rect(screen2, x0 - x1  + 3, SCREEN2H - 272, x0 + x1  - 3, SCREEN2H - 198, xcom1_color(LOCAL_COLOR));
 
     textout_centre(screen2, font, _("Player 2"), x0, SCREEN2H - 185, xcom1_color(CAPTION));
     for (i = 0; i < 8; i++)
-        textprintf(screen2, font, x0 - x1  + 5, SCREEN2H - 170 + i * 9, xcom1_color(COMMENT), scenario->briefing_right[scenario->type][i]);
+        textprintf(screen2, font, x0 - x1  + 5, SCREEN2H - 170 + i * 9, xcom1_color(COMMENT), "%s", scenario->briefing_right[scenario->type][i]);
     if (pos == POS_RIGHT)
         rect(screen2, x0 - x1  + 3, SCREEN2H - 172, x0 + x1  - 3, SCREEN2H - 98, xcom1_color(LOCAL_COLOR));
 
@@ -333,14 +333,14 @@ void Units::draw_scenario_window()
             break;
 
             case OPT_NUMBER:
-                textprintf(screen2, font, x0 - x1  + 5, SCREEN2H - 70 + i * 9, xcom1_color(COMMENT), scenario->options[scenario->type][i]->caption);
+                textprintf(screen2, font, x0 - x1  + 5, SCREEN2H - 70 + i * 9, xcom1_color(COMMENT), "%s", scenario->options[scenario->type][i]->caption);
                 textout_centre(screen2, font, "<", x0 + 150, SCREEN2H - 70 + i * 9, xcom1_color(BUTTON));
                 textprintf_centre(screen2, font, x0 + 170, SCREEN2H - 70 + i * 9, xcom1_color(SELECTED), "%d", scenario->options[scenario->type][i]->value);
                 textout_centre(screen2, font, ">", x0 + 190, SCREEN2H - 70 + i * 9, xcom1_color(BUTTON));
             break;
 
             case OPT_SWITCH:
-                textprintf(screen2, font, x0 - x1  + 5, SCREEN2H - 70 + i * 9, scenario->options[scenario->type][i]->value ? xcom1_color(SWITCH_ON) : xcom1_color(SWITCH_OFF), scenario->options[scenario->type][i]->value ? scenario->options[scenario->type][i]->caption_on : scenario->options[scenario->type][i]->caption_off);
+                textprintf(screen2, font, x0 - x1  + 5, SCREEN2H - 70 + i * 9, scenario->options[scenario->type][i]->value ? xcom1_color(SWITCH_ON) : xcom1_color(SWITCH_OFF), "%s", scenario->options[scenario->type][i]->value ? scenario->options[scenario->type][i]->caption_on : scenario->options[scenario->type][i]->caption_off);
             break;
         }
     }
