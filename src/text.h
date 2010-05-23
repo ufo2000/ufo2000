@@ -58,6 +58,9 @@ void battle_report( const char *format, ... );
 
 #undef map
 //! Interface to LUA-gettext()
+#ifdef __GNUC__
+__attribute__((format_arg(1)))
+#endif
 const char *ufo2k_gettext(const char *str);
 extern std::map<const char *, const char *> translation_cache;
 #define map g_map
