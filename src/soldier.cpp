@@ -403,7 +403,7 @@ bool Soldier::set_attribute(const char *attribute_name, int value)
 
 bool Soldier::set_name(const char *newname)
 {
-    if (strlen(newname) + 1 > sizeof(ud.Name)) return false;
+    if (ustrlen(newname) > MAN_NAME_LEN) return false;
     strcpy(ud.Name, newname);
     strcpy(md.Name, newname);
     return true;

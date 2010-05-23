@@ -63,7 +63,7 @@ struct UNITDATA
     unsigned char LArmWound;
     unsigned char RLegWound;
     unsigned char LLegWound;
-    char          Name[26];     //!< The unit name!!
+    char          Name[MAN_NAME_BUFSIZE];     //!< The unit name!!
 };
 
 #define P_SHL_RIGHT       0

@@ -137,10 +137,14 @@ int Units::deselect_unit(int num)
 
 int Units::add(int num, const char *nm, int ct)
 {
-    if (num < 0 || num >= SQUAD_LIMIT)
+    if (num < 0 || num >= SQUAD_LIMIT) {
+        ASSERT(false);
         return 0;
-    if (strlen(nm) >= 25)
+    }
+    if (ustrlen(nm) > MAN_NAME_LEN) {
+        ASSERT(false);
         return 0;
+    }
     size = num;
     strcpy(name[size], nm);
     cost[size] = ct;

@@ -36,7 +36,7 @@ class Units
     friend class Connect;
 private:
     int size;
-    char name[SQUAD_LIMIT][26];
+    char name[SQUAD_LIMIT][MAN_NAME_BUFSIZE];
     int cost[SQUAD_LIMIT];
     int lev[SQUAD_LIMIT], col[SQUAD_LIMIT], row[SQUAD_LIMIT];
     int selected;                   //!< number of the soldier currently selected for editing

@@ -34,7 +34,7 @@ class StatEntry: public persist::BaseObject
 	DECLARE_PERSISTENCE(StatEntry);
 private:
 	int         SID;              //!< The soldier's ID
-	char        name[26];         //!< The name of the soldier
+	char        name[MAN_NAME_BUFSIZE]; //!< The name of the soldier
 	int         kills;            //!< The number of soldiers he's killed
 	int         dead;             //!< Is he dead?
 	int         damage_inflicted; //!< How much damage did he inflict?

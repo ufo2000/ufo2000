@@ -194,11 +194,15 @@ struct GEODATA
     uint8  mapdata[36];  //!< The actual map data - refers to the number at the end of map name; i.e. urban12 would be number
 };
 
+// Name length limit in characters
+#define MAN_NAME_LEN 22
+// Name buffer size (each character can take up to 6 bytes in UTF-8)
+#define MAN_NAME_BUFSIZE (MAN_NAME_LEN * 6 + 1) 
+
 #pragma pack(1)
 struct MANDATA
 {
-#define MAN_NAME_LEN 22
-    char          Name[26];     //!< There are actually 26 bytes allocated for this, but only the first 23 are used.  The names can be up to 22 bytes.
+    char          Name[MAN_NAME_BUFSIZE];
     unsigned char TimeUnits;    //!< TU each turn for actions
     unsigned char Health;       //!< Hitpoints: when down to 0, soldier dies
     unsigned char Stamina;      //!< Actions like walking consume TU as well as energy
