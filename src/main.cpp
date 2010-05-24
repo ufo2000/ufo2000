@@ -2540,7 +2540,9 @@ void gameloop()
                     }
                     break;
                 case KEY_F2:
-                    if (askmenu( _("SAVE GAME") )) {
+                    if (net->gametype == GAME_TYPE_HOTSEAT &&
+                        askmenu(_("SAVE GAME"))) {
+
                         savegame(F("$(home)/ufo2000.sav"), 1);
                         // Todo: test if save was successful
                         g_console->printf(COLOR_SYS_OK, _("Game saved") );
@@ -2549,7 +2551,9 @@ void gameloop()
                     }
                     break;
                 case KEY_F3:
-                    if (askmenu( _("LOAD GAME") )) {
+                    if (net->gametype == GAME_TYPE_HOTSEAT &&
+                        askmenu(_("LOAD GAME"))) {
+
                         if (!loadgame(F("$(home)/ufo2000.sav" ), 1)) {
                             battle_report( "# %s: %s\n", _("LOAD GAME"), _("failed") );
                             temp_mouse_range_ptr = new MouseRange(0, 0, SCREEN_W - 1, SCREEN_H - 1);
