@@ -1,6 +1,6 @@
 /*
-This file is part of "UFO 2000" aka "X-COM: Gladiators"
-                    http://ufo2000.sourceforge.net/
+This file is part of UFO2000 (http://ufo2000.sourceforge.net)
+
 Copyright (C) 2000-2001  Alexander Ivanov aka Sanami
 Copyright (C) 2002-2006  ufo2000 development team
 
