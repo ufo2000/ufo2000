@@ -1098,22 +1098,41 @@ int Soldier::tus_reserved(std::string *error)
 }
 
 /**
- * Test if soldier has reserved time for shooting.
- * Returns true if he has enough time for the next action.
+ * Check if soldier has enough Energy and Time Units for performing required action, with
+ * reserved time in mind. Call report_game_error() if the check fails. Check steps are Energy,
+ * reserved time, Time Units – from the most crucial to the least.
+ *
+ * @param walk_time Number of Time Units for required action
+ * @param ISLOCAL flag which shows whether the unit is local or remote
+ * @param use_energy flag which shows whether the action requires energy to perform
+ * @return OK from GameErrorCodes, if unit can do required action; error code otherwise.
  */
-int Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
+int Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy) //TODO Rename to can_do_action
 {
-    if(!ISLOCAL)            // during enemy turn: don't check for reserved time
+    if(!ISLOCAL)            // Do not check enemy actions, they are checked remotely.
         return havetime(walk_time, use_energy);
 
-    std::string error = "";
-    int time = tus_reserved(&error);
-    
+    //Check Energy first
+    if(use_energy){
+        int energy_check_result = havetime(walk_time, use_energy);
+        if ( energy_check_result != OK ) {
+            report_game_error(energy_check_result);
+            return havetime(walk_time, use_energy);
+        }
+    }
+    //Energy is OK, check reserved time
+    std::string reserved_time_message = "";
+    int time = tus_reserved(&reserved_time_message);
+
     if((havetime(walk_time + time, 0) != OK) && (havetime(time, 0) == OK)) {
-        if(error != "")
-            g_console->printf(COLOR_SYS_INFO1, "%s", error.c_str());
+        //Not enough TUs for required action plus reserved time AND enough for reserved action
+        if(reserved_time_message != "") //print message about reserved TUs
+            //TODO Must use report_game_error()
+            g_console->printf(COLOR_SYS_INFO1, "%s", reserved_time_message.c_str());
         return havetime(walk_time + time, 0);
     } else {
+        //Enough TUs for required action plus reserved time OR not enough for reserved action
+        //TODO What if the 2nd OR condition is true?
         return havetime(walk_time, use_energy);
     }
 }
