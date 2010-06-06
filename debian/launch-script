@@ -1,3 +1,0 @@
-#!/bin/sh -e
-cd /usr/share/games/ufo2000
-./ufo2000

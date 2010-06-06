@@ -1,8 +1,0 @@
-ufo2000 (0.7.1011-1) unstable; urgency=low
-
-  * Initial Release.
-  * This is my first Debain package.
-  * Adjusted makefile to fix $DESTDIR problems.
-
- -- Neil Stockbridge <unclouded@users.sourceforge.net>  Wed,  5 Apr 2006 10:05:15 +1200
-
