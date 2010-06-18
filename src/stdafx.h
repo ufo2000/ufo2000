@@ -47,6 +47,9 @@ extern "C" {
 #ifdef LINUX
 #include <unistd.h>
 inline long filelength(int handle) { struct stat s; fstat(handle, &s); return s.st_size; }
+#ifdef HAVE_VALGRIND
+#include <valgrind/memcheck.h>
+#endif
 #endif
 
 

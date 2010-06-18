@@ -86,6 +86,7 @@ endif
 
 ifdef valgrind
 	debug = 1
+	CFLAGS += -DHAVE_VALGRIND
 endif
 
 VPATH = src src/jpgalleg src/dumbogg src/exchndl src/agup src/lua \

@@ -145,6 +145,9 @@ Engine::~Engine()
 void Engine::WriteBinary(const uint8* data, const uint32 size) 
 	THROWS (Engine::Exception)
 {
+#ifdef HAVE_VALGRIND
+	VALGRIND_CHECK_MEM_IS_DEFINED(data, size);
+#endif
 	ASSERT(myOperationalMode == modeWrite);
 	myUnderlyingOStream->write((const char *)data,size);
 }
