@@ -42,8 +42,6 @@ private:
     friend class Soldier;
     //! Pointer to current selected soldier in the squad
     Soldier *man;
-    //! Index of currently selected soldier --BSM
-    int selected_soldier;
     //! Squad identifier
     long     ID;
     //! Number of soldiers in the squad
