@@ -615,7 +615,7 @@ void Units::print_simple(int gcol)
         uint32 item_type;
         int item_quantity = pd_remote->id[i].num;
         for (int j = 0; j < item_quantity; j++){
-            item_type = pd_remote->id[i].item_type[j];
+            item_type = intel_uint32(pd_remote->id[i].item_type[j]);
             remote_unit_equipment_cost += Item::obdata_cost(item_type);
         }
         remote_total_equipment_cost += remote_unit_equipment_cost;
