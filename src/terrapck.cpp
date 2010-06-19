@@ -263,12 +263,14 @@ void TerraPCK::add_ufo2000_tileset(const char *tileset_name)
         lua_pushstring(L, "Shape");
         lua_gettable(L, -2);
         ASSERT(lua_isstring(L, -1));
+        ASSERT(lua_strlen(L, -1) == 384);
         const uint8 *shape_data = (const uint8 *)lua_tostring(L, -1);
-        for (int j = 0; j < 384; j += 2)
-            *(uint16 *)(shape_data + j) = intel_uint16(*(uint16 *)(shape_data + j));
-
         ShapeInfo s;
-        memcpy(&s, shape_data, sizeof(s));
+        for (int j = 0; j < 12; j++)
+            for (int k = 0; k < 16; k++) {
+                s.data[j][k] = shape_data[0] + shape_data[1] * 256;
+                shape_data += 2;
+            }
         lua_pop(L, 1);
 
         m_mcd[oldcount + i].ShapeIndex = get_shape_index(s);
