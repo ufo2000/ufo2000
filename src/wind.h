@@ -105,9 +105,11 @@ class ConsoleWindow : public VisualObject
 	std::vector<int>          m_lines_color;
 	ConsoleStatusLine        *m_status_line;
 	FONT                     *m_font;
+	BITMAP                   *m_background_bmp;
 	bool                      m_need_redraw;
 public:
-	ConsoleWindow(int width, int height, FONT *font = g_console_font);
+	ConsoleWindow(int width, int height, BITMAP *bg = NULL,
+                  FONT *font = g_console_font);
 	virtual ~ConsoleWindow();
 
 	virtual void redraw_full(BITMAP *bmp, int x, int y);

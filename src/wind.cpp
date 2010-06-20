@@ -105,17 +105,23 @@ bool ConsoleStatusLine::process_keyboard_input(int keycode, int scancode)
     return false;
 }
 
-ConsoleWindow::ConsoleWindow(int width, int height, FONT *font)
+ConsoleWindow::ConsoleWindow(int width, int height, BITMAP *bg, FONT *font)
 {
     m_width = width;
     m_height = height;
     m_font = font;
+    m_background_bmp = NULL;
+    if (bg) {
+        m_background_bmp = create_bitmap(bg->w, bg->h);
+        blit(bg, m_background_bmp, 0, 0, 0, 0, bg->w, bg->h);
+    }
     m_status_line = new ConsoleStatusLine(width, font, COLOR_WHITE);
     m_need_redraw = true;
 }
 
 ConsoleWindow::~ConsoleWindow()
 {
+    destroy_bitmap(m_background_bmp);
     delete m_status_line;
 }
 
@@ -125,7 +131,15 @@ void ConsoleWindow::redraw_full(BITMAP *bmp, int x, int y)
 
     acquire_bitmap(bmp);
     BITMAP *temp_bmp = create_bitmap(m_width, m_height);
-    clear_to_color(temp_bmp, COLOR_BLACK1);
+    if (m_background_bmp) {
+        int x, y;
+        for (y = 0; y < m_height; y += m_background_bmp->h)
+            for (x = 0; x < m_width; x += m_background_bmp->w)
+                blit(m_background_bmp, temp_bmp, 0, 0, x, y,
+                    m_background_bmp->w, m_background_bmp->h);
+    } else {
+        clear_to_color(temp_bmp, COLOR_BLACK1);
+    }
     int lines_to_show = (m_height - m_status_line->get_height()) / text_height(m_font);
     for (int i = m_lines_text.size() - 1, j = 1; i >= 0 && j <= lines_to_show; i--, j++) {
         text_mode(-1);
