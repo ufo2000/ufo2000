@@ -379,9 +379,6 @@ void closegame()
     lua_message( "Done : closegame" );
 }
 
-int print_y = 0;
-Wind *print_win = NULL;
-
 std::string indent(const std::string &str)
 {
     bool newline = true;
@@ -402,6 +399,8 @@ std::string indent(const std::string &str)
 class consoleBuf : public std::streambuf {
     std::string curline;
     bool doCout;
+    ConsoleWindow *m_print_win;
+    int m_print_win_x, m_print_win_y;
 
 protected:
     virtual int overflow(int c) {
@@ -411,14 +410,10 @@ protected:
             else
                 std::cout<<(static_cast<char>(c));
         if (c == 10) {
-            if (print_win != NULL) {
-                curline.append("\r\n");
-                print_win->printstr(curline.c_str(), COLOR_WHITE);
-            } else {
+            if (m_print_win) {
                 curline.append("\n");
-                text_mode( -1);
-                textout(screen, font, curline.c_str(), 0, print_y, COLOR_WHITE);
-                print_y += 10;
+                m_print_win->printf(COLOR_WHITE, curline.c_str());
+                m_print_win->redraw_fast(screen, m_print_win_x, m_print_win_y);
             }
             curline.assign("");
         } else {
@@ -428,9 +423,19 @@ protected:
         return c;
     }
 public:
-    consoleBuf(bool dco) {
+    consoleBuf(bool dco, BITMAP *bg = NULL, int x = 0, int y = 0) {
         curline.assign("");
         doCout = dco;
+        if (bg) {
+            m_print_win = new ConsoleWindow(bg->w, bg->h, bg, font);
+            m_print_win->hide_empty_status_line();
+            m_print_win_x = x;
+            m_print_win_y = y;
+        }
+    }
+    ~consoleBuf()
+    {
+        delete m_print_win;
     }
 };
 
@@ -871,19 +876,28 @@ void initmain(int argc, char *argv[])
     SkinInterface *screen_init;
     screen_init = new SkinInterface("Game_init");
     BITMAP *loading_back = screen_init->background();
-    stretch_blit(loading_back, screen, 0, 0, loading_back->w, loading_back->h, 0, 0, SCREEN_W, SCREEN_H);
-       
+    BITMAP *loading_back_scaled = create_bitmap(SCREEN_W, SCREEN_H);
+    stretch_blit(loading_back, loading_back_scaled, 0, 0, loading_back->w,
+        loading_back->h, 0, 0, loading_back_scaled->w, loading_back_scaled->h);
+    destroy_bitmap(loading_back);
+    blit(loading_back_scaled, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
+
     int init_win_x1, init_win_y1, init_win_x2, init_win_y2;
     init_win_x1 = screen_init->Feature("InitStream")->get_pd_x1();
     init_win_y1 = screen_init->Feature("InitStream")->get_pd_y1();
     init_win_x2 = screen_init->Feature("InitStream")->get_pd_x2();
     init_win_y2 = screen_init->Feature("InitStream")->get_pd_y2();
-    /*Draw on sprite : otherwise we get a bad visual effect*/
-    print_win = new Wind(loading_back, init_win_x1, init_win_y1, init_win_x2, init_win_y2, COLOR_BLACK2);
-    delete screen_init; 
+
+    BITMAP *loading_back_subbitmap = create_sub_bitmap(
+        loading_back_scaled, init_win_x1, init_win_y1,
+        init_win_x2 - init_win_x1, init_win_y2 - init_win_y1);
     /* to use the init console as an ostream -very handy. */
-    consoleBuf consbuf(FLAGS & F_LOGTOSTDOUT);
+    consoleBuf consbuf(FLAGS & F_LOGTOSTDOUT, loading_back_subbitmap,
+        init_win_x1, init_win_y1);
     std::ostream console(&consbuf);
+    destroy_bitmap(loading_back_subbitmap);
+    destroy_bitmap(loading_back_scaled);
+    delete screen_init; 
 
     /* Load Allegro library */    
     console<<"allegro_init"<<std::endl;
@@ -1013,8 +1027,6 @@ void initmain(int argc, char *argv[])
     GameErrorColour[-ERR_NO_ITEM]    = COLOR_SYS_FAIL;
     GameErrorColour[-ERR_DISTANCE]   = COLOR_YELLOW;
 
-    delete print_win;
-    
     // Safety check to ensure that the game is compiled with proper alignment
     // and all the #paragma pack and other attributes are accepted
     ASSERT(sizeof(ITEMDATA) == 701);
