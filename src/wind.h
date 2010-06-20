@@ -76,6 +76,7 @@ class ConsoleStatusLine : public VisualObject
 	std::string m_text;
 	FONT *m_font;
 	int m_color;
+	bool m_hide_when_empty;
 
 	bool backspace();
 
@@ -85,7 +86,13 @@ public:
 
 	virtual void redraw_full(BITMAP *bmp, int x, int y);
 	virtual bool resize(int width, int height);
+	virtual int get_height() const
+	{
+	    return m_hide_when_empty && m_text.empty() ? 0 : m_height;
+	}
 
+	void hide_when_empty() { m_hide_when_empty = true; }
+	void show_when_empty() { m_hide_when_empty = false; }
 	bool process_keyboard_input(int keycode, int scancode);
 
 	const std::string &get_text() const { return m_text; }
@@ -136,6 +143,8 @@ __attribute__ __format__ for non-static member functions.
 #endif
     ;
 
+	void hide_empty_status_line() { m_status_line->hide_when_empty(); }
+	void show_empty_status_line() { m_status_line->show_when_empty(); }
 	bool process_keyboard_input(int keycode, int scancode);
 
 	const char *get_text();

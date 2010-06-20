@@ -32,6 +32,7 @@ ConsoleStatusLine::ConsoleStatusLine(int width, FONT *font, int color)
     m_height = text_height(font);
     m_font = font;
     m_color = color;
+    m_hide_when_empty = false;
 }
 
 ConsoleStatusLine::~ConsoleStatusLine()
@@ -273,7 +274,10 @@ bool ConsoleWindow::process_keyboard_input(int keycode, int scancode)
             return false;
         }
     }
+    int old_height = m_status_line->get_height();
     m_status_line->process_keyboard_input(keycode, scancode);
+    if (m_status_line->get_height() != old_height)
+        set_full_redraw();
     return false;
 }
 
