@@ -109,7 +109,7 @@ SRCS_FDLIBM = e_acos.cpp e_asin.cpp e_atan2.cpp e_exp.cpp e_fmod.cpp  \
               w_asin.cpp w_atan2.cpp w_exp.cpp w_fmod.cpp w_log.cpp   \
               w_pow.cpp w_remainder.cpp w_sqrt.cpp
 
-SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp dirty.cpp \
+SRCS = bullet.cpp cell.cpp config.cpp connect.cpp crc32.cpp           \
        editor.cpp explo.cpp font.cpp icon.cpp inventory.cpp item.cpp  \
        keys.cpp main.cpp mainmenu.cpp map.cpp map_pathfind.cpp        \
        minimap.cpp mouse.cpp multiplay.cpp music.cpp packet.cpp       \
