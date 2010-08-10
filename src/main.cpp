@@ -109,8 +109,11 @@ void show_time_left()
 {
     int time_left = g_time_left;
 
-    // Todo: check if minimap is visible, so show time only once on screen:
-    textprintf(screen2, font, 0, 0, COLOR_WHITE, _("Time left: %d"), time_left);
+    //Check if minimap is visible, so show time only once on screen.
+    if (SCREEN2W == screen->w){ //same condition in "case KEY_LEFT:" in main.cpp
+        //main screen is taking all screen width, no minimap => Show the time.
+        textprintf(screen2, font, 0, 12, COLOR_WHITE, _("Time left: %d"), time_left);
+    }
 
     if (last_time_left == time_left)    // Play sounds only once per second
         return;
