@@ -1112,6 +1112,7 @@ int Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
     if(!ISLOCAL)            // during enemy turn: don't check for reserved time
         return havetime(walk_time, use_energy);
 
+    //TODO Link checks in Map::path_show and Soldier::time_reserve
     //Check Energy first
     if(use_energy){
         int check_result = havetime(walk_time, use_energy);
@@ -2140,6 +2141,29 @@ int Soldier::havetime(int ntime, int use_energy)
             return ERR_NO_ENERGY;
     if (ud.CurTU < ntime)
         return ERR_NO_TUS;
+    return OK;
+}
+
+/**
+ * Function that checks if the soldier has enough resources to perform required
+ * action. For actions that require energy, use_energy should be 1. If the
+ * action can not be performed, an error from GameErrorCodes is returned.
+ *
+ * @param action      requirements to perform the action
+ * @param resources   resources for action, they are modified
+ *
+ * @result            Error code from GameErrorCodes.
+ */
+int Soldier::havetime(ActionRequirements action, ResourcesState *resources)
+{
+    resources->time_units -= action.time_units;
+    if (resources->time_units < action.time_units)
+        return ERR_NO_TUS;
+    if (action.use_energy == 1) {
+        resources->energy -= action.time_units / 2;
+        if (resources->energy < 0)
+            return ERR_NO_ENERGY;
+    }
     return OK;
 }
 
