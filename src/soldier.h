@@ -66,6 +66,18 @@ struct UNITDATA
     char          Name[MAN_NAME_BUFSIZE];     //!< The unit name!!
 };
 
+//List of various action requirements. Now only moving actions.
+struct ActionRequirements{
+    int time_units;
+    int use_energy; //must be 1 if action uses energy (see Soldier::havetime)
+};
+
+//List of soldier resources spent on various actions. Now only moving actions.
+struct ResourcesState{
+    int time_units;
+    int energy;
+};
+
 #define P_SHL_RIGHT       0
 #define P_SHL_LEFT        1
 #define P_ARM_RIGHT       2
@@ -290,6 +302,7 @@ public:
     int ismoving();
     int is_marching() { return (m_state == MARCH); }
     int havetime(int ntime, int use_energy = 0);
+    int havetime(ActionRequirements action, ResourcesState *resources);
     int time_reserve(int walk_time, int ISLOCAL, int use_energy = 1);
     void spend_time(int tm, int use_energy = 0);
     int walktime(int _dir);
