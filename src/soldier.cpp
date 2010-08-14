@@ -3068,9 +3068,9 @@ void Soldier::drawinfo(int x, int y)
     if (ud.CurStun > 0) // draw stun bar
     {
         if (ud.CurStun < ud.CurHealth)
-            icon->draw_stun_bar(x, y, ud.CurStun,   ud.MaxHealth);
-        else
-            icon->draw_stun_bar(x, y, ud.CurHealth, ud.MaxHealth);
+            icon->draw_stun_bar(ud.CurStun, ud.MaxHealth);
+        else //do not exceed current health
+            icon->draw_stun_bar(ud.CurHealth, ud.MaxHealth);
     }
 }
 
