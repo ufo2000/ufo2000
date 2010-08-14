@@ -3062,15 +3062,15 @@ void Soldier::drawinfo(int x, int y)
 
     icon->draw_attribute(A_TIME_UNITS, ud.CurTU,     ud.MaxTU);
     icon->draw_attribute(A_ENERGY,     ud.CurEnergy, ud.MaxEnergy);
-    icon->draw_attribute(A_HEALTH,     ud.CurHealth, ud.MaxHealth);
+    icon->draw_attribute(A_HEALTH,     ud.CurHealth, ud.MaxHealth); //curr issue 594
     icon->draw_attribute(A_MORALE,     ud.Morale, 100);
 
     if (ud.CurStun > 0) // draw stun bar
     {
         if (ud.CurStun < ud.CurHealth)
-            icon->draw_stun_bar(x, y, ud.CurStun,   ud.MaxHealth);
-        else
-            icon->draw_stun_bar(x, y, ud.CurHealth, ud.MaxHealth);
+            icon->draw_stun_bar(ud.CurStun, ud.MaxHealth);
+        else //do not exceed current health
+            icon->draw_stun_bar(ud.CurHealth, ud.MaxHealth);
     }
 }
 
