@@ -688,7 +688,13 @@ inline int graycol(int c)
 }
 
 /**
- * Display soldiers attributes, with numbers and barcharts 
+ * Display soldiers attributes with numbers and barcharts inside a transparent
+ * window (titled with soldier's name) which width is 320 pixels and height
+ * depends on the heights of "large" and "g_small_font" fonts.
+ *
+ * If abs_pos is zero, posx and posy are the coordinates of window's upper left
+ * corner. In other case posx and posy are the width and height of the area in
+ * which the window must be placed.
  */
 void Soldier::draw_unibord(int abs_pos, int posx, int posy)
 {
@@ -715,7 +721,7 @@ void Soldier::draw_unibord(int abs_pos, int posx, int posy)
         { (char*)_("FIRING ACCURACY"),   eff_FAccuracy(), ud.MaxFA,     132},
         { (char*)_("THROWING ACCURACY"), TAccuracy(100),  ud.MaxTA,     100},
         { (char*)_("STRENGTH"),          ud.MaxStrength,  md.Strength,   52},
-        {NULL, 0, 0, 0},
+        {NULL, 0, 0, 0},//separator
         { (char*)_("FRONT ARMOUR"),      ud.CurFront,     ud.MaxFront,   87},
         { (char*)_("LEFT ARMOUR"),       ud.CurLeft,      ud.MaxLeft,    87},
         { (char*)_("RIGHT ARMOUR"),      ud.CurRight,     ud.MaxRight,   87},
@@ -755,28 +761,31 @@ void Soldier::draw_unibord(int abs_pos, int posx, int posy)
             textout_right(temp, row_f, param[i].str, sx[1] - 2, name_h + 6 + row_h * i + 2, COLOR_GREEN00);
             textprintf_centre(temp, font, 165, name_h + 6 + row_h * i + 3, COLOR_RED02, "%d", param[i].cur);
 
+            //draw horizontal bar from zero on the left to max on the right
             rect(temp, sx[2], name_h + 6 + row_h * i + 3, sx[2] + param[i].max, name_h + 6 + row_h * i + row_h - 2, xcom1_color(param[i].col));
-            if (param[i].max)
-                line(temp, sx[2], name_h + 6 + row_h * i + 4, sx[2], name_h + 6 + row_h * i + row_h - 2, xcom1_color(param[i].col - 4));
-            if (param[i].cur)
+            if (param[i].max)//skip fatal wounds, bravery and separator
+                //color left border in the "inner" color
+                line(temp, sx[2], name_h + 6 + row_h * i + 4, sx[2], name_h + 6 + row_h * i + row_h - 3, xcom1_color(param[i].col - 4));
+            if (param[i].cur)//if the value of parameter is not zero
+                //fill the inner part plus left border of the bar
                 rectfill(temp, sx[2], name_h + 6 + row_h * i + 4, sx[2] + param[i].cur - 1, name_h + 6 + row_h * i + row_h - 3, xcom1_color(param[i].col - 4));
 
             // special case for the health bar
             if (i == 2) // draw stun damage
                 if (ud.CurStun > 0)
-                {
+                {//fill the inner part plus left border of the bar like above
                     if (ud.CurStun < ud.CurHealth)
-                        rectfill(temp, sx[2], name_h + 6 + row_h * i + 4, sx[2] + ud.CurStun - 1, name_h + 6 + row_h * i + 9, COLOR_WHITE1);
+                        rectfill(temp, sx[2], name_h + 6 + row_h * i + 4, sx[2] + ud.CurStun - 1, name_h + 6 + row_h * i + row_h - 3, COLOR_WHITE1);
                     else
-                        rectfill(temp, 170, name_h + 6 + row_h * i + 4, sx[2] + ud.CurHealth - 1, name_h + 6 + row_h * i + 9, COLOR_WHITE1);
+                        rectfill(temp, 170, name_h + 6 + row_h * i + 4, sx[2] + ud.CurHealth - 1, name_h + 6 + row_h * i + row_h - 3, COLOR_WHITE1);
                 }
         }
     }
     
     set_trans_blender(0, 0, 0, 192);
-    if (abs_pos)
+    if (abs_pos)//absolute position, (posx:posy) is window's upper left corner
         draw_trans_sprite(screen2, temp, posx, posy);
-    else
+    else//posx and posy are dimensions of the area in which center the popup is
         draw_trans_sprite(screen2, temp, (posx - width) / 2, (posy - height) / 2);
     destroy_bitmap(temp);
 }
@@ -3074,6 +3083,11 @@ void Soldier::drawinfo(int x, int y)
     }
 }
 
+/**
+ * Draw soldier attributes in a line: Name as string and TU, Health, Armor as
+ * numbers. Color Name in white, blue or red depending on whether the soldier
+ * is selected and sees enemy. The whole line is 70+(15*6)=160 pixels wide.
+ */
 void Soldier::draw_stats(BITMAP* bitmap, int x, int y, bool selected)
 {   
     int dx = 15;
