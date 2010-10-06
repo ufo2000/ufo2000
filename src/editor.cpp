@@ -85,9 +85,15 @@ Editor::~Editor()
  */
 void Editor::load()
 {
-    std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
+    bool select_canceled = false;
+
+    std::string filename = gui_file_select(select_canceled, SCREEN_W / 2, SCREEN_H / 2,
         _("Load squad (*.squad files)"), F("$(home)"), "squad");
-    
+
+    if (select_canceled){ //Do not display "No saved squads found!" message
+        return;
+    }
+
     if (filename.empty()) {
         alert( "", _("No saved squads found!"), "", _("OK"), NULL, 0, 0);
         return;
@@ -103,10 +109,12 @@ void Editor::load()
  */
 void Editor::save()
 {
-    std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
+    bool select_canceled = false;
+
+    std::string filename = gui_file_select(select_canceled, SCREEN_W / 2, SCREEN_H / 2,
         _("Save squad (*.squad file)"), F("$(home)"), "squad", true);
     
-    if (!filename.empty()) {
+    if (!filename.empty() && !select_canceled) {
         m_plt->save_FULLDATA(filename.c_str());
         lua_message(std::string("Squad saved: ") + filename);
     }
@@ -725,8 +733,11 @@ static int common_change_button_proc(
         for (int i = 0; names[i] != NULL; i++)
             gui_list.push_back(names[i]);
 
-        if (gui_list.size() > 1)
-            d->d1 = gui_select_from_list(D_WIDTH, D_HEIGHT, title, gui_list, d->d1);
+        if (gui_list.size() > 1) {
+            int selection = gui_select_from_list(D_WIDTH, D_HEIGHT, title, gui_list, d->d1);
+            if (UFO2K_FILE_SELECT_CANCELED == selection || selection == d->d1) return D_REDRAW;
+            d->d1 = selection;
+        }
         fixup_unit_info();
         return D_REDRAW;
     }
@@ -966,7 +977,11 @@ void Editor::edit_soldier()
 
     set_dialog_color(sol_dialog, gui_fg_color, gui_bg_color);
     centre_dialog(sol_dialog);
-    popup_dialog(sol_dialog, -1);
+    int selection = popup_dialog(sol_dialog, -1);
+    if (UFO2K_FILE_SELECT_CANCELED == selection) {
+        ::sol_dialog = NULL;
+        return;
+    }
 
     switch (sol_dialog[D_RACE].d1) {
         case  0: 
@@ -1059,6 +1074,8 @@ void Editor::change_equipment()
         int result = gui_select_from_list(
             300, 200, _("Select equipment set"), 
             eqsets, index != -1 ? index : 0);
+
+        if (UFO2K_FILE_SELECT_CANCELED == result) return;
 
         if (set_current_equipment_name(eqsets[result].c_str()))
             net->send_equipment_choice();
