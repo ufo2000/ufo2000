@@ -939,9 +939,10 @@ void Units::execute_map(Map *map, int map_change_allowed)
         //MAP TYPE
 
         std::string current_terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
-        std::string terrain_name = terrain_set->select_terrain_gui_dialog(current_terrain_name);
+        std::string terrain_name = terrain_set->select_terrain_gui_dialog(
+                                                  select_canceled, current_terrain_name);
 
-        if (current_terrain_name != terrain_name) {
+        if (!select_canceled && current_terrain_name != terrain_name) {
             Map::new_GEODATA(&mapdata, terrain_name);
             net->send_map_data(&mapdata);
             mapdata.load_game = 77;

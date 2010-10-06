@@ -437,7 +437,7 @@ static const char *gui_select_from_list_proc(int index, int *list_size)
  * @param title          dialog title message
  * @param data           std::vector with a number of variants to be suggested to user
  * @param default_value  value that is active at start of dialog
- * @returns              index of user's choice
+ * @returns              index of user's choice or -1 if user canceled the dialog
  */
 int gui_select_from_list(
     int width, int height,
@@ -461,8 +461,9 @@ int gui_select_from_list(
     list_dialog[2].d1 = default_value;
     set_dialog_color(list_dialog, gui_fg_color, gui_bg_color);
     centre_dialog(list_dialog);
-    popup_dialog(list_dialog, 2);
+    int selection = popup_dialog(list_dialog, 2);
     current_list = NULL;
+    if (UFO2K_POPUP_DIALOG_CANCELED == selection) return UFO2K_POPUP_DIALOG_CANCELED;
     return list_dialog[2].d1;
 }
 
@@ -567,6 +568,10 @@ std::string gui_file_select(
         return dir + "/" + result + "." + ext;
     } else {
         int result = gui_select_from_list(width, height, title, data, 0);
+        if (UFO2K_POPUP_DIALOG_CANCELED == result) {
+            select_canceled = true;
+            return "";
+        }
         return dir + "/" + data[result] + "." + ext;
     }
 }

@@ -733,8 +733,11 @@ static int common_change_button_proc(
         for (int i = 0; names[i] != NULL; i++)
             gui_list.push_back(names[i]);
 
-        if (gui_list.size() > 1)
-            d->d1 = gui_select_from_list(D_WIDTH, D_HEIGHT, title, gui_list, d->d1);
+        if (gui_list.size() > 1) {
+            int selection = gui_select_from_list(D_WIDTH, D_HEIGHT, title, gui_list, d->d1);
+            if (UFO2K_POPUP_DIALOG_CANCELED == selection || selection == d->d1) return D_REDRAW;
+            d->d1 = selection;
+        }
         fixup_unit_info();
         return D_REDRAW;
     }
@@ -1071,6 +1074,8 @@ void Editor::change_equipment()
         int result = gui_select_from_list(
             300, 200, _("Select equipment set"), 
             eqsets, index != -1 ? index : 0);
+
+        if (UFO2K_POPUP_DIALOG_CANCELED == result) return;
 
         if (set_current_equipment_name(eqsets[result].c_str()))
             net->send_equipment_choice();
