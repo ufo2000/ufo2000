@@ -85,9 +85,15 @@ Editor::~Editor()
  */
 void Editor::load()
 {
-    std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
+    bool select_canceled = false;
+
+    std::string filename = gui_file_select(select_canceled, SCREEN_W / 2, SCREEN_H / 2,
         _("Load squad (*.squad files)"), F("$(home)"), "squad");
-    
+
+    if (select_canceled){ //Do not display "No saved squads found!" message
+        return;
+    }
+
     if (filename.empty()) {
         alert( "", _("No saved squads found!"), "", _("OK"), NULL, 0, 0);
         return;
@@ -103,10 +109,12 @@ void Editor::load()
  */
 void Editor::save()
 {
-    std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
+    bool select_canceled = false;
+
+    std::string filename = gui_file_select(select_canceled, SCREEN_W / 2, SCREEN_H / 2,
         _("Save squad (*.squad file)"), F("$(home)"), "squad", true);
     
-    if (!filename.empty()) {
+    if (!filename.empty() && !select_canceled) {
         m_plt->save_FULLDATA(filename.c_str());
         lua_message(std::string("Squad saved: ") + filename);
     }
@@ -357,7 +365,7 @@ void Editor::show()
                     int ty = 235;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("       F1: Help")); ty += 10;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("    F2/F3: Save/load team")); ty += 10;
-                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("       F4: Edit attributes")); ty += 10;
+                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("       F4: Edit soldier attributes")); ty += 10;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("       F5: Change weaponset")); ty += 15;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("       F6: Save as weapon set template")); ty += 15;
 
@@ -579,7 +587,7 @@ int Editor::load_clip()
 
 //#define D_WIDTH 320
 #define D_WIDTH 360
-#define D_HEIGHT 340
+#define D_HEIGHT 360
 
 #define DX  0
 #define DY  0
@@ -589,7 +597,7 @@ int Editor::load_clip()
 //#define STX 35
 #define SSX 145
 #define STX 35
-#define SSY 40
+#define SSY 60
 #define STY SSY+4
 //#define SSW 170
 //#define STW 65
@@ -725,8 +733,11 @@ static int common_change_button_proc(
         for (int i = 0; names[i] != NULL; i++)
             gui_list.push_back(names[i]);
 
-        if (gui_list.size() > 1)
-            d->d1 = gui_select_from_list(D_WIDTH, D_HEIGHT, title, gui_list, d->d1);
+        if (gui_list.size() > 1) {
+            int selection = gui_select_from_list(D_WIDTH, D_HEIGHT, title, gui_list, d->d1);
+            if (UFO2K_FILE_SELECT_CANCELED == selection || selection == d->d1) return D_REDRAW;
+            d->d1 = selection;
+        }
         fixup_unit_info();
         return D_REDRAW;
     }
@@ -853,7 +864,7 @@ void Editor::edit_soldier()
     DIALOG sol_dialog[] = {
         //(dialog proc)      (x)           (y)                   (w)      (h)  (fg) (bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
         { d_agup_shadow_box_proc, DX,           DY,                   D_WIDTH,     D_HEIGHT, FG,  BG, 0, 0, 0, 0, NULL, NULL, NULL},
-        { d_agup_button_proc,     DX + 200,     DY + SSY + SH*13 + 4, 100,     20,  FG,  BG, 0, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL},
+        { d_agup_button_proc,     DX + 130,     DY + SSY + SH*13 + 4, 100,     20,  FG,  BG, 0, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL},
         { d_agup_rtext_proc,      DX + STX,     DY + SSY - SH*1,      STW,     16,  FG,  BG, 0, 0, 0, 0, (void *)_("Name:"), NULL, NULL},
         { d_agup_edit_proc,       DX + SSX,     DY + SSY - SH*1 - 4, 23*8,     16,  FG,  BG, 0, 0, MAN_NAME_LEN, 0, NULL, NULL, NULL},
         { d_agup_text_proc,       DX + 100,     DY + SSY + SH*12 + 2,  100,     16,  FG,  BG, 0, 0, 0, 0, (void *)points_str, NULL, NULL},
@@ -883,6 +894,7 @@ void Editor::edit_soldier()
         { d_agup_slider_pro2, DX + SSX, DY + SSY + SH*9,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
         { d_agup_rtext_proc,  DX + STX, DY + STY + SH*10, STW, 16, FG, BG, 0, 0, 0, 0, (void *)_("Strength"), NULL, NULL},
         { d_agup_slider_pro2, DX + SSX, DY + SSY + SH*10, SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
+        { d_agup_ctext_proc,  DX, DY + SH/2, D_WIDTH, 16, FG, BG, 0, 0, 0, 0, (void *)_("Edit soldier attributes"), NULL, NULL},
         { d_yield_proc,           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
         { NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL}
     };
@@ -966,7 +978,11 @@ void Editor::edit_soldier()
 
     set_dialog_color(sol_dialog, gui_fg_color, gui_bg_color);
     centre_dialog(sol_dialog);
-    popup_dialog(sol_dialog, -1);
+    int selection = popup_dialog(sol_dialog, -1);
+    if (UFO2K_FILE_SELECT_CANCELED == selection) {
+        ::sol_dialog = NULL;
+        return;
+    }
 
     switch (sol_dialog[D_RACE].d1) {
         case  0: 
@@ -1059,6 +1075,8 @@ void Editor::change_equipment()
         int result = gui_select_from_list(
             300, 200, _("Select equipment set"), 
             eqsets, index != -1 ? index : 0);
+
+        if (UFO2K_FILE_SELECT_CANCELED == result) return;
 
         if (set_current_equipment_name(eqsets[result].c_str()))
             net->send_equipment_choice();

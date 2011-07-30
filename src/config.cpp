@@ -280,8 +280,11 @@ static int lang_change_button_proc(int msg, DIALOG *d, int c)
 {
     int result = d_button_proc(msg, d, c);
     if (result == D_CLOSE) {
-        if (language_names.size() > 1)
-            d->d1 = gui_select_from_list(320, 200, "Language:", language_names, d->d1);
+        if (language_names.size() > 1){
+            int selection =  gui_select_from_list(320, 200, "Language:", language_names, d->d1);
+            if (UFO2K_FILE_SELECT_CANCELED == selection || selection == d->d1) return D_REDRAW;
+            d->d1 = selection;
+        }
 
         char *temp = new char[strlen(language_names[d->d1].c_str())];
         strcpy(temp, language_names[d->d1].c_str());

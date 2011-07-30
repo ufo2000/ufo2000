@@ -2534,10 +2534,12 @@ int TerrainSet::get_random_terrain_id()
  * available terrains, additional requirement for network games is
  * that remote user should have these maps installed too.
  *
+ * @param select_canceled returns true if user canceled the dialog
  * @param default_choice  terrain name that is active by default
  * @returns               terrain name, selected by user
  */
 std::string TerrainSet::select_terrain_gui_dialog(
+    bool& select_canceled,
     const std::string &default_choice)
 {
     MouseRange temp_mouse_range(0, 0, SCREEN_W - 1, SCREEN_H - 1);
@@ -2565,5 +2567,10 @@ std::string TerrainSet::select_terrain_gui_dialog(
         gui_list,
         default_index);
     
+    if (UFO2K_FILE_SELECT_CANCELED == result) {
+        select_canceled = true;
+        return default_choice;
+    }
+
     return gui_list[result];
 }
