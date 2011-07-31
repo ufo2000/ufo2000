@@ -196,7 +196,7 @@ void Scenario::init_capture ()
     briefing_right[SC_CAPTURE][1] = _("from capturing by enemy. He is always visible on ");
     briefing_right[SC_CAPTURE][2] = _("your opponent's minimap.                         ");
 
-    options[SC_CAPTURE][0] = new Option(OPT_SWITCH, 0, _("Leader can have two-handed weapons"), _("Leader can't have two-handed weapons"), false);
+    options[SC_CAPTURE][0] = new Option(OPT_SWITCH, 0, _("Leader can use two-handed weapons"), _("Leader can't use two-handed weapons"), false);
     options[SC_CAPTURE][1] = new Option(OPT_NONE);
     options[SC_CAPTURE][2] = new Option(OPT_NONE);
 }
@@ -206,7 +206,7 @@ void Scenario::init_search ()
     name[SC_SEARCH] = ("Search and destroy");
 
     briefing_left[SC_SEARCH][0] = briefing_right[SC_SEARCH][0] = _("You can deploy your units anywhere on the map.   ");
-    briefing_left[SC_SEARCH][1] = briefing_right[SC_SEARCH][1] = _("Find and kill the ennemy. All units will face    ");
+    briefing_left[SC_SEARCH][1] = briefing_right[SC_SEARCH][1] = _("Find and kill the enemy. All units will face    ");
     briefing_left[SC_SEARCH][2] = briefing_right[SC_SEARCH][2] = _("away from the center and the outside of the map, ");
     briefing_left[SC_SEARCH][3] = briefing_right[SC_SEARCH][3] = _("depending on the closest map feature.            ");
     briefing_left[SC_SEARCH][4] = briefing_right[SC_SEARCH][4] = _("                                                 ");

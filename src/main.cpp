@@ -90,12 +90,12 @@ int debug_save_state_id;
 
 int GameErrorColour[-ERR_MINUS_NUM];
 const char GameErrorMessage[-ERR_MINUS_NUM][STDBUFSIZE] = {
-    "Success.",
-    "Not Enough Time Units!",
-    "Not Enough Energy!",
-    "Out Of Ammo!",
-    "No Item To Use!",
-    "Out Of Range!"
+    N_("Success."),
+    N_("Not Enough Time Units!"),
+    N_("Not Enough Energy!"),
+    N_("Out Of Ammo!"),
+    N_("No Item To Use!"),
+    N_("Out Of Range!")
 };
 
 //ReserveTime_Mode ReserveTimeMode;     // TODO: should be platoon- or soldier-specific
@@ -1148,7 +1148,7 @@ void check_crc(int crc)
         g_console->printf(COLOR_SYS_FAIL, _("You can encounter any weird bugs or just crashes if you continue playing."));
         g_console->printf(COLOR_SYS_FAIL, _("Bug report saved in 'crc_error_%d.txt', please send it to developers"), crc);
         net->send_debug_message("crc error");
-        battle_report( "# %s: crc=%d, bcrc=%d\n", _("wrong wholeCRC"), crc, bcrc );
+        battle_report("# %s: %d <> %d\n", _("Remote game state checksum is not equal to local"), crc, bcrc );
 
         dump_gamestate_on_crc_error(crc, bcrc);
     }
@@ -2139,7 +2139,7 @@ void report_game_error(int chk)
     chk = -chk; // Error codes are negative.
     if(FLAGS & F_ENDTURNSND)
         soundSystem::getInstance()->play(SS_BUTTON_PUSH_2);
-    g_console->printf(GameErrorColour[chk], "%s", GameErrorMessage[chk]);
+    g_console->printf(GameErrorColour[chk], "%s", _(GameErrorMessage[chk]));
 }
 
 /**

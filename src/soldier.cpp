@@ -1650,8 +1650,8 @@ void Soldier::die()
 
     //m_platoon->change_morale(-(100 / (m_platoon->num_of_men() + 1)), false);
 
-    g_console->printf(COLOR_BLUE, _("%s killed."), md.Name);
-    battle_report(_("killed: %s\n"), md.Name);
+    g_console->printf(COLOR_BLUE, "%s: %s", _("Soldier was killed"), md.Name);
+    battle_report("# %s: %s\n",_("Soldier was killed"), md.Name);
   // Todo: With-what-weapon, By-whom ?
 }
 
@@ -1700,8 +1700,8 @@ void Soldier::stun()
     MOVED = 0;
     m_reaction_chances = 0;
 
-    g_console->printf(COLOR_BLUE, _("%s stunned."), md.Name);
-    battle_report(_("stunned: %s\n"), md.Name);
+    g_console->printf(COLOR_BLUE, "%s: %s", _("Soldier was stunned"), md.Name);
+    battle_report("# %s: %s\n", _("Soldier was stunned"), md.Name);
 }
 
 
@@ -1773,11 +1773,11 @@ void Soldier::panic(int action)
 
     change_morale(20);
     
-    g_console->printf(COLOR_ROSE, _("%s has panicked."), md.Name);
+    g_console->printf(COLOR_ROSE, "%s: %s",_("Soldier began to panic"), md.Name);
     if (platoon_local->belong(this))
-        g_console->printf(COLOR_ROSE, _("(can't access inventory but moves faster)"));
+        g_console->printf(COLOR_ROSE, _("The soldier can't access inventory but moves faster"));
                                          
-    battle_report( "%s: %s\n", _("Panicked"), md.Name);
+    battle_report( "%s: %s\n", _("Soldier began to panic"), md.Name);
 }
 
 void Soldier::berserk_fire()
