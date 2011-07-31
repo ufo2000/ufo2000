@@ -412,7 +412,7 @@ protected:
         if (c == 10) {
             if (m_print_win) {
                 curline.append("\n");
-                m_print_win->printf(COLOR_WHITE, curline.c_str());
+                m_print_win->printf(COLOR_WHITE, "%s", curline.c_str());
                 m_print_win->redraw_fast(screen, m_print_win_x, m_print_win_y);
             }
             curline.assign("");
