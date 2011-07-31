@@ -380,7 +380,7 @@ void Editor::show()
             char str1[64]; // to adjust position of translated string
           //int x1 = 120;
             int x2 = 236;
-            sprintf(str1, "%s: %4d", _("Equipment cost"), man->calc_full_ammunition_cost() );
+            sprintf(str1, "%s: %4d", _("Soldier cost"), man->calc_full_ammunition_cost() );
             int w1 = text_length(g_small_font, str1);  // right-justify string
             textprintf(screen2, g_small_font, x2-w1, 20, COLOR_GRAY02, "%s", str1);
 
