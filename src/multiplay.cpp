@@ -191,7 +191,7 @@ void Net::send()
 void Net::send(const std::string &pkt)
 {
     if (FLAGS & F_RAWMESSAGES) 
-        g_console->printf( _("send:[%s]"), pkt.c_str());
+        g_console->printf( "send:[%s]", pkt.c_str());
 
     log("send:[%s]\n", pkt.c_str());
 
@@ -263,7 +263,7 @@ void Net::check()
     if (!packet.empty()) {
         queue->put(packet);
         if (FLAGS & F_RAWMESSAGES) {
-            g_console->printf( _("put:[%d]"), (int)packet.size());
+            g_console->printf( "put:[%d]", (int)packet.size());
             g_console->printf("%s", packet.c_str());
         }
     }
@@ -274,7 +274,7 @@ void Net::check()
     if (!queue->get(packet)) return;
 
     if (FLAGS & F_RAWMESSAGES) {
-        g_console->printf( _("get:[%d]"), (int)packet.size());
+        g_console->printf( "get:[%d]", (int)packet.size());
         g_console->printf("%s", packet.c_str());
     }
 
