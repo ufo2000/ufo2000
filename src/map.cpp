@@ -222,7 +222,7 @@ void Map::loadmaps(unsigned char *_map)
 					load_lua_map(map_name, col * 10, row * 10);
 					lua_pop(L, 1);
 				}else{
-					battle_report("Unable to load terrain, line 230 of map.cpp\n");
+					battle_report("# %s\n", _("Unable to load terrain"));
 					//This should not happen - check Terrain::terrain(str)
 					ASSERT(false);
 				}
@@ -969,7 +969,7 @@ void Map::build_lights()
 
 void Map::update_lights()
 {
-	battle_report("== UPDATE LIGHTS");
+	battle_report("== %s\n", _("UPDATE LIGHT SOURCES"));
 	/* set all to default value from scenario rules */
     for (int i = 0; i < level; i++)
         for (int j = 0; j < width * 10; j++)
@@ -1958,7 +1958,7 @@ void Map::add_light_source(int lev, int col, int row, int power)
 
 void Map::show_light_source(int lev, int col, int row)
 {
-	battle_report("== SHOW LIGHT SOURCE %d %d %d \n", lev,col,row);
+	battle_report("== %s, %d %d %d \n", _("SHOW LIGHT SOURCE"), lev,col,row);
 	int power = m_cell[lev][col][row]->islight;
 
 	double range = power / POWER_TO_RANGE;
