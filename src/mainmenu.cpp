@@ -240,7 +240,7 @@ int do_mainmenu()
     
     the_dialog[MAINMENU_BACKGROUND].proc = d_mainmenu_background_proc;
 
-    the_dialog[MAINMENU_INTERNET].dp    = (void *) _("connect to internet server");
+    the_dialog[MAINMENU_INTERNET].dp    = (void *) _("connect to server");
     the_dialog[MAINMENU_HOTSEAT].dp     = (void *) _("start hotseat game");
     the_dialog[MAINMENU_GEOSCAPE].dp    = (void *) _("show geoscape demo");
     the_dialog[MAINMENU_LOADGAME].dp    = (void *) _("load saved game");
