@@ -1145,7 +1145,7 @@ void check_crc(int crc)
         g_console->printf(COLOR_SYS_FAIL, _("You can encounter any weird bugs or just crashes if you continue playing."));
         g_console->printf(COLOR_SYS_FAIL, _("Bug report saved in 'crc_error_%d.txt', please send it to developers"), crc);
         net->send_debug_message("crc error");
-        battle_report( "# %s: crc=%d, bcrc=%d\n", _("wrong wholeCRC"), crc, bcrc );
+        battle_report("# %s: %d <> %d\n", _("Remote game state checksum is not equal to local"), crc, bcrc );
 
         dump_gamestate_on_crc_error(crc, bcrc);
     }
