@@ -688,7 +688,13 @@ inline int graycol(int c)
 }
 
 /**
- * Display soldiers attributes, with numbers and barcharts 
+ * Display soldiers attributes with numbers and barcharts inside a transparent
+ * window (titled with soldier's name) which width is 320 pixels and height
+ * depends on the heights of "large" and "g_small_font" fonts.
+ *
+ * If abs_pos is zero, posx and posy are the coordinates of window's upper left
+ * corner. In other case posx and posy are the width and height of the area in
+ * which the window must be placed.
  */
 void Soldier::draw_unibord(int abs_pos, int posx, int posy)
 {
@@ -715,7 +721,7 @@ void Soldier::draw_unibord(int abs_pos, int posx, int posy)
         { (char*)_("FIRING ACCURACY"),   eff_FAccuracy(), ud.MaxFA,     132},
         { (char*)_("THROWING ACCURACY"), TAccuracy(100),  ud.MaxTA,     100},
         { (char*)_("STRENGTH"),          ud.MaxStrength,  md.Strength,   52},
-        {NULL, 0, 0, 0},
+        {NULL, 0, 0, 0},//separator
         { (char*)_("FRONT ARMOUR"),      ud.CurFront,     ud.MaxFront,   87},
         { (char*)_("LEFT ARMOUR"),       ud.CurLeft,      ud.MaxLeft,    87},
         { (char*)_("RIGHT ARMOUR"),      ud.CurRight,     ud.MaxRight,   87},
@@ -755,28 +761,31 @@ void Soldier::draw_unibord(int abs_pos, int posx, int posy)
             textout_right(temp, row_f, param[i].str, sx[1] - 2, name_h + 6 + row_h * i + 2, COLOR_GREEN00);
             textprintf_centre(temp, font, 165, name_h + 6 + row_h * i + 3, COLOR_RED02, "%d", param[i].cur);
 
+            //draw horizontal bar from zero on the left to max on the right
             rect(temp, sx[2], name_h + 6 + row_h * i + 3, sx[2] + param[i].max, name_h + 6 + row_h * i + row_h - 2, xcom1_color(param[i].col));
-            if (param[i].max)
-                line(temp, sx[2], name_h + 6 + row_h * i + 4, sx[2], name_h + 6 + row_h * i + row_h - 2, xcom1_color(param[i].col - 4));
-            if (param[i].cur)
+            if (param[i].max)//skip fatal wounds, bravery and separator
+                //color left border in the "inner" color
+                line(temp, sx[2], name_h + 6 + row_h * i + 4, sx[2], name_h + 6 + row_h * i + row_h - 3, xcom1_color(param[i].col - 4));
+            if (param[i].cur)//if the value of parameter is not zero
+                //fill the inner part plus left border of the bar
                 rectfill(temp, sx[2], name_h + 6 + row_h * i + 4, sx[2] + param[i].cur - 1, name_h + 6 + row_h * i + row_h - 3, xcom1_color(param[i].col - 4));
 
             // special case for the health bar
             if (i == 2) // draw stun damage
                 if (ud.CurStun > 0)
-                {
+                {//fill the inner part plus left border of the bar like above
                     if (ud.CurStun < ud.CurHealth)
-                        rectfill(temp, sx[2], name_h + 6 + row_h * i + 4, sx[2] + ud.CurStun - 1, name_h + 6 + row_h * i + 9, COLOR_WHITE1);
+                        rectfill(temp, sx[2], name_h + 6 + row_h * i + 4, sx[2] + ud.CurStun - 1, name_h + 6 + row_h * i + row_h - 3, COLOR_WHITE1);
                     else
-                        rectfill(temp, 170, name_h + 6 + row_h * i + 4, sx[2] + ud.CurHealth - 1, name_h + 6 + row_h * i + 9, COLOR_WHITE1);
+                        rectfill(temp, 170, name_h + 6 + row_h * i + 4, sx[2] + ud.CurHealth - 1, name_h + 6 + row_h * i + row_h - 3, COLOR_WHITE1);
                 }
         }
     }
     
     set_trans_blender(0, 0, 0, 192);
-    if (abs_pos)
+    if (abs_pos)//absolute position, (posx:posy) is window's upper left corner
         draw_trans_sprite(screen2, temp, posx, posy);
-    else
+    else//posx and posy are dimensions of the area in which center the popup is
         draw_trans_sprite(screen2, temp, (posx - width) / 2, (posy - height) / 2);
     destroy_bitmap(temp);
 }
@@ -1098,22 +1107,42 @@ int Soldier::tus_reserved(std::string *error)
 }
 
 /**
- * Test if soldier has reserved time for shooting.
- * Returns true if he has enough time for the next action.
+ * Check if soldier has enough Energy and Time Units for performing required action, with
+ * reserved time in mind. Call report_game_error() if the check fails. Check steps are Energy,
+ * reserved time, Time Units – from the most crucial to the least.
+ *
+ * @param walk_time Number of Time Units for required action
+ * @param ISLOCAL flag which shows whether the unit is local or remote
+ * @param use_energy flag which shows whether the action requires energy to perform
+ * @return OK from GameErrorCodes, if unit can do required action; error code otherwise.
  */
-int Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
+int Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy) //TODO Rename to can_do_action
 {
-    if(!ISLOCAL)            // during enemy turn: don't check for reserved time
+    if(!ISLOCAL)            // Do not check enemy actions, they are checked remotely.
         return havetime(walk_time, use_energy);
 
-    std::string error = "";
-    int time = tus_reserved(&error);
-    
+    //TODO Link checks in Map::path_show and Soldier::time_reserve
+    //Check Energy first
+    if(use_energy){
+        int energy_check_result = havetime(walk_time, use_energy);
+        if ( energy_check_result != OK ) {
+            report_game_error(energy_check_result);
+            return havetime(walk_time, use_energy);
+        }
+    }
+    //Energy is OK, check reserved time
+    std::string reserved_time_message = "";
+    int time = tus_reserved(&reserved_time_message);
+
     if((havetime(walk_time + time, 0) != OK) && (havetime(time, 0) == OK)) {
-        if(error != "")
-            g_console->printf(COLOR_SYS_INFO1, "%s", error.c_str());
+        //Not enough TUs for required action plus reserved time AND enough for reserved action
+        if(reserved_time_message != "") //print message about reserved TUs
+            //TODO Must use report_game_error()
+            g_console->printf(COLOR_SYS_INFO1, "%s", reserved_time_message.c_str());
         return havetime(walk_time + time, 0);
     } else {
+        //Enough TUs for required action plus reserved time OR not enough for reserved action
+        //TODO What if the 2nd OR condition is true?
         return havetime(walk_time, use_energy);
     }
 }
@@ -2129,6 +2158,29 @@ int Soldier::havetime(int ntime, int use_energy)
 }
 
 /**
+ * Function that checks if the soldier has enough resources to perform required
+ * action. For actions that require energy, use_energy should be 1. If the
+ * action can not be performed, an error from GameErrorCodes is returned.
+ *
+ * @param action      requirements to perform the action
+ * @param resources   resources for action, they are modified
+ *
+ * @result            Error code from GameErrorCodes.
+ */
+int Soldier::havetime(ActionRequirements action, ResourcesState *resources)
+{
+    resources->time_units -= action.time_units;
+    if (resources->time_units < action.time_units)
+        return ERR_NO_TUS;
+    if (action.use_energy) {
+        resources->energy -= action.time_units / 2;
+        if (resources->energy < 0)
+            return ERR_NO_ENERGY;
+    }
+    return OK;
+}
+
+/**
  * Function that returns the time needed to move from current location to 
  * specified direction.
  *
@@ -3025,12 +3077,17 @@ void Soldier::drawinfo(int x, int y)
     if (ud.CurStun > 0) // draw stun bar
     {
         if (ud.CurStun < ud.CurHealth)
-            icon->draw_stun_bar(x, y, ud.CurStun,   ud.MaxHealth);
-        else
-            icon->draw_stun_bar(x, y, ud.CurHealth, ud.MaxHealth);
+            icon->draw_stun_bar(ud.CurStun, ud.MaxHealth);
+        else //do not exceed current health
+            icon->draw_stun_bar(ud.CurHealth, ud.MaxHealth);
     }
 }
 
+/**
+ * Draw soldier attributes in a line: Name as string and TU, Health, Armor as
+ * numbers. Color Name in white, blue or red depending on whether the soldier
+ * is selected and sees enemy. The whole line is 70+(15*6)=160 pixels wide.
+ */
 void Soldier::draw_stats(BITMAP* bitmap, int x, int y, bool selected)
 {   
     int dx = 15;
