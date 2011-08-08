@@ -85,9 +85,15 @@ Editor::~Editor()
  */
 void Editor::load()
 {
-    std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
+    bool select_canceled = false;
+
+    std::string filename = gui_file_select(select_canceled, SCREEN_W / 2, SCREEN_H / 2,
         _("Load squad (*.squad files)"), F("$(home)"), "squad");
-    
+
+    if (select_canceled){
+        return;
+    }
+
     if (filename.empty()) {
         alert( "", _("No saved squads found!"), "", _("OK"), NULL, 0, 0);
         return;
@@ -103,10 +109,12 @@ void Editor::load()
  */
 void Editor::save()
 {
-    std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
+    bool select_canceled = false;
+
+    std::string filename = gui_file_select(select_canceled, SCREEN_W / 2, SCREEN_H / 2,
         _("Save squad (*.squad file)"), F("$(home)"), "squad", true);
     
-    if (!filename.empty()) {
+    if (!filename.empty() && !select_canceled) {
         m_plt->save_FULLDATA(filename.c_str());
         lua_message(std::string("Squad saved: ") + filename);
     }
