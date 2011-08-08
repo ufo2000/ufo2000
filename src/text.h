@@ -41,6 +41,8 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #define HELP_STATS      120
 #define HELP_ENDGAME    140
 #define HELP_NET        150
+//Dummy page id that is not equal to any help page id - to exit help index
+#define HELP_U2K_INDEX_EXIT  -1
 
 // First page of scenario-help follows directly
 // after last page of help for mission-planner:

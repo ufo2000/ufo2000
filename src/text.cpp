@@ -395,41 +395,41 @@ const char *help_chapters(int index, int *list_size)
  */
 int select_help()
 {
-    int ret, sel;
-    int x0 =    24, y0 =     8, w0 =   280, h0 = 140;
-    int x1 = x0+20, y1 = y0+16, w1 = w0-32, h1 =  16;
-    int x2 = x0+20, y2 = y0+32, w2 = w0-32, h2 =  96;
-    static DIALOG the_dialog[] =
-    {
-        /* (dialog proc)     (x)   (y)   (w)   (h) (fg) (bg) (key) (flags) (d1) (d2) (dp)              (dp2) (dp3) */
-        { d_shadow_box_proc, x0,   y0,   w0,   h0, _FG, _BG,   0,  0,       0,   0,  NULL,              NULL, NULL }, 
-        { d_text_proc,       x1,   y1,   w1,   h1, _FG, _BG,   0,  0,       0,   0,  (void *)_("Select Help-Page"), NULL, NULL },
-        { d_list_proc,       x2,   y2,   w2,   h2, _FG, _BG,   0,  D_EXIT,  0,   0,  (void *)help_chapters, NULL, NULL },
-      //{ d_button_proc,     20,  200,  100,   20, _FG, _BG,   0,  D_EXIT,  0,   0,  (void *)_("OK"),   NULL, NULL },
-      //{ d_button_proc,    180,  200,  100,   20, _FG, _BG,   0,  D_EXIT,  0,   0,  (void *)_("Cancel"), NULL, NULL },
-        { NULL,               0,    0,    0,    0, _FG, _BG,   0,  0,       0,   0,  NULL,              NULL, NULL }
-    };
+  int ret, sel;
+  int x0 =    24, y0 =     8, w0 =   280, h0 = 140;
+  int x1 = x0+20, y1 = y0+16, w1 = w0-32, h1 =  16;
+  int x2 = x0+20, y2 = y0+32, w2 = w0-32, h2 =  96;
+  static DIALOG the_dialog[] =
+  {
+    /* (dialog proc)     (x)   (y)   (w)   (h) (fg) (bg) (key) (flags) (d1) (d2) (dp)              (dp2) (dp3) */
+    { d_shadow_box_proc, x0,   y0,   w0,   h0, _FG, _BG,   0,  0,       0,   0,  NULL,              NULL, NULL },
+    { d_text_proc,       x1,   y1,   w1,   h1, _FG, _BG,   0,  0,       0,   0,  (void *)_("Select Help-Page"), NULL, NULL },
+    { d_list_proc,       x2,   y2,   w2,   h2, _FG, _BG,   0,  D_EXIT,  0,   0,  (void *)help_chapters, NULL, NULL },
+  //{ d_button_proc,     20,  200,  100,   20, _FG, _BG,   0,  D_EXIT,  0,   0,  (void *)_("OK"),   NULL, NULL },
+  //{ d_button_proc,    180,  200,  100,   20, _FG, _BG,   0,  D_EXIT,  0,   0,  (void *)_("Cancel"), NULL, NULL },
+    { NULL,               0,    0,    0,    0, _FG, _BG,   0,  0,       0,   0,  NULL,              NULL, NULL }
+  };
 
-  //ret = do_dialog(the_dialog, -1);
-	centre_dialog(the_dialog);
+  centre_dialog(the_dialog);
 
-	set_dialog_color(the_dialog, COLOR_BLACK1, COLOR_WHITE);
-	ret = popup_dialog(the_dialog, -1);
+  set_dialog_color(the_dialog, COLOR_BLACK1, COLOR_WHITE);
+  ret = popup_dialog(the_dialog, -1);
+  if (UFO2K_POPUP_DIALOG_CANCELED == ret){
+    return HELP_U2K_INDEX_EXIT;
+  }
+  sel = the_dialog[ 2 ].d1;   // from listbox-entry
 
-    sel = the_dialog[ 2 ].d1;   // from listbox-entry
-  //return sel;
-
-    if (sel == 0) return HELP_INTRO;
-    if (sel == 1) return HELP_BATTLESCAPE;
-    if (sel == 2) return HELP_MAPVIEW;
-    if (sel == 3) return HELP_INVENTORY;
-    if (sel == 4) return HELP_STATS;
-    if (sel == 5) return HELP_ENDGAME;
-    if (sel == 6) return HELP_NET;
-    if (sel == 7) return HELP_PLANNER;
-    if (sel == 8) return HELP_SCENARIO;
-    return HELP_U2K_INDEX;
-};
+  if (sel == 0) return HELP_INTRO;
+  if (sel == 1) return HELP_BATTLESCAPE;
+  if (sel == 2) return HELP_MAPVIEW;
+  if (sel == 3) return HELP_INVENTORY;
+  if (sel == 4) return HELP_STATS;
+  if (sel == 5) return HELP_ENDGAME;
+  if (sel == 6) return HELP_NET;
+  if (sel == 7) return HELP_PLANNER;
+  if (sel == 8) return HELP_SCENARIO;
+  return HELP_U2K_INDEX;
+}
 
 /**
  * Show a single help-page when KEY_F1 is pressed.
@@ -461,7 +461,7 @@ void help( const int helppage )
 {
     int b1       =   0;    //<! button-number the user pressed
     int kp_0     =   0;    //<! Keypress: 0 : default
-    int hp       =  10;
+    int hp       =  HELP_INTRO; //Help page identifier
     int kp_index = 105;    //<! Keypress for indexpage: 105:"i"
     int kp_prev  = 112;    //<! Keypress for prev.page: 112:"p"
     int kp_ok    =  27;    //<! Keypress for ok=close :  13:ENTER / 27:ESC
@@ -478,7 +478,7 @@ void help( const int helppage )
     sprintf( esc2exit, "%s", _("To leave, press ESC.") );
   //char test[128];
   //sprintf( test,  "Charset-Test: %s", 
-  //         _("DE: ae=ä  oe=ö  ue=ü  Ae=Ä  Oe=Ö  Ue=Ü  sz=ß") 
+  //         _("DE: ae=Ð´  oe=Ñ†  ue=ÑŒ  Ae=Ð”  Oe=Ð¦  Ue=Ð¬  sz=Ð¯") 
   //);
 /*
     FILE *f1 = fopen( "gettext.log", "at");
@@ -1014,10 +1014,10 @@ void help( const int helppage )
                          prev, ok, NULL, kp_prev, kp_ok, kp_0);  // no "next"-button
             break;
 
-
+        case HELP_U2K_INDEX_EXIT:
         default:
-            // no help page: just exit
-            break;
+        //no help page: just exit
+          break;
     }
     if (b1 == 1)
         help( helppage - 1 );  // Previous help-page
