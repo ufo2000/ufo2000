@@ -966,7 +966,11 @@ void Editor::edit_soldier()
 
     set_dialog_color(sol_dialog, gui_fg_color, gui_bg_color);
     centre_dialog(sol_dialog);
-    popup_dialog(sol_dialog, -1);
+    int selection = popup_dialog(sol_dialog, -1);
+    if (UFO2K_POPUP_DIALOG_CANCELED == selection) {
+        ::sol_dialog = NULL;
+        return;
+    }
 
     switch (sol_dialog[D_RACE].d1) {
         case  0: 
