@@ -357,7 +357,7 @@ void Editor::show()
                     int ty = 235;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("       F1: Help")); ty += 10;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("    F2/F3: Save/load team")); ty += 10;
-                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("       F4: Edit attributes")); ty += 10;
+                    textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("       F4: Edit soldier attributes")); ty += 10;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("       F5: Change weaponset")); ty += 15;
                     textprintf(screen2, font,  330, ty, COLOR_BLUE,     _("       F6: Save as weapon set template")); ty += 15;
 
@@ -579,7 +579,7 @@ int Editor::load_clip()
 
 //#define D_WIDTH 320
 #define D_WIDTH 360
-#define D_HEIGHT 340
+#define D_HEIGHT 360
 
 #define DX  0
 #define DY  0
@@ -589,7 +589,7 @@ int Editor::load_clip()
 //#define STX 35
 #define SSX 145
 #define STX 35
-#define SSY 40
+#define SSY 60
 #define STY SSY+4
 //#define SSW 170
 //#define STW 65
@@ -853,7 +853,7 @@ void Editor::edit_soldier()
     DIALOG sol_dialog[] = {
         //(dialog proc)      (x)           (y)                   (w)      (h)  (fg) (bg) (key) (flags) (d1) (d2) (dp) (dp2) (dp3)
         { d_agup_shadow_box_proc, DX,           DY,                   D_WIDTH,     D_HEIGHT, FG,  BG, 0, 0, 0, 0, NULL, NULL, NULL},
-        { d_agup_button_proc,     DX + 200,     DY + SSY + SH*13 + 4, 100,     20,  FG,  BG, 0, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL},
+        { d_agup_button_proc,     DX + 130,     DY + SSY + SH*13 + 4, 100,     20,  FG,  BG, 0, D_EXIT, 0, 0, (void *)_("OK"), NULL, NULL},
         { d_agup_rtext_proc,      DX + STX,     DY + SSY - SH*1,      STW,     16,  FG,  BG, 0, 0, 0, 0, (void *)_("Name:"), NULL, NULL},
         { d_agup_edit_proc,       DX + SSX,     DY + SSY - SH*1 - 4, 23*8,     16,  FG,  BG, 0, 0, MAN_NAME_LEN, 0, NULL, NULL, NULL},
         { d_agup_text_proc,       DX + 100,     DY + SSY + SH*12 + 2,  100,     16,  FG,  BG, 0, 0, 0, 0, (void *)points_str, NULL, NULL},
@@ -883,6 +883,7 @@ void Editor::edit_soldier()
         { d_agup_slider_pro2, DX + SSX, DY + SSY + SH*9,  SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
         { d_agup_rtext_proc,  DX + STX, DY + STY + SH*10, STW, 16, FG, BG, 0, 0, 0, 0, (void *)_("Strength"), NULL, NULL},
         { d_agup_slider_pro2, DX + SSX, DY + SSY + SH*10, SSW, 16, FG, BG, 0, 0, 100, 33, NULL, NULL, NULL},
+        { d_agup_ctext_proc,  DX, DY + SH/2, D_WIDTH, 16, FG, BG, 0, 0, 0, 0, (void *)_("Edit soldier attributes"), NULL, NULL},
         { d_yield_proc,           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL},
         { NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL}
     };
