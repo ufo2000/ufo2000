@@ -101,6 +101,10 @@ typedef unsigned long uint32;
 #error Can not define int32 type
 #endif
 
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+
 inline uint16 intel_uint16(uint16 x)
 {
 #ifdef ALLEGRO_BIG_ENDIAN
