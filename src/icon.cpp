@@ -359,7 +359,8 @@ Icon::Icon()
     ASSERT(lua_isnumber(L, -1));
     nc[0] = (int)lua_tonumber(L, -1);
     lua_pop(L, 1);
-    
+    stun_color = nc[0];
+
     //reserve time buttons
         for (i = 0; i < RESERVE_NUMBER; i++) {
         lua_pushstring(L, reserve[i].name);
@@ -412,7 +413,6 @@ Icon::Icon()
         lua_pop(L, 1);
     }
     
-    stun_color = nc[0];
             
     lua_settop(L, stack_top);
 
@@ -992,14 +992,12 @@ void Icon::show_eot()
 /**
  * Draw the stun-bar inside the health-bar
  */
-void Icon::draw_stun_bar(int x, int y, int val, int maxval)
+void Icon::draw_stun_bar(int val, int maxval)
 {
     if (attribute[A_HEALTH].BarDirection == dir_hor) {
-        hline(iconsbmp, attribute[A_HEALTH].BarX, y + attribute[A_HEALTH].BarY + 1, x + attribute[A_HEALTH].BarX + val, xcom1_color(stun_color));
-        putpixel(iconsbmp, attribute[A_HEALTH].BarX + maxval + 1, y + attribute[A_HEALTH].BarY + 1, xcom1_color(attribute[A_HEALTH].BColor));
+        hline(iconsbmp, attribute[A_HEALTH].BarX, attribute[A_HEALTH].BarY + 1, attribute[A_HEALTH].BarX + val, xcom1_color(stun_color));
     } else {
-        vline(iconsbmp, attribute[A_HEALTH].BarX + 1, y + attribute[A_HEALTH].BarY, y + attribute[A_HEALTH].BarY - val, xcom1_color(stun_color));
-        putpixel(iconsbmp, attribute[A_HEALTH].BarX + 1, y + attribute[A_HEALTH].BarY + maxval + 1, xcom1_color(attribute[A_HEALTH].BColor));
+        vline(iconsbmp, attribute[A_HEALTH].BarX + 1, attribute[A_HEALTH].BarY, attribute[A_HEALTH].BarY - val, xcom1_color(stun_color));
     }
 }
 

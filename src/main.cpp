@@ -109,8 +109,11 @@ void show_time_left()
 {
     int time_left = g_time_left;
 
-    // Todo: check if minimap is visible, so show time only once on screen:
-    textprintf(screen2, font, 0, 0, COLOR_WHITE, _("Time left: %d"), time_left);
+    //Check if minimap is visible, so show time only once on screen.
+    if (SCREEN2W == screen->w){ //same condition in "case KEY_LEFT:" in main.cpp
+        //main screen is taking all screen width, no minimap => Show the time.
+        textprintf(screen2, font, 0, 12, COLOR_WHITE, _("Time left: %d"), time_left);
+    }
 
     if (last_time_left == time_left)    // Play sounds only once per second
         return;
@@ -2677,9 +2680,15 @@ void gameloop()
         };
 
         if (net->gametype != GAME_TYPE_REPLAY && askmenu(_("Save replay?"))) {
-            std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
+            bool select_canceled = false;
+
+            std::string filename = gui_file_select(select_canceled, SCREEN_W / 2, SCREEN_H / 2,
                 _("Save replay (*.replay file)"), F("$(home)"), "replay", true);
-                
+
+            if (select_canceled){
+                g_console->printf(_("Replay saving canceled"));
+            }
+
             if (!filename.empty()) {
                 if (exists(filename.c_str()))
                     if (remove(filename.c_str()) != 0) {
@@ -2822,9 +2831,15 @@ game have been played before. I don't know how to fix it in other way.*/
 
     char path[1000]; *path = 0;
     
-    std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
+    bool select_canceled = false;
+
+    std::string filename = gui_file_select(select_canceled, SCREEN_W / 2, SCREEN_H / 2,
         _("Load replay (*.replay files)"), F("$(home)"), "replay");
-        
+
+    if (select_canceled){
+        return;
+    }
+
     if (filename.empty()) {
         alert( "", _("No saved replays found!"), "", _("OK"), NULL, 0, 0);
         return;

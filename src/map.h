@@ -492,7 +492,10 @@ public:
         }
         return -1;
     }
-    std::string select_terrain_gui_dialog(const std::string &default_choice);
+    std::string select_terrain_gui_dialog(
+            bool& select_canceled,
+            const std::string &default_choice);
+
     bool create_geodata(const std::string &terrain_name, int size_x, int size_y, GEODATA &gd);
 };
 

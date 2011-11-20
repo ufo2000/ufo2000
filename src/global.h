@@ -426,6 +426,7 @@ bool check_filename_case_consistency(const char *filename);
 /**
  * @defgroup gui User interface
  */
+#define UFO2K_POPUP_DIALOG_CANCELED -1
 
 /**
  * @defgroup battlescape Battlescape 

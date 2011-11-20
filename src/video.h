@@ -58,6 +58,7 @@ int gui_select_from_list(
     int default_value = 0);
 
 std::string gui_file_select(
+    bool& select_canceled,
     int width, int height,
     const std::string &title, 
     const std::string &dir,

@@ -437,7 +437,7 @@ static const char *gui_select_from_list_proc(int index, int *list_size)
  * @param title          dialog title message
  * @param data           std::vector with a number of variants to be suggested to user
  * @param default_value  value that is active at start of dialog
- * @returns              index of user's choice
+ * @returns              index of user's choice or -1 if user canceled the dialog
  */
 int gui_select_from_list(
     int width, int height,
@@ -461,8 +461,9 @@ int gui_select_from_list(
     list_dialog[2].d1 = default_value;
     set_dialog_color(list_dialog, gui_fg_color, gui_bg_color);
     centre_dialog(list_dialog);
-    popup_dialog(list_dialog, 2);
+    int selection = popup_dialog(list_dialog, 2);
     current_list = NULL;
+    if (UFO2K_POPUP_DIALOG_CANCELED == selection) return UFO2K_POPUP_DIALOG_CANCELED;
     return list_dialog[2].d1;
 }
 
@@ -481,14 +482,16 @@ static int d_custom_list_proc(int msg, DIALOG *d, int c)
 
 /**
  * High level function that shows GUI dialog with a choice from a list of variants
+ * @param select_canceled returns true if user canceled the dialog
  * @param width          width of dialog in pixels
  * @param height         height of dialog in pixels
  * @param title          dialog title message
  * @param data           std::vector with a number of variants to be suggested to user
  * @param default_value  value that is active at start of dialog
- * @returns              user's choice
+ * @returns              user's choice or empty string if user canceled the dialog
  */
 std::string gui_select_from_list_ex(
+    bool& select_canceled,
     int width, int height,
     const std::string &title, 
     const std::vector<std::string> &data,
@@ -518,7 +521,11 @@ std::string gui_select_from_list_ex(
     }
     set_dialog_color(list_dialog, gui_fg_color, gui_bg_color);
     centre_dialog(list_dialog);
-    popup_dialog(list_dialog, 2);
+    int selection = popup_dialog(list_dialog, 2);
+    if (UFO2K_POPUP_DIALOG_CANCELED == selection) {
+        select_canceled = true;
+        return "";
+    }
     current_list = NULL;
     return buffer;
 }
@@ -526,15 +533,17 @@ std::string gui_select_from_list_ex(
 /**
  * Select existing files with some specific extension which
  * all reside in a single directory
+ * @param select_canceled  returns true if user canceled the dialog
  * @param width            width of dialog in pixels
  * @param height           height of dialog in pixels
  * @param title            dialog title message
  * @param dir              directory name
  * @param ext              file extension name
  * @param edit_box_enabled if set, enables edit box for entering file name
- * @returns                name of the selected file
+ * @returns                name of the selected file or empty string if user canceled the dialog
  */
 std::string gui_file_select(
+    bool& select_canceled,
     int width, int height,
     const std::string &title, 
     const std::string &dir,
@@ -554,10 +563,15 @@ std::string gui_file_select(
     if (data.empty() && !edit_box_enabled) return "";
     std::sort(data.begin(), data.end());
     if (edit_box_enabled) {
-        std::string result = gui_select_from_list_ex(width, height, title, data, "");
+        std::string result = gui_select_from_list_ex(select_canceled, width, height, title, data, "");
+        if (select_canceled) return "";
         return dir + "/" + result + "." + ext;
     } else {
         int result = gui_select_from_list(width, height, title, data, 0);
+        if (UFO2K_POPUP_DIALOG_CANCELED == result) {
+            select_canceled = true;
+            return "";
+        }
         return dir + "/" + data[result] + "." + ext;
     }
 }

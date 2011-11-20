@@ -927,6 +927,7 @@ void Units::execute_scenario(Map *map, int map_change_allowed)
  */
 void Units::execute_map(Map *map, int map_change_allowed)
 {
+    bool select_canceled = false;
 
     if (!mouse_inside(gmx + gmw / 2 - 120, SCREEN2H - 79, gmx + gmw / 2 + 120, SCREEN2H - 37))
         state = PS_MAIN;
@@ -938,9 +939,10 @@ void Units::execute_map(Map *map, int map_change_allowed)
         //MAP TYPE
 
         std::string current_terrain_name = terrain_set->get_terrain_name(mapdata.terrain);
-        std::string terrain_name = terrain_set->select_terrain_gui_dialog(current_terrain_name);
+        std::string terrain_name = terrain_set->select_terrain_gui_dialog(
+                                                  select_canceled, current_terrain_name);
 
-        if (current_terrain_name != terrain_name) {
+        if (!select_canceled && current_terrain_name != terrain_name) {
             Map::new_GEODATA(&mapdata, terrain_name);
             net->send_map_data(&mapdata);
             mapdata.load_game = 77;
@@ -1002,10 +1004,10 @@ void Units::execute_map(Map *map, int map_change_allowed)
 
     if (mouse_inside(x0 - x2a, SCREEN2H - 49, x0 + x2b, SCREEN2H - 36)) {
         //"LOAD"
-        std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
-            _("Load map"), F("$(home)"), "area");
+        std::string filename = gui_file_select(select_canceled, SCREEN_W / 2, SCREEN_H / 2,
+            _("Load map (*.area files)"), F("$(home)"), "area");
                 
-        if (!filename.empty()) {
+        if (!filename.empty() && !select_canceled) {
             GEODATA gd;
 
             if (!Map::load_GEODATA(filename.c_str(), &gd) || !Map::valid_GEODATA(&gd)) {
@@ -1021,10 +1023,10 @@ void Units::execute_map(Map *map, int map_change_allowed)
 
     if (mouse_inside(x0 + x3a, SCREEN2H - 49, x0 + x3b, SCREEN2H - 36)) {
         //"SAVE"
-        std::string filename = gui_file_select(SCREEN_W / 2, SCREEN_H / 2, 
-            _("Save map"), F("$(home)"), "area", true);
+        std::string filename = gui_file_select(select_canceled, SCREEN_W / 2, SCREEN_H / 2,
+            _("Save map (*.area file)"), F("$(home)"), "area", true);
         
-        if (!filename.empty()) {
+        if (!filename.empty() && !select_canceled) {
             if(!Map::save_GEODATA(filename.c_str(), &mapdata))
                 g_console->printf(COLOR_RED02, _("Can't save map file.") );
         }

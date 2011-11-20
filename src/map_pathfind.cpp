@@ -59,10 +59,27 @@ void Map::draw_path_from(Soldier * s)
     path_show(s->z, s->x, s->y, way, waylen, s);
 }
 
+/**
+ * Function shows a path along which a soldier will move. Path is shown as a
+ * sequence of numbers over map cells, each number represents TU remainder.
+ * Constraints on movement are shown by color difference:
+ *   Constraint             Color
+ *   no constraint          COLOR_GRAY15
+ *   not enough Energy      COLOR_RED00
+ *   TUs reserved           COLOR_RED00
+ *   not enough TU          COLOR_GRAY04
+ */
 void Map::path_show(int _z, int _x, int _y, char *way, int waylen, Soldier *sld)
 {
     //text_mode(0);
     //textprintf(screen, font, 0, SCREEN2H, COLOR_WHITE, "waylen=%d ", waylen);
+    ActionRequirements action;
+    ResourcesState resources;
+    bool subsequent_turn = false;
+
+    action.use_energy = 1;
+    resources.time_units = sld->ud.CurTU;
+    resources.energy = sld->ud.CurEnergy;
 
     for (int i = 1; i < waylen; i++) {
         int dir = way[i];
@@ -74,16 +91,31 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen, Soldier *sld)
         int sy = y - (_x + 1) * 8 + 8 * _y - 8 - _z * CELL_SCR_Z;
         
         TU -= time_of_dst;
+        action.time_units = time_of_dst;
 
         if ((sx > -32) && (sx < SCREEN2W) && (sy >= -34) && (sy < SCREEN2H)) {
-            if (TU < sld->tus_reserved()) {
-                TU_color = 32;      // COLOR_RED00
+            if (!subsequent_turn) {
+                //show Energy and "TUs reserved" constraints only for one turn
+                //TODO Link checks in Map::path_show and Soldier::time_reserve
+                if (TU < sld->tus_reserved() &&
+                    TU + time_of_dst >= sld->tus_reserved()) {
+                    //Show "TUs reserved" constraint only if the soldier can
+                    //still do action for which TUs are reserved.
+                    TU_color = 32;      // COLOR_RED00
+                }
+
+                if (sld->havetime(action, &resources)==ERR_NO_ENERGY) {
+                    //Show "not enough Energy" constraint
+                    TU_color = 32;
+                }
             }
-            
+
             // Keep showing consecutive turns:
             if (TU < 0) {
+                if (!subsequent_turn) subsequent_turn = true;
                 TU = TU_max - time_of_dst;
-              //TU_color += 4;      // COLOR_GRAY04
+
+                //Show "not enough TU" constraint
                 TU_color =  4;      // COLOR_GRAY04
             }
             if (TU < 0) break;

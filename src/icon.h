@@ -262,7 +262,7 @@ public:
 	void draw_text(int txt, int val, char *format);
 	void draw_attribute(int attr, int val, int maxval);
 	
-	void draw_stun_bar(int x, int y, int val, int maxval);
+	void draw_stun_bar(int val, int maxval);
 };                      
 
 #endif
