@@ -19,7 +19,6 @@
 
 
 double _png_screen_gamma = -1.0;
-int _png_compression_level = Z_BEST_COMPRESSION;
 
 
 
@@ -263,7 +262,7 @@ BITMAP *load_png(AL_CONST char *filename, RGB *pal)
      * the normal method of doing things with libpng).  REQUIRED unless you
      * set up your own error handlers in the png_create_read_struct() earlier.
      */
-    if (setjmp(png_ptr->jmpbuf)) {
+    if (PNG_SETJMP(png_ptr)) {
 	/* Free all of the memory associated with the png_ptr and info_ptr */
 	png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
 	pack_fclose(fp);
@@ -362,7 +361,7 @@ BITMAP *load_memory_png(AL_CONST void *buffer, int bufsize, RGB *pal)
      * the normal method of doing things with libpng).  REQUIRED unless you
      * set up your own error handlers in the png_create_read_struct() earlier.
      */
-    if (setjmp(png_ptr->jmpbuf)) {
+    if (PNG_SETJMP(png_ptr)) {
 	/* Free all of the memory associated with the png_ptr and info_ptr */
 	png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
 	/* If we get here, we had a problem reading the file */

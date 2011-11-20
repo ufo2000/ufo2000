@@ -14,6 +14,11 @@ extern "C" {
 #define LOADPNG_SUBVERSION	4
 #define LOADPNG_VERSIONSTR	"1.4"
 
+#if PNG_LIBPNG_VER < 10500
+#define PNG_SETJMP(png_ptr) setjmp(png_ptr->jmpbuf)
+#else
+#define PNG_SETJMP(png_ptr) setjmp(png_jmpbuf(png_ptr))
+#endif
 
 /* _png_screen_gamma is slightly overloaded (sorry):
  *

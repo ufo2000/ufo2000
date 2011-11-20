@@ -188,7 +188,7 @@ static int really_save_png(PACKFILE *fp, BITMAP *bmp, AL_CONST RGB *pal)
 	goto Error;
 
     /* Set error handling. */
-    if (setjmp(png_ptr->jmpbuf)) {
+    if (PNG_SETJMP(png_ptr)) {
 	/* If we get here, we had a problem reading the file. */
 	goto Error;
     }
@@ -240,9 +240,6 @@ static int really_save_png(PACKFILE *fp, BITMAP *bmp, AL_CONST RGB *pal)
      * PNG_TEXT_COMPRESSION_zTXt_WR, so it doesn't get written out again
      * at the end.
      */
-
-    /* Set compression level. */
-    png_set_compression_level(png_ptr, _png_compression_level);
 
     /* Save the data. */
     switch (depth) {
