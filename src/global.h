@@ -400,6 +400,9 @@ std::string lua_escape_string(const std::string &str);
 std::string indent(const std::string &);
 bool check_filename_case_consistency(const char *filename);
 
+void set_status_message(
+    int color, const std::string &msg, unsigned int timeout_sec = 2);
+
 /**
  * @defgroup battlescape Battlescape Map
  * Tile dimensions
