@@ -2176,14 +2176,10 @@ static LONG WINAPI TopLevelExceptionFilter(PEXCEPTION_POINTERS pExceptionInfo)
  */
 void report_game_error(int chk)
 {
-    // TODO: The error sound should be toggled by some specific flag.
-    // TODO: Even message displaying should be toggled since it may become
-    //       too annoying, for example, when trying to throw a grenade
-    //       as far as the soldier can.
     chk = -chk; // Error codes are negative.
-    if(FLAGS & F_ENDTURNSND)
-        soundSystem::getInstance()->play(SS_BUTTON_PUSH_2);
-    g_console->printf(GameErrorColour[chk], "%s", _(GameErrorMessage[chk]));
+    ASSERT(chk >= 0);
+    ASSERT(chk < (int)(sizeof(GameErrorColour) / sizeof(GameErrorColour[0])));
+    set_status_message(GameErrorColour[chk], _(GameErrorMessage[chk]));
 }
 
 /**
