@@ -137,6 +137,7 @@ Soldier *sel_man = NULL;
 Explosive *elist;
 Random *cur_random;
 
+volatile unsigned int g_1s_timer_ticks = 0;
 volatile unsigned int ANIMATION = 0;
 volatile int CHANGE = 1;
 volatile int MOVEIT = 0;
@@ -174,6 +175,7 @@ void timer_1s()
     g_fps = g_fps_counter;
     g_fps_counter = 0;
     NOTICE++;
+    g_1s_timer_ticks++;
 }
 END_OF_FUNCTION(timer_1s);
 
@@ -1444,11 +1446,39 @@ void scale2x(BITMAP *dst, BITMAP *src, int size_x, int size_y)
 #endif
 }
 
+static std::string status_message_text;
+static unsigned int status_message_timestamp = 0;
+static unsigned int status_message_timeout = 0;
+static int status_message_color;
+
+/**
+ * Set status message text, which will automatically disappear
+ * approximately after 'timeout_sec' seconds (precision is very rough).
+ *
+ * @param color       message color
+ * @param msg         message text
+ * @param timeout_sec timeout before the message disappears (in seconds)
+ */
+void set_status_message(int color, const std::string &msg, unsigned int timeout_sec)
+{
+    status_message_text = msg;
+    status_message_timestamp = g_1s_timer_ticks;
+    status_message_timeout = timeout_sec;
+    status_message_color = color;
+}
+
 /**
  * Show a line informational text at the top of screen.
  */
 static void show_status_message_text()
 {
+    if (g_1s_timer_ticks - status_message_timestamp < status_message_timeout)
+    {
+        textprintf(screen2, font, 0, 0,
+            status_message_color, "%s", status_message_text.c_str());
+        return;
+    }
+
     if (MODE == WATCH)
         textprintf(screen2, font, 0, 0, COLOR_WHITE, _("WATCH"));
     else
