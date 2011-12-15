@@ -1461,6 +1461,16 @@ static int status_message_color;
  */
 void set_status_message(int color, const std::string &msg, unsigned int timeout_sec)
 {
+    bool old_message_has_timed_out = status_message_timeout <=
+        g_1s_timer_ticks - status_message_timestamp;
+
+    if (msg != status_message_text || old_message_has_timed_out) {
+        static SAMPLE *sound_sample;
+        if (!sound_sample)
+            sound_sample = wav_sample("$(ufo2000)/sfx/freesound.org/135125__ecfike__computer-error.wav");
+        ASSERT(sound_sample);
+        play_sample(sound_sample, 255, 127, 1000, 0);
+    }
     status_message_text = msg;
     status_message_timestamp = g_1s_timer_ticks;
     status_message_timeout = timeout_sec;
