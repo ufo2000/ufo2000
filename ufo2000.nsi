@@ -381,6 +381,7 @@ Section "${GAME_NAME} (required)" MainSec
     SectionIn RO
   
     CreateDirectory "$INSTDIR\arts"
+    CreateDirectory "$INSTDIR\sfx"
     CreateDirectory "$INSTDIR\init-scripts"
     CreateDirectory "$INSTDIR\newmaps"
     CreateDirectory "$INSTDIR\newmusic"
@@ -414,6 +415,9 @@ Section "${GAME_NAME} (required)" MainSec
     
     SetOutPath $INSTDIR\arts
     File /r arts\*
+  
+    SetOutPath $INSTDIR\sfx
+    File /r sfx\*
   
     SetOutPath $INSTDIR\init-scripts
     File init-scripts\*
