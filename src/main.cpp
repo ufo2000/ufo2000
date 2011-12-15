@@ -1445,6 +1445,17 @@ void scale2x(BITMAP *dst, BITMAP *src, int size_x, int size_y)
 }
 
 /**
+ * Show a line informational text at the top of screen.
+ */
+static void show_status_message_text()
+{
+    if (MODE == WATCH)
+        textprintf(screen2, font, 0, 0, COLOR_WHITE, _("WATCH"));
+    else
+        textprintf(screen2, font, 0, 0, COLOR_WHITE, _("FPS: %d"), g_fps);
+}
+
+/**
  * Blit prepared battleview image to screen. Implemented as separate function in 
  * order to make profiling easier (now we can estimate how much time is spent
  * on preparing image and how much time it actually takes to flush it to screen).
@@ -1522,11 +1533,7 @@ void build_screen(int & select_y)
         show_time_left();
 
     draw_stats();
-
-    if (MODE == WATCH)
-        textprintf(screen2, font, 0, 0, COLOR_WHITE, _("WATCH"));
-    else
-        textprintf(screen2, font, 0, 0, COLOR_WHITE, _("FPS: %d"), g_fps);
+    show_status_message_text();
 
     if (g_pause)
         textprintf_right(screen2, font, SCREEN2W - 1, 0, COLOR_WHITE, _("PAUSE (press shift+space to resume)") );
