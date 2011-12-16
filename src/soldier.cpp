@@ -1098,14 +1098,29 @@ int Soldier::tus_reserved(std::string *error)
 }
 
 /**
- * Test if soldier has reserved time for shooting.
- * Returns true if he has enough time for the next action.
+ * Check if soldier has enough Energy and Time Units to perform required action
+ * with reserved time in mind. Call report_game_error() if the check fails.
+ * Check steps are 1) Energy, 2) reserved time, 3) Time Units.
+ *
+ * @param walk_time number of Time Units required for the action
+ * @param ISLOCAL is the unit local or remote
+ * @param use_energy does the action require energy
+ * @return OK from GameErrorCodes if the check passed, error code otherwise
  */
 int Soldier::time_reserve(int walk_time, int ISLOCAL, int use_energy)
 {
     if(!ISLOCAL)            // during enemy turn: don't check for reserved time
         return havetime(walk_time, use_energy);
 
+    //Check Energy first
+    if (use_energy) {
+        int check_result = havetime(walk_time, use_energy);
+        if (check_result != OK) {
+            report_game_error(check_result);
+            return check_result;
+        }
+    }
+    //Energy is OK, check reserved time
     std::string error = "";
     int time = tus_reserved(&error);
     
