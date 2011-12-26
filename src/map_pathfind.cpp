@@ -54,7 +54,7 @@ void Map::draw_path_from(Soldier * s)
     TU = s->ud.CurTU;
     if (s->state() == SIT) TU -= 8;     //time to stand up
     TU_max = s->ud.MaxTU;
-    TU_color = 1;           // COLOR_WHITE
+    TU_color = COLOR_WHITE;
     // Todo: change this color to have some contrast to terrain (e.g. arctic)
     path_show(s->z, s->x, s->y, way, waylen, s);
 }
@@ -77,17 +77,16 @@ void Map::path_show(int _z, int _x, int _y, char *way, int waylen, Soldier *sld)
 
         if ((sx > -32) && (sx < SCREEN2W) && (sy >= -34) && (sy < SCREEN2H)) {
             if (TU < sld->tus_reserved()) {
-                TU_color = 32;      // COLOR_RED00
+                TU_color = COLOR_RED00;
             }
             
             // Keep showing consecutive turns:
             if (TU < 0) {
                 TU = TU_max - time_of_dst;
-              //TU_color += 4;      // COLOR_GRAY04
-                TU_color =  4;      // COLOR_GRAY04
+                TU_color = COLOR_GRAY04;
             }
             if (TU < 0) break;
-            printsmall_center_back(sx, sy, xcom1_color(TU_color), COLOR_GRAY15, TU);
+            printsmall_center_back(sx, sy, TU_color, COLOR_GRAY15, TU);
         }
 
         //textprintf(screen, font, 0+i*80, SCREEN2H+20, COLOR_WHITE, "way[%d]=%d ", i, way[i]);
