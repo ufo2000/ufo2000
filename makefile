@@ -302,7 +302,11 @@ lng-spa: $(SRCS)
 	xgettext -o translations/ufo2000.pot --keyword=_ $^
 	msgmerge --update translations/ufo2000-spa.po translations/ufo2000.pot
 
-lng-all: lng-bel lng-deu lng-est lng-fre lng-ita lng-pol lng-rus lng-spa
+lng-hun: $(SRCS)
+	xgettext -o translations/ufo2000.pot --keyword=_ $^
+	msgmerge --update translations/ufo2000-hun.po translations/ufo2000.pot
+
+lng-all: lng-bel lng-deu lng-est lng-fre lng-ita lng-pol lng-rus lng-spa lng-hun
 
 binary-archive: all server
 ifdef win32

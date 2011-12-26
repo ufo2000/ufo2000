@@ -1,0 +1,2590 @@
+# Hungarian tranlsation for UFO2000.
+# Copyright (C) 2011 lukx <portuguiese@freemail.hu>
+# This file is distributed under the same license as the UFO2000 package.
+# 
+# Translators:
+#   <portuguiese@freemail.hu>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: ufo2000\n"
+"Report-Msgid-Bugs-To: http://ufo2000.net/mantisbt/view_all_bug_page.php\n"
+"POT-Creation-Date: 2011-12-26 08:00+0000\n"
+"PO-Revision-Date: 2011-09-18 17:41+0000\n"
+"Last-Translator: lukx <portuguiese@freemail.hu>\n"
+"Language-Team: Hungarian (http://www.transifex.net/projects/p/ufo2000/team/hu/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: hu\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: src/config.cpp:311 src/text.cpp:324 src/units.cpp:332
+msgid "Options"
+msgstr "Beállítások"
+
+#: src/config.cpp:319
+msgid "end turn sound"
+msgstr "kör végi hang"
+
+#: src/config.cpp:320
+msgid "start sitting if second"
+msgstr "guggolva kezd ha második"
+
+#: src/config.cpp:321
+msgid "icon panel tooltips"
+msgstr "ikon panel cimkék"
+
+#: src/config.cpp:322
+msgid "enlarged battleview"
+msgstr "nagyobbított harci nézet"
+
+#: src/config.cpp:323
+msgid "center on new enemies"
+msgstr "középreáll új ellenségre"
+
+#: src/config.cpp:325 src/connect.cpp:290 src/editor.cpp:92 src/editor.cpp:856
+#: src/editor.cpp:1068 src/main.cpp:2615 src/main.cpp:2834 src/main.cpp:2872
+#: src/main.cpp:2877 src/main.cpp:3062 src/multiplay.cpp:458
+#: src/server_gui.cpp:338 src/text.cpp:1041 src/video.cpp:396
+msgid "OK"
+msgstr "OK"
+
+#: src/config.cpp:326 src/icon.cpp:702 src/server_gui.cpp:339
+#: src/video.cpp:396
+msgid "Cancel"
+msgstr "Mégse"
+
+#: src/config.cpp:327
+msgid "movement speed"
+msgstr "mozgási sebesség"
+
+#: src/config.cpp:328
+msgid "fire speed"
+msgstr "Tüzelési sebesség"
+
+#: src/config.cpp:329
+msgid "scroll speed"
+msgstr "Lapozási sebesség"
+
+#: src/config.cpp:330
+msgid "mapscroll points"
+msgstr "térkép pont lapozás"
+
+#: src/config.cpp:331
+msgid "music volume"
+msgstr "zene hangereje"
+
+#: src/config.cpp:332
+msgid "console font size"
+msgstr "konzol betű méret"
+
+#: src/config.cpp:333
+msgid "mouse sensitivity"
+msgstr "egér érzékenység"
+
+#: src/config.cpp:334
+msgid "prefer x-com graphics"
+msgstr "válassza az x-com grafikát"
+
+#: src/connect.cpp:54
+#, c-format
+msgid ""
+"Unfortunately you have an older UFO2000 version than your opponent has. And the changes introduced between these versions make them incompatible.\n"
+"\n"
+"Please visit http://ufo2000.sourceforge.net and upgrade (you need UFO2000 version %s.%d or newer)."
+msgstr ""
+"Sajnos régebbi verziójú az UFO2000-ed, mint az ellenfeledé. És a változtatások miatt a két verzió összeférhetetlen egymással.\n"
+"\n"
+"Kérjük látogass el a http://ufo2000.sourceforge.net -re és tölts le egy újabb verziót (a következő UFO2000 verzióra van szükség: %s.%d vagy újabb)."
+
+#: src/connect.cpp:59
+msgid ""
+"Unfortunately your opponent has an older version of UFO2000. And the changes introduced between these versions make them incompatible.\n"
+"\n"
+"Please try again after your opponent upgrades to an up to date version."
+msgstr ""
+"Sajnos régebbi verziójú az UFO2000-ed, mint az ellenfeledé. És a változtatások miatt a két verzió összeférhetetlen egymással.\n"
+"\n"
+"Kérjük próbáld újra miután az ellenfeled letöltött egy frissebb verziót."
+
+#: src/connect.cpp:80
+msgid "Comparing local and remote UFO2000 versions..."
+msgstr "Összehasonlítás a helyi és a távoli UFO2000 verziókat"
+
+#: src/connect.cpp:82
+msgid "Press ESC to cancel if it takes too long."
+msgstr "Nyomj ESC-et a kilépéshez ha túl sokáig tart."
+
+#: src/connect.cpp:196
+msgid "Welcome to the mission-planner !"
+msgstr "Üdvözlet a küldetés-tervezőben !"
+
+#: src/connect.cpp:262 src/connect.cpp:467
+msgid "EXIT MISSION-PLANNER"
+msgstr "KILÉPÉS A KÜLDETÉSTERVEZŐBŐL"
+
+#: src/connect.cpp:289
+msgid "Remote player does not have any of your maps"
+msgstr "A távoli játékosnak nincs meg egyik térképed sem"
+
+#: src/connect.cpp:337
+msgid "You can select a map and change the match-settings."
+msgstr "Kiválaszthatsz egy térképet és módosíthatod a meccs beállításait"
+
+#: src/connect.cpp:339
+msgid "The map is already set for this game, and cannot be changed."
+msgstr "A térkép már be van állítva ehhez a játékhoz és nem módosítható"
+
+#: src/connect.cpp:340
+msgid "To edit a soldier, CTRL-click on his name."
+msgstr "A katonák szerkesztéséhez, CTRL-klik a nevére"
+
+#: src/connect.cpp:341
+msgid "Left-click to place a soldier on the map, right-click to remove him."
+msgstr "Bal-klik lerakja a katonát a térképre, jobb-klik felszedi"
+
+#: src/connect.cpp:342
+msgid ""
+"When finished, click SEND, then START.  Press ESC to quit, F1 for help."
+msgstr ""
+"Amikor kész, kattints a SEND aztán a START gombra.\n"
+"Nyomj ESC-et a kilépéshez, F1-et a súgóhoz."
+
+#: src/connect.cpp:406
+msgid "PREPARATIONS FOR MISSION FINISHED"
+msgstr "KÜLDETÉS ELŐKÉSZÍTÉSE BEFEJEZVE"
+
+#: src/connect.cpp:458 src/editor.cpp:538 src/main.cpp:2656
+msgid "SCREEN-SNAPSHOT"
+msgstr "KÉPERNYŐ-MENTÉS"
+
+#: src/connect.cpp:464 src/main.cpp:2120 src/server_gui.cpp:676
+msgid "Music OFF"
+msgstr "Zene Kikapcsolva"
+
+#: src/editor.cpp:89
+msgid "Load squad (*.squad files)"
+msgstr "Csapat betöltése (*.squad fájlok)"
+
+#: src/editor.cpp:92
+msgid "No saved squads found!"
+msgstr "Nem találhatók mentett csapatfájlok!"
+
+#: src/editor.cpp:107
+msgid "Save squad (*.squad file)"
+msgstr "Csapat mentése (*.squad fájlok)"
+
+#: src/editor.cpp:121
+#, c-format
+msgid "Armoury layout exported as weapon set template to %s"
+msgstr ""
+"Fegyvertár elrendezés exportálva mint fegyver készlet séma, ebbe a fájlba: "
+"%s"
+
+#: src/editor.cpp:248
+msgid ""
+"This item is not allowed for currently selected weapon set, right-click to "
+"get rid of it"
+msgstr ""
+"Ez a fegyver nem engedélyezett a jelenlegi fegyverkészletben, jobb-klikkel "
+"eltüntetheted"
+
+#: src/editor.cpp:280
+msgid ""
+"Click-and-drop weapons from the armory to the soldier, right-click to remove"
+msgstr ""
+"Kattintással felveheted és lerakhatod a fegyvereket a katonára a raktárból, "
+"jobb-kattintással eltávolít"
+
+#: src/editor.cpp:330 src/editor.cpp:338 src/inventory.cpp:111
+#: src/inventory.cpp:119
+msgid "AMMO:"
+msgstr "LŐSZER:"
+
+#: src/editor.cpp:331 src/editor.cpp:339 src/inventory.cpp:112
+#: src/inventory.cpp:120
+msgid "ROUNDS"
+msgstr "LÖVÉS"
+
+#: src/editor.cpp:332 src/editor.cpp:340 src/inventory.cpp:103
+#: src/inventory.cpp:113 src/inventory.cpp:121
+msgid "LEFT="
+msgstr "MARADT="
+
+#: src/editor.cpp:358
+msgid "       F1: Help"
+msgstr "          F1: Súgó"
+
+#: src/editor.cpp:359
+msgid "    F2/F3: Save/load team"
+msgstr "          F2/F3: Csapat mentés/betöltés"
+
+#: src/editor.cpp:360
+msgid "       F4: Edit soldier attributes"
+msgstr "               F4: Katonák értékeinek szerkesztése"
+
+#: src/editor.cpp:361
+msgid "       F5: Change weaponset"
+msgstr "          F5: Fegyverkészlet cseréje"
+
+#: src/editor.cpp:362
+msgid "       F6: Save as weapon set template"
+msgstr "          F6: Fegyverkészlet mentése sémába"
+
+#: src/editor.cpp:364
+msgid " Ctrl+Ins: Copy current soldier"
+msgstr " Ctrl+Ins: Katona másolása"
+
+#: src/editor.cpp:365
+msgid "Shift+Ins: Paste on current soldier"
+msgstr "Shift+Ins: Beillesztés erre a katonára"
+
+#: src/editor.cpp:366
+msgid "      Del: Delete items of current man"
+msgstr "          Del: Jelenlegi ember felszerelését törli"
+
+#: src/editor.cpp:368
+msgid "      F11: Cycle through appearences"
+msgstr "          F11: Megjelenések lapozása"
+
+#: src/editor.cpp:369
+msgid "      F12: Cycle through human armours"
+msgstr "          F12: Emberi páncélok lapozása"
+
+#: src/editor.cpp:370
+msgid "Shift+F12: Cycle through alien races"
+msgstr "Shift+F12: Idegen fajok lapozása"
+
+#: src/editor.cpp:371
+msgid "      Tab: Next soldier"
+msgstr "          F1: Súgó"
+
+#: src/editor.cpp:372
+msgid "Shift+Tab: Previous soldier"
+msgstr "Shift+Tab: Előző katona"
+
+#: src/editor.cpp:379
+#, c-format
+msgid "Equipment weight: %2d/%2d"
+msgstr "Felszerelés sulya: %2d%2d"
+
+#: src/editor.cpp:383
+msgid "Soldier cost"
+msgstr "Katona ára"
+
+#: src/editor.cpp:738
+msgid "Select unit race"
+msgstr "Faj kiválasztása"
+
+#: src/editor.cpp:743
+msgid "Select unit armour"
+msgstr "Páncél kiválasztása"
+
+#: src/editor.cpp:748
+msgid "Select unit appearance"
+msgstr "Megjelenés kiválasztása"
+
+#: src/editor.cpp:802 src/editor.cpp:909
+#, c-format
+msgid "Points remain: %2d "
+msgstr "Ennyi pont maradt: %2d"
+
+#: src/editor.cpp:857
+msgid "Name:"
+msgstr "Név:"
+
+#: src/editor.cpp:861
+msgid "Race:"
+msgstr "Faj:"
+
+#: src/editor.cpp:864
+msgid "Armour:"
+msgstr "Páncél:"
+
+#: src/editor.cpp:867
+msgid "Appearance:"
+msgstr "Megjelenés:"
+
+#: src/editor.cpp:870
+msgid "Time Units"
+msgstr "Időegységek"
+
+#: src/editor.cpp:872
+msgid "Stamina"
+msgstr "Álllóképesség"
+
+#: src/editor.cpp:874 src/item.cpp:271
+msgid "Health"
+msgstr "Életerő"
+
+#: src/editor.cpp:876
+msgid "Bravery"
+msgstr "Bátorság"
+
+#: src/editor.cpp:878
+msgid "Reactions"
+msgstr "Reakció"
+
+#: src/editor.cpp:880
+msgid "Firing"
+msgstr "Célzás"
+
+#: src/editor.cpp:882
+msgid "Throwing"
+msgstr "Dobás"
+
+#: src/editor.cpp:884
+msgid "Strength"
+msgstr "Erő"
+
+#: src/editor.cpp:886
+msgid "Edit soldier attributes"
+msgstr "Katonák értékeinek szerkesztése"
+
+#: src/editor.cpp:1061
+msgid "Select equipment set"
+msgstr "Fegyver-készlet kiválasztása"
+
+#: src/editor.cpp:1068
+msgid "Remote player does not have any of your weaponsets"
+msgstr "Másik játékosnak nincs meg egyik fegyver-készleted sem"
+
+#: src/icon.cpp:546
+#, c-format
+msgid "CANCEL"
+msgstr "MÉGSE"
+
+#: src/icon.cpp:554
+#, c-format
+msgid "THROW       ACC>%02d%% TUs>%02d"
+msgstr "DOBÁS        CÉLZ>%02d%% IE>%02d"
+
+#: src/icon.cpp:567
+#, c-format
+msgid "STUN                TUs>%02d"
+msgstr "BÉNÍTÁS                        IE>%02d"
+
+#: src/icon.cpp:569
+#, c-format
+msgid "PUNCH               TUs>%02d"
+msgstr "ÜTÉS                             IE>%02d"
+
+#: src/icon.cpp:581
+#, c-format
+msgid "PRIME EXPLOSIVE     TUs>%02d"
+msgstr "ROBBANÓSZERT ÉLESÍT     IE>%02d"
+
+#: src/icon.cpp:588
+#, c-format
+msgid "PRIME GRENADE       TUs>%02d"
+msgstr "GRÁNÁT ÉLESÍTÉSE          IE>%02d"
+
+#: src/icon.cpp:601
+#, c-format
+msgid "AUTO SHOT   ACC>%02d%% TUs>%02d"
+msgstr "SOROZAT LÖVÉS  CÉLZ>%02d%% IE>%02d"
+
+#: src/icon.cpp:611
+#, c-format
+msgid "SNAP SHOT   ACC>%02d%% TUs>%02d"
+msgstr "KAPÁS LÖVÉS      CÉLZ>%02d%% IE>%02d"
+
+#: src/icon.cpp:621
+#, c-format
+msgid "AIMED SHOT  ACC>%02d%% TUs>%02d"
+msgstr "CÉLZOTT LÖVÉS CÉLZ>%02d%% IE>%02d"
+
+#: src/icon.cpp:634
+#, c-format
+msgid "HEAL WOUNDS         TUs>%02d"
+msgstr "SEBGYÓGYÍTÁS                              IE-k>%02d"
+
+#: src/icon.cpp:642
+#, c-format
+msgid "INJECT STIMULANTS   TUs>%02d"
+msgstr "STIMULÁNS INJEKCIÓ                     IE-k>%02d"
+
+#: src/icon.cpp:650
+#, c-format
+msgid "INJECT PAINKILLERS  TUs>%02d"
+msgstr "FÁJDALOMCSILLAPÍTÓ INJEKCIÓ   IE-k>%02d"
+
+#: src/icon.cpp:859 src/main.cpp:2540
+#, c-format
+msgid "%s is panicking and can't access inventory."
+msgstr "%s pánikol és nem tudja használni a felszerelését."
+
+#: src/inventory.cpp:101
+msgid "DELAY"
+msgstr "KÉSLELTETÉS"
+
+#: src/inventory.cpp:102
+msgid "TIME:"
+msgstr "IDŐ:"
+
+#: src/item.cpp:228
+msgid "Firing-Type"
+msgstr "Tüzelési-Típus"
+
+#: src/item.cpp:228
+msgid "Accuracy"
+msgstr "Pontosság"
+
+#: src/item.cpp:228
+msgid "TU cost"
+msgstr "IE ár"
+
+#: src/item.cpp:232
+msgid "Auto"
+msgstr "Sorozat"
+
+#: src/item.cpp:238
+msgid "Snap"
+msgstr "Kapás"
+
+#: src/item.cpp:244
+msgid "Aimed"
+msgstr "Célzott"
+
+#: src/item.cpp:253
+msgid "Hand-to-hand weapon"
+msgstr "Kézi-harc fegyver"
+
+#: src/item.cpp:258
+msgid "Two-handed weapon"
+msgstr "Kétkezes fegyver"
+
+#: src/item.cpp:267
+msgid "Medical item"
+msgstr "Gyógyászati tárgy"
+
+#: src/item.cpp:275
+msgid "Stun"
+msgstr "Bénultság"
+
+#: src/item.cpp:279
+msgid "Energy"
+msgstr "Energia"
+
+#: src/item.cpp:283
+msgid "Morale"
+msgstr "Morál"
+
+#: src/item.cpp:291
+msgid "Usage TU cost"
+msgstr "Használat IE ár"
+
+#: src/item.cpp:297
+msgid "Prime TU cost"
+msgstr "Élesítés IE ár"
+
+#: src/item.cpp:303
+msgid "Throw TU cost"
+msgstr "Dobás IE ár"
+
+#: src/item.cpp:309 src/main.cpp:2038 src/main.cpp:2040 src/main.cpp:2044
+msgid "Damage"
+msgstr "Sebzés"
+
+#: src/item.cpp:313
+msgid "Ammo-Type"
+msgstr "Lőszer-Típus"
+
+#: src/item.cpp:319
+msgid "Rounds"
+msgstr "Lövések"
+
+#: src/item.cpp:325
+msgid "Blast range"
+msgstr "Robbanási körzet"
+
+#: src/item.cpp:331
+msgid "Smoke range"
+msgstr "Füst körzet"
+
+#: src/item.cpp:337
+msgid "Smoke time"
+msgstr "Füst idő"
+
+#: src/item.cpp:346
+msgid "Ammo#"
+msgstr "Lőszer#"
+
+#: src/item.cpp:351
+msgid "Weight"
+msgstr "Súly"
+
+#: src/item.cpp:354
+msgid "Cost"
+msgstr "Ár"
+
+#: src/main.cpp:113
+#, c-format
+msgid "Time left: %d"
+msgstr "Idő maradt: %d"
+
+#: src/main.cpp:1146
+msgid "Error: game state on your an remote computers got out of sync."
+msgstr "Hiba: játékállapot nem egyezik a Te géped és a másik gép között"
+
+#: src/main.cpp:1147
+msgid ""
+"You can encounter any weird bugs or just crashes if you continue playing."
+msgstr "Furcsa hibák fordulhatnak elő ha folytatod a játékot"
+
+#: src/main.cpp:1148
+#, c-format
+msgid "Bug report saved in 'crc_error_%d.txt', please send it to developers"
+msgstr ""
+"Hibajelentés elmentve a 'crc_error_%d.txt' fájlba, ha lehet, küldd el a "
+"fejlesztőknek"
+
+#: src/main.cpp:1150
+msgid "Remote game state checksum is not equal to local"
+msgstr "A másik játékos játék-állpotának checksum-ja nem egyezik a mienkkel"
+
+#: src/main.cpp:1236 src/main.cpp:1237
+msgid "Turn end"
+msgstr "Kör vége"
+
+#: src/main.cpp:1265
+msgid "  NEXT TURN  "
+msgstr "  KÖVETKEZŐ KÖR  "
+
+#: src/main.cpp:1266 src/multiplay.cpp:129 src/multiplay.cpp:137
+#: src/server_gui.cpp:437 src/server_gui.cpp:444 src/server_gui.cpp:496
+msgid "    OK    "
+msgstr "      OK      "
+
+#: src/main.cpp:1298 src/main.cpp:1330
+msgid "Next turn"
+msgstr "Következő kör"
+
+#: src/main.cpp:1324
+#, c-format
+msgid "Next turn. local = %d, remote = %d soldiers"
+msgstr "Új kör. Katonák száma: Helyi = %d, Távoli = %d"
+
+#: src/main.cpp:1493
+msgid "WATCH"
+msgstr "MEGFIGYELÉS"
+
+#: src/main.cpp:1495
+#, c-format
+msgid "FPS: %d"
+msgstr "FPS: %d"
+
+#: src/main.cpp:1579
+msgid "PAUSE (press shift+space to resume)"
+msgstr "PAUZA (nyomj shift+space -t a folytatáshoz)"
+
+#: src/main.cpp:1918 src/main.cpp:1940
+msgid "DRAW!"
+msgstr "DÖNTETLEN!"
+
+#: src/main.cpp:1923 src/main.cpp:1927
+msgid "PLAYER 2 WINS!"
+msgstr "JÁTÉKOS 2 GYŐZÖTT"
+
+#: src/main.cpp:1924 src/main.cpp:1926
+msgid "PLAYER 1 WINS!"
+msgstr "JÁTÉKOS 1 GYŐZÖTT"
+
+#: src/main.cpp:1935
+msgid "YOU WIN!"
+msgstr "TE GYŐZTÉL!"
+
+#: src/main.cpp:1939
+msgid "YOU LOSE!"
+msgstr "VESZTETTÉL!"
+
+#: src/main.cpp:1949
+msgid "Summary"
+msgstr "Összegzés"
+
+#: src/main.cpp:1960 src/main.cpp:2010 src/main.cpp:2018 src/main.cpp:2026
+#: src/units.cpp:319
+msgid "Player 1"
+msgstr "Játékos 1"
+
+#: src/main.cpp:1961 src/main.cpp:2010 src/main.cpp:2018 src/main.cpp:2026
+#: src/units.cpp:325
+msgid "Player 2"
+msgstr "Játékos 2"
+
+#: src/main.cpp:1966
+msgid "Your Platoon"
+msgstr "A Te osztagod"
+
+#: src/main.cpp:1967
+msgid "Remote Platoon"
+msgstr "A Másik osztaga"
+
+#: src/main.cpp:1974
+msgid "Total Kills:"
+msgstr "Ölések Száma:"
+
+#: src/main.cpp:1979 src/main.cpp:2043
+msgid "Player"
+msgstr "Játékos"
+
+#: src/main.cpp:1982
+msgid "Death:"
+msgstr "Halálok:"
+
+#: src/main.cpp:1989
+msgid "Total Damage Inflicted:"
+msgstr "Összes Okozott Sebzés:"
+
+#: src/main.cpp:1996
+msgid "Total Damage Taken:"
+msgstr "Összes Kapott Sebzés:"
+
+#: src/main.cpp:2007
+msgid "Most Valuable Soldier:"
+msgstr "Legértékesebb Katona:"
+
+#: src/main.cpp:2008
+#, c-format
+msgid "%s (%s, %d kills)"
+msgstr "%s (%s, %d ölés)"
+
+#: src/main.cpp:2010 src/main.cpp:2018 src/main.cpp:2026
+msgid "Remote"
+msgstr "Távoli"
+
+#: src/main.cpp:2010 src/main.cpp:2018 src/main.cpp:2026
+msgid "Local"
+msgstr "Helyi"
+
+#: src/main.cpp:2015
+msgid "Most Devastating Soldier:"
+msgstr "Legpusztítóbb Katona:"
+
+#: src/main.cpp:2016 src/main.cpp:2024
+#, c-format
+msgid "%s (%s, %d damage inflicted)"
+msgstr "%s (%s, %d okozott sebzés)"
+
+#: src/main.cpp:2023
+msgid "Most Cowardly Soldier:"
+msgstr "Leggyávább Katona:"
+
+#: src/main.cpp:2038 src/main.cpp:2040 src/main.cpp:2044
+msgid "Name"
+msgstr "Név"
+
+#: src/main.cpp:2038 src/main.cpp:2040 src/main.cpp:2044
+msgid "Kills"
+msgstr "Ölések"
+
+#: src/main.cpp:2042
+msgid "Details"
+msgstr "Részletek"
+
+#: src/main.cpp:2079
+msgid "End"
+msgstr "Vége"
+
+#: src/main.cpp:2088
+msgid "You can chat here.  Press ESC when finished."
+msgstr "Itt lehet chat-elni. Nyomj ESC-et amikor kész vagy."
+
+#: src/main.cpp:2108
+msgid "EXIT TO MAIN MENU"
+msgstr "KILÉPÉS A FŐMENÜBE"
+
+#: src/main.cpp:2239
+msgid "Welcome to the battlescape of UFO2000 !"
+msgstr "Üdvözöllek az UFO2000 csatatéren !"
+
+#: src/main.cpp:2240
+msgid "Press F1 for help."
+msgstr "Nyomj F1-et a súgóhoz."
+
+#: src/main.cpp:2242
+msgid "Battlereport"
+msgstr "Csatajelentés"
+
+#: src/main.cpp:2599
+msgid "SAVE GAME"
+msgstr "JÁTÉK MENTÉS"
+
+#: src/main.cpp:2603 src/main.cpp:2605
+msgid "Game saved"
+msgstr "Játék elmentve"
+
+#: src/main.cpp:2610 src/main.cpp:2613 src/main.cpp:2618 src/main.cpp:2837
+msgid "LOAD GAME"
+msgstr "JÁTÉK BETÖLTÉS"
+
+#: src/main.cpp:2613
+msgid "failed"
+msgstr "sikertelen"
+
+#: src/main.cpp:2615
+msgid "Saved game not found"
+msgstr "Nem található mentett játék"
+
+#: src/main.cpp:2618
+msgid "success"
+msgstr "siker"
+
+#: src/main.cpp:2628
+msgid "Tooltips OFF"
+msgstr "Egércimkék KI"
+
+#: src/main.cpp:2631
+msgid "Tooltips ON."
+msgstr "Egércimkék BE"
+
+#: src/main.cpp:2645
+msgid "STOP NOTIFY"
+msgstr "ÉRTESÍTÉS LEÁLLÍTÁSA"
+
+#: src/main.cpp:2648
+msgid "START NOTIFY"
+msgstr "ÉRTESÍTÉS INDÍTÁSA"
+
+#: src/main.cpp:2670
+msgid "ABORT MISSION ?"
+msgstr "KÜLDETÉS MEGSZAKÍTÁSA?"
+
+#: src/main.cpp:2670
+msgid "YES=RESIGN"
+msgstr "IGEN = MEGADÁS"
+
+#: src/main.cpp:2671
+msgid "RECALL DRAW OFFER"
+msgstr "DÖNTETLEN AJÁNLAT TÖRLÉSE"
+
+#: src/main.cpp:2672
+msgid "ACCEPT DRAW OFFER"
+msgstr "DÖNTETLEN AJÁNLAT ELFOGADÁSA"
+
+#: src/main.cpp:2673
+msgid "OFFER DRAW"
+msgstr "DÖNTETLENT AJÁNL"
+
+#: src/main.cpp:2673
+msgid "NO=CONTINUE"
+msgstr "NEM = FOLYTATÁS"
+
+#: src/main.cpp:2675
+msgid "EXIT FROM REPLAY?"
+msgstr "VISSZAJÁTSZÁS MEGSZAKÍTÁSA?"
+
+#: src/main.cpp:2680
+msgid "Game aborted"
+msgstr "Játék megszakítva"
+
+#: src/main.cpp:2685
+msgid "You: Draw offer accepted"
+msgstr "Te: Döntetlen ajánlat elfogadva"
+
+#: src/main.cpp:2687
+msgid "You: Draw offered"
+msgstr "Te: Döntetlen felajánlva"
+
+#: src/main.cpp:2689
+msgid "You: Draw offer recalled"
+msgstr "Te: Döntetlen ajánlat törölve"
+
+#: src/main.cpp:2722
+msgid "Save replay?"
+msgstr "Elmented a visszajátszást?"
+
+#: src/main.cpp:2724
+msgid "Save replay (*.replay file)"
+msgstr "Visszajátszás mentése (*.replay fájlok)"
+
+#: src/main.cpp:2729
+#, c-format
+msgid "Unable to delete existing file %s!"
+msgstr "Nem sikerült törölni a létező fájlt: %s!"
+
+#: src/main.cpp:2735
+#, c-format
+msgid "Replay saved as %s"
+msgstr "Visszajátszás mentve mint %s"
+
+#: src/main.cpp:2737
+#, c-format
+msgid "Unable to save %s!"
+msgstr "Nem sikerült elmenteni: %s!"
+
+#: src/main.cpp:2745
+#, c-format
+msgid "Unable to delete temporary file %s!"
+msgstr "Nem sikerült törölni az ideiglenes fájlt: %s!"
+
+#: src/main.cpp:2834
+msgid "Saved game not available"
+msgstr "Mentett játék nem áll rendelkezésre"
+
+#: src/main.cpp:2869
+msgid "Load replay (*.replay files)"
+msgstr "Visszajátszás betöltése (*.replay fájlok)"
+
+#: src/main.cpp:2872
+msgid "No saved replays found!"
+msgstr "Nem található mentett visszajátszás!"
+
+#: src/main.cpp:2877
+msgid "Replay is invalid!"
+msgstr "Ez a visszajátszás hibás!"
+
+#: src/main.cpp:2877
+msgid "(Probably it was saved by incompatible version)."
+msgstr "(Bizonyára egy nem kompatibilis játék-verzióból mentették)."
+
+#: src/main.cpp:2881
+msgid "START REPLAY"
+msgstr "VISSZAJÁTSZÁS INDÍTÁSA"
+
+#: src/main.cpp:3034
+#, c-format
+msgid "UFO2000 v%s.%s - a free and opensource multiplayer game"
+msgstr "UFO2000 v%s.%s - egy ingyenes nyílt forrású multiplayer játék"
+
+#: src/main.cpp:3037
+msgid "inspired by 'X-COM: UFO Defense', see http://ufo2000.sf.net."
+msgstr "amelyet az 'X-COM: UFO Defense' ihletett, lásd http://ufo2000.sf.net."
+
+#: src/main.cpp:3039
+msgid " &MORE "
+msgstr " &MÉG "
+
+#: src/main.cpp:3039
+msgid " OK "
+msgstr " OK "
+
+#: src/main.cpp:3060
+msgid ""
+"IEEE-754 compatible 64-bit floating point arithmetics is not supported,"
+msgstr "IEEE-754 kompatibilis 64-bites lebegő-pontos aritmetika nem támogott,"
+
+#: src/main.cpp:3061
+msgid "so you have high risk of synchronization errors in network games"
+msgstr ""
+"ezért nagy az esélye a szinkronizációs hibáknak a hálózati játék során,"
+
+#: src/main.cpp:3062
+msgid "and are not allowed to connect the server"
+msgstr "emiatt nem kapcsolódhatsz a szerverhez."
+
+#: src/mainmenu.cpp:243
+msgid "connect to server"
+msgstr "csatlakozás a szerverhez"
+
+#: src/mainmenu.cpp:244
+msgid "start hotseat game"
+msgstr "Egygépes (HOTSEAT) játék indítása"
+
+#: src/mainmenu.cpp:245
+msgid "show geoscape demo"
+msgstr "geoscape demo megtekintés"
+
+#: src/mainmenu.cpp:246
+msgid "load saved game"
+msgstr "mentett játék betöltés"
+
+#: src/mainmenu.cpp:247
+msgid "load a replay"
+msgstr "visszajátszás betöltés"
+
+#: src/mainmenu.cpp:248
+msgid "options"
+msgstr "beállitások"
+
+#: src/mainmenu.cpp:249
+msgid "about"
+msgstr "névjegy"
+
+#: src/mainmenu.cpp:250
+msgid "tip of the day"
+msgstr "a nap tippje"
+
+#: src/mainmenu.cpp:253
+msgid "quit"
+msgstr "kilépés"
+
+#: src/map.cpp:2561
+msgid "Select terrain type"
+msgstr "Terep típus választása"
+
+#: src/multiplay.cpp:129
+msgid "  NEXT PLAYER  "
+msgstr "  KÖVETKEZŐ JÁTÉKOS  "
+
+#: src/multiplay.cpp:137
+msgid "  GAME START  "
+msgstr "  JÁTÉK INDÍTÁSA  "
+
+#: src/multiplay.cpp:457
+msgid "Your opponent left the game"
+msgstr "Az ellenfeled kilépett a játékból"
+
+#: src/multiplay.cpp:1330
+#, c-format
+msgid ""
+"Remote player has the following %d maps that can be used for network game:\n"
+msgstr ""
+"Távoli játékosnak ez a %d térképe áll rendelkezésre hálózati játékhoz:\n"
+
+#: src/multiplay.cpp:1355
+#, c-format
+msgid ""
+"The following maps can not be used, they are modified or just not installed "
+"by remote player:\n"
+msgstr ""
+"Ezeket a térképeket nem lehet használni, mivel módosultak vagy nincsenek meg"
+" a távoli játékosnak:\n"
+
+#: src/multiplay.cpp:1634
+msgid "Opponent: Draw offer accepted"
+msgstr "Ellenfél: Döntetlen ajánlat elfogadva"
+
+#: src/multiplay.cpp:1636
+msgid "Opponent: Draw offered"
+msgstr "Ellenfél: Döntetlent ajánl"
+
+#: src/multiplay.cpp:1638
+msgid "Opponent: Draw offer recalled"
+msgstr "Ellenfél: Döntetlen ajánlat törölve"
+
+#: src/place.cpp:376
+msgid "(none, remote player doesn't have any of your weaposets)"
+msgstr ""
+"(nincs, a távoli játékosnak egyik fegyverkészlet sincs meg a tieid közül)"
+
+#: src/place.cpp:378
+#, c-format
+msgid "Weapon set: %s"
+msgstr "Fegyver készlet: %s"
+
+#: src/scenario.cpp:75
+msgid "Kill 'em all!"
+msgstr "Kill 'em all!"
+
+#: src/scenario.cpp:86
+msgid "You must get your leader (first selected soldier)"
+msgstr "El kell hoznod a vezéredet (az első kijelölt katona)"
+
+#: src/scenario.cpp:87
+msgid "to the opposite edge of the map to win.          "
+msgstr "a térkép túloldalára a győzelemhez."
+
+#: src/scenario.cpp:88
+msgid "Your leader is always visible on your opponent's "
+msgstr "A vezéredet mindig látja az ellenfél"
+
+#: src/scenario.cpp:89
+msgid "minimap."
+msgstr "a kistérképen."
+
+#: src/scenario.cpp:91 src/scenario.cpp:137
+msgid "You must kill enemy leader (first selected       "
+msgstr "El kell pusztítanod az ellenséges vezért (az első kijelölt"
+
+#: src/scenario.cpp:92
+msgid "soldier) before he gets to your edge of the map. "
+msgstr "katona) mielőtt elérne a térkép hozzád eső végére."
+
+#: src/scenario.cpp:93
+msgid "Leader is always visible on your minimap.        "
+msgstr "A vezér mindig látszik a kistérképen."
+
+#: src/scenario.cpp:95 src/scenario.cpp:145 src/scenario.cpp:199
+msgid "Leader can use two-handed weapons"
+msgstr "A vezér használhat két-kezes fegyvereket"
+
+#: src/scenario.cpp:95 src/scenario.cpp:145 src/scenario.cpp:199
+msgid "Leader can't use two-handed weapons"
+msgstr "A vezér nem használhat két-kezes fegyvereket"
+
+#: src/scenario.cpp:104
+msgid "You must place high explosives at places which   "
+msgstr "Le kell raknod a robbanóanyagokat azokra a helyekre"
+
+#: src/scenario.cpp:105
+msgid "are indicated on your minimap. You can have high "
+msgstr "amelyek a kistérképen jelölve vannak. Akkor is lehet"
+
+#: src/scenario.cpp:106
+msgid "explosives even if they aren't allowed by rules  "
+msgstr "nálad robbanóanyag, ha ez a felszerelés nem engedélyezett"
+
+#: src/scenario.cpp:107
+msgid "of the match.                                    "
+msgstr "a játékszabályban."
+
+#: src/scenario.cpp:109
+msgid "You must kill all enemy soldiers before they     "
+msgstr "El kell pusztítanod az ellenséges katonákat mielőtt"
+
+#: src/scenario.cpp:110
+msgid "plant explosives at places which are indicated on"
+msgstr "lerakják a robbanóanyagokat a térképen jelölt"
+
+#: src/scenario.cpp:111
+msgid "the minimap.                                     "
+msgstr "helyekre."
+
+#: src/scenario.cpp:122
+msgid "You must control the 10x10 area in the centre of "
+msgstr "Neked kell birtokolnod a 10x10-es területet a térkép"
+
+#: src/scenario.cpp:123
+msgid "the map for number of successive half-turns set  "
+msgstr "közepén, annyi egymás utáni fél-körön át, amennyi"
+
+#: src/scenario.cpp:124
+msgid "in the \"Options\" section.                      "
+msgstr "a \"Beállítások\" résznél be van állítva."
+
+#: src/scenario.cpp:125
+msgid "To control an area you have to have in it more   "
+msgstr "Ahhoz hogy birtokold a területet, több katonádnak kell"
+
+#: src/scenario.cpp:126
+msgid "soldiers than your opponent.                     "
+msgstr "rajta tartózkodnia mint az ellenfelednek."
+
+#: src/scenario.cpp:128
+msgid "Half-turns to control the area"
+msgstr "Fél-körök száma amíg a terület birtokolandó"
+
+#: src/scenario.cpp:138
+msgid "soldier). Enemy leader is always visible on your "
+msgstr "katona). Az ellenséges vezér mindig látszik a te"
+
+#: src/scenario.cpp:139
+msgid "minimap.                                         "
+msgstr "kistérképeden."
+
+#: src/scenario.cpp:141
+msgid "You must save your leader (first selected        "
+msgstr "Meg kell mentened a vezéredet (első kijelölt"
+
+#: src/scenario.cpp:142
+msgid "soldier). He is always visible for your opponent "
+msgstr "katona). A vezéred mindig látszik az ellenfeled"
+
+#: src/scenario.cpp:143
+msgid "on the minimap.                                  "
+msgstr "kistérképén."
+
+#: src/scenario.cpp:154
+msgid "You must save at least half of your squad        "
+msgstr "Legalább a csapatod felének életben kell maradnia"
+
+#: src/scenario.cpp:155 src/scenario.cpp:159
+msgid "(rounded down) until the end of the match (number"
+msgstr "(lefelé kerekítve) a játék végéig (a körök száma"
+
+#: src/scenario.cpp:156 src/scenario.cpp:160
+msgid "of turns is set in the \"Options\" section).       "
+msgstr "állítható a \"Beállítások\" résznél)."
+
+#: src/scenario.cpp:158 src/scenario.cpp:176
+msgid "You must kill more than half of enemy squad      "
+msgstr "El kell pusztítanod az ellenfél csapatának több mint a felét"
+
+#: src/scenario.cpp:162
+msgid "Half-turns to hold (match length)"
+msgstr "Fél-körök száma amig ki kell tartani (játék hossza)"
+
+#: src/scenario.cpp:163 src/scenario.cpp:181
+msgid "\"Surrounded\" deployment"
+msgstr "\"Körbevett\" elhelyezés"
+
+#: src/scenario.cpp:163 src/scenario.cpp:181
+msgid "Standard deployment"
+msgstr "Normális elhelyezés"
+
+#: src/scenario.cpp:171
+msgid "You must bring at least half of your squad       "
+msgstr "El kell hoznod legalább a csapatod felét"
+
+#: src/scenario.cpp:172
+msgid "(rounded up) to the opposite edge of the map if  "
+msgstr "(felfelé kerekítve) a térkép túlsó felére ha a normális"
+
+#: src/scenario.cpp:173
+msgid "standard deployment is selected or to any edge if"
+msgstr "elhelyezés van kiválasztva, vagy bármely szélére ha"
+
+#: src/scenario.cpp:174
+msgid "\"surrounded\" deployment is selected.             "
+msgstr " \"körbevett\" elhelyezés van kiválasztva."
+
+#: src/scenario.cpp:177
+msgid "(rounded up) before they get to your edge of the "
+msgstr "(felfelé kerekítve) mielőtt eljutnak a térkép feléd eső"
+
+#: src/scenario.cpp:178
+msgid "map if standard deployment is selected or to any "
+msgstr "szélére ha a normál elhelyezés van kijelölve vagy bármely"
+
+#: src/scenario.cpp:179
+msgid "edge if \"surrounded\" deployment is selected.     "
+msgstr "szélére ha a \"körbevett\" elhelyezés van kijelölve."
+
+#: src/scenario.cpp:190
+msgid "You must capture enemy leader (first selected    "
+msgstr "El kell fognod az ellenséges vezért (első kijelölt"
+
+#: src/scenario.cpp:191
+msgid "soldier). To do this you must stun him and bring "
+msgstr "katona). Ehhez le kell bénítanod és el kell hoznod"
+
+#: src/scenario.cpp:192
+msgid "to your edge of the map. Leader is always visible"
+msgstr "a térkép feléd eső szélére. A vezér mindig látszik"
+
+#: src/scenario.cpp:193
+msgid "on your minimap.                                 "
+msgstr "a kistérképen."
+
+#: src/scenario.cpp:195
+msgid "You must save your leader (first selected man)   "
+msgstr "Meg kell mentened a vezéredet (első kijelölt ember)"
+
+#: src/scenario.cpp:196
+msgid "from capturing by enemy. He is always visible on "
+msgstr "és megakadályozni hogy az ellenség elfogja. A vezéred mindig"
+
+#: src/scenario.cpp:197
+msgid "your opponent's minimap.                         "
+msgstr "látszik az ellenfeled kistérképén."
+
+#: src/scenario.cpp:208
+msgid "You can deploy your units anywhere on the map.   "
+msgstr "Bárhol elhelyezheted az egységeidet a térképen."
+
+#: src/scenario.cpp:209
+msgid "Find and kill the enemy. All units will face    "
+msgstr ""
+"Találd meg és pusztítsd el az ellenséget. Az összes egység arra fog nézni"
+
+#: src/scenario.cpp:210
+msgid "away from the center and the outside of the map, "
+msgstr "kifelé fog nézni a térkép közepétől a széle felé,"
+
+#: src/scenario.cpp:211
+msgid "depending on the closest map feature.            "
+msgstr "a legközelebbi tereptárgyak figyelembevételével."
+
+#: src/scenario.cpp:212
+msgid "                                                 "
+msgstr ""
+"                                                                              "
+
+#: src/scenario.cpp:213
+msgid "Map exploration level 0 (unexplored) recommended."
+msgstr "Térkép felfedezettségi szint 0 (teljesen felfedezetlen) ajánlott."
+
+#: src/scenario.cpp:503
+#, c-format
+msgid "Player 1 is controlling the target area for %d turn(s)."
+msgstr "Játékos 1 ellenőrzi a célterületet %d kör óta."
+
+#: src/scenario.cpp:511
+#, c-format
+msgid "Player 2 is controlling the target area for %d turn(s)."
+msgstr "Játékos 2 ellenőrzi a célterületet %d kör óta."
+
+#: src/scenario.cpp:516
+msgid "Nobody is controlling the target area."
+msgstr "Senki sem ellenőrzi a célterületet."
+
+#: src/scenario.cpp:798
+#, c-format
+msgid "%d points limit exceeded!"
+msgstr "%d pontos határ túllépve."
+
+#: src/scenario.cpp:811
+#, c-format
+msgid "%s does not have his %s loaded!"
+msgstr "%s-nek nincs lőszer a %s-jában!"
+
+#: src/scenario.cpp:825
+#, c-format
+msgid ""
+"Items on the ground aren't allowed (you have: %d, including unselected "
+"soldiers)."
+msgstr ""
+"Nem maradhat felszerelés a földön (maradt: %d, beleértve a kijelöletlen "
+"katonákat is)"
+
+#: src/scenario.cpp:837 src/scenario.cpp:868 src/scenario.cpp:913
+msgid "Soldier #1 can't have two-handed weapons!"
+msgstr "Katona #1-nek nem lehet két-kezes fegyvere!"
+
+#: src/scenario.cpp:856
+msgid "You must have at least 2 high explosives."
+msgstr "Legalább 2 robbanóanyagot (high explosives)-t is vinned kell."
+
+#: src/scenario.cpp:907
+msgid "You must have at least one stun weapon."
+msgstr "Legalább 1 bénítófegyvert is vinned kell."
+
+#: src/scenario.cpp:1076 src/scenario.cpp:1090
+msgid "Leader can't use two-handed weapons."
+msgstr "A vezér nem használhat két-kezes fegyvert"
+
+#: src/server_gui.cpp:330
+msgid "Server:"
+msgstr "Szerver:"
+
+#: src/server_gui.cpp:332
+msgid "Login:"
+msgstr "Felhasználónév:"
+
+#: src/server_gui.cpp:334
+msgid "Password:"
+msgstr "Jelszó:"
+
+#: src/server_gui.cpp:336
+msgid "Autologin"
+msgstr "Auto-login"
+
+#: src/server_gui.cpp:337
+msgid "Help"
+msgstr "Súgó"
+
+#: src/server_gui.cpp:345
+msgid ""
+"The game can connect to the server running on the internet or on a local network (to start the server on your computer, just run 'ufo2000-srv' executable included in ufo2000 distributive).\n"
+"\n"
+"You need to enter server address. On the first run of the game, the server address contains some default value, it is the official ufo2000 server running on the internet. If you want to play on a local network, you need to start the ufo2000 server on one computer and enter its IP address when connecting to it from ufo2000 on another computer.\n"
+"\n"
+"The other two required fields are login and password. They are used to identify the user to track some game statistics like the number of victories and ELO rating.\n"
+"\n"
+"Login should be any name not used by other players and password should be at least 6 characters long. If you are connecting to the server for the first time, your account will be registered automatically. After successful login or registration, you will see the internet server chat screen."
+msgstr ""
+"A játékkal csatlakozhatsz egy szerverhez az interneten vagy a helyi hálózaton (a szerver indításához a számítógépen, csak futtasd az \"ufo2000-srv\" fájlt, amely megtalálható az UFO2000 csomagban).\n"
+"\n"
+"Meg kell adni a szerver címét. A játék első indításakor, a szerver cím az alapértelmezett értékre van állítva, ami a hivatalos UFO2000 szerver címe. Ha akarsz játszani a helyi hálózaton, akkor el kell indítani az UFO2000 szervert egy számítógépen, és írjd be az IP-címét, amikor csatlakozol az UFO2000-ben egy másik számítógépen.\n"
+"\n"
+"A másik két kötelező mező a felhasználónév és a jelszó. Ezek segítségével azonosítja a szerver a felhasználót, hogy néhány játék statisztikát követhessen róla, mint a győzelmek száma, és az ELO minősítés.\n"
+"\n"
+"Bejelentkezéshez bármilyen nevet használhatsz amit még más játékos nem használ és a jelszó legyen legalább 6 karakter hosszú. Ha most csatlakozol a szerverhez először ezzel a felhasználónévvel, akkor az automatikusan regisztrálódik a szerveren. Sikeres bejelentkezés vagy regisztráció után, látni fogod az internetes szerver chat képernyőjét."
+
+#: src/server_gui.cpp:431
+msgid "Connecting to server..."
+msgstr "Csatlakozás a szerverhez..."
+
+#: src/server_gui.cpp:454
+msgid "ufo2000 internet server ("
+msgstr "UFO2000 internet szerver ("
+
+#: src/server_gui.cpp:458
+msgid "users online"
+msgstr "felhasználó van belépve"
+
+#: src/server_gui.cpp:462
+msgid "You have just connected to ufo2000 internet server"
+msgstr "Sikeresen csatlakoztál az UFO2000 internet szerverhez"
+
+#: src/server_gui.cpp:463
+msgid "There are two windows here: chat console in the left window"
+msgstr "Két ablak található itt: a chat konzol a bal oldalon"
+
+#: src/server_gui.cpp:464
+msgid "and the list of online players in the right"
+msgstr "és a belépett játékosok listája a jobb oldalon"
+
+#: src/server_gui.cpp:466
+msgid "white player name - that's your own name"
+msgstr "fehér játékos név - ez a saját neved"
+
+#: src/server_gui.cpp:467
+msgid "gray player name - available for chat"
+msgstr "szürke játékos név - be van lépve és chat-elhet"
+
+#: src/server_gui.cpp:468
+msgid "yellow player name - you have sent a challenge to this player"
+msgstr "sárga játékos név - kihívtad ezt a játékost egy csatára"
+
+#: src/server_gui.cpp:469
+msgid "green player name - you can accept a challenge from this player"
+msgstr "zöld játékos név - elfogadhatod a kihívást ettől a játékostól"
+
+#: src/server_gui.cpp:470
+msgid "red player name - the player is busy playing with someone else"
+msgstr ""
+"piros játékos név - a játékos épp egy másik játékban játszik (és nem látja a"
+" chat-et)"
+
+#: src/server_gui.cpp:472
+msgid "You can left click on player names to select them as your opponents"
+msgstr ""
+"Bal gombbal kattints a játékosok nevére ahhoz hogy kihívd őket ellenfélnek"
+
+#: src/server_gui.cpp:474
+msgid ""
+"If you have an unfinished game at the server you can press F3 to continue "
+"it."
+msgstr "Ha van befejezetlen játékod a szerveren, nyomj F3-mat a folytatásához"
+
+#: src/server_gui.cpp:487
+msgid "Connected to server"
+msgstr "Csatlakozva a szerverhez"
+
+#: src/server_gui.cpp:488
+msgid "as user"
+msgstr "mint "
+
+#: src/server_gui.cpp:496 src/server_gui.cpp:497
+msgid "  Connection lost  "
+msgstr "  A kapcsolat megszakadt  "
+
+#: src/server_gui.cpp:509
+#, c-format
+msgid "%s is back from a game"
+msgstr "%s visszatért egy játékból"
+
+#: src/server_gui.cpp:511
+#, c-format
+msgid "%s is here"
+msgstr "%s van jelen"
+
+#: src/server_gui.cpp:518
+#, c-format
+msgid "%s disconnected"
+msgstr "%s kilépett"
+
+#: src/server_gui.cpp:536
+#, c-format
+msgid "%s left chat to play a game"
+msgstr "%s elhagyta a chat-et és belépett egy játékba"
+
+#: src/server_gui.cpp:550
+msgid "Start networkgame with"
+msgstr "Hálózati játék indítása ezzel"
+
+#: src/server_gui.cpp:577 src/server_gui.cpp:606
+msgid "Join networkgame with"
+msgstr "Hálózati játékhoz csatlakozás ezzel"
+
+#: src/server_gui.cpp:692 src/server_gui.cpp:694 src/server_gui.cpp:720
+msgid "DISCONNECT FROM SERVER"
+msgstr "SZERVERRŐL LECSATLAKOZVA"
+
+#: src/soldier.cpp:645
+#, c-format
+msgid "Equipment weight: %d/%2d"
+msgstr "Felszerelés sulya: %d/%2d"
+
+#: src/soldier.cpp:654
+msgid "TUs>"
+msgstr "IEk>"
+
+#: src/soldier.cpp:676
+msgid "Health>"
+msgstr "Élet>"
+
+#: src/soldier.cpp:708
+msgid "TIME UNITS"
+msgstr "IDŐEGYSÉGEK"
+
+#: src/soldier.cpp:709
+msgid "ENERGY"
+msgstr "ENERGIA"
+
+#: src/soldier.cpp:710
+msgid "HEALTH"
+msgstr "ÉLET"
+
+#: src/soldier.cpp:711
+msgid "FATAL WOUNDS"
+msgstr "HALÁLOS SEBEK"
+
+#: src/soldier.cpp:712
+msgid "BRAVERY"
+msgstr "BÁTORSÁG"
+
+#: src/soldier.cpp:713
+msgid "MORALE"
+msgstr "MORÁL"
+
+#: src/soldier.cpp:714
+msgid "REACTIONS"
+msgstr "REAKCIÓ"
+
+#: src/soldier.cpp:715
+msgid "FIRING ACCURACY"
+msgstr "TÜZELÉSI PONTOSSÁG"
+
+#: src/soldier.cpp:716
+msgid "THROWING ACCURACY"
+msgstr "DOBÁSI PONTOSSÁG"
+
+#: src/soldier.cpp:717
+msgid "STRENGTH"
+msgstr "ERŐ"
+
+#: src/soldier.cpp:719
+msgid "FRONT ARMOUR"
+msgstr "ELÜLSŐ PÁNCÉL"
+
+#: src/soldier.cpp:720
+msgid "LEFT ARMOUR"
+msgstr "BAL PÁNCÉL"
+
+#: src/soldier.cpp:721
+msgid "RIGHT ARMOUR"
+msgstr "JOBB PÁNCÉL"
+
+#: src/soldier.cpp:722
+msgid "REAR ARMOUR"
+msgstr "HÁTSÓ PÁNCÉL"
+
+#: src/soldier.cpp:723
+msgid "UNDER ARMOUR"
+msgstr "ALSÓ PÁNCÉL"
+
+#: src/soldier.cpp:1072
+msgid "Time units are reserved for snap shot."
+msgstr "Időegységek kapás-lövésre tartalékolva."
+
+#: src/soldier.cpp:1079
+msgid "Time units are reserved for aimed shot."
+msgstr "Időegységek célzott-lövésre tartalékolva."
+
+#: src/soldier.cpp:1086
+msgid "Time units are reserved for auto shot."
+msgstr "Időegységek sorozat-lövésre tartalékolva."
+
+#: src/soldier.cpp:1093
+msgid "Time units are reserved for grenade throw."
+msgstr "Időegységek gránát-dobásra tartalékolva."
+
+#: src/soldier.cpp:1639
+#, c-format
+msgid "%s killed."
+msgstr "%s meghalt."
+
+#: src/soldier.cpp:1640
+#, c-format
+msgid "killed: %s\n"
+msgstr "megölve: %s\n"
+
+#: src/soldier.cpp:1689
+#, c-format
+msgid "%s stunned."
+msgstr "%s lebénítva."
+
+#: src/soldier.cpp:1690
+#, c-format
+msgid "stunned: %s\n"
+msgstr "lebénítva: %s\n"
+
+#: src/soldier.cpp:1762
+#, c-format
+msgid "%s has panicked."
+msgstr "%s bepánikolt."
+
+#: src/soldier.cpp:1764
+msgid "(can't access inventory but moves faster)"
+msgstr "(nem tudja használni a felszerelését, de gyorsabban mozog)"
+
+#: src/soldier.cpp:1766
+msgid "Panicked"
+msgstr "Pánikol"
+
+#: src/text.cpp:199 src/text.cpp:476
+msgid "  CLOSE  "
+msgstr "  BEZÁR  "
+
+#: src/text.cpp:200
+msgid "&RANDOM TIP"
+msgstr "&RANDOM TIPP"
+
+#: src/text.cpp:201
+msgid "&NEXT TIP"
+msgstr "&KÖVETKEZŐ TIPP"
+
+#: src/text.cpp:202
+msgid "RANDOM TIP"
+msgstr "RANDOM TIPP"
+
+#: src/text.cpp:203
+msgid "NEXT TIP"
+msgstr "KÖVETKEZŐ TIPP"
+
+#: src/text.cpp:245
+msgid "Tip"
+msgstr "Tipp"
+
+#: src/text.cpp:283
+msgid "RIGHT SHOULDER"
+msgstr "JOBB VA'LL"
+
+#: src/text.cpp:284
+msgid "LEFT SHOULDER"
+msgstr "BAL VA'LL"
+
+#: src/text.cpp:285
+msgid "RIGHT HAND"
+msgstr "JOBB KÉZ"
+
+#: src/text.cpp:286
+msgid "LEFT HAND"
+msgstr "BAL KÉZ"
+
+#: src/text.cpp:287
+msgid "RIGHT LEG"
+msgstr "JOBB LA'B"
+
+#: src/text.cpp:288
+msgid "LEFT LEG"
+msgstr "BAL LA'B"
+
+#: src/text.cpp:289
+msgid "BACK PACK"
+msgstr "HA'TIZSA'K"
+
+#: src/text.cpp:290
+msgid "BELT"
+msgstr "ÖV"
+
+#: src/text.cpp:291
+msgid "GROUND"
+msgstr "TALAJ"
+
+#: src/text.cpp:292
+msgid "ARMOURY"
+msgstr "FEGYVERKÉSZLET"
+
+#: src/text.cpp:293
+msgid "COMMON POOL"
+msgstr "KÖZÖS FELSZERELÉS"
+
+#: src/text.cpp:308
+msgid "Move up one level"
+msgstr "Mozgás felfelé egy szinttel"
+
+#: src/text.cpp:309
+msgid "Move down one level"
+msgstr "Mozgás lefelé egy szinttel"
+
+#: src/text.cpp:311
+msgid "View up one level"
+msgstr "Nézetet feljebb egy szinttel"
+
+#: src/text.cpp:312
+msgid "View down one level"
+msgstr "Nézetet lejjebb egy szinttel"
+
+#: src/text.cpp:314
+msgid "Show Map"
+msgstr "Térkép Nézet"
+
+#: src/text.cpp:315
+msgid "Stand up / Crouch"
+msgstr "Feláll / Leguggol"
+
+#: src/text.cpp:317 src/text.cpp:380
+#, c-format
+msgid "Inventory"
+msgstr "Felszerelés"
+
+#: src/text.cpp:318
+msgid "CenterView"
+msgstr "Képernyő Középre"
+
+#: src/text.cpp:320
+msgid "Jump to Next Man"
+msgstr "Ugrás a Következő Emberre"
+
+#: src/text.cpp:321
+msgid "Done with this man"
+msgstr "Ember befejezése"
+
+#: src/text.cpp:323
+msgid "Toggle Roof"
+msgstr "Tetők Kapcsolgatása"
+
+#: src/text.cpp:327
+msgid "Done with turn"
+msgstr "Kör vége"
+
+#: src/text.cpp:328
+msgid "Exit Game"
+msgstr "Kilépés"
+
+#: src/text.cpp:330
+msgid "Show Stats of man"
+msgstr "Ember Értékei"
+
+#: src/text.cpp:331
+msgid "Switch Barchart"
+msgstr "Oszlopdiagram Kapcsolása"
+
+#: src/text.cpp:334
+msgid "Reserve Time: None"
+msgstr "Időegység tartalékolás: Nincs"
+
+#: src/text.cpp:337
+msgid "Reserve Time: Aimed shot"
+msgstr "Időegység tartalékolás: Célzott lövésre"
+
+#: src/text.cpp:340
+msgid "Reserve Time: Snapshot"
+msgstr "Időegység tartalékolás: Kapás lövésre"
+
+#: src/text.cpp:343
+msgid "Reserve Time: Autoshot"
+msgstr "Időegység tartalékolás: Sorozat lövésre"
+
+#: src/text.cpp:377
+#, c-format
+msgid "Introduction"
+msgstr "Bevezető"
+
+#: src/text.cpp:378
+#, c-format
+msgid "Battlescape"
+msgstr "Csatatér"
+
+#: src/text.cpp:379
+#, c-format
+msgid "Mapview"
+msgstr "Térképnézet"
+
+#: src/text.cpp:381
+#, c-format
+msgid "Stats-View"
+msgstr "Értékek Megtekintése"
+
+#: src/text.cpp:382
+#, c-format
+msgid "Endgame-Stats"
+msgstr "Játék Végi Statisztikák"
+
+#: src/text.cpp:383
+#, c-format
+msgid "Network"
+msgstr "Hálózat"
+
+#: src/text.cpp:384
+#, c-format
+msgid "Mission-Planner"
+msgstr "Küldetés-Tervező"
+
+#: src/text.cpp:385
+#, c-format
+msgid "Scenarios"
+msgstr "Forgatókönyvek"
+
+#: src/text.cpp:406
+msgid "Select Help-Page"
+msgstr "Válassz Súgó-Oldalt"
+
+#: src/text.cpp:473
+msgid "HELP-&INDEX"
+msgstr "SÚGÓ-&INDEX"
+
+#: src/text.cpp:474
+msgid "&PREV PAGE"
+msgstr "&ELŐZŐ OLDAL"
+
+#: src/text.cpp:475
+msgid "&NEXT PAGE"
+msgstr "&KÖVETKEZŐ OLDAL"
+
+#: src/text.cpp:478
+msgid "To leave, press ESC."
+msgstr "Kilépéshez nyomj ESC-et"
+
+#: src/text.cpp:504
+msgid "UFO2000 is a multiplayer game in the spirit of 'X-COM: UFO Defense'."
+msgstr "Az UFO2000 egy multiplayer játék az 'X-COM: UFO Defense' stílusában."
+
+#: src/text.cpp:505
+msgid "At the moment, only the tactical part of the game is playable,"
+msgstr "Jelenleg csak a játék taktikai része játszható,"
+
+#: src/text.cpp:506
+msgid "e.g. two teams of soldiers and/or aliens fighting each other."
+msgstr "amelyben két csapat ember és idegen harcol egymással."
+
+#: src/text.cpp:510
+msgid "UFO2000 needs data (graphics, sound, maps) from an original XCOM-game."
+msgstr ""
+"Az UFO2000 betöltheti az eredeti XCOM-játékok fájlait (grafikák, hang, "
+"térképek)."
+
+#: src/text.cpp:511
+msgid "Files from the XCOM-Demo can be used if you don't own XCOM-1,"
+msgstr ""
+"Az XCOM-Demo verzió fájlai is használhatók ehhez, ha az eredeti XCOM-1 nincs"
+" meg,"
+
+#: src/text.cpp:512
+msgid "but this demo only has a few of the maps and aliens."
+msgstr "de ebben a demo-ban csak néhány térkép és idegen van."
+
+#: src/text.cpp:516
+msgid "If you also have Terror-from-the-Deep (aka UFO-2) or the TFTD-demo,"
+msgstr "Ha a Terror-from-the-Deep is megvan (alias UFO-2), vagy a TFTD-demo,"
+
+#: src/text.cpp:517
+msgid "some additional maps from this game can be used."
+msgstr "akkor néhány extra térkép is használható abból a játékból."
+
+#: src/text.cpp:518
+msgid "(But XCOM-1 is always required)"
+msgstr "(De az XCOM-1 mindig szükséges.)"
+
+#: src/text.cpp:522
+msgid "UFO2000 can be played hotseat (solo, or 2 players on 1 computer),"
+msgstr "Az UFO2000 HOTSEAT módban is játszható (2 játékos 1 gépen),"
+
+#: src/text.cpp:523
+msgid "or via LAN or internet.  The offical server runs on lxnt.info:2001."
+msgstr ""
+"vagy LAN-on vagy neten keresztül. A hivatalos szerver internet címe "
+"lxnt.info:2001."
+
+#: src/text.cpp:524
+msgid "There is no AI implemented yet."
+msgstr "Még nincsen AI implementálva."
+
+#: src/text.cpp:533
+msgid "UFO2000 is controlled mainly with the mouse, and these keys:"
+msgstr ""
+"Az UFO2000 irányítása főleg az egérrel történik, és ezekkel a gombokkal:"
+
+#: src/text.cpp:534
+msgid ""
+"F1: Help, F2+F3: Save+Load, F9: Keymap, F10: Window/Fullscreen, F12: "
+"Screenshot"
+msgstr ""
+"F1: Súgó, F2+F3: Mentés+Betöltés, F9: Gombok listája, F10: "
+"Ablak/Teljesképernyő, F12: Screenshot"
+
+#: src/text.cpp:535
+msgid "Keypad+/-: adjust Music-Volume, Shift+space: Pause, ESC: Quit."
+msgstr "Keypad +/-: Zene hangerő állítás, Shift+space: Pauza, ESC: Kilépés"
+
+#: src/text.cpp:539
+msgid "The active soldier is highlighted by a yellow arrow above him."
+msgstr "Az aktív katonát egy sárga nyíl mutatja a feje fölött."
+
+#: src/text.cpp:540
+msgid "Click on any of your soldiers to make him active."
+msgstr "Kattints bármelyik katonádra, hogy aktívvá váljon."
+
+#: src/text.cpp:545
+msgid "To move the active soldier, left-click on the map."
+msgstr "Az aktív katona mozgatásához kattints bal gombbal a térképre."
+
+#: src/text.cpp:546
+msgid "Right-click turns him towards the cursor, opens doors,"
+msgstr "Jobb-klikk elfordítja a katonát a kurzor felé, vagy ajtót nyit"
+
+#: src/text.cpp:547
+msgid "and stops movement (e.g. in case of a mis-click)."
+msgstr "valamint megállítja a mozgást (ha rossz helyre klikkeltél)"
+
+#: src/text.cpp:551
+msgid "To fire a gun, click on the weapon in the left or right hand,"
+msgstr "Tüzeléshez, kattints a fegyverre a jobb vagy bal kézben,"
+
+#: src/text.cpp:552
+msgid "select the fire-mode (aimed, snapshot, autoshot), then click"
+msgstr "válaszd ki a tüzelési-módot (célzott, kapás, sorozat), aztán kattints"
+
+#: src/text.cpp:553
+msgid "on the target.  Use the PgUp&&PgDown-buttons to aim at other levels."
+msgstr ""
+"a célpontra.  Használad a PageUp és PageDown gombokat a szintváltáshoz "
+"célzás közben."
+
+#: src/text.cpp:557
+msgid "Grenades should be primed before they are thrown."
+msgstr "A gránátokat élesíteni (időzíteni) kell mielőtt eldobod őket."
+
+#: src/text.cpp:558
+msgid "The delay is the number of rounds before they go off."
+msgstr "Az időzítésnél megadhatod hogy hány kör mulva robbanjon fel."
+
+#: src/text.cpp:559
+msgid "Zero delay means they explode at the end of your turn."
+msgstr ""
+"Ha nullára állítod az időzítést, akkor a köröd végén robban. (vagy rögtön "
+"becsapódáskor)"
+
+#: src/text.cpp:563
+msgid "While you hold a grenade in your hand, it does not countdown,"
+msgstr "Amíg fogod a gránátot, nem számol vissza"
+
+#: src/text.cpp:564
+msgid "but a high-explosive does !"
+msgstr "de a robbanószer (high-explosive) igen."
+
+#: src/text.cpp:565
+msgid "Primed proxy-grenades get hot when thrown or put on the ground."
+msgstr "Az élesített proxy-gránátok a földre rakástól kezdve aktívak."
+
+#: src/text.cpp:570
+msgid "The control-panel at the bottom of the screen:"
+msgstr "Az irányító panel a képernyő közepén, alul található."
+
+#: src/text.cpp:571
+msgid "The boxes at the left and right show the items in hand, e.g. weapons."
+msgstr ""
+"A bal és jobboldalon lévő dobozok mutatják a két kézben tartott "
+"felszerelést."
+
+#: src/text.cpp:572
+msgid "Between them are some buttons and a small status-display."
+msgstr "Ezek között van néhány egyéb gomb és az állapot jelző."
+
+#: src/text.cpp:576
+msgid "Control-panel:  Buttons in column 1:"
+msgstr "Irányító panel:  Az első oszlopban lévő gombok."
+
+#: src/text.cpp:577
+msgid "Climb up && down a level."
+msgstr "Mászás fel && Mászlás le egy szinttel (pl. létrán)"
+
+#: src/text.cpp:578
+msgid "This works only when standing on a gravlift."
+msgstr ""
+"Ez csak akkor működik ha grav-liftben vagy létrán állsz, vagy repülő "
+"páncélod van."
+
+#: src/text.cpp:582
+msgid "Control-panel:  Buttons in column 2 (Ladder-symbol):"
+msgstr "Irányító panel: A második oszlopban lévő gombok (létra-jel)"
+
+#: src/text.cpp:583
+msgid "Change level up && down: Look (and aim) at other levels."
+msgstr "Nézet váltása egy szinttel fel && egy szinttel le"
+
+#: src/text.cpp:584
+msgid "Maps have 4 levels.  Keyboard-shortcut: PgUp && PgDn-Keys."
+msgstr ""
+"A térképeknek 4 szintje van.   Billentyűzet-gombok: PageUp && PageDown "
+"gombok"
+
+#: src/text.cpp:588
+msgid "Control-panel:  Buttons in column 3:"
+msgstr "Irányító panel:  A harmadik oszlopban lévő gombok"
+
+#: src/text.cpp:589
+msgid "Map-Display: Invoke the map-viewer for a small overhead-view."
+msgstr ""
+"Kistérkép: Bekapcsolja a kistérkép-nézőt, amelyen látszik az egész pálya"
+
+#: src/text.cpp:590
+msgid "Stand up / Kneel:  Kneeling improves aiming (10%)."
+msgstr ""
+"Helyzetváltás: Feláll / Leguggol:  A guggolás (térdelés) (10%)-al növeli a "
+"célzási pontosságot."
+
+#: src/text.cpp:594
+msgid "Control-panel:  Buttons in column 4:"
+msgstr "Irányító-panel:   A negyedik oszlopban lévő gombok"
+
+#: src/text.cpp:595
+msgid "Inventory: access your belt, backpack etc., and items on the ground."
+msgstr ""
+"Felszerelés: az övben, hátizsákban, földön stb. lévő felszerelések kezelése"
+
+#: src/text.cpp:596
+msgid "Center view: scroll map-display to center around the current man."
+msgstr "Nézet középre: ráállítja a képernyőt az éppen kijelölt emberre"
+
+#: src/text.cpp:600
+msgid "Control-panel:  Buttons in column 5:"
+msgstr "Irányító-panel:   Az ötödik oszlopban lévő gombok"
+
+#: src/text.cpp:601
+msgid "Switch to next man, who still has TUs left.      "
+msgstr "Váltás a következő emberre, akinek még van időegysége."
+
+#: src/text.cpp:602
+msgid "Switch to next man, and mark current man as done."
+msgstr ""
+"Váltás a következő emberre, és a jelenlegi embert kész-nek jelöli erre a "
+"körre."
+
+#: src/text.cpp:606
+msgid "Control-panel:  Buttons in column 6:"
+msgstr "Irányító-panel:  A hatodik oszlop gombjai"
+
+#: src/text.cpp:607
+msgid "Show/hide other levels (e.g. show roof of buildings etc.)"
+msgstr "A magasabb szintek (pl. tetők) mutatása / elrejtése"
+
+#: src/text.cpp:608
+msgid "Config-Dialog: adjust movement speed, scrolling speed etc."
+msgstr ""
+"Beállítás-panel: mozgási sebesség, térkép mozgatási sebesség, stb. állítása"
+
+#: src/text.cpp:612
+msgid "Control-panel:  Buttons in column 7:"
+msgstr "Irányító-panel:  A hetedik oszlop gombjai"
+
+#: src/text.cpp:613
+msgid "End your turn."
+msgstr "Kör vége"
+
+#: src/text.cpp:614
+msgid "Quit: abort mission (same as ESC)."
+msgstr "Kilépés: küldetés megszakítása (ESC gombbal is)"
+
+#: src/text.cpp:618
+msgid "Control-panel:  green&&red buttons at the lower left:"
+msgstr "Irányító-panel:  zöld && piros gombok a bal lenti sarokban"
+
+#: src/text.cpp:619
+msgid "Green: Reserve no time, move freely.                   "
+msgstr "Zöld: Nincs időegység tartalékolás, szabadon mozoghat"
+
+#: src/text.cpp:620
+msgid "Red:   Reserve time for aimed shot, snapshot, autofire."
+msgstr ""
+"Piros:   Időegységek tartalékolása célzott, kapás vagy sorozat lövésre"
+
+#: src/text.cpp:624
+msgid "Control-panel:  big brown button in the center"
+msgstr "Irányító-panel:  nagy barna gomb középen"
+
+#: src/text.cpp:625
+msgid "(shows turn-number):"
+msgstr "(megmutatja a jelenlegi kör számát)"
+
+#: src/text.cpp:626
+msgid "Invoke statistics-display for current man."
+msgstr "Megmutatja a kijelölt ember statisztikáit"
+
+#: src/text.cpp:635
+msgid "The map-viewer shows a small overhead-view of the map."
+msgstr "A kistérkép megmutatja az egész pályát"
+
+#: src/text.cpp:636
+msgid "To look at other levels, use the up&&down-buttons at the left."
+msgstr ""
+"Más szintek megtekintéséhez használd a fel && le gombokat a baloldalon"
+
+#: src/text.cpp:637
+msgid "To leave, click on the red OK-button, or press ESC."
+msgstr "Kilépéshez kattints a piros OK gombra vagy nyomj ESC-et"
+
+#: src/text.cpp:641
+msgid "A click on the map-area centers the view to this spot."
+msgstr "Kattints a térképen annak a helynek a megtekintéséhez"
+
+#: src/text.cpp:643
+msgid "Unexplored areas are shown as black."
+msgstr "A felfedezetlen részek feketével látszanak"
+
+#: src/text.cpp:647
+msgid "Yellow dots: your men.             "
+msgstr "Sárga pontok: a te embereid"
+
+#: src/text.cpp:648
+msgid "Red dots   : enemy soldiers.       "
+msgstr "Piros pontok: ellenséges katonák"
+
+#: src/text.cpp:649
+msgid "Blue dots  : map-tiles with damage."
+msgstr "Kék pontok: sebzést okozó térképkockák"
+
+#: src/text.cpp:743
+msgid "Inventory: here you can manage the weapons"
+msgstr "Felszerelés: itt tudod kezelni a fegyvereket"
+
+#: src/text.cpp:744
+msgid "and equipment of your soldier."
+msgstr "és az katona felszerelését."
+
+#: src/text.cpp:745
+msgid "To leave, press the OK-button, or goto the next/previous man."
+msgstr "Elhagyásho nyomd az OK-gombot, vagy menj a következő / előző emberre."
+
+#: src/text.cpp:749
+msgid "In the mission-planner, you can use F2 && F3"
+msgstr "A küldetés-tervezőben az F2 és F3 gombokat használhatod"
+
+#: src/text.cpp:750
+msgid "to save && load a team of soldiers."
+msgstr "egy csapat katona mentéséhez vagy betöltéséhez."
+
+#: src/text.cpp:755
+msgid "Use the mouse to move items between the slots"
+msgstr "Az égerrel tudsz tárgyakat mozgatni a helyek között"
+
+#: src/text.cpp:756
+msgid "for hands, belt, backpack etc."
+msgstr "a kézbe, az övbe a hátizsákba, stb."
+
+#: src/text.cpp:757
+msgid "Note: during battle, each such move costs time."
+msgstr "Megjegyzés: harc közben az ilyen mozgatások időegységekbe kerülnek."
+
+#: src/text.cpp:761
+msgid "To unload a weapon, move it over the clip-button"
+msgstr ""
+"A fegyverből a tár eltávolításához mozgasd a fegyvert a tár-ürítés gombra"
+
+#: src/text.cpp:762
+msgid "(top right, below the arrow-buttons) and click there."
+msgstr "(jobb felső rész, a nyíl gombok alatt) és kattints rá."
+
+#: src/text.cpp:763
+msgid "You must have your second hand free."
+msgstr "Ehhez a másik kéznek üresnek kell lennie."
+
+#: src/text.cpp:767
+msgid "To load an empty weapon, hold it in one hand,"
+msgstr "Fegyver betöltéséhez rakd az egyik kézbe,"
+
+#: src/text.cpp:768
+msgid "and move ammo of the matching type into the weapon-slot."
+msgstr "mozgasd rá a megfelelő tipusú lőszert a fegyverre, és kattints."
+
+#: src/text.cpp:774
+msgid "The armor cannot be changed during a battle."
+msgstr "A páncélt nem lehet harc közben lecserélni."
+
+#: src/text.cpp:775
+msgid "Flying armor does not work yet (it only has stronger armor)."
+msgstr "A repülő páncél még nem működik (csak erősebb a páncélja)."
+
+#: src/text.cpp:776
+msgid "Click on the picture of the soldier to get to his stats."
+msgstr "Kattints a katona képére hogy megjelenjenek a tulajdonságai."
+
+#: src/text.cpp:782
+msgid "Quick-Setup: (experimental feature)"
+msgstr "Gyors-Beállítás: (próba jellegű funkció)"
+
+#: src/text.cpp:783
+msgid "With F5..F8 a predefined soldier-type can be selected."
+msgstr ""
+"Az F5...F8 gombokkal egy előre-beállított katona tipust lehet kiválasztani."
+
+#: src/text.cpp:784
+msgid "Shift-F5..F8 set up these keys."
+msgstr "Shift-F5...F8 gombkombinációkkal lehet ezeket a gombokat beállítani."
+
+#: src/text.cpp:788 src/text.cpp:794 src/text.cpp:800
+msgid "Quick-Setup:"
+msgstr "Gyors-Beállítás:"
+
+#: src/text.cpp:789
+msgid "DEL: delete equipment of the current soldier."
+msgstr "DEL: törli a jelenlegi katona összes felszerelését."
+
+#: src/text.cpp:790
+msgid "TAB/Shift-TAB: jump to next/previous soldier."
+msgstr "TAB / Shift-TAB: ugrás a következő / előző katonára."
+
+#: src/text.cpp:795
+msgid "F9: generate a name for the current soldier."
+msgstr "F9: új név generálása a jelenlegi katonának."
+
+#: src/text.cpp:796
+msgid "Shift-F9: configure the name-generator."
+msgstr "Shift-F9: a név-generátor beállításai."
+
+#: src/text.cpp:801
+msgid "F11: cycle thru apperances of the current soldier. "
+msgstr "F11: a jelenlegi katona kinézetének változtatása."
+
+#: src/text.cpp:802
+msgid "F12: cycle thru armor-types of the current soldier."
+msgstr "F12: a jelenlegi katona páncél-típusainak változtatása."
+
+#: src/text.cpp:811
+msgid "Stats-Display: the current attributes of the soldier."
+msgstr ""
+"Tulajdonságok-Képernyő: a jelenlegi katona tulajdonságainak megjelenítése."
+
+#: src/text.cpp:813
+msgid "To leave, press ESC or click a mousebutton."
+msgstr "Elhagyáshoz nyomd meg az ESC gombot vagy kattints az egérrel."
+
+#: src/text.cpp:817 src/text.cpp:823 src/text.cpp:829 src/text.cpp:835
+#: src/text.cpp:841 src/text.cpp:847 src/text.cpp:853 src/text.cpp:859
+#: src/text.cpp:865
+msgid "Stats:"
+msgstr "Tulajdonságok:"
+
+#: src/text.cpp:818
+msgid "Time-Units: every action costs time."
+msgstr "Idő-Egységek: minden cselekvés időbe kerül."
+
+#: src/text.cpp:819
+msgid "Energy: some actions also cost energy (e.g. walking)."
+msgstr "Energia: némely cselekvések energiába is kerülnek (pl. gyaloglás)"
+
+#: src/text.cpp:824
+msgid "Health: when this reaches zero, the soldier dies."
+msgstr "Élet: amikor ez elfogy, a katona meghal."
+
+#: src/text.cpp:825
+msgid "Fatal Wounds: amount of health-loss each round."
+msgstr "Halálos Sebek: élet veszteség minden körben."
+
+#: src/text.cpp:830
+msgid "Stun: shown as an overlay to health. When the stun-value"
+msgstr "Bénulás: ez egy csík az élet fölött. Amikor a bénulás-érték"
+
+#: src/text.cpp:831
+msgid "reaches the value of health, the soldier gets unconscious."
+msgstr "eléri az élet mennyiségét, a katona elájul."
+
+#: src/text.cpp:836
+msgid "Bravery: (not yet implemented - same for all man)"
+msgstr "Bátorság: (még nincs implementálva - minden embernek egyforma)"
+
+#: src/text.cpp:837
+msgid "Morale: current morale. Goes down when own men die."
+msgstr "Morál: a jelenlegi morál. Csökken amikor saját emberek meghalnak."
+
+#: src/text.cpp:842
+msgid "Reactions: chance for firing at an enemy during their round."
+msgstr ""
+"Reakció: annak az esélye hogy a katona visszalő az ellenségre az ő körük "
+"alatt."
+
+#: src/text.cpp:843
+msgid "This needs time for at least a snapshot."
+msgstr "Ehhez elég időegységnek kell lennie legalább egy kapás-lövésre."
+
+#: src/text.cpp:848
+msgid "Firing accuracy: for pistols and guns."
+msgstr "Célzási Pontosság: a lőfegyverekkel való lövés pontossága."
+
+#: src/text.cpp:849
+msgid "Throwing accuracy: for grenades."
+msgstr "Dobási Pontosság: gránátok dobási pontossága."
+
+#: src/text.cpp:854
+msgid "Strength: this determines how much the soldier can carry."
+msgstr "Erő: ez mutatja hogy mennyi felszerelést bír el a katona."
+
+#: src/text.cpp:855
+msgid "When overloaded, he gets less TU each round."
+msgstr "Amikor túl van terhelve, az időegyésge kevesebb lesz minden körben."
+
+#: src/text.cpp:860
+msgid "PSI-Strength: (not yet implemented)"
+msgstr "PSI-Erő: (még nincs implementálva)"
+
+#: src/text.cpp:866
+msgid "Armor: protection-value on all sides of the soldier."
+msgstr "Páncél: védő-érték a katona minden oldalára."
+
+#: src/text.cpp:867
+msgid "Under-armor protects against nearby explosions."
+msgstr "Az alsó-pánél megvéd a közeli robbanásoktól."
+
+#: src/text.cpp:876 src/text.cpp:882
+msgid "Endgame-Statistics:"
+msgstr "Játékvégi-Statisztikák:"
+
+#: src/text.cpp:878
+msgid "A summary of kills and damage for both teams."
+msgstr "Az ölések és a sebzés összegzése mindkét csapatnak."
+
+#: src/text.cpp:883
+msgid "You can stay here to chat in private with your partner."
+msgstr "Itt maradhatsz és privátban chat-elhetsz a másik játékossal."
+
+#: src/text.cpp:893
+msgid "Connect to an UFO2000-Server on your LAN (e.g. 192.168.1.2:2000)"
+msgstr ""
+"Csatlakozás UFO2000 szerverhez helyi (LAN) hálózaton. (például: "
+"192.168.1.2:2000)"
+
+#: src/text.cpp:894
+msgid "or on the Internet (e.g. the offical server lxnt.info:2001)."
+msgstr "vagy az interneten (például: a hivatalos szerver: lxnt.info:2001)"
+
+#: src/text.cpp:899
+msgid "To get a valid login-name at the official server,"
+msgstr "Érvényes login név regisztrálásához a szerveren"
+
+#: src/text.cpp:900
+msgid "register at http://ufo2000.lxnt.info/admin.php"
+msgstr "regisztrálj itt: http://ufo2000.lxnt.info/admin.php"
+
+#: src/text.cpp:901
+msgid "Registration is free, and no personal data is required."
+msgstr "A regisztráció ingyenes és nem kell személyes adatot megadni."
+
+#: src/text.cpp:905
+msgid "To chat, just type your message, and press ENTER."
+msgstr "Chat-eléshez írd meg az üzenetet és nyomj ENTER-t."
+
+#: src/text.cpp:906
+msgid "To challenge another player, or accept his/her challenge,"
+msgstr " Másik játékos kihívásához vagy kihívás elfogadásához,"
+
+#: src/text.cpp:907
+msgid "click on his/her name in the player-list at the right."
+msgstr "kattints a nevére a játékos listában a jobboldalon."
+
+#: src/text.cpp:911
+msgid "Colors of the playernames:"
+msgstr "A játékosok nevének szinei:"
+
+#: src/text.cpp:912
+msgid "White: You.                             "
+msgstr "Fehér: Te"
+
+#: src/text.cpp:913
+msgid "Gray : Someone else, available for chat."
+msgstr "Szürke: valaki más, aki tud chat-elni"
+
+#: src/text.cpp:917
+msgid "Red   : He/she is busy, playing with someone else."
+msgstr "Piros: ez a játékos most játszik valaki mással"
+
+#: src/text.cpp:918
+msgid "Yellow: You have sent a challenge to him/her.     "
+msgstr "Sárga: kihívtad ezt a játékost egy csatára"
+
+#: src/text.cpp:919
+msgid "Green : You can accept a challenge from him/her.  "
+msgstr "Zöld: elfogadhatsz egy kihívást ettől a játékostól"
+
+#: src/text.cpp:928
+msgid "Mission-Planner: here you can select a map and a scenario,"
+msgstr "Küldetés-Tervező: itt kiválaszthatsz egy térképet és egy küldetést,"
+
+#: src/text.cpp:929
+msgid "set the game-rules, and select soldiers for a mission."
+msgstr ""
+"beállíthatod a játékszabályokat és kiválaszthatod a katonákat a küldetéshez."
+
+#: src/text.cpp:930
+msgid "When finished, press SEND, then START. To leave, press ESC."
+msgstr ""
+"Amikor kész, nyomd meg a SEND és aztán a START gombokat. Kilépéshez nyomj "
+"ESC-et."
+
+#: src/text.cpp:934
+msgid "To edit one of your soldiers, CTRL-click on his name."
+msgstr "A katonák szerkesztéséhez, CTRL-klikk a nevére."
+
+#: src/text.cpp:935
+msgid "Left-click to place a soldier on the map (your side only),"
+msgstr ""
+"Bal-klikk -el tudod lerakni a katonát a térképre (csak a saját csapatodból),"
+
+#: src/text.cpp:936
+msgid "right-click to remove him."
+msgstr "jobb-klikkel tudod eltávolítani."
+
+#: src/text.cpp:940
+msgid "SAVE && LOAD for a team can be found on the soldier-edit-screen."
+msgstr ""
+"Mentés és Betöltés a csapatoknak megtalálható a katona-szerkesztő-képernyőn."
+
+#: src/text.cpp:946
+msgid "To change the scenario, click on the text below 'MATCH SETTINGS'."
+msgstr ""
+"A küldetés megváltoztatásához kattints a 'MECCS BEÁLLÍTÁSOK' alatti gombra."
+
+#: src/text.cpp:947
+msgid "To generate a new map, click on the terrain-name,"
+msgstr "Új térkép generálásához kattints a terep nevére,"
+
+#: src/text.cpp:948
+msgid "then click on LOAD, NEW or select a new size (4*4, 5*5, 6*6)."
+msgstr ""
+"és aztán kattints a BETÖLTÉS vagy ÚJ gombra, vagy válassz új méretet (4*4, "
+"5*5, 6*6)."
+
+#: src/text.cpp:952
+msgid "Click on 'Game rules' for fine-tuning the settings:"
+msgstr "Kattints a \"Játékszabályok\"-ra a szabályok módosításához."
+
+#: src/text.cpp:953
+msgid "Explosives, Pointlimit, Turnlimit, Timelimit, FOW, Items on Ground."
+msgstr ""
+"Robbanószerek, Ponthatár, Körhatár, Időkorlát, Háborús Köd, Tárgyak a Földön"
+
+#: src/text.cpp:954
+msgid "You should negotiate them via chat with your partner."
+msgstr "Ezeket a másik játékossal egyeztesd chat-ben."
+
+#: src/text.cpp:958
+msgid "Gamerules - Explosives:"
+msgstr "Játékszabályok - Robbanószerek:"
+
+#: src/text.cpp:959
+msgid "What kind of grenades and rockets are allowed."
+msgstr "Milyen gránátok vannak engedélyezve."
+
+#: src/text.cpp:960
+msgid "(0=no explosives .. 3=everything allowed)"
+msgstr "(0=semmilyen robbanószer ... 3=összes robbanószer)"
+
+#: src/text.cpp:964
+msgid "Gamerules - Pointlimit:"
+msgstr "Játékszabályok - Ponthatár:"
+
+#: src/text.cpp:965
+msgid "How many points you can spend on your soldiers,"
+msgstr "Hány pontot költhetsz a katonáidra,"
+
+#: src/text.cpp:966
+msgid "their attributes, armor, weapons and equipment."
+msgstr " értékeikre, a páncéljukra, fegyvereikre és felszerelésükre."
+
+#: src/text.cpp:970
+msgid "Gamerules - Turnlimit:"
+msgstr "Játékszabályok - Körhatár:"
+
+#: src/text.cpp:971
+msgid "How many turns the match will last."
+msgstr "Hány körig tart a meccs."
+
+#: src/text.cpp:976
+msgid "Gamerules - Timelimit:"
+msgstr "Játékszabályok - Időkorlát:"
+
+#: src/text.cpp:977
+msgid "How many seconds each turn lasts."
+msgstr "Hány másodpercig tarthat egy kör."
+
+#: src/text.cpp:978
+msgid "This is for fast, blitz-type games."
+msgstr "Ez a gyors, villám-jellegű játékokhoz jó."
+
+#: src/text.cpp:982
+msgid "Gamerules - Map Exploration Level at start of game:"
+msgstr "Játékszabályok - Térkép Felfedezettség a játék kezdetekor:"
+
+#: src/text.cpp:983
+msgid ""
+"0: map not explored, 1: deployment-area explored, 2: whole map explored."
+msgstr ""
+"0: a térkép nincs felfedezve, 1: kezdési terület fel van fedezve, 2: egész "
+"térkép fel van fedezve."
+
+#: src/text.cpp:984
+msgid "Unexplored (not yet seen) parts of the map are shown as black."
+msgstr "A fel nem fedezett (még nem látott) területek feketével látszanak."
+
+#: src/text.cpp:988
+msgid "Gamerules - Ground"
+msgstr "Játékszabályok - Föld:"
+
+#: src/text.cpp:989
+msgid "If this is off, you cannot leave the editor while items"
+msgstr ""
+"Ha ez ki van kapcsolva, akkor nem mehetsz ki a felszerelés képernyőről amig "
+"tárgyak"
+
+#: src/text.cpp:990
+msgid "are on the ground (e.g. heavy rockets to take on the mission)."
+msgstr "vannak a földön (pl. nehéz rakéták amiket a küldetésre vinnél)"
+
+#: src/text.cpp:997
+msgid "There are several scenario-types available:"
+msgstr "Több féle küldetés közül lehet választani:"
+
+#: src/text.cpp:998
+msgid "Deathmatch, Escape, Control, Sabotage, Capture ..."
+msgstr "Deathmatch, Escape, Control, Sabotage, Capture ..."
+
+#: src/text.cpp:1004
+msgid "Deathmatch - the most basic scenario:"
+msgstr "Deathmatch - a legegyszerűbb küldetés:"
+
+#: src/text.cpp:1005
+msgid "To win, you just have to survive,"
+msgstr "A győzelemhez túl kell élned"
+
+#: src/text.cpp:1006
+msgid "and kill or stun everybody else."
+msgstr "és megölni vagy elkábítani az ellenfeleket."
+
+#: src/text.cpp:1012
+msgid "(to be continued)"
+msgstr "(folytatva lesz)"
+
+#: src/units.cpp:223
+msgid "MATCH SETTINGS"
+msgstr "JÁTÉK BEÁLLÍTÁSOK"
+
+#: src/units.cpp:229
+msgid "Game rules:"
+msgstr "Jatékszabályok:"
+
+#: src/units.cpp:255
+#, c-format
+msgid "Total points=%d (of %d)"
+msgstr "Pont-érték = %d   (össz. %d)"
+
+#: src/units.cpp:371
+msgid "NEW"
+msgstr "ÚJ"
+
+#: src/units.cpp:372
+msgid "LOAD"
+msgstr "BETÖLTÉS"
+
+#: src/units.cpp:373
+msgid "SAVE"
+msgstr "MENTÉS"
+
+#: src/units.cpp:385
+#, c-format
+msgid "Light level: %d"
+msgstr "Napfény szintje: %d"
+
+#: src/units.cpp:386
+#, c-format
+msgid "Points limit: %d000"
+msgstr "Ponthatár: %d000"
+
+#: src/units.cpp:387
+msgid "No turns limit"
+msgstr "Nincs kör határ"
+
+#: src/units.cpp:387
+#, c-format
+msgid "Turns limit: %d"
+msgstr "Kör határ: %d"
+
+#: src/units.cpp:388
+msgid "No time limit"
+msgstr "Nincs időkorlát"
+
+#: src/units.cpp:388
+#, c-format
+msgid "Time limit: %d sec"
+msgstr "Időkorlát: %d másodperc"
+
+#: src/units.cpp:389
+#, c-format
+msgid "Exploration level: %d"
+msgstr "Felfedezettségi szint: %d"
+
+#: src/units.cpp:390
+msgid "Editor: ground on"
+msgstr "Felszerelés képernyő: Föld bekapcsolva"
+
+#: src/units.cpp:390
+msgid "Editor: ground off"
+msgstr "Felszerelés képernyő: Föld kikapcsolva"
+
+#: src/units.cpp:413
+msgid "Night."
+msgstr "Északa."
+
+#: src/units.cpp:414
+msgid "Low visibility."
+msgstr "Félhomály."
+
+#: src/units.cpp:419
+msgid "Twilight."
+msgstr "Hajnal."
+
+#: src/units.cpp:420
+msgid "Medium visibility."
+msgstr "Közepes látóviszonyok."
+
+#: src/units.cpp:425
+msgid "Day."
+msgstr "Nappal."
+
+#: src/units.cpp:426
+msgid "Good visibility."
+msgstr "Verőfényes napsütés."
+
+#: src/units.cpp:458 src/units.cpp:474
+msgid "no"
+msgstr "nem"
+
+#: src/units.cpp:497
+msgid "Map isn't explored at all."
+msgstr "A térkép egyáltalán nincs felfedezve."
+
+#: src/units.cpp:501
+msgid "Deployment area is explored."
+msgstr "A kezdési terület fel van fedezve."
+
+#: src/units.cpp:505
+msgid "The entire map is explored."
+msgstr "Az egész térkép fel van fedezve."
+
+#: src/units.cpp:625
+msgid "Ready to play!"
+msgstr "Kezdésre készen!"
+
+#: src/units.cpp:628
+#, c-format
+msgid "Total points=%d "
+msgstr "Pontok összesen  = %d"
+
+#: src/units.cpp:644
+msgid "SERVER"
+msgstr "SERVER"
+
+#: src/units.cpp:647
+msgid "CLIENT"
+msgstr "CLIENT"
+
+#: src/units.cpp:654
+msgid "SEND"
+msgstr "SEND"
+
+#: src/units.cpp:661
+msgid "START"
+msgstr "START"
+
+#: src/units.cpp:800
+msgid ""
+"Some of the soldiers selected for battle are equipped with forbidden weapons"
+msgstr ""
+"Valamely katonának nem engedélyezett fegyverek vannak a felszerelésében."
+
+#: src/units.cpp:1006
+msgid "Load map"
+msgstr "Térkép betöltése"
+
+#: src/units.cpp:1012
+msgid "Invalid map file."
+msgstr "Hibás térkép fájl"
+
+#: src/units.cpp:1025
+msgid "Save map"
+msgstr "Térkép mentése"
+
+#: src/units.cpp:1029
+msgid "Can't save map file."
+msgstr "Nem sikerült menteni a térkép fájlt."
+
+#: src/video.cpp:329
+#, c-format
+msgid "Screenshot saved as %s"
+msgstr "Screenshot elmentve mint %s"
+
+#: src/geoscape.cpp:111
+msgid "Use left/right arrows to rotate the globe"
+msgstr "Használd a nyilakat a földgömb forgatásához"
+
+#: src/geoscape.cpp:112
+msgid "Use F1..F7 to accelerate time"
+msgstr "Használd az F1...F7 gombokat az idő gyorsításához"
+
+#: src/geoscape.cpp:113
+msgid "Press ESC to exit"
+msgstr "Nyomj ESC-et a kilépéshez"
+
+
